@@ -1,0 +1,53 @@
+{% extends "layouts/signed_out.html" %}
+
+{% block title %}{{ lang['W_L']['bi_init'] }}{% endblock %}
+
+{% macro render_field_errors(field) -%}
+  {% if field.errors %}
+    {% for e in field.errors %}
+      <p class="help-block">{{ e }}</p>
+    {% endfor %}
+  {% endif %}
+{%- endmacro %}
+
+{% macro render_field(field, help_block=None) -%}
+  <div class="form-group {% if field.errors %}has-error{% endif %}">
+    {{ field.label() }}
+    {{ field(class='form-control') }}
+    {% if help_block %}
+        <p class="help-block">{{ help_block }}</p>
+    {% endif %}
+    {{ render_field_errors(field) }}
+  </div>
+{%- endmacro %}
+
+{% block content %}
+<div class="fixed-width-page">
+  <div class="bg-white tiled">
+    <h4 class="m-t-0">{{ lang['W_L']['welcome_tip'] }}</h4>
+    <div>{{ lang['W_L']['bi_init_tip'] }}</div>
+
+    {% with messages = get_flashed_messages() %}
+      {% if messages %}
+        {% for message in messages %}
+          <div class="alert alert-warning" role="alert">{{ message }}</div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+
+    <form role="form" method="post" name="create_account">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+
+      <h4 class="m-t-25">{{ lang['W_L']['sys_manager'] }}：</h4>
+      {{ render_field(form.name) }}
+      {{ render_field(form.email) }}
+      {{ render_field(form.password) }}
+
+      <h4 class="m-t-25">{{ lang['W_L']['organization'] }}：</h4>
+      {{ render_field(form.org_name, help_block= lang['W_L']['organization_tip']) }}
+
+      <button type="submit" class="btn btn-primary btn-block m-t-25">设置</button>
+    </form>
+  </div>
+</div>
+{% endblock %}

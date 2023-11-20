@@ -1,0 +1,156 @@
+.desktop-navbar {
+  display: none;
+  background: #001529;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  width: 110px;
+  overflow: hidden;
+}
+.desktop-navbar-spacer {
+  flex: 1 1 auto;
+}
+.desktop-navbar-logo.ant-menu {
+  padding-top: 20px;
+  padding-bottom: 20px;
+  text-align: center;
+}
+.desktop-navbar-logo.ant-menu img {
+  height: 40px;
+  transition: all 270ms;
+}
+.desktop-navbar .help-trigger {
+  font: inherit;
+}
+.desktop-navbar .ant-menu .ant-menu-item,
+.desktop-navbar .ant-menu .ant-menu-submenu {
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.75);
+}
+.desktop-navbar .ant-menu .ant-menu-item.navbar-active-item,
+.desktop-navbar .ant-menu .ant-menu-submenu.navbar-active-item {
+  box-shadow: inset 3px 0 0 #fff;
+}
+.desktop-navbar .ant-menu .ant-menu-item.ant-menu-submenu-open,
+.desktop-navbar .ant-menu .ant-menu-submenu.ant-menu-submenu-open,
+.desktop-navbar .ant-menu .ant-menu-item.ant-menu-submenu-active,
+.desktop-navbar .ant-menu .ant-menu-submenu.ant-menu-submenu-active,
+.desktop-navbar .ant-menu .ant-menu-item:hover,
+.desktop-navbar .ant-menu .ant-menu-submenu:hover,
+.desktop-navbar .ant-menu .ant-menu-item:active,
+.desktop-navbar .ant-menu .ant-menu-submenu:active,
+.desktop-navbar .ant-menu .ant-menu-item:focus,
+.desktop-navbar .ant-menu .ant-menu-submenu:focus,
+.desktop-navbar .ant-menu .ant-menu-item:focus-within,
+.desktop-navbar .ant-menu .ant-menu-submenu:focus-within {
+  color: #fff;
+}
+.desktop-navbar .ant-menu .ant-menu-item .anticon,
+.desktop-navbar .ant-menu .ant-menu-submenu .anticon {
+  font-size: 26px;
+  margin: 0;
+}
+.desktop-navbar .ant-menu .ant-menu-item .desktop-navbar-label,
+.desktop-navbar .ant-menu .ant-menu-submenu .desktop-navbar-label {
+  margin-top: 4px;
+  font-size: 11px;
+}
+.desktop-navbar .ant-menu .ant-menu-item a,
+.desktop-navbar .ant-menu .ant-menu-submenu a,
+.desktop-navbar .ant-menu .ant-menu-item span,
+.desktop-navbar .ant-menu .ant-menu-submenu span,
+.desktop-navbar .ant-menu .ant-menu-item .anticon,
+.desktop-navbar .ant-menu .ant-menu-submenu .anticon {
+  color: inherit;
+}
+.desktop-navbar .ant-menu .ant-menu-submenu-arrow {
+  display: none;
+}
+.desktop-navbar .ant-menu .ant-menu-item,
+.desktop-navbar .ant-menu .ant-menu-submenu {
+  padding: 0;
+  height: 60px;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  justify-content: center;
+}
+.desktop-navbar .ant-menu .ant-menu-submenu-title {
+  width: 100%;
+  padding: 0;
+}
+.desktop-navbar .ant-menu a,
+.desktop-navbar .ant-menu.ant-menu-vertical > .ant-menu-submenu > .ant-menu-submenu-title,
+.desktop-navbar .ant-menu .ant-menu-submenu-title {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  line-height: normal;
+  height: auto;
+  background: none;
+  color: inherit;
+}
+.desktop-navbar .desktop-navbar-profile-menu .desktop-navbar-profile-menu-title {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  flex-direction: column;
+}
+.desktop-navbar .desktop-navbar-profile-menu .desktop-navbar-profile-menu-title .profile__image_thumb {
+  margin: 0;
+  vertical-align: middle;
+  width: 26px;
+  height: 26px;
+}
+.desktop-navbar .desktop-navbar-profile-menu .desktop-navbar-profile-menu-title .profile__live__type {
+  display: flex;
+  align-items: center;
+  font-size: 11px;
+  margin-top: 3px;
+}
+.desktop-navbar .desktop-navbar-profile-menu .desktop-navbar-profile-menu-title .profile__live__type > span {
+  display: block;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  margin-right: 2px;
+}
+.desktop-navbar-submenu .ant-menu .ant-menu-item-divider {
+  background: rgba(255, 255, 255, 0.5);
+}
+.desktop-navbar-submenu .ant-menu .ant-menu-item {
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.75);
+}
+.desktop-navbar-submenu .ant-menu .ant-menu-item:hover,
+.desktop-navbar-submenu .ant-menu .ant-menu-item:active,
+.desktop-navbar-submenu .ant-menu .ant-menu-item:focus,
+.desktop-navbar-submenu .ant-menu .ant-menu-item:focus-within {
+  color: #fff;
+}
+.desktop-navbar-submenu .ant-menu .ant-menu-item a,
+.desktop-navbar-submenu .ant-menu .ant-menu-item span,
+.desktop-navbar-submenu .ant-menu .ant-menu-item .anticon {
+  color: inherit;
+}
+.desktop-navbar-submenu .ant-menu .ant-menu-item .zmdi,
+.desktop-navbar-submenu .ant-menu .ant-menu-item .fa {
+  margin-right: 5px;
+}
+.desktop-navbar-submenu .ant-menu .ant-menu-item.version-info {
+  height: auto;
+  line-height: normal;
+  padding-top: 12px;
+  padding-bottom: 12px;
+}
+.desktop-navbar-submenu .ant-menu .ant-menu-item.version-info a {
+  color: rgba(255, 255, 255, 0.8);
+}
+.desktop-navbar-submenu .ant-menu .ant-menu-item.version-info a:hover,
+.desktop-navbar-submenu .ant-menu .ant-menu-item.version-info a:active,
+.desktop-navbar-submenu .ant-menu .ant-menu-item.version-info a:focus,
+.desktop-navbar-submenu .ant-menu .ant-menu-item.version-info a:focus-within {
+  color: #ffffff;
+}

@@ -1,0 +1,25 @@
+.dialogue-top{
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    padding: 0 100px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 30px;
+    /* background: rgba(243, 243, 243,0.7); */
+    /* backdrop-filter: blur(1px); */
+    background: #fff;
+    z-index: 2;
+}
+.dialogue-top-flex{
+    display: flex;
+    align-items: center;
+    color: #534a4a;
+    font-weight: bold;
+    font-size: 14px;
+}
+.dialogue-top-flex span{
+    margin-left: 10px;
+}

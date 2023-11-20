@@ -1,0 +1,49 @@
+.alert-page h3 {
+  flex-grow: 1;
+
+  input {
+    margin: -0.2em 0;
+    width: 100%;
+    min-width: 170px;
+  }
+}
+
+.btn-create-alert[disabled] {
+  display: block;
+  margin-top: -20px;
+}
+
+.alert-state {
+  border-bottom: 1px solid @input-border;
+  padding-bottom: 30px;
+
+  .alert-state-indicator {
+    text-transform: uppercase;
+    font-size: 14px;
+    padding: 5px 8px;
+  }
+
+  .ant-form-item-explain {
+    margin-top: 10px;
+  }
+
+  .alert-last-triggered {
+    color: @headings-color;
+  }
+}
+
+.alert-query-selector {
+  min-width: 250px;
+  width: auto !important;
+}
+
+// allow form item labels to gracefully break line
+.alert-form-item label {
+  white-space: initial;
+  padding-right: 8px;
+  line-height: 21px;
+
+  &::after {
+    margin-right: 0 !important;
+  }
+}

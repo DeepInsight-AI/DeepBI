@@ -1,0 +1,180 @@
+.flex-d{
+    display: flex;
+    flex-direction: column;
+}
+.h-30{
+    height: 30%;
+}
+.dia-main{
+    position: relative;
+    top: 0;
+    font-size: 13px;
+    padding:5px 20px;
+    /* border-radius: 20px; */
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    /* background: linear-gradient(270deg,#f6f2f2,#f6f2f2 .01%,#f6f2f2 .02%,#f3efef 43.75%,#e7e5e5); */
+    max-width: 320px;
+    min-width: 280px;
+    box-shadow: 2px 0 5px rgba(0,0,0,.25);
+    z-index: 9;
+    background:#fff;
+}
+.dia-top{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 5px;
+    width: 100%;
+    font-size: 25px;
+    font-weight: bold;
+    color: #2e334d;
+    border-bottom: 1px solid #e5e7eb;
+    margin-bottom: 15px;
+    padding: 15px 0;
+}
+.dia-top img{
+    width: 40px;
+    height: 40px;
+}
+.dia-top span{
+    margin-left: 6px;
+}
+.dia-title{
+    font-size: 14px;
+    letter-spacing: 1px;
+    padding:10px;
+    color: #333;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    display: none;
+}
+.dia-chats{
+    width: 100%;
+    height: 100%;
+    overflow-y: scroll;
+    display: flex;
+    flex-wrap: wrap;
+    /* padding: 0 15px; */
+    flex-direction: column;
+}
+.dia-chat{
+    transition-duration: .2s;
+    padding: 12px 0 12px 15px;
+    color: #fff;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    width: 100%;
+    position: relative;
+    /* border: 1px solid #c9c9c9; */
+    border-radius: 8px;
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
+    cursor: pointer;
+    font-weight: bold;
+    background: #2e334d !important;
+    font-size: 26px;
+}
+.dia-chat i{
+    padding-right: 10px;
+    border-right: 1px solid #fff;
+}
+.dia-chat img{
+    width: 35px;
+    height: 35px;
+    margin-right: 10px;
+}
+.dia-chat-name{
+    font-weight: 500;
+    font-size: 14px;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    -webkit-line-clamp: 2;
+    /* flex: 1; */
+    width: 80%;
+    text-align: center;
+}
+.dia-chat-del{
+    display: flex;
+    justify-content: flex-end;
+    flex: 1 1;
+    align-self: flex-start;
+}
+.dia-info{
+    /* background: #fff; */
+    /* border: 1px solid #e6e6e6; */
+    border-radius: 8px;
+    margin-bottom: 15px;
+    /* flex: 1 1; */
+    min-height: 0;
+    position: relative;
+    box-sizing: border-box;
+}
+.dia-queries{
+    background: #fff;
+    margin-bottom: 10px;
+}
+.dia-bottom{
+    
+    background: #fff;
+    /* border: 1px solid #e6e6e6; */
+    border-radius: 8px;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+}
+.dia-bottom img{
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+}
+.dia-content{
+    display: flex;
+    flex-direction: column;
+    /* flex: 1 1; */
+    min-height: 0;
+}
+.dia-main-resize{
+    max-width: 100px;
+    min-width: 100px;
+    padding-right: 30px;
+}
+.dia-resize{
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.dia-resize .dia-content{
+    flex-direction: column-reverse;
+}
+.socket-type{
+    display: flex;
+    align-items: center;
+}
+.socket-type-bg{
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    margin-right: 5px;
+}
+.bg-resize{
+    margin: 0;
+    position: absolute;
+    left: 30px;
+    top: 8px;
+}

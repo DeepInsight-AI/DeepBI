@@ -1,0 +1,63 @@
+body #application-root {
+  display: flex;
+  flex-direction: row;
+  justify-content: stretch;
+  padding-bottom: 0 !important;
+  height: 100vh;
+}
+body #application-root .application-layout-side-menu {
+  height: 100vh;
+  position: relative;
+}
+@media (max-width: 767px) {
+  body #application-root .application-layout-side-menu {
+    display: none;
+  }
+}
+body #application-root .application-layout-top-menu {
+  height: 49px;
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  box-sizing: border-box;
+  z-index: 1000;
+}
+@media (max-width: 767px) {
+  body #application-root .application-layout-top-menu {
+    display: block;
+  }
+}
+body #application-root .application-layout-content {
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  flex: 1 1 auto;
+}
+@media (max-width: 767px) {
+  body #application-root .application-layout-content {
+    margin-top: 49px;
+  }
+}
+body.fixed-layout #application-root .application-layout-content {
+  padding-bottom: 0;
+}
+body.headless #application-root .application-layout-side-menu,
+body.headless #application-root .application-layout-top-menu {
+  display: none !important;
+}
+body.headless #application-root .application-layout-content {
+  margin-top: 0;
+}
+@media only percy {
+  body #application-root {
+    height: auto;
+  }
+  body #application-root .application-layout-side-menu {
+    height: auto;
+  }
+  body #application-root .application-layout-content {
+    overflow: visible;
+  }
+}

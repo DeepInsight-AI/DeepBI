@@ -1,0 +1,21 @@
+# See http://mirrors.163.com/community/UpgradeNotes for how to upgrade to
+deb http://mirrors.163.com/ubuntu/ focal main restricted
+# deb-src http://mirrors.163.com/ubuntu/ focal main restricted
+deb http://mirrors.163.com/ubuntu/ focal-updates main restricted
+# deb-src http://mirrors.163.com/ubuntu/ focal-updates main restricted
+deb http://mirrors.163.com/ubuntu/ focal universe
+# deb-src http://mirrors.163.com/ubuntu/ focal universe
+deb http://mirrors.163.com/ubuntu/ focal-updates universe
+# deb-src http://mirrors.163.com/ubuntu/ focal-updates universe
+deb http://mirrors.163.com/ubuntu/ focal multiverse
+# deb-src http://mirrors.163.com/ubuntu/ focal multiverse
+deb http://mirrors.163.com/ubuntu/ focal-updates multiverse
+# deb-src http://mirrors.163.com/ubuntu/ focal-updates multiverse
+deb http://mirrors.163.com/ubuntu/ focal-backports main restricted universe multiverse
+# deb-src http://mirrors.163.com/ubuntu/ focal-backports main restricted universe multiverse
+deb http://mirrors.163.com/ubuntu focal-security main restricted
+# deb-src http://mirrors.163.com/ubuntu focal-security main restricted
+deb http://mirrors.163.com/ubuntu focal-security universe
+# deb-src http://mirrors.163.com/ubuntu focal-security universe
+deb http://mirrors.163.com/ubuntu focal-security multiverse
+# deb-src http://mirrors.163.com/ubuntu focal-security multiverse

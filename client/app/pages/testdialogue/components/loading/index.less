@@ -1,0 +1,32 @@
+.content_loading {
+    // margin: auto;
+    margin-left: 10px;
+    margin-top: 4px;
+    // width: 100%;
+    text-align: center;
+  }
+  .content_loading > div {
+    width: 8px;
+    height: 8px;
+    background-color: #939393;
+    border-radius: 50%;
+    display: inline-block;
+    animation: action 1.5s infinite ease-in-out;
+    animation-fill-mode: both;
+    margin: 0 3px;
+  }
+  .content_loading .point1 {
+    animation-delay: -0.3s;
+  }
+  .content_loading .point2 {
+    animation-delay: -0.1s;
+  }
+  
+  @keyframes action {
+    0%, 80%, 100% {
+        transform: scale(0);
+    }
+    40% {
+        transform: scale(1.0);
+    }
+  }

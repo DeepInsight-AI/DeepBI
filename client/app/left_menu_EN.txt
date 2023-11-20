@@ -1,0 +1,6 @@
+[
+    {
+        "title":"Example",
+        "value":"Click [Start] to ask your question <br><br> Common questions: <br> 1. What is the planned sales volume of each primary category in 2019? <br> 2. The number of users in each city is from high to low, represented by a bar chart <br> 3. Which secondary categories should we give up? <br> 4. Generate a line chart of sales profit for each month in 2018 <br> 5. What is the average order price of all history and what is the average consumption of all history users? <br> 6. Which secondary categories lost money in 2018? <br> 7. Which city has more money through consumption data? <br><br> Tips: <br> 1. The order data in the test data only includes data from the second quarter of 2018 to the first quarter of 2019. <br> 2. If the question takes a long time to answer, you can click [show work] in the dialogue to see the specific process of the background workflow. <br> It is generally the following situations, <br> It may be that the GPT interface of this dialogue responds slowly. <br> It may also be that the multi-agent did not get the desired result in one round of dialogue and started the second round of dialogue. <br> "
+    }
+]

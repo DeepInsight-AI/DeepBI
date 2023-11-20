@@ -1,0 +1,73 @@
+version: "1.0"
+x-service: &holmes-service
+  build:
+    context: .
+    args:
+      skip_frontend_build: ""  # set to empty string to build
+  volumes:
+    - ./user_upload_files:/app/user_upload_files
+  env_file:
+    - .env
+x-environment: &holmes-environment
+  HOLMES_LOG_LEVEL: "INFO"
+  HOLMES_RATELIMIT_ENABLED: "false"
+  HOLMES_MAIL_DEFAULT_SENDER: "test@example.com"
+  HOLMES_MAIL_SERVER: "email"
+  HOLMES_ENFORCE_CSRF: "true"
+  HOLMES_GUNICORN_TIMEOUT: 60
+  HOLMES_WEB_WORKERS: 4
+  HOLMES_CELERY_WORKERS: 4
+  # Set secret keys in the .env file
+services:
+  server:
+    <<: *holmes-service
+    command: server
+    depends_on:
+      - postgres
+      - redis
+    ports:
+      - "8338:8338"
+    environment:
+      <<: *holmes-environment
+      PYTHONUNBUFFERED: 0
+  server_socket:
+    <<: *holmes-service
+    command: server_socket
+    depends_on:
+      - server
+    ports:
+      - "8339:8339"
+    environment:
+      <<: *holmes-environment
+  scheduler:
+    <<: *holmes-service
+    command: scheduler
+    depends_on:
+      - server
+    environment:
+      <<: *holmes-environment
+  worker:
+    <<: *holmes-service
+    command: worker
+    depends_on:
+      - server
+    environment:
+      <<: *holmes-environment
+      PYTHONUNBUFFERED: 0
+  redis:
+    image: redis:3-alpine
+    restart: unless-stopped
+  postgres:
+    image: postgres:14-alpine
+    # The following turns the DB into less durable, but gains significant performance improvements for the tests run (x3
+    # improvement on my personal machine). We should consider moving this into a dedicated Docker Compose configuration for
+    # tests.
+    command: "postgres -c fsync=off -c full_page_writes=off -c synchronous_commit=OFF"
+    restart: unless-stopped
+    environment:
+      POSTGRES_HOST_AUTH_METHOD: "trust"
+  email:
+    image: maildev/maildev
+    ports:
+      - "1080:80"
+    restart: unless-stopped

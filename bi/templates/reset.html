@@ -1,0 +1,25 @@
+{% extends "layouts/signed_out.html" %}
+
+{% block title %}{{ lang['W_L']['reset_password'] }}{% endblock %}
+
+{% block content %}
+<div class="fixed-width-page">
+  <div class="bg-white tiled">
+    {% with messages = get_flashed_messages() %}
+      {% if messages %}
+        {% for message in messages %}
+          <div class="alert alert-danger" role="alert">{{ message }}</div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+    <form role="form" method="post" name="invite">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+      <div class="form-group">
+        <label for="password">{{ lang['W_L']['enter_new_password'] }}：</label>
+        <input type="password" class="form-control" id="password" name="password" placeholder="Password">
+      </div>
+      <button type="submit" class="btn btn-primary btn-block m-t-25">{{ lang['W_L']['change_password'] }}</button>
+    </form>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,7 @@
+Hi {{ user.name }},
+
+请点击链接，验证电子邮箱 {{ user.email }} 是否正确：
+
+{{ verify_url }}
+
+谢谢。

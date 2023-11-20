@@ -1,0 +1,82 @@
+#!/bin/bash
+export LANG=en_US.UTF-8
+# 安装文件
+# 检测docker
+if ! command -v docker &> /dev/null; then
+    echo " 需要安装 docker "
+    exit 1
+fi
+
+# 检测 docker-compose 支持
+if ! command -v docker-compose &> /dev/null; then
+    echo "需要安装 docker-compose"
+    exit 1
+fi
+# get local ip
+ip_addresses=$(ifconfig | grep -Eo 'inet (addr:)?([0-9]*\.){3}[0-9]*' | grep -Eo '([0-9]*\.){3}[0-9]*')
+# print ip for user to select the ip
+echo "需要设置服务器的IP地址，你本地IP 如下，可以选择一个局域网IP:"
+echo "$ip_addresses" | tr ' ' '\n'
+
+# let user select ip
+echo "你输入的IP，它将作为页面访问的IP地址（以后可以在.env 更改）"
+while true; do
+    # shellcheck disable=SC2162
+    read -p "请输入你的 ip: " ip
+    if [[ $ip == "" ]]; then
+        echo "必须输入你的 ip，不能为空"
+    else
+        read -p "你输入的IP是: $ip  ,确定么？(Y/N): " confirm
+        if [[ $confirm == "Y" || $confirm == "y" ]]; then
+            echo "IP ：$ip"
+            break
+        fi
+    fi
+done
+# shellcheck disable=SC2162
+read -p "我们会使用服务端口 8338 8339 ,确保它们没有使用？(Y/N): " confirm
+if [[ $confirm == "N" || $confirm == "n" ]]; then
+    exit 1
+fi
+# 复制 .env file基础内容
+env_content=$(cat .env.template)
+# replace language
+env_content=$(echo "$env_content" | sed "s/LANG/CN/g")
+# replace ip，替换IP
+env_content=$(echo "$env_content" | sed "s/IP/$ip/g")
+# replace sec_key， 替换码
+sec_key=$(openssl rand -hex 16)
+env_content=$(echo "$env_content" | sed "s/SEC_KEY/$sec_key/g")
+# save .env file，保存文件
+echo "$env_content" > .env
+# 输出说明：
+echo "所有配置如下:"
+echo "--------------------------------"
+echo "$env_content"
+echo "--------------------------------"
+# begin run docker compose
+echo "下面将开始 通过docker-compose 拉取创建镜像，可能需要60分钟，主要根据你的网络情况，请耐心等待。 "
+echo "或者，你修改本地docker 镜像源地址，比如更改为阿里云等"
+
+docker-compose build
+echo "--------------------------------"
+echo "镜像拉取创建完毕，开始初始化镜像中数据库"
+docker-compose run --rm server create_db
+echo "数据库初始化完毕"
+echo "--------------------------------"
+echo "下面开始启动Holmes  下面是一些尝用命令"
+echo "常用命令: "
+echo " docker-compose up  # 创建容器，并启动容器 "
+echo " docker-compose up -d # 创建容器，并在后台运行容器 "
+echo " docker-compose start # 启动所有已经创建的容器，并后台运行"
+echo " docker-compose start [container id /container name]# 启动单个服务容器"
+echo " docker-compose stop [container id /container name]# 停止单个服务容器"
+echo " docker-compose ps # 查看所有运行中的容器"
+echo "--------------------------------"
+echo "现在，创建并启动容器...."
+docker-compose up -d
+echo "--------------------------------"
+echo "启动成功，你可以访问 http://$ip:5000"
+echo "--------------------------------"
+echo "谢谢，如果有问题，可以给我们提issue "
+

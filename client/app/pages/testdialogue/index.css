@@ -1,0 +1,6 @@
+.page-alerts-list {
+  height: 100vh;
+  display: flex;
+  justify-content: space-between;
+  overflow: hidden;
+}

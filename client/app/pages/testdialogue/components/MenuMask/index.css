@@ -1,0 +1,10 @@
+.menumask{
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 110px;
+    height: 100%;
+    background-color: transparent;
+    z-index: 9;
+    cursor: progress;
+}

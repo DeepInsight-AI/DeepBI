@@ -1,0 +1,23 @@
+.edit-in-place {
+  white-space: pre-line;
+  display: inline-block;
+
+  p {
+    margin-bottom: 0;
+  }
+
+  .editable {
+    display: inline-block;
+    cursor: pointer;
+
+    &:hover {
+      background: @redash-yellow;
+      border-radius: @redash-radius;
+    }
+  }
+
+  &.active input,
+  &.active textarea {
+    display: inline-block;
+  }
+}

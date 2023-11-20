@@ -1,0 +1,10 @@
+Hi {{ invited.name }},
+
+{{ inviter.name }} ({{inviter.email}}) 诚邀加入 {{org.name}}.
+
+点击链接完成账户设置：
+
+{{ invite_url }}
+
+电子邮箱： {{invited.email}}
+账户信息： {{ url_for('bi.index', org_slug=org.slug, _external=True) }}

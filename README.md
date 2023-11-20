@@ -49,7 +49,7 @@ https://github.com/Deep-thoughtIO/Holmes/assets/151519374/14eabcdc-c477-4aab-9cf
 The database connections supported by Holmes are:
 - MySQL
 - PostgreSQL
-- csv/Excel导入
+- csv/Excel Import
 
 ## 📦 Docker build
 

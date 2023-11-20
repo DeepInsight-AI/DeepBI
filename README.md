@@ -13,9 +13,7 @@ Intelligent and versatile AI reporting tool for various databases
 
   <div style="display: flex; align-items: center;">
 
-If you think Holmes is helpful to you, please help by clicking <a style="display: flex; align-items: center;margin:0px 6px" target="_blank" 
-
-href='https://github.com/Deep-thoughtIO/Holmes'>here</a> on the ⭐ Star and Fork in the upper right corner. Your support is the greatest driving force for Holmes to become better.
+If you think Holmes is helpful to you, please help by clicking <a style="display: flex; align-items: center;margin:0px 6px" target="_blank" href='https://github.com/Deep-thoughtIO/Holmes'>here</a> on the ⭐ Star and Fork in the upper right corner. Your support is the greatest driving force for Holmes to become better.
 
 
   </div>

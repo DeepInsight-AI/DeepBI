@@ -7,6 +7,9 @@
 
 </div>
 
+
+
+
 <div align="center">
 
   Languages： 中文 [English](README.md)
@@ -20,9 +23,8 @@
 
 
 ## 案例视频
-<video width="320" height="240" controls>
-    <source src="https://github.com/LiChengxin007/ethminer14.1/assets/36986406/18d63253-831b-493b-b6ac-d1225ff011cc" type="video/mp4">
-</video>
+
+https://github.com/Deep-thoughtIO/Holmes/assets/151519374/1f7b3165-840e-46f9-b43e-2764113ac0b7
 
 
 

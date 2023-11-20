@@ -13,7 +13,9 @@ Intelligent and versatile AI reporting tool for various databases
 
   <div style="display: flex; align-items: center;">
 
-If you think Holmes is helpful to you, please help by clicking <a style="display: flex; align-items: center;margin:0px 6px" target="_blank" href='https://github.com/Deep-thoughtIO/Holmes'>here</a> on the ⭐ Star and Fork in the upper right corner. Your support is the greatest driving force for Holmes to become better.
+If you think Holmes is helpful to you, please help by clicking <a style="display: flex; align-items: center;margin:0px 6px" target="_blank" 
+
+href='https://github.com/Deep-thoughtIO/Holmes'>here</a> on the ⭐ Star and Fork in the upper right corner. Your support is the greatest driving force for Holmes to become better.
 
 
   </div>
@@ -22,9 +24,8 @@ If you think Holmes is helpful to you, please help by clicking <a style="display
 
 
 ## Video example
-<video width="320" height="240" controls>
-    <source src="https://github.com/LiChengxin007/ethminer14.1/assets/36986406/18d63253-831b-493b-b6ac-d1225ff011cc" type="video/mp4">
-</video>
+https://github.com/Deep-thoughtIO/Holmes/assets/151519374/14eabcdc-c477-4aab-9cf2-919280dd4c6c
+
 
 
 
@@ -52,7 +53,7 @@ The database connections supported by Holmes are:
 - PostgreSQL
 - csv/Excel导入
 
-## 📦 Docker 部署
+## 📦 Docker build
 
 ```bash
     The local environment needs to have docker and docker-compose

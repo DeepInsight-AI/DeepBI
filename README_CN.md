@@ -24,7 +24,7 @@
 
 ## 案例视频
 
-https://github.com/Deep-thoughtIO/Holmes/assets/151519374/1f7b3165-840e-46f9-b43e-2764113ac0b7
+https://github.com/Deep-thoughtIO/Holmes/assets/151519374/f0d2fcd4-32b0-4095-a892-b9bbf8a51602
 
 
 

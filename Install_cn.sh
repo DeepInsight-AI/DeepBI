@@ -3,13 +3,13 @@ export LANG=en_US.UTF-8
 # 安装文件
 # 检测docker
 if ! command -v docker &> /dev/null; then
-    echo " 需要安装 docker "
+    echo " 需要安装 docker, 参考：https://github.com/Deep-thoughtIO/holmes/InstallDockerCN.md "
     exit 1
 fi
 
 # 检测 docker-compose 支持
 if ! command -v docker-compose &> /dev/null; then
-    echo "需要安装 docker-compose"
+    echo "需要安装 docker-compose, 参考：https://github.com/Deep-thoughtIO/holmes/InstallDockerCN.md"
     exit 1
 fi
 # get local ip

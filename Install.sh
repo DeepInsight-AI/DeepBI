@@ -5,13 +5,13 @@ export LANG=en_US.UTF-8
 # Install.sh, you mast have installed docker and docker-compose
 # check docker support
 if ! command -v docker &> /dev/null; then
-    echo "Docker has not installed"
+    echo "Docker has not installed. Solve this problem : https://github.com/Deep-thoughtIO/holmes/InstallDocker.md"
     exit 1
 fi
 
 # check Docker Compose support
 if ! command -v docker-compose &> /dev/null; then
-    echo "Docker Compose has not installed"
+    echo "Docker Compose has not installed. Solve this problem : https://github.com/Deep-thoughtIO/holmes/InstallDocker.md"
     exit 1
 fi
 # get local ip

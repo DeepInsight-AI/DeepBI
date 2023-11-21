@@ -27,24 +27,24 @@ https://github.com/Deep-thoughtIO/Holmes/assets/151519374/14eabcdc-c477-4aab-9cf
 
 
 
-## 📖 Introduce
+## 📖 Introduction
 
-&emsp; &emsp;Holmes is a free open-source multi-database client tool that supports Docker installation, server-side deployment, and web access. Compared to traditional database client software such as Navicat and DBeaver, Holmes integrates AIGC capabilities, enabling it to convert natural language into SQL and vice versa. It can also provide optimization suggestions for SQL developers, greatly improving their efficiency. It is a powerful tool for database developers in the AI era, and in the future, even operators who do not understand SQL can use it to quickly query business data and generate reports.
-
-
-
-## ✨ Characteristic
-
-- 🌈 AI intelligent assistant, supports natural language to SQL, SQL
-- 🔥 Smart report, using AIGC capabilities to generate reports in one sentence.
-- 💻 växtart Customize large screen data display and refresh regularly
-- 💪 Persistent data storage, result storage
-- 🎉 Multiple database support, support for MySQL, PostgreSQL, CSV/Excel import
-- 💻 Multi-platform support, support for Windows-WSL, Linux, Mac
-- 🌐 Internationalization, support for Chinese and English
+&emsp; &emsp;Holmes is an AI-native data analysis platform. Holmes leverages the power of large language models to explore, query, visualize, and share data from any data source. Users can use Holmes to gain data insight and make data-driven decisions.
 
 
-## 🚀 Databases support
+
+## ✨ Features
+
+1 Conversational data analysis: Users can get arbitrary data results and analysis results through dialogues.
+2 Conversational query generation: Generates persistent queries and visualizations through dialogues.
+3 Dashboard : Assemble persistent visualizations into dashboards.
+4 Automated data analysis reports (to be developed) : Complete data analysis reports automatically according to user instructions. 
+5 Support multiple data sources, including MySQL, PostgreSQL, Doris, StarRocks, CSV/Excel, etc. 
+6 Multi-platform support, support Windows-WSL, Linux, Mac. 
+7 International, support Chinese, English.
+
+
+## 🚀 Supported Databases
 
 The database connections supported by Holmes are:
 - MySQL

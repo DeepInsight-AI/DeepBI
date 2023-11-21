@@ -2,7 +2,7 @@
 
 <div align="center">
 
-Intelligent and versatile AI reporting tool for various databases
+Holmes is an AI-native data analysis platform. Holmes leverages the power of large language models to explore, query, visualize, and share data from any data source. Users can use Holmes to gain data insight and make data-driven decisions.
 
 
 </div>
@@ -25,12 +25,6 @@ If you think Holmes is helpful to you, please help by clicking <a style="display
 
 https://github.com/Deep-thoughtIO/Holmes/assets/151519374/d1effbe1-5c11-4c77-86ef-e01b1ea7f2f6
 
-
-
-
-## 📖 Introduction
-
-&emsp; &emsp;Holmes is an AI-native data analysis platform. Holmes leverages the power of large language models to explore, query, visualize, and share data from any data source. Users can use Holmes to gain data insight and make data-driven decisions.
 
 
 

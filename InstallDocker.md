@@ -15,15 +15,16 @@
 
 
 ## Mac, Two ways to install docker
-1. Use system preferences to install docker (Recommendation)
+
+
+1. Download docker desktop  (Recommendation)
+- from here: https://docs.docker.com/desktop/install/mac-install/
+- open docker desktop and click on "settings" and then click on "resources" and then click on "advanced" and then click on "docker engine" and then click on "settings" and then click on "advanced" and then click on "daemon" and then click on "tls" and then click on "enable tls verification" and save.
+  
+2. Use system preferences to install docker
 - Install command:brew install docker
 - Run command:brew services start docker
 - Check command:brew services list |grep docker
-
-2. Download docker desktop
-- from here: https://docs.docker.com/desktop/install/mac-install/
-- open docker desktop and click on "settings" and then click on "resources" and then click on "advanced" and then click on "docker engine" and then click on "settings" and then click on "advanced" and then click on "daemon" and then click on "tls" and then click on "enable tls verification" and then
-
 
 ###
 Above, the installation is complete. Run docker --version && docker-compose --version to see the Docker version, indicating that Docker has been installed correctly. If you have any additional questions, please refer to: https://docs.docker.com/desktop/

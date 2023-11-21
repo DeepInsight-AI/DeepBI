@@ -22,7 +22,8 @@ If you think Holmes is helpful to you, please help by clicking <a style="display
 
 
 ## Video example
-https://github.com/Deep-thoughtIO/Holmes/assets/151519374/14eabcdc-c477-4aab-9cf2-919280dd4c6c
+
+https://github.com/Deep-thoughtIO/Holmes/assets/151519374/d1effbe1-5c11-4c77-86ef-e01b1ea7f2f6
 
 
 
@@ -55,7 +56,7 @@ The database connections supported by Holmes are:
 
 ```bash
     The local environment needs to have docker and docker-compose
-    Just run ./Install_cn.sh directly
+    Just run ./Install.sh directly
     Default port is 8338 and 8339
     Web access: http://ip:8338
 ```

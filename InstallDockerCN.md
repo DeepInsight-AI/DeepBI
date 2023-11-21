@@ -17,11 +17,11 @@
 
 # Mac
 ##安装docker的两种方法
-### 1. 下载docker desktop
+### 1. 下载docker desktop（推荐）
 - 从这里：https://docs.docker.com/desktop/install/mac-install/
 - 打开docker desktop，点击“设置”，然后点击“资源”，然后点击“高级”，然后点击“docker engine”，然后点击“设置”，然后点击“高级”，然后点击“daemon”，然后点击“tls”，然后点击“启用tls验证”，然后保存即可。
 
-### 2.使用系统偏好设置安装docker（推荐）
+### 2.使用系统偏好设置安装docker
 - 安装命令：brew install docker
 - 运行命令：brew services start docker
 - 检查命令：brew services list |grep docker

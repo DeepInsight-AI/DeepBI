@@ -2,7 +2,7 @@
 
 <div align="center">
 
-智能且多功能的 AI报表工具，适用于各种数据库
+Holmes是一款AI原生的数据分析平台。Holmes充分利用大语言模型的能力来探索、查询、可视化和共享来自任何数据源的数据。用户可以使用Holmes洞察数据并做出数据驱动的决策。
 
 
 </div>
@@ -27,10 +27,6 @@
 https://github.com/Deep-thoughtIO/Holmes/assets/151519374/f0d2fcd4-32b0-4095-a892-b9bbf8a51602
 
 
-
-## 📖 简介
-
-&emsp; &emsp;Holmes是一款AI原生的数据分析平台。Holmes充分利用大语言模型的能力来探索、查询、可视化和共享来自任何数据源的数据。用户可以使用Holmes洞察数据并做出数据驱动的决策。
 
 ## ✨ 特性
 

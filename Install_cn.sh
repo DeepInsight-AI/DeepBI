@@ -73,7 +73,7 @@ echo " docker-compose start [container id /container name]# 启动单个服务�
 echo " docker-compose stop [container id /container name]# 停止单个服务容器"
 echo " docker-compose ps # 查看所有运行中的容器"
 echo "--------------------------------"
-echo "现在，创建并启动容器...."
+echo "现在，创建并启动容器......"
 docker-compose up -d
 echo "--------------------------------"
 echo "启动成功，你可以访问 http://$ip:5000"

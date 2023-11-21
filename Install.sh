@@ -87,7 +87,7 @@ echo " docker-compose start [container id /container name]# Start signal contain
 echo " docker-compose stop [container id /container name]# Stop signal container server"
 echo " docker-compose ps # look all containers server running info"
 echo "--------------------------------"
-echo "Run: docker-compose up...."
+echo "Run: docker-compose up......"
 docker-compose up -d
 echo "--------------------------------"
 echo "You can visit http://$ip:8338"

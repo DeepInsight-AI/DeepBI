@@ -38,10 +38,19 @@ read -p "我们会使用服务端口 8338 8339 ,确保它们没有使用？(Y/N)
 if [[ $confirm == "N" || $confirm == "n" ]]; then
     exit 1
 fi
+# get web port
+# shellcheck disable=SC2162
+web_port=8338
+# get socket port
+# shellcheck disable=SC2162
+socket_port=8339
 # 复制 .env file基础内容
 env_content=$(cat .env.template)
 # replace language
 env_content=$(echo "$env_content" | sed "s/LANG/CN/g")
+# replace web port
+# shellcheck disable=SC2001
+env_content=$(echo "$env_content" | sed "s/WEB_PORT/$web_port/g")
 # shellcheck disable=SC2001
 env_content=$(echo "$env_content" | sed "s/SOCKET_PORT/$socket_port/g")
 # replace ip，替换IP

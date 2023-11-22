@@ -1,10 +1,10 @@
 #如何安装docker和docker-compose
 
 ##Windows
-
-- 从这里下载docker桌面：https://docs.docker.com/desktop/install/windows-install/，点击蓝色按钮
-- 安装docker桌面
-- 打开docker desktop，点击“settings”，然后点击“resources”，然后点击“advanced”，然后点击“docker engine”，然后点击“settings”，然后点击“advanced”，然后点击“daemon”，然后点击“tls”，然后点击“enable tls verification”，然后点击“ok”，然后点击“ok”
+- 使用Windows，我们需要安装WSL，系统扩展的ubuntu系统功能，安装方式：https://learn.microsoft.com/zh-cn/windows/wsl/install 或者在微软商店 搜索ubuntu 进行安装
+- 安装完毕后，打开命令行 输入 "wsl -version" 如果显示版本号，说明安装成功
+- 命令行输入："wsl -d [username]" 这里的username 就是你的登录名称
+- 登录后，就可以按照 下面Ubuntu 的命令进行安装
 
 #Ubuntu
 - 运行命令如下：

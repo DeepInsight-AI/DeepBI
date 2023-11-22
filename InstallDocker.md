@@ -1,9 +1,11 @@
 # How to install docker and docker-compose
 
 ## Windows
-- Download docker desktop from here: https://docs.docker.com/desktop/install/windows-install/ ,click blue button
-- Install docker desktop
-- Open docker desktop and click on "settings" and then click on "resources" and then click on "advanced" and then click on "docker engine" and then click on "settings" and then click on "advanced" and then click on "daemon" and then click on "tls" and then click on "enable tls verification" and then click on "ok" and then click on "ok"
+- In widows system ,we need install WSL server, https://learn.microsoft.com/en-us/windows/wsl/install or in Microsoft Store
+  search Ubuntu and install it
+- Install WSL success then open command prompt and type "wsl --version",you will see the version of WSL
+- login in WSL by command "wsl -d [username]", username is your username
+- we can install docker and docker-compose as fellow steps in ubuntu
 
 ## Ubuntu
 - sudo sudo apt-get clean

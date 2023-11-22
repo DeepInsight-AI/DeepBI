@@ -42,6 +42,8 @@ fi
 env_content=$(cat .env.template)
 # replace language
 env_content=$(echo "$env_content" | sed "s/LANG/CN/g")
+# shellcheck disable=SC2001
+env_content=$(echo "$env_content" | sed "s/SOCKET_PORT/$socket_port/g")
 # replace ip，替换IP
 env_content=$(echo "$env_content" | sed "s/IP/$ip/g")
 # replace sec_key， 替换码

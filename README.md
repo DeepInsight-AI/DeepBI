@@ -26,6 +26,8 @@ If you think Holmes is helpful to you, please help by clicking <a style="display
 https://github.com/Deep-thoughtIO/Holmes/assets/151519374/d1effbe1-5c11-4c77-86ef-e01b1ea7f2f6
 
 
+## user manual
+[Holmes user manual](user_manual/en/user_manual_en.md)
 
 
 ## ✨ Features

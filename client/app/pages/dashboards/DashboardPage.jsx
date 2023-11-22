@@ -174,7 +174,18 @@ DashboardComponent.propTypes = {
 function DashboardPage({ dashboardSlug, dashboardId, onError,isShowReport }) {
   const [dashboard, setDashboard] = useState(null);
   const handleError = useImmutableCallback(onError);
-  let timeoutId = null;
+  
+  useEffect(() => {
+    Dashboard.get({ id: dashboardId, slug: dashboardSlug })
+      .then(dashboardData => {
+        recordEvent("view", "dashboard", dashboardData.id);
+        setDashboard(dashboardData);
+
+        // if loaded by slug, update location url to use the id
+        if (!dashboardId) {
+          location.setPath(url.parse(dashboardData.url).pathname, true);
+        }
+        let timeoutId = null;
   const scrollToBottom = () => {
     if (timeoutId) {
       clearTimeout(timeoutId);
@@ -191,17 +202,7 @@ function DashboardPage({ dashboardSlug, dashboardId, onError,isShowReport }) {
     }
   }, 80);
   };
-  useEffect(() => {
-    Dashboard.get({ id: dashboardId, slug: dashboardSlug })
-      .then(dashboardData => {
-        recordEvent("view", "dashboard", dashboardData.id);
-        setDashboard(dashboardData);
-
-        // if loaded by slug, update location url to use the id
-        if (!dashboardId) {
-          location.setPath(url.parse(dashboardData.url).pathname, true);
-        }
-        scrollToBottom();
+  scrollToBottom();
       })
       .catch(handleError);
   }, [dashboardId, dashboardSlug, handleError]);

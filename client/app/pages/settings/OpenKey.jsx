@@ -1,29 +1,29 @@
-import React,{useState,useEffect} from 'react';
+import React,{useState,useEffect,useCallback} from 'react';
 import Button from "antd/lib/button";
 import Form from "antd/lib/form";
 import Input from "antd/lib/input";
 // import * as XLSX from 'xlsx';
 import routeWithUserSession from "@/components/ApplicationArea/routeWithUserSession";
-import LoadingState from "@/components/items-list/components/LoadingState";
+// import LoadingState from "@/components/items-list/components/LoadingState";
 import wrapSettingsTab from "@/components/SettingsWrapper";
 import notification from "@/services/notification";
-import { currentUser } from "@/services/auth";
 import routes from "@/services/routes";
 import { axios } from "@/services/axios";
 import { websocket,createWebSocket } from '../testdialogue/components/Dialogue/websocket';
 const SettingsOpenKey = () => {
     const [form] = Form.useForm();
   const [disabled, setDisabled] = useState(false);
-  const getOpenKey = async () => {
+  const getOpenKey = useCallback(async () => {
     setDisabled(true);
     const {data} = await axios.get(`/api/ai_token`);
     form.setFieldsValue(data);
     createWebSocket()
     setDisabled(false)
-  };
+  }, [form]);
+
   useEffect(() => {
     getOpenKey();
-  }, []);
+  }, [getOpenKey]);
   const handOpenKey = (info)=>{
     axios.post("/api/ai_token",info).then((res) => {
         setDisabled(false)

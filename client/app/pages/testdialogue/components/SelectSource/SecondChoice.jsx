@@ -1,8 +1,6 @@
-import React, { useEffect, useState,forwardRef, useImperativeHandle } from 'react';
+import React, { useEffect, useState,forwardRef} from 'react';
 import Input from "antd/lib/input";
 import Table from "antd/lib/table";
-import { axios } from "@/services/axios";
-import Spin from "antd/lib/spin";
 import ArrowLeftOutlinedIcon from "@ant-design/icons/ArrowLeftOutlined";
 import ExclamationCircleOutlinedIcon from "@ant-design/icons/ExclamationCircleOutlined";
 import Tooltip from "@/components/Tooltip";
@@ -11,14 +9,6 @@ const SecondChoice = forwardRef(({SelectLoading,editData,closeEditData,submit,so
   const [SchemaList, setSchemaList] = useState([]);
   const [SchemaListDataItem, setSchemaListDataItem] = useState({});
   const [SecondChoiceLoading, setSecondChoiceLoading] = useState(false);
-  useEffect(() => {
-    setSecondChoiceLoading(SelectLoading);
-  }, [SelectLoading]);
-  useEffect(() => {
-    if(editData && editData.length>0){
-      secondEditData(editData);
-    }
-  }, [editData]);
   const columns = [
     {
       title: window.W_L.field_name,
@@ -45,7 +35,7 @@ const SecondChoice = forwardRef(({SelectLoading,editData,closeEditData,submit,so
       key: 'is_pass',
       render: (text, record) => (
         <div>
-          {text == 1 ? (
+          {text === 1 ? (
             <span style={{ color: "#52c41a" }}>{window.W_L.pass}</span>
           ) : (
             <span style={{ color: "#f5222d" }}>{window.W_L.fail}</span>
@@ -54,29 +44,32 @@ const SecondChoice = forwardRef(({SelectLoading,editData,closeEditData,submit,so
       ),
     }
   ];
-  const filterOption = (input, option) => (option?.label ?? '').toLowerCase().includes(input.toLowerCase());
+  useEffect(() => {
+    setSecondChoiceLoading(SelectLoading);
+  }, [SelectLoading]);
+  useEffect(() => {
+    if(editData && editData.length>0){
+      setSchemaList(editData);
+      clickSchemaItem(editData[0]); 
+    }
+  }, [editData]);
 
-  const secondEditData = (data) => {
-    // const { table_name, table_comment, field_desc } = data[0];
-    // const newFieldDesc = field_desc.filter((item) => item.is_pass == 0);
-    // setSchemaListDataItem({ table_name, table_comment, newFieldDesc });
-    setSchemaList(data);
-    clickSchemaItem(data[0]); 
-  }
+
+ 
 
 
   const handleFieldDescriptionChange = (e, record) => {
     const value = e.target.value;
     const newSchemaListDataItem = { ...SchemaListDataItem };
     const newFieldDesc = newSchemaListDataItem.field_desc.map((item) => {
-      if (item.name == record.name) {
+      if (item.name === record.name) {
         item.comment = value;
       }
       return item;
     }
     );
     const newSchemaList = SchemaList.map((item) => {
-      if (item.table_name == SchemaListDataItem.table_name) {
+      if (item.table_name === SchemaListDataItem.table_name) {
         item.field_desc = newFieldDesc;
       }
       return item;
@@ -87,7 +80,7 @@ const SecondChoice = forwardRef(({SelectLoading,editData,closeEditData,submit,so
   const handleTableDescriptionChange = (e) => {
     const value = e.target.value;
     const newSchemaList = SchemaList.map((item) => {
-      if (item.table_name == SchemaListDataItem.table_name) {
+      if (item.table_name === SchemaListDataItem.table_name) {
         item.table_comment = value;
       }
       return item;
@@ -97,7 +90,7 @@ const SecondChoice = forwardRef(({SelectLoading,editData,closeEditData,submit,so
   }
   const clickSchemaItem = (item) => {
     let newFieldDesc =item
-    newFieldDesc.field_desc = item.field_desc.filter((item) => item.is_pass == 0);
+    newFieldDesc.field_desc = item.field_desc.filter((item) => item.is_pass === 0);
     setSchemaListDataItem(newFieldDesc);
   }
   const editSubmit = () => {
@@ -126,7 +119,7 @@ const SecondChoice = forwardRef(({SelectLoading,editData,closeEditData,submit,so
                   <ul className={!SchemaListIsShow ? "flex-center" : ""} style={{height:"288px"}}>
                     {SchemaListIsShow&& SchemaList.map((item, index) => (
                       <li key={index}>
-                        <span onClick={() => clickSchemaItem(item)} style={{ color: item.table_name == SchemaListDataItem.table_name ? "#2196F3" : "#333",textAlign: "center",display:"block" }}>{source_item.type=="csv"?item.table_comment:item.table_name}</span>
+                        <span onClick={() => clickSchemaItem(item)} style={{ color: item.table_name === SchemaListDataItem.table_name ? "#2196F3" : "#333",textAlign: "center",display:"block" }}>{source_item.type==="csv"?item.table_comment:item.table_name}</span>
                       </li>
                     ))}
                   </ul>
@@ -135,13 +128,13 @@ const SecondChoice = forwardRef(({SelectLoading,editData,closeEditData,submit,so
             <div className="table-columns">
               {tableIsShow && (
                 <div className="table-columns-item">
-                  <span>{source_item.type=="csv"?SchemaListDataItem.table_comment:SchemaListDataItem.table_name}</span>
+                  <span>{source_item.type==="csv"?SchemaListDataItem.table_comment:SchemaListDataItem.table_name}</span>
                   <Input
                      placeholder={window.W_L.sheet_description}
                     style={{ padding: "2px", maxWidth: "60%" }}
                     type="text"
-                    disabled={source_item.type=="csv"?true:false}
-                    value={source_item.type=="csv"?SchemaListDataItem.table_name:SchemaListDataItem.table_comment}
+                    disabled={source_item.type==="csv"?true:false}
+                    value={source_item.type==="csv"?SchemaListDataItem.table_name:SchemaListDataItem.table_comment}
                     onChange={handleTableDescriptionChange}
                   />
                 </div>

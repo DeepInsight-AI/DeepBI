@@ -11,7 +11,7 @@ import { formatDateTime } from "@/lib/utils";
 import Link from "@/components/Link";
 import Parameters from "@/components/Parameters";
 import TimeAgo from "@/components/TimeAgo";
-import Modal from "antd/lib/modal";
+// import Modal from "antd/lib/modal";
 import Timer from "@/components/Timer";
 import { Moment } from "@/components/proptypes";
 import QueryLink from "@/components/QueryLink";
@@ -79,29 +79,29 @@ function visualizationWidgetMenuOptions({ widget, canEditDashboard, onParameters
   ]);
 }
 
-function HandleFullScreen({href}){
-  const [visible, setVisible] = useState(false);
-  const handleOk = () => {
+// function HandleFullScreen({href}){
+//   const [visible, setVisible] = useState(false);
+//   const handleOk = () => {
   
-    setVisible(true);
-  };
-  return(
-    <>
-     <span onClick={handleOk}>{window.W_L.edit_query}</span>
-    <Modal
-      wrapClassName="ant-modal-fullscreen"
-      title=""
-      footer={
-        []
-      }
-      onClose={()=>setVisible(false)}
-      visible={visible}
-    >
-        <iframe style={{width:"100%",height:"100%"}} title="Report Display" src={href} frameborder="0"></iframe>
-    </Modal>
-    </>
-  )
-}
+//     setVisible(true);
+//   };
+//   return(
+//     <>
+//      <span onClick={handleOk}>{window.W_L.edit_query}</span>
+//     <Modal
+//       wrapClassName="ant-modal-fullscreen"
+//       title=""
+//       footer={
+//         []
+//       }
+//       onClose={()=>setVisible(false)}
+//       visible={visible}
+//     >
+//         <iframe style={{width:"100%",height:"100%"}} title="Report Display" src={href} frameborder="0"></iframe>
+//     </Modal>
+//     </>
+//   )
+// }
 function RefreshIndicator({ refreshStartedAt }) {
   return (
     <div className="refresh-indicator">

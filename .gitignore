@@ -20,9 +20,7 @@ client/dist
 _build
 .vscode
 .env
-
-dump.rdb
-
+user_upload_files/*
 node_modules
 .tmp
 .sass-cache

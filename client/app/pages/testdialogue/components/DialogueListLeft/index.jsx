@@ -1,11 +1,8 @@
-import React, { useRef,useCallback,useState,useEffect} from 'react';
+import React, { useState,useEffect} from 'react';
 import icon_small from "@/assets/images/icon_small.png";
-import Link from "@/components/Link";
-import Dropdown from "antd/lib/dropdown";
 import './index.css';
 import MessageOutlinedIcon from "@ant-design/icons/MessageOutlined";
 const DialogueLeftList = (props) => {
-  const {switchMode,chat_type} = props;
   const [arr ,setArr] = useState([]);
   const [uuid ,setUuid] = useState("");
 useEffect(()=>{
@@ -31,7 +28,7 @@ const modeSwitch = (item) => () => {
         <div className="dia-chats" >
         
              <div className="dia-chat" onClick={modeSwitch(item)}>
-            <MessageOutlinedIcon style={{color:uuid==item.uuid?"#4974d1":"#fff",fontSize:"21px"}} ></MessageOutlinedIcon>
+            <MessageOutlinedIcon style={{color:uuid===item.uuid?"#4974d1":"#fff",fontSize:"21px"}} ></MessageOutlinedIcon>
               <div className="dia-chat-name">{item.messages[1].content || item.title}</div>
           </div>
         </div>

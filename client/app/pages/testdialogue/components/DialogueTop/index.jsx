@@ -1,11 +1,10 @@
-import React, { useState, forwardRef, useImperativeHandle,useRef } from "react";
-import CloseOutlinedIcon from "@ant-design/icons/CloseOutlined";
+import React from "react";
 import Button from "antd/lib/button";
 import Modal from "antd/lib/modal";
 import "./index.css";
 
 const DialogueTop = (props) => {
-    const {HolmestableItem,closeDialogue,chat_type,Holmestable} = props;
+    const {HolmestableItem,chat_type,Holmestable} = props;
     const close = () => {
         const doDelete = () => {
             props.closeDialogue()
@@ -29,14 +28,14 @@ const DialogueTop = (props) => {
     Holmestable&&HolmestableItem&& HolmestableItem.label&&
      <div className="dialogue-top"> 
     <div className="dialogue-top-flex">
-         <div>{chat_type=="chat"?window.W_L.data_analysis:chat_type=="report"?window.W_L.query_builder:""}</div>
+         <div>{chat_type==="chat"?window.W_L.data_analysis:chat_type==="report"?window.W_L.query_builder:""}</div>
      </div>
      <div className="dialogue-top-flex">
          <div>{window.W_L.data_source}:</div>
          <span>{HolmestableItem.label}</span>
      </div>
      {
-        chat_type!="viewConversation"&&
+        chat_type!=="viewConversation"&&
         (
             <Button type="primary" size="small" onClick={() => close()} style={{borderRadius: "20px",fontSize: "13px",paddingLeft: "15px",paddingRight: "15px"}} ghost>
             {window.W_L.new_dialogue}

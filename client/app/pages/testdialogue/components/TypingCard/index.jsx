@@ -1,7 +1,5 @@
 import React, { useRef, useEffect, useState, useMemo } from "react";
-import Card from "antd/lib/card";
 import { PropTypes } from "prop-types";
-import Loading from "../loading";
 import { currentUser } from "@/services/auth";
 import EChartsChart from "../Echarts/Echarts";
 import LogWorkflow from "../LogWorkflow"
@@ -10,9 +8,8 @@ import "./index.less";
 import icon_small from "@/assets/images/icon_small.png";
 
 const TypingCard = (props) => {
-  const { chart, source, logData, index, Cardloading, sender, time, message, ChangeScrollTop,retry } = props;
+  const { chart, source, logData, index, Cardloading, sender, time, ChangeScrollTop,retry } = props;
   const sourceEl = useRef();
-  const outputEl = useRef();
   const [sourceText, setSourceText] = useState("");
   const [showComponent, setShowComponent] = useState(false);
 
@@ -29,11 +26,7 @@ const TypingCard = (props) => {
     setTimeout(() => {
       ChangeScrollTop();
     }, 0);
-  }, [source]);
-
-  const changeTitle = () => {
-    props.changeTitle(index);
-  }
+  }, [source , ChangeScrollTop]);
 
   const renderLogWorkflow = useMemo(() => {
     return index === 0 ? null : <LogWorkflow Cardloading={Cardloading} logData={logData} />;

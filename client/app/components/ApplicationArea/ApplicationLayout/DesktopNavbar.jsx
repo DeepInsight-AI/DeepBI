@@ -4,31 +4,23 @@ import Menu from "antd/lib/menu";
 import Link from "@/components/Link";
 import PlainButton from "@/components/PlainButton";
 import HelpTrigger from "@/components/HelpTrigger";
-import CreateDashboardDialog from "@/components/dashboards/CreateDashboardDialog";
 import { useCurrentRoute } from "@/components/ApplicationArea/Router";
 import { Auth, currentUser } from "@/services/auth";
 import settingsMenu from "@/services/settingsMenu";
 import logoUrl from "@/assets/images/icon_small.png";
 
-import DesktopOutlinedIcon from "@ant-design/icons/DesktopOutlined";
-
-import AlertOutlinedIcon from "@ant-design/icons/AlertOutlined";
 
 import CommentOutlinedIcon from "@ant-design/icons/CommentOutlined";
-import BarsOutlinedIcon from "@ant-design/icons/BarsOutlined";
 import LineChartOutlinedIcon from "@ant-design/icons/LineChartOutlined";
 import DashboardOutlinedIcon from "@ant-design/icons/DashboardOutlined";
-import OrderedListOutlinedIcon from "@ant-design/icons/OrderedListOutlined";
 
 
-import PlusOutlinedIcon from "@ant-design/icons/PlusOutlined";
 
 import QuestionCircleOutlinedIcon from "@ant-design/icons/QuestionCircleOutlined";
 import SettingOutlinedIcon from "@ant-design/icons/SettingOutlined";
 import VersionInfo from "./VersionInfo";
 
-// import {lockReconnect,websocket,lockReconnectEvent} from "../Dialogue/websocket.js"
-import {lockReconnect,websocket,lockReconnectEvent} from "@/pages/testdialogue/components/Dialogue/websocket.js"
+import {lockReconnectEvent} from "@/pages/testdialogue/components/Dialogue/websocket.js"
 
 import "./DesktopNavbar.less";
 
@@ -83,9 +75,9 @@ export default function DesktopNavbar() {
 
   const activeState = useNavbarActiveState();
 
-  const canCreateQuery = currentUser.hasPermission("create_query");
-  const canCreateDashboard = currentUser.hasPermission("create_dashboard");
-  const canCreateAlert = currentUser.hasPermission("list_alerts");
+  // const canCreateQuery = currentUser.hasPermission("create_query");
+  // const canCreateDashboard = currentUser.hasPermission("create_dashboard");
+  // const canCreateAlert = currentUser.hasPermission("list_alerts");
 
   const [socketType,setSocketType] = useState(0)
   useEffect(() => {
@@ -162,32 +154,6 @@ export default function DesktopNavbar() {
 
 
       <NavbarSection style={{flex:"1"}}>
-      {/* <Menu.Item key="testdialogue" className={activeState.testdialogue ? "navbar-active-item" : null}>
-          <Link href="./">
-              <CommentOutlinedIcon aria-label="testdialogue navigation button" />
-              <span className="desktop-navbar-label">{window.W_L.data_analysis}</span>
-            </Link>
-          </Menu.Item>
-
-          <Menu.Item key="dialogue_list" className={activeState.dialogue_list ? "navbar-active-item" : null}>
-            <Link href="dialogue-list">
-              <OrderedListOutlinedIcon aria-label="dialogue_list navigation button" />
-              <span className="desktop-navbar-label">{window.W_L.dialogue_list}</span>
-            </Link>
-          </Menu.Item> */}
-        {/* {currentUser.hasPermission("list_dashboards") && ( */}
-          {/* <Menu.Item key="report_route" className={activeState.report_route ? "navbar-active-item" : null}>
-            <Link href="report-route">
-              <LineChartOutlinedIcon aria-label="report_route navigation button" />
-              <span className="desktop-navbar-label">{window.W_L.report_generation}</span>
-            </Link>
-          </Menu.Item>
-          <Menu.Item key="queries" className={activeState.queries ? "navbar-active-item" : null}>
-            <Link href="queries">
-              <BarsOutlinedIcon aria-label="Queries navigation button" />
-              <span className="desktop-navbar-label">{window.W_L.report_list}</span>
-            </Link>
-          </Menu.Item> */}
           <Menu.Item key="dashboards" className={activeState.dashboards ? "navbar-active-item" : null}>
             <Link href="dashboards">
               <DashboardOutlinedIcon aria-label="dashboards navigation button" />
@@ -224,8 +190,8 @@ export default function DesktopNavbar() {
             <span data-test="ProfileDropdown" className="desktop-navbar-profile-menu-title">
               <img className="profile__image_thumb" src={currentUser.profile_image_url} alt={currentUser.name} />
               <div className="profile__live__type">
-                <span style={{"background":socketType==0?"red":socketType==1?"green":"yellow"}}></span>
-                <div>{socketType==0?window.W_L.offline:socketType==1?window.W_L.online:window.W_L.pending}</div>
+                <span style={{"background":socketType===0?"red":socketType===1?"green":"yellow"}}></span>
+                <div>{socketType===0?window.W_L.offline:socketType===1?window.W_L.online:window.W_L.pending}</div>
               </div>
             </span>
           }>

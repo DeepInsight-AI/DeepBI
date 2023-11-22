@@ -1,6 +1,13 @@
 #!/bin/bash
 export LANG=en_US.UTF-8
 # 安装文件
+if [ -f .env ]; then
+    rm .env
+fi
+
+if [ -f Dockerfile ]; then
+    rm Dockerfile
+fi
 # 检测docker
 if ! command -v docker &> /dev/null; then
     echo " 需要安装 docker, 参考：https://github.com/Deep-thoughtIO/holmes/InstallDockerCN.md "
@@ -47,7 +54,7 @@ socket_port=8339
 # 复制 .env file基础内容
 env_content=$(cat .env.template)
 # replace language
-env_content=$(echo "$env_content" | sed "s/LANG/CN/g")
+env_content=$(echo "$env_content" | sed "s/LANGTYPE/CN/g")
 # replace web port
 # shellcheck disable=SC2001
 env_content=$(echo "$env_content" | sed "s/WEB_PORT/$web_port/g")
@@ -61,7 +68,7 @@ env_content=$(echo "$env_content" | sed "s/SEC_KEY/$sec_key/g")
 # save .env file，保存文件
 echo "$env_content" > .env
 # 修改配置 pip 为国内清华源
-sed -i '' -e 's/#CN#//g' Dockerfile
+sed 's/#CN#//g' Dockerfile.template > Dockerfile
 # 输出说明：
 echo "所有配置如下:"
 echo "--------------------------------"
@@ -89,7 +96,7 @@ echo "--------------------------------"
 echo "现在，创建并启动容器......"
 docker-compose up -d
 echo "--------------------------------"
-echo "启动成功，你可以访问 http://$ip:5000"
+echo "启动成功，你可以访问 http://$ip:$web_port"
 echo "--------------------------------"
 echo "谢谢，如果有问题，可以给我们提issue "
 

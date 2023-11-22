@@ -1,20 +1,16 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
-import Input from "antd/lib/input";
-import Select from "antd/lib/select";
 import { axios } from "@/services/axios";
-import {websocket,createWebSocket,closeWebSocket,lockReconnect,setLockReconnect,setStopGeneration,stopGeneration} from './websocket.js';
+import {websocket,createWebSocket,lockReconnect,setLockReconnect,setStopGeneration,stopGeneration} from './websocket.js';
 import { useSql } from './method/useSql.js';
 import { useChartCode } from "./method/useChartCode.js";
 import { dialogueStorage } from "./method/dialogueStorage.js";
 import DialogueTop from "../DialogueTop";
-import OpenKey from "../OpenKey"
+// import OpenKey from "../OpenKey"
 import DialogueContent from "../DialogueContent"
 import notification from "@/services/notification";
-import { currentUser } from "@/services/auth";
 import MenuMask from "../MenuMask/index.jsx";
 import "./index.less";
 import moment from "moment";
-const { TextArea } = Input;
 
 const Dialogue = (props) => {
   const {chat_type,sendUrl,uuid} =props
@@ -43,10 +39,7 @@ const Dialogue = (props) => {
   const [state, setState] = useState({
     messages: [],
     inputMessage: "",
-    // sendTableDate: 0,
-    // loadingState: false,
     lockReconnect :false,
-    // loadingMask:false,
     data_type:null,
     newInputMessage:"",
     logData:[],
@@ -78,9 +71,28 @@ const Dialogue = (props) => {
     HolmestableD_date.current = holmestableDate;
   }, [holmestableDate]);
 
+
+const sendSocketMessage = useCallback((state, sender, data_type, content,id=0) => {
+    const messgaeInfo = {
+      state,
+      database:sourceTypeRef.current,
+      sender,
+      chat_type,
+      data: {
+        data_type,
+        databases_id:Holmestable_id.current || 0,
+        language_mode:window.W_L.language_mode,
+        content,
+      },
+      id
+    }
+    websocket.send(JSON.stringify(messgaeInfo));
+}, [state]);
+
+
 const getDialogueDashboardStorage = (type=null) => {
-if(chat_type=="chat" ||chat_type=="report"){
-  const res =chat_type=="report"?getDashboard() : getDialogueStorage();
+if(chat_type==="chat" ||chat_type==="report"){
+  const res =chat_type==="report"?getDashboard() : getDialogueStorage();
   if (res&&res.length>0) {
     setHolmestableDate(res[0].table_name);
     saveDashboardId("", res[0].Holmestable_id);
@@ -94,7 +106,7 @@ if(chat_type=="chat" ||chat_type=="report"){
       sendUrl(res[0].dashboardId);
       saveDashboardId("dashboard_id", res[0].dashboardId);
     }else{
-      if(chat_type=="report"){
+      if(chat_type==="report"){
         sendUrl("new_report");
       }
       saveDashboardId("dashboard_id", null);
@@ -113,7 +125,7 @@ if(chat_type=="chat" ||chat_type=="report"){
       onUse();
     }
   }else{
-    if(chat_type=="report"){
+    if(chat_type==="report"){
       sendUrl("");
     }
     setHolmestableDate(null);
@@ -127,10 +139,10 @@ if(chat_type=="chat" ||chat_type=="report"){
     setStartUse(false);
     Holmestable_item.current = {};
   }
-}else if(chat_type=="viewConversation"){
+}else if(chat_type==="viewConversation"){
     const res = getAllStorage();
     if (res&&res.length>0 && uuid) {
-      const currentList = res.filter(item=>item.uuid==uuid);
+      const currentList = res.filter(item=>item.uuid===uuid);
       setHolmestableDate(currentList[0].table_name);
       saveDashboardId("", currentList[0].Holmestable_id);
       Holmestable_item.current = {
@@ -161,7 +173,7 @@ const setDialogueDashboardStorage = () => {
   HoImes_Dashboard.uuid= Date.now();
   HoImes_Dashboard.messages=[];
   existingDialogueStorage.push(HoImes_Dashboard)
-  if(chat_type=="report"){
+  if(chat_type==="report"){
   addDashboard(existingDialogueStorage);
   }else{
     addDialogueStorage(existingDialogueStorage);
@@ -169,11 +181,12 @@ const setDialogueDashboardStorage = () => {
 }
 const closeDialogue = () => {
   closeSetMessage();
-  if(chat_type=="report"){
+  if(chat_type==="report"){
     addDashboard([])
-  }else if(chat_type=="chat"){
+  }else if(chat_type==="chat"){
     addDialogueStorage([])
   }
+  DialogueContentRef.current.sourceEdit([]);
   getDialogueDashboardStorage("report")
 };
 const updateHolmestableDate = () => {
@@ -182,6 +195,266 @@ const updateHolmestableDate = () => {
   // test
   setDialogueDashboardStorage()
 };
+
+const onSuccess = useCallback((code, value,source_item,result,firstTableData) => {
+  if (!lockReconnect) {
+    notification.warning(window.W_L.connection_seems_lost);
+    setConfirmLoading(false);
+    openSocket();
+    return
+  }
+  Holmestable_id.current = source_item.id;
+  Holmestable_item.current = {
+    label: source_item.label,
+    id: source_item.id,
+    type: source_item.type,
+  };
+  sourceTypeRef.current = source_item.type
+
+  setConfirmLoading(true);
+  setState(prevState => ({
+    ...prevState,
+    data_type: "mysql_comment",
+  }));
+
+  if(firstTableData){
+    setSelectTableName(result)
+  }
+  
+  setSelectTableDesc({table_desc:value})
+  const allIsPass= value.map(item => {
+    const newFieldDesc = item.field_desc.filter(field => field.in_use === 1);
+    return {
+      table_name: item.table_name,
+      table_comment: item.table_comment,
+      field_desc: newFieldDesc
+    };
+  });
+  const content = {
+    databases_desc: "",
+    table_desc: allIsPass
+  }
+  sendSocketMessage(code, 'bi', 'mysql_comment', content)
+}, [setState, sendSocketMessage]);
+const mergeObj= (obj1,obj2)=>{
+  let obj3 = JSON.parse(JSON.stringify(obj1));
+  obj2.table_desc.forEach((item,index)=>{
+      let obj3Index = obj3.table_desc.findIndex((item2,index2)=>{
+          return item.table_name === item2.table_name
+      })
+      if(obj3Index !== -1){
+        obj3.table_desc[obj3Index].table_comment = item.table_comment
+          item.field_desc.forEach((item3,index3)=>{
+              let obj3Index2 = obj3.table_desc[obj3Index].field_desc.findIndex((item4,index4)=>{
+                  return item3.name === item4.name
+              })
+              if(obj3Index2 !== -1){
+                  obj3.table_desc[obj3Index].field_desc[obj3Index2].comment = item3.comment
+                  obj3.table_desc[obj3Index].field_desc[obj3Index2].in_use = item3.in_use
+                  obj3.table_desc[obj3Index].field_desc[obj3Index2].is_pass = item3.is_pass
+              }else{
+                  obj3.table_desc[obj3Index].field_desc.push(item3)
+              }
+          })
+      }else{
+          obj3.table_desc.push(item)
+      }
+  })
+  return obj3
+}
+const handleSuccess =async (tableId,table,isSendTableDateType=null) => {
+  // console.log("table",table);
+  // console.log("selectTableDescRef.current",selectTableDescRef.current);
+  try {
+    const mergeTable = mergeObj(selectTableDescRef.current,table);
+    // console.log(mergeTable,"mergeTable====")
+    const promises = mergeTable.table_desc.map(async (item) => {
+      const columns_obj = {
+        table_name : item.table_name,
+        table_inuse : true,
+        table_desc:item.table_comment,
+        table_columns_info : {
+          field_desc:item.field_desc
+        }
+      }
+      // console.log("columns_obj",columns_obj)
+       await axios.post(`/api/data_table/columns/${tableId}/${item.table_name}`,columns_obj);
+    });
+
+    Promise.all(promises).then(() => {
+      if(isSendTableDateType){
+        onUse();
+      }
+    });
+
+} catch (error) {
+  // notification.warning("Error");
+  setConfirmLoading(false);
+}
+
+};
+
+const handleSocketMessage = useCallback(() => {
+  if (!lockReconnect) {
+    createWebSocket();
+    return
+  }
+  websocket.onclose = (event) => {
+    setState(prevState => ({
+      ...prevState,
+      messages: prevState.messages.map((message, i) =>
+        i === prevState.messages.length - 1 && message.sender === "bot"&& message.Cardloading
+          ? { ...message, content: window.W_L.connection_seems_lost, Cardloading: false }
+          : message
+      ),
+      // messages: prevState.messages.filter((item,index)=>item.content!==window.W_L.stopping_generation),
+    }));
+    setLoadingMask(false);
+    setSendTableDate(0);
+    setLockReconnect(false);
+    errorSetting();
+  }
+
+  websocket.onmessage = async (event) => {
+    try {
+      const data = JSON.parse(event.data);
+
+      if (data.receiver === 'user') {
+        setState(prevState => ({
+          ...prevState,
+          messages: prevState.messages.map((message, i) =>
+            i === prevState.messages.length - 1 && message.sender === "bot"
+              ? { ...message, content: data.data.content, Cardloading: false,time:moment().format('YYYY-MM-DD HH:mm') }
+              : message
+          ),
+        }));
+        setLoadingState(false);
+        scrollToBottom();
+      }
+
+      if (data.state === 500) {
+        if (data.receiver === 'bi') {
+          if (data.data.data_type === 'mysql_comment_first') {
+            // setState(prevState => ({ ...prevState, sendTableDate: 0 }));
+            setSendTableDate(0)
+            setLoadingMask(false);
+          }
+        }
+
+        setConfirmLoading(false);
+        if (data.receiver === 'log') {
+          notification.warning(data.data.content);
+          return
+        }
+        errorSetting();
+        return;
+      }
+
+      if (data.receiver === 'bi') {
+        if (data.data.data_type === 'mysql_code') {
+          setData_type("mysql_code");
+          testAndVerifySql(data.data.content, data.data.name,data.id);
+        } else if (data.data.data_type === 'ask_data') {
+          setData_type("ask_data");
+          dashboardsId("", "ask_data",data.id);
+        } else if (data.data.data_type === 'chart_code') {
+          setData_type("chart_code")
+        try {
+          if(Dashboard_id.current){
+            saveChart(JSON.parse(data.data.content),"edit",data.id)
+          }else{
+            saveChart(JSON.parse(data.data.content),null,data.id)
+          }
+
+        } catch (error) {
+            sendSocketMessage(500,'bi','chart_code',error,data.id)
+        }
+        } else if (data.data.data_type === 'mysql_comment') {
+          setData_type("mysql_comment");
+          try {
+            const table_desc_list = JSON.parse(JSON.stringify(data.data.content.table_desc));
+            const table_desc = await filterTableDesc(table_desc_list);
+            if (table_desc.length > 0) {
+              notification.info(window.W_L.please_fill_in_the_description);
+              setConfirmLoading(false);
+              DialogueContentRef.current.sourceEdit(table_desc);
+              handleSuccess(Holmestable_id.current,data.data.content);
+            } else {
+              updateHolmestableDate();
+
+              // notification.success(window.W_L.connection_success);
+              setConfirmLoading(false);
+              if(chat_type==="report"){
+                sendUrl("new_report");
+              }
+              handleSuccess(Holmestable_id.current,data.data.content,"success");
+            }
+            setPercent(0)
+          } catch (error) {
+            errorSetting();
+          }
+        } else if (data.data.data_type === 'mysql_comment_first') {
+          setState({
+            messages: [{ content: data.data.content, sender: "bot", Cardloading: false,time:moment().format('YYYY-MM-DD HH:mm') }],
+            // loadingMask: false,
+            // sendTableDate: 1,
+            data_type: "mysql_comment_first"
+          });
+          setLoadingMask(false);
+          setSendTableDate(1);
+          setStartUse(true);
+          notification.success(window.W_L.configuration_completed, window.W_L.start_the_dialogue);
+        } else if(data.data.data_type === 'mysql_comment_second'){
+          setState(prevState => ({
+            ...prevState,
+            // loadingMask: false,
+            // sendTableDate: 1,
+          }));
+          setLoadingMask(false);
+          setSendTableDate(1);
+          sendSocketMessage(200, 'user', 'question', state.newInputMessage);
+        } else if (data.data.data_type === 'delete_chart') {
+          setData_type("delete_chart");
+          dashboardsId(data.data.content, "delete",data.id);
+        } else if (data.data.data_type === 'table_code') {
+          setData_type("table_code");
+          if (Dashboard_id.current) {
+            publishQuery("edit",data.id);
+          } else {
+            publishQuery(null,data.id);
+          }
+        }
+      } else if (data.receiver === 'log') {
+        if(!data.data.content) return
+        if(data.data.data_type === 'data_check'){
+          setPercent(data.data.content)
+          return
+        }
+        setState(prevState => ({
+          messages: prevState.messages.map((message, i) =>
+            i === prevState.messages.length - 1 && message.sender === "bot"
+            ? { ...message, logData: [...(message.logData || []), data.data.content] }
+              : message
+          )
+        }));
+      }else if(data.receiver === 'python'){
+          if(data.data.data_type === 'echart_code'){
+            setState(prevState => ({
+              messages: prevState.messages.map((message, i) =>
+                i === prevState.messages.length - 1 && message.sender === "bot"
+                  ? { ...message, chart: data.data.content}
+                  : message
+              ),
+            }));
+            scrollToBottom();
+          }
+        }
+    } catch (error) {
+      console.log(error, 'socket_error');
+    }
+  }
+}, [state, setState,props]);
+
 // websocket
 const openSocket = useCallback(() => {
 
@@ -190,7 +463,7 @@ const openSocket = useCallback(() => {
     handleSocketMessage()
   }, []);
   const closeSetMessage=()=>{
-    if(chat_type=="chat" || chat_type=="report"){
+    if(chat_type==="chat" || chat_type==="report"){
       let allMessages = messagesRef.current;
       const lastMessage = messagesRef.current[messagesRef.current.length - 1];
       if (lastMessage && lastMessage.sender === "bot" && lastMessage.Cardloading) {
@@ -230,119 +503,8 @@ const openSocket = useCallback(() => {
     // schemaList(value,type);
   }, [setState, handleSocketMessage, openSocket]);
 
-
-  const onSuccess = useCallback((code, value,source_item,result,firstTableData) => {
-    if (!lockReconnect) {
-      notification.warning(window.W_L.connection_seems_lost);
-      setConfirmLoading(false);
-      openSocket();
-      return
-    }
-    Holmestable_id.current = source_item.id;
-    Holmestable_item.current = {
-      label: source_item.label,
-      id: source_item.id,
-      type: source_item.type,
-    };
-    sourceTypeRef.current = source_item.type
-
-    setConfirmLoading(true);
-    setState(prevState => ({
-      ...prevState,
-      data_type: "mysql_comment",
-    }));
-
-    if(firstTableData){
-      setSelectTableName(result)
-    }
-    
-    setSelectTableDesc({table_desc:value})
-    const allIsPass= value.map(item => {
-      const newFieldDesc = item.field_desc.filter(field => field.in_use === 1);
-      return {
-        table_name: item.table_name,
-        table_comment: item.table_comment,
-        field_desc: newFieldDesc
-      };
-    });
-    const content = {
-      databases_desc: "",
-      table_desc: allIsPass
-    }
-    sendSocketMessage(code, 'bi', 'mysql_comment', content)
-  }, [setState, sendSocketMessage]);
-  const mergeObj= (obj1,obj2)=>{
-    let obj3 = JSON.parse(JSON.stringify(obj1));
-    obj2.table_desc.forEach((item,index)=>{
-        let obj3Index = obj3.table_desc.findIndex((item2,index2)=>{
-            return item.table_name === item2.table_name
-        })
-        let res =axios.get(`/api/data_table/columns/${Holmestable_id.current}/${item.table_name}`);
-        if(obj3Index !== -1){
-          obj3.table_desc[obj3Index].table_comment = item.table_comment
-            item.field_desc.forEach((item3,index3)=>{
-                let obj3Index2 = obj3.table_desc[obj3Index].field_desc.findIndex((item4,index4)=>{
-                    return item3.name === item4.name
-                })
-                if(obj3Index2 !== -1){
-                    obj3.table_desc[obj3Index].field_desc[obj3Index2].comment = item3.comment
-                    obj3.table_desc[obj3Index].field_desc[obj3Index2].in_use = item3.in_use
-                    obj3.table_desc[obj3Index].field_desc[obj3Index2].is_pass = item3.is_pass
-                }else{
-                    obj3.table_desc[obj3Index].field_desc.push(item3)
-                }
-            })
-        }else{
-            obj3.table_desc.push(item)
-        }
-    })
-    return obj3
-}
-  const handleSuccess =async (tableId,table,isSendTableDateType=null) => {
-    // console.log("table",table);
-    // console.log("selectTableDescRef.current",selectTableDescRef.current);
-    try {
-      const mergeTable = mergeObj(selectTableDescRef.current,table);
-      // console.log(mergeTable,"mergeTable====")
-      const promises = mergeTable.table_desc.map(async (item) => {
-        const columns_obj = {
-          table_name : item.table_name,
-          table_inuse : true,
-          table_desc:item.table_comment,
-          table_columns_info : {
-            field_desc:item.field_desc
-          }
-        }
-        // console.log("columns_obj",columns_obj)
-        const res = await axios.post(`/api/data_table/columns/${tableId}/${item.table_name}`,columns_obj);
-      });
-
-      Promise.all(promises).then(() => {
-        if(isSendTableDateType){
-          onUse();
-        }
-      });
-
-  } catch (error) {
-    // notification.warning("Error");
-    setConfirmLoading(false);
-  }
-
-  };
-  const onFinish = useCallback((code, value) => {
-    setState(prevState => ({ ...prevState, data_type: "mysql_comment" }));
-    const content = {
-      databases_desc: "",
-      table_desc: value
-    }
-    sendSocketMessage(code, 'bi', 'mysql_comment', content);
-  }, [state,setState, sendSocketMessage]);
-
-  const filterOption = useCallback((input, option) =>
-    (option?.label ?? '').toLowerCase().includes(input.toLowerCase()), []);
-
   const saveDashboardId = useCallback((key, value) => {
-    if(key=='dashboard_id'){
+    if(key==='dashboard_id'){
       Dashboard_id.current = value;
       setDashboardId(value);
       return
@@ -350,36 +512,8 @@ const openSocket = useCallback(() => {
     Holmestable_id.current = value;
   }, []);
 
-  const handleSendMessage = useCallback(() => {
-    const { inputMessage, messages } = state;
-     if(stopGeneration){
-      return
-    }
-    if (LoadingState) {
-      return
-    }
-    if (!lockReconnect) {
-      notification.warning(window.W_L.connection_failed, window.W_L.connection_failed_tip);
-      // setState(prevState => ({ ...prevState, sendTableDate: 0 }));
-      setSendTableDate(0);
-      setLoadingState(false);
-      openSocket();
-      return
-    }
-    if(!startUse){
-      return
-    }
-    if (HolmestableD_date.current && HolmestableD_date.current.tableName.length > 0) {
-      handleSendMessage1();
-    }
-  }, [state, setState, openSocket, handleSendMessage1]);
-
-  const onUse = useCallback(() => {
-    isSendTableDate("mysql_comment_first");
-  }, [isSendTableDate]);
   const isSendTableDate = useCallback((data_type) => {
     handleSocketMessage();
-    const { inputMessage, messages } = state;
     if (!lockReconnect) {
       notification.warning(window.W_L.connection_failed, window.W_L.connection_failed_tip);
       // setState(prevState => ({ ...prevState, sendTableDate: 0 }));
@@ -433,179 +567,38 @@ const openSocket = useCallback(() => {
     }));
     setLoadingState(true);
     scrollToBottom();
-    if(SendTableDate==0 && messages.length>=1){
+    if(SendTableDate===0 && messages.length>=1){
       isSendTableDate("mysql_comment_second");
       return
     }
     sendSocketMessage(200, 'user', 'question', inputMessage);
   }, [state, setState, handleSocketMessage, scrollToBottom, sendSocketMessage,isSendTableDate]);
 
-  const handleSocketMessage = useCallback(() => {
-    if (!lockReconnect) {
-      createWebSocket();
+  const handleSendMessage = useCallback(() => {
+    const { inputMessage, messages } = state;
+     if(stopGeneration){
       return
     }
-    websocket.onclose = (event) => {
-      setState(prevState => ({
-        ...prevState,
-        messages: prevState.messages.map((message, i) =>
-          i === prevState.messages.length - 1 && message.sender === "bot"&& message.Cardloading
-            ? { ...message, content: window.W_L.connection_seems_lost, Cardloading: false }
-            : message
-        ),
-        messages: prevState.messages.filter((item,index)=>item.content!=window.W_L.stopping_generation),
-      }));
-      setLoadingMask(false);
+    if (LoadingState) {
+      return
+    }
+    if (!lockReconnect) {
+      notification.warning(window.W_L.connection_failed, window.W_L.connection_failed_tip);
+      // setState(prevState => ({ ...prevState, sendTableDate: 0 }));
       setSendTableDate(0);
-      setLockReconnect(false);
-      errorSetting();
+      setLoadingState(false);
+      openSocket();
+      return
     }
-
-    websocket.onmessage = async (event) => {
-      try {
-        const data = JSON.parse(event.data);
-
-        if (data.receiver === 'user') {
-          setState(prevState => ({
-            ...prevState,
-            messages: prevState.messages.map((message, i) =>
-              i === prevState.messages.length - 1 && message.sender === "bot"
-                ? { ...message, content: data.data.content, Cardloading: false,time:moment().format('YYYY-MM-DD HH:mm') }
-                : message
-            ),
-          }));
-          setLoadingState(false);
-          scrollToBottom();
-        }
-
-        if (data.state == 500) {
-          if (data.receiver === 'bi') {
-            if (data.data.data_type === 'mysql_comment_first') {
-              // setState(prevState => ({ ...prevState, sendTableDate: 0 }));
-              setSendTableDate(0)
-              setLoadingMask(false);
-            }
-          }
-
-          setConfirmLoading(false);
-          if (data.receiver === 'log') {
-            notification.warning(data.data.content);
-            return
-          }
-          errorSetting();
-          return;
-        }
-
-        if (data.receiver === 'bi') {
-          if (data.data.data_type === 'mysql_code') {
-            setData_type("mysql_code");
-            testAndVerifySql(data.data.content, data.data.name,data.id);
-          } else if (data.data.data_type === 'ask_data') {
-            setData_type("ask_data");
-            dashboardsId("", "ask_data",data.id);
-          } else if (data.data.data_type === 'chart_code') {
-            setData_type("chart_code")
-          try {
-            if(Dashboard_id.current){
-              saveChart(JSON.parse(data.data.content),"edit",data.id)
-            }else{
-              saveChart(JSON.parse(data.data.content),null,data.id)
-            }
-
-          } catch (error) {
-              sendSocketMessage(500,'bi','chart_code',error,data.id)
-          }
-          } else if (data.data.data_type === 'mysql_comment') {
-            setData_type("mysql_comment");
-            try {
-              const table_desc_list = JSON.parse(JSON.stringify(data.data.content.table_desc));
-              const table_desc = await filterTableDesc(table_desc_list);
-              if (table_desc.length > 0) {
-                notification.info(window.W_L.please_fill_in_the_description);
-                setConfirmLoading(false);
-                DialogueContentRef.current.sourceEdit(table_desc);
-                handleSuccess(Holmestable_id.current,data.data.content);
-              } else {
-                updateHolmestableDate();
-
-                // notification.success(window.W_L.connection_success);
-                setConfirmLoading(false);
-                if(chat_type=="report"){
-                  sendUrl("new_report");
-                }
-                handleSuccess(Holmestable_id.current,data.data.content,"success");
-              }
-              setPercent(0)
-            } catch (error) {
-              errorSetting();
-            }
-          } else if (data.data.data_type === 'mysql_comment_first') {
-            setState({
-              messages: [{ content: data.data.content, sender: "bot", Cardloading: false,time:moment().format('YYYY-MM-DD HH:mm') }],
-              // loadingMask: false,
-              // sendTableDate: 1,
-              data_type: "mysql_comment_first"
-            });
-            setLoadingMask(false);
-            setSendTableDate(1);
-            setStartUse(true);
-            notification.success(window.W_L.configuration_completed, window.W_L.start_the_dialogue);
-          } else if(data.data.data_type === 'mysql_comment_second'){
-            setState(prevState => ({
-              ...prevState,
-              // loadingMask: false,
-              // sendTableDate: 1,
-            }));
-            setLoadingMask(false);
-            setSendTableDate(1);
-            sendSocketMessage(200, 'user', 'question', state.newInputMessage);
-          } else if (data.data.data_type === 'delete_chart') {
-            setData_type("delete_chart");
-            dashboardsId(data.data.content, "delete",data.id);
-          } else if (data.data.data_type === 'table_code') {
-            setData_type("table_code");
-            if (Dashboard_id.current) {
-              publishQuery("edit",data.id);
-            } else {
-              publishQuery(null,data.id);
-            }
-          }
-        } else if (data.receiver === 'log') {
-          if(!data.data.content) return
-          if(data.data.data_type === 'data_check'){
-            setPercent(data.data.content)
-            return
-          }
-          setState(prevState => ({
-            messages: prevState.messages.map((message, i) =>
-              i === prevState.messages.length - 1 && message.sender === "bot"
-              ? { ...message, logData: [...(message.logData || []), data.data.content] }
-                : message
-            )
-          }));
-        }else if(data.receiver === 'python'){
-            if(data.data.data_type === 'echart_code'){
-              setState(prevState => ({
-                messages: prevState.messages.map((message, i) =>
-                  i === prevState.messages.length - 1 && message.sender === "bot"
-                    ? { ...message, chart: data.data.content}
-                    : message
-                ),
-              }));
-              scrollToBottom();
-            }
-          }
-      } catch (error) {
-        console.log(error, 'socket_error');
-      }
+    if(!startUse){
+      return
     }
-  }, [state, setState, errorSetting, scrollToBottom, testAndVerifySql, dashboardsId, setData_type, sendSocketMessage, props]);
+    if (HolmestableD_date.current && HolmestableD_date.current.tableName.length > 0) {
+      handleSendMessage1();
+    }
+  }, [state, setState, openSocket, handleSendMessage1]);
 
-  const setData_type = useCallback((value) => {
-    setState(prevState => ({ ...prevState, data_type: value }));
-  }, [setState]);
-
-  const errorSetting = useCallback(() => {
+    const errorSetting = useCallback(() => {
     if(stopGeneration){
       return
     }
@@ -613,6 +606,17 @@ const openSocket = useCallback(() => {
     // setState(prevState => ({ ...prevState, Cardloading: false }));
     setLoadingState(false);
   }, [setState]);
+  const onUse = useCallback(() => {
+    isSendTableDate("mysql_comment_first");
+  }, [isSendTableDate]);
+
+
+
+  const setData_type = useCallback((value) => {
+    setState(prevState => ({ ...prevState, data_type: value }));
+  }, [setState]);
+
+
 
   const successSetting = useCallback(() => {
     if(stopGeneration){
@@ -628,12 +632,12 @@ const openSocket = useCallback(() => {
   }, []);
 
   const scrollToBottom = useCallback(() => {
-    if(chat_type=="viewConversation") return
+    if(chat_type==="viewConversation") return
     if (timeoutId) {
       clearTimeout(timeoutId);
     }
     timeoutId = setTimeout(() => {
-    const messageContainer = document.querySelector('.dialogue-content-message');
+    const messageContainer = document.querySelector('.dialogue-content-all');
     if (messageContainer) {
         const scrollHeight = messageContainer.scrollHeight;
       const clientHeight = messageContainer.clientHeight;
@@ -642,25 +646,9 @@ const openSocket = useCallback(() => {
         behavior: 'smooth',
       });
     }
-  }, 80);
+  }, 50);
   }, []);
 
-  const sendSocketMessage = useCallback((state, sender, data_type, content,id=0) => {
-    const messgaeInfo = {
-      state,
-      database:sourceTypeRef.current,
-      sender,
-      chat_type,
-      data: {
-        data_type,
-        databases_id:Holmestable_id.current || 0,
-        language_mode:window.W_L.language_mode,
-        content,
-      },
-      id
-    }
-    websocket.send(JSON.stringify(messgaeInfo));
-  }, [state]);
 
 
   const ChangeScrollTop = useCallback(() => {
@@ -670,21 +658,21 @@ const openSocket = useCallback(() => {
   }, []);
   const stopSend = useCallback((type=null) => {
     websocket&&websocket.close();
-    setState(prevState => ({
-      ...prevState,
-      messages: prevState.messages.map((message, i) =>
-        i === prevState.messages.length - 1 && message.sender === "bot" && message.Cardloading
-          ? { ...message, content: window.W_L.stopping_generation, Cardloading: false }
-          : message
-      ),
-      // sendTableDate: 0,
-    }));
-    setSendTableDate(type=="edit"?1:0);
+    // setState(prevState => ({
+    //   ...prevState,
+    //   messages: prevState.messages.map((message, i) =>
+    //     i === prevState.messages.length - 1 && message.sender === "bot" && message.Cardloading
+    //       ? { ...message, content: window.W_L.stopping_generation, Cardloading: false }
+    //       : message
+    //   ),
+    //   // sendTableDate: 0,
+    // }));
+    setSendTableDate(type==="edit"?1:0);
     setLoadingState(false);
     setStopGeneration(true);
     scrollToBottom();
     openSocket();
-  }, [setState, scrollToBottom, openSocket]);
+  }, [setState, openSocket]);
   const sendDashId = useCallback((id) => {
     sendUrl(id);
     setDialogueStorageDashboardId(id)

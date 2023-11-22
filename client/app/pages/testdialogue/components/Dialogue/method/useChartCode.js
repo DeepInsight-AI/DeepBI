@@ -69,7 +69,7 @@ export const useChartCode = (sendSocketMessage,saveDashboardId, props, successSe
     try {
       const res = await axios.post(`/api/visualizations`, data);
       // console.log(res, 'save_success');
-      if (type == "edit") {
+      if (type === "edit") {
         // console.log("second saveChart")
         await dashboardsId(res, type,task_id);
       } else {
@@ -111,7 +111,7 @@ const deleteReports = (async (report_name) => {
   const res = await axios.get(`/api/dashboards?order&page=1&page_size=20&q=${report_name}`);
   if(res.results.length>0){
     res.results.forEach(async (item,index)=>{
-      if(item.name==report_name){
+      if(item.name===report_name){
         const resdel = await axios.delete(`/api/dashboards/${item.id}`);
       }
     })
@@ -160,8 +160,8 @@ const dashboardsId = useCallback(async (response, type = null,task_id) => {
         widgetsJson(res, type,task_id);
         return
       }
-      if (type === "getPath" || type=="delGetPath") {
-        sendSocketMessage(200, 'bi', type=="getPath"?'chart_code':'delete_chart', res,task_id)
+      if (type === "getPath" || type === "delGetPath") {
+        sendSocketMessage(200, 'bi', type==="getPath"?'chart_code':'delete_chart', res,task_id)
         sendDashId(dashboard_id)
         successSetting()
         return
@@ -267,7 +267,7 @@ const dashboardsId = useCallback(async (response, type = null,task_id) => {
     } catch (error) {
       // console.log(error, 'jsonget_error')
     }
-  }, [state, sendSocketMessage, dashboardsId]);
+  }, [state, sendSocketMessage,new_sql, dashboardsId]);
   
 
 
@@ -308,7 +308,7 @@ const dashboardsId = useCallback(async (response, type = null,task_id) => {
     try {
       const arr = response.widgets.map(async (item, index) => {
         if (nameList.includes(item.visualization.query.name)) {
-          const res = await axios.delete(`/api/widgets/${item.id}`)
+          await axios.delete(`/api/widgets/${item.id}`)
         }
       })
       Promise.all(arr).then(res => {

@@ -1,31 +1,15 @@
 import React from "react";
-import { wrap as itemsList, ControllerType } from "@/components/items-list/ItemsList";
 import routeWithUserSession from "@/components/ApplicationArea/routeWithUserSession";
-import { ResourceItemsSource } from "@/components/items-list/classes/ItemsSource";
-import { StateStorage } from "@/components/items-list/classes/StateStorage";
-import Link from "@/components/Link";
-import PageHeader from "@/components/PageHeader";
-import Paginator from "@/components/Paginator";
-import EmptyState, { EmptyStateHelpMessage } from "@/components/empty-state/EmptyState";
-import DynamicComponent from "@/components/DynamicComponent";
-import ItemsTable, { Columns } from "@/components/items-list/components/ItemsTable";
-import Alert from "@/services/alert";
-import { currentUser } from "@/services/auth";
 import routes from "@/services/routes";
 import DashboardPage from "@/pages/dashboards/DashboardPage";
 import Dialogue from "./components/Dialogue";
 import DialogueListLeft from "./components/DialogueListLeft";
-import LogWorkflow from "./components/LogWorkflow";
 
 import "./index.less";
 
-import { toUpper } from "lodash";
-let timeoutId = null;
-
 function DialogueList(props) {
-  const { currentPage, chatType } = props;
+  const { chatType } = props;
   // const [chatType, setChatType] = React.useState("chat");
-  const [isShowReport, setisShowReport] = React.useState(false);
   const [dashboardId, setDashboardId] = React.useState("");
   const [dashboardKey, setDashboardKey] = React.useState(0);
   const [uuid, setUuid] = React.useState("");
@@ -35,24 +19,8 @@ function DialogueList(props) {
   };
   const handleError = () => {
   };
-  const scrollToBottom = () => {
-    if (timeoutId) {
-      clearTimeout(timeoutId);
-    }
-    timeoutId = setTimeout(() => {
-    const messageContainer = document.querySelector('.dashbord_page');
-    if (messageContainer) {
-        const scrollHeight = messageContainer.scrollHeight;
-      const clientHeight = messageContainer.clientHeight;
-      messageContainer.scrollTo({
-        top: scrollHeight - clientHeight,
-        behavior: 'smooth',
-      });
-    }
-  }, 80);
-  };
   const sendUrl = (item) => {
-    if(item=="new_report"){
+    if(item==="new_report"){
       setIsShowNoData(true);
       setDashboardId("");
       setDashboardKey((prevKey) => prevKey + 1);
@@ -61,9 +29,8 @@ function DialogueList(props) {
     setIsShowNoData(false);
     setDashboardId(item);
     setDashboardKey((prevKey) => prevKey + 1);
-      // scrollToBottom()
   }
-  const NoDashboardData=({})=> {
+  const NoDashboardData=()=> {
     return (
         <div style={{ flex: '1 1 0%', overflow: 'auto', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
           <img
@@ -85,7 +52,7 @@ function DialogueList(props) {
         chatType === "viewConversation"&&
         (<DialogueListLeft chat_type={chatType} switchMode={switchMode}></DialogueListLeft>)
       }
-      <div style={{ display: 'flex', flexDirection: 'column', flex: 1, borderRadius: '10px', position: "relative", background: "rgb(243 243 243)",overflow: "auto"}}>
+      <div style={{ display: 'flex', flexDirection: 'column', flex: 1, position: "relative", background: "rgb(250, 250, 250)",overflow: "auto"}}>
       {
         chatType === "viewConversation"&& !uuid?
         <NoDashboardData />
@@ -96,7 +63,7 @@ function DialogueList(props) {
       {
         chatType === "report" && dashboardId?
           <div style={{ flex: "1",overflow: "auto" }} className="dashbord_page">
-            <DashboardPage key={dashboardKey} isShowReport={isShowReport} dashboardId={dashboardId} dashboardSlug="-" onError={handleError} />
+            <DashboardPage key={dashboardKey} isShowReport={false} dashboardId={dashboardId} dashboardSlug="-" onError={handleError} />
           </div>
           : null
       }

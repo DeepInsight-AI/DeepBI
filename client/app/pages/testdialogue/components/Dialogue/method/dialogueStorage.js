@@ -1,4 +1,3 @@
-import React from 'react';
 
 export const dialogueStorage=()=> {
     const addDialogueStorage = (dialogue) => {
@@ -12,7 +11,7 @@ export const dialogueStorage=()=> {
             return
         }
         let HoImes_Dialogue=[]
-        if(type=="chat"){
+        if(type==="chat"){
             HoImes_Dialogue=getDialogueStorage()
         }else{
             HoImes_Dialogue=getDashboard()
@@ -20,8 +19,8 @@ export const dialogueStorage=()=> {
         if(HoImes_Dialogue && HoImes_Dialogue.length>0){
             HoImes_Dialogue[HoImes_Dialogue.length-1].messages=dialogue
         }
-        type=="chat"?addDialogueStorage(HoImes_Dialogue):addDashboard(HoImes_Dialogue)
-        if(type=="chat"&&HoImes_Dialogue && HoImes_Dialogue.length>0 && HoImes_Dialogue[HoImes_Dialogue.length-1].messages.length>=2){
+        type==="chat"?addDialogueStorage(HoImes_Dialogue):addDashboard(HoImes_Dialogue)
+        if(type==="chat"&&HoImes_Dialogue && HoImes_Dialogue.length>0 && HoImes_Dialogue[HoImes_Dialogue.length-1].messages.length>=2){
             addAllStorage(HoImes_Dialogue)
         }
     }
@@ -45,7 +44,7 @@ export const dialogueStorage=()=> {
             allStorage.splice(0,1)
         }
         let index=allStorage.findIndex((item)=>{
-            return item.uuid==dialogue[0].uuid
+            return item.uuid===dialogue[0].uuid
         })
         if(index>=0){
             allStorage[index].messages=dialogue[0].messages

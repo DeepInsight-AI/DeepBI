@@ -3,7 +3,7 @@ import Button from "antd/lib/button";
 import './index.css';
 
 const Overlay = (props) => {
-  const {loadingMask,Holmestable } = props;
+  const {loadingMask } = props;
   const onUse = () => {
     props.onUse();
   };

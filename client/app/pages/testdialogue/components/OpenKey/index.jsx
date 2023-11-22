@@ -1,10 +1,7 @@
-import React, { useState, forwardRef, useImperativeHandle,useRef } from "react";
+import React, { useState, forwardRef, useImperativeHandle } from "react";
 import Modal from "antd/lib/modal";
 import Input from "antd/lib/input";
-import { axios } from "@/services/axios";
-import notification from "@/services/notification";
 const OpenKey = forwardRef((props, ref) => {
-  const { onSuccess,setConfirmLoadingState,updateHolmestableDate} = props;
   const [visible, setVisible] = useState(false);
     const [KeyValue ,setKeyValue] = useState("");
   const showModal = () => {
@@ -37,6 +34,7 @@ const OpenKey = forwardRef((props, ref) => {
             <Input
             placeholder=""
             value={KeyValue}
+            onChange={(e) => setKeyValue(e.target.value)}
             />
         </div>
       </Modal>

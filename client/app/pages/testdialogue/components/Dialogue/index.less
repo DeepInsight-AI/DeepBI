@@ -10,7 +10,7 @@
   transition: all .5s ease;
   background: transparent !important;
   z-index: 9;
-  padding-bottom: 15px;
+  // padding-bottom: 15px;
   margin: auto;
 }
 .maxWidth-90bot{
@@ -20,15 +20,16 @@
 }
 .dialogue-content-all {
   flex-grow: 1;
-  overflow:hidden;
+  overflow-y:scroll;
   flex:1;
 }
 .dialogue-content-message {
   display: flex;
   flex-direction: column;
-  height: 100%;
+  height: auto;
   box-sizing: border-box;
-  overflow-y: auto;
+  margin-bottom: 120px;
+  // overflow-y: auto;
 }
 .dialogue-content-message-auto{
   height: 100%;
@@ -56,6 +57,14 @@
   align-items: flex-end;
   margin: auto;
   width: 80%;
+  position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(255,255,255,.8);
+    box-shadow: 0 -25px 50px 0px #fff;
+    padding-bottom: 10px;
+    flex-direction: column;
 }
 .dialogue-content-bottom {
     width: 100%;
@@ -128,6 +137,7 @@ textarea,textarea.ant-input:hover,textarea:focus{
   display: flex;
     justify-content: center;
     padding-bottom: 12px;
+  margin: auto;
 }
 .gpt-btn-item{
   display: flex;

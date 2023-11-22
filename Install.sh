@@ -1,7 +1,12 @@
 #!/bin/bash
 export LANG=en_US.UTF-8
+if [ -f .env ]; then
+    rm .env
+fi
 
-
+if [ -f Dockerfile ]; then
+    rm Dockerfile
+fi
 # Install.sh, you mast have installed docker and docker-compose
 # check docker support
 if ! command -v docker &> /dev/null; then
@@ -49,6 +54,9 @@ web_port=8338
 socket_port=8339
 # get env_template content
 env_content=$(cat .env.template)
+# replace language
+# shellcheck disable=SC2001
+env_content=$(echo "$env_content" | sed "s/LANGTYPE/EN/g")
 # replace web port
 # shellcheck disable=SC2001
 env_content=$(echo "$env_content" | sed "s/WEB_PORT/$web_port/g")
@@ -64,6 +72,7 @@ sec_key=$(openssl rand -hex 16)
 env_content=$(echo "$env_content" | sed "s/SEC_KEY/$sec_key/g")
 # save .env file
 echo "$env_content" > .env
+cp Dockerfile.template Dockerfile
 # save env file over
 echo "You setting as fellows:"
 echo "--------------------------------"
@@ -90,7 +99,7 @@ echo "--------------------------------"
 echo "Run: docker-compose up......"
 docker-compose up -d
 echo "--------------------------------"
-echo "You can visit http://$ip:8338"
+echo "You can visit http://$ip:$web_port"
 echo "--------------------------------"
 
 

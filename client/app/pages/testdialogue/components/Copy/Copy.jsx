@@ -1,12 +1,10 @@
 import React from 'react';
-import Button from "antd/lib/button";
-import Loading from "../loading";
 import copy from "@/assets/images/copy.png";
-import Retry from "@/assets/images/retry.png";
+// import Retry from "@/assets/images/retry.png";
 import './index.less';
 
 const Copy = (props) => {
-  const { sender ,source,index,retry} = props;
+  const { sender ,source} = props;
   const copyCentent = () => {
     const input = document.createElement('input');
     input.setAttribute('readonly', 'readonly');
@@ -19,9 +17,9 @@ const Copy = (props) => {
     }
     document.body.removeChild(input);
   }
-  const retryCentent = () => {
-    retry(index)
-  }
+  // const retryCentent = () => {
+  //   retry(index)
+  // }
   return (
     
     <div className={`copy${sender}`}>

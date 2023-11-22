@@ -1,4 +1,4 @@
-import moment from "moment";
+// import moment from "moment";
 import { isFunction } from "lodash";
 
 // Ensure that this image will be available in assets folder

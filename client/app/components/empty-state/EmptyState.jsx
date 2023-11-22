@@ -6,7 +6,6 @@ import CloseOutlinedIcon from "@ant-design/icons/CloseOutlined";
 import Link from "@/components/Link";
 import PlainButton from "@/components/PlainButton";
 import CreateDashboardDialog from "@/components/dashboards/CreateDashboardDialog";
-import HelpTrigger from "@/components/HelpTrigger";
 import { currentUser } from "@/services/auth";
 import organizationStatus from "@/services/organizationStatus";
 

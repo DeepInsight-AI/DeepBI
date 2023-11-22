@@ -1,7 +1,5 @@
 import React from 'react';
-import Button from "antd/lib/button";
 import Loading from "../loading";
-import LoadingOutlinedIcon from "@ant-design/icons/LoadingOutlined";
 import './index.css';
 
 const LogWorkflow = (props) => {
@@ -26,12 +24,12 @@ const LogWorkflow = (props) => {
         log_terminal.scrollTop = log_terminal.scrollHeight;
       }, 0);
     }
-  },[logData])
+  },[logData,sourceList.length])
   const changeWork = () => {
-    if(logData&&logData.length == 0){
+    if(logData&&logData.length === 0){
       return;
     }
-    if(workTitle == "Show work"){
+    if(workTitle === "Show work"){
       setWorkTitle("Hide work");
       logTerminal.current.style.height = "170px";
     }else{

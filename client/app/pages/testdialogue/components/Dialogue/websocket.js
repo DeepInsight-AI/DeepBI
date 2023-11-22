@@ -1,4 +1,4 @@
-import notification from "@/services/notification";
+// import notification from "@/services/notification";
 import { currentUser } from "@/services/auth";
 import { EventEmitter } from 'events';
 
@@ -46,19 +46,19 @@ let reconnect = (url) => {
     lockReconnectEvent.emit('change', wsType);
   }, 4000);
 };
-let heartCheck = {
-  timeout: 60000, 
-  timeoutObj: null,
-  reset: function () {
-    clearInterval(this.timeoutObj);
-    return this;
-  },
-  start: function () {
-    this.timeoutObj = setInterval(function () {
-      websocket.send("HeartBeat");
-    }, this.timeout);
-  },
-};
+// let heartCheck = {
+//   timeout: 60000, 
+//   timeoutObj: null,
+//   reset: function () {
+//     clearInterval(this.timeoutObj);
+//     return this;
+//   },
+//   start: function () {
+//     this.timeoutObj = setInterval(function () {
+//       websocket.send("HeartBeat");
+//     }, this.timeout);
+//   },
+// };
 let closeWebSocket = () => {
   websocket && websocket.close();
 };

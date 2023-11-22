@@ -55,8 +55,26 @@ const SelectSource = forwardRef(({ confirmLoading, Holmestable, chat_type, onCha
   ];
 
   useEffect(() => {
+    const getMySql = async () => {
+      try {
+        const res = await axios.get('/api/data_sources');
+        const options = res.map(d => ({
+          ...d,
+          value: d.id,
+          label: d.name,
+          type: d.type,
+        }));
+        if (chat_type !== "report") {
+          options.unshift({ label: window.W_L.excel_upload, value: 0, type: "csv",id:0 });
+        }
+  
+        setOptions(options);
+      } catch (err) {
+        console.error('error', err);
+      }
+    };
     getMySql();
-  }, []);
+  }, [chat_type]);
   useEffect(() => {
     setSelectLoading(confirmLoading)
     if(!confirmLoading){
@@ -69,24 +87,7 @@ const SelectSource = forwardRef(({ confirmLoading, Holmestable, chat_type, onCha
   const editTableData = (data) => {
     setEditData(data);
   }
-  const getMySql = async () => {
-    try {
-      const res = await axios.get('/api/data_sources');
-      const options = res.map(d => ({
-        ...d,
-        value: d.id,
-        label: d.name,
-        type: d.type,
-      }));
-      if (chat_type != "report") {
-        options.unshift({ label: window.W_L.excel_upload, value: 0, type: "csv",id:0 });
-      }
-
-      setOptions(options);
-    } catch (err) {
-      console.error('error', err);
-    }
-  };
+  
 
   const handleChange = (value) => {
     resetStates();
@@ -117,9 +118,9 @@ const SelectSource = forwardRef(({ confirmLoading, Holmestable, chat_type, onCha
       const getOptionsList = (data, type) => {
         return data.map((item, index) => ({
           ...item,
-          label: type == "csv" ? item.source_name : item.name,
+          label: type === "csv" ? item.source_name : item.name,
           value: index,
-          name: type == "csv" ? item.file_name : item.name,
+          name: type === "csv" ? item.file_name : item.name,
           checked: false,
         }));
       };
@@ -145,18 +146,18 @@ const SelectSource = forwardRef(({ confirmLoading, Holmestable, chat_type, onCha
       table_comment: "",
       field_desc: []
     };
-    const res = await axios.get(`/api/data_table/columns/${source_id}/${source_item.type == "csv" ? item.file_name : item.name}`);
-    if (Object.keys(res).length != 0) {
+    const res = await axios.get(`/api/data_table/columns/${source_id}/${source_item.type === "csv" ? item.file_name : item.name}`);
+    if (Object.keys(res).length !== 0) {
       table_desc_obj.table_name = res.table_name;
       table_desc_obj.table_comment = res.table_desc || "";
       table_desc_obj.field_desc = res.table_columns_info.field_desc;
     } else {
-      table_desc_obj.table_name = source_item.type == "csv" ? item.file_name : item.name;
-      table_desc_obj.table_comment = source_item.type == "csv" ? item.source_name : "";
+      table_desc_obj.table_name = source_item.type === "csv" ? item.file_name : item.name;
+      table_desc_obj.table_comment = source_item.type === "csv" ? item.source_name : "";
       if (source_item.type !== "csv") {
         item.columns.forEach((i, index) => {
           const field_desc_obj = {
-            name: source_item.type == "pg" ? i.name : i,
+            name: source_item.type === "pg" ? i.name : i,
             comment: item.comment[index] || "",
             in_use: 1
           }
@@ -335,11 +336,11 @@ const SelectSource = forwardRef(({ confirmLoading, Holmestable, chat_type, onCha
             field_desc: res.table_columns_info.field_desc
           }
           data.forEach(item=>{
-            if(item.table_name==res.table_name){
+            if(item.table_name===res.table_name){
               obj.table_comment=item.table_comment
               obj.field_desc.forEach((field,index)=>{
                 item.field_desc.forEach(i=>{
-                  if(field.name==i.name){
+                  if(field.name===i.name){
                     obj.field_desc[index].comment=i.comment
                   }
                 })
@@ -415,7 +416,7 @@ const SelectSource = forwardRef(({ confirmLoading, Holmestable, chat_type, onCha
       <div className="flex-column">
         <div className="dislogue-caption">
             <h1>Hi !</h1>
-            <span>{chat_type=="chat"?window.W_L.chat_start:window.W_L.report_start}</span>
+            <span>{chat_type==="chat"?window.W_L.chat_start:window.W_L.report_start}</span>
         </div>
         <div className="select-content">
         <Spin spinning={SelectLoading} className={!submitting?"":"dislogue-spin"}>
@@ -465,7 +466,7 @@ const SelectSource = forwardRef(({ confirmLoading, Holmestable, chat_type, onCha
                    }
                     {SchemaListIsShow ? SchemaList.map((item, index) => (
                       <li key={index}>
-                        <span onClick={() => clickSchemaItem(item)} style={{ color: item.label == SchemaListDataItem.table_name ? "#2196F3" : "#333" }}>{item.label}</span>
+                        <span onClick={() => clickSchemaItem(item)} style={{ color: item.label === SchemaListDataItem.table_name ? "#2196F3" : "#333" }}>{item.label}</span>
                         <Checkbox checked={item.checked} onChange={(e) => changeSource(e, item)} />
                       </li>
                     )) : <NoDataHtml/>}
@@ -476,13 +477,13 @@ const SelectSource = forwardRef(({ confirmLoading, Holmestable, chat_type, onCha
             <div className="table-columns">
               {tableIsShow && (
                 <div className="table-columns-item">
-                  <span>{source_item.type=="csv"?SchemaListDataItem.table_comment:SchemaListDataItem.table_name}</span>
+                  <span>{source_item.type==="csv"?SchemaListDataItem.table_comment:SchemaListDataItem.table_name}</span>
                   <Input
                   placeholder={window.W_L.sheet_description}
                     style={{ padding: "2px", maxWidth: "60%" }}
                     type="text"
-                    disabled={source_item.type=="csv"?true:false}
-                    value={source_item.type=="csv"?SchemaListDataItem.table_name:SchemaListDataItem.table_comment}
+                    disabled={source_item.type==="csv"?true:false}
+                    value={source_item.type==="csv"?SchemaListDataItem.table_name:SchemaListDataItem.table_comment}
                     onChange={handleTableDescriptionChange}
                   />
                 </div>

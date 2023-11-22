@@ -1,6 +1,5 @@
 import React ,{useRef,forwardRef, useImperativeHandle}from 'react';
 import Input from "antd/lib/input";
-import Select from "antd/lib/select";
 import Overlay from "../Overlay";
 import SelectSource from "../SelectSource";
 import TypingCard from "../TypingCard";
@@ -43,33 +42,34 @@ const DialogueContent = forwardRef(({
         <div className="dialogue-content-message-auto">
         <SelectSource ref={selectSourceRef} onSuccess={onSuccess} chat_type={chat_type} Holmestable={Holmestable} confirmLoading={confirmLoading} onChange={onChange} percent={percent}></SelectSource>
             {
-          sendTableDate!=1 && messages.length<=0&&Holmestable?
+          sendTableDate!==1 && messages.length<=0&&Holmestable?
           (<Overlay loadingMask={loadingMask} Holmestable={Holmestable} onUse={onUse}></Overlay>)
           :
           null
             }
           {messages.map((message, index) => (
-            <div key={index} className="chat-content" style={{margin:chat_type=="report"?'0 30px':'',marginTop:index==0?"30px":""}}>
+            <div key={index} className="chat-content" style={{margin:chat_type==="report"?'0 30px':'',marginTop:index===0?"30px":""}}>
                   <TypingCard chart={message.chart} logData={message.logData} sender={message.sender} time={message.time} Cardloading={message.Cardloading} source={message.content} index={index} ChangeScrollTop={ChangeScrollTop} retry={retry} />
             </div>
           ))}
         </div>
       </div>
       </div>
-      {loadingState?
+     
+      {
+      chat_type!=="viewConversation" &&
+      (
+        <div className="main-all" style={{width:chat_type==="report"?"90%":"80%"}}>
+           {loadingState?
       <div className="gpt-section-btn-list">
       <button className="gpt-btn-item" onClick={stopSend}>
           <PauseCircleOutlinedIcon className="gpt-btn-item-img"></PauseCircleOutlinedIcon>
           <div className="gpt-btn-item-txt">{window.W_L.stop_generation}</div>
       </button>
       </div>
-      :
-      null
-      }
-      {
-      chat_type!="viewConversation" &&
-      (
-        <div className="main-all" style={{width:chat_type=="report"?"90%":"80%"}}>
+       :
+       null
+       }
         <div className="dialogue-content-bottom">
         <div className="open-key" style={{display:"none"}} onClick={onOpenKeyClick}>
         </div>

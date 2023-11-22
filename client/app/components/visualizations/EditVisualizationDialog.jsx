@@ -82,7 +82,7 @@ function EditVisualizationDialog({ dialog, visualization, query, queryResult }) 
     }),
     [data, filters]
   );
-
+   
   const defaultState = useMemo(() => {
     const config = visualization ? registeredVisualizations[visualization.type] : getDefaultVisualization();
     const options = config.getOptions(isNew ? {} : visualization.options, data);
@@ -159,7 +159,6 @@ function EditVisualizationDialog({ dialog, visualization, query, queryResult }) 
 
   const vizTypeId = useUniqueId("visualization-type");
   const vizNameId = useUniqueId("visualization-name");
-
   return (
     <Modal
       {...dialog.props}

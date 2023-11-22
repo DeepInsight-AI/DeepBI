@@ -38,9 +38,9 @@ export default function ApplicationArea() {
   }
 
   // moment.locale('zh-cn')
-  window.W_L.language_mode=="CN"?moment.locale('zh-cn'):moment.locale('en')
+  window.W_L.language_mode==="CN"?moment.locale('zh-cn'):moment.locale('en')
   return (
-    <ConfigProvider locale={window.W_L.language_mode=="CN"?zh_CN:""}>
+    <ConfigProvider locale={window.W_L.language_mode==="CN"?zh_CN:""}>
       <Router routes={routes.items} onRouteChange={setCurrentRoute} />
     </ConfigProvider>
   );

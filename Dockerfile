@@ -64,8 +64,8 @@ RUN apt-get clean && apt-get update && \
   rm -rf /var/lib/apt/lists/*
 #
 # ali pip source
-RUN pip config set global.index-url https://pypi.tuna.tsinghua.edu.cn/simple
-RUN pip install --upgrade pip
+#CN#RUN pip config set global.index-url https://pypi.tuna.tsinghua.edu.cn/simple
+#CN#RUN pip install --upgrade pip
 COPY --chown=holmes . /app
 WORKDIR /app
 ## Disable PIP Cache and Version Check
@@ -81,7 +81,7 @@ RUN if [ "x$skip_dev_deps" = "x" ] ; then pip install -r requirements_dev.txt ; 
 RUN pip install -r requirements.txt && pip install -r requirements_ai.txt
 #
 ## fix python 3.8.18 error import .
-RUN sed -i 's/from importlib_resources import path/from importlib.resources import path/g' /usr/local/lib/python3.8/site-packages/saml2/sigver.py && \
+RUN docker /usr/local/lib/python3.8/site-packages/saml2/sigver.py && \
     sed -i 's/from importlib_resources import path/from importlib.resources import path/g' /usr/local/lib/python3.8/site-packages/saml2/xml/schema/__init__.py && \
     chown holmes /app && chmod +x /app/ai/main.py
 

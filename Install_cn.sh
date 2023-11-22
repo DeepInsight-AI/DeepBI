@@ -49,6 +49,8 @@ sec_key=$(openssl rand -hex 16)
 env_content=$(echo "$env_content" | sed "s/SEC_KEY/$sec_key/g")
 # save .env file，保存文件
 echo "$env_content" > .env
+# 修改配置 pip 为国内清华源
+sed -i '' -e 's/#CN#//g' Dockerfile
 # 输出说明：
 echo "所有配置如下:"
 echo "--------------------------------"

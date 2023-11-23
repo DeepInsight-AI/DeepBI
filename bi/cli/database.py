@@ -57,9 +57,6 @@ def create_tables():
         sqlalchemy.orm.configure_mappers()
         db.create_all()
 
-        # Need to mark current DB as up to date
-        stamp()
-
 
 @manager.command()
 def drop_tables():

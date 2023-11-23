@@ -2,7 +2,8 @@ import React from "react";
 import { pick } from "lodash";
 import HelpTrigger from "@/components/HelpTrigger";
 import Link from "@/components/Link";
-import { Renderer as VisRenderer, Editor as VisEditor, updateVisualizationsSettings } from "@redash/viz/lib";
+import { Renderer as VisRenderer, Editor as VisEditor } from "@/components/chart/visualizations";
+import {updateVisualizationsSettings} from "@/components/chart/visualizations/visualizationsSettings"
 import { clientConfig } from "@/services/auth";
 
 import countriesDataUrl from "./countries.geo.json";

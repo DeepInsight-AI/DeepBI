@@ -1,7 +1,7 @@
 import { size, filter, forEach, extend } from "lodash";
 import React from "react";
 import PropTypes from "prop-types";
-import { SortableContainer, SortableElement, DragHandle } from "@redash/viz/lib/components/sortable";
+import { SortableContainer, SortableElement, DragHandle } from "@/components/chart/components/sortable";
 import location from "@/services/location";
 import { Parameter, createParameter } from "@/services/parameters";
 import ParameterApplyButton from "@/components/ParameterApplyButton";
@@ -9,7 +9,7 @@ import ParameterValueInput from "@/components/ParameterValueInput";
 import PlainButton from "@/components/PlainButton";
 import EditParameterSettingsDialog from "./EditParameterSettingsDialog";
 import { toHuman } from "@/lib/utils";
-
+ 
 import "./Parameters.less";
 
 function updateUrl(parameters) {

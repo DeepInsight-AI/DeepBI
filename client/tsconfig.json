@@ -14,7 +14,7 @@
     "esModuleInterop": true,
     "jsx": "react",
     "allowSyntheticDefaultImports": true,
-    "noUnusedLocals": true,
+    // "noUnusedLocals": true,
     "lib": ["dom", "dom.iterable", "esnext"],
     "forceConsistentCasingInFileNames": true,
     "baseUrl": "./",

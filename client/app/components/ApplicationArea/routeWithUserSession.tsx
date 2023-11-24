@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import ErrorBoundary, { ErrorBoundaryContext } from "@redash/viz/lib/components/ErrorBoundary";
+import ErrorBoundary, { ErrorBoundaryContext } from "@/components/chart/components/ErrorBoundary";
 import { Auth } from "@/services/auth";
 import { policy } from "@/services/policy";
 import { CurrentRoute } from "@/services/routes";

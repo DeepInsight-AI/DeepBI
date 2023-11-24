@@ -11,19 +11,12 @@ import requests
 from dotenv import load_dotenv
 import hashlib
 import base64
-from backend.base_config import CONFIG
+from ai.backend.base_config import CONFIG
+from ai.backend.util.base_util import dbinfo_encode
 
-# load_dotenv()
 
-# 加载 .env 文件中的环境变量
-load_dotenv('../.env')
-# 读取环境变量的值
-DB_API_SECRET_KEY = os.getenv("DB_API_SECRET_KEY", "c3334882e7548bfc6b1108a17e55d445")
+DB_API_SECRET_KEY = os.environ.get("DB_API_SECRET_KEY", None)
 print('DB_API_SECRET_KEY : ', DB_API_SECRET_KEY)
-
-# DB_API_SECRET_KEY = "c3334882e7548bfc6b1108a17e55d445"
-# DB_API_SECRET_KEY = "89e52b447c5b89f3ea6bb555196eb804"
-
 
 def encrypt(text, key):
     key_hash = hashlib.sha256(key.encode()).digest()
@@ -48,8 +41,8 @@ def decrypt(encrypted_text, key):
     return decrypted_bytes.decode()
 
 
-def make_secret(text):  # 默认来的时候是 data id, 回去的时候是 json 的 序列化字符串
-    # DB_API_SECRET_KEY = "c3334882e7548bfc6b1108a17e55d445"
+def make_secret(text):
+    """ By default, it is the data id when it comes in, and it is the json serialized string when it goes back."""
     now_int_time = int(time.time())
     code_str = str(now_int_time) + "$$" + str(text) + "$$" + str(DB_API_SECRET_KEY)
     print(code_str)
@@ -58,11 +51,7 @@ def make_secret(text):  # 默认来的时候是 data id, 回去的时候是 json
 
 
 def check_secret(data_id, secret):
-    # 先解密
     try:
-        # print("准备解密", secret)
-        # 这里 是  key
-        # DB_API_SECRET_KEY = os.getenv("DB_API_SECRET_KEY")
         code_str = decrypt(secret, DB_API_SECRET_KEY)
         # print("解密 from se ", code_str)
         code_arr = code_str.split("$$")
@@ -107,9 +96,6 @@ class Main:
         # 生成 se 用于获取 接口权限
         from_se = make_secret(db)
         print("生成 获取 secret", from_se)
-        # url = "http://cn.deep-thought.io/data_source_info/" + db + "/" + from_se
-        # url = "http://newcn.deep-thought.io/data_source_info/" + db + "/" + from_se
-        # url = "http://192.168.5.165:4999/data_source_info/" + db + "/" + from_se
         # url = "http://127.0.0.1:4999/data_source_info/" + db + "/" + from_se
 
         if CONFIG.web_server_ip is not None:
@@ -126,6 +112,35 @@ class Main:
         if 200 == json_data['code']:
             decode_json = decode_data_info(json_data['data'])
             print("解密后", decode_json)
+
+            # 敏感信息隐藏
+            decode_json = dbinfo_encode(decode_json)
+            return True, decode_json
+        else:
+            print(json_data['msg'])
+            return False, json_data['msg']
+
+    def run_decode(self):
+        db = self.db_id  # database id
+        # Generate se to obtain interface permissions
+        from_se = make_secret(db)
+        print("Generate secret", from_se)
+        # url = "http://127.0.0.1:4999/data_source_info/" + db + "/" + from_se
+
+        if CONFIG.web_server_ip is not None:
+            url = "http://" + CONFIG.web_server_ip + "/data_source_info/" + db + "/" + from_se
+
+        else:
+            return False, ' error: Not found CONFIG.web_server_ip '
+
+        print(url)
+        url_data = requests.get(url).text
+        print('url_data :', url_data)
+        json_data = json.loads(url_data)
+        print('json_data :', json_data)
+        if 200 == json_data['code']:
+            decode_json = decode_data_info(json_data['data'])
+            print("decode : ", decode_json)
             return True, decode_json
         else:
             print(json_data['msg'])
@@ -133,6 +148,6 @@ class Main:
 
 
 if __name__ == "__main__":
-    db_id = str(14)
+    db_id = str(18)
     obj = Main(db_id)
     obj.run()

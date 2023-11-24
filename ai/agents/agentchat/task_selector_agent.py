@@ -1,6 +1,6 @@
 import asyncio
 from typing import Callable, Dict, List, Optional, Union
-from backend.util.write_log import logger
+from ai.backend.util.write_log import logger
 from .conversable_agent import ConversableAgent
 from .agent import Agent
 

@@ -3,7 +3,7 @@ import sys
 from typing import Dict, List, Optional, Union
 from .agent import Agent
 from .conversable_agent import ConversableAgent
-from backend.util.write_log import logger
+from ai.backend.util.write_log import logger
 
 
 # logger = logging.getLogger(__name__)

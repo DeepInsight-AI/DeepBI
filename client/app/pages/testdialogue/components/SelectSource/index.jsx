@@ -13,6 +13,7 @@ import excel from "@/assets/images/db-logos/excel.png";
 import InboxOutlinedIcon from "@ant-design/icons/InboxOutlined";
 import QuestionCircleOutlinedIcon from "@ant-design/icons/QuestionCircleOutlined";
 import InfoCircleOutlinedIcon from "@ant-design/icons/InfoCircleOutlined";
+import Link from "@/components/Link";
 import Tooltip from "@/components/Tooltip";
 import SecondChoice from "./SecondChoice";
 import './index.less';
@@ -416,7 +417,9 @@ const SelectSource = forwardRef(({ confirmLoading, Holmestable, chat_type, onCha
       <div className="flex-column">
         <div className="dislogue-caption">
             <h1>Hi !</h1>
-            <span>{chat_type==="chat"?window.W_L.chat_start:window.W_L.report_start}</span>
+            <span>{chat_type==="chat"?window.W_L.chat_start:window.W_L.report_start}
+            <Link href="/data_sources">{window.W_L.add_datasource}</Link>
+            </span> 
         </div>
         <div className="select-content">
         <Spin spinning={SelectLoading} className={!submitting?"":"dislogue-spin"}>

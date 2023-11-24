@@ -8,9 +8,12 @@ import Link from "@/components/Link";
 import PlainButton from "@/components/PlainButton";
 import CloseOutlinedIcon from "@ant-design/icons/CloseOutlined";
 import BigMessage from "@/components/BigMessage";
+import HtmlContent from "@/components/chart/components/HtmlContent";
 import { axios } from "@/services/axios";
+import { markdown } from "markdown";
 import DynamicComponent, { registerComponent } from "@/components/DynamicComponent";
-
+import usermdcn from "./user_manual/user_help_cn.md";
+import usermden from "./user_manual/user_help_en.md";
 import "./HelpTrigger.less";
 
 const DOMAIN = "https://xxx";
@@ -136,12 +139,8 @@ export function helpTriggerWithTypes(types, allowedDomains = [], drawerClassName
       return helpTriggerType ? helpTriggerType[0] : this.props.href;
     };
     getRichText =async () => {
-      const res =await axios.get('/api/left_menu');
-      if(res&&res.length>0){
-        this.setState({ richText: JSON.parse(res),loading: false });
-      }else{
-        this.setState({ loading: false });
-      }
+      let md = markdown.toHTML(window.W_L.language_mode==="CN"?usermdcn:usermden);
+      this.setState({ richText: md,loading: false });
     }
       
     openDrawer = e => {
@@ -219,7 +218,7 @@ export function helpTriggerWithTypes(types, allowedDomains = [], drawerClassName
             visible={this.state.visible}
             className={cx("help-drawer", drawerClassName)}
             destroyOnClose
-            width={400}>
+            width={1000}>
             <div className="drawer-wrapper">
               <div className="drawer-menu">
                 {url && (
@@ -238,9 +237,8 @@ export function helpTriggerWithTypes(types, allowedDomains = [], drawerClassName
                 </Tooltip>
               </div>
               {/* rich text */}
-              {this.state.richText && this.state.richText.length>0 && this.state.richText.map((item,index)=>{
-                return <div className="help-content" dangerouslySetInnerHTML={{ __html: item.value }} />
-              })
+              {this.state.richText &&
+                 <HtmlContent className="preview markdown">{this.state.richText}</HtmlContent>
               }
               {/* iframe */}
               {/* {!this.state.error && (

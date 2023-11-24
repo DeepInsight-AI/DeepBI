@@ -13,10 +13,10 @@ import useQueryResultData from "@/lib/useQueryResultData";
 import { useUniqueId } from "@/lib/hooks/useUniqueId";
 import {
   registeredVisualizations,
-  getDefaultVisualization,
+  getDefaultVisualization, 
   newVisualization,
   VisualizationType,
-} from "@redash/viz/lib";
+} from "@/components/chart/index";
 import { Renderer, Editor } from "@/components/visualizations/visualizationComponents";
 
 import "./EditVisualizationDialog.less";

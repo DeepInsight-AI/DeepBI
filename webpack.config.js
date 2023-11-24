@@ -168,6 +168,10 @@ const config = {
         ]
       },
       {
+        test: /\.md$/,
+        use: 'raw-loader'
+      },
+      {
         test: /\.css$/,
         use: [
           {

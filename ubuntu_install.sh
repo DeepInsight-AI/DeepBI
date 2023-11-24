@@ -113,10 +113,10 @@ sudo apt-get update &&  apt-get install -y python3-pip \
     libpq-dev g++ unixodbc-dev xmlsec1 libssl-dev default-libmysqlclient-dev freetds-dev \
     libsasl2-dev unzip libsasl2-modules-gssapi-mit
 line
-echo "init virtual evn"
+echo "init virtual vevn"
 pip install virtualenv
 echo "create venv"
-sudo virtualenv venv -p python3
+virtualenv venv -p python3
 echo "activate venv"
 source venv/bin/activate
 line
@@ -125,7 +125,7 @@ pip config set global.index-url https://pypi.tuna.tsinghua.edu.cn/simple
 pip install --upgrade pip
 line
 echo "need python require"
-pip install -r requirements.txt && pip install -r requirements_ai.txt
+pip install -r requirements.txt -r requirements_ai.txt
 line
 # check mysql config file
 if [ -f /usr/include/mysql/my_config.h ]; then
@@ -234,10 +234,11 @@ sec_key=$(openssl rand -hex 16)
 # shellcheck disable=SC2001
 env_content=$(echo "$env_content" | sed "s/SEC_KEY/$sec_key/g")
 # set user upload dir
-root=$(pwd)
-env_content="$env_content\nDATA_SOURCE_FILE_DIR=$root/user_upload_files"
+
 # save .env file
 echo "$env_content" > .env
+root=$(pwd)
+echo "DATA_SOURCE_FILE_DIR=$root/user_upload_files" >> .env
 
 
 if command -v yarn &>/dev/null; then
@@ -271,9 +272,10 @@ echo "init database "
 line
 # start server backend
 echo "start server"
-nohup ./bin/run ./manage.py runserver -h0.0.0.0  -p "$web_port" >web.log 2>&1
+nohup ./bin/run ./manage.py runserver -h0.0.0.0  -p "$web_port" >web.log 2>&1 &
 nohup ./bin/run ./manage.py rq scheduler >scheduler.log 2>&1 &
 nohup ./bin/run ./manage.py rq worker  >worker.log 2>&1 &
+nohup ./bin/run ./manage.py run_ai  >ai.log 2>&1 &
 
 
 

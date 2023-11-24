@@ -64,7 +64,7 @@ class AnalysisMysql(Analysis):
                     obj = database_util.Main(db_id)
                     if_suss, db_info = obj.run()
                     if if_suss:
-                        self.agent_instance_util.base_mysql_info = ' When connecting to the database, be sure to bring the port. This is database info :' + '\n' + str(
+                        self.agent_instance_util.base_mysql_info = ' When connecting to the database, be sure to bring the port. This is mysql database info :' + '\n' + str(
                             db_info)
                         self.agent_instance_util.base_message = str(q_str)
                         self.agent_instance_util.db_id = db_id
@@ -87,7 +87,7 @@ class AnalysisMysql(Analysis):
                     obj = database_util.Main(db_id)
                     if_suss, db_info = obj.run()
                     if if_suss:
-                        self.agent_instance_util.base_mysql_info = '  When connecting to the database, be sure to bring the port. This is database info :' + '\n' + str(
+                        self.agent_instance_util.base_mysql_info = '  When connecting to the database, be sure to bring the port. This is mysql database info :' + '\n' + str(
                             db_info)
                         self.agent_instance_util.base_message = str(q_str)
                         self.agent_instance_util.db_id = db_id

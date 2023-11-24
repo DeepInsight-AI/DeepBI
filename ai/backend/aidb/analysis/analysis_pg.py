@@ -61,7 +61,7 @@ class AnalysisPostgresql(Analysis):
                     obj = database_util.Main(db_id)
                     if_suss, db_info = obj.run()
                     if if_suss:
-                        self.agent_instance_util.base_mysql_info = '  When connecting to the database, be sure to bring the port. This is database info :' + '\n' + str(
+                        self.agent_instance_util.base_postgresql_info = '  When connecting to the database, be sure to bring the port. This is postgresql database info :' + '\n' + str(
                             db_info)
                         self.agent_instance_util.base_message = str(q_str)
                         self.agent_instance_util.db_id = db_id
@@ -85,7 +85,7 @@ class AnalysisPostgresql(Analysis):
                     obj = database_util.Main(db_id)
                     if_suss, db_info = obj.run()
                     if if_suss:
-                        self.agent_instance_util.base_mysql_info = '  When connecting to the database, be sure to bring the port. This is database info :' + '\n' + str(
+                        self.agent_instance_util.base_postgresql_info = '  When connecting to the database, be sure to bring the port. This is postgresql database info :' + '\n' + str(
                             db_info)
                         self.agent_instance_util.base_message = str(q_str)
                         self.agent_instance_util.db_id = db_id
@@ -162,9 +162,8 @@ class AnalysisPostgresql(Analysis):
                          Reply "TERMINATE" in the end when everything is done.
                          When you find an answer,  You are a report analysis, you have the knowledge and skills to turn raw data into information and insight, which can be used to make business decisions.include your analysis in your reply.
 
-                         The only source data you need to process is csv files.
-                   IMPORTANT:
-                   First, determine whether there is a need to display data in the form of charts in the user's question, such as "Please give me a histogram of the top 10 sales of sub-category products." If such a need exists, it is recommended that the function call <task_postgresql_echart_code>.If it does not exist, directly answer the questions.
+                         Be careful to avoid using postgresql special keywords in postgresql code.
+
                          """ + '\n' + self.agent_instance_util.base_postgresql_info + '\n' + CONFIG.python_base_dependency + '\n' + self.agent_instance_util.quesion_answer_language,
             human_input_mode="NEVER",
             user_name=self.user_name,

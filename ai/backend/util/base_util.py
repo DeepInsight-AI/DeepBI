@@ -4,6 +4,12 @@ from dotenv import load_dotenv
 from pathlib import Path
 
 
+host_secret = 'tNGoVq0KpQ4LKr5WMIZM'
+db_secret = 'aCyBIffJv2OSW5dOvREL'
+user_secret = 'kdgtPvEnzGKjE44d38M3'
+passwd_secret = 'D3uGSjdaHbFL1ZprkIJD'
+
+
 def is_json(myjson):
     try:
         json_object = json.loads(myjson)

@@ -1,12 +1,22 @@
 import click
 import simplejson
 from flask import current_app
-from flask.cli import FlaskGroup, run_command, with_appcontext
+from flask.cli import FlaskGroup, run_command, with_appcontext, AppGroup
 from rq import Connection
 
 from bi import __version__, create_app, settings, rq_redis_connection
 from bi.cli import data_sources, database, groups, organization, queries, users, rq
 from bi.monitor import get_status
+from ai.backend.start_server import WSServer
+
+ai = AppGroup(help="ai")
+
+
+@ai.command()
+def run_ai():
+    server_port = 8339
+    s = WSServer(server_port)
+    s.serve_forever()
 
 
 def create(group):
@@ -35,6 +45,7 @@ manager.add_command(organization.manager, "org")
 manager.add_command(queries.manager, "queries")
 manager.add_command(rq.manager, "rq")
 manager.add_command(run_command, "runserver")
+manager.add_command(run_ai, "run_ai")
 
 
 @manager.command()

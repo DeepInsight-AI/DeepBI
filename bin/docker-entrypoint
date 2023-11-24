@@ -10,7 +10,7 @@ scheduler() {
 server_socket() {
   echo "Starting ai web-socket server.."
 
-  exec python /app/ai/main.py
+  exec /app/manage.py run_ai
 }
 
 worker() {

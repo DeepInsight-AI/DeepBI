@@ -184,7 +184,7 @@ class AnalysisMysql(Analysis):
 
                     await python_executor.initiate_chat(
                         mysql_echart_assistant,
-                        message=self.base_message + '\n' + self.question_ask + '\n' + str(
+                        message=self.agent_instance_util.base_message + '\n' + self.question_ask + '\n' + str(
                             qustion_message),
                     )
 

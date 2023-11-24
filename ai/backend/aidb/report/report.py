@@ -1,6 +1,6 @@
-from backend.base_config import CONFIG
-from backend.aidb import AIDB
-from agents.agentchat import HumanProxyAgent, TaskSelectorAgent
+from ai.backend.base_config import CONFIG
+from ai.backend.aidb import AIDB
+from ai.agents.agentchat import HumanProxyAgent, TaskSelectorAgent
 
 
 class Report(AIDB):
@@ -26,8 +26,8 @@ class Report(AIDB):
         select_report_assistant = TaskSelectorAgent(
             name="select_report_assistant",
             system_message="""You are a helpful AI assistant.
-                     Divide the questions raised by users into corresponding task types. 
-                     Different tasks have different processing methods. 
+                     Divide the questions raised by users into corresponding task types.
+                     Different tasks have different processing methods.
                      Task types are generally divided into the following categories:
                      - Report generation task: query data, and finally display the data in the form of charts.
                      - base tasks: analyze existing data and draw conclusions about the given problem.

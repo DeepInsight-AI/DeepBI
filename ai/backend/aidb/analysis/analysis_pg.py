@@ -1,13 +1,13 @@
 import traceback
 import json
-from backend.util.write_log import logger
-from backend.base_config import CONFIG
-from backend.util import database_util
+from ai.backend.util.write_log import logger
+from ai.backend.base_config import CONFIG
+from ai.backend.util import database_util
 from .analysis import Analysis
 import re
 import ast
-from agents.agentchat import HumanProxyAgent, TaskSelectorAgent
-from backend.util import base_util
+from ai.agents.agentchat import TaskSelectorAgent
+from ai.backend.util import base_util
 
 language_chinese = CONFIG.language_chinese
 max_retry_times = CONFIG.max_retry_times
@@ -64,6 +64,8 @@ class AnalysisPostgresql(Analysis):
                         self.agent_instance_util.base_mysql_info = '  When connecting to the database, be sure to bring the port. This is database info :' + '\n' + str(
                             db_info)
                         self.agent_instance_util.base_message = str(q_str)
+                        self.agent_instance_util.db_id = db_id
+
                 else:
                     self.agent_instance_util.base_message = str(q_str)
 
@@ -86,6 +88,8 @@ class AnalysisPostgresql(Analysis):
                         self.agent_instance_util.base_mysql_info = '  When connecting to the database, be sure to bring the port. This is database info :' + '\n' + str(
                             db_info)
                         self.agent_instance_util.base_message = str(q_str)
+                        self.agent_instance_util.db_id = db_id
+
                 else:
                     self.agent_instance_util.base_message = str(q_str)
 
@@ -101,144 +105,6 @@ class AnalysisPostgresql(Analysis):
                 self.delay_messages['bi'][q_data_type].append(message)
                 print("delay_messages : ", self.delay_messages)
                 return
-
-    async def start_chatgroup(self, q_str):
-        user_proxy = self.get_agent_user_proxy()
-        # base_postgresql_assistant = self.agent_instance_util.get_agent_base_postgresql_assistant()
-        base_postgresql_assistant = self.get_agent_select_analysis_assistant()
-
-        await user_proxy.initiate_chat(
-            base_postgresql_assistant,
-            message=self.question_ask + '\n' + str(q_str),
-        )
-
-    async def task_generate_echart(self, qustion_message):
-        """ Task type: postgresql echart code block"""
-        try:
-            base_content = []
-            base_mess = []
-            report_demand_list = []
-            json_str = ""
-            error_times = 0
-            use_cache = True
-            for i in range(max_retry_times):
-                try:
-                    postgresql_echart_assistant = self.agent_instance_util.get_agent_postgresql_echart_assistant(
-                        use_cache=use_cache)
-                    python_executor = self.agent_instance_util.get_agent_python_executor()
-
-                    await python_executor.initiate_chat(
-                        postgresql_echart_assistant,
-                        message=self.agent_instance_util.base_message + '\n' + self.question_ask + '\n' + str(
-                            qustion_message),
-                    )
-
-                    answer_message = postgresql_echart_assistant.chat_messages[python_executor]
-
-
-                    for answer_mess in answer_message:
-                        # print("answer_mess :", answer_mess)
-                        if answer_mess['content']:
-                            if str(answer_mess['content']).__contains__('execution succeeded'):
-
-                                answer_mess_content = str(answer_mess['content']).replace('\n', '')
-
-                                print("answer_mess: ", answer_mess)
-                                match = re.search(
-                                    r"\[.*\]", answer_mess_content.strip(), re.MULTILINE | re.IGNORECASE | re.DOTALL
-                                )
-
-                                if match:
-                                    json_str = match.group()
-                                print("json_str : ", json_str)
-                                # report_demand_list = json.loads(json_str)
-
-                                chart_code_str = str(json_str).replace('\n', '')
-
-                                if len(chart_code_str) > 0:
-                                    print("chart_code_str: ", chart_code_str)
-                                    if base_util.is_json(chart_code_str):
-                                        # report_demand_list = ast.literal_eval(chart_code_str)
-                                        report_demand_list = json.loads(chart_code_str)
-
-                                        print("report_demand_list: ", report_demand_list)
-
-                                        for jstr in report_demand_list:
-                                            if str(jstr).__contains__('echart_name') and str(jstr).__contains__(
-                                                    'echart_code'):
-                                                base_content.append(jstr)
-                                    else:
-                                        report_demand_list = ast.literal_eval(chart_code_str)
-                                        print("report_demand_list: ", report_demand_list)
-                                        for jstr in report_demand_list:
-                                            if str(jstr).__contains__('echart_name') and str(jstr).__contains__(
-                                                    'echart_code'):
-                                                base_content.append(jstr)
-
-                    print("base_content: ", base_content)
-                    base_mess = []
-                    base_mess.append(answer_mess)
-                    break
-
-                except Exception as e:
-                    traceback.print_exc()
-                    logger.error("from user:[{}".format(self.user_name) + "] , " + "error: " + str(e))
-                    error_times = error_times + 1
-                    use_cache = False
-
-            if error_times >= max_retry_times:
-                return self.error_message_timeout
-
-            bi_proxy = self.agent_instance_util.get_agent_bi_proxy()
-            for img_str in base_content:
-                echart_name = img_str.get('echart_name')
-                echart_code = img_str.get('echart_code')
-
-                if len(echart_code) > 0 and str(echart_code).__contains__('x'):
-                    is_chart = True
-                    print("echart_name : ", echart_name)
-                    re_str = await bi_proxy.run_echart_code(str(echart_code), echart_name)
-                    base_mess.append(re_str)
-
-            error_times = 0
-            for i in range(max_retry_times):
-                try:
-                    planner_user = self.agent_instance_util.get_agent_planner_user()
-                    analyst = self.agent_instance_util.get_agent_analyst()
-
-                    question_supplement = 'Please make an analysis and summary in English, including which charts were generated, and briefly introduce the contents of these charts.'
-                    if self.language_mode == language_chinese:
-                        if is_chart:
-                            question_supplement = " 请用中文，简单介绍一下已生成图表中的数据内容."
-                        else:
-                            question_supplement = " 请用中文，从上诉对话中分析总结出问题的答案."
-
-                    await planner_user.initiate_chat(
-                        analyst,
-                        # manager,
-                        # message=content + '\n' + " This is my question: " + '\n' + str(qustion_message),
-                        message=str(base_mess) + '\n' + str(
-                            qustion_message) + '\n' + self.question_ask + '\n' + question_supplement,
-                    )
-
-                    answer_message = planner_user.last_message()["content"]
-                    # answer_message = planner_user.chat_messages[-1]["content"]
-                    # print("answer_message: ", answer_message)
-                    return answer_message
-
-                except Exception as e:
-                    traceback.print_exc()
-                    logger.error("from user:[{}".format(self.user_name) + "] , " + "error: " + str(e))
-                    error_times = error_times + 1
-
-            if error_times == max_retry_times:
-                return self.error_message_timeout
-
-        except Exception as e:
-            traceback.print_exc()
-            logger.error("from user:[{}".format(self.user_name) + "] , " + "error: " + str(e))
-
-        return self.agent_instance_util.data_analysis_error
 
     async def task_base(self, qustion_message):
         """ Task type:  data analysis"""
@@ -294,7 +160,7 @@ class AnalysisPostgresql(Analysis):
                          If the result indicates there is an error, fix the error and output the code again. Suggest the full code instead of partial code or code changes. If the error can't be fixed or if the task is not solved even after the code is executed successfully, analyze the problem, revisit your assumption, collect additional info you need, and think of a different approach to try.
                          When you find an answer, verify the answer carefully. Include verifiable evidence in your response if possible.
                          Reply "TERMINATE" in the end when everything is done.
-                         When you find an answer,  You are a report analysis, you have the knowledge and skills to turn raw data into information and insight, which can be used to make business decisions.include your analysis in your reply.     
+                         When you find an answer,  You are a report analysis, you have the knowledge and skills to turn raw data into information and insight, which can be used to make business decisions.include your analysis in your reply.
 
                          The only source data you need to process is csv files.
                    IMPORTANT:
@@ -310,3 +176,127 @@ class AnalysisPostgresql(Analysis):
             openai_proxy=self.agent_instance_util.openai_proxy,
         )
         return base_postgresql_assistant
+
+    async def task_generate_echart(self, qustion_message):
+        """ Task type: postgresql echart code block"""
+        try:
+            base_content = []
+            base_mess = []
+            report_demand_list = []
+            json_str = ""
+            error_times = 0
+            use_cache = True
+            for i in range(max_retry_times):
+                try:
+                    postgresql_echart_assistant = self.agent_instance_util.get_agent_postgresql_echart_assistant(
+                        use_cache=use_cache)
+                    python_executor = self.agent_instance_util.get_agent_python_executor()
+
+                    await python_executor.initiate_chat(
+                        postgresql_echart_assistant,
+                        message=self.agent_instance_util.base_message + '\n' + self.question_ask + '\n' + str(
+                            qustion_message),
+                    )
+
+                    answer_message = postgresql_echart_assistant.chat_messages[python_executor]
+
+                    for answer_mess in answer_message:
+                        # print("answer_mess :", answer_mess)
+                        if answer_mess['content']:
+                            if str(answer_mess['content']).__contains__('execution succeeded'):
+
+                                answer_mess_content = str(answer_mess['content']).replace('\n', '')
+
+                                print("answer_mess: ", answer_mess)
+                                match = re.search(
+                                    r"\[.*\]", answer_mess_content.strip(), re.MULTILINE | re.IGNORECASE | re.DOTALL
+                                )
+
+                                if match:
+                                    json_str = match.group()
+                                print("json_str : ", json_str)
+                                # report_demand_list = json.loads(json_str)
+
+                                chart_code_str = str(json_str).replace('\n', '')
+
+                                if len(chart_code_str) > 0:
+                                    print("chart_code_str: ", chart_code_str)
+                                    if base_util.is_json(chart_code_str):
+                                        # report_demand_list = ast.literal_eval(chart_code_str)
+                                        report_demand_list = json.loads(chart_code_str)
+
+                                        print("report_demand_list: ", report_demand_list)
+
+                                        for jstr in report_demand_list:
+                                            if str(jstr).__contains__('echart_name') and str(jstr).__contains__(
+                                                'echart_code'):
+                                                base_content.append(jstr)
+                                    else:
+                                        report_demand_list = ast.literal_eval(chart_code_str)
+                                        print("report_demand_list: ", report_demand_list)
+                                        for jstr in report_demand_list:
+                                            if str(jstr).__contains__('echart_name') and str(jstr).__contains__(
+                                                'echart_code'):
+                                                base_content.append(jstr)
+
+                    print("base_content: ", base_content)
+                    base_mess = []
+                    base_mess.append(answer_mess)
+                    break
+
+                except Exception as e:
+                    traceback.print_exc()
+                    logger.error("from user:[{}".format(self.user_name) + "] , " + "error: " + str(e))
+                    error_times = error_times + 1
+                    use_cache = False
+
+            if error_times >= max_retry_times:
+                return self.error_message_timeout
+
+            bi_proxy = self.agent_instance_util.get_agent_bi_proxy()
+            is_chart = False
+            for img_str in base_content:
+                echart_name = img_str.get('echart_name')
+                echart_code = img_str.get('echart_code')
+
+                if len(echart_code) > 0 and str(echart_code).__contains__('x'):
+                    is_chart = True
+                    print("echart_name : ", echart_name)
+                    re_str = await bi_proxy.run_echart_code(str(echart_code), echart_name)
+                    base_mess.append(re_str)
+
+            error_times = 0
+            for i in range(max_retry_times):
+                try:
+                    planner_user = self.agent_instance_util.get_agent_planner_user()
+                    analyst = self.agent_instance_util.get_agent_analyst()
+
+                    question_supplement = 'Please make an analysis and summary in English, including which charts were generated, and briefly introduce the contents of these charts.'
+                    if self.language_mode == language_chinese:
+                        if is_chart:
+                            question_supplement = " 请用中文，简单介绍一下已生成图表中的数据内容."
+                        else:
+                            question_supplement = " 请用中文，从上诉对话中分析总结出问题的答案."
+
+                    await planner_user.initiate_chat(
+                        analyst,
+                        message=str(base_mess) + '\n' + self.question_ask + '\n' + question_supplement,
+                    )
+
+                    answer_message = planner_user.last_message()["content"]
+                    return answer_message
+
+                except Exception as e:
+                    traceback.print_exc()
+                    logger.error("from user:[{}".format(self.user_name) + "] , " + "error: " + str(e))
+                    error_times = error_times + 1
+
+            if error_times == max_retry_times:
+                return self.error_message_timeout
+
+        except Exception as e:
+            traceback.print_exc()
+            logger.error("from user:[{}".format(self.user_name) + "] , " + "error: " + str(e))
+
+        return self.agent_instance_util.data_analysis_error
+

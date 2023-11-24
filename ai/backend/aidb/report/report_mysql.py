@@ -1,12 +1,12 @@
 from .report import Report
 import json
-from backend.util.write_log import logger
+from ai.backend.util.write_log import logger
 import traceback
-from backend.base_config import CONFIG
-from backend.util import database_util
+from ai.backend.base_config import CONFIG
+from ai.backend.util import database_util
 import re
-from backend.util.token_util import num_tokens_from_messages
-from agents.agentchat import HumanProxyAgent, TaskSelectorAgent
+from ai.backend.util.token_util import num_tokens_from_messages
+from ai.agents.agentchat import HumanProxyAgent, TaskSelectorAgent
 
 max_retry_times = CONFIG.max_retry_times
 

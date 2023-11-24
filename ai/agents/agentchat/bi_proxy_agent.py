@@ -3,9 +3,9 @@ from collections import defaultdict
 import copy
 import json
 from typing import Any, Callable, Dict, List, Optional, Tuple, Type, Union
-from agents import oai
+from ai.agents import oai
 from .agent import Agent
-from agents.code_utils import (
+from ai.agents.code_utils import (
     DEFAULT_MODEL,
     UNKNOWN,
     execute_code,
@@ -14,10 +14,10 @@ from agents.code_utils import (
 )
 import time
 import ast
-from backend.util.write_log import logger
-from backend.util.token_util import num_tokens_from_messages
+from ai.backend.util.write_log import logger
+from ai.backend.util.token_util import num_tokens_from_messages
 import traceback
-from backend.base_config import if_hide_sensitive
+from ai.backend.base_config import if_hide_sensitive
 
 try:
     from termcolor import colored

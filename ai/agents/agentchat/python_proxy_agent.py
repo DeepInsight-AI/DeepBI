@@ -3,9 +3,9 @@ from collections import defaultdict
 import copy
 import json
 from typing import Any, Callable, Dict, List, Optional, Tuple, Type, Union
-from agents import oai
+from ai.agents import oai
 from .agent import Agent
-from agents.code_utils import (
+from ai.agents.code_utils import (
     DEFAULT_MODEL,
     UNKNOWN,
     execute_code,
@@ -13,8 +13,10 @@ from agents.code_utils import (
     infer_lang,
 )
 import traceback
-from backend.util.write_log import logger
-from agents.code_utils import tell_logger
+from ai.backend.util.write_log import logger
+from ai.agents.code_utils import tell_logger
+from ai.backend.util.base_util import dbinfo_decode
+from ai.backend.util import database_util
 
 try:
     from termcolor import colored
@@ -46,20 +48,21 @@ class PythonProxyAgent(Agent):
     MAX_CONSECUTIVE_AUTO_REPLY = 100  # maximum number of consecutive auto replies (subject to future change)
 
     def __init__(
-            self,
-            name: str,
-            system_message: Optional[str] = None,
-            is_termination_msg: Optional[Callable[[Dict], bool]] = None,
-            max_consecutive_auto_reply: Optional[int] = None,
-            human_input_mode: Optional[str] = "TERMINATE",
-            function_map: Optional[Dict[str, Callable]] = None,
-            code_execution_config: Optional[Union[Dict, bool]] = None,
-            llm_config: Optional[Union[Dict, bool]] = None,
-            default_auto_reply: Optional[Union[str, Dict, None]] = "",
-            websocket: Optional = None,
-            user_name: Optional[str] = "default_user",
-            outgoing: Optional = None,
-            incoming: Optional = None,
+        self,
+        name: str,
+        system_message: Optional[str] = None,
+        is_termination_msg: Optional[Callable[[Dict], bool]] = None,
+        max_consecutive_auto_reply: Optional[int] = None,
+        human_input_mode: Optional[str] = "TERMINATE",
+        function_map: Optional[Dict[str, Callable]] = None,
+        code_execution_config: Optional[Union[Dict, bool]] = None,
+        llm_config: Optional[Union[Dict, bool]] = None,
+        default_auto_reply: Optional[Union[str, Dict, None]] = "",
+        websocket: Optional = None,
+        user_name: Optional[str] = "default_user",
+        outgoing: Optional = None,
+        incoming: Optional = None,
+        db_id: Optional = None,
     ):
         """
         Args:
@@ -137,14 +140,15 @@ class PythonProxyAgent(Agent):
         self.user_name = user_name
         self.outgoing = outgoing
         self.incoming = incoming
+        self.db_id = db_id
 
     def register_reply(
-            self,
-            trigger: Union[Type[Agent], str, Agent, Callable[[Agent], bool], List],
-            reply_func: Callable,
-            position: Optional[int] = 0,
-            config: Optional[Any] = None,
-            reset_config: Optional[Callable] = None,
+        self,
+        trigger: Union[Type[Agent], str, Agent, Callable[[Agent], bool], List],
+        reply_func: Callable,
+        position: Optional[int] = 0,
+        config: Optional[Any] = None,
+        reset_config: Optional[Callable] = None,
     ):
         """Register a reply function.
 
@@ -304,11 +308,11 @@ class PythonProxyAgent(Agent):
         return True
 
     async def send(
-            self,
-            message: Union[Dict, str],
-            recipient: Agent,
-            request_reply: Optional[bool] = None,
-            silent: Optional[bool] = False,
+        self,
+        message: Union[Dict, str],
+        recipient: Agent,
+        request_reply: Optional[bool] = None,
+        silent: Optional[bool] = False,
     ) -> bool:
         """Send a message to another agent.
 
@@ -355,11 +359,11 @@ class PythonProxyAgent(Agent):
             )
 
     async def a_send(
-            self,
-            message: Union[Dict, str],
-            recipient: Agent,
-            request_reply: Optional[bool] = None,
-            silent: Optional[bool] = False,
+        self,
+        message: Union[Dict, str],
+        recipient: Agent,
+        request_reply: Optional[bool] = None,
+        silent: Optional[bool] = False,
     ) -> bool:
         """(async) Send a message to another agent.
 
@@ -463,11 +467,11 @@ class PythonProxyAgent(Agent):
             await self._print_received_message(message, sender)
 
     async def receive(
-            self,
-            message: Union[Dict, str],
-            sender: Agent,
-            request_reply: Optional[bool] = None,
-            silent: Optional[bool] = False,
+        self,
+        message: Union[Dict, str],
+        sender: Agent,
+        request_reply: Optional[bool] = None,
+        silent: Optional[bool] = False,
     ):
         """Receive a message from another agent.
 
@@ -502,11 +506,11 @@ class PythonProxyAgent(Agent):
             await self.send(reply, sender, silent=silent)
 
     async def a_receive(
-            self,
-            message: Union[Dict, str],
-            sender: Agent,
-            request_reply: Optional[bool] = None,
-            silent: Optional[bool] = False,
+        self,
+        message: Union[Dict, str],
+        sender: Agent,
+        request_reply: Optional[bool] = None,
+        silent: Optional[bool] = False,
     ):
         """(async) Receive a message from another agent.
 
@@ -546,11 +550,11 @@ class PythonProxyAgent(Agent):
             recipient.clear_history(self)
 
     async def initiate_chat(
-            self,
-            recipient: "ConversableAgent",
-            clear_history: Optional[bool] = True,
-            silent: Optional[bool] = False,
-            **context,
+        self,
+        recipient: "ConversableAgent",
+        clear_history: Optional[bool] = True,
+        silent: Optional[bool] = False,
+        **context,
     ):
         """Initiate a chat with the recipient agent.
 
@@ -569,11 +573,11 @@ class PythonProxyAgent(Agent):
         await self.send(self.generate_init_message(**context), recipient, silent=silent)
 
     async def a_initiate_chat(
-            self,
-            recipient: "ConversableAgent",
-            clear_history: Optional[bool] = True,
-            silent: Optional[bool] = False,
-            **context,
+        self,
+        recipient: "ConversableAgent",
+        clear_history: Optional[bool] = True,
+        silent: Optional[bool] = False,
+        **context,
     ):
         """(async) Initiate a chat with the recipient agent.
 
@@ -629,10 +633,10 @@ class PythonProxyAgent(Agent):
             self._oai_messages[agent].clear()
 
     def generate_oai_reply(
-            self,
-            messages: Optional[List[Dict]] = None,
-            sender: Optional[Agent] = None,
-            config: Optional[Any] = None,
+        self,
+        messages: Optional[List[Dict]] = None,
+        sender: Optional[Agent] = None,
+        config: Optional[Any] = None,
     ) -> Tuple[bool, Union[str, Dict, None]]:
         """Generate a reply using autogen.oai.
         """
@@ -650,10 +654,10 @@ class PythonProxyAgent(Agent):
         return True, oai.ChatCompletion.extract_text_or_function_call(response)[0]
 
     def generate_code_execution_reply(
-            self,
-            messages: Optional[List[Dict]] = None,
-            sender: Optional[Agent] = None,
-            config: Optional[Any] = None,
+        self,
+        messages: Optional[List[Dict]] = None,
+        sender: Optional[Agent] = None,
+        config: Optional[Any] = None,
     ):
         """Generate a reply using code execution.
         """
@@ -682,6 +686,17 @@ class PythonProxyAgent(Agent):
             if len(code_blocks) == 1 and code_blocks[0][0] != 'python':
                 continue
 
+            if self.db_id is not None:
+                obj = database_util.Main(self.db_id)
+                if_suss, db_info = obj.run_decode()
+                if if_suss:
+                    code_blocks = [(item[0], dbinfo_decode(item[1], db_info)) if isinstance(item[1], str) else item for
+                                   item in
+                                   code_blocks]
+
+                    # code_blocks = self.replace_ab_with_ac(code_blocks, db_info)
+                    print('new_code_blocks : ', code_blocks)
+
             # found code blocks, execute code and push "last_n_messages" back
             exitcode, logs = self.execute_code_blocks(code_blocks)
             code_execution_config["last_n_messages"] = last_n_messages
@@ -694,10 +709,10 @@ class PythonProxyAgent(Agent):
         return False, None
 
     async def generate_function_call_reply(
-            self,
-            messages: Optional[List[Dict]] = None,
-            sender: Optional[Agent] = None,
-            config: Optional[Any] = None,
+        self,
+        messages: Optional[List[Dict]] = None,
+        sender: Optional[Agent] = None,
+        config: Optional[Any] = None,
     ):
         """Generate a reply using function call.
         """
@@ -713,10 +728,10 @@ class PythonProxyAgent(Agent):
         return False, None
 
     async def check_termination_and_human_reply(
-            self,
-            messages: Optional[List[Dict]] = None,
-            sender: Optional[Agent] = None,
-            config: Optional[Any] = None,
+        self,
+        messages: Optional[List[Dict]] = None,
+        sender: Optional[Agent] = None,
+        config: Optional[Any] = None,
     ) -> Tuple[bool, Union[str, Dict, None]]:
         """Check if the conversation should be terminated, and if human reply is provided.
         """
@@ -787,10 +802,10 @@ class PythonProxyAgent(Agent):
         return False, None
 
     async def generate_reply(
-            self,
-            messages: Optional[List[Dict]] = None,
-            sender: Optional[Agent] = None,
-            exclude: Optional[List[Callable]] = None,
+        self,
+        messages: Optional[List[Dict]] = None,
+        sender: Optional[Agent] = None,
+        exclude: Optional[List[Callable]] = None,
     ) -> Union[str, Dict, None]:
         """Reply based on the conversation history and the sender.
 
@@ -843,10 +858,10 @@ class PythonProxyAgent(Agent):
         return self._default_auto_reply
 
     async def a_generate_reply(
-            self,
-            messages: Optional[List[Dict]] = None,
-            sender: Optional[Agent] = None,
-            exclude: Optional[List[Callable]] = None,
+        self,
+        messages: Optional[List[Dict]] = None,
+        sender: Optional[Agent] = None,
+        exclude: Optional[List[Callable]] = None,
     ) -> Union[str, Dict, None]:
         """(async) Reply based on the conversation history and the sender.
 

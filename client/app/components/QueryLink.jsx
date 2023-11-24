@@ -1,6 +1,6 @@
 import React from "react";
 import PropTypes from "prop-types";
-import { VisualizationType } from "@redash/viz/lib";
+import { VisualizationType } from "@/components/chart/visualizations/prop-types"; 
 import Link from "@/components/Link";
 import VisualizationName from "@/components/visualizations/VisualizationName";
 

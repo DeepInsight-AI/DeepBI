@@ -27,7 +27,7 @@ https://github.com/Deep-thoughtIO/Holmes/assets/151519374/d1effbe1-5c11-4c77-86e
 
 
 ## user manual
-[Holmes user manual](user_manual/en/user_manual_en.md)
+[Holmes user manual](client/app/assets/images/en/user_manual_en.md)
 
 
 ## ✨ Features

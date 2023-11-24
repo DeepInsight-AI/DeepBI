@@ -21,8 +21,8 @@ import VisualizationRenderer from "@/components/visualizations/VisualizationRend
 import FileOutlinedIcon from "@ant-design/icons/FileOutlined";
 import FileExcelOutlinedIcon from "@ant-design/icons/FileExcelOutlined";
 
-import { VisualizationType } from "@redash/viz/lib";
-import HtmlContent from "@redash/viz/lib/components/HtmlContent";
+import { VisualizationType } from "@/components/chart/index";
+import HtmlContent from "@/components/chart/components/HtmlContent";
 
 import { formatDateTime } from "@/lib/utils";
 import useImmutableCallback from "@/lib/hooks/useImmutableCallback";

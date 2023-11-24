@@ -4,7 +4,7 @@ import { compact, isEmpty, invoke, map } from "lodash";
 import { markdown } from "markdown";
 import cx from "classnames";
 import Menu from "antd/lib/menu";
-import HtmlContent from "@redash/viz/lib/components/HtmlContent";
+import HtmlContent from "@/components/chart/components/HtmlContent";
 import { currentUser } from "@/services/auth";
 import recordEvent from "@/services/recordEvent";
 import { formatDateTime } from "@/lib/utils";

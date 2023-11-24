@@ -19,7 +19,7 @@ import {
 import location from "@/services/location";
 import { cloneParameter } from "@/services/parameters";
 import dashboardGridOptions from "@/config/dashboard-grid-options";
-import { registeredVisualizations } from "@redash/viz/lib";
+import { registeredVisualizations } from "@/components/chart/index";
 import { Query } from "./query";
 
 export const WidgetTypeEnum = {

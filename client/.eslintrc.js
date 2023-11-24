@@ -58,6 +58,8 @@ module.exports = {
       rules: {
         // Do not require functions (especially react components) to have explicit returns
         "@typescript-eslint/explicit-function-return-type": "off",
+        "@typescript-eslint/no-empty-function": "off",
+
         // Do not require to type every import from a JS file to speed up development
         "@typescript-eslint/no-explicit-any": "off",
         // Do not complain about useless contructors in declaration files

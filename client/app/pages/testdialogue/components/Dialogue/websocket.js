@@ -16,7 +16,7 @@ let createWebSocket = () => {
   const url = `${wsProtocol}://${process.env.SOCKET}${currentUser.id}_${currentUser.name}`
   websocket = new WebSocket(url);
   websocket.onopen = function () {
-    // heartCheck.reset().start();
+    heartCheck.reset().start();
     // notification.success(window.W_L.connection_success_tip)
     lockReconnect = true;
     stopGeneration=false;
@@ -46,19 +46,31 @@ let reconnect = (url) => {
     lockReconnectEvent.emit('change', wsType);
   }, 4000);
 };
-// let heartCheck = {
-//   timeout: 60000, 
-//   timeoutObj: null,
-//   reset: function () {
-//     clearInterval(this.timeoutObj);
-//     return this;
-//   },
-//   start: function () {
-//     this.timeoutObj = setInterval(function () {
-//       websocket.send("HeartBeat");
-//     }, this.timeout);
-//   },
-// };
+let heartCheck = {
+  timeout: 60000, 
+  timeoutObj: null,
+  reset: function () {
+    clearInterval(this.timeoutObj);
+    return this;
+  },
+  start: function () {
+    this.timeoutObj = setInterval(function () {
+      const messgaeInfo = {
+        state:200,
+        sender:"heartCheck",
+        data: {
+          content:"HeartBeat",
+        },
+      }
+      sendMessage(messgaeInfo)
+    }, this.timeout);
+  },
+};
+let sendMessage = (message) => {
+  if (websocket && websocket.readyState === 1) {
+    websocket.send(JSON.stringify(message));
+  }
+};
 let closeWebSocket = () => {
   websocket && websocket.close();
 };

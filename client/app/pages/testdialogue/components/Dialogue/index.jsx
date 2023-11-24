@@ -658,15 +658,6 @@ const openSocket = useCallback(() => {
   }, []);
   const stopSend = useCallback((type=null) => {
     websocket&&websocket.close();
-    // setState(prevState => ({
-    //   ...prevState,
-    //   messages: prevState.messages.map((message, i) =>
-    //     i === prevState.messages.length - 1 && message.sender === "bot" && message.Cardloading
-    //       ? { ...message, content: window.W_L.stopping_generation, Cardloading: false }
-    //       : message
-    //   ),
-    //   // sendTableDate: 0,
-    // }));
     setSendTableDate(type==="edit"?1:0);
     setLoadingState(false);
     setStopGeneration(true);

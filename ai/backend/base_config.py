@@ -1,4 +1,4 @@
-from backend.util import base_util
+from ai.backend.util import base_util
 
 
 class Config():
@@ -39,19 +39,19 @@ class Config():
         self.type_log_data = 'log_data'
         self.type_test = 'test'
 
-        self.local_base_mysql_info = """  
+        self.local_base_mysql_info = """
         """
 
-        self.online_base_mysql_info = """  
+        self.online_base_mysql_info = """
         """
 
-        self.local_base_postgresql_info = """  
+        self.local_base_postgresql_info = """
         """
 
-        self.local_base_csv_info = """ 
+        self.local_base_csv_info = """
         """
 
-        self.local_base_xls_info = """ 
+        self.local_base_xls_info = """
         """
 
         self.default_base_message = """
@@ -77,23 +77,23 @@ python_base_dependency = """python installed dependency environment: pymysql, pa
 receiver_BI = 'redash'
 receiver_user = 'user'
 
-local_base_mysql_info = """  
+local_base_mysql_info = """
 """
 
 # 在线数据库信息
-online_base_mysql_info = """ 
+online_base_mysql_info = """
 """
 
 # 在线数据库信息
-local_base_postgresql_info = """  
+local_base_postgresql_info = """
 """
 
 local_base_csv_info = """
 """
 
-local_base_xls_info = """ 
+local_base_xls_info = """
 """
 
 default_base_message = """
-       
+
         """

@@ -30,3 +30,4 @@ client/cypress/screenshots
 client/cypress/videos
 supervisord.conf
 uwsgi.ini
+/ai/test/

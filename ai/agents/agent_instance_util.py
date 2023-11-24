@@ -1,19 +1,19 @@
 from typing import Optional
 import re
 import json
-from backend.util.write_log import logger
+from ai.backend.util.write_log import logger
 import traceback
 import ast
-from backend.util.token_util import num_tokens_from_messages
-from backend.base_config import request_timeout, max_retry_times, language_chinese, \
+from ai.backend.util.token_util import num_tokens_from_messages
+from ai.backend.base_config import request_timeout, max_retry_times, language_chinese, \
     language_english, \
     local_base_postgresql_info, local_base_mysql_info, local_base_xls_info, \
     csv_file_path, python_base_dependency, default_language_mode
-from agents.prompt import CSV_ECHART_TIPS_MESS, \
+from ai.agents.prompt import CSV_ECHART_TIPS_MESS, \
     MYSQL_ECHART_TIPS_MESS, MYSQL_MATPLOTLIB_TIPS_MESS, POSTGRESQL_ECHART_TIPS_MESS
-from agents.agentchat import UserProxyAgent, GroupChat, AssistantAgent, GroupChatManager, \
+from ai.agents.agentchat import UserProxyAgent, GroupChat, AssistantAgent, GroupChatManager, \
     PythonProxyAgent, BIProxyAgent, HumanProxyAgent, TaskPlannerAgent, TaskSelectorAgent, CheckAgent
-from backend.util import base_util
+from ai.backend.util import base_util
 
 
 class AgentInstanceUtil:
@@ -207,7 +207,7 @@ class AgentInstanceUtil:
             llm_config=chart_llm_config,
             system_message='''You are a chart data presenter, and your task is to choose the appropriate presentation method for the data.
                      There are currently several types of charts that can be used, including line, column, area, pie, scanner, bubble, heatmap, box, and table.
-                     For example, selecting a set of data to display in a column chart format and specifying the x and y axis data. 
+                     For example, selecting a set of data to display in a column chart format and specifying the x and y axis data.
                      Usually, there can only be one set of x-axis data, while there can be multiple sets of y-axis data.
                      Hand over your code to the Executor for execution.
                      There can only be x-axis and y-axis mappings in columnMapping
@@ -216,7 +216,7 @@ class AgentInstanceUtil:
                      There can be one or more mappings on the y-axis, such as {"prao": "y", "prbo": "y"}.
                      The output should be formatted as a JSON instance that conforms to the JSON schema below, the JSON is a list of dict,
                       [
-                          {"globalSeriesType":"box","columnMapping":{"mon":"x","prao":"y","prbo":"y","prco":"y"}} 
+                          {"globalSeriesType":"box","columnMapping":{"mon":"x","prao":"y","prbo":"y","prco":"y"}}
                       ].
 
                       If there is no suitable chart, or if the user requests a table, use the table to display, and the returned results are as follows:
@@ -265,8 +265,8 @@ class AgentInstanceUtil:
         base_assistant = TaskSelectorAgent(
             name="base_assistant",
             system_message="""You are a helpful AI assistant.
-                Divide the questions raised by users into corresponding task types. 
-                Different tasks have different processing methods. 
+                Divide the questions raised by users into corresponding task types.
+                Different tasks have different processing methods.
                 Task types are generally divided into the following categories:
                 - Report generation task: query data, and finally display the data in the form of charts.
                 - base tasks: analyze existing data and draw conclusions about the given problem.
@@ -330,7 +330,7 @@ class AgentInstanceUtil:
                       If the result indicates there is an error, fix the error and output the code again. Suggest the full code instead of partial code or code changes. If the error can't be fixed or if the task is not solved even after the code is executed successfully, analyze the problem, revisit your assumption, collect additional info you need, and think of a different approach to try.
                       When you find an answer, verify the answer carefully. Include verifiable evidence in your response if possible.
                       Reply "TERMINATE" in the end when everything is done.
-                      When you find an answer,  You are a report analysis, you have the knowledge and skills to turn raw data into information and insight, which can be used to make business decisions.include your analysis in your reply.     
+                      When you find an answer,  You are a report analysis, you have the knowledge and skills to turn raw data into information and insight, which can be used to make business decisions.include your analysis in your reply.
 
                       The only source data you need to process is csv files.
                 IMPORTANT:
@@ -378,7 +378,7 @@ class AgentInstanceUtil:
                          If the result indicates there is an error, fix the error and output the code again. Suggest the full code instead of partial code or code changes. If the error can't be fixed or if the task is not solved even after the code is executed successfully, analyze the problem, revisit your assumption, collect additional info you need, and think of a different approach to try.
                          When you find an answer, verify the answer carefully. Include verifiable evidence in your response if possible.
                          Reply "TERMINATE" in the end when everything is done.
-                         When you find an answer,  You are a report analysis, you have the knowledge and skills to turn raw data into information and insight, which can be used to make business decisions.include your analysis in your reply.     
+                         When you find an answer,  You are a report analysis, you have the knowledge and skills to turn raw data into information and insight, which can be used to make business decisions.include your analysis in your reply.
 
                          The only source data you need to process is csv files.
                    IMPORTANT:
@@ -424,36 +424,13 @@ class AgentInstanceUtil:
         )
         return analyst
 
-    def get_agent_user_proxy(self):
-        """ Human Proxy  """
-        user_proxy = HumanProxyAgent(
-            name="Admin",
-            system_message="A human admin. Interact with the planner to discuss the plan. ",
-            code_execution_config={"last_n_messages": 1, "work_dir": "paper"},
-            human_input_mode="NEVER",
-            websocket=self.websocket,
-            user_name=self.user_name,
-            function_map={"task_generate_report": self.task_generate_report,
-                          "task_analysis_data": self.task_analysis_data,
-                          "task_delete_chart": self.task_delete_chart,
-                          "task_chart_img": self.task_chart_img,
-                          "task_mysql_echart_code": self.task_mysql_echart_code,
-                          "task_csv_echart_code": self.task_csv_echart_code,
-                          "task_postgresql_echart_code": self.task_postgresql_echart_code,
-                          "task_mysql_base": self.task_mysql_base,
-                          },
-            outgoing=self.outgoing,
-            incoming=self.incoming,
-            openai_proxy=self.openai_proxy,
-        )
-        return user_proxy
 
     def get_agent_chart_deleter(self):
         chart_deleter = AssistantAgent(
             name="chart_deleter",
             system_message="""Analyze the list of report chart names that the user wants to delete from the questions raised by the user.
                             If you are unsure which report chart the user wants to delete, please let user know.
-                            If you can determine which report charts the user wants to delete, 
+                            If you can determine which report charts the user wants to delete,
                               the output should be formatted as a JSON instance that conforms to the JSON schema below, the JSON is a list of dict,
                                 [
                                 {"report_name": "report_1"},
@@ -592,14 +569,14 @@ class AgentInstanceUtil:
 
         task_selector = TaskSelectorAgent(
             name="task_selector",
-            system_message='''Task selector. Divide the questions raised by users into corresponding task types. 
-                    Different tasks have differentask_selectort processing methods. 
+            system_message='''Task selector. Divide the questions raised by users into corresponding task types.
+                    Different tasks have differentask_selectort processing methods.
                     Task types are generally divided into the following categories:
                       - Report or chart generation task: The user requires that the data be finally displayed in the form of a table or chart.If the question does not clearly state that a report or chart is to be generated, it does not belong to this task.
                       - Data analysis tasks: not report or chart generation tasks, but issues related to data analysis.
                       - Chart deletion task: Delete unnecessary report charts according to user needs.
                       - Other tasks: Not any of the tasks listed above, but other types of tasks.
-                
+
                 Reply "TERMINATE" in the end when everything is done.
                 ''',
             user_name=self.user_name,
@@ -624,7 +601,7 @@ class AgentInstanceUtil:
             Before making a plan, clarify which individuals are in this chat and do not assign work to individuals who are not in this chat.
             First, explain the plan. Make it clear which parts are completed by which individuals.
             Reply "TERMINATE" in the end when everything is done.
-            请用中文回答.
+
             ''',
             llm_config=self.gpt4_turbo_config,
             human_input_mode="NEVER",
@@ -670,7 +647,7 @@ class AgentInstanceUtil:
             name="chart_planner",
             system_message="""You are the report planner and your task is to prepare data analysis reports based on user questions.
             In general, you can obtain the database table structure of the raw data, and you can formulate the list of report tasks that need to be generated.
-            Reports need to be represented from multiple dimensions. To keep them compact, merge them properly. 
+            Reports need to be represented from multiple dimensions. To keep them compact, merge them properly.
                     Give a description of the purpose of each report.
                     The output should be formatted as a JSON instance that conforms to the JSON schema below, the JSON is a list of dict,
                     [
@@ -719,7 +696,7 @@ class AgentInstanceUtil:
                     If the result indicates there is an error, fix the error and output the code again. Suggest the full code instead of partial code or code changes. If the error can't be fixed or if the task is not solved even after the code is executed successfully, analyze the problem, revisit your assumption, collect additional info you need, and think of a different approach to try.
                     When you find an answer, verify the answer carefully. Include verifiable evidence in your response if possible.
                     Reply "TERMINATE" in the end when everything is done.
-                    When you find an answer,  You are a report analysis, you have the knowledge and skills to turn raw data into information and insight, which can be used to make business decisions.include your analysis in your reply.        
+                    When you find an answer,  You are a report analysis, you have the knowledge and skills to turn raw data into information and insight, which can be used to make business decisions.include your analysis in your reply.
                     """ + '\n' + self.base_csv_info + '\n' + python_base_dependency + '\n' + CSV_ECHART_TIPS_MESS,
             human_input_mode="NEVER",
             user_name=self.user_name,
@@ -746,7 +723,7 @@ class AgentInstanceUtil:
                                           If the result indicates there is an error, fix the error and output the code again. Suggest the full code instead of partial code or code changes. If the error can't be fixed or if the task is not solved even after the code is executed successfully, analyze the problem, revisit your assumption, collect additional info you need, and think of a different approach to try.
                                           When you find an answer, verify the answer carefully. Include verifiable evidence in your response if possible.
                                           Reply "TERMINATE" in the end when everything is done.
-                                          When you find an answer,  You are a report analysis, you have the knowledge and skills to turn raw data into information and insight, which can be used to make business decisions.include your analysis in your reply.  
+                                          When you find an answer,  You are a report analysis, you have the knowledge and skills to turn raw data into information and insight, which can be used to make business decisions.include your analysis in your reply.
                                           Be careful to avoid using mysql special keywords in mysql code.
                                           """ + '\n' + self.base_mysql_info + '\n' + python_base_dependency + '\n' + MYSQL_ECHART_TIPS_MESS,
             human_input_mode="NEVER",
@@ -774,7 +751,7 @@ class AgentInstanceUtil:
                                             If the result indicates there is an error, fix the error and output the code again. Suggest the full code instead of partial code or code changes. If the error can't be fixed or if the task is not solved even after the code is executed successfully, analyze the problem, revisit your assumption, collect additional info you need, and think of a different approach to try.
                                             When you find an answer, verify the answer carefully. Include verifiable evidence in your response if possible.
                                             Reply "TERMINATE" in the end when everything is done.
-                                            When you find an answer,  You are a report analysis, you have the knowledge and skills to turn raw data into information and insight, which can be used to make business decisions.include your analysis in your reply.        
+                                            When you find an answer,  You are a report analysis, you have the knowledge and skills to turn raw data into information and insight, which can be used to make business decisions.include your analysis in your reply.
                                             """ + '\n' + self.base_postgresql_info + '\n' + python_base_dependency + '\n' + POSTGRESQL_ECHART_TIPS_MESS,
             human_input_mode="NEVER",
             user_name=self.user_name,
@@ -800,7 +777,7 @@ class AgentInstanceUtil:
                                     If the result indicates there is an error, fix the error and output the code again. Suggest the full code instead of partial code or code changes. If the error can't be fixed or if the task is not solved even after the code is executed successfully, analyze the problem, revisit your assumption, collect additional info you need, and think of a different approach to try.
                                     When you find an answer, verify the answer carefully. Include verifiable evidence in your response if possible.
                                     Reply "TERMINATE" in the end when everything is done.
-                                    When you find an answer,  You are a report analysis, you have the knowledge and skills to turn raw data into information and insight, which can be used to make business decisions.include your analysis in your reply.        
+                                    When you find an answer,  You are a report analysis, you have the knowledge and skills to turn raw data into information and insight, which can be used to make business decisions.include your analysis in your reply.
                                     """ + '\n' + self.base_mysql_info + '\n' + python_base_dependency + '\n' + MYSQL_MATPLOTLIB_TIPS_MESS,
             human_input_mode="NEVER",
             user_name=self.user_name,
@@ -819,7 +796,7 @@ class AgentInstanceUtil:
             You are a data annotation checker, and your task is to understand the meanings of various tables and fields in the database. If the annotation is easy to understand, it means it has passed the inspection, otherwise it does not pass.
             You must provide scores for the meaning of each table and field.
             -  is_pass (meaning passed or not): A score of 0 indicates that the check was not passed, while a score of 1 indicates that the check was passed.
-             
+
             Do not modify other attributes in the input json, just add or modify the is_pass attribute.
 
              The following is an input case:
@@ -827,15 +804,15 @@ class AgentInstanceUtil:
             {"table_name":"order_details2","table_comment":"order details 1","field_desc":[{"name":"id","comment":"Order ID"},{"name":"amount","comment":"sales amount"}]}
 
              ```
-             
-             The output must contain a JSON instance. 
-                  JSON instances are distinguished by the  ``` symbol at the beginning and end.  
+
+             The output must contain a JSON instance.
+                  JSON instances are distinguished by the  ``` symbol at the beginning and end.
                   The output should be formatted as a JSON instance that conforms to the JSON schema below,
-                  
+
                ```
             {"table_name":"order_details2","table_comment":"order details 1","is_pass":1,"field_desc":[{"name":"id","comment":"Order ID","is_pass":1},{"name":"amount","comment":"sales amount","is_pass":1}]}
                ```
-               
+
             """,
             human_input_mode="NEVER",
             user_name=self.user_name,
@@ -865,8 +842,8 @@ class AgentInstanceUtil:
               {"databases_desc":"this is a mysql order database.","table_desc":[{"table_name":"order_details2","table_comment":"order details 2","field_desc":[{"name":"id","comment":"Order ID"},{"name":"amount","comment":"sales amount"}]}]}
               ```
 
-              The output must contain a JSON instance. 
-                   JSON instances are distinguished by the  ``` symbol at the beginning and end.  
+              The output must contain a JSON instance.
+                   JSON instances are distinguished by the  ``` symbol at the beginning and end.
                    The output should be formatted as a JSON instance that conforms to the JSON schema below,
 
                 ```
@@ -1046,7 +1023,7 @@ class AgentInstanceUtil:
                                     answer_contents) + '\n' + " 以下是我的问题，请用中文回答: " + '\n' + " 1,本次生成哪些报表？简单描述一下各报表 "
                                         + '\n' + " 以下是一个回答案例：" + '\n' +
                                         """总结：
-                                        -- Monthly Sales Summary Q1 2019: 同名图表历史已生成过，此次不再生成,若要重新生成图表，请先删除已有同名报表。2019年第一季度的月度销售总结。它包括了每个月的总销售额、利润和订单数量的详细信息. 
+                                        -- Monthly Sales Summary Q1 2019: 同名图表历史已生成过，此次不再生成,若要重新生成图表，请先删除已有同名报表。2019年第一季度的月度销售总结。它包括了每个月的总销售额、利润和订单数量的详细信息.
                                         -- Summary Q1 2018: 生成成功。2018年第一季度的月度销售总结。它包括了每个月的总销售额、利润和订单数量的详细信息.
                                     """,
                             )
@@ -1205,7 +1182,7 @@ class AgentInstanceUtil:
                                     answer_contents) + '\n' + " 以下是我的问题，请用中文回答: " + '\n' + " 1,本次生成哪些报表？简单描述一下各报表 "
                                         + '\n' + " 以下是一个回答案例：" + '\n' +
                                         """总结：
-                                        -- Monthly Sales Summary Q1 2019: 同名图表历史已生成过，此次不再生成,若要重新生成图表，请先删除已有同名报表。2019年第一季度的月度销售总结。它包括了每个月的总销售额、利润和订单数量的详细信息. 
+                                        -- Monthly Sales Summary Q1 2019: 同名图表历史已生成过，此次不再生成,若要重新生成图表，请先删除已有同名报表。2019年第一季度的月度销售总结。它包括了每个月的总销售额、利润和订单数量的详细信息.
                                         -- Summary Q1 2018: 生成成功。2018年第一季度的月度销售总结。它包括了每个月的总销售额、利润和订单数量的详细信息.
                                     """,
                             )
@@ -1578,576 +1555,4 @@ class AgentInstanceUtil:
         else:
             return 'Failed to analyze data, please check whether the relevant data is sufficient.'
 
-    async def task_mysql_echart_code(self, qustion_message):
-        try:
-            base_content = []
-            base_mess = []
-            report_demand_list = []
-            json_str = ""
-            error_times = 0
-            use_cache = True
-            for i in range(max_retry_times):
-                try:
-                    mysql_echart_assistant = self.get_agent_mysql_echart_assistant(use_cache=use_cache)
-                    python_executor = self.get_agent_python_executor()
 
-                    await python_executor.initiate_chat(
-                        mysql_echart_assistant,
-                        message=self.base_message + '\n' + self.question_ask + '\n' + str(
-                            qustion_message),
-                    )
-
-                    answer_message = mysql_echart_assistant.chat_messages[python_executor]
-
-
-                    # answer = python_executor.chat_messages[mysql_echart_assistant]
-                    # print("answer: ", answer)
-                    # last_answer = mysql_echart_assistant.last_message()["content"]
-                    # print("last_answer", last_answer)
-                    for answer_mess in answer_message:
-                        # print("answer_mess :", answer_mess)
-                        if answer_mess['content']:
-                            if str(answer_mess['content']).__contains__('execution succeeded'):
-
-                                answer_mess_content = str(answer_mess['content']).replace('\n', '')
-
-                                print("answer_mess: ", answer_mess)
-                                match = re.search(
-                                    r"\[.*\]", answer_mess_content.strip(), re.MULTILINE | re.IGNORECASE | re.DOTALL
-                                )
-
-                                if match:
-                                    json_str = match.group()
-                                print("json_str : ", json_str)
-                                # report_demand_list = json.loads(json_str)
-
-                                chart_code_str = str(json_str).replace("\n", "")
-                                if len(chart_code_str) > 0:
-                                    print("chart_code_str: ", chart_code_str)
-                                    if base_util.is_json(chart_code_str):
-                                        # 字符串 实例化为对象
-                                        # report_demand_list = ast.literal_eval(chart_code_str)
-                                        report_demand_list = json.loads(chart_code_str)
-
-                                        print("report_demand_list: ", report_demand_list)
-
-                                        for jstr in report_demand_list:
-                                            if str(jstr).__contains__('echart_name') and str(jstr).__contains__(
-                                                    'echart_code'):
-                                                base_content.append(jstr)
-                                    else:
-                                        # 字符串 实例化为对象
-                                        report_demand_list = ast.literal_eval(chart_code_str)
-                                        print("report_demand_list: ", report_demand_list)
-                                        for jstr in report_demand_list:
-                                            if str(jstr).__contains__('echart_name') and str(jstr).__contains__(
-                                                    'echart_code'):
-                                                base_content.append(jstr)
-
-                    print("base_content: ", base_content)
-                    base_mess = []
-                    base_mess.append(answer_message)
-                    break
-
-                    # if len(base_content) > 0:
-                    #     break
-                except Exception as e:
-                    traceback.print_exc()
-                    logger.error("from user:[{}".format(self.user_name) + "] , " + "error: " + str(e))
-                    error_times = error_times + 1
-                    use_cache = False
-
-            if error_times >= max_retry_times:
-                return self.error_message_timeout
-
-            logger.info(
-                "from user:[{}".format(self.user_name) + "] , " + "，report_demand_list" + str(report_demand_list))
-
-            bi_proxy = self.get_agent_bi_proxy()
-            is_chart = False
-            # 调用接口生成图片
-            for img_str in base_content:
-                echart_name = img_str.get('echart_name')
-                echart_code = img_str.get('echart_code')
-
-                if len(echart_code) > 0 and str(echart_code).__contains__('x'):
-                    is_chart = True
-                    print("echart_name : ", echart_name)
-                    re_str = await bi_proxy.run_echart_code(str(echart_code), echart_name)
-                    base_mess.append(re_str)
-
-            error_times = 0  # 失败次数
-            for i in range(max_retry_times):
-                try:
-                    planner_user = self.get_agent_planner_user()
-                    analyst = self.get_agent_analyst()
-
-                    question_supplement = 'Please make an analysis and summary in English, including which charts were generated, and briefly introduce the contents of these charts.'
-                    if self.language_mode == language_chinese:
-                        # question_supplement = " 请用中文，从上诉对话中分析总结出答案.（如果对话中有图表生成成功，再简单介绍一下图表中的数据内容, 如果没有图表生成，忽略这句话）"
-
-                        if is_chart:
-                            question_supplement = " 请用中文，简单介绍一下已生成图表中的数据内容."
-                        else:
-                            question_supplement = " 请用中文，从上诉对话中分析总结出问题的答案."
-
-                    # 1,开始分析
-                    await planner_user.initiate_chat(
-                        analyst,
-                        # manager,
-                        # message=content + '\n' + " This is my question: " + '\n' + str(qustion_message),
-                        message=str(
-                            base_mess) + '\n' + self.question_ask + '\n' + question_supplement,
-                    )
-
-                    answer_message = planner_user.last_message()["content"]
-                    # answer_message = planner_user.chat_messages[-1]["content"]
-                    # print("answer_message: ", answer_message)
-                    return answer_message
-
-                except Exception as e:
-                    traceback.print_exc()
-                    logger.error("from user:[{}".format(self.user_name) + "] , " + "error: " + str(e))
-                    error_times = error_times + 1
-
-            if error_times == max_retry_times:
-                # return "十分抱歉，本次AI-GPT接口调用超时，请再次重试"
-                return self.error_message_timeout
-
-            if self.language_mode == language_chinese:
-                return "十分抱歉，无法回答您的问题，请检查相关数据是否充分。"
-            else:
-                return 'Sorry, we cannot answer your question. Please check whether the relevant data is sufficient.'
-        except Exception as e:
-            print(e)
-            # 使用 traceback 打印详细信息
-            traceback.print_exc()
-            logger.error("from user:[{}".format(self.user_name) + "] , " + "error: " + str(e))
-
-        if self.language_mode == language_chinese:
-            return "分析数据失败，请检查相关数据是否充分。"
-        else:
-            return 'Failed to analyze data, please check whether the relevant data is sufficient.'
-
-    async def task_mysql_echart_code1108(self, qustion_message):
-        """Task type: mysql echart code block"""
-        try:
-            print('运行 【task_mysql_echart_code】函数')
-            base_content = []
-            base_mess = []
-            report_demand_list = []
-            json_str = ""
-            error_times = 0  # 失败次数
-            # max_retry_times = 3 # 最大重试次数
-            for i in range(max_retry_times):
-                try:
-                    mysql_echart_assistant = self.get_agent_mysql_echart_assistant()
-                    python_executor = self.get_agent_python_executor()
-
-                    """ 创建对话，解决问题"""
-                    await python_executor.initiate_chat(
-                        mysql_echart_assistant,
-                        message=self.base_message + '\n' + self.question_ask + '\n' + str(
-                            qustion_message),
-                    )
-
-                    # answer_message = planner_user.last_message()["content"]
-                    # answer_message = manager._oai_messages[user_proxy_1030_img]
-                    # print("answer_message_base_assistant_1030_img : ",
-                    #       mysql_echart_assistant.chat_messages[mysql_echart_assistant])
-
-                    answer_message = mysql_echart_assistant.chat_messages[python_executor]
-
-                    for answer_mess in answer_message:
-                        # print("answer_mess :", answer_mess)
-                        if answer_mess['content']:
-                            if str(answer_mess['content']).__contains__('execution succeeded'):
-
-                                print("answer_mess: ", answer_mess)
-                                match = re.search(
-                                    r"\[.*\]", str(answer_mess).strip(), re.MULTILINE | re.IGNORECASE | re.DOTALL
-                                )
-                                if match:
-                                    json_str = match.group()
-                                print("json_str : ", json_str)
-                                # report_demand_list = json.loads(json_str)
-
-                                chart_code_str = str(json_str).replace("\n", "")
-                                print("chart_code_str: ", chart_code_str)
-                                # 字符串 实例化为对象
-                                # report_demand_list = ast.literal_eval(chart_code_str)
-                                report_demand_list = json.loads(chart_code_str)
-
-                                print("report_demand_list: ", report_demand_list)
-
-                                for jstr in report_demand_list:
-                                    if str(jstr).__contains__('echart_name') and str(jstr).__contains__('echart_code'):
-                                        base_content.append(jstr)
-
-                    print("base_content: ", base_content)
-
-                    if len(base_content) > 0:
-                        base_mess.append(answer_mess)
-                        break
-                except Exception as e:
-                    traceback.print_exc()
-                    logger.error("from user:[{}".format(self.user_name) + "] , " + "error: " + str(e))
-                    error_times = error_times + 1
-
-            if error_times >= max_retry_times:
-                return self.error_message_timeout
-
-            logger.info(
-                "from user:[{}".format(self.user_name) + "] , " + "，report_demand_list" + str(report_demand_list))
-
-            bi_proxy = self.get_agent_bi_proxy()
-            # 调用接口生成图片
-            for img_str in base_content:
-                echart_name = img_str.get('echart_name')
-                echart_code = img_str.get('echart_code')
-                print("echart_name : ", echart_name)
-                # img_url = "http://cn.deep-thought.io/show_img/top10_subcategory.jpg"
-                re_str = await bi_proxy.run_echart_code(str(echart_code), echart_name)
-                base_mess.append(re_str)
-
-            error_times = 0  # 失败次数
-            for i in range(max_retry_times):
-                try:
-                    planner_user = self.get_agent_planner_user()
-                    analyst = self.get_agent_analyst()
-
-                    question_supplement = 'Please make an analysis and summary in English, including which charts were generated, and briefly introduce the contents of these charts.'
-                    if self.language_mode == language_chinese:
-                        question_supplement = " 请用中文做一下分析总结，内容包括哪些图表生成了，简单介绍一下这些图表的内容。"
-
-                    # 1,开始分析
-                    await planner_user.initiate_chat(
-                        analyst,
-                        # manager,
-                        # message=content + '\n' + " This is my question: " + '\n' + str(qustion_message),
-                        message=str(base_mess) + '\n' + str(
-                            qustion_message) + '\n' + self.question_ask + '\n' + question_supplement,
-                    )
-
-                    answer_message = planner_user.last_message()["content"]
-                    # answer_message = planner_user.chat_messages[-1]["content"]
-                    # print("answer_message: ", answer_message)
-                    return answer_message
-
-                except Exception as e:
-                    traceback.print_exc()
-                    logger.error("from user:[{}".format(self.user_name) + "] , " + "error: " + str(e))
-                    error_times = error_times + 1
-
-            if error_times == max_retry_times:
-                # return "十分抱歉，本次AI-GPT接口调用超时，请再次重试"
-                return self.error_message_timeout
-
-            if self.language_mode == language_chinese:
-                return "十分抱歉，无法回答您的问题，请检查相关数据是否充分。"
-            else:
-                return 'Sorry, we cannot answer your question. Please check whether the relevant data is sufficient.'
-        except Exception as e:
-            print(e)
-            # 使用 traceback 打印详细信息
-            traceback.print_exc()
-            logger.error("from user:[{}".format(self.user_name) + "] , " + "error: " + str(e))
-
-        if self.language_mode == language_chinese:
-            return "分析数据失败，请检查相关数据是否充分。"
-        else:
-            return 'Failed to analyze data, please check whether the relevant data is sufficient.'
-
-    async def task_csv_echart_code(self, qustion_message):
-        """ Task type: csv echart code block"""
-        try:
-            base_content = []
-            base_mess = []
-            report_demand_list = []
-            json_str = ""
-            error_times = 0
-            for i in range(max_retry_times):
-                try:
-                    csv_echart_assistant = self.get_agent_csv_echart_assistant()
-                    python_executor = self.get_agent_python_executor()
-
-                    await python_executor.initiate_chat(
-                        csv_echart_assistant,
-                        message=self.base_message + '\n' + self.question_ask + '\n' + str(
-                            qustion_message),
-                    )
-
-                    answer_message = csv_echart_assistant.chat_messages[python_executor]
-                    for answer_mess in answer_message:
-                        # print("answer_mess :", answer_mess)
-                        if answer_mess['content']:
-                            if str(answer_mess['content']).__contains__('execution succeeded'):
-
-                                print("answer_mess: ", answer_mess)
-                                match = re.search(
-                                    r"\[.*\]", str(answer_mess).strip(), re.MULTILINE | re.IGNORECASE | re.DOTALL
-                                )
-                                if match:
-                                    json_str = match.group()
-                                print("json_str : ", json_str)
-                                # report_demand_list = json.loads(json_str)
-
-                                chart_code_str = str(json_str).replace("\n", "")
-                                if len(chart_code_str) > 0:
-                                    print("chart_code_str: ", chart_code_str)
-                                    if base_util.is_json(chart_code_str):
-                                        report_demand_list = json.loads(chart_code_str)
-                                        print("report_demand_list: ", report_demand_list)
-
-                                        for jstr in report_demand_list:
-                                            if str(jstr).__contains__('echart_name') and str(jstr).__contains__(
-                                                    'echart_code'):
-                                                base_content.append(jstr)
-                                    else:
-                                        report_demand_list = ast.literal_eval(chart_code_str)
-                                        print("report_demand_list: ", report_demand_list)
-                                        for jstr in report_demand_list:
-                                            if str(jstr).__contains__('echart_name') and str(jstr).__contains__(
-                                                    'echart_code'):
-                                                base_content.append(jstr)
-
-                    print("base_content: ", base_content)
-                    base_mess = []
-                    base_mess.append(answer_message)
-                    break
-
-                    # if len(base_content) > 0:
-                    # base_mess.append(answer_mess)
-                    # break
-                except Exception as e:
-                    traceback.print_exc()
-                    logger.error("from user:[{}".format(self.user_name) + "] , " + "error: " + str(e))
-                    error_times = error_times + 1
-
-            if error_times >= max_retry_times:
-                return self.error_message_timeout
-                # return "十分抱歉，本次AI-GPT接口调用超时，请再次重试"
-
-            logger.info(
-                "from user:[{}".format(self.user_name) + "] , " + "，report_demand_list" + str(report_demand_list))
-
-            bi_proxy = self.get_agent_bi_proxy()
-            is_chart = False
-            # 调用接口生成图片
-            for img_str in base_content:
-                echart_name = img_str.get('echart_name')
-                echart_code = img_str.get('echart_code')
-
-                if len(echart_code) > 0 and str(echart_code).__contains__('x'):
-                    is_chart = True
-                    print("echart_name : ", echart_name)
-                    re_str = await bi_proxy.run_echart_code(str(echart_code), echart_name)
-                    base_mess.append(re_str)
-
-            error_times = 0  # 失败次数
-            for i in range(max_retry_times):
-                try:
-                    planner_user = self.get_agent_planner_user()
-                    analyst = self.get_agent_analyst()
-
-                    question_supplement = 'Please make an analysis and summary in English, including which charts were generated, and briefly introduce the contents of these charts.'
-                    if self.language_mode == language_chinese:
-                        # question_supplement = " 请用中文做一下分析总结，内容包括哪些图表生成了，简单介绍一下这些图表的内容。"
-                        if is_chart:
-                            question_supplement = " 请用中文，简单介绍一下已生成图表中的数据内容."
-                        else:
-                            question_supplement = " 请用中文，从上诉对话中分析总结出问题的答案."
-
-                    # 1,开始分析
-                    await planner_user.initiate_chat(
-                        analyst,
-                        message=str(base_mess) + '\n' + str(
-                            qustion_message) + '\n' + self.question_ask + '\n' + question_supplement,
-                    )
-
-                    answer_message = planner_user.last_message()["content"]
-                    print("answer_message: ", answer_message)
-                    return answer_message
-
-                except Exception as e:
-                    traceback.print_exc()
-                    logger.error("from user:[{}".format(self.user_name) + "] , " + "error: " + str(e))
-                    error_times = error_times + 1
-
-            if error_times == max_retry_times:
-                # return "十分抱歉，本次AI-GPT接口调用超时，请再次重试"
-                return self.error_message_timeout
-
-            if self.language_mode == language_chinese:
-                return "十分抱歉，无法回答您的问题，请检查相关数据是否充分。"
-            else:
-                return 'Sorry, we cannot answer your question. Please check whether the relevant data is sufficient.'
-        except Exception as e:
-            print(e)
-            # 使用 traceback 打印详细信息
-            traceback.print_exc()
-            logger.error("from user:[{}".format(self.user_name) + "] , " + "error: " + str(e))
-
-        if self.language_mode == language_chinese:
-            return "分析数据失败，请检查相关数据是否充分。"
-        else:
-            return 'Failed to analyze data, please check whether the relevant data is sufficient.'
-
-    async def task_postgresql_echart_code(self, qustion_message):
-        """ Task type: postgresql echart code block"""
-        try:
-            base_content = []
-            base_mess = []
-            report_demand_list = []
-            json_str = ""
-            error_times = 0
-            for i in range(max_retry_times):
-                try:
-                    postgresql_echart_assistant = self.get_agent_postgresql_echart_assistant()
-                    python_executor = self.get_agent_python_executor()
-
-                    await python_executor.initiate_chat(
-                        postgresql_echart_assistant,
-                        message=self.base_message + '\n' + self.question_ask + '\n' + str(
-                            qustion_message),
-                    )
-
-                    answer_message = postgresql_echart_assistant.chat_messages[python_executor]
-
-                    for answer_mess in answer_message:
-                        # print("answer_mess :", answer_mess)
-                        if answer_mess['content']:
-                            if str(answer_mess['content']).__contains__('execution succeeded'):
-
-                                print("answer_mess: ", answer_mess)
-                                match = re.search(
-                                    r"\[.*\]", str(answer_mess).strip(), re.MULTILINE | re.IGNORECASE | re.DOTALL
-                                )
-                                if match:
-                                    json_str = match.group()
-                                print("json_str : ", json_str)
-                                # report_demand_list = json.loads(json_str)
-
-                                chart_code_str = str(json_str).replace("\n", "")
-                                if len(chart_code_str) > 0:
-                                    print("chart_code_str: ", chart_code_str)
-                                    if base_util.is_json(chart_code_str):
-                                        # report_demand_list = ast.literal_eval(chart_code_str)
-                                        report_demand_list = json.loads(chart_code_str)
-
-                                        print("report_demand_list: ", report_demand_list)
-
-                                        for jstr in report_demand_list:
-                                            if str(jstr).__contains__('echart_name') and str(jstr).__contains__(
-                                                    'echart_code'):
-                                                base_content.append(jstr)
-                                    else:
-                                        report_demand_list = ast.literal_eval(chart_code_str)
-                                        print("report_demand_list: ", report_demand_list)
-                                        for jstr in report_demand_list:
-                                            if str(jstr).__contains__('echart_name') and str(jstr).__contains__(
-                                                    'echart_code'):
-                                                base_content.append(jstr)
-
-                    print("base_content: ", base_content)
-                    base_mess = []
-                    base_mess.append(answer_mess)
-                    break
-
-                except Exception as e:
-                    traceback.print_exc()
-                    logger.error("from user:[{}".format(self.user_name) + "] , " + "error: " + str(e))
-                    error_times = error_times + 1
-
-            if error_times >= max_retry_times:
-                return self.error_message_timeout
-
-            bi_proxy = self.get_agent_bi_proxy()
-            for img_str in base_content:
-                echart_name = img_str.get('echart_name')
-                echart_code = img_str.get('echart_code')
-
-                if len(echart_code) > 0 and str(echart_code).__contains__('x'):
-                    is_chart = True
-                    print("echart_name : ", echart_name)
-                    re_str = await bi_proxy.run_echart_code(str(echart_code), echart_name)
-                    base_mess.append(re_str)
-
-            error_times = 0
-            for i in range(max_retry_times):
-                try:
-                    planner_user = self.get_agent_planner_user()
-                    analyst = self.get_agent_analyst()
-
-                    question_supplement = 'Please make an analysis and summary in English, including which charts were generated, and briefly introduce the contents of these charts.'
-                    if self.language_mode == language_chinese:
-                        if is_chart:
-                            question_supplement = " 请用中文，简单介绍一下已生成图表中的数据内容."
-                        else:
-                            question_supplement = " 请用中文，从上诉对话中分析总结出问题的答案."
-
-                    await planner_user.initiate_chat(
-                        analyst,
-                        # manager,
-                        # message=content + '\n' + " This is my question: " + '\n' + str(qustion_message),
-                        message=str(base_mess) + '\n' + str(
-                            qustion_message) + '\n' + self.question_ask + '\n' + question_supplement,
-                    )
-
-                    answer_message = planner_user.last_message()["content"]
-                    # answer_message = planner_user.chat_messages[-1]["content"]
-                    # print("answer_message: ", answer_message)
-                    return answer_message
-
-                except Exception as e:
-                    traceback.print_exc()
-                    logger.error("from user:[{}".format(self.user_name) + "] , " + "error: " + str(e))
-                    error_times = error_times + 1
-
-            if error_times == max_retry_times:
-                return self.error_message_timeout
-
-        except Exception as e:
-            traceback.print_exc()
-            logger.error("from user:[{}".format(self.user_name) + "] , " + "error: " + str(e))
-
-        return self.data_analysis_error
-
-    async def task_mysql_base(self, qustion_message):
-        """ Task type: mysql data analysis"""
-        try:
-            error_times = 0
-            for i in range(max_retry_times):
-                try:
-                    base_mysql_assistant = self.get_agent_base_mysql_assistant()
-                    python_executor = self.get_agent_python_executor()
-
-                    await python_executor.initiate_chat(
-                        base_mysql_assistant,
-                        message=self.base_message + '\n' + self.question_ask + '\n' + str(
-                            qustion_message),
-                    )
-
-                    answer_message = python_executor.chat_messages[base_mysql_assistant]
-                    print("answer_message: ", answer_message)
-
-                    for i in range(len(answer_message)):
-                        answer_mess = answer_message[len(answer_message) - 1 - i]
-                        # print("answer_mess :", answer_mess)
-                        if answer_mess['content'] and answer_mess['content'] != 'TERMINATE':
-                            print("answer_mess['content'] ", answer_mess['content'])
-                            return answer_mess['content']
-
-                except Exception as e:
-                    traceback.print_exc()
-                    logger.error("from user:[{}".format(self.user_name) + "] , " + "error: " + str(e))
-                    error_times = error_times + 1
-
-            if error_times >= max_retry_times:
-                return self.error_message_timeout
-
-        except Exception as e:
-            traceback.print_exc()
-            logger.error("from user:[{}".format(self.user_name) + "] , " + "error: " + str(e))
-
-        return self.data_analysis_error

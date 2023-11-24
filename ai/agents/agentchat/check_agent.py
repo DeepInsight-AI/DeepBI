@@ -1,7 +1,7 @@
 from .conversable_agent import ConversableAgent
 from .agent import Agent
 from typing import Any, Callable, Dict, List, Optional, Tuple, Union
-from agents import oai
+from ai.agents import oai
 import asyncio
 
 

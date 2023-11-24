@@ -4,9 +4,9 @@ import copy
 import json
 import logging
 from typing import Any, Callable, Dict, List, Optional, Tuple, Type, Union
-from agents import oai
+from ai.agents import oai
 from .agent import Agent
-from agents.code_utils import (
+from ai.agents.code_utils import (
     DEFAULT_MODEL,
     UNKNOWN,
     execute_code,

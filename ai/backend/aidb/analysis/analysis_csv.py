@@ -1,13 +1,13 @@
 import traceback
 import json
-from backend.util.write_log import logger
-from backend.base_config import CONFIG
+from ai.backend.util.write_log import logger
+from ai.backend.base_config import CONFIG
 from .analysis import Analysis
 import pandas as pd
-from backend.util import base_util
+from ai.backend.util import base_util
 import re
 import ast
-from agents.agentchat import HumanProxyAgent, TaskSelectorAgent
+from ai.agents.agentchat import TaskSelectorAgent
 
 language_chinese = CONFIG.language_chinese
 max_retry_times = CONFIG.max_retry_times
@@ -44,14 +44,8 @@ class AnalysisCsv(Analysis):
             if q_data_type == CONFIG.type_comment:
                 result['receiver'] = 'bi'
                 result['data']['data_type'] = 'mysql_comment'
-                # re_mess = await self.check_data_csv(q_str)
-                # re_mess = await self.check_data_csv(q_str)
-                # result['data']['content'] = re_mess
-                #
-                # consume_output = json.dumps(result)
-                # await self.outgoing.put(consume_output)
 
-                await self.check_data_csv1116(q_str)
+                await self.check_data_csv(q_str)
             elif q_data_type == CONFIG.type_comment_first:
                 if json_str.get('data').get('language_mode'):
                     q_language_mode = json_str['data']['language_mode']
@@ -102,40 +96,6 @@ class AnalysisCsv(Analysis):
         )
 
     async def check_data_csv(self, q_str):
-        """Check the data description to see if it meets the requirements"""
-        print("q_str :", q_str)
-        if q_str.get('table_desc'):
-            for tb in q_str.get('table_desc'):
-                # 默认值
-                if tb.get('table_comment') == '':
-                    tb['table_comment'] = tb.get('table_name')
-                tb['is_pass'] = 1
-
-                if len(tb.get('field_desc')) > 0:
-                    for fd in tb.get('field_desc'):
-                        # 默认值
-                        if fd.get('comment') == '':
-                            fd['comment'] = fd.get('name')
-                        fd['is_pass'] = 1
-                else:
-                    data = pd.read_csv(CONFIG.up_file_path + tb.get('table_name'))
-
-                    # Get column headers (first row of data)
-                    column_titles = list(data.columns)
-                    # print("column_titles ：", column_titles)
-
-                    for i in range(len(column_titles)):
-                        tb['field_desc'].append({
-                            "name": column_titles[i],
-                            "comment": column_titles[i],
-                            "is_pass": 1
-                        })
-
-            return q_str
-        else:
-            return q_str
-
-    async def check_data_csv1116(self, q_str):
         """Check the data description to see if it meets the requirements"""
         print("q_str :", q_str)
         print("CONFIG.up_file_path  : " + CONFIG.up_file_path)
@@ -205,14 +165,14 @@ class AnalysisCsv(Analysis):
 
                                         for jstr in report_demand_list:
                                             if str(jstr).__contains__('echart_name') and str(jstr).__contains__(
-                                                    'echart_code'):
+                                                'echart_code'):
                                                 base_content.append(jstr)
                                     else:
                                         report_demand_list = ast.literal_eval(chart_code_str)
                                         print("report_demand_list: ", report_demand_list)
                                         for jstr in report_demand_list:
                                             if str(jstr).__contains__('echart_name') and str(jstr).__contains__(
-                                                    'echart_code'):
+                                                'echart_code'):
                                                 base_content.append(jstr)
 
                     print("base_content: ", base_content)
@@ -352,7 +312,7 @@ class AnalysisCsv(Analysis):
                        If the result indicates there is an error, fix the error and output the code again. Suggest the full code instead of partial code or code changes. If the error can't be fixed or if the task is not solved even after the code is executed successfully, analyze the problem, revisit your assumption, collect additional info you need, and think of a different approach to try.
                        When you find an answer, verify the answer carefully. Include verifiable evidence in your response if possible.
                        Reply "TERMINATE" in the end when everything is done.
-                       When you find an answer,  You are a report analysis, you have the knowledge and skills to turn raw data into information and insight, which can be used to make business decisions.include your analysis in your reply.     
+                       When you find an answer,  You are a report analysis, you have the knowledge and skills to turn raw data into information and insight, which can be used to make business decisions.include your analysis in your reply.
 
                        The only source data you need to process is csv files.
                        """ + '\n' + self.agent_instance_util.base_csv_info + '\n' + CONFIG.python_base_dependency + '\n' + self.agent_instance_util.quesion_answer_language,

@@ -1,7 +1,7 @@
 import asyncio
 import websockets
 import time
-from backend.chat_task import ChatClass
+from ai.backend.chat_task import ChatClass
 
 
 class WSServer:
@@ -15,12 +15,11 @@ class WSServer:
         server_ip = "0.0.0.0"
         # server_port = 5001
         server_port = self.server_port
-        # server_port = 5003
         start_server = websockets.serve(self.handler, server_ip, server_port, ping_interval=None)
 
         # start_server = websockets.serve(lambda x, y: router(x, y), server_ip, server_port, ping_interval=None)
         print(str(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())))
-        print("=== start WebSocket server===")
+        print("=== start WebSocket server ===")
         print("start listen " + server_ip + ":" + str(server_port))
 
         # start_server = websockets.serve(self.handler, '0.0.0.0', 5678)

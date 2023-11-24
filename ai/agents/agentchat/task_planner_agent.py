@@ -2,7 +2,7 @@ from collections import defaultdict
 from typing import Any, Callable, Dict, List, Optional, Tuple, Union
 from .agent import Agent
 from .conversable_agent import ConversableAgent
-from agents.code_utils import (
+from ai.agents.code_utils import (
     DEFAULT_MODEL,
 )
 

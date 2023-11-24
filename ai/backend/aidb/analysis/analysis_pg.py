@@ -6,8 +6,8 @@ from backend.util import database_util
 from .analysis import Analysis
 import re
 import ast
-from agents.agentchat import HumanProxyAgent, TaskSelectorAgent
-from backend.util import base_util
+from ai.agents.agentchat import HumanProxyAgent, TaskSelectorAgent
+from ai.backend.util import base_util
 
 language_chinese = CONFIG.language_chinese
 max_retry_times = CONFIG.max_retry_times
@@ -294,7 +294,7 @@ class AnalysisPostgresql(Analysis):
                          If the result indicates there is an error, fix the error and output the code again. Suggest the full code instead of partial code or code changes. If the error can't be fixed or if the task is not solved even after the code is executed successfully, analyze the problem, revisit your assumption, collect additional info you need, and think of a different approach to try.
                          When you find an answer, verify the answer carefully. Include verifiable evidence in your response if possible.
                          Reply "TERMINATE" in the end when everything is done.
-                         When you find an answer,  You are a report analysis, you have the knowledge and skills to turn raw data into information and insight, which can be used to make business decisions.include your analysis in your reply.     
+                         When you find an answer,  You are a report analysis, you have the knowledge and skills to turn raw data into information and insight, which can be used to make business decisions.include your analysis in your reply.
 
                          The only source data you need to process is csv files.
                    IMPORTANT:

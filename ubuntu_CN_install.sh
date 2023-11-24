@@ -7,11 +7,11 @@ function line() {
     done
     echo "$line"
 }
-echo "begin"
+echo "开始"
 line
 # check system
 if [ "$(lsb_release -si)" = "Ubuntu" ] && [ "$(lsb_release -rs | cut -d. -f1)" -ge 16 ]; then
-    echo "System check ok!"
+    echo "系统检查完毕"
 else
     exit 1
 fi
@@ -19,14 +19,14 @@ fi
 if command -v python3 &>/dev/null; then
     python_version=$(python3 -c 'import sys; print(".".join(map(str, sys.version_info[:3])))')
     if [ "$(echo "$python_version 3.8" | awk '{print ($1 >= $2)}')" -eq 1 ]; then
-        echo "check python ok!"
+        echo "python 版本检查完毕"
     else
-        echo "need python 3.8+"
+        echo "需要安装python  3.8+"
     fi
 else
-    echo "need python3.8+"
+    echo "需要安装 python3.8+"
     # shellcheck disable=SC2162
-    read -p "auto install python3.8 ？(Y/N): " confirm
+    read -p "即将自动安装 python3.8 ？(Y/N): " confirm
     if [[ $confirm == "Y" || $confirm == "y" ]]; then
         sudo apt update
         sudo apt install python3.8
@@ -38,23 +38,23 @@ line
 # check redis and install
 # shellcheck disable=SC1009
 if command -v redis-server &>/dev/null; then
-    echo "Redis has installed"
+    echo "Redis 已经安装 ,如果需要设置密码，修改安装后的.env"
     # shellcheck disable=SC1073
     # shellcheck disable=SC1049
     if systemctl is-active --quiet redis; then
-        echo "redis is ok"
+        echo "redis 检查完毕"
     else
-        echo "start redis.. "
+        echo "启动 redis.. "
         sudo service redis-server start
     fi
 else
     # shellcheck disable=SC2162
-    read -p "auto install redis ？(Y/N): " confirm
+    read -p "自动安装redis ？(Y/N): " confirm
     if [[ $confirm == "Y" || $confirm == "y" ]]; then
         sudo apt update
-        echo "redis install ......"
+        echo "正在安装redis ......"
         sudo apt-get -y install redis-server
-        echo "start redis.. "
+        echo "启动 redis.. "
         sudo service redis-server start
         sudo systemctl enable redis-server
     else
@@ -66,46 +66,47 @@ line
 # shellcheck disable=SC1009
 if ! command -v psql &> /dev/null; then
     # shellcheck disable=SC2162
-    read -p "auto install postgresql16 ？(Y/N): " confirm
+    read -p "自动安装 postgresql16 ？(Y/N): " confirm
     if [[ $confirm == "Y" || $confirm == "y" ]]; then
-        echo "begin install postgresql"
-        echo "set postgresql source "
+        echo "开始安装 postgresql"
+        echo "设置 postgresql 源 "
         sudo wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | sudo apt-key add -
         echo "deb http://apt.postgresql.org/pub/repos/apt/ $(lsb_release -cs)-pgdg main" | sudo tee /etc/apt/sources.list.d/pgdg.list
         sudo apt-get update
         sudo apt-get install postgresql-16 -y
-        echo "start postgresql"
+        echo "启动 postgresql"
         sudo service postgresql start
-        echo "you can run 'sudo -i -u postgres' manage database "
+        echo "你可以通过 'sudo -i -u postgres' manage database 管理数据库 "
     else
-      echo "need postgresql"
+      echo "需要安装 数据库 postgresql"
       exit 1
     fi
 else
-    echo "you have installed postgresql"
+    echo "你已经安装了 postgresql"
 fi
-echo "start postgresql"
+echo "启动 postgresql"
 sudo service postgresql start
-echo "create database holmes"
+echo "创建数据库 holmes"
 if sudo -u postgres psql -lqt | cut -d \| -f 1 | grep -qw holmes; then
-    echo "Database 'holmes' already exists."
+    echo "数据库 'holmes' 已经存在."
 else
     sudo -u postgres psql -c "CREATE DATABASE holmes;"
-    echo "Database 'holmes' created."
+    echo "数据库 'holmes' 创建完毕."
 fi
 # shellcheck disable=SC2006
 if sudo -u postgres psql -tAc "SELECT 1 FROM pg_roles WHERE rolname='holmes'" | grep -q 1; then
-     echo "User 'holmes' created."
+     echo "用户 'holmes' 已经存在."
 else
+     echo "创建用户 'holmes' "
      sudo su postgres -c "`printf 'psql -c "create user holmes password %s;"' "'holmes_8338'"`"
 fi
-echo "change database owner"
+echo "修改数据库 database 所有者"
 sudo -u postgres psql -c "ALTER DATABASE holmes OWNER TO holmes;"
-echo "Setting user and database can connect"
+echo "设置用户连接"
 sudo sh -c "sed -i '/^#\s*TYPE/ahost holmes holmes 127.0.0.1/32  md5' /etc/postgresql/16/main/pg_hba.conf && service postgresql restart "
 
 line
-echo "install sys extends"
+echo "安装系统扩展"
 # shellcheck disable=SC1004
 sudo dpkg --remove-architecture i386
 sudo apt-get update &&  apt-get install -y python3-pip \
@@ -113,18 +114,18 @@ sudo apt-get update &&  apt-get install -y python3-pip \
     libpq-dev g++ unixodbc-dev xmlsec1 libssl-dev default-libmysqlclient-dev freetds-dev \
     libsasl2-dev unzip libsasl2-modules-gssapi-mit
 line
-echo "init virtual vevn"
+echo "安装虚拟环境扩展 virtual vevn"
 pip install virtualenv
-echo "create venv"
+echo "创建虚拟环境 venv"
 virtualenv venv -p python3
-echo "activate venv"
+echo "激活虚拟环境 venv"
 source venv/bin/activate
 line
-echo "set pip config"
+echo "设置国内源 pip config"
 pip config set global.index-url https://pypi.tuna.tsinghua.edu.cn/simple
 pip install --upgrade pip
 line
-echo "need python require"
+echo "安装 python 扩展"
 pip install -r requirements.txt -r requirements_ai.txt
 line
 # check mysql config file
@@ -140,10 +141,10 @@ else
 fi
 
 line
-echo "check front extends"
+echo "检查前端 扩展"
 line
 if command -v node &>/dev/null; then
-    echo "node is ok"
+    echo "node 已经安装"
 else
     sudo apt-get update
     sudo apt-get -y install nodejs npm
@@ -151,13 +152,13 @@ fi
 line
 
 if command -v n &>/dev/null; then
-    echo "node manager n is ok"
+    echo "node 管理扩展 n 已经安装"
 else
     sudo npm install n -g
 fi
-echo "node manager n is ok"
+echo "node 管理 n 检查完毕"
 line
-echo "install  node version 14.17"
+echo "安装  node version 14.17"
 sudo n 14.17
 line
 # check node is version 14.17
@@ -166,12 +167,12 @@ while true; do
     if [[ "$node_version" == "v14.17"* ]]; then
       break
     else
-        echo "node version is not 14.17.*, please select it"
+        echo "node 版本需要 14.17.*"
         sudo n
     fi
 done
 line
-echo "make .env config file"
+echo "创建 .env 配置文件"
 #
 if [ -f .env ]; then
     rm .env
@@ -179,19 +180,19 @@ fi
 # get local ip
 ip_addresses=$(ifconfig | grep -Eo 'inet (addr:)?([0-9]*\.){3}[0-9]*' | grep -Eo '([0-9]*\.){3}[0-9]*')
 # print ip for user to select the ip
-echo "You local ip as fellows:"
+echo "本地ip地址如下:"
 echo "$ip_addresses" | tr ' ' '\n'
 
 # let user select ip
-echo "Please select a ip for your server, you can change it at .env file:"
+echo "选择一个你可以访问的地址，最好是局域网内地址 比如 192.168.x.x"
 while true; do
     # shellcheck disable=SC2162
-    read -p "Please input your ip: " ip
+    read -p "请输入你的选择 ip: " ip
     if [[ $ip == "" ]]; then
-        echo "Ip mast input"
+        echo "Ip 必须输入"
     else
         # shellcheck disable=SC2162
-        read -p "You input this: $ip  ,Are you sure？(Y/N): " confirm
+        read -p "你的输入是: $ip  ,确定么？(Y/N): " confirm
         if [[ $confirm == "Y" || $confirm == "y" ]]; then
             echo "IP ：$ip"
             break
@@ -199,7 +200,7 @@ while true; do
     fi
 done
 # shellcheck disable=SC2162
-read -p "We need server port 8338 8339 ,is that ports not use？(Y/N): " confirm
+read -p "我们需要端口 8338 8339 ,确定它们没有使用？(Y/N): " confirm
 if [[ $confirm == "N" || $confirm == "n" ]]; then
     exit 1
 fi
@@ -252,7 +253,7 @@ sudo yarn config set registry https://registry.npmmirror.com
 sed -i 's#github.com/getredash/sql-formatter.git#gitee.com/apgmer/sql-formatter.git#g'  yarn.lock
 line
 
-echo "begin build web page"
+echo "开始编译 前端文件"
 sudo yarn && yarn build
 line
 
@@ -261,7 +262,7 @@ source venv/bin/activate
 line
 python_version=$(python3 -c 'import sys; print(".".join(map(str, sys.version_info[:3])))')
 if [[ "$python_version" == "3.8."* ]]; then
-    echo "修复 python3.8 bug"
+    echo "fix python3.8 bug"
     sed -i 's/from importlib_resources import path/from importlib.resources import path/g' ./venv/lib/python3.8/site-packages/saml2/sigver.py &&
     sed -i 's/from importlib_resources import path/from importlib.resources import path/g' ./venv/lib/python3.8/site-packages/saml2/xml/schema/__init__.py
     line
@@ -277,8 +278,10 @@ nohup ./bin/run ./manage.py rq scheduler >scheduler.log 2>&1 &
 nohup ./bin/run ./manage.py rq worker  >worker.log 2>&1 &
 nohup ./bin/run ./manage.py run_ai  >ai.log 2>&1 &
 echo "--------------------------------"
-echo "You can visit http://$ip:$web_port"
+echo "启动成功，你可以访问 http://$ip:$web_port"
 echo "--------------------------------"
+echo "谢谢，如果有问题，可以给我们提issue "
+
 
 
 

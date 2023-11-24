@@ -138,14 +138,7 @@ else
       exit 1
   fi
 fi
-line
-python_version=$(python3 -c 'import sys; print(".".join(map(str, sys.version_info[:3])))')
-if [ "$python_version" = "3.8" ]; then
-    echo "fix python3.8 bug"
-    sed -i 's/from importlib_resources import path/from importlib.resources import path/g' /usr/local/lib/python3.8/site-packages/saml2/sigver.py &&
-    sed -i 's/from importlib_resources import path/from importlib.resources import path/g' /usr/local/lib/python3.8/site-packages/saml2/xml/schema/__init__.py
-    line
-fi
+
 line
 echo "check front extends"
 line
@@ -263,6 +256,16 @@ sudo yarn && yarn build
 line
 
 sudo source venv/bin/activate
+
+line
+python_version=$(python3 -c 'import sys; print(".".join(map(str, sys.version_info[:3])))')
+if [[ "$python_version" == "3.8."* ]]; then
+    echo "fix python3.8 bug"
+    sed -i 's/from importlib_resources import path/from importlib.resources import path/g' ./venv/lib/python3.8/site-packages/saml2/sigver.py &&
+    sed -i 's/from importlib_resources import path/from importlib.resources import path/g' ./venv/lib/python3.8/site-packages/saml2/xml/schema/__init__.py
+    line
+fi
+
 echo "init database "
 ./bin/run ./manage.py database create_tables
 line

@@ -2,13 +2,13 @@ import asyncio
 import json
 import time
 import traceback
-from backend.util.write_log import logger
-from agents import AgentInstanceUtil
-from backend.memory import ChatMemoryManager
-from backend.base_config import CONFIG
-from backend.aidb.report import ReportMysql, ReportPostgresql
-from backend.aidb.analysis import AnalysisMysql, AnalysisCsv, AnalysisPostgresql
-from backend.aidb import AIDB
+from ai.backend.util.write_log import logger
+from ai.agents import AgentInstanceUtil
+from ai.backend.memory import ChatMemoryManager
+from ai.backend.base_config import CONFIG
+from ai.backend.aidb.report import ReportMysql, ReportPostgresql
+from ai.backend.aidb.analysis import AnalysisMysql, AnalysisCsv, AnalysisPostgresql
+from ai.backend.aidb import AIDB
 
 message_pool: ChatMemoryManager = ChatMemoryManager(name="message_pool")
 

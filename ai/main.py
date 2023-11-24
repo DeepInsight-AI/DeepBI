@@ -1,5 +1,5 @@
 import asyncio
-from backend.start_server import WSServer
+from ai.backend.start_server import WSServer
 
 if __name__ == '__main__':
     server_port = 8339

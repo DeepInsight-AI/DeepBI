@@ -8,10 +8,10 @@ import re
 import time
 from hashlib import md5
 import logging
-from agents import oai
+from ai.agents import oai
 import json
 import traceback
-from backend.base_config import if_hide_sensitive
+from ai.backend.base_config import if_hide_sensitive
 
 try:
     import docker
@@ -607,7 +607,7 @@ async def tell_logger(websocket, log_str):
                                ******* python code ************
                                ******* python code ************
                                ******* python code ************
-    
+
                                ```
                                    """
                 log_str = re.sub(CODE_BLOCK_PATTERN, replacement, log_str, flags=re.DOTALL)

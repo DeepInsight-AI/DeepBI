@@ -18,14 +18,15 @@ from ai.backend.util import base_util
 
 class AgentInstanceUtil:
     def __init__(
-            self,
-            websocket: Optional = None,
-            # base_message: Optional[str] = default_base_message,
-            base_message: Optional[str] = None,
-            user_name: Optional[str] = "default_user",
-            delay_messages: Optional = None,
-            outgoing: Optional = None,
-            incoming: Optional = None,
+        self,
+        websocket: Optional = None,
+        # base_message: Optional[str] = default_base_message,
+        base_message: Optional[str] = None,
+        user_name: Optional[str] = "default_user",
+        delay_messages: Optional = None,
+        outgoing: Optional = None,
+        incoming: Optional = None,
+        db_id: Optional = None,
     ):
         self.base_message = base_message
         self.websocket = websocket
@@ -49,6 +50,8 @@ class AgentInstanceUtil:
         self.api_key_use = False
 
         self.openai_proxy = None
+        self.db_id = db_id
+
     def set_api_key(self, api_key):
         self.api_key = api_key
 
@@ -424,7 +427,6 @@ class AgentInstanceUtil:
         )
         return analyst
 
-
     def get_agent_chart_deleter(self):
         chart_deleter = AssistantAgent(
             name="chart_deleter",
@@ -677,7 +679,7 @@ class AgentInstanceUtil:
             default_auto_reply="TERMINATE",
             # outgoing=self.outgoing,
             # incoming=self.incoming,
-
+            db_id=self.db_id,
         )
         return python_executor
 
@@ -1212,7 +1214,6 @@ class AgentInstanceUtil:
             logger.error("from user:[{}".format(self.user_name) + "] , " + str(e))
         return "报表生成失败，请检查相关数据是否充分。"
 
-
     async def task_analysis_data(self, qustion_message):
         """ 任务类型2： 数据分析 """
         try:
@@ -1554,5 +1555,3 @@ class AgentInstanceUtil:
             return "分析数据失败，请检查相关数据是否充分。"
         else:
             return 'Failed to analyze data, please check whether the relevant data is sufficient.'
-
-

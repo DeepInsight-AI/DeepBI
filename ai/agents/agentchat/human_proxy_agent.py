@@ -14,9 +14,9 @@ from ai.agents.code_utils import (
     infer_lang,
 )
 import time
-from backend.util.write_log import logger
+from ai.backend.util.write_log import logger
 import traceback
-from agents.code_utils import tell_logger
+from ai.agents.code_utils import tell_logger
 
 try:
     from termcolor import colored
@@ -61,7 +61,7 @@ class HumanProxyAgent(Agent):
             default_auto_reply: Optional[Union[str, Dict, None]] = "",
             websocket: Optional = None,
             user_name: Optional[str] = "default_user",
-            outgoing: Optional = None,  # 待发送消息队列
+            outgoing: Optional = None,
             incoming: Optional = None,
             openai_proxy: Optional[str] = None,
     ):

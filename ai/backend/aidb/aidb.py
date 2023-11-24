@@ -50,7 +50,6 @@ class AIDB:
             if self.language_mode == CONFIG.language_chinese:
                 qustion_message = "请为我解释一下这些数据"
 
-            # 1,开始分析
             await planner_user.initiate_chat(
                 database_describer,
                 # message=content + '\n' + " This is my question: " + '\n' + str(qustion_message),

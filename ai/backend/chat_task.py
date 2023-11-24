@@ -84,6 +84,12 @@ class ChatClass:
             json_str = json.loads(message)
             print(json_str)
 
+            if json_str.get('sender'):
+                if json_str.get('sender') == 'heartCheck':
+                    result['receiver'] = 'heartCheck'
+                    consume_output = json.dumps(result)
+                    return await self.outgoing.put(consume_output)
+
             q_state = json_str['state']
 
             if q_state == 200 or q_state == 500:

@@ -24,8 +24,6 @@ try:
     from openai import Completion as openai_Completion
     import diskcache
 
-    # Set up a proxy, note that version 1.2 will be outdated
-    # openai.proxy = "http://192.168.5.165:7890"
 
     ERROR = None
 except ImportError:

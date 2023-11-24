@@ -8,10 +8,10 @@ from ai.backend.util import base_util
 import re
 import ast
 from ai.agents.agentchat import TaskSelectorAgent
+import chardet
 
 language_chinese = CONFIG.language_chinese
 max_retry_times = CONFIG.max_retry_times
-
 
 class AnalysisCsv(Analysis):
     async def deal_question(self, json_str, message):
@@ -97,12 +97,18 @@ class AnalysisCsv(Analysis):
 
     async def check_data_csv(self, q_str):
         """Check the data description to see if it meets the requirements"""
-        print("q_str :", q_str)
         print("CONFIG.up_file_path  : " + CONFIG.up_file_path)
         if q_str.get('table_desc'):
             for tb in q_str.get('table_desc'):
                 if len(tb.get('field_desc')) == 0:
-                    data = pd.read_csv(CONFIG.up_file_path + tb.get('table_name'))
+
+                    # Read file and detect encoding
+                    csv_file = CONFIG.up_file_path + tb.get('table_name')
+                    f = open(csv_file, 'rb')
+                    # Read the file using the detected encoding
+                    encoding = chardet.detect(f.read())['encoding']
+                    f.close()
+                    data = pd.read_csv(open(csv_file, encoding=encoding, errors='ignore'))
 
                     # Get column headers (first row of data)
                     column_titles = list(data.columns)
@@ -191,7 +197,6 @@ class AnalysisCsv(Analysis):
 
             if error_times >= max_retry_times:
                 return self.error_message_timeout
-                # return "十分抱歉，本次AI-GPT接口调用超时，请再次重试"
 
             logger.info(
                 "from user:[{}".format(self.user_name) + "] , " + "，report_demand_list" + str(report_demand_list))

@@ -4,7 +4,10 @@ from ai.backend.util.write_log import logger
 from ai.backend.base_config import CONFIG
 from ai.backend.util import database_util
 from .analysis import Analysis
+import re
+import ast
 from ai.agents.agentchat import TaskSelectorAgent
+from ai.backend.util import base_util
 
 
 max_retry_times = CONFIG.max_retry_times
@@ -64,6 +67,8 @@ class AnalysisMysql(Analysis):
                         self.agent_instance_util.base_mysql_info = ' When connecting to the database, be sure to bring the port. This is database info :' + '\n' + str(
                             db_info)
                         self.agent_instance_util.base_message = str(q_str)
+                        self.agent_instance_util.db_id = db_id
+
                 else:
                     self.agent_instance_util.base_message = str(q_str)
 
@@ -85,6 +90,7 @@ class AnalysisMysql(Analysis):
                         self.agent_instance_util.base_mysql_info = '  When connecting to the database, be sure to bring the port. This is database info :' + '\n' + str(
                             db_info)
                         self.agent_instance_util.base_message = str(q_str)
+                        self.agent_instance_util.db_id = db_id
                 else:
                     self.agent_instance_util.base_message = str(q_str)
 
@@ -94,17 +100,6 @@ class AnalysisMysql(Analysis):
                 self.delay_messages['bi'][q_data_type].append(message)
                 print("delay_messages : ", self.delay_messages)
                 return
-
-    async def start_chatgroup(self, q_str):
-        # print("agent_instance_util.base_message : ", self.agent_instance_util.base_message)
-        user_proxy = self.agent_instance_util.get_agent_user_proxy()
-        # base_mysql_assistant = self.agent_instance_util.get_agent_base_mysql_assistant()
-        base_mysql_assistant = self.agent_instance_util.get_agent_base_assistant()
-
-        await user_proxy.initiate_chat(
-            base_mysql_assistant,
-            message=self.agent_instance_util.base_message + '\n' + self.question_ask + '\n' + str(q_str),
-        )
 
     async def task_base(self, qustion_message):
         """ Task type: mysql data analysis"""
@@ -173,3 +168,131 @@ class AnalysisMysql(Analysis):
             openai_proxy=self.agent_instance_util.openai_proxy,
         )
         return base_mysql_assistant
+
+    async def task_generate_echart(self, qustion_message):
+        try:
+            base_content = []
+            base_mess = []
+            report_demand_list = []
+            json_str = ""
+            error_times = 0
+            use_cache = True
+            for i in range(max_retry_times):
+                try:
+                    mysql_echart_assistant = self.agent_instance_util.get_agent_mysql_echart_assistant(use_cache=use_cache)
+                    python_executor = self.agent_instance_util.get_agent_python_executor()
+
+                    await python_executor.initiate_chat(
+                        mysql_echart_assistant,
+                        message=self.base_message + '\n' + self.question_ask + '\n' + str(
+                            qustion_message),
+                    )
+
+                    answer_message = mysql_echart_assistant.chat_messages[python_executor]
+
+                    for answer_mess in answer_message:
+                        # print("answer_mess :", answer_mess)
+                        if answer_mess['content']:
+                            if str(answer_mess['content']).__contains__('execution succeeded'):
+
+                                answer_mess_content = str(answer_mess['content']).replace('\n', '')
+
+                                print("answer_mess: ", answer_mess)
+                                match = re.search(
+                                    r"\[.*\]", answer_mess_content.strip(), re.MULTILINE | re.IGNORECASE | re.DOTALL
+                                )
+
+                                if match:
+                                    json_str = match.group()
+                                print("json_str : ", json_str)
+                                # report_demand_list = json.loads(json_str)
+
+                                chart_code_str = str(json_str).replace("\n", "")
+                                if len(chart_code_str) > 0:
+                                    print("chart_code_str: ", chart_code_str)
+                                    if base_util.is_json(chart_code_str):
+                                        report_demand_list = json.loads(chart_code_str)
+
+                                        print("report_demand_list: ", report_demand_list)
+
+                                        for jstr in report_demand_list:
+                                            if str(jstr).__contains__('echart_name') and str(jstr).__contains__(
+                                                    'echart_code'):
+                                                base_content.append(jstr)
+                                    else:
+                                        # String instantiated as object
+                                        report_demand_list = ast.literal_eval(chart_code_str)
+                                        print("report_demand_list: ", report_demand_list)
+                                        for jstr in report_demand_list:
+                                            if str(jstr).__contains__('echart_name') and str(jstr).__contains__(
+                                                    'echart_code'):
+                                                base_content.append(jstr)
+
+                    print("base_content: ", base_content)
+                    base_mess = []
+                    base_mess.append(answer_message)
+                    break
+
+
+                except Exception as e:
+                    traceback.print_exc()
+                    logger.error("from user:[{}".format(self.user_name) + "] , " + "error: " + str(e))
+                    error_times = error_times + 1
+                    use_cache = False
+
+            if error_times >= max_retry_times:
+                return self.error_message_timeout
+
+            logger.info(
+                "from user:[{}".format(self.user_name) + "] , " + "，report_demand_list" + str(report_demand_list))
+
+            bi_proxy = self.agent_instance_util.get_agent_bi_proxy()
+            is_chart = False
+            # Call the interface to generate pictures
+            for img_str in base_content:
+                echart_name = img_str.get('echart_name')
+                echart_code = img_str.get('echart_code')
+
+                if len(echart_code) > 0 and str(echart_code).__contains__('x'):
+                    is_chart = True
+                    print("echart_name : ", echart_name)
+                    re_str = await bi_proxy.run_echart_code(str(echart_code), echart_name)
+                    base_mess.append(re_str)
+
+            error_times = 0
+            for i in range(max_retry_times):
+                try:
+                    planner_user = self.agent_instance_util.get_agent_planner_user()
+                    analyst = self.agent_instance_util.get_agent_analyst()
+
+                    question_supplement = 'Please make an analysis and summary in English, including which charts were generated, and briefly introduce the contents of these charts.'
+                    if self.language_mode == CONFIG.language_chinese:
+
+                        if is_chart:
+                            question_supplement = " 请用中文，简单介绍一下已生成图表中的数据内容."
+                        else:
+                            question_supplement = " 请用中文，从上诉对话中分析总结出问题的答案."
+
+                    await planner_user.initiate_chat(
+                        analyst,
+                        message=str(
+                            base_mess) + '\n' + self.question_ask + '\n' + question_supplement,
+                    )
+
+                    answer_message = planner_user.last_message()["content"]
+                    return answer_message
+
+                except Exception as e:
+                    traceback.print_exc()
+                    logger.error("from user:[{}".format(self.user_name) + "] , " + "error: " + str(e))
+                    error_times = error_times + 1
+
+            if error_times == max_retry_times:
+                return self.error_message_timeout
+
+        except Exception as e:
+            traceback.print_exc()
+            logger.error("from user:[{}".format(self.user_name) + "] , " + "error: " + str(e))
+        return self.agent_instance_util.data_analysis_error
+
+

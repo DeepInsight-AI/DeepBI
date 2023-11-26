@@ -24,7 +24,7 @@
 - 下载我们的代码，解压重命名为 "Holmes" 移动到  /mnt/c/Windows/system32 (也就是你之前看到的文件夹地址)
 - 运行命令 "cd Holmes && sudo chmod+x ./Install.sh &&sudo ./Install.sh " 开始安装
 
-#Ubuntu
+# Ubuntu 安装docker
 - 运行命令如下：
 - sudo apt-get clean
 - sudo apt update

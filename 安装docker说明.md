@@ -3,6 +3,7 @@
 ##Windows
 - 你可以通过 https://learn.microsoft.com/en-us/windows/wsl/install 或者在微软商店进行安装 WSL
   或者通过管理员命令行安装 WSL :wsl --install
+- ![cmd.png](user_manual/cn/img/cmd.jpg)
 - 需要调整本地主板虚拟化选项
   电脑按del键进入Bios,进入高级选项"Intel (VMX) Virtualization Technology" or "Intel (VMX) Virtualization Technology" or "AMD-V" ，并设置"enable on"，然后重启电脑"
 - 打开管理员命令行，登录 WSL
@@ -41,19 +42,21 @@
 ##安装docker的两种方法
 ### 1. 下载docker desktop（推荐）
 - 从这里：https://docs.docker.com/desktop/install/mac-install/
-- 打开docker desktop，点击“setting”, 选择 Docker
-{
-  "builder": {
-    "gc": {
-      "defaultKeepStorage": "20GB",
-      "enabled": true
-    }
-  },
-  "experimental": false,
-  "registry-mirrors": [
-    "https://a8b2ut7v.mirror.aliyuncs.com"
-  ]
-}
+  - 打开docker desktop，点击“setting”, 选择 Docker engine
+  ```
+  {
+    "builder": {
+      "gc": {
+        "defaultKeepStorage": "20GB",
+        "enabled": true
+      }
+    },
+    "experimental": false,
+    "registry-mirrors": [
+      "https://docker.mirrors.ustc.edu.cn" # 新增国内源，建议用阿里云自定义源
+    ]
+  }
+  ```
 ### 2.使用系统偏好设置安装docker
 - 安装命令：brew install docker
 - 运行命令：brew services start docker

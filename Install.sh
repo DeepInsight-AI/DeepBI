@@ -10,17 +10,17 @@ fi
 # Install.sh, you mast have installed docker and docker-compose
 # check docker support
 if ! command -v docker &> /dev/null; then
-    echo "Docker has not installed. Solve this problem : https://github.com/Deep-thoughtIO/holmes/InstallDocker.md"
+    echo "Docker has not installed. Solve this problem : https://github.com/DeepThought-AI/Holmes/blob/main/InstallDocker.md"
     exit 1
 fi
 
 # check Docker Compose support
 if ! command -v docker-compose &> /dev/null; then
-    echo "Docker Compose has not installed. Solve this problem : https://github.com/Deep-thoughtIO/holmes/InstallDocker.md"
+    echo "Docker Compose has not installed. Solve this problem : https://github.com/DeepThought-AI/Holmes/blob/main/InstallDocker.md"
     exit 1
 fi
 # get local ip
-ip_addresses=$(ifconfig | grep -Eo 'inet (addr:)?([0-9]*\.){3}[0-9]*' | grep -Eo '([0-9]*\.){3}[0-9]*')
+ip_addresses=$(ifconfig | grep -Eo 'inet (addr:)?([0-9]*\.){3}[0-9]*' | grep -vE '^inet 127(\.[0-9]{1,3}){3}')
 # print ip for user to select the ip
 echo "You local ip as fellows:"
 echo "$ip_addresses" | tr ' ' '\n'
@@ -88,7 +88,7 @@ echo "build over. Create database container and init database"
 docker-compose run --rm server create_db
 echo "Initialization database completed"
 echo "--------------------------------"
-echo "command: "
+echo "command: (ubuntu need sudo)"
 echo " docker-compose up  #Create containers and front-end command line operation "
 echo " docker-compose up -d # Create containers and start containers server in the background: "
 echo " docker-compose start # Start all containers server "

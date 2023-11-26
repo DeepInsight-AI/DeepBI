@@ -10,17 +10,17 @@ if [ -f Dockerfile ]; then
 fi
 # 检测docker
 if ! command -v docker &> /dev/null; then
-    echo " 需要安装 docker, 参考：https://github.com/Deep-thoughtIO/holmes/InstallDockerCN.md "
+    echo " 需要安装 docker, 参考：https://github.com/DeepThought-AI/Holmes/blob/main/InstallDockerCN.md "
     exit 1
 fi
 
 # 检测 docker-compose 支持
 if ! command -v docker-compose &> /dev/null; then
-    echo "需要安装 docker-compose, 参考：https://github.com/Deep-thoughtIO/holmes/InstallDockerCN.md"
+    echo "需要安装 docker-compose, 参考：https://github.com/DeepThought-AI/Holmes/blob/main/InstallDockerCN.md"
     exit 1
 fi
 # get local ip
-ip_addresses=$(ifconfig | grep -Eo 'inet (addr:)?([0-9]*\.){3}[0-9]*' | grep -Eo '([0-9]*\.){3}[0-9]*')
+ip_addresses=$(ifconfig | grep -Eo 'inet (addr:)?([0-9]*\.){3}[0-9]*' | grep -vE '^inet 127(\.[0-9]{1,3}){3}')
 # print ip for user to select the ip
 echo "需要设置服务器的IP地址，你本地IP 如下，可以选择一个局域网IP:"
 echo "$ip_addresses" | tr ' ' '\n'
@@ -85,7 +85,7 @@ docker-compose run --rm server create_db
 echo "数据库初始化完毕"
 echo "--------------------------------"
 echo "下面开始启动Holmes  下面是一些尝用命令"
-echo "常用命令: "
+echo "常用命令: (ubuntu need sudo)"
 echo " docker-compose up  # 创建容器，并启动容器 "
 echo " docker-compose up -d # 创建容器，并在后台运行容器 "
 echo " docker-compose start # 启动所有已经创建的容器，并后台运行"

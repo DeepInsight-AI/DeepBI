@@ -1,11 +1,13 @@
 #如何安装docker和docker-compose
 
-##Windows
+## Windows
 - 你可以通过 https://learn.microsoft.com/en-us/windows/wsl/install 或者在微软商店进行安装 WSL
   或者通过管理员命令行安装 WSL :wsl --install
-- ![cmd.png](user_manual/cn/img/cmd.jpg)
+- ![cmd.jpg](user_manual/cn/img/cmd.jpg)
 - 需要调整本地主板虚拟化选项
-  电脑按del键进入Bios,进入高级选项"Intel (VMX) Virtualization Technology" or "Intel (VMX) Virtualization Technology" or "AMD-V" ，并设置"enable on"，然后重启电脑"
+  电脑按del键进入Bios,进入高级选项"Intel (VMX) Virtualization Technology" or "Intel (VMX) Virtualization Technology" or "AMD-V" ，并设置"enable on"，然后重启电脑" (或像下图)
+- ![bios.png](user_manual/cn/img/bios.png)
+
 - 打开管理员命令行，登录 WSL
 - 运行命令 "wsl" 或者 "wsl -u [username] username 是你之前安装的用户名
 - 运行 "lsb_release -a", 你会看到 ubuntu版本 ，根据版本号 ，运行以下命令安装 docker

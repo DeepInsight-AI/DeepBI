@@ -16,13 +16,7 @@ from .query_runner import import_query_runners
 from .destinations import import_destinations
 
 __version__ = "11.0.0-dev"
-__Holmes_version__ = "0.0.1"
-
-
-if os.environ.get("REMOTE_DEBUG"):
-    import ptvsd
-
-    ptvsd.enable_attach(address=("0.0.0.0", 5678))
+__Holmes_version__ = "1.0.0"
 
 
 def setup_logging():

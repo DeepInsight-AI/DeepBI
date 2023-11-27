@@ -9,7 +9,7 @@ Holmes is an AI-native data analysis platform. Holmes leverages the power of lar
 
 <div align="center">
 
-  Languages： English [中文](中文说明.md)<br>
+  Languages： English [中文](README_CN.md)<br>
 Developer Connect：dev@deep-thought.io Business connect：hi@deep-thought.io
 
   <div style="display: flex; align-items: center;">

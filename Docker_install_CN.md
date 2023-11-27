@@ -8,8 +8,8 @@
   ```
 - ![cmd.jpg](user_manual/cn/img/cmd.jpg)
 - 需要调整本地主板虚拟化选项
-  电脑按del键进入Bios,进入高级选项"Intel (VMX) Virtualization Technology" or "Intel (VMX) Virtualization Technology" or "AMD-V" ，并设置"enable on"，然后重启电脑" (或像下图)
-- ![bios.png](user_manual/cn/img/bios.png)
+  电脑按del键进入Bios,进入高级选项"Intel (VMX) Virtualization Technology" or "Intel (VMX) Virtualization Technology" or "AMD-V" ，并设置"enable on"，然后重启电脑" (或像下图)<br>
+  ![bios.png](user_manual/cn/img/bios.png)
 
 - 打开管理员命令行，登录 WSL
 - 运行命令```wsl```或者 ```wsl -u [username]``` username 是你之前安装的用户名
@@ -33,7 +33,7 @@
 - 下载我们的代码，```git clone git@github.com:DeepThought-AI/Holmes.git```
 - 进入项目文件夹 ```cd Holmes ```
 - 修改权限 ```sudo chmod+x ./Install.sh```
-- 运行命令```sudo ./Install_cn.sh ``` 开始安装
+- 运行命令```sudo ./Install_cn.sh ``` 开始安装<br>
 
 
 

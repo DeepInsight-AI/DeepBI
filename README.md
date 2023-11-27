@@ -55,7 +55,7 @@ The database connections supported by Holmes are:
 - [Installl docker](Docker_install.md)
 - Download project files by git:``` git clone https://github.com/Deep-thoughtIO/Holmes.git ``` <br>
   or drirect download zip file, unzip it. <br>
-- ![download.png](user_manual/cn/img/download.png)
+  ![download.png](user_manual/cn/img/download.png)
 
 - Enter the project directory:``` cd Holmes ```
 - Just run``` ./Install.sh ```directly

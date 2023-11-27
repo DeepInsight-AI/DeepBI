@@ -13,7 +13,7 @@ Holmes是一款AI原生的数据分析平台。Holmes充分利用大语言模型
 <div align="center">
 
   Languages： 中文 [English](README.md)<br>
- 开发相关：dev@deep-thought.io，工作及商务相关：hi@deep-thought.io
+ 开发：dev@deep-thought.io，工作及商务：hi@deep-thought.io
 
   <div style="display: flex; align-items: center;">
     如果觉得 Holmes 对您有帮助的话，请帮忙<a style="display: flex; align-items: center;margin:0px 6px" target="_blank" href='https://github.com/Deep-thoughtIO/Holmes'></a>
@@ -51,46 +51,34 @@ Holmes 支持的数据库连接有:
 
 ## 📦 Docker 安装部署
 
-```bash
-    本地需要有docker,docker-compose 环境,安装参考 :https://github.com/DeepThought-AI/Holmes/blob/main/安装docker说明.md
-    直接运行 sudo ./Install_cn.sh 即可,按照提示安装
-    默认使用端口 8338 8339
-    web访问: http://ip:8338
-    查看本机IP ifconfig | grep -Eo 'inet (addr:)?([0-9]*\.){3}[0-9]*' | grep -vE '^inet 127(\.[0-9]{1,3}){3}'
-```
+[使用 Docker 安装](Docker_install_CN.md)
 
-## docker命令
-    进入项目目录后运行命令：
-    docker-compose start # 启动Holmes 服务
-    docker-compose stop # 停止Holmes 服务
-    docker-compose ps # 查看 Holmes 服务
+## 📦 Ubuntu 直接安装
 
 
-## Ubuntu 直接安装
-
-```bash
-    直接在ubuntu 系统安装,需要将安装redis,postgresql python3.8.17 环境
-    如果本地已经有上述环境需要
+- 直接在ubuntu 系统安装,需要将安装redis,postgresql python3.8.17 环境
+- 环境建议
     1. redis 可以直接通过127.0.0.1,无密码命令行访问
     2. python版本要求3.8+ 建议使用pyenv coda 等虚拟环境
     3. postgresql 需要安装postgresql-16 版本
-    直接运行 . ubuntu_CN_install.sh 即可 (注意，这里运行的是 . ubuntu_CN_install.sh 而不是sh xxx， 因为需要运行python 虚拟环境)
-    默认使用端口 8338 8339
-    web访问: http://[ip]:8338
-    如果数据库或者redis本地已经安装,可以在.env 中修改
+- 下载代码``` git clone git@github.com:DeepThought-AI/Holmes.git ```
+- 直接运行 ```. ubuntu_CN_install.sh ```即可 <br>(注意，这里运行的是 . ubuntu_CN_install.sh 而不是sh xxx， 因为需要运行python 虚拟环境)
+- 默认使用端口 8338 8339
+- web访问: http://[ip]:8338
+- 如果数据库或者redis本地已经安装,可以在.env 中修改
     完成安装后, 请看上面的使用说明进行设置和使用
-    查看本机IP ifconfig | grep -Eo 'inet (addr:)?([0-9]*\.){3}[0-9]*' | grep -vE '^inet 127(\.[0-9]{1,3}){3}'
+- 查看本机IP ```ifconfig | grep -Eo 'inet (addr:)?([0-9]*\.){3}[0-9]*' | grep -vE '^inet 127(\.[0-9]{1,3}){3}'```
+
+## docker命令 或 Ubuntu 启动后命令
+- 进入项目目录后运行命令：
+```
+    docker-compose start # 启动Holmes 服务
+    docker-compose stop # 停止Holmes 服务
+    docker-compose ps # 查看 Holmes 服务
 ```
 
 
-## 💻 开发者
 
-- [Deep-thought](https://github.com/Deep-thoughtIO)
-
-## 💖 赞助者
-
-- [Deep-thought](https://github.com/Deep-thoughtIO)
-```bash
 ## 📑 文档
 
 - <a href="https://github.com/Deep-thoughtIO/Holmes/issues">Issue</a>

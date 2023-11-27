@@ -14,7 +14,7 @@ Developer：dev@deep-thought.io  Business：hi@deep-thought.io
 
   <div style="display: flex; align-items: center;">
 
-If you think Holmes is helpful to you, please help by clicking <a style="display: flex; align-items: center;margin:0px 6px" target="_blank" href='https://github.com/Deep-thoughtIO/Holmes'>here</a> on the ⭐ Star and Fork in the upper right corner. Your support is the greatest driving force for Holmes to become better.
+If you think Holmes is helpful to you, please help by clicking <a style="display: flex; align-items: center;margin:0px 6px" target="_blank" href='https://github.com/DeepThought-AI/Holmes'>here</a> on the ⭐ Star and Fork in the upper right corner. Your support is the greatest driving force for Holmes to become better.
 
 
   </div>
@@ -52,10 +52,14 @@ The database connections supported by Holmes are:
 ## 📦 Docker build
 
 - The local environment needs to have docker and docker-compose. <br>
-- [How to installl docker](Docker_install.md)
--  Download project files and enter the project directory.
+- [Installl docker](Docker_install.md)
+- Download project files by git:``` git clone https://github.com/Deep-thoughtIO/Holmes.git ``` <br>
+  or drirect download zip file, unzip it. <br>
+- ![download.png](user_manual/cn/img/download.png)
+
+- Enter the project directory:``` cd Holmes ```
 - Just run``` ./Install.sh ```directly
-    Default port is 8338 and 8339
+- Default port: 8338 8339
 - Web access: http://ip:8338
 
 ## Docker command
@@ -67,18 +71,19 @@ The database connections supported by Holmes are:
 ```
 
 ## Ubuntu build
-Install directly on the ubuntu system, you need to install redis, postgresql python3.8.17 environment
+Install directly on the ubuntu system, you need to install redis, postgresql python3.8.17 environment.
 If there is a need for the above environment locally
 
 - Redis can be accessed directly through the 127.0.0.1 password-free command line.
-- Python version requirements 3.8+ Recommend using virtual environments such as pyenv coda
-postgresql needs to install postgresql-16 version
-- Just run . ubuntu_install.sh directly (note that you run . ubuntu_CN_install.sh instead of sh xxx here, because you need to run the python virtual environment)
+- Require python version  3.8+
+- Recommend using virtual environments such as pyenv coda
+- postgresql needs to install postgresql-16 version
+- Just run ```. ubuntu_install.sh``` directly (note that you run . ubuntu_CN_install.sh instead of sh xxx here, because you need to run the python virtual environment)
 - Default port is 8338 and 8339
 - Web access: http://ip:8338
 
 
 ## 📑 Other
-
+- We have tested on Mac OS 12.7/13.X /14.1.1, Ubuntu 20.04/22.04, and Windows11 WSL 22.04. <br>If you have any questions, please contact us at dev@deep-thought.io
 - <a href="https://github.com/Deep-thoughtIO/Holmes/issues">Issue</a>
 

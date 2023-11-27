@@ -70,6 +70,7 @@ Holmes 支持的数据库连接有:
 - 查看本机IP ```ifconfig | grep -Eo 'inet (addr:)?([0-9]*\.){3}[0-9]*' | grep -vE '^inet 127(\.[0-9]{1,3}){3}'```
 
 ## docker命令 或 Ubuntu 启动后命令
+
 - 进入项目目录后运行命令：
 ```
     docker-compose start # 启动Holmes 服务
@@ -80,6 +81,7 @@ Holmes 支持的数据库连接有:
 
 
 ## 📑 文档
-
+- 我们已经在 Mac OS 12.7/13.X /14.1.1 , Ubuntu 20.04/22.04 和  Windows11 WSL 22.04 系统测试。
+  <br> 如果有什么问题，可以联系我们 dev@deep-thought.io
 - <a href="https://github.com/Deep-thoughtIO/Holmes/issues">Issue</a>
 

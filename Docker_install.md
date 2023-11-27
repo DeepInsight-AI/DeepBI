@@ -1,37 +1,47 @@
 # How to install docker and docker-compose
 
 ## Windows
-- In widows system ,we need install WSL server, https://learn.microsoft.com/en-us/windows/wsl/install or in Microsoft Store
-  search Ubuntu and install it
-- Please enable the Virtual lachine Platform findows feature and ensure virtualization is enabled in the BI0S. (Restart the computer, press the del key (usually based on the motherboard) to enter the BIOS, then enter Advanced Settings and find cpu setting, find "Intel (VMX) Virtualization Technology" or "AMD-V"  set it to enable)
-- Install WSL success then open command prompt and type "lsb_release -a",you will see the version of WSL,install docker based on the version
-- 'docker' install command :<br>
+- You can install WSL through https://learn.microsoft.com/en-us/windows/wsl/install or through the Microsoft Store, or by running the following command in the administrator command line:
+```
+   WSL --install
+```
+
+- ![cmd.jpg](user_manual/cn/img/cmd.jpg)
+- Now, you are in WSL system,you need to adjust the local motherboard virtualization options
+Press the del key to enter Bios, go to the advanced options "Intel (VMX) Virtualization Technology" or "Intel (VMX) Virtualization Technology" or "AMD-V", and set "enable on", then restart the computer (or like this picture).
+- ![bios.png](user_manual/cn/img/bios.png)
+
+- Open the administrator command line and log into WSL.<br>
+Run the command``` wsl``` or ```wsl -u [username]```  username is the username you installed before.
+- After logging in, you are now in the WSL system. Run ```lsb_release -a```, and you will see the ubuntu version. According to the version number, run the following command to install docker
+- 'docker' install command :
+```
    sudo snap install docker         # version 20.10.24 <br>
    sudo apt  install podman-docker  # version 3.4.4+ds1-1ubuntu1.22.04.2<br>
    sudo apt install docker.io         # version 24.0.5-0ubuntu1~22.04.1<br>
-- Open the command prompt as an administrator
-- login in WSL by command "wsl" or "wsl -u [username], username is your username
-- Run command "sudo apt install net-tools"
-- Run command "sudo service docker start" to start docker server
-- Run command "service docker status" to check docker status,it must be "active (running)"
-- Run command : "pwd" you will see local path like  "/mnt/c/Windows/system32" .
- Download project zip file from github, unzip it ,rename it as "Holmes" and move it to  /mnt/c/Windows/system32 (Path of the previous step)
-- Run command "cd Holmes && sudo ./Install.sh " wait installing
+```
+- After installing docker, give permissions to the current logged-in user. ```sudo usermod -aG docker $USER```
+- Start the docker command ```sudo service docker start```
+- Check the docker running status command``` service docker status``` It should be "active (running)"
+- Install network management commands```sudo apt install net-tools```
+- Download the Holmes code by the command : ```git clone git@github.com:DeepThought-AI/Holmes.git```
+- Run the command ```cd Holmes```  to the corresponding folder and run install file ```sudo ./install.sh```
 
 ## Ubuntu
-- sudo apt-get clean
-- sudo apt update
-- sudo apt-get install ca-certificates curl gnupg lsb-release
-- sudo curl -fsSL http://mirrors.aliyun.com/docker-ce/linux/ubuntu/gpg | sudo apt-key add -
-- sudo add-apt-repository "deb [arch=amd64] http://mirrors.aliyun.com/docker-ce/linux/ubuntu $(lsb_release -cs) stable"
-- sudo apt-get update
-- apt-get install docker-ce docker-ce-cli containerd.io
-- sudo usermod -aG docker $USER
+- Run the command as follows:
+```
+sudo apt-get clean
+sudo apt-get update
+sudo apt-get install ca-certificates curl gnupg lsb-release
+apt-get install docker-ce docker-ce-cli containerd.io
+sudo usermod -aG docker $USER
+```
 - Need user exit and relogin
-- systemctl start docker
-- sud apt-get -y install apt-transport-https ca-certificates curl software-properties-common
-- sudo systemctl enable docker
-
+```
+systemctl start docker
+sud apt-get -y install apt-transport-https ca-certificates curl software-properties-common
+sudo systemctl enable docker
+```
 
 ## Mac, Two ways to install docker
 

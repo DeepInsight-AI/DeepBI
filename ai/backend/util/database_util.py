@@ -71,7 +71,8 @@ def check_secret(data_id, secret):
     pass
 
 
-def decode_data_info(code):  # 解密获取 数据库信息
+def decode_data_info(code):
+    """Decrypt to obtain database information """
     try:
         code_str = decrypt(code, DB_API_SECRET_KEY)
         code_arr = code_str.split("$$")
@@ -104,14 +105,13 @@ class Main:
             return False, ' error: Not found CONFIG.web_server_ip '
 
         print(url)
-        # 这里获取数据
         url_data = requests.get(url).text
         print('url_data :', url_data)
         json_data = json.loads(url_data)
         print('json_data :', json_data)
         if 200 == json_data['code']:
             decode_json = decode_data_info(json_data['data'])
-            print("解密后", decode_json)
+            # print("解密后", decode_json)
 
             # 敏感信息隐藏
             decode_json = dbinfo_encode(decode_json)
@@ -140,7 +140,7 @@ class Main:
         print('json_data :', json_data)
         if 200 == json_data['code']:
             decode_json = decode_data_info(json_data['data'])
-            print("decode : ", decode_json)
+            # print("decode : ", decode_json)
             return True, decode_json
         else:
             print(json_data['msg'])

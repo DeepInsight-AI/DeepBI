@@ -24,7 +24,7 @@ If you think Holmes is helpful to you, please help by clicking <a style="display
 
 ## Video example
 
-https://github.com/Deep-thoughtIO/Holmes/assets/151519374/d1effbe1-5c11-4c77-86ef-e01b1ea7f2f6
+https://github.com/DeepThought-AI/Holmes/assets/151519374/d1effbe1-5c11-4c77-86ef-e01b1ea7f2f6
 
 
 ## user manual
@@ -63,7 +63,7 @@ The database connections supported by Holmes are:
 - Web access: http://ip:8338
 
 ## Docker command
-- Entrance project Holmes dir:
+- Enter project Holmes dir:
 ```
     docker-compose start # start Holmes servie
     docker-compose stop # stop Holmes servie
@@ -72,7 +72,6 @@ The database connections supported by Holmes are:
 
 ## Ubuntu build
 Install directly on the ubuntu system, you need to install redis, postgresql python3.8.17 environment.
-If there is a need for the above environment locally
 
 - Redis can be accessed directly through the 127.0.0.1 password-free command line.
 - Require python version  3.8+
@@ -84,6 +83,6 @@ If there is a need for the above environment locally
 
 
 ## 📑 Other
-- We have tested on Mac OS 12.7/13.X /14.1.1, Ubuntu 20.04/22.04, and Windows11 WSL 22.04. <br>If you have any questions, please contact us at dev@deep-thought.io
+- We have tested on Mac OS 12.7/13.X /14.1.1, Ubuntu 20.04/22.04, and Windows11 WSL 22.04. <br>If you have any question, please contact us at dev@deep-thought.io
 - <a href="https://github.com/Deep-thoughtIO/Holmes/issues">Issue</a>
 

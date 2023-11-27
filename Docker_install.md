@@ -13,12 +13,28 @@ Press the del key to enter Bios, go to the advanced options "Intel (VMX) Virtual
 
 - Open the administrator command line and log into WSL.<br>
 Run the command``` wsl``` or ```wsl -u [username]```  username is the username you installed before.
-- After logging in, you are now in the WSL system. Run ```lsb_release -a```, and you will see the ubuntu version. According to the version number, run the following command to install docker
+- After logging in, you are now in the WSL system.
 - 'docker' install command :
 ```
-   sudo snap install docker         # version 20.10.24 <br>
-   sudo apt  install podman-docker  # version 3.4.4+ds1-1ubuntu1.22.04.2<br>
-   sudo apt install docker.io         # version 24.0.5-0ubuntu1~22.04.1<br>
+   sudo apt update
+   sudo apt install apt-transport-https ca-certificates curl software-properties-common
+   curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+   sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
+   sudo apt update
+   sudo apt install docker-ce
+   sudo service docker start
+   sudo service docker status
+```
+- If you encounter the error```Docker is not running```
+- Slove the error by the command:
+```
+sudo update-alternatives --set iptables /usr/sbin/iptables-legacy
+sudo update-alternatives --set ip6tables /usr/sbin/ip6tables-legacy
+```
+- Install docker-compose
+```
+sudo curl -L https://download.fastgit.org/docker/compose/releases/download/1.27.4/docker-compose-`uname -s`-`uname -m` > /usr/local/bin/docker-compose
+sudo chmod +x /usr/local/bin/docker-compose
 ```
 - After installing docker, give permissions to the current logged-in user. ```sudo usermod -aG docker $USER```
 - Start the docker command ```sudo service docker start```

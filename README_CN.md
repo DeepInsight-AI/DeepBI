@@ -16,7 +16,7 @@ Holmes是一款AI原生的数据分析平台。Holmes充分利用大语言模型
  开发：dev@deep-thought.io，工作及商务：hi@deep-thought.io
 
   <div style="display: flex; align-items: center;">
-    如果觉得 Holmes 对您有帮助的话，请帮忙<a style="display: flex; align-items: center;margin:0px 6px" target="_blank" href='https://github.com/Deep-thoughtIO/Holmes'></a>
+    如果觉得 Holmes 对您有帮助的话，请帮忙<a style="display: flex; align-items: center;margin:0px 6px" target="_blank" href='https://github.com/DeepThought-AI/Holmes'></a>
     的右上角点个⭐ Star 和 Fork，您的支持是 Holmes 变得更好最大的动力
   </div>
 </div>
@@ -25,7 +25,7 @@ Holmes是一款AI原生的数据分析平台。Holmes充分利用大语言模型
 
 ## 案例视频
 
-https://github.com/Deep-thoughtIO/Holmes/assets/151519374/f0d2fcd4-32b0-4095-a892-b9bbf8a51602
+https://github.com/DeepThought-AI/Holmes/assets/151519374/f0d2fcd4-32b0-4095-a892-b9bbf8a51602
 
 ## 使用说明
 [Holmes 使用说明](client/app/assets/images/cn/user_manual_cn.md)
@@ -83,5 +83,5 @@ Holmes 支持的数据库连接有:
 ## 📑 文档
 - 我们已经在 Mac OS 12.7/13.X /14.1.1 , Ubuntu 20.04/22.04 和  Windows11 WSL 22.04 系统测试。
   <br> 如果有什么问题，可以联系我们 dev@deep-thought.io
-- <a href="https://github.com/Deep-thoughtIO/Holmes/issues">Issue</a>
+- <a href="https://github.com/DeepThought-AI/Holmes/issues">Issue</a>
 

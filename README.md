@@ -53,7 +53,7 @@ The database connections supported by Holmes are:
 
 - The local environment needs to have docker and docker-compose. <br>
 - [Installl docker](Docker_install.md)
-- Download project files by git:``` git clone https://github.com/Deep-thoughtIO/Holmes.git ``` <br>
+- Download project files by git:``` git clone https://github.com/DeepThought-AI/Holmes.git ``` <br>
   or drirect download zip file, unzip it. <br>
   ![download.png](user_manual/cn/img/download.png)
 
@@ -84,5 +84,5 @@ Install directly on the ubuntu system, you need to install redis, postgresql pyt
 
 ## 📑 Other
 - We have tested on Mac OS 12.7/13.X /14.1.1, Ubuntu 20.04/22.04, and Windows11 WSL 22.04. <br>If you have any question, please contact us at dev@deep-thought.io
-- <a href="https://github.com/Deep-thoughtIO/Holmes/issues">Issue</a>
+- <a href="https://github.com/DeepThought-AI/Holmes/issues">Issue</a>
 

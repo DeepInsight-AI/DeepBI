@@ -51,7 +51,7 @@ Holmes 支持的数据库连接有:
 
 ## 📦 Docker 安装部署
 
-[Docker 安装使用说明](Docker_install_CN.md)
+[使用 Docker 安装](Docker_install_CN.md)
 
 ## 📦 Ubuntu 直接安装
 

@@ -1,15 +1,18 @@
 # How to install docker and docker-compose
 
 ## Windows
+
+- You are in WSL system,you need to adjust the local motherboard virtualization options
+Press the del key to enter Bios, go to the advanced options "Intel (VMX) Virtualization Technology" or "Intel (VMX) Virtualization Technology" or "AMD-V", and set "enable on", then restart the computer (or like this picture).
+- ![bios.png](user_manual/cn/img/bios.png)
+
 - You can install WSL through https://learn.microsoft.com/en-us/windows/wsl/install or through the Microsoft Store, or by running the following command in the administrator command line:
 ```
    WSL --install
 ```
 
 - ![cmd.jpg](user_manual/cn/img/cmd.jpg)
-- Now, you are in WSL system,you need to adjust the local motherboard virtualization options
-Press the del key to enter Bios, go to the advanced options "Intel (VMX) Virtualization Technology" or "Intel (VMX) Virtualization Technology" or "AMD-V", and set "enable on", then restart the computer (or like this picture).
-- ![bios.png](user_manual/cn/img/bios.png)
+
 
 - Open the administrator command line and log into WSL.<br>
 Run the command``` wsl``` or ```wsl -u [username]```  username is the username you installed before.
@@ -33,8 +36,9 @@ sudo update-alternatives --set ip6tables /usr/sbin/ip6tables-legacy
 ```
 - Install docker-compose
 ```
-sudo curl -L https://download.fastgit.org/docker/compose/releases/download/1.27.4/docker-compose-`uname -s`-`uname -m` > /usr/local/bin/docker-compose
-sudo chmod +x /usr/local/bin/docker-compose
+sudo apt-get install docker-compose
+sudo rm /usr/local/bin/docker-compose
+sudo ln -s /usr/bin/docker-compose /usr/local/bin/docker-compose
 ```
 - After installing docker, give permissions to the current logged-in user. ```sudo usermod -aG docker $USER```
 - Start the docker command ```sudo service docker start```

@@ -1,10 +1,19 @@
 ## Windows
 
+- 需要调整本地主板虚拟化选项<br>
+  首先重启电脑，重启电脑时不断按“F1”和“F2”和“DEL”这三个键进入Bios（因为大部分主板是这三个按键的其中一个，所以一起按，另外注意笔记本是按“ESC”键）<br>
+  ![bios.png](user_manual/cn/img/bios1.png)
+  ![bios.png](user_manual/cn/img/bios2.jpg)
+
+
 - 你可以通过 https://learn.microsoft.com/en-us/windows/wsl/install 或者在微软商店进行安装 WSL
   或者通过管理员命令行安装
-  ```
+- 然后在管理员命令行运行
+```
   WSL --install
-  ```
+```
+- ![cmd.jpg](user_manual/cn/img/cmd.jpg)
+
 - 如果出现，下面的提示
 ```
 版权所有(c) Microsoft Corporation。保留所有权利。
@@ -20,12 +29,8 @@
  运行: wsl --list --online 查看可以安装的版本
  然后运行: wsl --install -d Ubuntu-20.04 # 这里的Ubuntu-20.04 就是版本号
 ```
-- 然后在管理员命令行运行
 
-- ![cmd.jpg](user_manual/cn/img/cmd.jpg)
-- 需要调整本地主板虚拟化选项
-  电脑按del键进入Bios,进入高级选项"Intel (VMX) Virtualization Technology" or "Intel (VMX) Virtualization Technology" or "AMD-V" ，并设置"enable on"，然后重启电脑" (或像下图)<br>
-  ![bios.png](user_manual/cn/img/bios.png)
+
 
 - 打开管理员命令行，登录 WSL
 - 运行命令```wsl```或者 ```wsl -u [username]``` username 是你之前安装的用户名
@@ -45,17 +50,18 @@
 - 启动 docker 命令```sudo service docker start```
 - 检查docker 运行状态 ```service docker status``` 为 "active (running)" 或者 "Docker is running" 则为正常
 - 如果遇到```Docker is not running```
-- 解决方案
+- 解决方案，运行下命令
 ```
 sudo update-alternatives --set iptables /usr/sbin/iptables-legacy
 sudo update-alternatives --set ip6tables /usr/sbin/ip6tables-legacy
 ```
 - 安装 docker-compose
 ```
-sudo curl -L https://download.fastgit.org/docker/compose/releases/download/2.23.3/docker-compose-`uname -s`-`uname -m` > /usr/local/bin/docker-compose
-sudo chmod +x /usr/local/bin/docker-compose
+sudo apt-get install docker-compose
+sudo rm /usr/local/bin/docker-compose
+sudo ln -s /usr/bin/docker-compose /usr/local/bin/docker-compose
 ```
-
+- 上面安装完毕docker ,以后就不用再次安装
 - 安装网络管理 命令: ```sudo apt install net-tools```
 - 运行命令 ```service docker status``` 确认docker是在运行 "active (running)" <br>
 - 获取本机内网IP地址,记录下来，一般是192.168.1.xxx,稍后可以用在安装路径下 如下图:<br>
@@ -65,7 +71,7 @@ sudo chmod +x /usr/local/bin/docker-compose
 
 - （1）直接下载压做包 (推荐)
 - 在WSL命令行中运行命令 : ```pwd``` 你会看到你目前的文件夹地址 比如 ```/mnt/c/Windows/system32```
-- 切换到桌面，点击”<a href="https://github.com/DeepThought-AI/Holmes" target='_blank'>链接</a>“通过网页下载我们的代码 如下图
+- 点击”<a href="https://github.com/DeepThought-AI/Holmes" target='_blank'>链接</a>“通过网页下载我们的代码 如下图
 - ![download.png](user_manual/cn/img/download.png)
 - 解压后的文件夹 "Holmes" 移动到  C:/Windows/system32 (也就是上面看到的文件夹地址,c表示C盘)
 - 回到WSL命令行，运行命令```cd Holmes ```进入项目文件夹
@@ -79,8 +85,15 @@ sudo chmod +x /usr/local/bin/docker-compose
 - 进入项目文件夹 ```cd Holmes ```
 - 修改权限 ```sudo chmod +x ./Install.sh```
 - 运行命令```sudo ./Install_cn.sh ``` 开始安装<br>
-安装结束后会有一个网址提示，直接浏览器访问即可
-
+- 安装结束后会有一个网址提示，直接浏览器访问即可<br>
+（注意*关闭命令符窗口将无法访问属于Holmes网址
+   再次使用Holmes，打开“命令提示符”窗口“以管理员身份运行”
+  ```
+   1.运行“wsl”命令
+   2.运行“cd Holmes”命令
+   3.运行“sudo docker-compose start”命令
+  ```
+   就可以去浏览器中打开自己Holmes网址了【网址都是http://‘本机内网IP地址’:8338】
 
 
 # Ubuntu 安装docker

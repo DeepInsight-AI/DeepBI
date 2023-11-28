@@ -69,7 +69,7 @@ Holmes 支持的数据库连接有:
     完成安装后, 请看上面的使用说明进行设置和使用
 - 查看本机IP ```ifconfig | grep -Eo 'inet (addr:)?([0-9]*\.){3}[0-9]*' | grep -vE '^inet 127(\.[0-9]{1,3}){3}'```
 
-## docker命令 或 Ubuntu 启动后命令
+## Holmes 命令
 
 - 进入项目目录后运行命令：
 ```
@@ -77,6 +77,13 @@ Holmes 支持的数据库连接有:
     docker-compose stop # 停止Holmes 服务
     docker-compose ps # 查看 Holmes 服务
 ```
+- 如果出现 ```... PermissionError ...``` 或者 ```... Permission denied ...``` 请在执行命令前 加sudo
+```
+    sudo docker-compose start # 启动Holmes 服务
+    sudo docker-compose stop # 停止Holmes 服务
+    sudo docker-compose ps # 查看 Holmes 服务
+```
+
 
 
 

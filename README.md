@@ -62,13 +62,6 @@ The database connections supported by Holmes are:
 - Default port: 8338 8339
 - Web access: http://ip:8338
 
-## Docker command
-- Enter project Holmes dir:
-```
-    docker-compose start # start Holmes servie
-    docker-compose stop # stop Holmes servie
-    docker-compose ps # see Holmes servie states
-```
 
 ## Ubuntu build
 Install directly on the ubuntu system, you need to install redis, postgresql python3.8.17 environment.
@@ -80,6 +73,21 @@ Install directly on the ubuntu system, you need to install redis, postgresql pyt
 - Just run ```. ubuntu_install.sh``` directly (note that you run . ubuntu_install.sh instead of sh xxx here, because you need to run the python virtual environment)
 - Default port is 8338 and 8339
 - Web access: http://ip:8338
+
+
+## Holmes command
+- Enter project Holmes dir:
+```
+    docker-compose start # start Holmes servie
+    docker-compose stop # stop Holmes servie
+    docker-compose ps # see Holmes servie states
+```
+- If it appears... PermissionError ... ' or ' Permission denied', please add 'sudo' before executing the command
+```
+    sudo docker-compose start # start Holmes servie
+    sudo docker-compose stop # stop Holmes servie
+    sudo docker-compose ps # see Holmes servie states
+```
 
 
 ## 📑 Other

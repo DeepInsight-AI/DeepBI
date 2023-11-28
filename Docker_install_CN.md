@@ -17,7 +17,7 @@
 ```
 
 
-- 如果出现，下面的提示
+- 如果出现，下面的提示<br>
  ![docker_err.jpg](user_manual/cn/img/docker_err.jpg)
 - 解决方案
 ```

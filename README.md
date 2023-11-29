@@ -10,7 +10,7 @@ Holmes is an AI-native data analysis platform. Holmes leverages the power of lar
 <div align="center">
 
   Languages： English [中文](README_CN.md)<br>
-Developer：dev@deep-thought.io  Business：hi@deep-thought.io https://twitter.com/DeepThoughAI
+Developer：dev@deep-thought.io  Business：hi@deep-thought.io Twitter:https://twitter.com/DeepThoughAI
 
   <div style="display: flex; align-items: center;">
 
@@ -27,7 +27,7 @@ If you think Holmes is helpful to you, please help by clicking <a style="display
 https://github.com/DeepThought-AI/Holmes/assets/151519374/d1effbe1-5c11-4c77-86ef-e01b1ea7f2f6
 
 
-## user manual
+## User manual
 [Holmes user manual](client/app/assets/images/en/user_manual_en.md)
 
 

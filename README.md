@@ -10,7 +10,7 @@ Holmes is an AI-native data analysis platform. Holmes leverages the power of lar
 <div align="center">
 
   Languages： English [中文](README_CN.md)<br>
-Developer：dev@deep-thought.io  Business：hi@deep-thought.io
+Developer：dev@deep-thought.io  Business：hi@deep-thought.io https://twitter.com/DeepThoughAI
 
   <div style="display: flex; align-items: center;">
 
@@ -51,16 +51,7 @@ The database connections supported by Holmes are:
 
 ## 📦 Docker build
 
-- The local environment needs to have docker and docker-compose. <br>
-- [Installl docker](Docker_install.md)
-- Download project files by git:``` git clone https://github.com/DeepThought-AI/Holmes.git ``` <br>
-  or drirect download zip file, unzip it. <br>
-  ![download.png](user_manual/cn/img/download.png)
-
-- Enter the project directory:``` cd Holmes ```
-- Just run``` ./Install.sh ```directly
-- Default port: 8338 8339
-- Web access: http://ip:8338
+Follow the steps corresponding to your system in "[Install with Docker](Docker_install.md)" , and finally obtain the Holmes URL, which can be accessed through a browser
 
 
 ## Ubuntu build
@@ -89,6 +80,8 @@ Install directly on the ubuntu system, you need to install redis, postgresql pyt
     sudo docker-compose ps # see Holmes servie states
 ```
 
+## Contact Us
+ <img src="http://www.deep-thought.io/wechat.png" width="30%">
 
 ## 📑 Other
 - We have tested on Mac OS 12.7/13.X /14.1.1, Ubuntu 20.04/22.04, and Windows11 WSL 22.04. <br>If you have any question, please contact us at dev@deep-thought.io

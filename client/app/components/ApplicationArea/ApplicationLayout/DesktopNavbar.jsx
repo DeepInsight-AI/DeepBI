@@ -13,8 +13,7 @@ import logoUrl from "@/assets/images/icon_small.png";
 import CommentOutlinedIcon from "@ant-design/icons/CommentOutlined";
 import LineChartOutlinedIcon from "@ant-design/icons/LineChartOutlined";
 import DashboardOutlinedIcon from "@ant-design/icons/DashboardOutlined";
-
-
+import RobotOutlinedIcon from "@ant-design/icons/RobotOutlined";
 
 import QuestionCircleOutlinedIcon from "@ant-design/icons/QuestionCircleOutlined";
 import SettingOutlinedIcon from "@ant-design/icons/SettingOutlined";
@@ -64,6 +63,7 @@ function useNavbarActiveState() {
       testdialogue: includes(["Dialogue.List"], currentRoute.id),
       report_route : includes(["Dialogue.List.Report"], currentRoute.id),
       dialogue_list : includes(["Dialogue.List.Dialogue"], currentRoute.id),
+      autopilot : includes(["Dialogue.List.autopilot"], currentRoute.id),
 
     }),
     [currentRoute.id]
@@ -160,6 +160,14 @@ export default function DesktopNavbar() {
               <span className="desktop-navbar-label">{window.W_L.dashboards}</span>
             </Link>
           </Menu.Item>
+
+          <Menu.Item key="autopilot" className={activeState.autopilot ? "navbar-active-item" : null}>
+            <Link href="autopilot">
+              <RobotOutlinedIcon aria-label="autopilot navigation button" />
+              <span className="desktop-navbar-label">{window.W_L.auto_pilot}</span>
+            </Link>
+          </Menu.Item>
+
       </NavbarSection>
 
  

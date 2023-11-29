@@ -78,6 +78,14 @@ function DialogueList(props) {
 }
 
 function registerDialogueListRoute() {
+  routes.register(
+    "Dialogue.List.autopilot",
+    routeWithUserSession({
+      path: "/autopilot",
+      title: "autopilot",
+      render: (pageProps) => <DialogueList {...pageProps} chatType="autopilot" />,
+    })
+  );
 
   routes.register(
     "Dialogue.List.Dialogue",

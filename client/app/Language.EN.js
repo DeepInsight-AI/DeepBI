@@ -777,4 +777,5 @@ window.W_L = {
   'Show_Legend': 'Show Legend',
   'Value_Placeholder': 'Value Placeholder',
   'Value_Format': 'Value Format',
+  'auto_pilot': 'Auto Pilot',
 }

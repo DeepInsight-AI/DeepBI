@@ -778,4 +778,5 @@ window.W_L=  {
   'Show_Legend':'显示图例',
   'Value_Placeholder':'显示值提示信息',
   'Value_Format':'显示值格式',
+  'auto_pilot':'自动驾驶',
 }

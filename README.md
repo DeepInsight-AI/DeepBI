@@ -10,7 +10,7 @@ Holmes is an AI-native data analysis platform. Holmes leverages the power of lar
 <div align="center">
 
   Languages： English [中文](README_CN.md)<br>
-Developer：dev@deep-thought.io  Business：hi@deep-thought.io
+Developer：dev@deep-thought.io  Business：hi@deep-thought.io Twitter:https://twitter.com/DeepThoughAI
 
   <div style="display: flex; align-items: center;">
 
@@ -27,7 +27,7 @@ If you think Holmes is helpful to you, please help by clicking <a style="display
 https://github.com/DeepThought-AI/Holmes/assets/151519374/d1effbe1-5c11-4c77-86ef-e01b1ea7f2f6
 
 
-## user manual
+## User manual
 [Holmes user manual](client/app/assets/images/en/user_manual_en.md)
 
 
@@ -51,24 +51,8 @@ The database connections supported by Holmes are:
 
 ## 📦 Docker build
 
-- The local environment needs to have docker and docker-compose. <br>
-- [Installl docker](Docker_install.md)
-- Download project files by git:``` git clone https://github.com/Deep-thoughtIO/Holmes.git ``` <br>
-  or drirect download zip file, unzip it. <br>
-  ![download.png](user_manual/cn/img/download.png)
+Follow the steps corresponding to your system in "[Install with Docker](Docker_install.md)" , and finally obtain the Holmes URL, which can be accessed through a browser
 
-- Enter the project directory:``` cd Holmes ```
-- Just run``` ./Install.sh ```directly
-- Default port: 8338 8339
-- Web access: http://ip:8338
-
-## Docker command
-- Enter project Holmes dir:
-```
-    docker-compose start # start Holmes servie
-    docker-compose stop # stop Holmes servie
-    docker-compose ps # see Holmes servie states
-```
 
 ## Ubuntu build
 Install directly on the ubuntu system, you need to install redis, postgresql python3.8.17 environment.
@@ -82,7 +66,24 @@ Install directly on the ubuntu system, you need to install redis, postgresql pyt
 - Web access: http://ip:8338
 
 
+## Holmes command
+- Enter project Holmes dir:
+```
+    docker-compose start # start Holmes servie
+    docker-compose stop # stop Holmes servie
+    docker-compose ps # see Holmes servie states
+```
+- If it appears... PermissionError ... ' or ' Permission denied', please add 'sudo' before executing the command
+```
+    sudo docker-compose start # start Holmes servie
+    sudo docker-compose stop # stop Holmes servie
+    sudo docker-compose ps # see Holmes servie states
+```
+
+## Contact Us
+ <img src="http://www.deep-thought.io/wechat.png" width="30%">
+
 ## 📑 Other
 - We have tested on Mac OS 12.7/13.X /14.1.1, Ubuntu 20.04/22.04, and Windows11 WSL 22.04. <br>If you have any question, please contact us at dev@deep-thought.io
-- <a href="https://github.com/Deep-thoughtIO/Holmes/issues">Issue</a>
+- <a href="https://github.com/DeepThought-AI/Holmes/issues">Issue</a>
 

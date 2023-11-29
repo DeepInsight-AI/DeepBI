@@ -10,7 +10,7 @@
 
 2. You can use https://learn.microsoft.com/en-us/windows/wsl/install or for installation WSL in Microsoft store
   Or install it through the administrator command line as shown below:
-  ![cmd.jpg](user_manual/en/img/cmd.jpg)
+  ![cmd.jpg](user_manual/en/img/cmd.png)
 
 - Go to the command window and run the following command
 ```

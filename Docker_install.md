@@ -19,7 +19,7 @@
 
 
 - If the following prompts appear<br>
- ![docker_err.jpg](user_manual/cn/img/docker_err.jpg)
+ ![docker_err.jpg](user_manual/en/img/docker_err.png)
 - solution
 ```
  Run: wsl --list --online to see which versions can be installed

@@ -8,7 +8,7 @@ const AutoPilot = memo(({ content }) => {
     const data = JSON.parse(content);
     let div = document.createElement("div")
     div.innerHTML = Html
-    chartRef.current.append(div)
+    autopilotRef.current.append(div)
     // eval解析
   let scripts = div.querySelectorAll("script")
   scripts.forEach(item => {
@@ -16,7 +16,7 @@ const AutoPilot = memo(({ content }) => {
   });
   }, [content]);
 
-  return <div ref={chartRef}/>;
+  return <div ref={autopilotRef}/>;
 });
 
 export default AutoPilot;

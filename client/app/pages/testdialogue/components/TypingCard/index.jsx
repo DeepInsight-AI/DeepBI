@@ -2,13 +2,14 @@ import React, { useRef, useEffect, useState, useMemo } from "react";
 import { PropTypes } from "prop-types";
 import { currentUser } from "@/services/auth";
 import EChartsChart from "../Echarts/Echarts";
+import AutoPilot from "../AutoPilot/AutoPilot";
 import LogWorkflow from "../LogWorkflow"
 import Copy from "../Copy/Copy.jsx";
 import "./index.less";
 import icon_small from "@/assets/images/icon_small.png";
 
 const TypingCard = (props) => {
-  const { chart, source, logData, index, Cardloading, sender, time, ChangeScrollTop,retry } = props;
+  const { autopilot,chart, source, logData, index, Cardloading, sender, time, ChangeScrollTop,retry } = props;
   const sourceEl = useRef();
   const [sourceText, setSourceText] = useState("");
   const [showComponent, setShowComponent] = useState(false);
@@ -46,6 +47,9 @@ const TypingCard = (props) => {
     );
   }, [sourceText]);
 
+  const renderAutoPilot = useMemo(() => {
+    return autopilot ? <AutoPilot content={autopilot} /> : null;
+  }, [autopilot]);
   return (
     <div className="message" onMouseLeave={() => setShowComponent(false)}>
       <>
@@ -58,6 +62,7 @@ const TypingCard = (props) => {
             <div className={`chat ${sender}`}>
               {renderLogWorkflow}
               {renderChart}
+              {renderAutoPilot}
               {renderChatContent}
             </div>
           )}

@@ -449,7 +449,18 @@ const handleSocketMessage = useCallback(() => {
             }));
             scrollToBottom();
           }
+      }else if(data.receiver === 'autopilot') {
+        if(data.data.data_type === 'autopilot_code'){
+          setState(prevState => ({
+            messages: prevState.messages.map((message, i) =>
+              i === prevState.messages.length - 1 && message.sender === "bot"&& message.Cardloading
+                ? { ...message, autopilot: data.data.content}
+                : message
+            ),
+          }));
+          scrollToBottom();
         }
+      }
     } catch (error) {
       console.log(error, 'socket_error');
     }

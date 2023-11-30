@@ -49,7 +49,7 @@ const DialogueContent = forwardRef(({
             }
           {messages.map((message, index) => (
             <div key={index} className="chat-content" style={{margin:chat_type==="report"?'0 30px':'',marginTop:index===0?"30px":""}}>
-                  <TypingCard chart={message.chart} logData={message.logData} sender={message.sender} time={message.time} Cardloading={message.Cardloading} source={message.content} index={index} ChangeScrollTop={ChangeScrollTop} retry={retry} />
+                  <TypingCard autopilot={message.autopilot} chart={message.chart} logData={message.logData} sender={message.sender} time={message.time} Cardloading={message.Cardloading} source={message.content} index={index} ChangeScrollTop={ChangeScrollTop} retry={retry} />
             </div>
           ))}
         </div>

@@ -79,6 +79,8 @@ Install directly on the ubuntu system, you need to install redis, postgresql pyt
     sudo docker-compose stop # stop Holmes servie
     sudo docker-compose ps # see Holmes servie states
 ```
+## Running hardware recommendation
+- 2 core 4G memory
 
 ## Contact Us
  <img src="http://www.deep-thought.io/wechat.png" width="30%">

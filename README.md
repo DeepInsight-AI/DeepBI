@@ -86,6 +86,7 @@ Install directly on the ubuntu system, you need to install redis, postgresql pyt
  <img src="http://www.deep-thought.io/wechat.png" width="30%">
 
 ## 📑 Other
-- We have tested on Mac OS 12.7/13.X /14.1.1, Ubuntu 20.04/22.04, and Windows11 WSL 22.04. <br>If you have any question, please contact us at dev@deep-thought.io
+- At present, the recommended environment is Ubuntu, other environments have not had time to test, the next step will be gradually improved, windows10 WSL window11 WSL, MacOS 13.x, MacOS 14.x, Ubuntu 20.04 22.04 are no problem
+- <br>If you have any question, please contact us at dev@deep-thought.io
 - <a href="https://github.com/DeepThought-AI/Holmes/issues">Issue</a>
 

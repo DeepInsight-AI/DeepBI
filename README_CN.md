@@ -85,15 +85,15 @@ Holmes 支持的数据库连接有:
 ```
 
 ## 运行硬件建议:
-    2核心4G内存
+   - 2核心4G内存
 
 ## Contact Us
  <img src="http://www.deep-thought.io/wechat.png" width="30%">
 
 
-
 ## 📑 文档
-- 我们已经在 Mac OS 12.7/13.X /14.1.1 , Ubuntu 20.04/22.04 和  Windows11 WSL 22.04 系统测试。
-  <br> 如果有什么问题，可以联系我们 dev@deep-thought.io
+- 目前推荐环境用的是Ubuntu，其他环境还没来得及测试，下一步会逐步完善，使用的话 windows10 WSL、window11 WSL、 macOS13.X、macOS14.X、ubuntu20.04 ubuntu22.04都没有问题。
+-
+- 如果有什么问题，可以联系我们 dev@deep-thought.io
 - <a href="https://github.com/DeepThought-AI/Holmes/issues">Issue</a>
 

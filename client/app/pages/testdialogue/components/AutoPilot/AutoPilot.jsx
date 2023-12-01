@@ -1,4 +1,6 @@
 import React, { memo, useEffect, useRef, useState } from 'react';
+import FilePptOutlinedIcon from "@ant-design/icons/FilePptOutlined";
+import html2pdf from 'html2pdf.js';
 import * as echarts from 'echarts';
 const AutoPilot = memo(({ content }) => {
   const autopilotRef = useRef(null);
@@ -16,8 +18,17 @@ const AutoPilot = memo(({ content }) => {
     window.eval(item.innerText);
   });
   }, [content]);
-
-  return <div ref={autopilotRef}/>;
+  const exportPdf = () => {
+   html2pdf(autopilotRef.current, {
+      filename: 'autopilot.pdf'
+      });
+  }
+  return <div id="auto_pilot" ref={autopilotRef}>
+    <div className="auto_pilot_icon" onClick={exportPdf}>
+    <FilePptOutlinedIcon />
+    <p>导出PDF</p>
+    </div>
+  </div>
 });
 
 export default AutoPilot;

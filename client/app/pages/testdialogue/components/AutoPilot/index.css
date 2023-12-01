@@ -1,0 +1,14 @@
+.auto_pilot{
+    position: relative;
+}
+.auto_pilot_icon{
+    position: absolute;
+    top: 0;
+    right: 0;
+    background-size: 100% 100%;
+    display:flex;
+    align-items:center;
+}
+.auto_pilot_icon p{
+    margin-right: 5px;
+}

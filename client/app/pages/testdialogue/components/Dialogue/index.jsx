@@ -454,10 +454,11 @@ const handleSocketMessage = useCallback(() => {
           setState(prevState => ({
             messages: prevState.messages.map((message, i) =>
               i === prevState.messages.length - 1 && message.sender === "bot"&& message.Cardloading
-                ? { ...message, autopilot: data.data.content}
+                ? { ...message, autopilot: data.data.content,Cardloading: false,time:moment().format('YYYY-MM-DD HH:mm') }
                 : message
             ),
           }));
+          setLoadingState(false);
           scrollToBottom();
         }
       }

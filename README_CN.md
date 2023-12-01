@@ -83,6 +83,10 @@ Holmes 支持的数据库连接有:
     sudo docker-compose stop # 停止Holmes 服务
     sudo docker-compose ps # 查看 Holmes 服务
 ```
+
+## 运行硬件建议:
+    2核心4G内存
+
 ## Contact Us
  <img src="http://www.deep-thought.io/wechat.png" width="30%">
 

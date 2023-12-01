@@ -129,6 +129,7 @@ const config = {
       { from: "client/app/unsupportedRedirect.js" },
       { from: `client/app/${web_language_js}` },
       { from: "client/app/cdn.plot.ly_plotly-locale-zh-cn-latest.js" },
+      { from: "client/app/echarts-main.js" },
       { from: "client/app/assets/css/*.css", to: "styles/", flatten: true },
       { from: "client/app/assets/fonts", to: "fonts/" }
     ]),

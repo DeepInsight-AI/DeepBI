@@ -1,4 +1,5 @@
 import React, { memo, useEffect, useRef, useState } from 'react';
+import * as echarts from 'echarts';
 const AutoPilot = memo(({ content }) => {
   const autopilotRef = useRef(null);
   // const [AutoPilotJson, setAutoPilotJson] = useState({});

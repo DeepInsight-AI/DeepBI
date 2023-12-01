@@ -5,7 +5,7 @@ const AutoPilot = memo(({ content }) => {
 
   useEffect(() => {
     if(!content) return;
-    const data = JSON.parse(content);
+    const data = content;
     let div = document.createElement("div")
     div.innerHTML = data
     autopilotRef.current.append(div)

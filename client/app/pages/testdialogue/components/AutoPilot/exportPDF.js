@@ -82,7 +82,7 @@ export const exportPDF = async (title, element) => {
         width *= contentScale;
       }
       html2canvas(element, {
-        scale: 2,
+        scale: 1,
         useCORS: true,
         allowTaint: false,
         ignoreElements: (element) => {
@@ -98,7 +98,8 @@ export const exportPDF = async (title, element) => {
           context.msImageSmoothingEnabled = false;
           context.imageSmoothingEnabled = false;
         }
-        let pageData = canvas.toDataURL('image/jpg', 1.0);
+        // let pageData = canvas.toDataURL('image/jpg', 1.0);
+        let pageData = canvas.toDataURL('image/webp', 0.8);
         let img = new Image();
         img.src = pageData;
         img.onload = function () {

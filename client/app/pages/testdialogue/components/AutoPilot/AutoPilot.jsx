@@ -2,6 +2,7 @@ import React, { memo, useEffect, useRef, useState } from 'react';
 import FilePptOutlinedIcon from "@ant-design/icons/FilePptOutlined";
 import html2pdf from 'html2pdf.js';
 import * as echarts from 'echarts';
+import { exportPDF } from './exportPDF.js';
 import "./index.css";
 const AutoPilot = memo(({ content }) => {
   const autopilotRef = useRef(null);
@@ -30,20 +31,21 @@ const AutoPilot = memo(({ content }) => {
   //       useCORS: true
   //     },
   //     });
-      const opt = {
-        margin: 10,
-        filename: 'converted_pdf.pdf',
-        image: { type: 'jpeg', quality: 0.98 },
-        html2canvas: { scale: 2 },
-        jsPDF: { unit: 'mm', format: 'a2', orientation: 'portrait' } // 设置 A2 纸张大小
-      };
+      // const opt = {
+      //   margin: 10,
+      //   filename: 'converted_pdf.pdf',
+      //   image: { type: 'jpeg', quality: 0.98 },
+      //   html2canvas: { scale: 2 },
+      //   jsPDF: { unit: 'mm', format: 'a2', orientation: 'portrait' } // 设置 A2 纸张大小
+      // };
   
-      // 使用 html2pdf 库生成 PDF
-      html2pdf()
-        .from(autopilotRef.current)
-        .set(opt)
-        .save();
+      // // 使用 html2pdf 库生成 PDF
+      // html2pdf()
+      //   .from(autopilotRef.current)
+      //   .set(opt)
+      //   .save();
   
+      exportPDF('测试导出PDF', autopilotRef.current)
   }
   return <div className="auto_pilot" >
     <div className="auto_pilot_icon" onClick={exportPdf}>

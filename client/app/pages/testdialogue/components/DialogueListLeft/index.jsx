@@ -16,7 +16,7 @@ const modeSwitch = (item) => () => {
     return (
       <div className="dia-top">
         <img src={icon_small} alt="" />
-        <span>HoImes</span>
+        <span>Holmes</span>
       </div>
     )
   }

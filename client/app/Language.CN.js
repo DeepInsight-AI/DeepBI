@@ -601,7 +601,7 @@ window.W_L=  {
   'sheet_description':'请填写数据表描述',
   'field_description':'请填写字段描述',
 
-  'source_tooltip':'选择您的数据源并完成相应的表格和字段描述，HoImes 使您能够将人类语言转化为可使用的操作，并帮助您完成现实世界的任务，例如与数据相关的任务。',
+  'source_tooltip':'选择您的数据源并完成相应的表格和字段描述，Holmes 使您能够将人类语言转化为可使用的操作，并帮助您完成现实世界的任务，例如与数据相关的任务。',
   'source_first_tooltip':'请完善表格和字段注释，使Agent更好的帮助您完成任务。',
   'source_second_tooltip':'以上注释没有通过大模型检测，请修改后再次提交',
 

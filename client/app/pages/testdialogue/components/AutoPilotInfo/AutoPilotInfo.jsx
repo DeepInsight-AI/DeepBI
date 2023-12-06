@@ -34,10 +34,10 @@ const CreateAutoPilot = () => {
     }
     const HoImes_Dialogue = getDialogueStorage();
     if(HoImes_Dialogue && HoImes_Dialogue.length>0){
-        if (HoImes_Dialogue.table_name && HoImes_Dialogue.tableName.length > 0) {
+        if (HoImes_Dialogue.table_name &&HoImes_Dialogue.table_name.tableName && HoImes_Dialogue.table_name.tableName.length > 0) {
             setBtn_disabled(true);
               let promisesList = [];
-              const promises = HoImes_Dialogue.tableName.map(async (item) => {
+              const promises = HoImes_Dialogue.table_name.tableName.map(async (item) => {
                 const res = await axios.get(`/api/data_table/columns/${HoImes_Dialogue.Holmestable_id}/${item.name}`);
                 promisesList.push({
                   table_name: res.table_name,

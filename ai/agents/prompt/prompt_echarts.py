@@ -1,4 +1,4 @@
-CSV_ECHART_TIPS_MESS = """Here are some examples of generating mysql and pyecharts Code based on the given question. 
+CSV_ECHART_TIPS_MESS = """Here are some examples of generating mysql and pyecharts Code based on the given question.
  Please generate new one based on the data and question human asks you, import the neccessary libraries and make sure the code is correct.
 
 IMPORTANT: You need to follow the coding style, and the type of the x, y axis. But also need to focus on the column name of the uploaded tables(if exists). Generally, PyEcharts does not accept numpy.int or numpy.float, etc. It only supports built-in data type like int, float, and str.
@@ -90,8 +90,8 @@ The output should be formatted as a JSON instance that conforms to the JSON sche
 ].
 """
 
-MYSQL_ECHART_TIPS_MESS = """
-Here are some examples of generating mysql and pyecharts Code based on the given question. 
+MYSQL_ECHART_TIPS_MESS = '''
+Here are some examples of generating mysql and pyecharts Code based on the given question.
 Please generate new one based on the data and question human asks you, import the neccessary libraries and make sure the code is correct.
 
 IMPORTANT: You need to follow the coding style, and the type of the x, y axis. But also need to focus on the column name of the uploaded tables(if exists). Generally, PyEcharts does not accept numpy.int or numpy.float, etc. It only supports built-in data type like int, float, and str.
@@ -117,7 +117,7 @@ Pay attention to check whether the sql statement in the code block is correct an
         port="your_port"
     )
 
-    query = "select DATE_FORMAT(o.`date`, '%Y-%m') AS `month`, sales, profit FROM order_list  WHERE DATE_FORMAT(`date`, '%Y') = '2018' GROUP BY month"
+    query = """select DATE_FORMAT(o.`date`, '%Y-%m') AS `month`, `sales`, `profit` FROM order_list  WHERE DATE_FORMAT(`date`, '%Y') = '2018' GROUP BY `month`"""
 
     df = pd.read_sql(query, con=connection)
     connection.close()
@@ -173,7 +173,7 @@ Pay attention to check whether the sql statement in the code block is correct an
         port="your_port"
     )
 
-    query = "SELECT year, sales FROM your_table"
+    query = "SELECT year, sales FROM your_table  WHERE DATE_FORMAT(`date`, '%Y') = '2018' "
 
     df = pd.read_sql(query, con=connection)
 
@@ -212,11 +212,10 @@ Pay attention to check whether the sql statement in the code block is correct an
                         {},
                         ].
 
-"""
+'''
 
-
-POSTGRESQL_ECHART_TIPS_MESS = """
-Here are some examples of generating postgresql and pyecharts Code based on the given question. 
+POSTGRESQL_ECHART_TIPS_MESS = '''
+Here are some examples of generating postgresql and pyecharts Code based on the given question.
 Please generate new one based on the data and question human asks you, import the neccessary libraries and make sure the code is correct.
 
 IMPORTANT: You need to follow the coding style, and the type of the x, y axis. But also need to focus on the column name of the uploaded tables(if exists). Generally, PyEcharts does not accept numpy.int or numpy.float, etc. It only supports built-in data type like int, float, and str.
@@ -240,7 +239,7 @@ Pay attention to check whether the query statement in the execution code block c
         port="your_port"
     )
 
-    query = "SELECT year, sales, profit FROM your_table"
+    query = """SELECT `year`, `sales`, profit FROM your_table"""
 
     df = pd.read_sql(query, con=connection)
     connection.close()
@@ -335,6 +334,4 @@ Pay attention to check whether the query statement in the execution code block c
                         {},
                         ].
 
-"""
-
-
+'''

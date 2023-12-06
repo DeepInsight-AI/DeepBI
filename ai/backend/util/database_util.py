@@ -18,6 +18,7 @@ from ai.backend.util.base_util import dbinfo_encode
 DB_API_SECRET_KEY = os.environ.get("DB_API_SECRET_KEY", None)
 print('DB_API_SECRET_KEY : ', DB_API_SECRET_KEY)
 
+
 def encrypt(text, key):
     key_hash = hashlib.sha256(key.encode()).digest()
     text_bytes = text.encode()
@@ -53,7 +54,7 @@ def make_secret(text):
 def check_secret(data_id, secret):
     try:
         code_str = decrypt(secret, DB_API_SECRET_KEY)
-        # print("解密 from se ", code_str)
+        # print("decode from se ", code_str)
         code_arr = code_str.split("$$")
         code_int_time = code_arr[0]
         code_data_id = code_arr[1]
@@ -101,6 +102,7 @@ class Main:
 
         if CONFIG.web_server_ip is not None:
             url = "http://" + CONFIG.web_server_ip + "/data_source_info/" + db + "/" + from_se
+            print(url)
         else:
             return False, ' error: Not found CONFIG.web_server_ip '
 
@@ -131,6 +133,7 @@ class Main:
             url = "http://" + CONFIG.web_server_ip + "/data_source_info/" + db + "/" + from_se
 
         else:
+            print('error: Not found CONFIG.web_server_ip ')
             return False, ' error: Not found CONFIG.web_server_ip '
 
         print(url)

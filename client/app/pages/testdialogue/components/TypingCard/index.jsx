@@ -61,7 +61,7 @@ const TypingCard = (props) => {
         <div className={`chat${sender}`} onMouseEnter={() => setShowComponent(true)}>
           <img src={sender === "user" ? currentUser.profile_image_url : icon_small} alt="" />
           {sender === "user" ?  
-          {renderUser}
+          renderUser
           : 
           (
             <div className={`chat ${sender}`}>

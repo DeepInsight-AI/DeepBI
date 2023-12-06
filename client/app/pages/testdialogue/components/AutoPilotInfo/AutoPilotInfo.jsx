@@ -34,10 +34,11 @@ const CreateAutoPilot = () => {
     const HoImes_Dialogue = getDialogueStorage();
     console.log(HoImes_Dialogue, 'HoImes_Dialogue');
     if(HoImes_Dialogue && HoImes_Dialogue.length>0){
+        if (HoImes_Dialogue[0].table_name &&HoImes_Dialogue[0].table_name.tableName && HoImes_Dialogue[0].table_name.tableName.length > 0) {
             setBtn_disabled(true);
               let promisesList = [];
-              const promises = HoImes_Dialogue.table_name.tableName.map(async (item) => {
-                const res = await axios.get(`/api/data_table/columns/${HoImes_Dialogue.Holmestable_id}/${item.name}`);
+              const promises = HoImes_Dialogue[0].table_name.tableName.map(async (item) => {
+                const res = await axios.get(`/api/data_table/columns/${HoImes_Dialogue[0].Holmestable_id}/${item.name}`);
                 promisesList.push({
                   table_name: res.table_name,
                   table_comment: res.table_desc,
@@ -47,11 +48,13 @@ const CreateAutoPilot = () => {
 
               
               Promise.all(promises).then(() => {
-                autoPilot(HoImes_Dialogue.Holmestable_id,promisesList);
+                autoPilot(HoImes_Dialogue[0].Holmestable_id,promisesList);
               }).catch((err) => {
                 console.log(err, 'first_error');
                 setBtn_disabled(false);
               });
+        
+          }
     }
 }
 const { getDialogueStorage}=dialogueStorage();

@@ -28,13 +28,12 @@ const autoPilot =async (databases_id,db_comment) => {
     })
 };
 const CreateAutoPilot = () => {
-    console.log(report_name, report_desc);
     if (!report_name || !report_desc) {
         return;
     }
     const HoImes_Dialogue = getDialogueStorage();
+    console.log(HoImes_Dialogue, 'HoImes_Dialogue');
     if(HoImes_Dialogue && HoImes_Dialogue.length>0){
-        if (HoImes_Dialogue.table_name &&HoImes_Dialogue.table_name.tableName && HoImes_Dialogue.table_name.tableName.length > 0) {
             setBtn_disabled(true);
               let promisesList = [];
               const promises = HoImes_Dialogue.table_name.tableName.map(async (item) => {
@@ -53,8 +52,6 @@ const CreateAutoPilot = () => {
                 console.log(err, 'first_error');
                 setBtn_disabled(false);
               });
-        
-          }
     }
 }
 const { getDialogueStorage}=dialogueStorage();

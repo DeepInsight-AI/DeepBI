@@ -417,7 +417,7 @@ const SelectSource = forwardRef(({ confirmLoading, Holmestable, chat_type, onCha
       <div className="flex-column">
         <div className="dislogue-caption">
             <h1>Hi !</h1>
-            <span>{chat_type==="chat"?window.W_L.chat_start:window.W_L.report_start}
+            <span>{chat_type==="chat"?window.W_L.chat_start:chat_type==="autopilot"?window.W_L.AutoPilot_start:window.W_L.report_start}
             <Link href="/data_sources">{window.W_L.add_datasource}</Link>
             </span> 
         </div>

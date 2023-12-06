@@ -581,7 +581,7 @@ window.W_L=  {
   'table_field_desc_edit':'数据表字段描述编辑',
   'language_mode':"CN",
   'excel_upload':'csv数据源',
-  'data_analysis':'数据分析',
+  'data_analysis':'辅助数据分析',
   'report_generation':'报表生成',
   'report_list':'报表列表',
   
@@ -597,6 +597,8 @@ window.W_L=  {
   'new_dialogue':'新对话',
   'chat_start':'请选择您的数据源和表以开始数据分析，或者',
   'report_start':'请选择您的数据源和表以开始报表生成，或者',
+  'AutoPilot_start':'请选择您的数据源和表以开始自动数据分析，或者',
+
 
   'sheet_description':'请填写数据表描述',
   'field_description':'请填写字段描述',
@@ -778,7 +780,7 @@ window.W_L=  {
   'Show_Legend':'显示图例',
   'Value_Placeholder':'显示值提示信息',
   'Value_Format':'显示值格式',
-  'auto_pilot':'自动驾驶',
+  'auto_pilot':'自动数据分析',
   'report_name':'报告名称',
   'report_desc':'报告描述',
   'report_name_placeholder':'请填写报告名称',

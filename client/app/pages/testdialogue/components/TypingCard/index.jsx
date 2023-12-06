@@ -47,9 +47,6 @@ const TypingCard = (props) => {
       />
     );
   }, [sourceText]);
-  // (
-  //   <div className={`chat ${sender}`}>{source}</div>
-  // )
   const renderUser = useMemo(() => {
     return chat_type === "autopilot" ? <AutoPilotInfo/> : <div className={`chat ${sender}`}>{source}</div>;
   }, [chat_type, sender, source]);

@@ -296,13 +296,10 @@ const handleSuccess =async (tableId,table,isSendTableDateType=null) => {
 
 };
 const AutoPilotInfo=()=>{
+  const { messages } = state;
   setState(prevState => ({
     ...prevState,
-    messages: prevState.messages.map((message, i) =>
-      i === prevState.messages.length - 1 && message.sender === "bot"
-        ? { ...message, content: "", Cardloading: false,time:moment().format('YYYY-MM-DD HH:mm'),chat_type, }
-        : message
-    ),
+  messages: [...messages, { content: "", sender: "user",time:moment().format('YYYY-MM-DD HH:mm') }],
   }));
 }
 const handleSocketMessage = useCallback(() => {

@@ -1,6 +1,7 @@
 .gpt-descriptions-btn{
     display:flex;
     align-items:center;
-    justify-content:flex-end;
-    width:100%;
+    width: 100px;
+    margin-left: auto;
+    margin-top: 10px;
 }

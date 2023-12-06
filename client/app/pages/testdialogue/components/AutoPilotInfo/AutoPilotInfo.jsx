@@ -28,6 +28,7 @@ const autoPilot =async (databases_id,db_comment) => {
     })
 };
 const CreateAutoPilot = () => {
+    console.log(report_name, report_desc);
     if (!report_name || !report_desc) {
         return;
     }
@@ -71,7 +72,7 @@ return (
                 />
             </Descriptions.Item>
             <Descriptions.Item label={window.W_L.report_desc}>
-                <TextArea rows={6} placeholder={window.W_L.report_desc_placeholder} bordered={false}
+                <TextArea rows={10} placeholder={window.W_L.report_desc_placeholder} bordered={false}
                 value={report_desc}
                 onChange={e => setReportDesc(e.target.value)}
                 />
@@ -79,7 +80,7 @@ return (
         </Descriptions>
         <div className="gpt-descriptions-btn">
             <Button block type="primary" disabled={btn_disabled} onClick={() => CreateAutoPilot()}>
-                <i className="fa fa:file-text m-r-5" aria-hidden="true" />
+                <i className="fa fa-check m-r-5" aria-hidden="true" />
                 {window.W_L.submit}
               </Button>
         </div>

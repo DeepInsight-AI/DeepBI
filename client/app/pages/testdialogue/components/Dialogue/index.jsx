@@ -295,13 +295,6 @@ const handleSuccess =async (tableId,table,isSendTableDateType=null) => {
 }
 
 };
-const AutoPilotInfo=()=>{
-  const { messages } = state;
-  setState(prevState => ({
-    ...prevState,
-  messages: [...messages, { content: "", sender: "user",time:moment().format('YYYY-MM-DD HH:mm') }],
-  }));
-}
 const handleSocketMessage = useCallback(() => {
   if (!lockReconnect) {
     createWebSocket();
@@ -402,19 +395,24 @@ const handleSocketMessage = useCallback(() => {
             errorSetting();
           }
         } else if (data.data.data_type === 'mysql_comment_first') {
-          setState({
-            messages: [{ content: data.data.content, sender: "bot", Cardloading: false,time:moment().format('YYYY-MM-DD HH:mm') }],
-            // loadingMask: false,
-            // sendTableDate: 1,
-            data_type: "mysql_comment_first"
-          });
+          if(chat_type==="autopilot"){
+            setState({
+              messages: [{ content: data.data.content, sender: "bot", Cardloading: false,time:moment().format('YYYY-MM-DD HH:mm') },{ content: "", sender: "user",time:moment().format('YYYY-MM-DD HH:mm') }],
+            });
+          }else{
+            setState({
+              messages: [{ content: data.data.content, sender: "bot", Cardloading: false,time:moment().format('YYYY-MM-DD HH:mm') }],
+              // loadingMask: false,
+              // sendTableDate: 1,
+              data_type: "mysql_comment_first"
+            });
+          }
+          
           setLoadingMask(false);
           setSendTableDate(1);
           setStartUse(true);
           notification.success(window.W_L.configuration_completed, window.W_L.start_the_dialogue);
-          if(chat_type==="autopilot"){
-            AutoPilotInfo();
-          }
+          
         } else if(data.data.data_type === 'mysql_comment_second'){
           setState(prevState => ({
             ...prevState,

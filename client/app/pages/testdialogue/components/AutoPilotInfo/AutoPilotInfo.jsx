@@ -8,7 +8,7 @@ const { TextArea } = Input;
 const AutoPilotInfo =()=>{
 const inputMessage = useRef(null);
 return (
-    <div>
+    <div style={{width:"50%"}}>
         <Descriptions  
             size="small" 
             column={1} 

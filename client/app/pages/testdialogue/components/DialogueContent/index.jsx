@@ -70,14 +70,14 @@ const DialogueContent = forwardRef(({
        :
        null
        }
-        <div className="dialogue-content-bottom">
-        <div className="open-key" style={{display:"none"}} onClick={onOpenKeyClick}>
-        </div>
-          {
+       {
             chat_type==="autopilot"?
             ""
             :
-            <>
+        <div className="dialogue-content-bottom">
+        <div className="open-key" style={{display:"none"}} onClick={onOpenKeyClick}>
+        </div>
+          
             <TextArea
             bordered={false}
             style={{ resize: 'none', maxHeight: '100px !important', fontSize: '15px', border: 'none !important' }}
@@ -99,9 +99,9 @@ const DialogueContent = forwardRef(({
           <div className="gpt-input-middle">
           <SendOutlinedIcon onClick={handleSendMessage} style={{color:inputMessage ? "" : "#ccc",fontSize:"20px",marginRight:"15px"}}></SendOutlinedIcon>
           </div>
-            </>
-          }
+         
         </div>
+      }
       </div>
       )
       }

@@ -73,7 +73,7 @@ const TypingCard = (props) => {
           )}
         </div>
 
-        {showComponent && !Cardloading && <Copy index={index} source={source} sender={sender} retry={retry} />}
+        {showComponent && !Cardloading&&chat_type!=="autopilot" && <Copy index={index} source={source} sender={sender} retry={retry} />}
       </>
     </div>
   );

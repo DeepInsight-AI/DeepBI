@@ -6,7 +6,7 @@ import Button from "antd/lib/button";
 
 const { TextArea } = Input;
 const AutoPilotInfo =()=>{
-
+const inputMessage = useRef(null);
 return (
     <div>
         <Descriptions  
@@ -19,7 +19,7 @@ return (
                 <Input placeholder={window.W_L.report_name_placeholder} />
             </Descriptions.Item>
             <Descriptions.Item label={window.W_L.report_desc}>
-                <TextArea rows={4} placeholder={window.W_L.report_desc_placeholder} value={inputMessage} bordered={false} />
+                <TextArea rows={4} placeholder={window.W_L.report_desc_placeholder} value={inputMessage.current} bordered={false} />
             </Descriptions.Item>
         </Descriptions>
     </div>

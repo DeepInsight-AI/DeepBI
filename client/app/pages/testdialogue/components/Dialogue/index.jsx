@@ -11,6 +11,7 @@ import notification from "@/services/notification";
 import MenuMask from "../MenuMask/index.jsx";
 import "./index.less";
 import moment from "moment";
+import AutoPilot from "../AutoPilot/AutoPilot.jsx";
 
 const Dialogue = (props) => {
   const {chat_type,sendUrl,uuid} =props
@@ -294,7 +295,16 @@ const handleSuccess =async (tableId,table,isSendTableDateType=null) => {
 }
 
 };
-
+const AutoPilotInfo=()=>{
+  setState(prevState => ({
+    ...prevState,
+    messages: prevState.messages.map((message, i) =>
+      i === prevState.messages.length - 1 && message.sender === "bot"
+        ? { ...message, content: "", Cardloading: false,time:moment().format('YYYY-MM-DD HH:mm'),chat_type, }
+        : message
+    ),
+  }));
+}
 const handleSocketMessage = useCallback(() => {
   if (!lockReconnect) {
     createWebSocket();
@@ -405,6 +415,9 @@ const handleSocketMessage = useCallback(() => {
           setSendTableDate(1);
           setStartUse(true);
           notification.success(window.W_L.configuration_completed, window.W_L.start_the_dialogue);
+          if(chat_type==="autopilot"){
+            AutoPilotInfo();
+          }
         } else if(data.data.data_type === 'mysql_comment_second'){
           setState(prevState => ({
             ...prevState,
@@ -449,19 +462,20 @@ const handleSocketMessage = useCallback(() => {
             }));
             scrollToBottom();
           }
-      }else if(data.receiver === 'autopilot') {
-        if(data.data.data_type === 'autopilot_code'){
-          setState(prevState => ({
-            messages: prevState.messages.map((message, i) =>
-              i === prevState.messages.length - 1 && message.sender === "bot"&& message.Cardloading
-                ? { ...message, autopilot: data.data.content,Cardloading: false,time:moment().format('YYYY-MM-DD HH:mm') }
-                : message
-            ),
-          }));
-          setLoadingState(false);
-          scrollToBottom();
-        }
       }
+      // else if(data.receiver === 'autopilot') {
+      //   if(data.data.data_type === 'autopilot_code'){
+      //     setState(prevState => ({
+      //       messages: prevState.messages.map((message, i) =>
+      //         i === prevState.messages.length - 1 && message.sender === "bot"&& message.Cardloading
+      //           ? { ...message, autopilot: data.data.content,Cardloading: false,time:moment().format('YYYY-MM-DD HH:mm') }
+      //           : message
+      //       ),
+      //     }));
+      //     setLoadingState(false);
+      //     scrollToBottom();
+      //   }
+      // }
     } catch (error) {
       console.log(error, 'socket_error');
     }

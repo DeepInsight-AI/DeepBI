@@ -779,4 +779,8 @@ window.W_L=  {
   'Value_Placeholder':'显示值提示信息',
   'Value_Format':'显示值格式',
   'auto_pilot':'自动驾驶',
+  'report_name':'报告名称',
+  'report_desc':'报告描述',
+  'report_name_placeholder':'请填写报告名称',
+  'report_desc_placeholder':'请填写报告描述',
 }

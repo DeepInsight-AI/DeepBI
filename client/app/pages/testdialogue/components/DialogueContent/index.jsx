@@ -26,7 +26,7 @@ const DialogueContent = forwardRef(({
   retry,
   onOpenKeyClick,
   onSuccess,
-  percent
+  percent,
 },ref) => {
   const selectSourceRef = useRef(null);
   const sourceEdit = (data) => {
@@ -49,7 +49,7 @@ const DialogueContent = forwardRef(({
             }
           {messages.map((message, index) => (
             <div key={index} className="chat-content" style={{margin:chat_type==="report"?'0 30px':'',marginTop:index===0?"30px":""}}>
-                  <TypingCard autopilot={message.autopilot} chart={message.chart} logData={message.logData} sender={message.sender} time={message.time} Cardloading={message.Cardloading} source={message.content} index={index} ChangeScrollTop={ChangeScrollTop} retry={retry} />
+                  <TypingCard chat_type={chat_type} autopilot={message.autopilot} chart={message.chart} logData={message.logData} sender={message.sender} time={message.time} Cardloading={message.Cardloading} source={message.content} index={index} ChangeScrollTop={ChangeScrollTop} retry={retry} />
             </div>
           ))}
         </div>
@@ -73,7 +73,12 @@ const DialogueContent = forwardRef(({
         <div className="dialogue-content-bottom">
         <div className="open-key" style={{display:"none"}} onClick={onOpenKeyClick}>
         </div>
-          <TextArea
+          {
+            chat_type==="autopilot"?
+            ""
+            :
+            <>
+            <TextArea
             bordered={false}
             style={{ resize: 'none', maxHeight: '100px !important', fontSize: '15px', border: 'none !important' }}
             value={inputMessage}
@@ -94,6 +99,8 @@ const DialogueContent = forwardRef(({
           <div className="gpt-input-middle">
           <SendOutlinedIcon onClick={handleSendMessage} style={{color:inputMessage ? "" : "#ccc",fontSize:"20px",marginRight:"15px"}}></SendOutlinedIcon>
           </div>
+            </>
+          }
         </div>
       </div>
       )

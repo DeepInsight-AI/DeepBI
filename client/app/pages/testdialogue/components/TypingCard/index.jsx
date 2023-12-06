@@ -5,11 +5,12 @@ import EChartsChart from "../Echarts/Echarts";
 import AutoPilot from "../AutoPilot/AutoPilot";
 import LogWorkflow from "../LogWorkflow"
 import Copy from "../Copy/Copy.jsx";
+import AutoPilotInfo from "../AutoPilotInfo/AutoPilotInfo.jsx";
 import "./index.less";
 import icon_small from "@/assets/images/icon_small.png";
 
 const TypingCard = (props) => {
-  const { autopilot,chart, source, logData, index, Cardloading, sender, time, ChangeScrollTop,retry } = props;
+  const { chat_type,autopilot,chart, source, logData, index, Cardloading, sender, time, ChangeScrollTop,retry } = props;
   const sourceEl = useRef();
   const [sourceText, setSourceText] = useState("");
   const [showComponent, setShowComponent] = useState(false);
@@ -46,6 +47,12 @@ const TypingCard = (props) => {
       />
     );
   }, [sourceText]);
+  // (
+  //   <div className={`chat ${sender}`}>{source}</div>
+  // )
+  const renderUser = useMemo(() => {
+    return chat_type === "autopilot" ? <AutoPilotInfo/> : <div className={`chat ${sender}`}>{source}</div>;
+  }, [chat_type, sender, source]);
 
   const renderAutoPilot = useMemo(() => {
     return autopilot ? <AutoPilot content={autopilot} /> : null;
@@ -56,9 +63,10 @@ const TypingCard = (props) => {
         <div className={`info${sender}-time`}>{time}</div>
         <div className={`chat${sender}`} onMouseEnter={() => setShowComponent(true)}>
           <img src={sender === "user" ? currentUser.profile_image_url : icon_small} alt="" />
-          {sender === "user" ? (
-            <div className={`chat ${sender}`}>{source}</div>
-          ) : (
+          {sender === "user" ?  
+          {renderUser}
+          : 
+          (
             <div className={`chat ${sender}`}>
               {renderLogWorkflow}
               {renderChart}

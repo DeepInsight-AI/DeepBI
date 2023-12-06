@@ -778,4 +778,8 @@ window.W_L = {
   'Value_Placeholder': 'Value Placeholder',
   'Value_Format': 'Value Format',
   'auto_pilot': 'Auto Pilot',
+  'report_desc': 'Report Description',
+  'report_name': 'Report Name',
+  'report_desc_placeholder': 'Please enter a description of the report',
+  'report_name_placeholder': 'Please enter the name of the report',
 }

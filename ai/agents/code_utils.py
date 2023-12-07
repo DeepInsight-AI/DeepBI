@@ -630,3 +630,32 @@ async def tell_logger(websocket, log_str):
         traceback.print_exc()
         logger.error(str(e))
 
+
+async def append_logger(log_list: Optional[List[str]], log_str):
+    try:
+        log_str = str(log_str)
+        if if_hide_sensitive:
+            # Replace hidden python code blocks to prevent private information from being exposed in logs
+            CODE_BLOCK_PATTERN = r"```(\w*)\n(.*?)\n```"
+            match = re.findall(CODE_BLOCK_PATTERN, log_str, flags=re.DOTALL)
+            if len(match) > 0 and match[0][0] == 'python':
+                replacement = """
+                               ```python
+                               ******* python code ************
+                               ******* python code ************
+                               ******* python code ************
+
+                               ```
+                                   """
+                log_str = re.sub(CODE_BLOCK_PATTERN, replacement, log_str, flags=re.DOTALL)
+                # print("new_text :", new_text)
+
+        if log_list is not None:
+            log_list.append(log_str)
+
+
+    except Exception as e:
+        traceback.print_exc()
+        logger.error(str(e))
+
+    return log_list

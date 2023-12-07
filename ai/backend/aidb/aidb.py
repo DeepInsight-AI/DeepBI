@@ -21,6 +21,7 @@ class AIDB:
         self.user_name = chatClass.user_name
         self.websocket = chatClass.ws
         self.uid = chatClass.uid
+        self.log_list = []
 
     def set_language_mode(self, language_mode):
         self.language_mode = language_mode

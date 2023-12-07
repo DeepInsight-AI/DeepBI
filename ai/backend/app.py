@@ -6,7 +6,7 @@ from ai.backend.aidb.autopilot.autopilot_mysql_api import AutopilotMysql
 app = Flask(__name__)
 
 
-# 异步函数包装器
+# Async function wrapper
 def run_async(func):
     def wrapper(*args, **kwargs):
         loop = asyncio.new_event_loop()

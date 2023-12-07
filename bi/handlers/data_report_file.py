@@ -29,18 +29,18 @@ class DataReportFileResource(BaseResource):  # BaseResource
         else:
             result = models.DataReportFile.get_user_files(user_id)
             # Define state mapping
-            status_mapping = {
-                -1: '失败',
-                0: '待生成',
-                1: '生成中',
-                2: '成功'
-            }
-
-            # Replace the value of is_generate with the corresponding text
-            for item in result:
-                status_code = item.get('is_generate')
-                if status_code is not None and status_code in status_mapping:
-                    item['is_generate'] = status_mapping[status_code]
+            # status_mapping = {
+            #     -1: '失败',
+            #     0: '待生成',
+            #     1: '生成中',
+            #     2: '成功'
+            # }
+            #
+            # # Replace the value of is_generate with the corresponding text
+            # for item in result:
+            #     status_code = item.get('is_generate')
+            #     if status_code is not None and status_code in status_mapping:
+            #         item['is_generate'] = status_mapping[status_code]
 
         self.record_event(
             {"action": "view", "object_id": data_report_file_id, "object_type": "data_report_file"}

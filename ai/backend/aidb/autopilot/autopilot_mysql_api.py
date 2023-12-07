@@ -254,14 +254,16 @@ class AutopilotMysql(Autopilot):
 
         # 修改其中的值
         data['html_code'] = rendered_html
+        if self.log_list is not None:
+            data['chat_log'] = self.log_list
 
         # 将更改后的内容写回文件
         with open(file_name, 'w') as file:
             json.dump(data, file, indent=4)
 
         # 更新数据
-        data_to_update = ('updated_value1', 'updated_value2', 'updated_value3', 'condition_value')
-        PsgReport().update_data()
+        # data_to_update = ('updated_value1', 'updated_value2', 'updated_value3', 'condition_value')
+        # PsgReport().update_data(data_to_update)
 
     async def generate_quesiton(self, q_str):
         questioner = self.get_agent_questioner()

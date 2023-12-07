@@ -108,7 +108,9 @@ class Autopilot(AIDB):
             default_auto_reply="请继续补充分析维度，不要重复.",
             websocket=self.websocket,
             openai_proxy=self.agent_instance_util.openai_proxy,
+            log_list=self.log_list,
         )
+
         return questioner
 
     def get_agent_ai_analyst(self):
@@ -130,6 +132,7 @@ class Autopilot(AIDB):
             llm_config=self.agent_instance_util.gpt4_config,
             websocket=self.websocket,
             openai_proxy=self.agent_instance_util.openai_proxy,
+            log_list=self.log_list,
         )
         return ai_analyst
 

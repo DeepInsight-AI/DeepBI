@@ -2,6 +2,9 @@ import React,{useEffect,useState} from "react";
 import routeWithUserSession from "@/components/ApplicationArea/routeWithUserSession";
 import routes from "@/services/routes";
 import Table from "antd/lib/table";
+import ItemsTable, { Columns } from "@/components/items-list/components/ItemsTable";
+import Link from "@/components/Link";
+import EmptyState from "@/components/items-list/components/EmptyState";
 import { axios } from "@/services/axios";
 import "./index.less";
 
@@ -51,11 +54,7 @@ const [isLoading, setIsLoading] = useState(true);
             loading={isLoading}
             locale={{
             emptyText: (
-                <EmptyState
-                description={window.W_L.no_analysis_available}
-                icon="fa fa-exclamation-triangle"
-                illustration="alert"
-                />
+                <EmptyState className="" />
             ),
             }}
         />

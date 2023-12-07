@@ -4,6 +4,7 @@ import Input from "antd/lib/input";
 import Button from "antd/lib/button";
 import { axios } from "@/services/axios";
 import { dialogueStorage } from "../Dialogue/method/dialogueStorage";
+import InfoCircleOutlinedIcon from "@ant-design/icons/InfoCircleOutlined";
 import "./index.css";
 
 const { TextArea } = Input;
@@ -11,6 +12,7 @@ const AutoPilotInfo =()=>{
 const [btn_disabled, setBtn_disabled] = useState(false);
 const [report_name, setReportName] = useState('');
 const [report_desc, setReportDesc] = useState('');
+const [btn_isShow, setBtn_isShow] = useState(true);
 // /api/auto_pilot
 const autoPilot =async (databases_id,db_comment) => {
     const data={
@@ -22,6 +24,7 @@ const autoPilot =async (databases_id,db_comment) => {
    await axios.post("/api/auto_pilot",data).then((res)=>{
         console.log(res);
         setBtn_disabled(false);
+        setBtn_isShow(false);
     }).catch((err)=>{
         console.log(err);
         setBtn_disabled(false);
@@ -48,7 +51,10 @@ const CreateAutoPilot = () => {
 
               
               Promise.all(promises).then(() => {
-                autoPilot(HoImes_Dialogue[0].Holmestable_id,promisesList);
+                autoPilot(HoImes_Dialogue[0].Holmestable_id,{
+                    databases_desc: "",
+                    table_desc: promisesList
+                  });
               }).catch((err) => {
                 console.log(err, 'first_error');
                 setBtn_disabled(false);
@@ -79,10 +85,19 @@ return (
             </Descriptions.Item>
         </Descriptions>
         <div className="gpt-descriptions-btn">
-            <Button block type="primary" disabled={btn_disabled} onClick={() => CreateAutoPilot()}>
+        <div style={{fontSize:"14px"}}>
+            <Tooltip title={window.W_L.source_tooltip}>
+              <InfoCircleOutlinedIcon style={{marginRight:"3px"}} />
+            </Tooltip>
+              {window.W_L.source_first_tooltip}
+            </div>
+            {
+                btn_isShow&&
+                <Button style={{width: "100px"}} block type="primary" disabled={btn_disabled} onClick={() => CreateAutoPilot()}>
                 <i className="fa fa-check m-r-5" aria-hidden="true" />
                 {window.W_L.submit}
               </Button>
+            }
         </div>
     </div>
 )

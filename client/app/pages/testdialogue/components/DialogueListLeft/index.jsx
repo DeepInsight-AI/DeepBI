@@ -29,7 +29,7 @@ const modeSwitch = (item) => () => {
     return (
       <div className="dia-content">
       {arr.map((item,index)=>{
-        return <div className="flex-d h-30 dia-info" key={index}>
+        return <div className="flex-d dia-info" key={index}>
         <div className="dia-chats" >
         
           <div className="dia-chat" onClick={modeSwitch(item)}>

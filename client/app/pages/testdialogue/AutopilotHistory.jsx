@@ -1,7 +1,6 @@
 import React,{useEffect,useState} from "react";
 import routeWithUserSession from "@/components/ApplicationArea/routeWithUserSession";
 import routes from "@/services/routes";
-import Dialogue from "./components/Dialogue";
 import DialogueListLeft from "./components/DialogueListLeft";
 import NoDashboardData from "./components/NoDashboardData";
 import { axios } from "@/services/axios";

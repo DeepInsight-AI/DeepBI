@@ -4,7 +4,7 @@ import routes from "@/services/routes";
 import DashboardPage from "@/pages/dashboards/DashboardPage";
 import Dialogue from "./components/Dialogue";
 import DialogueListLeft from "./components/DialogueListLeft";
-import NoDashboardData from "./components/NoDashboardData";
+import NoDashboardData from "./components/NoDashboardData/NoDashboardData.jsx";
 import "./index.less";
 
 function DialogueList(props) {

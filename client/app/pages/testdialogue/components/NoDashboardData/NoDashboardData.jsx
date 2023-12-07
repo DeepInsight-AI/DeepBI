@@ -10,7 +10,7 @@ function NoDashboardData({ chatType }) {
       />
       <p style={{ textAlign: 'center', marginTop: '20px', fontSize: '14px', fontWeight: 'bold' }}>
       {
-        chatType==="autopilot"?window.W_L.no_dialogue:chatType==="report"?window.W_L.start_your_dialogue:window.W_L.no_dialogue
+        chatType==="report"?window.W_L.start_your_dialogue:window.W_L.no_dialogue
       }
       </p>
     </div>

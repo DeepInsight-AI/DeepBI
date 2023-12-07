@@ -1,13 +1,12 @@
 import React,{useEffect,useState} from "react";
 import routeWithUserSession from "@/components/ApplicationArea/routeWithUserSession";
 import routes from "@/services/routes";
-import DialogueListLeft from "./components/DialogueListLeft";
-import NoDashboardData from "./components/NoDashboardData";
+import ItemsTable, { Columns } from "@/components/items-list/components/ItemsTable";
+import Paginator from "@/components/Paginator";
 import { axios } from "@/services/axios";
 import "./index.less";
 
 function AutopilotHistory() {
-  const { chatType } = props;
   const [AutoPilotList, setAutoPilotList] = useState([]);
   const  getAutoPilotList = async () => {
     const res = await axios.get("/api/auto_pilot");
@@ -19,15 +18,24 @@ function AutopilotHistory() {
     }, []);
   return (
     <div className="page-alerts-list">
-        (<DialogueListLeft chat_type={chatType} switchMode={switchMode} AutoPilotList={AutoPilotList}></DialogueListLeft>)
-      <div style={{ display: 'flex', flexDirection: 'column', flex: 1, position: "relative", background: "rgb(250, 250, 250)",overflow: "auto"}}>
-      {
-        AutoPilotList&&AutoPilotList.lenght>0?
-        <NoDashboardData chatType={chatType} />
-        :
-          ""
-      }
-      </div>
+       <div className="bg-white tiled table-responsive">
+                  {/* <ItemsTable
+                    items={controller.pageItems}
+                    loading={!controller.isLoaded}
+                    columns={tableColumns}
+                    orderByField={controller.orderByField}
+                    orderByReverse={controller.orderByReverse}
+                    toggleSorting={controller.toggleSorting}
+                  /> */}
+                  {/* <Paginator
+                    showPageSizeSelect
+                    totalCount={controller.totalItemsCount}
+                    pageSize={controller.itemsPerPage}
+                    onPageSizeChange={itemsPerPage => controller.updatePagination({ itemsPerPage })}
+                    page={controller.page}
+                    onChange={page => controller.updatePagination({ page })}
+                  /> */}
+                </div>
     </div>
   );
 }

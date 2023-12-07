@@ -23,11 +23,9 @@ const autoPilot =async (databases_id,db_comment) => {
         db_comment
     }
    await axios.post("/api/auto_pilot",data).then((res)=>{
-        console.log(res);
         setBtn_disabled(false);
         setBtn_isShow(false);
     }).catch((err)=>{
-        console.log(err);
         setBtn_disabled(false);
     })
 };
@@ -36,7 +34,6 @@ const CreateAutoPilot = () => {
         return;
     }
     const HoImes_Dialogue = getDialogueStorage();
-    console.log(HoImes_Dialogue, 'HoImes_Dialogue');
     if(HoImes_Dialogue && HoImes_Dialogue.length>0){
         if (HoImes_Dialogue[0].table_name &&HoImes_Dialogue[0].table_name.tableName && HoImes_Dialogue[0].table_name.tableName.length > 0) {
             setBtn_disabled(true);

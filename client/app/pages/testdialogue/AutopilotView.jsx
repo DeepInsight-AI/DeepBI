@@ -8,10 +8,9 @@ import LogWorkflow from ".components/LogWorkflow"
 import ".components/TypingCard/index.less";
 
 function AutopilotView(props) {
-    const {autopilotId} = props;
     const [autoPilot, setAutoPilot] = useState({});
-    const getAutoPilot = async () => {
-        const res = await axios.get(`/api/auto_pilot/${autopilotId}`);
+    const getAutoPilot = async (id) => {
+        const res = await axios.get(`/api/auto_pilot/${id}`);
         if(res.code === 200){
             setAutoPilot(res.data);
         }else{
@@ -19,7 +18,7 @@ function AutopilotView(props) {
         }
     };
     useEffect(() => {
-      console.log(props,"props.query====")
+        getAutoPilot(props.autopilotId);
     }, []);
 
   return (

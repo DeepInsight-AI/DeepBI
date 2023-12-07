@@ -13,7 +13,7 @@ import "./index.less";
 
 function AutopilotView(props) {
     useEffect(() => {
-      console.log(props.query,"props.query====")
+      console.log(props,"props.query====")
     }, []);
   return (
     <div className="auto-pilot-list">

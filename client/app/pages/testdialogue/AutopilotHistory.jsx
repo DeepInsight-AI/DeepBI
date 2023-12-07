@@ -87,7 +87,6 @@ const listColumns = [
                 <EmptyState className="" />
             ),
             }}
-            style={{ minHeight: "200px" }}
         />
         </div>
         </React.Fragment>

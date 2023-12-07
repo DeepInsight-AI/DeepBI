@@ -1,23 +1,37 @@
 import React,{useEffect,useState} from "react";
 import routeWithUserSession from "@/components/ApplicationArea/routeWithUserSession";
 import routes from "@/services/routes";
-import Table from "antd/lib/table";
-import ItemsTable, { Columns } from "@/components/items-list/components/ItemsTable";
-import Link from "@/components/Link";
-import EmptyState from "@/components/items-list/components/EmptyState";
-import Layout from "@/components/layouts/ContentWithSidebar";
 import Tag from "antd/lib/tag";
 import { axios } from "@/services/axios";
-import { durationHumanize, formatDate, formatDateTime } from "@/lib/utils";
-import "./index.less";
+import AutoPilot from ".components/AutoPilot/AutoPilot";
+import LogWorkflow from ".components/LogWorkflow"
+import ".components/TypingCard/index.less";
 
 function AutopilotView(props) {
+    const {autopilotId} = props;
+    const [autoPilot, setAutoPilot] = useState({});
+    const getAutoPilot = async () => {
+        const res = await axios.get(`/api/auto_pilot/${autopilotId}`);
+        if(res.code === 200){
+            setAutoPilot(res.data);
+        }else{
+            setAutoPilot({});
+        }
+    };
     useEffect(() => {
       console.log(props,"props.query====")
     }, []);
+
   return (
     <div className="auto-pilot-list">
-        123123123
+        <div className="message" >
+        <div className={`chatuser`} >
+            <div className={`chat user`}>
+                <LogWorkflow Cardloading={false} logData={autoPilot.chat_log} />;
+              <AutoPilot content={autoPilot.html_code}></AutoPilot>
+            </div>
+        </div>
+    </div>
     </div>
   );
 }

@@ -554,10 +554,11 @@ const openSocket = useCallback(() => {
           promisesList.push({
             table_name: res.table_name,
             table_comment: res.table_desc,
-            field_desc: res.table_columns_info.field_desc
+            field_desc:filterTableDesc(res.table_columns_info)
           });
         });
         Promise.all(promises).then(() => {
+          console.log(promisesList, 'promisesList')
           sendSocketMessage(200, 'bi', data_type, {
             databases_desc: "",
             table_desc: promisesList

@@ -44,7 +44,7 @@ const [isLoading, setIsLoading] = useState(true);
         getAutoPilotList();
     }, []);
   return (
-    <div className="page-alerts-list">
+        <Layout>
         <Layout.Content style={{width:"95% !important"}}>
         <React.Fragment>
         <div className="bg-white tiled table-responsive">
@@ -65,7 +65,7 @@ const [isLoading, setIsLoading] = useState(true);
         </div>
         </React.Fragment>
         </Layout.Content>
-    </div>
+        </Layout>
   );
 }
 

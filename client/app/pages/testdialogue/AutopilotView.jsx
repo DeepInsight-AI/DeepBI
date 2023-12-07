@@ -5,10 +5,12 @@ import Tag from "antd/lib/tag";
 import { axios } from "@/services/axios";
 import AutoPilot from "./components/AutoPilot/AutoPilot";
 import LogWorkflow from "./components/LogWorkflow"
+import Skeleton from "antd/lib/skeleton";
 import "./components/TypingCard/index.less";
 
 function AutopilotView(props) {
     const [autoPilot, setAutoPilot] = useState({});
+    const [loading, setLoading] = useState(true);
     const getAutoPilot = async (id) => {
         const res = await axios.get(`/api/auto_pilot/${id}`);
         if(res.code === 200){
@@ -16,6 +18,7 @@ function AutopilotView(props) {
         }else{
             setAutoPilot({});
         }
+        setLoading(false);
     };
     useEffect(() => {
         getAutoPilot(props.autopilotId);
@@ -23,6 +26,7 @@ function AutopilotView(props) {
 
   return (
     <div className="auto-pilot-list">
+        <Skeleton loading={loading} active paragraph={{ rows: 10 }}>
         <div className="message" >
         <div className={`autopilot`} >
             <div className={`chat user autopilot-item`}>
@@ -33,6 +37,7 @@ function AutopilotView(props) {
             </div>
         </div>
     </div>
+        </Skeleton>
     </div>
   );
 }

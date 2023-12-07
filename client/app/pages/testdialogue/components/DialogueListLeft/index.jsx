@@ -3,13 +3,18 @@ import icon_small from "@/assets/images/icon_small.png";
 import './index.css';
 import MessageOutlinedIcon from "@ant-design/icons/MessageOutlined";
 const DialogueLeftList = (props) => {
+  const {chat_type,AutoPilotList} = props;
   const [arr ,setArr] = useState([]);
-  const [uuid ,setUuid] = useState("");
+  const [arr_item ,setArrItem] = useState({});
 useEffect(()=>{
+  if(chat_type==="autopilot"){
+    setArr(AutoPilotList)
+  }else{
     setArr(JSON.parse(localStorage.getItem("HoImes_All")) || [])
+  }
 },[])
 const modeSwitch = (item) => () => {
-    setUuid(item.uuid)
+    setArrItem(item)
     props.switchMode(item)
 }
   const DiaTop = () => {
@@ -27,9 +32,9 @@ const modeSwitch = (item) => () => {
         return <div className="flex-d h-30 dia-info" key={index}>
         <div className="dia-chats" >
         
-             <div className="dia-chat" onClick={modeSwitch(item)}>
-            <MessageOutlinedIcon style={{color:uuid===item.uuid?"#4974d1":"#fff",fontSize:"21px"}} ></MessageOutlinedIcon>
-              <div className="dia-chat-name">{item.messages[1].content || item.title}</div>
+          <div className="dia-chat" onClick={modeSwitch(item)}>
+            <MessageOutlinedIcon style={{color:arr_item.uuid===item.uuid?"#4974d1":"#fff",fontSize:"21px"}} ></MessageOutlinedIcon>
+              <div className="dia-chat-name">{chat_type==="autopilot"?item.report_name:item.messages[1].content || item.title}</div>
           </div>
         </div>
         </div>

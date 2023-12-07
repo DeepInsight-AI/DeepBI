@@ -6,6 +6,7 @@ import Tooltip from "antd/lib/tooltip";
 import { axios } from "@/services/axios";
 import { dialogueStorage } from "../Dialogue/method/dialogueStorage";
 import InfoCircleOutlinedIcon from "@ant-design/icons/InfoCircleOutlined";
+import notification from "@/services/notification";
 import "./index.css";
 
 const { TextArea } = Input;
@@ -25,8 +26,10 @@ const autoPilot =async (databases_id,db_comment) => {
    await axios.post("/api/auto_pilot",data).then((res)=>{
         setBtn_disabled(false);
         setBtn_isShow(false);
+        notification.success(window.W_L.submit_success,window.W_L.submit_success_tip);
     }).catch((err)=>{
         setBtn_disabled(false);
+        notification.error(window.W_L.submit_fail);
     })
 };
 const CreateAutoPilot = () => {

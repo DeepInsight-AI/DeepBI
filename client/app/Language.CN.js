@@ -790,4 +790,11 @@ window.W_L=  {
   'no_analysis_available':'暂无分析报告',
   'success':'成功',
   'fail':'失败',
+  'generating':'生成中',
+  'waiting':'待生成',
+  'all_autopilot':'所有分析报告',
+  'data_analysis':'数据分析',
+  'submit_success':'提交成功',
+  'submit_success_tip':'你可在历史分析中查看',
+  'submit_fail':'提交失败',
 }

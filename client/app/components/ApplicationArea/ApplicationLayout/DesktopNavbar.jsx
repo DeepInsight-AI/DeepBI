@@ -65,7 +65,7 @@ function useNavbarActiveState() {
       dialogue_list : includes(["Dialogue.List.Dialogue"], currentRoute.id),
       autopilot : includes(["Dialogue.List.autopilot"], currentRoute.id),
       autopilot_list : includes(["Dialogue.List.autopilot_list"], currentRoute.id),
-
+      autopilot_view : includes(["Dialogue.List.autopilot_view"], currentRoute.id),
     }),
     [currentRoute.id]
   );
@@ -175,7 +175,7 @@ export default function DesktopNavbar() {
             key="create"
             popupClassName="desktop-navbar-submenu"
             data-test="autopilotButton"
-            className={activeState.autopilot || activeState.dialogue_list ? "navbar-active-item" : null}
+            className={activeState.autopilot || activeState.autopilot_view || activeState.autopilot_list ? "navbar-active-item" : null}
             tabIndex={0}
             title={
               <React.Fragment>

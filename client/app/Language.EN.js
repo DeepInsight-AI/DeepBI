@@ -788,4 +788,11 @@ window.W_L = {
   'no_analysis_available':'No analysis available',
   'success':'Success',
   'fail':'Fail',
+  'generating':'Generating',
+  'waiting':'Waiting',
+  'all_autopilot':'All Autopilot',
+  'data_analysis':'Data Autopilot',
+  'submit_success':'Submitted successfully',
+  'submit_success_tip':'You can view it in the history analysis',
+  'submit_fail':'Submission failed',
 }

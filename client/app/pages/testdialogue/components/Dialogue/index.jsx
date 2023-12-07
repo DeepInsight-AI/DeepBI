@@ -554,7 +554,7 @@ const openSocket = useCallback(() => {
           promisesList.push({
             table_name: res.table_name,
             table_comment: res.table_desc,
-            field_desc:filterColumnsByInUse(res.table_columns_info.field_desc)
+            field_desc:filterColumnsByInUse(res.table_columns_info)
           });
         });
         Promise.all(promises).then(() => {

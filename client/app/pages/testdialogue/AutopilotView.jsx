@@ -3,9 +3,9 @@ import routeWithUserSession from "@/components/ApplicationArea/routeWithUserSess
 import routes from "@/services/routes";
 import Tag from "antd/lib/tag";
 import { axios } from "@/services/axios";
-import AutoPilot from ".components/AutoPilot/AutoPilot";
-import LogWorkflow from ".components/LogWorkflow"
-import ".components/TypingCard/index.less";
+import AutoPilot from "./components/AutoPilot/AutoPilot";
+import LogWorkflow from "./components/LogWorkflow"
+import "./components/TypingCard/index.less";
 
 function AutopilotView(props) {
     const [autoPilot, setAutoPilot] = useState({});

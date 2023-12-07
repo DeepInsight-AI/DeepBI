@@ -1041,16 +1041,16 @@ class DataSourceFile(BelongsToOrgMixin, db.Model):
 class DataReportFile(BelongsToOrgMixin, db.Model):
     id = primary_key("DataReportFile")
     user_id = Column(key_type("User"), db.ForeignKey("users.id"))
-    users = db.relationship(User, backref="date_report_file")
+    users = db.relationship(User, backref="data_report_file")
     org_id = Column(key_type("Organization"), db.ForeignKey("organizations.id"))
-    organizations = db.relationship(Organization, backref="date_report_file")
+    organizations = db.relationship(Organization, backref="data_report_file")
     report_name = Column(db.String(255))
     file_name = Column(db.String(255))
     is_use = Column(db.Boolean, default=True)
     created_at = Column(db.DateTime(True), default=db.func.now())
     is_generate = Column(db.Integer, default=0)
 
-    __tablename__ = "date_report_file"
+    __tablename__ = "data_report_file"
     __table_args__ = (db.Index("file_id_table_name", "user_id", "report_name", unique=True),)
 
     @classmethod

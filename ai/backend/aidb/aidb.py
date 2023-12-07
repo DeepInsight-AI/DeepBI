@@ -134,7 +134,6 @@ class AIDB:
                         if self.language_mode == CONFIG.language_chinese:
                             qustion_message = "帮助我检查下列数据注释是否完整且正确: "
 
-
                         await asyncio.wait_for(planner_user.initiate_chat(
                             database_describer,
                             # message=content + '\n' + " This is my question: " + '\n' + str(qustion_message),
@@ -223,8 +222,8 @@ class AIDB:
         consume_output = json.dumps(mess)
         # await self.outgoing.put(consume_output)
         # await self.ws.send(consume_output)
-        await asyncio.wait_for(self.websocket.send(consume_output), timeout=CONFIG.request_timeout)
-
+        if self.websocket is not None:
+            await asyncio.wait_for(self.websocket.send(consume_output), timeout=CONFIG.request_timeout)
         print(str(time.strftime("%Y-%m-%d %H:%M:%S",
                                 time.localtime())) + ' ---- ' + "from user:[{}".format(
             self.user_name) + "], reply a message:{}".format(consume_output))
@@ -248,10 +247,9 @@ class AIDB:
                 HttpProxyPort = data['HttpProxyPort']
 
                 if HttpProxyHost is not None and len(str(HttpProxyHost)) > 0 and HttpProxyPort is not None and len(
-                        str(HttpProxyPort)) > 0:
+                    str(HttpProxyPort)) > 0:
                     # openai_proxy = "http://127.0.0.1:7890"
                     self.agent_instance_util.openai_proxy = 'http://' + str(HttpProxyHost) + ':' + str(HttpProxyPort)
-
 
                 planner_user = self.agent_instance_util.get_agent_planner_user(is_log_out=False)
                 api_check = self.agent_instance_util.get_agent_api_check()
@@ -261,9 +259,7 @@ class AIDB:
                     message=""" 5-2 =?? """,
                 ), timeout=120)  # time out 120 seconds
 
-
                 self.agent_instance_util.api_key_use = True
-
 
                 return True
             except Exception as e:
@@ -278,12 +274,12 @@ class AIDB:
                                    content=self.error_miss_key)
             return False
 
-
     async def test_api_key(self):
         self.agent_instance_util.api_key_use = True
 
         # .token_[uid].json
         token_path = CONFIG.up_file_path + '.token_' + str(self.uid) + '.json'
+        print('token_path : ', token_path)
         if os.path.exists(token_path):
             try:
                 with open(token_path, 'r') as file:
@@ -300,10 +296,9 @@ class AIDB:
                 print('HttpProxyPort : ', HttpProxyPort)
 
                 if HttpProxyHost is not None and len(str(HttpProxyHost)) > 0 and HttpProxyPort is not None and len(
-                        str(HttpProxyPort)) > 0:
+                    str(HttpProxyPort)) > 0:
                     # openai_proxy = "http://127.0.0.1:7890"
                     self.agent_instance_util.openai_proxy = 'http://' + str(HttpProxyHost) + ':' + str(HttpProxyPort)
-
 
                 planner_user = self.agent_instance_util.get_agent_planner_user(is_log_out=False)
                 api_check = self.agent_instance_util.get_agent_api_check()
@@ -335,4 +330,5 @@ class AIDB:
             if self.language_mode == CONFIG.language_chinese:
                 return await self.put_message(200, CONFIG.talker_api, CONFIG.type_test, '未检测到apikey,请先保存')
             else:
-                return await self.put_message(200, CONFIG.talker_api, CONFIG.type_test, 'apikey not detected, please save first')
+                return await self.put_message(200, CONFIG.talker_api, CONFIG.type_test,
+                                              'apikey not detected, please save first')

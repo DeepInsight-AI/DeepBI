@@ -2,6 +2,7 @@ import React, { useRef, useEffect, useState, useMemo } from "react";
 import Descriptions from "antd/lib/descriptions";
 import Input from "antd/lib/input";
 import Button from "antd/lib/button";
+import Tooltip from "antd/lib/tooltip";
 import { axios } from "@/services/axios";
 import { dialogueStorage } from "../Dialogue/method/dialogueStorage";
 import InfoCircleOutlinedIcon from "@ant-design/icons/InfoCircleOutlined";

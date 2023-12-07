@@ -784,4 +784,6 @@ window.W_L = {
   'report_desc_placeholder': 'Please enter a description of the report',
   'report_name_placeholder': 'Please enter the name of the report',
   'history_autopilot': 'History Autopilot',
+  'task_status':'Task Status',
+  'no_analysis_available':'No analysis available',
 }

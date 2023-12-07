@@ -786,4 +786,7 @@ window.W_L=  {
   'report_name_placeholder':'请填写报告名称',
   'report_desc_placeholder':'请填写报告描述',
   'history_autopilot':'历史分析',
+  'task_status':'任务状态',
+  'no_analysis_available':'暂无分析报告',
+
 }

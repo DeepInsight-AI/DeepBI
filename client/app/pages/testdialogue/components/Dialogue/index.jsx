@@ -558,7 +558,6 @@ const openSocket = useCallback(() => {
           });
         });
         Promise.all(promises).then(() => {
-          console.log(promisesList, 'promisesList')
           sendSocketMessage(200, 'bi', data_type, {
             databases_desc: "",
             table_desc: promisesList

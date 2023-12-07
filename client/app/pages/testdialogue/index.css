@@ -5,7 +5,7 @@
   overflow: hidden;
 }
 .auto-pilot-list {
-  padding: 20px 50px;
+  padding: 20px;
   max-height: 100vh;
   overflow: scroll;
 }

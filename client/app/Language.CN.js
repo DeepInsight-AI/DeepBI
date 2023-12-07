@@ -797,4 +797,5 @@ window.W_L=  {
   'submit_success':'提交成功',
   'submit_success_tip':'你可在历史分析中查看',
   'submit_fail':'提交失败',
+  'download':'下载',
 }

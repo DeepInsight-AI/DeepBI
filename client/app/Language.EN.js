@@ -795,4 +795,5 @@ window.W_L = {
   'submit_success':'Submitted successfully',
   'submit_success_tip':'You can view it in the history analysis',
   'submit_fail':'Submission failed',
+  'download':'Download',
 }

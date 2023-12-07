@@ -631,7 +631,7 @@ async def tell_logger(websocket, log_str):
         logger.error(str(e))
 
 
-async def append_logger(log_list: Optional[List[str]], log_str):
+def append_logger(log_list: Optional[List[str]], log_str):
     try:
         log_str = str(log_str)
         if if_hide_sensitive:

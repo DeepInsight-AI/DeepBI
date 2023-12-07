@@ -532,7 +532,7 @@ const openSocket = useCallback(() => {
           promisesList.push({
             table_name: res.table_name,
             table_comment: res.table_desc,
-            field_desc: res.table_columns_info.field_desc
+            field_desc: filterColumnsByInUse(res.table_columns_info)
           });
         });
         Promise.all(promises).then(() => {
@@ -624,6 +624,10 @@ const openSocket = useCallback(() => {
     }
     notification.success(window.W_L.report_generation_completed);
   }, []);
+
+  function filterColumnsByInUse(columnsInfo) {
+    return columnsInfo.field_desc.filter(column => column.in_use === 1);
+  }
 
   const filterTableDesc = useCallback((tableDesc) => {
     return tableDesc.filter((item) => {

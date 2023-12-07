@@ -5,6 +5,7 @@ import Table from "antd/lib/table";
 import ItemsTable, { Columns } from "@/components/items-list/components/ItemsTable";
 import Link from "@/components/Link";
 import EmptyState from "@/components/items-list/components/EmptyState";
+import Layout from "@/components/layouts/ContentWithSidebar";
 import { axios } from "@/services/axios";
 import "./index.less";
 
@@ -44,8 +45,11 @@ const [isLoading, setIsLoading] = useState(true);
     }, []);
   return (
     <div className="page-alerts-list">
-       <div className="bg-white tiled table-responsive">
-        <Table
+        <Layout.Content style={{width:"95% !important"}}>
+        <React.Fragment>
+        <div className="bg-white tiled table-responsive">
+            <Table
+            className="table-data"
             rowKey="id"
             size="middle"
             columns={listColumns}
@@ -59,6 +63,8 @@ const [isLoading, setIsLoading] = useState(true);
             }}
         />
         </div>
+        </React.Fragment>
+        </Layout.Content>
     </div>
   );
 }

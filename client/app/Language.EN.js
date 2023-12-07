@@ -786,4 +786,6 @@ window.W_L = {
   'history_autopilot': 'History Autopilot',
   'task_status':'Task Status',
   'no_analysis_available':'No analysis available',
+  'success':'Success',
+  'fail':'Fail',
 }

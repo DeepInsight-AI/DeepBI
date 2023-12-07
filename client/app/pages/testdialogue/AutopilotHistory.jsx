@@ -6,6 +6,7 @@ import ItemsTable, { Columns } from "@/components/items-list/components/ItemsTab
 import Link from "@/components/Link";
 import EmptyState from "@/components/items-list/components/EmptyState";
 import Layout from "@/components/layouts/ContentWithSidebar";
+import Tag from "antd/lib/tag";
 import { axios } from "@/services/axios";
 import "./index.less";
 
@@ -27,10 +28,17 @@ const [isLoading, setIsLoading] = useState(true);
         title: window.W_L.name,
         field: "report_name",
         width: null,
+        sorter: false,
       }
     ),
-    Columns.dateTime.sortable({ title: window.W_L.create_time, field: "created_at", width: "1%" }),
-    Columns.dateTime.sortable({ title: window.W_L.task_status, field: "is_generate", width: "1%" }),
+    Columns.dateTime.sortable({ title: window.W_L.create_time, field: "created_at", sorter: false}),
+    Columns.dateTime.sortable(
+    (text, item) => (
+        <React.Fragment>
+        <Tag color={item.is_generate ? "green" : "red"}>{item.is_generate ? window.W_L.success : window.W_L.fail}</Tag>
+        </React.Fragment>
+    ),
+        { title: window.W_L.task_status, field: "is_generate", sorter: false}),
   ];
   const  getAutoPilotList = async () => {
     setIsLoading(true);
@@ -44,7 +52,8 @@ const [isLoading, setIsLoading] = useState(true);
         getAutoPilotList();
     }, []);
   return (
-        <Layout>
+    <div className="auto-pilot-list">
+         <Layout>
         <Layout.Content style={{width:"95% !important"}}>
         <React.Fragment>
         <div className="bg-white tiled table-responsive">
@@ -66,6 +75,7 @@ const [isLoading, setIsLoading] = useState(true);
         </React.Fragment>
         </Layout.Content>
         </Layout>
+    </div>
   );
 }
 

@@ -788,5 +788,6 @@ window.W_L=  {
   'history_autopilot':'历史分析',
   'task_status':'任务状态',
   'no_analysis_available':'暂无分析报告',
-
+  'success':'成功',
+  'fail':'失败',
 }

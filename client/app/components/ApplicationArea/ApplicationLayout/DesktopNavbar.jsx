@@ -154,7 +154,7 @@ export default function DesktopNavbar() {
 
 
 
-      <NavbarSection style={{flex:"1"}}>
+      <NavbarSection style={{flex:"0"}}>
           <Menu.Item key="dashboards" className={activeState.dashboards ? "navbar-active-item" : null}>
             <Link href="dashboards">
               <DashboardOutlinedIcon aria-label="dashboards navigation button" />
@@ -170,7 +170,7 @@ export default function DesktopNavbar() {
           </Menu.Item> */}
 
       </NavbarSection>
-      <NavbarSection className="desktop-navbar-spacer" style={{flex:"0"}}>
+      <NavbarSection className="desktop-navbar-spacer" style={{flex:"1"}}>
           <Menu.SubMenu
             key="create"
             popupClassName="desktop-navbar-submenu"

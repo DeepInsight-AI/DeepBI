@@ -26,7 +26,7 @@ function AutopilotView(props) {
         <div className="message" >
         <div className={`chatuser`} >
             <div className={`chat user`}>
-                <LogWorkflow Cardloading={false} logData={autoPilot.chat_log} />;
+                <LogWorkflow Cardloading={false} logData={[autoPilot.chat_log]} />;
               <AutoPilot content={autoPilot.html_code}></AutoPilot>
             </div>
         </div>

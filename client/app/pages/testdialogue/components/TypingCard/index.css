@@ -109,6 +109,7 @@
 }
 .autopilot {
   padding: 0 !important;
+  width: 90%;
 }
 .autopilot .bot {
   max-width: 100% !important;

@@ -52,8 +52,6 @@ const SettingsOpenKey = () => {
       }
       
     }
-    console.log(data,"info===")
-    return
     axios.post("/api/ai_token",data).then((res) => {
         setDisabled(false)
         notification.success(window.W_L.save_success)
@@ -65,12 +63,15 @@ const SettingsOpenKey = () => {
 
   }
   const onFinish = (values) => {
-    // setDisabled(true)
+    setDisabled(true)
     if (values.HttpProxyPort === undefined) {
       values.HttpProxyPort = '';
     }
     if (values.HttpProxyHost === undefined) {
       values.HttpProxyHost = '';
+    }
+    if(values.ApiHost === undefined){
+      values.ApiHost = '';
     }
     handOpenKey()
   };
@@ -96,7 +97,7 @@ const SettingsOpenKey = () => {
     handleMessage();
     
     form.validateFields().then((values) => {
-      // setDisabled(true)
+      setDisabled(true)
       let sendInfo={
         state:200,
         receiver:"sender",
@@ -107,8 +108,6 @@ const SettingsOpenKey = () => {
           language_mode:window.W_L.language_mode,
         }
     }
-    console.log(sendInfo,"sendInfo")
-    return
     websocket.send(JSON.stringify(sendInfo))
   })
     

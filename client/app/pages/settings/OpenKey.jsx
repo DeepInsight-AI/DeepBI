@@ -19,7 +19,20 @@ const SettingsOpenKey = () => {
   const getOpenKey = useCallback(async () => {
     setDisabled(true);
     const {data} = await axios.get(`/api/ai_token`);
-    form.setFieldsValue(data);
+    if(data.code === 200){
+      if(!data.in_use){
+        form.setFieldsValue(data);
+      }else{
+        const {Openai, Holmes} = data;
+        form.setFieldsValue({
+        ApiKey: Holmes.ApiKey,
+        OpenaiApiKey: Openai.OpenaiApiKey,
+        HttpProxyHost: Openai.HttpProxyHost,
+        HttpProxyPort: Openai.HttpProxyPort,
+        ApiHost: Openai.ApiHost
+    });
+      }
+    }
     createWebSocket()
     setDisabled(false)
   }, [form]);
@@ -28,9 +41,22 @@ const SettingsOpenKey = () => {
     getOpenKey();
   }, [getOpenKey]);
   const handOpenKey = (info)=>{
-    console.log(info,"info===")
+    const data ={
+      in_use: aiOption,
+      Openai: {
+        OpenaiApiKey: info.OpenaiApiKey,
+        HttpProxyHost: info.HttpProxyHost,
+        HttpProxyPort: info.HttpProxyPort,
+        ApiHost: info.ApiHost
+      },
+      Holmes: {
+        ApiKey: info.ApiKey
+      }
+      
+    }
+    console.log(data,"info===")
     return
-    axios.post("/api/ai_token",info).then((res) => {
+    axios.post("/api/ai_token",data).then((res) => {
         setDisabled(false)
         notification.success(window.W_L.save_success)
         getOpenKey();
@@ -41,7 +67,7 @@ const SettingsOpenKey = () => {
 
   }
   const onFinish = (values) => {
-    setDisabled(true)
+    // setDisabled(true)
     if (values.HttpProxyPort === undefined) {
       values.HttpProxyPort = '';
     }
@@ -72,7 +98,7 @@ const SettingsOpenKey = () => {
     handleMessage();
     
     form.validateFields().then((values) => {
-      setDisabled(true)
+      // setDisabled(true)
       let sendInfo={
         state:200,
         receiver:"sender",
@@ -109,8 +135,8 @@ const SettingsOpenKey = () => {
       <h4 style={{marginRight:"30px"}}>AI:</h4>
             <Radio.Group onChange={handleRadioChange} value={aiOption}>
            
-              <Radio value="Holmes">Holmes Key</Radio>
-              <Radio value="Openai">OpenAI Key</Radio>
+              <Radio value="Holmes">Holmes</Radio>
+              <Radio value="Openai">Open AI</Radio>
             </Radio.Group>
       </div>
           </Form.Item>
@@ -134,6 +160,11 @@ const SettingsOpenKey = () => {
       name="HttpProxyPort"
         label="HttpProxyPort">
         <Input placeholder="HttpProxyPort" />
+      </Form.Item>
+      <Form.Item
+      name="ApiHost"
+        label="ApiHost">
+        <Input placeholder="ApiHost" />
       </Form.Item>
             </>
           )}

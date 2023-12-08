@@ -38,17 +38,17 @@ const SettingsOpenKey = () => {
   useEffect(() => {
     getOpenKey();
   }, [getOpenKey]);
-  const handOpenKey = (info)=>{
+  const handOpenKey = ()=>{
     const data ={
       in_use: aiOption,
       Openai: {
-        OpenaiApiKey: info.OpenaiApiKey,
-        HttpProxyHost: info.HttpProxyHost,
-        HttpProxyPort: info.HttpProxyPort,
-        ApiHost: info.ApiHost
+        OpenaiApiKey: form.getFieldValue("OpenaiApiKey"),
+        HttpProxyHost:  form.getFieldValue("HttpProxyHost"),
+        HttpProxyPort: form.getFieldValue("HttpProxyPort"),
+        ApiHost: form.getFieldValue("ApiHost")
       },
       Holmes: {
-        ApiKey: info.ApiKey
+        ApiKey: form.getFieldValue("ApiKey")
       }
       
     }
@@ -72,7 +72,7 @@ const SettingsOpenKey = () => {
     if (values.HttpProxyHost === undefined) {
       values.HttpProxyHost = '';
     }
-    handOpenKey(values)
+    handOpenKey()
   };
   const handleMessage=()=>{
     try {

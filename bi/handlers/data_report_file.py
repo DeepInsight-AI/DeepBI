@@ -50,7 +50,7 @@ class DataReportFileResource(BaseResource):  # BaseResource
                         report_id = item.get('id')
                         file_name = item.get('file_name')
                         # 创建新线程并执行 POST 请求
-                        thread = threading.Thread(target=self.send_post_request, args=(report_id, file_name))
+                        thread = threading.Thread(target=self.send_post_request, args=(user_id, report_id, file_name))
                         thread.start()
                         print("线程结束")
 
@@ -98,8 +98,6 @@ class DataReportFileResource(BaseResource):  # BaseResource
         models.db.session.add(result)
         models.db.session.commit()
 
-
-
         return json_response(
             {
                 'code': 200,
@@ -131,8 +129,8 @@ class DataReportFileResource(BaseResource):  # BaseResource
             abort(400, message=str(e))
         return {"message": "success", "code": 200}
 
-    def send_post_request(self, report_id, file_name):
-        user_name = str(self.current_user.id) + '_user'
+    def send_post_request(self, user_id, report_id, file_name):
+        user_name = str(user_id) + '_user'
         data = {"user_name": user_name, "report_id": report_id, "file_name": file_name
                 }
 

@@ -105,12 +105,14 @@ const SettingsOpenKey = () => {
       onFinish={onFinish}
     >
       <Form.Item>
-      <h3 style={{marginRight:"30px"}}>AI:</h3>
-            <Radio.Group onChange={handleRadioChange} value={aiOption}  style={{ display: 'flex', flexDirection: 'row' }}>
+      <div style={{display:"flex";alignItems:"center"}}>
+      <h4 style={{marginRight:"30px"}}>AI:</h4>
+            <Radio.Group onChange={handleRadioChange} value={aiOption}>
            
               <Radio value="Holmes">Holmes Key</Radio>
               <Radio value="Openai">OpenAI Key</Radio>
             </Radio.Group>
+      </div>
           </Form.Item>
           {aiOption === 'Holmes' && (
             <Form.Item name="ApiKey" label="ApiKey" rules={[{ required: true, message: 'Please enter API key' }]}>
@@ -118,7 +120,7 @@ const SettingsOpenKey = () => {
             </Form.Item>
           )}
 
-{aiOption === 'openaikey' && (
+{aiOption === 'Openai' && (
             <>
              <Form.Item name="OpenaiApiKey" label="OpenaiApiKey"  rules={[{ required: true, message: window.W_L.please_enter_api_key }]}>
         <Input placeholder="OpenaiApiKey" />

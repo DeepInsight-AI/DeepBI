@@ -12,11 +12,11 @@ class AiTokenResource(BaseResource):  # BaseResource
             abort(400, message="Need set DATA_SOURCE_FILE_DIR")
         try:
             data = request.json
-            result = {
-                "HttpProxyHost": data['HttpProxyHost'],
-                "HttpProxyPort": data['HttpProxyPort'],
-                "OpenaiApiKey": data['OpenaiApiKey']
-            }
+            # result = {
+            #     "HttpProxyHost": data['HttpProxyHost'],
+            #     "HttpProxyPort": data['HttpProxyPort'],
+            #     "OpenaiApiKey": data['OpenaiApiKey']
+            # }
             user_id = self.current_user.id
             token_file = os.path.join(settings.DATA_SOURCE_FILE_DIR, ".token_" + str(user_id) + ".json")
             with open(token_file, 'w', encoding='utf-8') as f:
@@ -38,17 +38,18 @@ class AiTokenResource(BaseResource):  # BaseResource
             with open(token_file, 'r', encoding='utf-8') as file:
                 # 加载JSON数据
                 data = json.load(file)
-            token = data['OpenaiApiKey']
-            return json_response(
-                {
-                    'code': 200,
-                    'data': {
-                        'HttpProxyHost': data['HttpProxyHost'],
-                        'HttpProxyPort': data['HttpProxyPort'],
-                        'OpenaiApiKey': token
-                    }
-                }
-            )
+            # token = data['OpenaiApiKey']
+            # return json_response(
+            #     {
+            #         'code': 200,
+            #         'data': {
+            #             'HttpProxyHost': data['HttpProxyHost'],
+            #             'HttpProxyPort': data['HttpProxyPort'],
+            #             'OpenaiApiKey': token
+            #         }
+            #     }
+            # )
+            return json_response({'code': 200, 'data': data})
+
         except Exception as e:
             return json_response({'code': 400, 'message': str(e)})
-

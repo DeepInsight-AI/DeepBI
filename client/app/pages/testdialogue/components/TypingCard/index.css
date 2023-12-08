@@ -107,16 +107,24 @@
   color: #292a2d;
   width: 100%;
 }
-.h-\[500px\] {
+.autopilot {
+  padding: 0 !important;
+  width: 90%;
+}
+.autopilot .bot {
+  max-width: 100% !important;
+}
+.chat_type .h-\[500px\] {
   height: 500px !important;
 }
 .w-full {
   width: 100%!important;
 }
-.autopilot {
+.auto-pilot {
   display: flex;
+  width: 100%;
 }
-.autopilot .autopilot-item {
+.auto-pilot .autopilot-item {
   max-width: none !important;
   background: transparent !important;
   width: 100%;

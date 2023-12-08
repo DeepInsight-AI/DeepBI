@@ -45,7 +45,7 @@ const SettingsOpenKey = () => {
         OpenaiApiKey: form.getFieldValue("OpenaiApiKey"),
         HttpProxyHost:  form.getFieldValue("HttpProxyHost"),
         HttpProxyPort: form.getFieldValue("HttpProxyPort"),
-        ApiHost: form.getFieldValue("ApiHost")
+        ApiHost: form.getFieldValue("ApiHost") || "",
       },
       Holmes: {
         ApiKey: form.getFieldValue("ApiKey")

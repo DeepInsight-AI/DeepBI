@@ -7,8 +7,10 @@ import Link from "@/components/Link";
 import EmptyState from "@/components/items-list/components/EmptyState";
 import Layout from "@/components/layouts/ContentWithSidebar";
 import Tag from "antd/lib/tag";
+import Modal from "antd/lib/modal";
 import { axios } from "@/services/axios";
 import PageHeader from "@/components/PageHeader";
+import  DeleteOutlinedIcon  from "@ant-design/icons/DeleteOutlined";
 import "./index.less";
 
 function AutopilotHistory() {
@@ -45,8 +47,37 @@ const listColumns = [
             {item.is_generate === -1 && <Tag color="red">{window.W_L.fail}</Tag>}
         </React.Fragment>
       )
+    },
+    {
+      title: "",
+      dataIndex: "actions",
+      width: 50,
+      align: "center",
+      render: (text, item) => (
+        <React.Fragment>
+          <DeleteOutlinedIcon style={{ color: "red", fontSize: "16px" }} onClick={() => handleDelete(item.id)} />
+        </React.Fragment>
+      )
     }
   ];
+  const handleDelete = async (id) => {
+    Modal.confirm({
+      title: window.W_L.confirm_delete,
+      content: window.W_L.confirm_delete_tip,
+      onOk: async () => {
+        try {
+          const res = await axios.delete(`/api/auto_pilot/delete/${id}`);
+          // Handle the response as needed
+          getAutoPilotList();
+        } catch (error) {
+          // Handle any errors
+        }
+      },
+      onCancel() {
+        // Handle cancel action
+      },
+    });
+  };
   const  getAutoPilotList = async () => {
     setIsLoading(true);
     const res = await axios.get("/api/auto_pilot");

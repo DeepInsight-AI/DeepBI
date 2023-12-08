@@ -19,7 +19,6 @@ const SettingsOpenKey = () => {
   const getOpenKey = useCallback(async () => {
     setDisabled(true);
     const {data} = await axios.get(`/api/ai_token`);
-    if(data.code === 200){
       if(!data.in_use){
         form.setFieldsValue(data);
       }else{
@@ -32,7 +31,6 @@ const SettingsOpenKey = () => {
         ApiHost: Openai.ApiHost
     });
       }
-    }
     createWebSocket()
     setDisabled(false)
   }, [form]);

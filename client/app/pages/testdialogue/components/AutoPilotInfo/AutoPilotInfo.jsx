@@ -74,13 +74,13 @@ return (
             column={1} 
             bordered
         >
-            <Descriptions.Item label={window.W_L.report_name} className="my-custom-item" style={{  width: "100px !important",textAlign: "center"}}>
+            <Descriptions.Item label={window.W_L.report_name} className="my-custom-item" style={{  width: "100px",textAlign: "center"}}>
                 <Input bordered={false}  placeholder={window.W_L.report_name_tip}
                 value={report_name}
                 onChange={e => setReportName(e.target.value)}
                 />
             </Descriptions.Item>
-            <Descriptions.Item label={window.W_L.report_desc} className="my-custom-item" style={{  width: "100px !important",textAlign: "center"}}>
+            <Descriptions.Item label={window.W_L.report_desc} className="my-custom-item" style={{  width: "100px",textAlign: "center"}}>
                 <TextArea style={{ resize: 'none'}} rows={10} placeholder={window.W_L.report_desc_tip} bordered={false}
                 value={report_desc}
                 onChange={e => setReportDesc(e.target.value)}

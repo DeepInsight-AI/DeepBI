@@ -169,7 +169,7 @@ const SettingsOpenKey = () => {
       <Form.Item style={{textAlign: "right"}}>
       <Button disabled={disabled} style={{marginRight:"10px"}}
       onClick={() => connectTest()}>{window.W_L.connect_test}</Button>
-      <Button disabled={disabled} htmlType="submit" type="primary">{window.W_L.submit}</Button>
+      <Button disabled={disabled} htmlType="submit" type="primary">{window.W_L.apply}</Button>
       </Form.Item>
     </Form>
      </div>

@@ -801,6 +801,7 @@ class Completion(openai_Completion):
                         openai_proxy=openai_proxy,
                         **base_config,
                     )
+                    print('response: ', response)
                     if response == -1:
                         return response
                     pass_filter = filter_func is None or filter_func(

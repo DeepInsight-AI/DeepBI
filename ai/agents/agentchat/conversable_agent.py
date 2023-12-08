@@ -760,6 +760,7 @@ class ConversableAgent(Agent):
     ) -> Tuple[bool, Union[str, Dict, None]]:
         """Check if the conversation should be terminated, and if human reply is provided.
         """
+        print('run functon check_termination_and_human_reply ', self.user_name)
         if config is None:
             config = self
         if messages is None:

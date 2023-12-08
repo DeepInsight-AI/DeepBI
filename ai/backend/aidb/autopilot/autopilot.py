@@ -104,7 +104,7 @@ class Autopilot(AIDB):
             name="questioner",
             human_input_mode="NEVER",
             max_consecutive_auto_reply=2,
-            llm_config=self.agent_instance_util.gpt4_config,
+            llm_config=self.agent_instance_util.gpt4_turbo_config,
             default_auto_reply="请继续补充分析维度，不要重复.",
             websocket=self.websocket,
             openai_proxy=self.agent_instance_util.openai_proxy,
@@ -129,7 +129,7 @@ class Autopilot(AIDB):
         ].
         Reply "TERMINATE" in the end when everything is done.
             """ + '\n' + '请用中文回答',
-            llm_config=self.agent_instance_util.gpt4_config,
+            llm_config=self.agent_instance_util.gpt4_turbo_config,
             websocket=self.websocket,
             openai_proxy=self.agent_instance_util.openai_proxy,
             log_list=self.log_list,

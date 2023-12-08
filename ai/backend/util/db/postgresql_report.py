@@ -50,7 +50,7 @@ class PsgReport:
             conn = self.connect()
             cursor = conn.cursor()
             cursor.execute("""
-                UPDATE date_report_file
+                UPDATE data_report_file
                 SET is_generate = %s
                 WHERE id = %s
             """, data)

@@ -236,16 +236,9 @@ class AIDB:
         token_path = CONFIG.up_file_path + '.token_' + str(self.uid) + '.json'
         if os.path.exists(token_path):
             try:
-                with open(token_path, 'r') as file:
-                    data = json.load(file)
+                ApiKey, HttpProxyHost, HttpProxyPort = self.load_api_key(token_path)
 
-                OpenaiApiKey = data['OpenaiApiKey']
-                print('OpenaiApiKey : ', OpenaiApiKey)
-
-                self.agent_instance_util.set_api_key(OpenaiApiKey)
-
-                HttpProxyHost = data['HttpProxyHost']
-                HttpProxyPort = data['HttpProxyPort']
+                self.agent_instance_util.set_api_key(ApiKey)
 
                 if HttpProxyHost is not None and len(str(HttpProxyHost)) > 0 and HttpProxyPort is not None and len(
                     str(HttpProxyPort)) > 0:
@@ -283,18 +276,9 @@ class AIDB:
         print('token_path : ', token_path)
         if os.path.exists(token_path):
             try:
-                with open(token_path, 'r') as file:
-                    data = json.load(file)
+                ApiKey, HttpProxyHost, HttpProxyPort = self.load_api_key(token_path)
 
-                OpenaiApiKey = data['OpenaiApiKey']
-                print('OpenaiApiKey : ', OpenaiApiKey)
-
-                self.agent_instance_util.set_api_key(OpenaiApiKey)
-
-                HttpProxyHost = data['HttpProxyHost']
-                print('HttpProxyHost : ', HttpProxyHost)
-                HttpProxyPort = data['HttpProxyPort']
-                print('HttpProxyPort : ', HttpProxyPort)
+                self.agent_instance_util.set_api_key(ApiKey)
 
                 if HttpProxyHost is not None and len(str(HttpProxyHost)) > 0 and HttpProxyPort is not None and len(
                     str(HttpProxyPort)) > 0:
@@ -333,3 +317,33 @@ class AIDB:
             else:
                 return await self.put_message(200, CONFIG.talker_api, CONFIG.type_test,
                                               'apikey not detected, please save first')
+
+    def load_api_key(self, token_path):
+        ApiKey = None
+        HttpProxyHost = None
+        HttpProxyPort = None
+
+        with open(token_path, 'r') as file:
+            data = json.load(file)
+
+        if data.get('in_use'):
+            in_use = data.get('in_use')
+            if in_use == 'Openai':
+                ApiKey = data['Openai']['OpenaiApiKey']
+                print('OpenaiApiKey : ', ApiKey)
+                HttpProxyHost = data['Openai']['HttpProxyHost']
+                print('HttpProxyHost : ', HttpProxyHost)
+                HttpProxyPort = data['Openai']['HttpProxyPort']
+                print('HttpProxyPort : ', HttpProxyPort)
+            elif in_use == 'Holmes':
+                ApiKey = data['Holmes']['ApiKey']
+                print('HolmesApiKey : ', ApiKey)
+        else:
+            ApiKey = data['OpenaiApiKey']
+            print('OpenaiApiKey : ', ApiKey)
+            HttpProxyHost = data['HttpProxyHost']
+            print('HttpProxyHost : ', HttpProxyHost)
+            HttpProxyPort = data['HttpProxyPort']
+            print('HttpProxyPort : ', HttpProxyPort)
+
+        return ApiKey, HttpProxyHost, HttpProxyPort

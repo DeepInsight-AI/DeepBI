@@ -52,7 +52,15 @@ class AutopilotMysql(Autopilot):
             self.agent_instance_util.base_message = str(db_comment)
             self.agent_instance_util.db_id = db_id
             # start chat
-            await self.start_chatgroup(q_str, file_name, report_id)
+            try:
+                data_to_update = (1, report_id)
+                PsgReport().update_data(data_to_update)
+                await self.start_chatgroup(q_str, file_name, report_id)
+            except Exception as e:
+                traceback.print_exc()
+                # update report status
+                data_to_update = (-1, report_id)
+                PsgReport().update_data(data_to_update)
 
     async def task_base(self, qustion_message):
         """ Task type: mysql data analysis"""
@@ -171,7 +179,6 @@ class AutopilotMysql(Autopilot):
             with open(file_name, 'w') as file:
                 json.dump(data, file, indent=4)
 
-
             return
 
         report_html_code = {}
@@ -180,23 +187,26 @@ class AutopilotMysql(Autopilot):
         report_html_code['report_question'] = []
 
         question_message = await self.generate_quesiton(q_str)
+
+        # question_message = [{'report_name': '2018年按月销售柱状图', 'description': ''},
+        #                     {'report_name': '城市销售的金额的柱状图', 'description': ''}]
+
         print('question_message :', question_message)
 
         report_html_code['report_thought'] = question_message
 
-        # question_message = [{'report_name': '2018年按月销售柱状图', 'description': ''},
-        #                     {'report_name': '城市销售的金额的柱状图', 'description': ''}]
         question_list = []
         que_num = 1
         for ques in question_message:
             print('ques :', ques)
             report_demand = 'i need a echart report , ' + ques['report_name'] + ':' + ques['description']
+            # report_demand = ' 10-1= ?? '
             print("report_demand: ", report_demand)
 
             question = {}
             question['question'] = ques
             que_num = que_num + 1
-            if que_num > 5:
+            if que_num > 3:
                 break
 
             answer_message, echart_code = await self.task_generate_echart(str(report_demand))
@@ -262,8 +272,8 @@ class AutopilotMysql(Autopilot):
             json.dump(data, file, indent=4)
 
         # 更新数据
-        # data_to_update = ('updated_value1', 'updated_value2', 'updated_value3', 'condition_value')
-        # PsgReport().update_data(data_to_update)
+        data_to_update = (2, report_id)
+        PsgReport().update_data(data_to_update)
 
     async def generate_quesiton(self, q_str):
         questioner = self.get_agent_questioner()
@@ -471,9 +481,11 @@ class AutopilotMysql(Autopilot):
                     error_times = error_times + 1
 
             if error_times == max_retry_times:
-                return self.error_message_timeout
+                print(self.error_message_timeout)
+                return None, None
 
         except Exception as e:
             traceback.print_exc()
             logger.error("from user:[{}".format(self.user_name) + "] , " + "error: " + str(e))
-        return self.agent_instance_util.data_analysis_error
+        print(self.agent_instance_util.data_analysis_error)
+        return None, None

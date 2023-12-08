@@ -9,7 +9,8 @@ from bi.permissions import (
 )
 from bi import settings
 import json
-import asyncio
+import requests
+import threading
 
 
 class DataReportFileResource(BaseResource):  # BaseResource
@@ -29,18 +30,29 @@ class DataReportFileResource(BaseResource):  # BaseResource
         else:
             result = models.DataReportFile.get_user_files(user_id)
             # Define state mapping
-            # status_mapping = {
-            #     -1: '失败',
-            #     0: '待生成',
-            #     1: '生成中',
-            #     2: '成功'
-            # }
+            status_mapping = {
+                -1: '失败',
+                0: '待生成',
+                1: '生成中',
+                2: '成功'
+            }
             #
             # # Replace the value of is_generate with the corresponding text
             # for item in result:
             #     status_code = item.get('is_generate')
             #     if status_code is not None and status_code in status_mapping:
             #         item['is_generate'] = status_mapping[status_code]
+
+            for item in result:
+                status_code = item.get('is_generate')
+                if status_code is not None and status_code in status_mapping:
+                    if status_code == 0:
+                        report_id = item.get('id')
+                        file_name = item.get('file_name')
+                        # 创建新线程并执行 POST 请求
+                        thread = threading.Thread(target=self.send_post_request, args=(report_id, file_name))
+                        thread.start()
+                        print("线程结束")
 
         self.record_event(
             {"action": "view", "object_id": data_report_file_id, "object_type": "data_report_file"}
@@ -59,6 +71,7 @@ class DataReportFileResource(BaseResource):  # BaseResource
         report_name = req["report_name"]
         report_desc = req["report_desc"]
         db_comment = req["db_comment"]
+        databases_id = req["databases_id"]
 
         new_filename = str(user_id) + "_report_" + str(uuid.uuid4()) + '.json'
         file_name = os.path.join(settings.DATA_SOURCE_FILE_DIR, new_filename)
@@ -67,8 +80,9 @@ class DataReportFileResource(BaseResource):  # BaseResource
             "report_name": report_name,
             "report_desc": report_desc,
             "db_comment": db_comment,
-            "html_code": "<h1>report生成中，请耐心等待 </h1>",
-            "chat_log": "report生成中，请耐心等待"
+            "html_code": "",
+            "chat_log": "report生成中，请耐心等待",
+            "databases_id": databases_id
         }
 
         with open(file_name, 'w') as file:
@@ -83,6 +97,8 @@ class DataReportFileResource(BaseResource):  # BaseResource
         )
         models.db.session.add(result)
         models.db.session.commit()
+
+
 
         return json_response(
             {
@@ -115,12 +131,18 @@ class DataReportFileResource(BaseResource):  # BaseResource
             abort(400, message=str(e))
         return {"message": "success", "code": 200}
 
-    async def async_send_message():
-        uri = 'ws://192.168.5.161:8339/chat/1_test'  # 与服务器相同的地址和端口
-        # uri = 'ws://192.168.5.161:5002/chat/bob'  # 与服务器相同的地址和端口
-        async with websockets.connect(uri, ping_interval=None) as websocket:
-            print(str(time.strftime('%Y-%m-%d %H:%M:%S', time.localtime())))
+    def send_post_request(self, report_id, file_name):
+        user_name = str(self.current_user.id) + '_user'
+        data = {"user_name": user_name, "report_id": report_id, "file_name": file_name
+                }
 
-        # 异步操作
-        await asyncio.sleep(1)
-        return "Async function completed"
+        # 发送 POST 请求到服务器
+        url = 'http://192.168.5.161:8340/api/autopilot'  # 根据你的实际地址修改
+        response = requests.post(url, json=data)
+
+        # 检查响应结果
+        if response.status_code == 200:
+            print('POST request successful')
+            print('Response:', response.text)
+        else:
+            print('POST request failed with status code:', response.status_code)

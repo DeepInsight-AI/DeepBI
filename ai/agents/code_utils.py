@@ -623,6 +623,9 @@ async def tell_logger(websocket, log_str):
         }
 
         send_json_str = json.dumps(result_message)
+
+        # await websocket.send(send_json_str)
+
         if websocket is not None:
             await websocket.send(send_json_str)
 

@@ -13,6 +13,8 @@ import { websocket,createWebSocket } from '../testdialogue/components/Dialogue/w
 const SettingsOpenKey = () => {
     const [form] = Form.useForm();
   const [disabled, setDisabled] = useState(false);
+  const [aiOption, setAiOption] = useState('Holmes'); // 默认选项
+
   const getOpenKey = useCallback(async () => {
     setDisabled(true);
     const {data} = await axios.get(`/api/ai_token`);
@@ -25,6 +27,8 @@ const SettingsOpenKey = () => {
     getOpenKey();
   }, [getOpenKey]);
   const handOpenKey = (info)=>{
+    console.log(info,"info===")
+    return
     axios.post("/api/ai_token",info).then((res) => {
         setDisabled(false)
         notification.success(window.W_L.save_success)
@@ -78,10 +82,15 @@ const SettingsOpenKey = () => {
           language_mode:window.W_L.language_mode,
         }
     }
+    console.log(sendInfo,"sendInfo")
+    return
     websocket.send(JSON.stringify(sendInfo))
   })
     
   }
+  const handleRadioChange = e => {
+    setAiOption(e.target.value);
+  };
   return (
    
      <React.Fragment>
@@ -94,7 +103,23 @@ const SettingsOpenKey = () => {
       disabled={disabled}
       onFinish={onFinish}
     >
-      <Form.Item name="OpenaiApiKey" label="OpenaiApiKey"  rules={[{ required: true, message: 'Please enter API Key!' }]}>
+      <Form.Item>
+      <h3 style={{marginRight:"30px"}}>AI:</h3>
+            <Radio.Group onChange={handleRadioChange} value={aiOption}  style={{ display: 'flex', flexDirection: 'row' }}>
+           
+              <Radio value="Holmes">Holmes Key</Radio>
+              <Radio value="Openai">OpenAI Key</Radio>
+            </Radio.Group>
+          </Form.Item>
+          {aiOption === 'Holmes' && (
+            <Form.Item name="ApiKey" label="ApiKey" rules={[{ required: true, message: 'Please enter API key' }]}>
+              <Input placeholder="ApiKey" />
+            </Form.Item>
+          )}
+
+{aiOption === 'openaikey' && (
+            <>
+             <Form.Item name="OpenaiApiKey" label="OpenaiApiKey"  rules={[{ required: true, message: window.W_L.please_enter_api_key }]}>
         <Input placeholder="OpenaiApiKey" />
       </Form.Item>
       <Form.Item
@@ -107,6 +132,9 @@ const SettingsOpenKey = () => {
         label="HttpProxyPort">
         <Input placeholder="HttpProxyPort" />
       </Form.Item>
+            </>
+          )}
+     
       <Form.Item style={{textAlign: "right"}}>
       <Button disabled={disabled} style={{marginRight:"10px"}}
       onClick={() => connectTest()}>{window.W_L.connect_test}</Button>

@@ -132,8 +132,8 @@ const SettingsOpenKey = () => {
       <h4 style={{marginRight:"30px"}}>AI:</h4>
             <Radio.Group onChange={handleRadioChange} value={aiOption}>
            
-              <Radio value="Holmes">Holmes</Radio>
-              <Radio value="Openai">Open AI</Radio>
+              <Radio value="Holmes">DeepThought</Radio>
+              <Radio value="Openai">OpenAI</Radio>
             </Radio.Group>
       </div>
           </Form.Item>

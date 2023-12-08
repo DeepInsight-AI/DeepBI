@@ -187,7 +187,7 @@ const setDialogueDashboardStorage = () => {
   existingDialogueStorage.push(HoImes_Dashboard)
   if(chat_type==="report"){
   addDashboard(existingDialogueStorage);
-  }else{
+  }else if(chat_type==="chat"){
     addDialogueStorage(existingDialogueStorage);
   }
 }
@@ -421,7 +421,7 @@ const handleSocketMessage = useCallback(() => {
           setLoadingMask(false);
           setSendTableDate(1);
           setStartUse(true);
-          notification.success(window.W_L.configuration_completed, window.W_L.start_the_dialogue);
+          notification.success(window.W_L.configuration_completed, chat_type==="autopilot"?"":window.W_L.start_the_dialogue);
           
         } else if(data.data.data_type === 'mysql_comment_second'){
           setState(prevState => ({

@@ -55,7 +55,7 @@ const listColumns = [
       align: "center",
       render: (text, item) => (
         <React.Fragment>
-          <DeleteOutlinedIcon style={{ color: "red", fontSize: "16px" }} onClick={() => handleDelete(item.id)} />
+          <DeleteOutlinedIcon style={{ color: "#f08282", fontSize: "15px" }} onClick={() => handleDelete(item.id)} />
         </React.Fragment>
       )
     }

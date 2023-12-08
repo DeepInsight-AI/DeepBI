@@ -4,6 +4,7 @@ import Input from "antd/lib/input";
 import Button from "antd/lib/button";
 import Tooltip from "antd/lib/tooltip";
 import { axios } from "@/services/axios";
+import routes from "@/services/routes";
 import { dialogueStorage } from "../Dialogue/method/dialogueStorage";
 import InfoCircleOutlinedIcon from "@ant-design/icons/InfoCircleOutlined";
 import notification from "@/services/notification";
@@ -27,6 +28,7 @@ const autoPilot =async (databases_id,db_comment) => {
         setBtn_disabled(false);
         setBtn_isShow(false);
         notification.success(window.W_L.submit_success,window.W_L.submit_success_tip);
+        routes.navigate("Dialogue.List.autopilot_list");
     }).catch((err)=>{
         setBtn_disabled(false);
         notification.error(window.W_L.submit_fail);

@@ -38,7 +38,8 @@ const DialogueTop = (props) => {
         chat_type!=="viewConversation"&&
         (
             <Button type="primary" size="small" onClick={() => close()} style={{borderRadius: "20px",fontSize: "13px",paddingLeft: "15px",paddingRight: "15px"}} ghost>
-            {window.W_L.new_dialogue}
+             <i className="fa fa-plus m-r-5" aria-hidden="true" />
+            {chat_type==="autopilot"?window.W_L.auto_pilot:window.W_L.new_dialogue}
           </Button>
         )
      }

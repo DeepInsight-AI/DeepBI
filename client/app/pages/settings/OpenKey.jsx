@@ -105,7 +105,7 @@ const SettingsOpenKey = () => {
       onFinish={onFinish}
     >
       <Form.Item>
-      <div style={{display:"flex";alignItems:"center"}}>
+      <div style={{display:"flex",alignItems:"center"}}>
       <h4 style={{marginRight:"30px"}}>AI:</h4>
             <Radio.Group onChange={handleRadioChange} value={aiOption}>
            

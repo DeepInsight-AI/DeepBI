@@ -120,10 +120,11 @@
 .w-full {
   width: 100%!important;
 }
-.autopilot {
+.auto-pilot {
   display: flex;
+  width: 100%;
 }
-.autopilot .autopilot-item {
+.auto-pilot .autopilot-item {
   max-width: none !important;
   background: transparent !important;
   width: 100%;

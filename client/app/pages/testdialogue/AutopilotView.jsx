@@ -28,7 +28,7 @@ function AutopilotView(props) {
     <div className="auto-pilot-list">
         <Skeleton loading={loading} active paragraph={{ rows: 10 }}>
         <div className="message" >
-        <div className={`autopilot`} >
+        <div className={`auto-pilot`} >
             <div className={`chat user autopilot-item`}>
                 <p>报告名称:{autoPilot.report_name}</p>
                 <p>报告描述:{autoPilot.report_desc}</p>

@@ -68,7 +68,7 @@ const CreateAutoPilot = () => {
 }
 const { getDialogueStorage}=dialogueStorage();
 return (
-    <div style={{width:"90%"}}>
+    <div style={{width:"100%"}}>
         <Descriptions  
             size="small" 
             column={1} 
@@ -89,10 +89,10 @@ return (
         </Descriptions>
         <div className="gpt-descriptions-btn">
         <div style={{fontSize:"14px"}}>
-            <Tooltip title={window.W_L.source_tooltip}>
+            <Tooltip title={window.W_L.report_name_and_report_desc_tip}>
               <InfoCircleOutlinedIcon style={{marginRight:"3px"}} />
             </Tooltip>
-              {window.W_L.source_first_tooltip}
+              {window.W_L.please_complete_report_name_and_report_desc}
             </div>
             {
                 btn_isShow&&

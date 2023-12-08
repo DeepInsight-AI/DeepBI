@@ -55,11 +55,14 @@ const TypingCard = (props) => {
     return autopilot ? <AutoPilot content={autopilot} /> : null;
   }, [autopilot]);
   return (
-    <div className="message" onMouseLeave={() => setShowComponent(false)}>
+    <div className={`message ${chat_type}`} onMouseLeave={() => setShowComponent(false)}>
       <>
-        <div className={`info${sender}-time`}>{time}</div>
+        <div className={`info${sender}-time`}>{chat_type==="autopilot"?"":time}</div>
         <div className={`chat${sender}`} onMouseEnter={() => setShowComponent(true)}>
-          <img src={sender === "user" ? currentUser.profile_image_url : icon_small} alt="" />
+          {
+            chat_type!=="autopilot"&&
+            <img src={sender === "user" ? currentUser.profile_image_url : icon_small} alt="" />
+          }
           {sender === "user" ?  
           renderUser
           : 
@@ -67,7 +70,6 @@ const TypingCard = (props) => {
             <div className={`chat ${sender}`}>
               {renderLogWorkflow}
               {renderChart}
-              {renderAutoPilot}
               {renderChatContent}
             </div>
           )}

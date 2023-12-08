@@ -107,7 +107,13 @@
   color: #292a2d;
   width: 100%;
 }
-.h-\[500px\] {
+.autopilot {
+  padding: 0 !important;
+}
+.autopilot .bot {
+  max-width: 100% !important;
+}
+.chat_type .h-\[500px\] {
   height: 500px !important;
 }
 .w-full {

@@ -801,4 +801,7 @@ window.W_L=  {
   'please_enter_api_key':'请输入API Key！',
   'confirm_delete':'确认删除',
   'confirm_delete_tip':'你确定要删除这个项目吗？',
+
+  'please_complete_report_name_and_report_desc':'请完善报告名称和报告描述，让Agent为您进行自动数据分析',
+  'report_name_and_report_desc_tip':'报告名称将作为生成report的标题；报告描述将为Agent提供自动数据分析的大方向，为您的report圈定分析范围；点击提交，将创建一个report任务',
 }

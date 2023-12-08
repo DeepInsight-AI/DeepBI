@@ -9,6 +9,10 @@ const DialogueTop = (props) => {
         const doDelete = () => {
             props.closeDialogue()
           };
+          if(chat_type==="autopilot"){
+            doDelete();
+            return
+          }
         Modal.confirm({
             title: window.W_L.reset_dialogue,
             content: window.W_L.reset_dialogue_confirm,

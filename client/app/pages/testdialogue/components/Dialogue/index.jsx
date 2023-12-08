@@ -93,8 +93,18 @@ const sendSocketMessage = useCallback((state, sender, data_type, content,id=0) =
 
 const getDialogueDashboardStorage = (type=null) => {
   // || chat_type=="autopilot"
-if(chat_type==="chat" ||chat_type==="report"){
-  const res =chat_type==="report"?getDashboard() : getDialogueStorage();
+if(chat_type==="chat" ||chat_type==="report" ||chat_type==="autopilot"){
+  let res=[];
+  switch (chat_type) {
+    case "chat":
+      res = getDialogueStorage();
+      break;
+    case "report":
+      res = getDashboard();
+      break;
+    default:
+      break;
+  }
   if (res&&res.length>0) {
     setHolmestableDate(res[0].table_name);
     saveDashboardId("", res[0].Holmestable_id);

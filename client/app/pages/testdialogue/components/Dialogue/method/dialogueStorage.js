@@ -1,5 +1,11 @@
 
 export const dialogueStorage=()=> {
+    const addAutopilotStorage = (dialogue) => {
+        sessionStorage.setItem("HoImes_Dialogue_Autopilot", JSON.stringify(dialogue));
+    };
+    const getAutopilotStorage = () => {
+        return JSON.parse(sessionStorage.getItem("HoImes_Dialogue_Autopilot"));
+    };
     const addDialogueStorage = (dialogue) => {
         sessionStorage.setItem("HoImes_Dialogue", JSON.stringify(dialogue));
     };
@@ -56,5 +62,5 @@ export const dialogueStorage=()=> {
     const getAllStorage = () => {
         return JSON.parse(localStorage.getItem("HoImes_All")) || [];
     }
-    return {addDashboard, getDashboard,addDialogueStorage,getDialogueStorage,addChatList,getAllStorage,setDialogueStorageDashboardId};
+    return {getAutopilotStorage,addAutopilotStorage,addDashboard, getDashboard,addDialogueStorage,getDialogueStorage,addChatList,getAllStorage,setDialogueStorageDashboardId};
 }

@@ -220,7 +220,7 @@ env_content=$(echo "$env_content" | sed "s/# HOLMES_DATABASE_URL=\"postgresql:\/
 env_content=$(echo "$env_content" | sed "s/# HOLMES_REDIS_URL/HOLMES_REDIS_URL/g")
 # replace language
 # shellcheck disable=SC2001
-env_content=$(echo "$env_content" | sed "s/LANGTYPE/EN/g")
+env_content=$(echo "$env_content" | sed "s/LANGTYPE/CN/g")
 # replace web port
 # shellcheck disable=SC2001
 env_content=$(echo "$env_content" | sed "s/WEB_PORT/$web_port/g")
@@ -273,10 +273,11 @@ echo "init database "
 line
 # start server backend
 echo "start server"
-nohup ./bin/run ./manage.py runserver -h0.0.0.0  -p "$web_port" >web.log 2>&1 &
-nohup ./bin/run ./manage.py rq scheduler >scheduler.log 2>&1 &
-nohup ./bin/run ./manage.py rq worker  >worker.log 2>&1 &
-nohup ./bin/run ./manage.py run_ai  >ai.log 2>&1 &
+./bin/run ./manage.py runserver -h0.0.0.0  -p "$web_port" >web.log 2>&1 &
+./bin/run ./manage.py rq scheduler >scheduler.log 2>&1 &
+./bin/run ./manage.py rq worker  >worker.log 2>&1 &
+./bin/run ./manage.py run_ai  >ai.log 2>&1 &
+./bin/run ./manage.py run_ai_api  >run_ai_api.log 2>&1 &
 echo "--------------------------------"
 echo "启动成功，你可以访问 http://$ip:$web_port"
 echo "--------------------------------"

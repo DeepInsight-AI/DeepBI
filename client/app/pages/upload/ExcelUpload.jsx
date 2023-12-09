@@ -45,14 +45,14 @@ const ExcelUpload = () => {
     customRequest: fileUpload,
     onChange(info) {
     },
-    progress: {
-      strokeColor: {
-        '0%': '#108ee9',
-        '100%': '#87d068',
-      },
-      strokeWidth: 3,
-      format: (percent) => percent && `${parseFloat(percent.toFixed(2))}%`,
-    },
+    // progress: {
+    //   strokeColor: {
+    //     '0%': '#108ee9',
+    //     '100%': '#87d068',
+    //   },
+    //   strokeWidth: 3,
+    //   format: (percent) => percent && `${parseFloat(percent.toFixed(2))}%`,
+    // },
   };
   
   

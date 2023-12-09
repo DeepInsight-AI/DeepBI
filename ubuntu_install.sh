@@ -272,10 +272,11 @@ echo "init database "
 line
 # start server backend
 echo "start server"
-nohup ./bin/run ./manage.py runserver -h0.0.0.0  -p "$web_port" >web.log 2>&1 &
-nohup ./bin/run ./manage.py rq scheduler >scheduler.log 2>&1 &
-nohup ./bin/run ./manage.py rq worker  >worker.log 2>&1 &
-nohup ./bin/run ./manage.py run_ai  >ai.log 2>&1 &
+./bin/run ./manage.py runserver -h0.0.0.0  -p "$web_port" >web.log 2>&1 &
+./bin/run ./manage.py rq scheduler >scheduler.log 2>&1 &
+./bin/run ./manage.py rq worker  >worker.log 2>&1 &
+./bin/run ./manage.py run_ai  >ai.log 2>&1 &
+./bin/run ./manage.py run_ai_api  >run_ai_api.log 2>&1 &
 echo "--------------------------------"
 echo "You can visit http://$ip:$web_port"
 echo "--------------------------------"

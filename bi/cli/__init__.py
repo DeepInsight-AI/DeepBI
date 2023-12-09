@@ -55,6 +55,7 @@ manager.add_command(queries.manager, "queries")
 manager.add_command(rq.manager, "rq")
 manager.add_command(run_command, "runserver")
 manager.add_command(run_ai, "run_ai")
+manager.add_command(run_ai_api, "run_ai_api")
 
 
 @manager.command()

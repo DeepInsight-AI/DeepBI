@@ -212,9 +212,15 @@ class Completion(openai_Completion):
                 if config.get('api_base'):
                     # and str(config['api_base']).__contains__('apiserver.deep-thought.io')\
 
-                    data = {
-                        "data": config['messages']
-                    }
+                    if config.get('functions'):
+                        data = {
+                            "messages": config['messages'],
+                            "functions": config['functions']
+                        }
+                    else:
+                        data = {
+                            "data": config['messages']
+                        }
 
                     # set header
                     headers = {

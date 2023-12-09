@@ -180,7 +180,7 @@ class Autopilot(AIDB):
         rendered_html = template.render(data, timestamp=timestamp)
 
         # 将渲染后的HTML写入文件
-        with open(html_template_path + '/output_' + str(timestamp) + '.html', 'w') as output_file:
+        with open(CONFIG.up_file_path + 'output_' + str(timestamp) + '.html', 'w') as output_file:
             output_file.write(rendered_html)
 
         print("HTML文件已生成：output.html")

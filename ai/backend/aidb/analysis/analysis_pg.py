@@ -261,6 +261,9 @@ class AnalysisPostgresql(Analysis):
                 if len(echart_code) > 0 and str(echart_code).__contains__('x'):
                     is_chart = True
                     print("echart_name : ", echart_name)
+                    # 格式化echart_code
+                    json_obj = json.loads(echart_code)
+                    echart_code = json.dumps(json_obj)
                     re_str = await bi_proxy.run_echart_code(str(echart_code), echart_name)
                     base_mess.append(re_str)
 

@@ -184,85 +184,93 @@ class AutopilotMysql(Autopilot):
             return
 
         report_html_code = {}
-        # report_html_code['report_name'] = '电商销售报告'
-        report_html_code['report_name'] = q_name
-        report_html_code['report_author'] = 'Holmes'
+        try:
+            # report_html_code['report_name'] = '电商销售报告'
+            report_html_code['report_name'] = q_name
+            report_html_code['report_author'] = 'Holmes'
 
-        report_html_code['report_question'] = []
+            report_html_code['report_question'] = []
 
-        question_message = await self.generate_quesiton(q_str)
+            question_message = await self.generate_quesiton(q_str)
 
-        # question_message = [{'report_name': '2018年按月销售柱状图', 'description': ''},
-        #                     {'report_name': '城市销售的金额的柱状图', 'description': ''}]
+            # question_message = [{'report_name': '2018年按月销售柱状图', 'description': ''},
+            #                     {'report_name': '城市销售的金额的柱状图', 'description': ''}]
 
-        print('question_message :', question_message)
+            print('question_message :', question_message)
 
-        report_html_code['report_thought'] = question_message
+            report_html_code['report_thought'] = question_message
 
-        question_list = []
-        que_num = 1
-        for ques in question_message:
-            print('ques :', ques)
-            report_demand = 'i need a echart report , ' + ques['report_name'] + ':' + ques['description']
-            # report_demand = ' 10-1= ?? '
-            print("report_demand: ", report_demand)
+            question_list = []
+            que_num = 1
+            for ques in question_message:
+                print('ques :', ques)
+                report_demand = 'i need a echart report , ' + ques['report_name'] + ':' + ques['description']
+                # report_demand = ' 10-1= ?? '
+                print("report_demand: ", report_demand)
 
-            question = {}
-            question['question'] = ques
-            que_num = que_num + 1
-            if que_num > 5:
-                break
+                question = {}
+                question['question'] = ques
+                que_num = que_num + 1
+                if que_num > 5:
+                    break
 
-            answer_message, echart_code = await self.task_generate_echart(str(report_demand))
-            question['answer'] = answer_message
-            question['echart_code'] = echart_code
-            report_html_code['report_question'].append(question)
+                answer_message, echart_code = await self.task_generate_echart(str(report_demand))
+                question['answer'] = answer_message
+                question['echart_code'] = echart_code
+                report_html_code['report_question'].append(question)
 
-            question_obj = {'question': report_demand, 'answer': answer_message, 'echart_code': ""}
-            question_list.append(question_obj)
+                question_obj = {'question': report_demand, 'answer': answer_message, 'echart_code': ""}
+                question_list.append(question_obj)
 
-        print('question_list:   ', question_list)
+            print('question_list:   ', question_list)
 
-        planner_user = self.agent_instance_util.get_agent_planner_user()
-        analyst = self.get_agent_analyst()
+            planner_user = self.agent_instance_util.get_agent_planner_user()
+            analyst = self.get_agent_analyst()
 
-        question_supplement = 'Please make an analysis and summary in English, including which charts were generated, and briefly introduce the contents of these charts.'
-        if self.language_mode == CONFIG.language_chinese:
-            question_supplement = " 请用中文帮我对报告做最终总结，给我有价值的结论"
+            question_supplement = 'Please make an analysis and summary in English, including which charts were generated, and briefly introduce the contents of these charts.'
+            if self.language_mode == CONFIG.language_chinese:
+                question_supplement = " 请用中文帮我对报告做最终总结，给我有价值的结论"
 
-        await planner_user.initiate_chat(
-            analyst,
-            message=str(
-                question_list) + '\n' + "这是本次报告的目标：" + '\n' + q_str + '\n' + self.question_ask + '\n' + question_supplement,
-        )
+            await planner_user.initiate_chat(
+                analyst,
+                message=str(
+                    question_list) + '\n' + "这是本次报告的目标：" + '\n' + q_str + '\n' + self.question_ask + '\n' + question_supplement,
+            )
 
-        last_analyst = planner_user.last_message()["content"]
+            last_analyst = planner_user.last_message()["content"]
 
-        print('last_analyst : ', last_analyst)
+            print('last_analyst : ', last_analyst)
 
-        match = re.search(
-            r"\[.*\]", last_analyst.strip(), re.MULTILINE | re.IGNORECASE | re.DOTALL
-        )
+            match = re.search(
+                r"\[.*\]", last_analyst.strip(), re.MULTILINE | re.IGNORECASE | re.DOTALL
+            )
 
-        if match:
-            json_str = match.group()
-        print("json_str : ", json_str)
-        # report_demand_list = json.loads(json_str)
+            if match:
+                json_str = match.group()
+            print("json_str : ", json_str)
+            # report_demand_list = json.loads(json_str)
 
-        chart_code_str = str(json_str).replace("\n", "")
-        if len(chart_code_str) > 0:
-            print("chart_code_str: ", chart_code_str)
-            if base_util.is_json(chart_code_str):
-                report_demand_list = json.loads(chart_code_str)
-                report_html_code['report_analyst'] = report_demand_list
-            else:
-                report_demand_list = ast.literal_eval(chart_code_str)
-                report_html_code['report_analyst'] = report_demand_list
+            last_analyst_str = str(json_str).replace("\n", "")
+            if len(last_analyst_str) > 0:
+                print("chart_code_str: ", last_analyst_str)
+                if base_util.is_json(last_analyst_str):
+                    report_demand_list = json.loads(last_analyst_str)
+                    report_html_code['report_analyst'] = report_demand_list
+                else:
+                    report_demand_list = ast.literal_eval(last_analyst_str)
+                    report_html_code['report_analyst'] = report_demand_list
+
+        except Exception as e:
+            traceback.print_exc()
+            data_to_update = (-1, report_id)
+            PsgReport().update_data(data_to_update)
+        else:
+            # 更新数据
+            data_to_update = (2, report_id)
+            PsgReport().update_data(data_to_update)
 
         print('report_html_code +++++++++++++++++ :', report_html_code)
-
         rendered_html = self.generate_report_template(report_html_code)
-
         with open(file_name, 'r') as file:
             data = json.load(file)
 
@@ -275,9 +283,7 @@ class AutopilotMysql(Autopilot):
         with open(file_name, 'w') as file:
             json.dump(data, file, indent=4)
 
-        # 更新数据
-        data_to_update = (2, report_id)
-        PsgReport().update_data(data_to_update)
+
 
     async def generate_quesiton(self, q_str):
         questioner = self.get_agent_questioner()
@@ -324,7 +330,7 @@ class AutopilotMysql(Autopilot):
 
                                 if not name_exists:
                                     base_content.append(jstr)
-                                    print("插入成功")
+                                    # print("插入成功")
                                 else:
                                     print("对象已存在，不重复插入")
 

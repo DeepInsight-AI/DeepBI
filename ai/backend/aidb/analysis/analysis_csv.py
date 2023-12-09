@@ -217,9 +217,9 @@ class AnalysisCsv(Analysis):
                     is_chart = True
                     print("echart_name : ", echart_name)
                     # 格式化echart_code
-                    if base_util.is_json(str(echart_code)):
-                        json_obj = json.loads(str(echart_code))
-                        echart_code = json.dumps(json_obj)
+                    # if base_util.is_json(str(echart_code)):
+                    #     json_obj = json.loads(str(echart_code))
+                    #     echart_code = json.dumps(json_obj)
 
 
                     re_str = await bi_proxy.run_echart_code(str(echart_code), echart_name)

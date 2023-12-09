@@ -211,7 +211,7 @@ class AutopilotMysql(Autopilot):
                 question = {}
                 question['question'] = ques
                 que_num = que_num + 1
-                if que_num > 5:
+                if que_num > 6:
                     break
 
                 answer_message, echart_code = await self.task_generate_echart(str(report_demand), report_file_name)
@@ -344,6 +344,8 @@ class AutopilotMysql(Autopilot):
                                 name_exists = any(item['report_name'] == jstr['report_name'] for item in base_content)
 
                                 if not name_exists:
+                                    if len(base_content) > 5:
+                                        break
                                     base_content.append(jstr)
                                     print("插入成功")
                                 else:
@@ -438,17 +440,15 @@ class AutopilotMysql(Autopilot):
                 echart_name = img_str.get('echart_name')
                 echart_code = img_str.get('echart_code')
 
-
-
                 if len(echart_code) > 0 and str(echart_code).__contains__('x'):
                     is_chart = True
                     print("echart_name : ", echart_name)
                     # 格式化echart_code
                     if base_util.is_json(str(echart_code)):
                         json_obj = json.loads(str(echart_code))
-                        echart_code = json.dumps(json_obj)
+                        last_echart_code = json.dumps(json_obj)
 
-                    last_echart_code = json.dumps(echart_code)
+                    # last_echart_code = json.dumps(echart_code)
                     # re_str = await bi_proxy.run_echart_code(str(echart_code), echart_name)
                     # base_mess.append(re_str)
                     base_mess = []

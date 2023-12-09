@@ -48,7 +48,7 @@ const TypingCard = (props) => {
     );
   }, [sourceText]);
   const renderUser = useMemo(() => {
-    return chat_type === "autopilot" ? <AutoPilotInfo/> : <div className={`chat ${sender}`}>{source}</div>;
+    return chat_type === "autopilot" ? <AutoPilotInfo/> : <div className={`Chat ${sender}`}>{source}</div>;
   }, [chat_type, sender, source]);
 
   const renderAutoPilot = useMemo(() => {
@@ -67,7 +67,7 @@ const TypingCard = (props) => {
           renderUser
           : 
           (
-            <div className={`chat ${sender}`}>
+            <div className={`Chat ${sender}`}>
               {renderLogWorkflow}
               {renderChart}
               {renderChatContent}

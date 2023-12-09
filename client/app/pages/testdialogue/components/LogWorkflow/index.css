@@ -7,6 +7,7 @@
   font-family: Menlo,Monaco,Consolas,Courier New,monospace;
   border-radius: 5px;
   overflow: hidden;
+  cursor: default;
 }
 .log_terminal_content {
   background-color: #000;

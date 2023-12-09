@@ -60,15 +60,13 @@ const DialogueContent = forwardRef(({
       chat_type!=="viewConversation" &&
       (
         <div className="main-all" style={{width:chat_type==="report"?"90%":"80%"}}>
-           {loadingState?
+           {loadingState && messages.length>0 &&
       <div className="gpt-section-btn-list">
       <button className="gpt-btn-item" onClick={stopSend}>
           <PauseCircleOutlinedIcon className="gpt-btn-item-img"></PauseCircleOutlinedIcon>
           <div className="gpt-btn-item-txt">{window.W_L.stop_generation}</div>
       </button>
       </div>
-       :
-       null
        }
        {
             chat_type==="autopilot"?

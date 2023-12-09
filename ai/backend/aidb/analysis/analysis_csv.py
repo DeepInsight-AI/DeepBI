@@ -113,7 +113,7 @@ class AnalysisCsv(Analysis):
                     if str(table_name).endswith('.csv'):
                         data = pd.read_csv(open(csv_file, encoding=encoding, errors='ignore'))
                     else:
-                        data = pd.read_excel(csv_file, encoding=encoding)
+                        data = pd.read_excel(csv_file)
 
                     # Get column headers (first row of data)
                     column_titles = list(data.columns)

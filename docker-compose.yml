@@ -29,6 +29,15 @@ services:
     environment:
       <<: *holmes-environment
       PYTHONUNBUFFERED: 0
+  server_ai_api:
+    <<: *holmes-service
+    command: server_api
+    depends_on:
+      - server
+    ports:
+      - "8340:8340"
+    environment:
+      <<: *holmes-environment
   server_socket:
     <<: *holmes-service
     command: server_socket

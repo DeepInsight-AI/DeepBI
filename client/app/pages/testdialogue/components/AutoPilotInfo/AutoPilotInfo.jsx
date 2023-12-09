@@ -26,9 +26,13 @@ const autoPilot =async (databases_id,db_comment) => {
     }
    await axios.post("/api/auto_pilot",data).then((res)=>{
         setBtn_disabled(false);
+        if(res.code===200){
         setBtn_isShow(false);
         notification.success(window.W_L.submit_success,window.W_L.submit_success_tip);
         routes.navigate("Dialogue.List.autopilot_list");
+        }else{
+        notification.error(res.data);
+        }
     }).catch((err)=>{
         setBtn_disabled(false);
         notification.error(window.W_L.submit_fail);

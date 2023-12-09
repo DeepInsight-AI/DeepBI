@@ -22,6 +22,7 @@ const SettingsOpenKey = () => {
       if(!data.in_use){
         form.setFieldsValue(data);
       }else{
+        setAiOption(data.in_use);
         const {OpenAI, DeepThought} = data;
         form.setFieldsValue({
         ApiKey: DeepThought.ApiKey|| "",

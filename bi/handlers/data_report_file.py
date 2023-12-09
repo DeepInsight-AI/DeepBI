@@ -94,7 +94,7 @@ class DataReportFileResource(BaseResource):  # BaseResource
             "report_desc": report_desc,
             "db_comment": db_comment,
             "html_code": "",
-            "chat_log": "The report is being generated, please wait patiently...",
+            "chat_log": ["The report is being generated, please wait patiently..."],
             "databases_id": databases_id
         }
 

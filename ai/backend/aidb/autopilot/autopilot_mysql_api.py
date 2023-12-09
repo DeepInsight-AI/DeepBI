@@ -270,18 +270,19 @@ class AutopilotMysql(Autopilot):
             PsgReport().update_data(data_to_update)
 
         print('report_html_code +++++++++++++++++ :', report_html_code)
-        rendered_html = self.generate_report_template(report_html_code)
-        with open(report_file_name, 'r') as file:
-            data = json.load(file)
+        if len(report_html_code['report_thought']) > 0:
+            rendered_html = self.generate_report_template(report_html_code)
+            with open(report_file_name, 'r') as file:
+                data = json.load(file)
 
-        # 修改其中的值
-        data['html_code'] = rendered_html
-        # if self.log_list is not None:
-        #     data['chat_log'] = self.log_list
+            # 修改其中的值
+            data['html_code'] = rendered_html
+            # if self.log_list is not None:
+            #     data['chat_log'] = self.log_list
 
-        # 将更改后的内容写回文件
-        with open(report_file_name, 'w') as file:
-            json.dump(data, file, indent=4)
+            # 将更改后的内容写回文件
+            with open(report_file_name, 'w') as file:
+                json.dump(data, file, indent=4)
 
     async def generate_quesiton(self, q_str, report_file_name):
         questioner = self.get_agent_questioner(report_file_name)
@@ -509,7 +510,6 @@ class AutopilotMysql(Autopilot):
             default_auto_reply="请继续补充分析维度，不要重复.",
             websocket=self.websocket,
             openai_proxy=self.agent_instance_util.openai_proxy,
-            log_list=self.log_list,
             report_file_name=report_file_name,
         )
 
@@ -534,7 +534,6 @@ class AutopilotMysql(Autopilot):
             llm_config=self.agent_instance_util.gpt4_turbo_config,
             websocket=self.websocket,
             openai_proxy=self.agent_instance_util.openai_proxy,
-            log_list=self.log_list,
             report_file_name=report_file_name,
         )
         return ai_analyst

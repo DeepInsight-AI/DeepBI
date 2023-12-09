@@ -16,10 +16,14 @@ const AutoPilot = memo(({ title,content }) => {
     div.innerHTML = data
     autopilotRef.current.append(div)
     // eval解析
-  let scripts = div.querySelectorAll("script")
+  try {
+    let scripts = div.querySelectorAll("script")
   scripts.forEach(item => {
     window.eval(item.innerText);
   });
+  } catch (error) {
+    
+  }
   }, [content]);
   const exportPdf = () => {
   //  html2pdf(autopilotRef.current, {

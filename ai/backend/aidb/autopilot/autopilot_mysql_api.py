@@ -13,7 +13,7 @@ from ai.backend.util.db.postgresql_report import PsgReport
 from ai.agents.agentchat import HumanProxyAgent, TaskSelectorAgent, Questioner, AssistantAgent
 
 max_retry_times = CONFIG.max_retry_times
-
+max_report_question = 5
 
 class AutopilotMysql(Autopilot):
 
@@ -201,7 +201,7 @@ class AutopilotMysql(Autopilot):
             report_html_code['report_thought'] = question_message
 
             question_list = []
-            que_num = 1
+            que_num = 0
             for ques in question_message:
                 print('ques :', ques)
                 report_demand = 'i need a echart report , ' + ques['report_name'] + ' : ' + ques['description']
@@ -211,7 +211,7 @@ class AutopilotMysql(Autopilot):
                 question = {}
                 question['question'] = ques
                 que_num = que_num + 1
-                if que_num > 6:
+                if que_num > max_report_question:
                     break
 
                 answer_message, echart_code = await self.task_generate_echart(str(report_demand), report_file_name)
@@ -328,6 +328,8 @@ class AutopilotMysql(Autopilot):
                                 name_exists = any(item['report_name'] == jstr['report_name'] for item in base_content)
 
                                 if not name_exists:
+                                    if len(base_content) > max_report_question:
+                                        break
                                     base_content.append(jstr)
                                     # print("插入成功")
                                 else:
@@ -344,7 +346,7 @@ class AutopilotMysql(Autopilot):
                                 name_exists = any(item['report_name'] == jstr['report_name'] for item in base_content)
 
                                 if not name_exists:
-                                    if len(base_content) > 5:
+                                    if len(base_content) > max_report_question:
                                         break
                                     base_content.append(jstr)
                                     print("插入成功")

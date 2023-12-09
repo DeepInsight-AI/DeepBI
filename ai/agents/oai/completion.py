@@ -190,6 +190,7 @@ class Completion(openai_Completion):
         key = get_key(config)
         if use_cache:
             response = cls._cache.get(key, None)
+            print('use_cache_response: ', response)
             if response is not None and (response != -1 or not raise_on_ratelimit_or_timeout):
                 # print("using cached response")
                 cls._book_keeping(config, response)
@@ -234,6 +235,10 @@ class Completion(openai_Completion):
                     print('create_url : ', url)
                     res = requests.post(url, json=data, headers=headers)
                     print("res :", res)
+                    # check response status_code
+                    if res.status_code != 200:
+                        res.raise_for_status()
+
                     response = res.json()
                 else:
                     if "request_timeout" in config:

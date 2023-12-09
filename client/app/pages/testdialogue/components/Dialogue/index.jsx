@@ -355,6 +355,7 @@ const handleSocketMessage = useCallback(() => {
             // setState(prevState => ({ ...prevState, sendTableDate: 0 }));
             setSendTableDate(0)
             setLoadingMask(false);
+            setLoadingState(false);
           }
         }
 
@@ -427,6 +428,7 @@ const handleSocketMessage = useCallback(() => {
           setLoadingMask(false);
           setSendTableDate(1);
           setStartUse(true);
+          setLoadingState(false);
           notification.success(window.W_L.configuration_completed, chat_type==="autopilot"?"":window.W_L.start_the_dialogue);
           
         } else if(data.data.data_type === 'mysql_comment_second'){
@@ -436,6 +438,7 @@ const handleSocketMessage = useCallback(() => {
             // sendTableDate: 1,
           }));
           setLoadingMask(false);
+          setLoadingState(false);
           setSendTableDate(1);
           sendSocketMessage(200, 'user', 'question', state.newInputMessage);
         } else if (data.data.data_type === 'delete_chart') {
@@ -564,6 +567,7 @@ const openSocket = useCallback(() => {
       if (SendTableDate === 0) {
         setState(prevState => ({ ...prevState,data_type }));
         setLoadingMask(true);
+        setLoadingState(true);
         let promisesList = [];
         const promises = HolmestableD_date.current.tableName.map(async (item) => {
           const res = await axios.get(`/api/data_table/columns/${Holmestable_id.current}/${item.name}`);
@@ -582,6 +586,7 @@ const openSocket = useCallback(() => {
           console.log(err, 'first_error');
           // setState(prevState => ({ ...prevState, loadingMask: false }));
           setLoadingMask(false);
+          setLoadingState(false);
           setSendTableDate(0);
         });
       }
@@ -723,7 +728,7 @@ const openSocket = useCallback(() => {
 
     return (
       <div className="dialogue-content">
-        <DialogueTop Holmestable={holmestableDate} HolmestableItem={Holmestable_item.current} closeDialogue={closeDialogue} chat_type={chat_type}></DialogueTop>
+        <DialogueTop loadingMask={LoadingMask} Holmestable={holmestableDate} HolmestableItem={Holmestable_item.current} closeDialogue={closeDialogue} chat_type={chat_type}></DialogueTop>
         {/* <OpenKey ref={OpenKeyRef}></OpenKey> */}
        {LoadingState&& <MenuMask/>}
         <DialogueContent

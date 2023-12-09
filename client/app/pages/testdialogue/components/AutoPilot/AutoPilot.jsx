@@ -1,4 +1,7 @@
 import React, { memo, useEffect, useRef, useState } from 'react';
+import FilePptOutlinedIcon from "@ant-design/icons/FilePptOutlined";
+import html2pdf from 'html2pdf.js';
+import * as echarts from 'echarts';
 import { useExportPDF } from './useExportPDF.js';
 import LoadingOutlinedIcon from '@ant-design/icons/LoadingOutlined';
 import "./index.css";
@@ -12,10 +15,15 @@ const AutoPilot = memo(({ title,content }) => {
     let div = document.createElement("div")
     div.innerHTML = data
     autopilotRef.current.append(div)
-  let scripts = div.querySelectorAll("script")
+    // eval解析
+  try {
+    let scripts = div.querySelectorAll("script")
   scripts.forEach(item => {
     window.eval(item.innerText);
   });
+  } catch (error) {
+    
+  }
   }, [content]);
   const exportPdf = () => {
   //  html2pdf(autopilotRef.current, {
@@ -36,6 +44,7 @@ const AutoPilot = memo(({ title,content }) => {
       //   jsPDF: { unit: 'mm', format: 'a2', orientation: 'portrait' } // 设置 A2 纸张大小
       // };
   
+      // // 使用 html2pdf 库生成 PDF
       // html2pdf()
       //   .from(autopilotRef.current)
       //   .set(opt)

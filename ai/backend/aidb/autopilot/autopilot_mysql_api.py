@@ -10,6 +10,7 @@ import ast
 from ai.agents.agentchat import TaskSelectorAgent
 from ai.backend.util import base_util
 from ai.backend.util.db.postgresql_report import PsgReport
+from ai.agents.agentchat import HumanProxyAgent, TaskSelectorAgent, Questioner, AssistantAgent
 
 max_retry_times = CONFIG.max_retry_times
 
@@ -21,16 +22,15 @@ class AutopilotMysql(Autopilot):
         Process mysql data source and select the corresponding workflow
         """
 
-        file_name = CONFIG.up_file_path + json_str['file_name']
+        report_file_name = CONFIG.up_file_path + json_str['file_name']
         report_id = json_str['report_id']
 
-        with open(file_name, 'r') as file:
+        with open(report_file_name, 'r') as file:
             data = json.load(file)
         db_comment = data['db_comment']
         db_id = str(data['databases_id'])
         q_str = data['report_desc']
         q_name = data['report_name']
-
 
         print("self.agent_instance_util.api_key_use :", self.agent_instance_util.api_key_use)
 
@@ -57,7 +57,7 @@ class AutopilotMysql(Autopilot):
             try:
                 data_to_update = (1, report_id)
                 PsgReport().update_data(data_to_update)
-                await self.start_chatgroup(q_str, file_name, report_id, q_name)
+                await self.start_chatgroup(q_str, report_file_name, report_id, q_name)
             except Exception as e:
                 traceback.print_exc()
                 # update report status
@@ -132,7 +132,7 @@ class AutopilotMysql(Autopilot):
         )
         return base_mysql_assistant
 
-    async def start_chatgroup(self, q_str, file_name, report_id, q_name):
+    async def start_chatgroup(self, q_str, report_file_name, report_id, q_name):
         aa = 1
         if aa == 2:
             report_html_code = {'report_name': '电商销售报告', 'report_question': [
@@ -171,14 +171,14 @@ class AutopilotMysql(Autopilot):
                                                     'description': '销售额在不同城市间分布不均，Indore、Mumbai、Pune、Delhi和Bhopal表现较好，而其他城市如Goa销售额较低，企业应根据城市销售表现调整策略和资源分配。'}]}
             rendered_html = self.generate_report_template(report_html_code)
 
-            with open(file_name, 'r') as file:
+            with open(report_file_name, 'r') as file:
                 data = json.load(file)
 
             # 修改其中的值
             data['html_code'] = rendered_html
 
             # 将更改后的内容写回文件
-            with open(file_name, 'w') as file:
+            with open(report_file_name, 'w') as file:
                 json.dump(data, file, indent=4)
 
             return
@@ -191,7 +191,7 @@ class AutopilotMysql(Autopilot):
 
             report_html_code['report_question'] = []
 
-            question_message = await self.generate_quesiton(q_str)
+            question_message = await self.generate_quesiton(q_str, report_file_name)
 
             # question_message = [{'report_name': '2018年按月销售柱状图', 'description': ''},
             #                     {'report_name': '城市销售的金额的柱状图', 'description': ''}]
@@ -204,7 +204,7 @@ class AutopilotMysql(Autopilot):
             que_num = 1
             for ques in question_message:
                 print('ques :', ques)
-                report_demand = 'i need a echart report , ' + ques['report_name'] + ':' + ques['description']
+                report_demand = 'i need a echart report , ' + ques['report_name'] + ' : ' + ques['description']
                 # report_demand = ' 10-1= ?? '
                 print("report_demand: ", report_demand)
 
@@ -214,7 +214,7 @@ class AutopilotMysql(Autopilot):
                 if que_num > 5:
                     break
 
-                answer_message, echart_code = await self.task_generate_echart(str(report_demand))
+                answer_message, echart_code = await self.task_generate_echart(str(report_demand), report_file_name)
                 question['answer'] = answer_message
                 question['echart_code'] = echart_code
                 report_html_code['report_question'].append(question)
@@ -224,8 +224,8 @@ class AutopilotMysql(Autopilot):
 
             print('question_list:   ', question_list)
 
-            planner_user = self.agent_instance_util.get_agent_planner_user()
-            analyst = self.get_agent_analyst()
+            planner_user = self.agent_instance_util.get_agent_planner_user(report_file_name=report_file_name)
+            analyst = self.get_agent_analyst(report_file_name=report_file_name)
 
             question_supplement = 'Please make an analysis and summary in English, including which charts were generated, and briefly introduce the contents of these charts.'
             if self.language_mode == CONFIG.language_chinese:
@@ -271,23 +271,21 @@ class AutopilotMysql(Autopilot):
 
         print('report_html_code +++++++++++++++++ :', report_html_code)
         rendered_html = self.generate_report_template(report_html_code)
-        with open(file_name, 'r') as file:
+        with open(report_file_name, 'r') as file:
             data = json.load(file)
 
         # 修改其中的值
         data['html_code'] = rendered_html
-        if self.log_list is not None:
-            data['chat_log'] = self.log_list
+        # if self.log_list is not None:
+        #     data['chat_log'] = self.log_list
 
         # 将更改后的内容写回文件
-        with open(file_name, 'w') as file:
+        with open(report_file_name, 'w') as file:
             json.dump(data, file, indent=4)
 
-
-
-    async def generate_quesiton(self, q_str):
-        questioner = self.get_agent_questioner()
-        ai_analyst = self.get_agent_ai_analyst()
+    async def generate_quesiton(self, q_str, report_file_name):
+        questioner = self.get_agent_questioner(report_file_name)
+        ai_analyst = self.get_agent_ai_analyst(report_file_name)
 
         message = self.agent_instance_util.base_message + '\n' + self.question_ask + '\n\n' + q_str
         print(' generate_quesiton message:  ', message)
@@ -352,7 +350,7 @@ class AutopilotMysql(Autopilot):
 
         return base_content
 
-    async def task_generate_echart(self, qustion_message):
+    async def task_generate_echart(self, qustion_message, report_file_name):
         try:
             base_content = []
             base_mess = []
@@ -363,8 +361,9 @@ class AutopilotMysql(Autopilot):
             for i in range(max_retry_times):
                 try:
                     mysql_echart_assistant = self.agent_instance_util.get_agent_mysql_echart_assistant(
-                        use_cache=use_cache)
-                    python_executor = self.agent_instance_util.get_agent_python_executor()
+                        use_cache=use_cache, report_file_name=report_file_name)
+                    python_executor = self.agent_instance_util.get_agent_python_executor(
+                        report_file_name=report_file_name)
 
                     await python_executor.initiate_chat(
                         mysql_echart_assistant,
@@ -450,8 +449,8 @@ class AutopilotMysql(Autopilot):
             error_times = 0
             for i in range(max_retry_times):
                 try:
-                    planner_user = self.agent_instance_util.get_agent_planner_user()
-                    analyst = self.get_agent_analyst()
+                    planner_user = self.agent_instance_util.get_agent_planner_user(report_file_name=report_file_name)
+                    analyst = self.get_agent_analyst(report_file_name=report_file_name)
 
                     question_supplement = 'Please make an analysis and summary in English, including which charts were generated, and briefly introduce the contents of these charts.'
                     if self.language_mode == CONFIG.language_chinese:
@@ -499,3 +498,43 @@ class AutopilotMysql(Autopilot):
             logger.error("from user:[{}".format(self.user_name) + "] , " + "error: " + str(e))
         print(self.agent_instance_util.data_analysis_error)
         return None, None
+
+    def get_agent_questioner(self, report_file_name):
+        """ Questioner  """
+        questioner = Questioner(
+            name="questioner",
+            human_input_mode="NEVER",
+            max_consecutive_auto_reply=2,
+            llm_config=self.agent_instance_util.gpt4_turbo_config,
+            default_auto_reply="请继续补充分析维度，不要重复.",
+            websocket=self.websocket,
+            openai_proxy=self.agent_instance_util.openai_proxy,
+            log_list=self.log_list,
+            report_file_name=report_file_name,
+        )
+
+        return questioner
+
+    def get_agent_ai_analyst(self, report_file_name):
+        """ ai_analyst """
+        ai_analyst = AssistantAgent(
+            name="ai_data_analyst",
+            system_message="""You are a helpful AI data analysis.
+             Please tell me from which dimensions you need to analyze and help me make a report plan.
+             Reports need to be represented from multiple dimensions. To keep them compact, merge them properly.
+             Give a description of the purpose of each report.
+         The output should be formatted as a JSON instance that conforms to the JSON schema below, the JSON is a list of dict,
+         [
+         {“report_name”: “report_1”, “description”:”description of the report”;},
+         {},
+         {},
+         ].
+         Reply "TERMINATE" in the end when everything is done.
+             """ + '\n' + '请用中文回答',
+            llm_config=self.agent_instance_util.gpt4_turbo_config,
+            websocket=self.websocket,
+            openai_proxy=self.agent_instance_util.openai_proxy,
+            log_list=self.log_list,
+            report_file_name=report_file_name,
+        )
+        return ai_analyst

@@ -13,6 +13,7 @@ import chardet
 language_chinese = CONFIG.language_chinese
 max_retry_times = CONFIG.max_retry_times
 
+
 class AnalysisCsv(Analysis):
     async def deal_question(self, json_str, message):
         """  Process csv data source and select the corresponding workflow """
@@ -101,14 +102,18 @@ class AnalysisCsv(Analysis):
         if q_str.get('table_desc'):
             for tb in q_str.get('table_desc'):
                 if len(tb.get('field_desc')) == 0:
+                    table_name = tb.get('table_name')
 
                     # Read file and detect encoding
-                    csv_file = CONFIG.up_file_path + tb.get('table_name')
+                    csv_file = CONFIG.up_file_path + table_name
                     f = open(csv_file, 'rb')
                     # Read the file using the detected encoding
                     encoding = chardet.detect(f.read())['encoding']
                     f.close()
-                    data = pd.read_csv(open(csv_file, encoding=encoding, errors='ignore'))
+                    if str(table_name).endswith('.csv'):
+                        data = pd.read_csv(open(csv_file, encoding=encoding, errors='ignore'))
+                    else:
+                        data = pd.read_excel(csv_file, encoding=encoding)
 
                     # Get column headers (first row of data)
                     column_titles = list(data.columns)

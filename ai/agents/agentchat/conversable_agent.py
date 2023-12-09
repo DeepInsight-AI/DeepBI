@@ -11,7 +11,7 @@ from ai.agents.code_utils import (
     UNKNOWN,
     execute_code,
     extract_code,
-    infer_lang, append_logger,
+    infer_lang, append_report_logger,
 )
 from ai.agents.code_utils import tell_logger
 
@@ -61,7 +61,7 @@ class ConversableAgent(Agent):
         user_name: Optional[str] = "default_user",
         openai_proxy: Optional[str] = None,
         use_cache: Optional[bool] = True,
-        log_list: Optional[List[str]] = None,
+        report_file_name: Optional[str] = None,
 
     ):
         """
@@ -142,7 +142,7 @@ class ConversableAgent(Agent):
         self.user_name = user_name
         self.openai_proxy = openai_proxy
         self.use_cache = use_cache
-        self.log_list = log_list
+        self.report_file_name = report_file_name
 
     def register_reply(
         self,
@@ -455,7 +455,7 @@ class ConversableAgent(Agent):
         log_str = log_str + '\n' + "-" * 80
         if self.is_log_out:
             await tell_logger(self.websocket, log_str)
-            append_logger(self.log_list, log_str)
+            append_report_logger(self.report_file_name, log_str)
 
     async def _process_received_message(self, message, sender, silent):
         message = self._message_to_dict(message)

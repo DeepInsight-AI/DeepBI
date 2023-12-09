@@ -12,7 +12,7 @@ from ai.agents.code_utils import (
     execute_code,
     extract_code,
     infer_lang,
-    append_logger,
+    append_report_logger,
 )
 import time
 from ai.backend.util.write_log import logger
@@ -66,7 +66,7 @@ class HumanProxyAgent(Agent):
         incoming: Optional = None,
         openai_proxy: Optional[str] = None,
         is_log_out: Optional[bool] = True,
-        log_list: Optional[List[str]] = None,
+        report_file_name: Optional[str] = None,
 
     ):
         """
@@ -148,7 +148,7 @@ class HumanProxyAgent(Agent):
         self.incoming = incoming
         self.openai_proxy = openai_proxy
         self.is_log_out = is_log_out
-        self.log_list = log_list
+        self.report_file_name = report_file_name
 
 
     def register_reply(
@@ -463,7 +463,7 @@ class HumanProxyAgent(Agent):
         log_str = log_str + '\n' + "-" * 80
         if self.is_log_out:
             await tell_logger(self.websocket, log_str)
-            append_logger(self.log_list, log_str)
+            append_report_logger(self.report_file_name, log_str)
 
     async def _process_received_message(self, message, sender, silent):
         message = self._message_to_dict(message)

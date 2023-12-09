@@ -90,7 +90,6 @@ class AgentInstanceUtil:
                 },
             ]
 
-
         self.gpt4_turbo_config = {
             "seed": 42,  # change the seed for different trials
             "temperature": 0,
@@ -503,7 +502,7 @@ class AgentInstanceUtil:
         )
         return bi_proxy
 
-    def get_agent_planner_user(self, is_log_out=True):
+    def get_agent_planner_user(self, is_log_out=True, report_file_name=None):
         """Disposable conversation initiator, no reply"""
         planner_user = UserProxyAgent(
             name="planner_user",
@@ -512,6 +511,7 @@ class AgentInstanceUtil:
             websocket=self.websocket,
             is_log_out=is_log_out,
             openai_proxy=self.openai_proxy,
+            report_file_name=report_file_name,
         )
         return planner_user
 
@@ -690,7 +690,7 @@ class AgentInstanceUtil:
         )
         return chart_planner
 
-    def get_agent_python_executor(self):
+    def get_agent_python_executor(self, report_file_name=None):
         python_executor = PythonProxyAgent(
             name="python_executor",
             system_message="python executor. Execute the python code and report the result.",
@@ -702,6 +702,7 @@ class AgentInstanceUtil:
             # outgoing=self.outgoing,
             # incoming=self.incoming,
             db_id=self.db_id,
+            report_file_name=report_file_name,
         )
         return python_executor
 
@@ -732,7 +733,7 @@ class AgentInstanceUtil:
         )
         return csv_echart_assistant
 
-    def get_agent_mysql_echart_assistant(self, use_cache=True):
+    def get_agent_mysql_echart_assistant(self, use_cache=True, report_file_name=None):
         """mysql_echart_assistant"""
         mysql_echart_assistant = AssistantAgent(
             name="mysql_echart_assistant",
@@ -757,6 +758,7 @@ class AgentInstanceUtil:
             llm_config=self.gpt4_turbo_config,
             openai_proxy=self.openai_proxy,
             use_cache=use_cache,
+            report_file_name=report_file_name,
 
         )
         return mysql_echart_assistant

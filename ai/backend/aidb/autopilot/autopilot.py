@@ -136,7 +136,7 @@ class Autopilot(AIDB):
         )
         return ai_analyst
 
-    def get_agent_analyst(self):
+    def get_agent_analyst(self, report_file_name=None):
         analyst = AssistantAgent(
             name="Analyst",
             system_message='''Analyst. You are a report analysis, you have the knowledge and skills to turn raw data into information and insight, which can be used to make business decisions.
@@ -152,6 +152,7 @@ class Autopilot(AIDB):
             websocket=self.agent_instance_util.websocket,
             user_name=self.agent_instance_util.user_name,
             openai_proxy=self.agent_instance_util.openai_proxy,
+            report_file_name=report_file_name,
         )
         return analyst
 

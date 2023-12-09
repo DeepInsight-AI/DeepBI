@@ -114,11 +114,14 @@
 .autopilot .bot {
   max-width: 100% !important;
 }
-.chat_type .h-\[500px\] {
+.chat_type .h-500 {
   height: 500px !important;
 }
 .w-full {
   width: 100%!important;
+}
+.h-500 {
+  height: 500px !important;
 }
 .auto-pilot {
   display: flex;

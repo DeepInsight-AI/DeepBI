@@ -6,6 +6,7 @@
     align-items:center;
     justify-content: flex-end;
     margin-bottom: 10px;
+    cursor: pointer;
 }
 .auto_pilot_icon p{
     margin: 0;

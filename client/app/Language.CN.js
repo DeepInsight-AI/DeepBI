@@ -806,4 +806,5 @@ window.W_L=  {
   'report_name_and_report_desc_tip':'报告名称将作为生成report的标题；报告描述将为Agent提供自动数据分析的大方向，为您的report圈定分析范围；点击提交，将创建一个report任务',
   'report_name_tip':'报告名称将作为生成report的标题',
   'report_desc_tip':'报告描述将为Agent提供自动数据分析的大方向，为您的report圈定分析范围',
+  'task_processing':'任务正在处理...',
 }

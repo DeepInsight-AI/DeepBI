@@ -14,7 +14,7 @@ import { websocket,createWebSocket } from '../testdialogue/components/Dialogue/w
 const SettingsOpenKey = () => {
     const [form] = Form.useForm();
   const [disabled, setDisabled] = useState(false);
-  const [aiOption, setAiOption] = useState('Holmes'); // 默认选项
+  const [aiOption, setAiOption] = useState('DeepThought'); // 默认选项
 
   const getOpenKey = useCallback(async () => {
     setDisabled(true);
@@ -24,11 +24,11 @@ const SettingsOpenKey = () => {
       }else{
         const {OpenAI, DeepThought} = data;
         form.setFieldsValue({
-        ApiKey: DeepThought.ApiKey,
-        OpenaiApiKey: OpenAI.OpenaiApiKey,
-        HttpProxyHost: OpenAI.HttpProxyHost,
-        HttpProxyPort: OpenAI.HttpProxyPort,
-        ApiHost: OpenAI.ApiHost
+        ApiKey: DeepThought.ApiKey|| "",
+        OpenaiApiKey: OpenAI.OpenaiApiKey|| "",
+        HttpProxyHost: OpenAI.HttpProxyHost|| "",
+        HttpProxyPort: OpenAI.HttpProxyPort|| "",
+        ApiHost: OpenAI.ApiHost|| "",
     });
       }
     createWebSocket()

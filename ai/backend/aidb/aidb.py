@@ -230,13 +230,16 @@ class AIDB:
             self.user_name) + "], reply a message:{}".format(consume_output))
 
     async def check_api_key(self):
-        self.agent_instance_util.api_key_use = True
+        # self.agent_instance_util.api_key_use = True
 
         # .token_[uid].json
         token_path = CONFIG.up_file_path + '.token_' + str(self.uid) + '.json'
         if os.path.exists(token_path):
             try:
                 ApiKey, HttpProxyHost, HttpProxyPort, ApiHost = self.load_api_key(token_path)
+                if ApiKey is None or len(ApiKey) == 0:
+                    await self.put_message(500, CONFIG.talker_log, CONFIG.type_log_data, self.error_miss_key)
+                    return False
 
                 self.agent_instance_util.set_api_key(ApiKey, ApiHost)
 
@@ -269,7 +272,7 @@ class AIDB:
             return False
 
     async def test_api_key(self):
-        self.agent_instance_util.api_key_use = True
+        # self.agent_instance_util.api_key_use = True
 
         # .token_[uid].json
         token_path = CONFIG.up_file_path + '.token_' + str(self.uid) + '.json'
@@ -277,6 +280,9 @@ class AIDB:
         if os.path.exists(token_path):
             try:
                 ApiKey, HttpProxyHost, HttpProxyPort, ApiHost = self.load_api_key(token_path)
+                if ApiKey is None or len(ApiKey) == 0:
+                    await self.put_message(500, CONFIG.talker_log, CONFIG.type_log_data, self.error_miss_key)
+                    return False
 
                 self.agent_instance_util.set_api_key(ApiKey, ApiHost)
 

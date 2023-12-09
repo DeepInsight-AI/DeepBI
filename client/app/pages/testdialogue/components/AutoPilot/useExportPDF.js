@@ -13,63 +13,49 @@ export const useExportPDF = () => {
   const exportPDF = async (title, element) => {
     if (element) {
       setLoading(true);
-      let width = element.offsetWidth / 4;
-      let height = element.offsetHeight / 4;
-      let limit = 14400;
-      if (height > limit) {
-        let contentScale = limit / height;
-        height = limit;
-        width *= contentScale;
-      }
-      html2canvas(element, {
-        scale: 2,
-        useCORS: true,
-        allowTaint: false,
-        ignoreElements: (element) => {
-          if (element.id === 'ignoreBtnElement') return true;
-          return false;
+
+      try {
+        const canvas = await html2canvas(element, {
+          scale: 2,
+          useCORS: true,
+          allowTaint: false,
+          ignoreElements: (element) => {
+            if (element.id === 'ignoreBtnElement') return true;
+            return false;
+          }
+        });
+
+        const width = canvas.width / 4;
+        let height = canvas.height / 4;
+        const limit = 14400;
+        if (height > limit) {
+          const contentScale = limit / height;
+          height = limit;
+          width *= contentScale;
         }
-      }).then(canvas => {
-        let context = canvas.getContext('2d');
-        let orientation;
-        if (context) {
-          context.mozImageSmoothingEnabled = false;
-          context.webkitImageSmoothingEnabled = false;
-          context.msImageSmoothingEnabled = false;
-          context.imageSmoothingEnabled = false;
-        }
-        // let pageData = canvas.toDataURL('image/jpg', 1.0);
-        let pageData = canvas.toDataURL('image/webp', 0.7);
-        let img = new Image();
+
+        const pageData = canvas.toDataURL('image/webp', 0.7);
+
+        const img = new Image();
         img.src = pageData;
+
         img.onload = function () {
           img.width /= 2;
           img.height /= 2;
           img.style.transform = 'scale(0.5)';
-          let pdf;
-          orientation = width > height ? 'l' : 'p'
-          // eslint-disable-next-line
-          pdf = new jsPDF(orientation , 'mm', [
-            width,
-            height
-          ]);
-          pdf.addImage(
-            pageData,
-            'jpeg',
-            0,
-            0,
-            width,
-            height
-          );
+          const orientation = width > height ? 'l' : 'p';
+
+          const pdf = new jsPDF(orientation, 'mm', [width, height]);
+          pdf.addImage(pageData, 'jpeg', 0, 0, width, height);
           pdf.save(`${title}.pdf`);
           setLoading(false);
         };
-      });
+      } catch (error) {
+        console.error('导出PDF时出错：', error);
+        setLoading(false);
+      }
     }
-  }
+  };
 
   return { loading, exportPDF };
-}
-export const exportPDF = async (title, element) => {
-   
-}
+};

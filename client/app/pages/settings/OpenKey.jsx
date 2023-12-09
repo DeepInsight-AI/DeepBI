@@ -10,7 +10,7 @@ import wrapSettingsTab from "@/components/SettingsWrapper";
 import notification from "@/services/notification";
 import routes from "@/services/routes";
 import { axios } from "@/services/axios";
-import { websocket,createWebSocket } from '../testdialogue/components/Dialogue/websocket';
+import { websocket,createWebSocket,closeWebSocket } from '../testdialogue/components/Dialogue/websocket';
 const SettingsOpenKey = () => {
     const [form] = Form.useForm();
   const [disabled, setDisabled] = useState(false);
@@ -54,9 +54,15 @@ const SettingsOpenKey = () => {
       
     }
     axios.post("/api/ai_token",data).then((res) => {
-        setDisabled(false)
+      if(res.code===200){
         notification.success(window.W_L.save_success)
+        closeWebSocket()
         getOpenKey();
+      }else{
+        notification.error(window.W_L.save_failed)
+        
+      }
+      setDisabled(false)
     }).catch((err) => {
         notification.error(window.W_L.save_failed)
       setDisabled(false)

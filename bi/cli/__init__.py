@@ -8,6 +8,8 @@ from bi import __version__, create_app, settings, rq_redis_connection
 from bi.cli import data_sources, database, groups, organization, queries, users, rq
 from bi.monitor import get_status
 from ai.backend.start_server import WSServer
+from ai.backend import app2
+import tornado.web
 
 ai = AppGroup(help="ai")
 
@@ -17,6 +19,13 @@ def run_ai():
     server_port = 8339
     s = WSServer(server_port)
     s.serve_forever()
+
+@ai.command()
+def run_ai_api():
+    server_port = 8340
+    app = app2.make_app()
+    app.listen(server_port)
+    tornado.ioloop.IOLoop.current().start()
 
 
 def create(group):

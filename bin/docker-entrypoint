@@ -13,6 +13,13 @@ server_socket() {
   exec /app/manage.py run_ai
 }
 
+server_api() {
+  echo "Starting ai web-api server.."
+
+  exec /app/manage.py run_ai_api
+}
+
+
 worker() {
   echo "Starting RQ worker..."
 
@@ -121,6 +128,9 @@ case "$1" in
     ;;
   server_socket)
     server_socket
+    ;;
+  server_api)
+    server_api
     ;;
   manage)
     shift

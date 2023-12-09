@@ -30,8 +30,8 @@ function AutopilotView(props) {
         <div className="message" >
         <div className={`auto-pilot`} >
             <div className={`chat user autopilot-item`}>
-                <p>报告名称:{autoPilot.report_name}</p>
-                <p>报告描述:{autoPilot.report_desc}</p>
+                <p>{window.W_L.report_name}:{autoPilot.report_name}</p>
+                <p>{window.W_L.report_desc}:{autoPilot.report_desc}</p>
                 {/* <LogWorkflow Cardloading={false} logData={[...(autoPilot.chat_log || [])]} /> */}
                 <LogWorkflow Cardloading={false} logData={autoPilot.chat_log} />
               {

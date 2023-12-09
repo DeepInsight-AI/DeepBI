@@ -43,7 +43,7 @@ const EChartsChart = memo(({ content }) => {
     }
   };
 
-  return <div ref={chartRef} className="w-full h-[500px]" />;
+  return <div ref={chartRef} className="w-full h-500" />;
 });
 
 export default EChartsChart;

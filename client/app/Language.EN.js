@@ -803,4 +803,5 @@ window.W_L = {
   'report_name_and_report_desc_tip':'The report name will be used as the title of the generated report; the report description agent provides the general direction of automatic data analysis and delineates the analysis scope for your report; click Submit and a report task will be created',
   'report_name_tip':'The report name will be used as the title of the generated report',
   'report_desc_tip':'The report description agent provides the general direction of automatic data analysis and delineates the analysis scope for your report',
+  'task_processing':'Task Processing...',
 }

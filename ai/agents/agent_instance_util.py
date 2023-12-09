@@ -52,22 +52,44 @@ class AgentInstanceUtil:
         self.openai_proxy = None
         self.db_id = db_id
 
-    def set_api_key(self, api_key):
+    def set_api_key(self, api_key, api_host=None):
         self.api_key = api_key
+        if api_host is not None:
+            # api_base = "https://api.openai.com/"
+            print('api_host: ', api_host)
 
-        self.config_list_gpt4 = [
-            {
-                'model': 'gpt-4',
-                'api_key': api_key
-            },
-        ]
+            self.config_list_gpt4 = [
+                {
+                    'model': 'gpt-4',
+                    'api_key': api_key,
+                    'api_base': api_host,
+                },
+            ]
 
-        self.config_list_gpt4_turbo = [
-            {
-                'model': 'gpt-4-1106-preview',
-                'api_key': self.api_key,
-            },
-        ]
+            self.config_list_gpt4_turbo = [
+                {
+                    'model': 'gpt-4-1106-preview',
+                    'api_key': self.api_key,
+                    'api_base': api_host,
+                },
+            ]
+        else:
+            self.config_list_gpt4 = [
+                {
+                    'model': 'gpt-4',
+                    'api_key': api_key,
+                    'api_base': api_host,
+                },
+            ]
+
+            self.config_list_gpt4_turbo = [
+                {
+                    'model': 'gpt-4-1106-preview',
+                    'api_key': self.api_key,
+                    'api_base': api_host,
+                },
+            ]
+
 
         self.gpt4_turbo_config = {
             "seed": 42,  # change the seed for different trials

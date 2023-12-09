@@ -29,6 +29,8 @@ class AutopilotMysql(Autopilot):
         db_comment = data['db_comment']
         db_id = str(data['databases_id'])
         q_str = data['report_desc']
+        q_name = data['report_name']
+
 
         print("self.agent_instance_util.api_key_use :", self.agent_instance_util.api_key_use)
 
@@ -55,7 +57,7 @@ class AutopilotMysql(Autopilot):
             try:
                 data_to_update = (1, report_id)
                 PsgReport().update_data(data_to_update)
-                await self.start_chatgroup(q_str, file_name, report_id)
+                await self.start_chatgroup(q_str, file_name, report_id, q_name)
             except Exception as e:
                 traceback.print_exc()
                 # update report status
@@ -130,7 +132,7 @@ class AutopilotMysql(Autopilot):
         )
         return base_mysql_assistant
 
-    async def start_chatgroup(self, q_str, file_name, report_id):
+    async def start_chatgroup(self, q_str, file_name, report_id, q_name):
         aa = 1
         if aa == 2:
             report_html_code = {'report_name': '电商销售报告', 'report_question': [
@@ -182,7 +184,9 @@ class AutopilotMysql(Autopilot):
             return
 
         report_html_code = {}
-        report_html_code['report_name'] = '电商销售报告'
+        # report_html_code['report_name'] = '电商销售报告'
+        report_html_code['report_name'] = q_name
+        report_html_code['report_author'] = 'Holmes'
 
         report_html_code['report_question'] = []
 
@@ -206,7 +210,7 @@ class AutopilotMysql(Autopilot):
             question = {}
             question['question'] = ques
             que_num = que_num + 1
-            if que_num > 3:
+            if que_num > 5:
                 break
 
             answer_message, echart_code = await self.task_generate_echart(str(report_demand))

@@ -236,9 +236,9 @@ class AIDB:
         token_path = CONFIG.up_file_path + '.token_' + str(self.uid) + '.json'
         if os.path.exists(token_path):
             try:
-                ApiKey, HttpProxyHost, HttpProxyPort = self.load_api_key(token_path)
+                ApiKey, HttpProxyHost, HttpProxyPort, ApiHost = self.load_api_key(token_path)
 
-                self.agent_instance_util.set_api_key(ApiKey)
+                self.agent_instance_util.set_api_key(ApiKey, ApiHost)
 
                 if HttpProxyHost is not None and len(str(HttpProxyHost)) > 0 and HttpProxyPort is not None and len(
                     str(HttpProxyPort)) > 0:
@@ -276,9 +276,9 @@ class AIDB:
         print('token_path : ', token_path)
         if os.path.exists(token_path):
             try:
-                ApiKey, HttpProxyHost, HttpProxyPort = self.load_api_key(token_path)
+                ApiKey, HttpProxyHost, HttpProxyPort, ApiHost = self.load_api_key(token_path)
 
-                self.agent_instance_util.set_api_key(ApiKey)
+                self.agent_instance_util.set_api_key(ApiKey, ApiHost)
 
                 if HttpProxyHost is not None and len(str(HttpProxyHost)) > 0 and HttpProxyPort is not None and len(
                     str(HttpProxyPort)) > 0:
@@ -322,22 +322,28 @@ class AIDB:
         ApiKey = None
         HttpProxyHost = None
         HttpProxyPort = None
+        ApiHost = None
 
         with open(token_path, 'r') as file:
             data = json.load(file)
 
         if data.get('in_use'):
             in_use = data.get('in_use')
-            if in_use == 'Openai':
-                ApiKey = data['Openai']['OpenaiApiKey']
+            if in_use == 'OpenAI':
+                ApiKey = data[in_use]['OpenaiApiKey']
                 print('OpenaiApiKey : ', ApiKey)
-                HttpProxyHost = data['Openai']['HttpProxyHost']
+                HttpProxyHost = data[in_use]['HttpProxyHost']
                 print('HttpProxyHost : ', HttpProxyHost)
-                HttpProxyPort = data['Openai']['HttpProxyPort']
+                HttpProxyPort = data[in_use]['HttpProxyPort']
                 print('HttpProxyPort : ', HttpProxyPort)
-            elif in_use == 'Holmes':
-                ApiKey = data['Holmes']['ApiKey']
+                openaiApiHost = data[in_use]['ApiHost']
+                if openaiApiHost is not None and len(str(openaiApiHost)) > 0:
+                    ApiHost = openaiApiHost
+
+            elif in_use == 'DeepThought':
+                ApiKey = data[in_use]['ApiKey']
                 print('HolmesApiKey : ', ApiKey)
+                ApiHost = "https://apiserver.deep-thought.io/proxy"
         else:
             ApiKey = data['OpenaiApiKey']
             print('OpenaiApiKey : ', ApiKey)
@@ -346,4 +352,4 @@ class AIDB:
             HttpProxyPort = data['HttpProxyPort']
             print('HttpProxyPort : ', HttpProxyPort)
 
-        return ApiKey, HttpProxyHost, HttpProxyPort
+        return ApiKey, HttpProxyHost, HttpProxyPort, ApiHost

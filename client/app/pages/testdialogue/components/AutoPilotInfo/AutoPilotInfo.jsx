@@ -38,7 +38,7 @@ const CreateAutoPilot = () => {
     if (!report_name || !report_desc) {
         return;
     }
-    const HoImes_Dialogue = getDialogueStorage();
+    const HoImes_Dialogue = getAutopilotStorage();
     if(HoImes_Dialogue && HoImes_Dialogue.length>0){
         if (HoImes_Dialogue[0].table_name &&HoImes_Dialogue[0].table_name.tableName && HoImes_Dialogue[0].table_name.tableName.length > 0) {
             setBtn_disabled(true);
@@ -66,7 +66,7 @@ const CreateAutoPilot = () => {
           }
     }
 }
-const { getDialogueStorage}=dialogueStorage();
+const { getAutopilotStorage}=dialogueStorage();
 return (
     <div style={{width:"100%"}}>
         <Descriptions  

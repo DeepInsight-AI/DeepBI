@@ -174,6 +174,7 @@ if(chat_type==="chat" ||chat_type==="report" ||chat_type==="autopilot"){
     }
 }
 };
+// setStorage
 const setDialogueDashboardStorage = () => {
   let existingDialogueStorage =[]
   let HoImes_Dashboard ={
@@ -189,14 +190,19 @@ const setDialogueDashboardStorage = () => {
   addDashboard(existingDialogueStorage);
   }else if(chat_type==="chat"){
     addDialogueStorage(existingDialogueStorage);
+  }else if(chat_type==="autopilot"){
+    addAutopilotStorage(existingDialogueStorage);
   }
 }
+// clearStorage
 const closeDialogue = () => {
   closeSetMessage();
   if(chat_type==="report"){
     addDashboard([])
   }else if(chat_type==="chat"){
     addDialogueStorage([])
+  }else if(chat_type==="autopilot"){
+    addAutopilotStorage([])
   }
   DialogueContentRef.current.sourceEdit([]);
   getDialogueDashboardStorage("report")
@@ -711,7 +717,7 @@ const openSocket = useCallback(() => {
   }, [setState, OpenKeyRef]);
   const { new_sql,testAndVerifySql } = useSql(Holmestable_id.current,sendSocketMessage,errorSetting);
   const { saveChart,dashboardsId,publishQuery }=useChartCode(sendSocketMessage,saveDashboardId, props, successSetting,HolmestableD_date.current,new_sql,dashboardId,sendDashId);
-  const { setDialogueStorageDashboardId, addDashboard, getDashboard,addDialogueStorage,getDialogueStorage,addChatList,getAllStorage}=dialogueStorage();
+  const { setDialogueStorageDashboardId, addDashboard, getDashboard,addDialogueStorage,getDialogueStorage,addChatList,getAllStorage,addAutopilotStorage}=dialogueStorage();
 //   const Dialogue = () => {
     const { messages, inputMessage, newInputMessage } = state;
 

@@ -1,6 +1,6 @@
 import React, { memo, useEffect, useRef, useState } from 'react';
 import { useExportPDF } from './useExportPDF.js';
-import LoadingOutlinedIcon from '@ant-design/icons/LoadingOutlinedIcon';
+import LoadingOutlinedIcon from '@ant-design/icons/LoadingOutlined';
 import "./index.css";
 const AutoPilot = memo(({ title,content }) => {
   const autopilotRef = useRef(null);

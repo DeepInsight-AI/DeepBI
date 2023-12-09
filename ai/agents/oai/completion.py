@@ -219,7 +219,7 @@ class Completion(openai_Completion):
                         }
                     else:
                         data = {
-                            "data": config['messages']
+                            "messages": config['messages']
                         }
 
                     # set header

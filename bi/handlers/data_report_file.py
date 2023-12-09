@@ -52,7 +52,8 @@ class DataReportFileResource(BaseResource):  # BaseResource
                         # 创建新线程并执行 POST 请求
                         thread = threading.Thread(target=self.send_post_request, args=(user_id, report_id, file_name))
                         thread.start()
-                        print("线程结束")
+                        print("Thread over....")
+            result = models.DataReportFile.get_user_files(user_id)
 
         self.record_event(
             {"action": "view", "object_id": data_report_file_id, "object_type": "data_report_file"}
@@ -66,6 +67,18 @@ class DataReportFileResource(BaseResource):  # BaseResource
             abort(400, message="Need set DATA_SOURCE_FILE_DIR")
         # get file from request
         user_id = self.current_user.id
+
+        history_result = models.DataReportFile.get_user_files(user_id)
+        for item in history_result:
+            status_code = item.get('is_generate')
+            if status_code is not None:
+                if status_code == 0 or status_code == 1:
+                    return json_response(
+                        {
+                            'code': 500,
+                            'data': '当前存在尚未完成报表任务，请等待任务完毕后再提交，或删除未完成报表任务后再提交新任务',
+                        }
+                    )
 
         req = request.get_json(True)
         report_name = req["report_name"]
@@ -81,7 +94,7 @@ class DataReportFileResource(BaseResource):  # BaseResource
             "report_desc": report_desc,
             "db_comment": db_comment,
             "html_code": "",
-            "chat_log": "report生成中，请耐心等待",
+            "chat_log": "The report is being generated, please wait patiently...",
             "databases_id": databases_id
         }
 
@@ -134,8 +147,8 @@ class DataReportFileResource(BaseResource):  # BaseResource
         data = {"user_name": user_name, "report_id": report_id, "file_name": file_name
                 }
 
-        # 发送 POST 请求到服务器
-        url = 'http://192.168.5.161:8340/api/autopilot'  # 根据你的实际地址修改
+        ai_web_server = settings.AI_WEB_SERVER
+        url = 'http://' + str(ai_web_server) + '/api/autopilot'
         response = requests.post(url, json=data)
 
         # 检查响应结果

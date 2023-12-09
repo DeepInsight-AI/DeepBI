@@ -670,5 +670,3 @@ def append_report_logger(file_name: Optional[str], log_str):
     except Exception as e:
         traceback.print_exc()
         logger.error(str(e))
-
-    return log_list

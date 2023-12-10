@@ -236,10 +236,11 @@ class Completion(openai_Completion):
                     print('create_url : ', url)
                     res = requests.post(url, json=data, headers=headers)
                     print("res :", res)
+                    print('res.text +++++++++ : ', res.text)
+
                     # check response status_code
                     if res.status_code != 200:
                         res.raise_for_status()
-                        print('res.text +++++++++ : ', res.text)
 
                     response = res.json()
                 else:

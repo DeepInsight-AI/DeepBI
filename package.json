@@ -40,6 +40,7 @@
   "homepage": "https://redash.io/",
   "dependencies": {
     "@ant-design/icons": "^4.2.1",
+    "@redash/viz": "^0.1.1",
     "ace-builds": "^1.4.12",
     "antd": "^4.4.3",
     "axios": "^0.21.1",

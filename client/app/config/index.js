@@ -5,7 +5,7 @@ import { isFunction } from "lodash";
 import "@/assets/images/avatar.svg";
 
 // Register visualizations
-// import "@redash/viz/lib";
+import "@redash/viz/lib";
 
 // Register routes before registering extensions as they may want to override some
 import "@/pages";

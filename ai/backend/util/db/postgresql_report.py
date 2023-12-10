@@ -58,8 +58,11 @@ class PsgReport:
             print("Data updated successfully!")
             cursor.close()
             conn.close()
+            return True
         except (Exception, psycopg2.Error) as error:
             print("Error while updating data:", error)
+            return False
+
 
 
 # 示例用法

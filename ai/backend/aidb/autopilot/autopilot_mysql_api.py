@@ -57,8 +57,9 @@ class AutopilotMysql(Autopilot):
             # start chat
             try:
                 data_to_update = (1, report_id)
-                PsgReport().update_data(data_to_update)
-                await self.start_chatgroup(q_str, report_file_name, report_id, q_name)
+                update_state = PsgReport().update_data(data_to_update)
+                if update_state:
+                    await self.start_chatgroup(q_str, report_file_name, report_id, q_name)
             except Exception as e:
                 traceback.print_exc()
                 # update report status

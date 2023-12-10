@@ -160,6 +160,18 @@ class Autopilot(AIDB):
         # 给定的数据
         # data = last_answer
 
+        for item in data['report_question']:
+            if item['answer'] is None or item['echart_code'] is None:
+                data['report_question'].remove(item)
+
+        for item in data['report_analyst']:
+            if item['analysis_item'] is None or item['description'] is None:
+                data['report_analyst'].remove(item)
+
+        for item in data['report_thought']:
+            if item['report_name'] is None or item['description'] is None:
+                data['report_thought'].remove(item)
+
         # 获取当前工作目录的路径
         current_directory = Path.cwd()
 

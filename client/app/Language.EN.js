@@ -791,7 +791,6 @@ window.W_L = {
   'generating':'Generating',
   'waiting':'Waiting',
   'all_autopilot':'All Autopilot',
-  'data_analysis':'Data Autopilot',
   'submit_success':'Submitted successfully',
   'submit_success_tip':'You can view it in the history analysis',
   'submit_fail':'Submission failed',

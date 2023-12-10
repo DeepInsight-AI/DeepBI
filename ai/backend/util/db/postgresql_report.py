@@ -2,7 +2,7 @@ import os
 import psycopg2
 
 # 创建数据库连接引擎，URL 形式
-HOLMES_DATABASE_URL = os.environ.get("HOLMES_DATABASE_URL", None)
+HOLMES_DATABASE_URL = os.environ.get("HOLMES_DATABASE_URL", "postgresql://postgres@postgres/postgres")
 print('HOLMES_DATABASE_URL : ', HOLMES_DATABASE_URL)
 
 

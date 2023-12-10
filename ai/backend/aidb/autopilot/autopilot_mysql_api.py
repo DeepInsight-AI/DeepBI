@@ -15,6 +15,7 @@ from ai.agents.agentchat import HumanProxyAgent, TaskSelectorAgent, Questioner, 
 max_retry_times = CONFIG.max_retry_times
 max_report_question = 5
 
+
 class AutopilotMysql(Autopilot):
 
     async def deal_question(self, json_str):
@@ -215,9 +216,10 @@ class AutopilotMysql(Autopilot):
                     break
 
                 answer_message, echart_code = await self.task_generate_echart(str(report_demand), report_file_name)
-                question['answer'] = answer_message
-                question['echart_code'] = echart_code
-                report_html_code['report_question'].append(question)
+                if answer_message is not None and echart_code is not None:
+                    question['answer'] = answer_message
+                    question['echart_code'] = echart_code
+                    report_html_code['report_question'].append(question)
 
                 question_obj = {'question': report_demand, 'answer': answer_message, 'echart_code': ""}
                 question_list.append(question_obj)

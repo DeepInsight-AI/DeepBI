@@ -210,7 +210,7 @@ class Completion(openai_Completion):
                 print('_get_response function +++++++++++++++++++')
                 print("config :", config)
                 print("config.get('api_base')", config.get('api_base'))
-                if config.get('api_base'):
+                if config.get('api_base') is not None:
                     # and str(config['api_base']).__contains__('apiserver.deep-thought.io')\
 
                     if config.get('functions'):
@@ -229,6 +229,7 @@ class Completion(openai_Completion):
                         "ai_name": "openai",
                         "module": config['model']
                     }
+                    print('request json : ', data)
 
                     # url = 'http://apiserver.deep-thought.io/proxy'
                     url = config['api_base']
@@ -238,6 +239,7 @@ class Completion(openai_Completion):
                     # check response status_code
                     if res.status_code != 200:
                         res.raise_for_status()
+                        print('res.text +++++++++ : ', res.text)
 
                     response = res.json()
                 else:

@@ -1051,7 +1051,7 @@ class DataReportFile(BelongsToOrgMixin, db.Model):
     is_generate = Column(db.Integer, default=0)
 
     __tablename__ = "data_report_file"
-    __table_args__ = (db.Index("file_id_table_name", "user_id", "report_name", unique=True),)
+    __table_args__ = (db.Index("file_id_report_name", "user_id", "report_name", unique=True),)
 
     @classmethod
     def have_it(cls, user_id, file_name):

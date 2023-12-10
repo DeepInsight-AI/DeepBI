@@ -173,11 +173,14 @@ class Autopilot(AIDB):
         # 读取模板文件
         with open(html_template_path + '/report_2.html', 'r') as file:
             template_str = file.read()
+            print('template_str :', template_str)
 
         # 使用Jinja2渲染模板
         timestamp = int(time.time() * 1000)
         template = Template(template_str)
+        print('template : ', template)
         rendered_html = template.render(data, timestamp=timestamp)
+        # rendered_html = template.render(str(data), timestamp=timestamp)
 
         # 将渲染后的HTML写入文件
         with open(CONFIG.up_file_path + 'output_' + str(timestamp) + '.html', 'w') as output_file:

@@ -51,6 +51,7 @@ web_port=8338
 # get socket port
 # shellcheck disable=SC2162
 socket_port=8339
+ai_web_port=8340
 # 复制 .env file基础内容
 env_content=$(cat .env.template)
 # replace language

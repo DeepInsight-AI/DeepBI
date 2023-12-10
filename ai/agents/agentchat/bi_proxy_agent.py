@@ -1144,13 +1144,13 @@ class BIProxyAgent(Agent):
                     num_tokens = num_tokens_from_messages(message, model='gpt-4')
                     mes_list.remove(mes)
 
-                    if num_tokens > 10000:
+                    if num_tokens > 5000:
                         return 'The MySQL code is not very suitable. You have queried too much data at once. Please adjust the MySQL code to solve the problem.'
 
                     return reply_content
 
         except Exception as e:
-            print(e)
+            traceback.print_exc()
             logger.error(
                 "from user:[{}".format(
                     self.user_name) + "] , " + self.name + ", error: " + str(e))
@@ -1223,7 +1223,7 @@ class BIProxyAgent(Agent):
                         return "Failed to generate chart. Please check whether the data format is correct"
 
         except Exception as e:
-            print(e)
+            traceback.print_exc()
             logger.error(
                 "from user:[{}".format(
                     self.user_name) + "] , " + self.name + ", error: " + str(e))
@@ -1376,7 +1376,7 @@ class BIProxyAgent(Agent):
 
     async def receive_message(self, target_sender: str, target_data_type: str, target_id: int):
         """ Receive message information and put it into different queues """
-        for i in range(10):
+        for i in range(5):
             try:
                 # msg_in = await self.websocket.recv()
                 msg_in = await asyncio.wait_for(self.websocket.recv(), timeout=10)  # 设置超时时间为5秒
@@ -1388,22 +1388,26 @@ class BIProxyAgent(Agent):
 
                 if q_state == 200 or q_state == 500:
                     q_sender = json_str['sender']
-                    # q_receiver = json_str['receiver']
-                    q_data_type = json_str['data']['data_type']
-                    print('q_data_type : ', q_data_type)
-                    q_str = json_str['data']['content']
-                    q_id = json_str['id']
 
-                    if target_id > 0:
-                        if str(q_id) != str(target_id):
-                            print("q_id: ", q_id)
-                            continue
+                    if json_str.get('sender') == 'heartCheck':
+                        continue
+                    if json_str.get('data').get('data_type'):
+                        # q_receiver = json_str['receiver']
+                        q_data_type = json_str['data']['data_type']
+                        print('q_data_type : ', q_data_type)
+                        q_str = json_str['data']['content']
+                        q_id = json_str['id']
 
-                    if q_sender == target_sender and q_data_type == target_data_type:
-                        self.delay_messages['bi'][q_data_type].append(msg_in)
-                        break
-                    else:
-                        await self.incoming.put(msg_in)
+                        if target_id > 0:
+                            if str(q_id) != str(target_id):
+                                print("q_id: ", q_id)
+                                continue
+
+                        if q_sender == target_sender and q_data_type == target_data_type:
+                            self.delay_messages['bi'][q_data_type].append(msg_in)
+                            break
+                        else:
+                            await self.incoming.put(msg_in)
             except asyncio.TimeoutError:
                 print("Asynchronous operation timeout")
 

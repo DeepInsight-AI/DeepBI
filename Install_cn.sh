@@ -57,6 +57,7 @@ env_content=$(cat .env.template)
 env_content=$(echo "$env_content" | sed "s/LANGTYPE/CN/g")
 # replace web port
 # shellcheck disable=SC2001
+env_content=$(echo "$env_content" | sed "s/AI_WEB_PORT/$ai_web_port/g")
 env_content=$(echo "$env_content" | sed "s/WEB_PORT/$web_port/g")
 # shellcheck disable=SC2001
 env_content=$(echo "$env_content" | sed "s/SOCKET_PORT/$socket_port/g")

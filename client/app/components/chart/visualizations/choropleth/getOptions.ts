@@ -24,7 +24,7 @@ const DEFAULT_OPTIONS = {
   },
   legend: {
     visible: true,
-    position: "bottom-left",
+    position: "bottom-left", 
     alignText: "right",
   },
   tooltip: {
@@ -33,7 +33,7 @@ const DEFAULT_OPTIONS = {
   },
   popup: {
     enabled: true,
-    template: "地区: <b>{{ @@name_long }} ({{ @@iso_a2 }})</b>\n<br>\n值: <b>{{ @@value }}</b>",
+    template: `${window.W_L.region}: <b>{{ @@name_long }} ({{ @@iso_a2 }})</b>\n<br>\n${window.W_L.value}: <b>{{ @@value }}</b>`,
   },
 };
 

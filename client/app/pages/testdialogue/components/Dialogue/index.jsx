@@ -438,7 +438,7 @@ const handleSocketMessage = useCallback(() => {
             // sendTableDate: 1,
           }));
           setLoadingMask(false);
-          setLoadingState(false);
+          // setLoadingState(false);
           setSendTableDate(1);
           sendSocketMessage(200, 'user', 'question', state.newInputMessage);
         } else if (data.data.data_type === 'delete_chart') {

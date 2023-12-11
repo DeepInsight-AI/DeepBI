@@ -618,6 +618,9 @@ window.W_L=  {
   'no_dialogue':'暂无对话记录',
   'new_Query':'新报表',
   'empty_query':'空语句无法执行。',
+  'formatting':'格式化',
+  'border':'边界',
+  'exterior':'外观',
 
   'left_align':"左对齐",
   'center':"居中",
@@ -793,7 +796,6 @@ window.W_L=  {
   'generating':'生成中',
   'waiting':'待生成',
   'all_autopilot':'所有分析报告',
-  'data_analysis':'数据分析',
   'submit_success':'提交成功',
   'submit_success_tip':'你可在历史分析中查看',
   'submit_fail':'提交失败',
@@ -807,4 +809,9 @@ window.W_L=  {
   'report_name_tip':'报告名称将作为生成report的标题',
   'report_desc_tip':'报告描述将为Agent提供自动数据分析的大方向，为您的report圈定分析范围',
   'task_processing':'任务正在处理...',
+  'style':'样式',
+  "region": "地区",
+  "column": "列",
+  "option": "选项",
+  
 }

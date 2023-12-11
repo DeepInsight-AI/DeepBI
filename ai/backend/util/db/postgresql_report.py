@@ -32,13 +32,15 @@ class PsgReport:
             print("Error while inserting data:", error)
 
     # 查询数据
-    def select_data(self):
+    def select_data(self, data_id):
         try:
             conn = self.connect()
             cursor = conn.cursor()
-            cursor.execute("SELECT * FROM your_table_name")
+            cursor.execute(
+                """SELECT * FROM data_report_file  WHERE id = """ + str(data_id) + """ and is_generate = 0 """)
             rows = cursor.fetchall()
             cursor.close()
+            conn.close()
             return rows
         except (Exception, psycopg2.Error) as error:
             print("Error while fetching data:", error)
@@ -64,26 +66,28 @@ class PsgReport:
             return False
 
 
-
 # 示例用法
 if __name__ == "__main__":
-    connection = connect()
+    HOLMES_DATABASE_URL = "postgresql://redash:aaa123456@192.168.5.165/redash"
+    psg = PsgReport()
+    data = (0, 37)
+    re = psg.update_data(data)
 
-    # 假设你有要插入的数据
-    data_to_insert = ('value1', 'value2', 'value3')
-    insert_data(connection, data_to_insert)
+    data = 37
+    re = psg.select_data(data)
+    print(re)
+    if re is not None and len(re) > 0:
+        print('存在需处理任务')
+    else:
+        print('不存在需处理任务')
 
-    # 查询数据
-    rows = select_data(connection)
-    if rows:
-        for row in rows:
-            print(row)
+    data = (2, 37)
+    re = psg.update_data(data)
 
-    # 更新数据
-    data_to_update = ('updated_value1', 'updated_value2', 'updated_value3', 'condition_value')
-    update_data(connection, data_to_update)
-
-    # 删除数据
-    delete_data(connection, 'condition_value')
-
-    connection.close()  # 关闭数据库连接
+    data = 37
+    re = psg.select_data(data)
+    print(re)
+    if re is not None and len(re) > 0:
+        print('存在需处理任务')
+    else:
+        print('不存在需处理任务')

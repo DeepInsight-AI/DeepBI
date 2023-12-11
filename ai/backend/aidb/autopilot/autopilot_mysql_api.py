@@ -56,10 +56,17 @@ class AutopilotMysql(Autopilot):
             self.agent_instance_util.db_id = db_id
             # start chat
             try:
-                data_to_update = (1, report_id)
-                update_state = PsgReport().update_data(data_to_update)
-                if update_state:
-                    await self.start_chatgroup(q_str, report_file_name, report_id, q_name)
+                psg = PsgReport()
+                re = psg.select_data(report_id)
+                if re is not None and len(re) > 0:
+                    print('need deal task')
+                    data_to_update = (1, report_id)
+                    update_state = psg.update_data(data_to_update)
+                    if update_state:
+                        await self.start_chatgroup(q_str, report_file_name, report_id, q_name)
+                else:
+                    print('no task')
+
             except Exception as e:
                 traceback.print_exc()
                 # update report status

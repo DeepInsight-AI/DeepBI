@@ -192,6 +192,8 @@ class AutopilotMysql(Autopilot):
             report_html_code['report_author'] = 'Holmes'
 
             report_html_code['report_question'] = []
+            report_html_code['report_thought'] = []
+            report_html_code['report_analyst'] = []
 
             question_message = await self.generate_quesiton(q_str, report_file_name)
 

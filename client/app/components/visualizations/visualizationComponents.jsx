@@ -13,7 +13,7 @@ import chinaDataUrl from "./china/china.geo.json";
 import BeiJing from "./china/110000.geo.json";
 import TianJing from "./china/120000.geo.json";
 import HeBei from "./china/130000.geo.json";
-import ShanXi from "./china/140000.geo.json";
+import ShanX from "./china/140000.geo.json";
 import NeiMengGu from "./china/150000.geo.json";
 import LiaoNing from "./china/210000.geo.json";
 import JiLin from "./china/220000.geo.json";
@@ -104,7 +104,7 @@ function wrapComponentWithSettings(WrappedComponent) {
       },
       china_140000: {
           name: "(140000)山西省行政区划图",
-          url: ShanXi,
+          url: ShanX,
           fieldNames: {
               name: "简称",
               adcode: "行政区划编码(6字母)"

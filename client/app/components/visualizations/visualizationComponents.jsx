@@ -9,7 +9,7 @@ import { clientConfig } from "@/services/auth";
 import countriesDataUrl from "./countries.geo.json";
 import usaDataUrl from "./usa-albers.geo.json";
 import subdivJapanDataUrl from "./japan.prefectures.geo.json";
-
+import chinaDataUrl from "./china.geo.json";
 function wrapComponentWithSettings(WrappedComponent) {
   return function VisualizationComponent(props) {
     updateVisualizationsSettings({
@@ -28,6 +28,14 @@ function wrapComponentWithSettings(WrappedComponent) {
             iso_n3: "ISO code(3 digits)",
           },
         },
+        china: {
+          name: "中国行政区划图",
+          url: chinaDataUrl,
+          fieldNames: {
+              name: "简称",
+              adcode: "行政区划编码(6字母)"
+          }
+      },
         usa: {
           name: "USA",
           url: usaDataUrl,
@@ -40,7 +48,7 @@ function wrapComponentWithSettings(WrappedComponent) {
           },
         },
         subdiv_japan: {
-          name: "Japan/Prefectures",
+          name: "Japan/Prefectures", 
           url: subdivJapanDataUrl,
           fieldNames: {
             name: "Name",

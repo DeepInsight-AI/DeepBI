@@ -97,7 +97,7 @@ const listColumns = [
           actions={
               <Link.Button block type="primary" href="autopilot">
                 <i className="fa fa-plus m-r-5" aria-hidden="true" />
-                {window.W_L.data_analysis}
+                {window.W_L.auto_pilot}
               </Link.Button>
           }
         />

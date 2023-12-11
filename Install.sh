@@ -68,9 +68,8 @@ else
     sed -i "s|192.168.5.126:8339|$ip:$socket_port|g" ./client/dist/app.1cc9a8f83919bcbf32d5.js
 fi
 
-rm -rf ./client/app/Language.CN.js
+rm -f ./client/app/Language.CN.js
 cp ./client/app/Language_EN.js ./client/app/Language.CN.js
-source venv/bin/activate
 # get env_template content
 env_content=$(cat .env.template)
 # replace language

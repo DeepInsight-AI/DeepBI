@@ -6,8 +6,8 @@ import ColorsSettings from "./ColorsSettings";
 import AppearanceSettings from "./AppearanceSettings";
 
 export default createTabbedEditor([
-  { key: "Columns", title: "列", component: ColumnsSettings },
-  { key: "Options", title: "选项", component: OptionsSettings },
-  { key: "Colors", title: "颜色", component: ColorsSettings },
-  { key: "Appearance", title: "外观", component: AppearanceSettings },
+  { key: "Columns", title: window.W_L.column, component: ColumnsSettings },
+  { key: "Options", title: window.W_L.option, component: OptionsSettings },
+  { key: "Colors", title: window.W_L.color, component: ColorsSettings },
+  { key: "Appearance", title: window.W_L.exterior, component: AppearanceSettings },
 ]);

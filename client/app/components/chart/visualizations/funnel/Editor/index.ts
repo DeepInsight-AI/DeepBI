@@ -4,6 +4,6 @@ import GeneralSettings from "./GeneralSettings";
 import AppearanceSettings from "./AppearanceSettings";
 
 export default createTabbedEditor([
-  { key: "General", title: "通用", component: GeneralSettings },
-  { key: "Appearance", title: "外观", component: AppearanceSettings },
+  { key: "General", title: window.W_L.general, component: GeneralSettings },
+  { key: "Appearance", title: window.W_L.exterior, component: AppearanceSettings },
 ]);

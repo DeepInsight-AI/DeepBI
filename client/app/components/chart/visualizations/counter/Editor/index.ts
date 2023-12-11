@@ -4,6 +4,6 @@ import GeneralSettings from "./GeneralSettings";
 import FormatSettings from "./FormatSettings";
 
 export default createTabbedEditor([
-  { key: "General", title: "通用", component: GeneralSettings },
-  { key: "Format", title: "格式化", component: FormatSettings },
+  { key: "General", title: window.W_L.general, component: GeneralSettings },
+  { key: "Format", title: window.W_L.formatting, component: FormatSettings },
 ]);

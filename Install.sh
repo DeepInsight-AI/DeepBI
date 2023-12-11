@@ -69,7 +69,7 @@ else
 fi
 
 rm -f ./client/app/Language.CN.js
-cp ./client/app/Language_EN.js ./client/app/Language.CN.js
+cp ./client/app/Language.EN.js ./client/dist/Language.CN.js
 # get env_template content
 env_content=$(cat .env.template)
 # replace language

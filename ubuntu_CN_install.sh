@@ -109,10 +109,11 @@ line
 echo "安装系统扩展"
 # shellcheck disable=SC1004
 sudo dpkg --remove-architecture i386
-sudo apt-get update &&  apt-get install -y python3-pip \
+sudo apt-get update
+sudo apt-get install -y python3-pip \
     libaio1 libaio-dev alien curl gnupg build-essential pwgen libffi-dev git-core wget \
     libpq-dev g++ unixodbc-dev xmlsec1 libssl-dev default-libmysqlclient-dev freetds-dev \
-    libsasl2-dev unzip libsasl2-modules-gssapi-mit
+    libsasl2-dev unzip libsasl2-modules-gssapi-mit libmysqlclient-dev
 line
 echo "安装虚拟环境扩展 virtual vevn"
 pip install virtualenv
@@ -139,41 +140,7 @@ else
       exit 1
   fi
 fi
-
 line
-echo "检查前端 扩展"
-line
-if command -v node &>/dev/null; then
-    echo "node 已经安装"
-else
-    sudo apt-get update
-    sudo apt-get -y install nodejs npm
-fi
-line
-
-if command -v n &>/dev/null; then
-    echo "node 管理扩展 n 已经安装"
-else
-    sudo npm install n -g
-fi
-echo "node 管理 n 检查完毕"
-line
-echo "安装  node version 14.17"
-sudo n 14.17
-line
-# check node is version 14.17
-while true; do
-    node_version=$(node -v)
-    if [[ "$node_version" == "v14.17"* ]]; then
-      break
-    else
-        echo "node 版本需要 14.17.*"
-        sudo n
-    fi
-done
-line
-echo "创建 .env 配置文件"
-#
 if [ -f .env ]; then
     rm .env
 fi
@@ -240,23 +207,15 @@ env_content=$(echo "$env_content" | sed "s/SEC_KEY/$sec_key/g")
 echo "$env_content" > .env
 root=$(pwd)
 echo "DATA_SOURCE_FILE_DIR=$root/user_upload_files" >> .env
-
-
-if command -v yarn &>/dev/null; then
-    echo "yarn manager n is ok"
-else
-    sudo npm install yarn -g
-fi
 line
-
-sudo yarn config set registry https://registry.npmmirror.com
-sed -i 's#github.com/getredash/sql-formatter.git#gitee.com/apgmer/sql-formatter.git#g'  yarn.lock
+echo "重命名前端文件 "
+mv ./client/dist_source ./client/dist
+# replace front file ip
+echo "替换前端 IP 地址"
+sed -i "s|192.168.5.126:8339|$ip:$socket_port|g" ./client/dist/vendors~app.444824b5848130ebfd0c.js
+sed -i "s|192.168.5.126:8339|$ip:$socket_port|g" ./client/dist/app.1cc9a8f83919bcbf32d5.js
 line
-
-echo "开始编译 前端文件"
-sudo yarn && yarn build
-line
-
+echo "激活环境"
 source venv/bin/activate
 
 line

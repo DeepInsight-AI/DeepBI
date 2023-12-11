@@ -3,7 +3,7 @@ import simplejson
 from flask import url_for
 
 WEBPACK_MANIFEST_PATH = os.path.join(
-    os.path.dirname(__file__), "../../client/dist/", "asset-manifest.json"
+    os.path.dirname(__file__), "../../client/dist_source/", "asset-manifest.json"
 )
 
 

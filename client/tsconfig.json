@@ -24,5 +24,7 @@
     "skipLibCheck": true
   },
   "include": ["app/**/*"],
-  "exclude": ["dist"]
+  "exclude": [
+    "dist_source"
+  ]
 }

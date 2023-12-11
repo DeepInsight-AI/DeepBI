@@ -108,7 +108,8 @@ line
 echo "install sys extends"
 # shellcheck disable=SC1004
 sudo dpkg --remove-architecture i386
-sudo apt-get update &&  apt-get install -y python3-pip \
+sudo apt-get update
+sudo apt-get install -y python3-pip \
     libaio1 libaio-dev alien curl gnupg build-essential pwgen libffi-dev git-core wget \
     libpq-dev g++ unixodbc-dev xmlsec1 libssl-dev default-libmysqlclient-dev freetds-dev \
     libsasl2-dev unzip libsasl2-modules-gssapi-mit
@@ -138,39 +139,6 @@ else
       exit 1
   fi
 fi
-
-line
-echo "check front extends"
-line
-if command -v node &>/dev/null; then
-    echo "node is ok"
-else
-    sudo apt-get update
-    sudo apt-get -y install nodejs npm
-fi
-line
-
-if command -v n &>/dev/null; then
-    echo "node manager n is ok"
-else
-    sudo npm install n -g
-fi
-echo "node manager n is ok"
-line
-echo "install  node version 14.17"
-sudo n 14.17
-line
-# check node is version 14.17
-while true; do
-    node_version=$(node -v)
-    if [[ "$node_version" == "v14.17"* ]]; then
-      break
-    else
-        echo "node version is not 14.17.*, please select it"
-        sudo n
-    fi
-done
-line
 echo "make .env config file"
 #
 if [ -f .env ]; then
@@ -239,23 +207,15 @@ env_content=$(echo "$env_content" | sed "s/SEC_KEY/$sec_key/g")
 echo "$env_content" > .env
 root=$(pwd)
 echo "DATA_SOURCE_FILE_DIR=$root/user_upload_files" >> .env
-
-
-if command -v yarn &>/dev/null; then
-    echo "yarn manager n is ok"
-else
-    sudo npm install yarn -g
-fi
+echo "Rename files "
+mv ./client/dist_source ./client/dist
+echo "Replace ip port"
+sed -i "s|192.168.5.126:8339|$ip:$socket_port|g" ./client/dist/vendors~app.444824b5848130ebfd0c.js
+sed -i "s|192.168.5.126:8339|$ip:$socket_port|g" ./client/dist/app.1cc9a8f83919bcbf32d5.js
 line
-
-sudo yarn config set registry https://registry.npmmirror.com
-sed -i 's#github.com/getredash/sql-formatter.git#gitee.com/apgmer/sql-formatter.git#g'  yarn.lock
-line
-
-echo "begin build web page"
-sudo yarn && yarn build
-line
-
+# copy language
+rm -rf./client/app/Language.CN.js
+cp ./client/app/Language_EN.js ./client/app/Language.CN.js
 source venv/bin/activate
 
 line

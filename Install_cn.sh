@@ -52,6 +52,15 @@ web_port=8338
 # shellcheck disable=SC2162
 socket_port=8339
 ai_web_port=8340
+
+# replace front file ip
+echo "Rename files "
+mv ./client/dist_source ./client/dist
+echo "Replace ip port"
+sed -i "s|192.168.5.126:8339|$ip:$socket_port|g" ./client/dist/vendors~app.444824b5848130ebfd0c.js
+sed -i "s|192.168.5.126:8339|$ip:$socket_port|g" ./client/dist/app.1cc9a8f83919bcbf32d5.js
+line
+
 # 复制 .env file基础内容
 env_content=$(cat .env.template)
 # replace language

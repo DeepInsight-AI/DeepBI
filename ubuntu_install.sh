@@ -208,7 +208,8 @@ echo "$env_content" > .env
 root=$(pwd)
 echo "DATA_SOURCE_FILE_DIR=$root/user_upload_files" >> .env
 echo "Rename files "
-mv ./client/dist_source ./client/dist
+rm -rf ./client/dist
+cp -R ./client/dist_source ./client/dist
 echo "Replace ip port"
 sed -i "s|192.168.5.126:8339|$ip:$socket_port|g" ./client/dist/vendors~app.444824b5848130ebfd0c.js
 sed -i "s|192.168.5.126:8339|$ip:$socket_port|g" ./client/dist/app.1cc9a8f83919bcbf32d5.js

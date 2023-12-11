@@ -209,7 +209,8 @@ root=$(pwd)
 echo "DATA_SOURCE_FILE_DIR=$root/user_upload_files" >> .env
 line
 echo "重命名前端文件 "
-mv ./client/dist_source ./client/dist
+rm -rf ./client/dist
+cp -R ./client/dist_source ./client/dist
 # replace front file ip
 echo "替换前端 IP 地址"
 sed -i "s|192.168.5.126:8339|$ip:$socket_port|g" ./client/dist/vendors~app.444824b5848130ebfd0c.js

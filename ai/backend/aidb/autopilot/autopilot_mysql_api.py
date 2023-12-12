@@ -377,10 +377,13 @@ class AutopilotMysql(Autopilot):
             use_cache = True
             for i in range(max_retry_times):
                 try:
-                    mysql_echart_assistant = self.agent_instance_util.get_agent_mysql_echart_assistant(
+                    # mysql_echart_assistant = self.agent_instance_util.get_agent_mysql_echart_assistant(
+                    #     use_cache=use_cache, report_file_name=report_file_name)
+                    mysql_echart_assistant = self.agent_instance_util.get_agent_mysql_echart_assistant35(
                         use_cache=use_cache, report_file_name=report_file_name)
                     python_executor = self.agent_instance_util.get_agent_python_executor(
                         report_file_name=report_file_name)
+
 
                     await python_executor.initiate_chat(
                         mysql_echart_assistant,

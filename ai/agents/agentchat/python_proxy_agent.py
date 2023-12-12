@@ -709,6 +709,12 @@ class PythonProxyAgent(Agent):
             exitcode, logs = self.execute_code_blocks(code_blocks)
             code_execution_config["last_n_messages"] = last_n_messages
             exitcode2str = "execution succeeded" if exitcode == 0 else "execution failed"
+
+            length = 5000
+            if len(logs) > length:
+                print(' ++++++++++ Length exceeds 5000 characters limit, cropped  +++++++++++++++++')
+                logs = logs[:length]
+
             return True, f"exitcode: {exitcode} ({exitcode2str})\nCode output: {logs}"
 
         # no code blocks are found, push last_n_messages back and return.

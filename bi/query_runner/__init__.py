@@ -15,7 +15,6 @@ from rq.timeouts import JobTimeoutException
 
 from bi.utils.requests_session import requests_or_advocate, requests_session, UnacceptableAddressException
 
-
 import sqlparse
 
 logger = logging.getLogger(__name__)
@@ -50,6 +49,7 @@ TYPE_DATE = "date"
 SUPPORTED_COLUMN_TYPES = set(
     [TYPE_INTEGER, TYPE_FLOAT, TYPE_BOOLEAN, TYPE_STRING, TYPE_DATETIME, TYPE_DATE]
 )
+
 
 def split_sql_statements(query):
     def strip_trailing_comments(stmt):
@@ -101,11 +101,13 @@ def split_sql_statements(query):
 def combine_sql_statements(queries):
     return ";\n".join(queries)
 
+
 def find_last_keyword_idx(parsed_query):
     for i in reversed(range(len(parsed_query.tokens))):
         if parsed_query.tokens[i].ttype in sqlparse.tokens.Keyword:
             return i
     return -1
+
 
 class InterruptException(Exception):
     pass
@@ -120,7 +122,7 @@ class BaseQueryRunner(object):
     should_annotate_query = True
     noop_query = None
     limit_query = " LIMIT 1000"
-    limit_keywords = [ "LIMIT", "OFFSET"]
+    limit_keywords = ["LIMIT", "OFFSET"]
 
     def __init__(self, configuration):
         self.syntax = "sql"
@@ -310,7 +312,6 @@ class BaseSQLQueryRunner(BaseQueryRunner):
         else:
             parsed_query.tokens += limit_tokens
         return str(parsed_query)
-
 
     def apply_auto_limit(self, query_text, should_apply_auto_limit):
         if should_apply_auto_limit:

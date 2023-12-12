@@ -374,7 +374,14 @@ const SelectSource = forwardRef(({ confirmLoading, Holmestable, chat_type, onCha
   }
   const dataSourceOptions = options.map((option) => {
     const { type, value, label } = option;
+    const iconMap = {
+      csv: csv,
+      mysql: mysql,
+      pg: pg,
+      starrocks: starrocks
+    };
     const icon = iconMap[type];
+
     return (
       <Select.Option key={value} value={value}>
         <Space>

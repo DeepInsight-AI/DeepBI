@@ -9,7 +9,8 @@ import Space from "antd/lib/space";
 import Progress from "antd/lib/progress";
 import pg from "@/assets/images/db-logos/pg.png";
 import mysql from "@/assets/images/db-logos/mysql.png";
-import excel from "@/assets/images/db-logos/excel.png";
+import csv from "@/assets/images/db-logos/excel.png";
+import starrocks from "@/assets/images/db-logos/starrocks.png";
 import InboxOutlinedIcon from "@ant-design/icons/InboxOutlined";
 import QuestionCircleOutlinedIcon from "@ant-design/icons/QuestionCircleOutlined";
 import InfoCircleOutlinedIcon from "@ant-design/icons/InfoCircleOutlined";
@@ -126,12 +127,13 @@ const SelectSource = forwardRef(({ confirmLoading, Holmestable, chat_type, onCha
         }));
       };
 
-      if (type === "mysql" || type === "pg") {
-        const res = await axios.get(`/api/data_sources/${val}/schema`);
-        optionsList = getOptionsList(res.schema, type);
-      } else {
+      if (type === "csv") {
         const { data } = await axios.get(`api/upload`);
         optionsList = getOptionsList(data, type);
+      } else {
+        
+        const res = await axios.get(`/api/data_sources/${val}/schema`);
+        optionsList = getOptionsList(res.schema, type);
       }
 
       setSchemaList(optionsList);
@@ -372,22 +374,13 @@ const SelectSource = forwardRef(({ confirmLoading, Holmestable, chat_type, onCha
   }
   const dataSourceOptions = options.map((option) => {
     const { type, value, label } = option;
-    let icon = null;
-  
-    if (type === "csv") {
-      icon = excel;
-    } else if (type === "mysql") {
-      icon = mysql;
-    } else if (type === "pg") {
-      icon = pg;
-    }
-
+    const icon = iconMap[type];
     return (
       <Select.Option key={value} value={value}>
         <Space>
           <div aria-label={label} style={{ display: "flex", alignItems: "center" }}>
             <span role="img" style={{ marginRight: "5px" }}>
-            <img src={icon} alt={icon} style={{ width: "30px", height: "30px" }} />
+            <img src={icon} alt={type} style={{ width: "30px", height: "30px" }} />
             </span>
             {label}
           </div>

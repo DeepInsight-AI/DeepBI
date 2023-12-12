@@ -4,14 +4,10 @@ from flask import request
 from flask_restful import abort
 from bi import models
 from bi.handlers.base import BaseResource, json_response
-from bi.permissions import (
-    require_permission,
-)
 from bi import settings
 
 
 class DataSourceFileResource(BaseResource):  # BaseResource
-    @require_permission("list_data_sources")
     def get(self, data_source_file_id=None, is_use=None):
         result = {}
         user_id = self.current_user.id
@@ -33,7 +29,6 @@ class DataSourceFileResource(BaseResource):  # BaseResource
         )
         return json_response({'code': 200, 'data': result})
 
-    @require_permission("list_data_sources")
     def post(self):
         """save csv file"""
         if not settings.DATA_SOURCE_FILE_DIR:

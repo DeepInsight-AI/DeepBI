@@ -83,7 +83,7 @@ Install directly on the ubuntu system, you need to install redis, postgresql pyt
 - 2 core 4G memory
 
 ## Contact Us
- <img src="http://www.deep-thought.io/wechat.png?" width="30%">
+ <img src="http://www.deep-thought.io/wechat.png?1" width="30%">
 
 ## 📑 Other
 - At present, the recommended environment is Ubuntu, other environments have not had time to test, the next step will be gradually improved, windows10 WSL window11 WSL, MacOS 13.x, MacOS 14.x, Ubuntu 20.04 22.04 are no problem

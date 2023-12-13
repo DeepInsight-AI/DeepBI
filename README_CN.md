@@ -88,7 +88,7 @@ Holmes 支持的数据库连接有:
    - 2核心4G内存
 
 ## Contact Us
- <img src="http://www.deep-thought.io/wechat.png?"  width="30%">
+ <img src="http://www.deep-thought.io/wechat.png?1"  width="30%">
 
 
 ## 📑 文档

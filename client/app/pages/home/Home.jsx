@@ -98,7 +98,7 @@ routes.register(
   "Home",
   routeWithUserSession({
     path: "/home",
-    title: "Holmes",
+    title: "DeepBI",
     render: pageProps => <Home {...pageProps} />,
   })
 );

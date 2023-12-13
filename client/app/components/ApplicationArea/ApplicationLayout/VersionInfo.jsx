@@ -7,7 +7,7 @@ export default function VersionInfo() {
   return (
     <React.Fragment>
       <div>
-        {window.W_L.version}: {clientConfig.Holmes_version}
+        {window.W_L.version}: {clientConfig.DeepBI_version}
         {frontendVersion !== clientConfig.version && ` (${frontendVersion.substring(0, 8)})`}
       </div>
       {clientConfig.newVersionAvailable && currentUser.hasPermission("super_admin") && (

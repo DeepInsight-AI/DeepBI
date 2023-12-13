@@ -22,8 +22,8 @@ from sqlalchemy.orm.query import Query
 from .human_time import parse_human_time
 
 COMMENTS_REGEX = re.compile("/\*.*?\*/")
-WRITER_ENCODING = os.environ.get("HOLMES_CSV_WRITER_ENCODING", "utf-8")
-WRITER_ERRORS = os.environ.get("HOLMES_CSV_WRITER_ERRORS", "strict")
+WRITER_ENCODING = os.environ.get("DEEPBI_CSV_WRITER_ENCODING", "utf-8")
+WRITER_ERRORS = os.environ.get("DEEPBI_CSV_WRITER_ERRORS", "strict")
 
 
 def utcnow():

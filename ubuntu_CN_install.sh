@@ -86,24 +86,24 @@ else
 fi
 echo "启动 postgresql"
 sudo service postgresql start
-echo "创建数据库 holmes"
-if sudo -u postgres psql -lqt | cut -d \| -f 1 | grep -qw holmes; then
-    echo "数据库 'holmes' 已经存在."
+echo "创建数据库 deepbi"
+if sudo -u postgres psql -lqt | cut -d \| -f 1 | grep -qw deepbi; then
+    echo "数据库 'deepbi' 已经存在."
 else
-    sudo -u postgres psql -c "CREATE DATABASE holmes;"
-    echo "数据库 'holmes' 创建完毕."
+    sudo -u postgres psql -c "CREATE DATABASE deepbi;"
+    echo "数据库 'deepbi' 创建完毕."
 fi
 # shellcheck disable=SC2006
-if sudo -u postgres psql -tAc "SELECT 1 FROM pg_roles WHERE rolname='holmes'" | grep -q 1; then
-     echo "用户 'holmes' 已经存在."
+if sudo -u postgres psql -tAc "SELECT 1 FROM pg_roles WHERE rolname='deepbi'" | grep -q 1; then
+     echo "用户 'deepbi' 已经存在."
 else
-     echo "创建用户 'holmes' "
-     sudo su postgres -c "`printf 'psql -c "create user holmes password %s;"' "'holmes_8338'"`"
+     echo "创建用户 'deepbi' "
+     sudo su postgres -c "`printf 'psql -c "create user deepbi password %s;"' "'deepbi_8338'"`"
 fi
 echo "修改数据库 database 所有者"
-sudo -u postgres psql -c "ALTER DATABASE holmes OWNER TO holmes;"
+sudo -u postgres psql -c "ALTER DATABASE deepbi OWNER TO deepbi;"
 echo "设置用户连接"
-sudo sh -c "sed -i '/^#\s*TYPE/ahost holmes holmes 127.0.0.1/32  md5' /etc/postgresql/16/main/pg_hba.conf && service postgresql restart "
+sudo sh -c "sed -i '/^#\s*TYPE/ahost deepbi deepbi 127.0.0.1/32  md5' /etc/postgresql/16/main/pg_hba.conf && service postgresql restart "
 
 line
 echo "安装系统扩展"
@@ -181,10 +181,10 @@ socket_port=8339
 env_content=$(cat .env.template)
 # replace postgresql
 # shellcheck disable=SC2001
-env_content=$(echo "$env_content" | sed "s/# HOLMES_DATABASE_URL=\"postgresql:\/\/user:pwd@ip\/database\"/HOLMES_DATABASE_URL=\"postgresql:\/\/holmes:holmes_8338@127.0.0.1\/holmes\"/g")
+env_content=$(echo "$env_content" | sed "s/# DEEPBI_DATABASE_URL=\"postgresql:\/\/user:pwd@ip\/database\"/DEEPBI_DATABASE_URL=\"postgresql:\/\/deepbi:deepbi_8338@127.0.0.1\/deepbi\"/g")
 # replace redis
 # shellcheck disable=SC2001
-env_content=$(echo "$env_content" | sed "s/# HOLMES_REDIS_URL/HOLMES_REDIS_URL/g")
+env_content=$(echo "$env_content" | sed "s/# DEEPBI_REDIS_URL/DEEPBI_REDIS_URL/g")
 # replace language
 # shellcheck disable=SC2001
 env_content=$(echo "$env_content" | sed "s/LANGTYPE/CN/g")

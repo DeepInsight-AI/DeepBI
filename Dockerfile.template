@@ -40,7 +40,7 @@ RUN apt-get clean && apt-get update && \
 # ali pip source
 #CN#RUN pip config set global.index-url https://pypi.tuna.tsinghua.edu.cn/simple
 #CN#RUN pip install --upgrade pip
-COPY --chown=holmes . /app
+COPY --chown=deepbi . /app
 WORKDIR /app
 ## Disable PIP Cache and Version Check
 ENV PIP_DISABLE_PIP_VERSION_CHECK=1
@@ -55,7 +55,7 @@ RUN pip install -r requirements.txt && pip install -r requirements_ai.txt
 ## fix python 3.8.18 error import .
 RUN sed -i 's/from importlib_resources import path/from importlib.resources import path/g' /usr/local/lib/python3.8/site-packages/saml2/sigver.py && \
     sed -i 's/from importlib_resources import path/from importlib.resources import path/g' /usr/local/lib/python3.8/site-packages/saml2/xml/schema/__init__.py && \
-    chown holmes /app && chmod +x /app/ai/main.py
+    chown deepbi /app && chmod +x /app/ai/main.py
 
 ENTRYPOINT ["/app/bin/docker-entrypoint"]
 CMD ["server"]

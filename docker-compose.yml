@@ -9,14 +9,14 @@ x-service: &holmes-service
   env_file:
     - .env
 x-environment: &holmes-environment
-  HOLMES_LOG_LEVEL: "INFO"
-  HOLMES_RATELIMIT_ENABLED: "false"
-  HOLMES_MAIL_DEFAULT_SENDER: "test@example.com"
-  HOLMES_MAIL_SERVER: "email"
-  HOLMES_ENFORCE_CSRF: "true"
-  HOLMES_GUNICORN_TIMEOUT: 60
-  HOLMES_WEB_WORKERS: 4
-  HOLMES_CELERY_WORKERS: 4
+  DEEPBI_LOG_LEVEL: "INFO"
+  DEEPBI_RATELIMIT_ENABLED: "false"
+  DEEPBI_MAIL_DEFAULT_SENDER: "test@example.com"
+  DEEPBI_MAIL_SERVER: "email"
+  DEEPBI_ENFORCE_CSRF: "true"
+  DEEPBI_GUNICORN_TIMEOUT: 60
+  DEEPBI_WEB_WORKERS: 4
+  DEEPBI_CELERY_WORKERS: 4
 services:
   server:
     <<: *holmes-service

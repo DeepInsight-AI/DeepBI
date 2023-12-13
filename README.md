@@ -1,8 +1,8 @@
-<h1 align="center">Holmes</h1>
+<h1 align="center">DeepBi</h1>
 
 <div align="center">
 
-Holmes is an AI-native data analysis platform. Holmes leverages the power of large language models to explore, query, visualize, and share data from any data source. Users can use Holmes to gain data insight and make data-driven decisions.
+DeepBi is an AI-native data analysis platform. DeepBi leverages the power of large language models to explore, query, visualize, and share data from any data source. Users can use DeepBi to gain data insight and make data-driven decisions.
 
 
 </div>
@@ -14,7 +14,7 @@ Developer：dev@deep-thought.io  Business：hi@deep-thought.io
 
   <div style="display: flex; align-items: center;">
 
-If you think Holmes is helpful to you, please help by clicking <a style="display: flex; align-items: center;margin:0px 6px" target="_blank" href='https://github.com/DeepThought-AI/Holmes'>here</a> on the ⭐ Star and Fork in the upper right corner. Your support is the greatest driving force for Holmes to become better.
+If you think DeepBi is helpful to you, please help by clicking <a style="display: flex; align-items: center;margin:0px 6px" target="_blank" href='https://github.com/DeepThought-AI/DeepBi'>here</a> on the ⭐ Star and Fork in the upper right corner. Your support is the greatest driving force for DeepBi to become better.
 
 
   </div>
@@ -24,11 +24,11 @@ If you think Holmes is helpful to you, please help by clicking <a style="display
 
 ## Video example
 
-https://github.com/DeepThought-AI/Holmes/assets/151519374/d1effbe1-5c11-4c77-86ef-e01b1ea7f2f6
+https://github.com/DeepThought-AI/DeepBi/assets/151519374/d1effbe1-5c11-4c77-86ef-e01b1ea7f2f6
 
 
 ## user manual
-[Holmes user manual](client/app/assets/images/en/user_manual_en.md)
+[DeepBi user manual](client/app/assets/images/en/user_manual_en.md)
 
 
 ## ✨ Features
@@ -44,7 +44,7 @@ https://github.com/DeepThought-AI/Holmes/assets/151519374/d1effbe1-5c11-4c77-86e
 
 ## 🚀 Supported Databases
 
-The database connections supported by Holmes are:
+The database connections supported by DeepBi are:
 - MySQL
 - PostgreSQL
 - csv/Excel Import
@@ -53,11 +53,11 @@ The database connections supported by Holmes are:
 
 - The local environment needs to have docker and docker-compose. <br>
 - [Installl docker](Docker_install.md)
-- Download project files by git:``` git clone https://github.com/DeepThought-AI/Holmes.git ``` <br>
+- Download project files by git:``` git clone https://github.com/DeepThought-AI/DeepBi.git ``` <br>
   or drirect download zip file, unzip it. <br>
   ![download.png](user_manual/cn/img/download.png)
 
-- Enter the project directory:``` cd Holmes ```
+- Enter the project directory:``` cd DeepBi ```
 - Just run``` ./Install.sh ```directly
 - Default port: 8338 8339
 - Web access: http://ip:8338
@@ -75,22 +75,22 @@ Install directly on the ubuntu system, you need to install redis, postgresql pyt
 - Web access: http://ip:8338
 
 
-## Holmes command
-- Enter project Holmes dir:
+## DeepBi command
+- Enter project DeepBi dir:
 ```
-    docker-compose start # start Holmes servie
-    docker-compose stop # stop Holmes servie
-    docker-compose ps # see Holmes servie states
+    docker-compose start # start DeepBi servie
+    docker-compose stop # stop DeepBi servie
+    docker-compose ps # see DeepBi servie states
 ```
 - If it appears... PermissionError ... ' or ' Permission denied', please add 'sudo' before executing the command
 ```
-    sudo docker-compose start # start Holmes servie
-    sudo docker-compose stop # stop Holmes servie
-    sudo docker-compose ps # see Holmes servie states
+    sudo docker-compose start # start DeepBi servie
+    sudo docker-compose stop # stop DeepBi servie
+    sudo docker-compose ps # see DeepBi servie states
 ```
 
 
 ## 📑 Other
 - We have tested on Mac OS 12.7/13.X /14.1.1, Ubuntu 20.04/22.04, and Windows11 WSL 22.04. <br>If you have any question, please contact us at dev@deep-thought.io
-- <a href="https://github.com/DeepThought-AI/Holmes/issues">Issue</a>
+- <a href="https://github.com/DeepThought-AI/DeepBi/issues">Issue</a>
 

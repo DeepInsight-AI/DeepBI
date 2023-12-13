@@ -86,23 +86,23 @@ else
 fi
 echo "start postgresql"
 sudo service postgresql start
-echo "create database holmes"
-if sudo -u postgres psql -lqt | cut -d \| -f 1 | grep -qw holmes; then
-    echo "Database 'holmes' already exists."
+echo "create database deepbi"
+if sudo -u postgres psql -lqt | cut -d \| -f 1 | grep -qw deepbi; then
+    echo "Database 'deepbi' already exists."
 else
-    sudo -u postgres psql -c "CREATE DATABASE holmes;"
-    echo "Database 'holmes' created."
+    sudo -u postgres psql -c "CREATE DATABASE deepbi;"
+    echo "Database 'deepbi' created."
 fi
 # shellcheck disable=SC2006
-if sudo -u postgres psql -tAc "SELECT 1 FROM pg_roles WHERE rolname='holmes'" | grep -q 1; then
-     echo "User 'holmes' created."
+if sudo -u postgres psql -tAc "SELECT 1 FROM pg_roles WHERE rolname='deepbi'" | grep -q 1; then
+     echo "User 'deepbi' created."
 else
-     sudo su postgres -c "`printf 'psql -c "create user holmes password %s;"' "'holmes_8338'"`"
+     sudo su postgres -c "`printf 'psql -c "create user deepbi password %s;"' "'deepbi_8338'"`"
 fi
 echo "change database owner"
-sudo -u postgres psql -c "ALTER DATABASE holmes OWNER TO holmes;"
+sudo -u postgres psql -c "ALTER DATABASE deepbi OWNER TO deepbi;"
 echo "Setting user and database can connect"
-sudo sh -c "sed -i '/^#\s*TYPE/ahost holmes holmes 127.0.0.1/32  md5' /etc/postgresql/16/main/pg_hba.conf && service postgresql restart "
+sudo sh -c "sed -i '/^#\s*TYPE/ahost deepbi deepbi 127.0.0.1/32  md5' /etc/postgresql/16/main/pg_hba.conf && service postgresql restart "
 
 line
 echo "install sys extends"
@@ -181,10 +181,10 @@ socket_port=8339
 env_content=$(cat .env.template)
 # replace postgresql
 # shellcheck disable=SC2001
-env_content=$(echo "$env_content" | sed "s/# HOLMES_DATABASE_URL=\"postgresql:\/\/user:pwd@ip\/database\"/HOLMES_DATABASE_URL=\"postgresql:\/\/holmes:holmes_8338@127.0.0.1\/holmes\"/g")
+env_content=$(echo "$env_content" | sed "s/# DEEPBI_DATABASE_URL=\"postgresql:\/\/user:pwd@ip\/database\"/DEEPBI_DATABASE_URL=\"postgresql:\/\/deepbi:deepbi_8338@127.0.0.1\/deepbi\"/g")
 # replace redis
 # shellcheck disable=SC2001
-env_content=$(echo "$env_content" | sed "s/# HOLMES_REDIS_URL/HOLMES_REDIS_URL/g")
+env_content=$(echo "$env_content" | sed "s/# DEEPBI_REDIS_URL/DEEPBI_REDIS_URL/g")
 # replace language
 # shellcheck disable=SC2001
 env_content=$(echo "$env_content" | sed "s/LANGTYPE/EN/g")

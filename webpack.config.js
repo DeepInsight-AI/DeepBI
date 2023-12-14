@@ -119,7 +119,7 @@ const config = {
     isProduction &&
       new MiniCssExtractPlugin({
         // filename: "[name].[chunkhash].css"
-        filename: "[name]..css"
+        filename: "[name].css"
       }),
     new ManifestPlugin({
       fileName: "asset-manifest.json",

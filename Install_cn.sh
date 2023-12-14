@@ -10,13 +10,13 @@ if [ -f Dockerfile ]; then
 fi
 # 检测docker
 if ! command -v docker &> /dev/null; then
-    echo " 需要安装 docker, 参考：https://github.com/DeepThought-AI/Holmes/blob/main/InstallDockerCN.md "
+    echo " 需要安装 docker, 参考：https://github.com/DeepInsight-AI/DeepBI/blob/main/Docker_install_CN.md "
     exit 1
 fi
 
 # 检测 docker-compose 支持
 if ! command -v docker-compose &> /dev/null; then
-    echo "需要安装 docker-compose, 参考：https://github.com/DeepThought-AI/Holmes/blob/main/InstallDockerCN.md"
+    echo "需要安装 docker-compose, 参考：https://github.com/DeepInsight-AI/DeepBI/blob/main/Docker_install_CN.md"
     exit 1
 fi
 # get local ip

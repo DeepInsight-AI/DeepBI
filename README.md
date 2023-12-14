@@ -75,7 +75,7 @@ Install directly on the ubuntu system, you need to install redis, postgresql pyt
 - Web access: http://ip:8338
 
 
-## DeepBi command
+## DeepBI command
 - Enter project DeepBi dir:
 ```
     docker-compose start # start DeepBi servie
@@ -88,6 +88,9 @@ Install directly on the ubuntu system, you need to install redis, postgresql pyt
     sudo docker-compose stop # stop DeepBi servie
     sudo docker-compose ps # see DeepBi servie states
 ```
+
+## Contact Us
+![image](https://github.com/DeepInsight-AI/DeepBI/assets/151519374/b0ba1fc3-8c71-4bf7-bd53-ecf17050581a)
 
 
 ## 📑 Other

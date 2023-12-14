@@ -2,8 +2,6 @@ version: "2.0"
 x-service: &deepbi-service
   build:
     context: .
-    args:
-      skip_frontend_build: ""  #
   volumes:
     - ./user_upload_files:/app/user_upload_files
   env_file:

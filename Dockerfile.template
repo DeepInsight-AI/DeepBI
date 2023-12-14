@@ -1,6 +1,6 @@
 FROM python:3.8.18-slim
 ##  out port
-EXPOSE 8338 8339
+EXPOSE 8338 8339 8340
 # Controls whether to install extra dependencies needed for all data sources.
 ARG skip_ds_deps=true
 # Controls whether to install dev dependencies. If need, set skip_dev_deps eq ''
@@ -8,12 +8,13 @@ ARG skip_dev_deps=yes
 #RUN sed -i 's/deb.debian.org/mirrors.aliyun.com/g' /etc/apt/sources.list
 #RUN echo "deb http://mirrors.aliyun.com/debian/ buster main" > /etc/apt/sources.list
 ## Create user
-RUN useradd --create-home deepai
+RUN useradd --create-home deepbi
 ## Ubuntu use aliyun source
 RUN apt-get update
 ## Ubuntu packages
-RUN apt-get clean && apt-get update && \
-  apt-get install -y --no-install-recommends \
+RUN apt-get clean
+RUN apt-get update
+RUN apt-get install -y --no-install-recommends \
   curl \
   gnupg \
   build-essential \
@@ -53,9 +54,9 @@ RUN if [ "x$skip_dev_deps" = "x" ] ; then pip install -r requirements_dev.txt ; 
 RUN pip install -r requirements.txt && pip install -r requirements_ai.txt
 #
 ## fix python 3.8.18 error import .
-RUN sed -i 's/from importlib_resources import path/from importlib.resources import path/g' /usr/local/lib/python3.8/site-packages/saml2/sigver.py && \
-    sed -i 's/from importlib_resources import path/from importlib.resources import path/g' /usr/local/lib/python3.8/site-packages/saml2/xml/schema/__init__.py && \
-    chown deepbi /app && chmod +x /app/ai/main.py
+RUN sed -i 's/from importlib_resources import path/from importlib.resources import path/g' /usr/local/lib/python3.8/site-packages/saml2/sigver.py
+RUN sed -i 's/from importlib_resources import path/from importlib.resources import path/g' /usr/local/lib/python3.8/site-packages/saml2/xml/schema/__init__.py
+RUN chown deepbi /app && chmod +x /app/ai/main.py
 
 ENTRYPOINT ["/app/bin/docker-entrypoint"]
 CMD ["server"]

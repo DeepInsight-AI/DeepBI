@@ -220,8 +220,8 @@ rm -rf ./client/dist
 cp -R ./client/dist_source ./client/dist
 # replace front file ip
 echo "替换前端 IP 地址"
-sed -i "s|192.168.5.165:8339|$ip:$socket_port|g" ./client/dist/vendors~app.cbcd037aa89230e022c8.js
-sed -i "s|192.168.5.165:8339|$ip:$socket_port|g" ./client/dist/app.3598c94c9eb6f2d9857b.js
+sed -i "s|192.168.5.165:8339|$ip:$socket_port|g" ./client/dist/vendors~app.js
+sed -i "s|192.168.5.165:8339|$ip:$socket_port|g" ./client/dist/app.js
 line
 echo "激活环境"
 source venv/bin/activate

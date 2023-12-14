@@ -60,11 +60,11 @@ cp -R ./client/dist_source ./client/dist
 echo "Replace ip port"
 os_name=$(uname)
 if [[ "$os_name" == "Darwin" ]]; then
-    sed -i '' "s|192.168.5.165:8339|$ip:$socket_port|g" ./client/dist/vendors~app.cbcd037aa89230e022c8.js
-    sed -i '' "s|192.168.5.165:8339|$ip:$socket_port|g" ./client/dist/app.3598c94c9eb6f2d9857b.js
+    sed -i '' "s|192.168.5.165:8339|$ip:$socket_port|g" ./client/dist/vendors~app.js
+    sed -i '' "s|192.168.5.165:8339|$ip:$socket_port|g" ./client/dist/app.js
 else
-    sed -i "s|192.168.5.165:8339|$ip:$socket_port|g" ./client/dist/vendors~app.cbcd037aa89230e022c8.js
-    sed -i "s|192.168.5.165:8339|$ip:$socket_port|g" ./client/dist/app.3598c94c9eb6f2d9857b.js
+    sed -i "s|192.168.5.165:8339|$ip:$socket_port|g" ./client/dist/vendors~app.js
+    sed -i "s|192.168.5.165:8339|$ip:$socket_port|g" ./client/dist/app.js
 fi
 # 复制 .env file基础内容
 env_content=$(cat .env.template)

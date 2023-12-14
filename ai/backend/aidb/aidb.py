@@ -348,7 +348,7 @@ class AIDB:
 
             elif in_use == 'DeepThought':
                 ApiKey = data[in_use]['ApiKey']
-                print('HolmesApiKey : ', ApiKey)
+                print('DeepBIApiKey : ', ApiKey)
                 ApiHost = "https://apiserver.deep-thought.io/proxy"
         else:
             ApiKey = data['OpenaiApiKey']

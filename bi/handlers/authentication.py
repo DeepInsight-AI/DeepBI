@@ -6,7 +6,7 @@ import json
 import time
 import os
 from flask_login import current_user, login_required, login_user, logout_user
-from bi import __version__, limiter, models, settings, __Holmes_version__
+from bi import __version__, limiter, models, settings, __DeepBI_version__
 from bi.authentication import current_org, get_login_url, get_next_path
 from bi.authentication.account import (
     BadSignature,
@@ -362,7 +362,7 @@ def client_config():
         client_config = {
             "newVersionAvailable": False,
             "version": __version__,
-            "Holmes_version": __Holmes_version__
+            "DeepBI_version": __DeepBI_version__
         }
     else:
         client_config = {}

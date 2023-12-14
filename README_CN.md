@@ -13,7 +13,7 @@ DeepBi是一款AI原生的数据分析平台。DeepBi充分利用大语言模型
 <div align="center">
 
   Languages： 中文 [English](README.md)<br>
- 开发：dev@deep-thought.io，工作及商务：hi@deep-thought.io
+ 开发：dev@deep-insight.co，工作及商务：hi@deep-insight.co
 
   <div style="display: flex; align-items: center;">
     如果觉得 DeepBi 对您有帮助的话，请帮忙<a style="display: flex; align-items: center;margin:0px 6px" target="_blank" href='https://github.com/DeepThought-AI/DeepBi'></a>
@@ -89,6 +89,6 @@ DeepBi 支持的数据库连接有:
 
 ## 📑 文档
 - 我们已经在 Mac OS 12.7/13.X /14.1.1 , Ubuntu 20.04/22.04 和  Windows11 WSL 22.04 系统测试。
-  <br> 如果有什么问题，可以联系我们 dev@deep-thought.io
+  <br> 如果有什么问题，可以联系我们 dev@deep-insight.co
 - <a href="https://github.com/DeepThought-AI/DeepBi/issues">Issue</a>
 

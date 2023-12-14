@@ -10,7 +10,7 @@ DeepBi is an AI-native data analysis platform. DeepBi leverages the power of lar
 <div align="center">
 
   Languages： English [中文](README_CN.md)<br>
-Developer：dev@deep-thought.io  Business：hi@deep-thought.io
+Developer：dev@deep-insight.co  Business：hi@deep-insight.co
 
   <div style="display: flex; align-items: center;">
 
@@ -91,6 +91,6 @@ Install directly on the ubuntu system, you need to install redis, postgresql pyt
 
 
 ## 📑 Other
-- We have tested on Mac OS 12.7/13.X /14.1.1, Ubuntu 20.04/22.04, and Windows11 WSL 22.04. <br>If you have any question, please contact us at dev@deep-thought.io
+- We have tested on Mac OS 12.7/13.X /14.1.1, Ubuntu 20.04/22.04, and Windows11 WSL 22.04. <br>If you have any question, please contact us at dev@deep-insight.co
 - <a href="https://github.com/DeepThought-AI/DeepBi/issues">Issue</a>
 

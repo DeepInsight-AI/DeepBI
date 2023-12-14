@@ -51,7 +51,8 @@ RUN pip install pip==20.2.4
 ## We first copy only the requirements file, to avoid rebuilding on every file change.
 RUN if [ "x$skip_dev_deps" = "x" ] ; then pip install -r requirements_dev.txt ; fi
 #
-RUN pip install -r requirements.txt && pip install -r requirements_ai.txt
+RUN pip install -r requirements.txt
+RUN pip install -r requirements_ai.txt
 #
 ## fix python 3.8.18 error import .
 RUN sed -i 's/from importlib_resources import path/from importlib.resources import path/g' /usr/local/lib/python3.8/site-packages/saml2/sigver.py

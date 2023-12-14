@@ -1,4 +1,4 @@
-<h1 align="center">Holmes User Manual</h1>
+<h1 align="center">DeepBI User Manual</h1>
 
 <div align="center">
 
@@ -98,7 +98,7 @@ Can view historical conversation records
 
 #### 4.1.1. Check the data (data source and table)
 
-- The checked data will be used as the basic data of AI in report generation. 
+- The checked data will be used as the basic data of AI in report generation.
 - 🔥Note: Currently the CSV data source does
   not support [Report Generation]
 
@@ -124,7 +124,7 @@ Can view historical conversation records
 
 ![doc.png](img/doc_11.png)
 
-#### 4.1.5, reselect data source 
+#### 4.1.5, reselect data source
 
 - If you want to reselect the data source and start a new round of dialogue, please click [New Dialogue] to reset the current dialogue.
 

@@ -10,11 +10,12 @@ import wrapSettingsTab from "@/components/SettingsWrapper";
 import notification from "@/services/notification";
 import routes from "@/services/routes";
 import { axios } from "@/services/axios";
+import Link from "@/components/Link";
 import { websocket,createWebSocket,closeWebSocket } from '../testdialogue/components/Dialogue/websocket';
 const SettingsOpenKey = () => {
     const [form] = Form.useForm();
   const [disabled, setDisabled] = useState(false);
-  const [aiOption, setAiOption] = useState('DeepThought'); // 默认选项
+  const [aiOption, setAiOption] = useState('DeepInsight'); // 默认选项
 
   const getOpenKey = useCallback(async () => {
     setDisabled(true);
@@ -23,9 +24,9 @@ const SettingsOpenKey = () => {
         form.setFieldsValue(data);
       }else{
         setAiOption(data.in_use);
-        const {OpenAI, DeepThought} = data;
+        const {OpenAI, DeepInsight} = data;
         form.setFieldsValue({
-        ApiKey: DeepThought.ApiKey|| "",
+        ApiKey: DeepInsight.ApiKey|| "",
         OpenaiApiKey: OpenAI.OpenaiApiKey|| "",
         HttpProxyHost: OpenAI.HttpProxyHost|| "",
         HttpProxyPort: OpenAI.HttpProxyPort|| "",
@@ -48,7 +49,7 @@ const SettingsOpenKey = () => {
         HttpProxyPort: form.getFieldValue("HttpProxyPort") || "",
         ApiHost: form.getFieldValue("ApiHost") || "",
       },
-      DeepThought: {
+      DeepInsight: {
         ApiKey: form.getFieldValue("ApiKey") || "",
       }
       
@@ -139,12 +140,12 @@ const SettingsOpenKey = () => {
       <h4 style={{marginRight:"30px"}}>AI:</h4>
             <Radio.Group onChange={handleRadioChange} value={aiOption}>
            
-              <Radio value="DeepThought">DeepThought</Radio>
+              <Radio value="DeepInsight">DeepInsight</Radio>
               <Radio value="OpenAI">OpenAI</Radio>
             </Radio.Group>
       </div>
           </Form.Item>
-          {aiOption === 'DeepThought' && (
+          {aiOption === 'DeepInsight' && (
             <Form.Item name="ApiKey" label="ApiKey" rules={[{ required: true, message: 'Please enter API key' }]}>
               <Input placeholder="ApiKey" />
             </Form.Item>
@@ -174,9 +175,18 @@ const SettingsOpenKey = () => {
           )}
      
       <Form.Item style={{textAlign: "right"}}>
-      <Button disabled={disabled} style={{marginRight:"10px"}}
+     <div style={{width:"100%",display:"flex",alignItems: "center",justifyContent: "spaceBetween"}}>
+     <Link
+             href="https://holmes.bukeshiguang.com/"
+             rel="noopener noreferrer"
+             target="_blank">
+      </Link>
+    <div>
+    <Button disabled={disabled} style={{marginRight:"10px"}}
       onClick={() => connectTest()}>{window.W_L.connect_test}</Button>
       <Button disabled={disabled} htmlType="submit" type="primary">{window.W_L.apply}</Button>
+    </div>
+     </div>
       </Form.Item>
     </Form>
      </div>

@@ -4,7 +4,7 @@ import Modal from "antd/lib/modal";
 import "./index.css";
 
 const DialogueTop = (props) => {
-    const {HolmestableItem,chat_type,Holmestable,loadingMask} = props;
+    const {CharttableItem,chat_type,Charttable,loadingMask} = props;
     const close = () => {
         const doDelete = () => {
             props.closeDialogue()
@@ -29,14 +29,14 @@ const DialogueTop = (props) => {
   return (
    <>
    {
-    Holmestable&&HolmestableItem&& HolmestableItem.label&&
+    Charttable&&CharttableItem&& CharttableItem.label&&
      <div className="dialogue-top"> 
     <div className="dialogue-top-flex">
          <div>{chat_type==="chat"?window.W_L.data_analysis:chat_type==="report"?window.W_L.query_builder:chat_type==="autopilot"?window.W_L.auto_pilot:""}</div>
      </div>
      <div className="dialogue-top-flex">
          <div>{window.W_L.data_source}:</div>
-         <span>{HolmestableItem.label}</span>
+         <span>{CharttableItem.label}</span>
      </div>
      {
         chat_type!=="viewConversation"&&

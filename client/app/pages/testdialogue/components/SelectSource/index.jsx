@@ -17,7 +17,7 @@ import Link from "@/components/Link";
 import Tooltip from "@/components/Tooltip";
 import SecondChoice from "./SecondChoice";
 import './index.less';
-const SelectSource = forwardRef(({ confirmLoading, Holmestable, chat_type, onChange, onSuccess,percent },ref) => {
+const SelectSource = forwardRef(({ confirmLoading, Charttable, chat_type, onChange, onSuccess,percent },ref) => {
   const [options, setOptions] = useState([]);
   const [source_item, setSourceItem] = useState({type:"mysql"});
   const [source_id, setSource_id] = useState();
@@ -413,7 +413,7 @@ const SelectSource = forwardRef(({ confirmLoading, Holmestable, chat_type, onCha
   const tableIsShow = SchemaListDataItem && SchemaListDataItem.table_name && SchemaListDataItem.field_desc.length > 0;
 
   return (
-    !Holmestable && (
+    !Charttable && (
       <div className="flex-column">
         <div className="dislogue-caption">
             <h1>Hi !</h1>

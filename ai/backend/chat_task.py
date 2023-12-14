@@ -7,7 +7,7 @@ from ai.agents import AgentInstanceUtil
 from ai.backend.memory import ChatMemoryManager
 from ai.backend.base_config import CONFIG
 from ai.backend.aidb.report import ReportMysql, ReportPostgresql
-from ai.backend.aidb.analysis import AnalysisMysql, AnalysisCsv, AnalysisPostgresql
+from ai.backend.aidb.analysis import AnalysisMysql, AnalysisCsv, AnalysisPostgresql,AnalysisStarrocks
 from ai.backend.aidb import AIDB
 from ai.backend.aidb.autopilot import autopilot_mysql, AutopilotMysql
 
@@ -49,6 +49,8 @@ class ChatClass:
         self.analysisMysql = AnalysisMysql(self)
         self.analysisCsv = AnalysisCsv(self)
         self.analysisPostgresql = AnalysisPostgresql(self)
+        self.analysisStarrocks = AnalysisStarrocks(self)
+
         self.reportMysql = ReportMysql(self)
         self.reportPostgresql = ReportPostgresql(self)
         self.autopilotMysql = AutopilotMysql(self)
@@ -125,6 +127,9 @@ class ChatClass:
                         # await self.deal_question_postgresql(json_str, message)
                         # await AnalysisPostgresql(self).deal_question(json_str, message)
                         await self.analysisPostgresql.deal_question(json_str, message)
+                    elif q_database == 'starrocks':
+                        print(" q_database ==  starrocks ")
+                        await self.analysisStarrocks.deal_question(json_str, message)
 
                 elif q_chat_type == 'report':
                     if q_database == 'mysql':

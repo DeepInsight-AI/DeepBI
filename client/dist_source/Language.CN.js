@@ -584,14 +584,14 @@ window.W_L=  {
   'data_analysis':'辅助数据分析',
   'report_generation':'报表生成',
   'report_list':'报表列表',
-  
+
   'dashboard':'仪表盘',
   'offline':'离线',
   'online':'在线',
   'pending':'待定',
   'temporary_dashboard':'临时仪表盘',
   'history_dialogue':'历史对话',
-  
+
   'reset_dialogue':'重置对话',
   'reset_dialogue_confirm':'确定新建对话而重置当前对话吗?',
   'new_dialogue':'新对话',
@@ -603,7 +603,7 @@ window.W_L=  {
   'sheet_description':'请填写数据表描述',
   'field_description':'请填写字段描述',
 
-  'source_tooltip':'选择您的数据源并完成相应的表格和字段描述，Holmes 使您能够将人类语言转化为可使用的操作，并帮助您完成现实世界的任务，例如与数据相关的任务。',
+  'source_tooltip':'选择您的数据源并完成相应的表格和字段描述，DeepBI 使您能够将人类语言转化为可使用的操作，并帮助您完成现实世界的任务，例如与数据相关的任务。',
   'source_first_tooltip':'请完善表格和字段注释，使Agent更好的帮助您完成任务。',
   'source_second_tooltip':'以上注释没有通过大模型检测，请修改后再次提交',
 

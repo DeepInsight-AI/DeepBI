@@ -1,5 +1,5 @@
 version: "2.0"
-x-service: &holmes-service
+x-service: &deepbi-service
   build:
     context: .
     args:
@@ -8,7 +8,7 @@ x-service: &holmes-service
     - ./user_upload_files:/app/user_upload_files
   env_file:
     - .env
-x-environment: &holmes-environment
+x-environment: &deepbi-environment
   DEEPBI_LOG_LEVEL: "INFO"
   DEEPBI_RATELIMIT_ENABLED: "false"
   DEEPBI_MAIL_DEFAULT_SENDER: "test@example.com"
@@ -19,7 +19,7 @@ x-environment: &holmes-environment
   DEEPBI_CELERY_WORKERS: 4
 services:
   server:
-    <<: *holmes-service
+    <<: *deepbi-service
     command: server
     depends_on:
       - postgres
@@ -27,40 +27,40 @@ services:
     ports:
       - "8338:8338"
     environment:
-      <<: *holmes-environment
+      <<: *deepbi-environment
       PYTHONUNBUFFERED: 0
   server_ai_api:
-    <<: *holmes-service
+    <<: *deepbi-service
     command: server_api
     depends_on:
       - server
     ports:
       - "8340:8340"
     environment:
-      <<: *holmes-environment
+      <<: *deepbi-environment
   server_socket:
-    <<: *holmes-service
+    <<: *deepbi-service
     command: server_socket
     depends_on:
       - server
     ports:
       - "8339:8339"
     environment:
-      <<: *holmes-environment
+      <<: *deepbi-environment
   scheduler:
-    <<: *holmes-service
+    <<: *deepbi-service
     command: scheduler
     depends_on:
       - server
     environment:
-      <<: *holmes-environment
+      <<: *deepbi-environment
   worker:
-    <<: *holmes-service
+    <<: *deepbi-service
     command: worker
     depends_on:
       - server
     environment:
-      <<: *holmes-environment
+      <<: *deepbi-environment
       PYTHONUNBUFFERED: 0
   redis:
     image: redis:3-alpine

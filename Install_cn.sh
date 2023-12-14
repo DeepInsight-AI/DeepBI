@@ -100,7 +100,7 @@ echo "镜像拉取创建完毕，开始初始化镜像中数据库"
 docker-compose run --rm server create_db
 echo "数据库初始化完毕"
 echo "--------------------------------"
-echo "下面开始启动Holmes  下面是一些尝用命令"
+echo "下面开始启动DeepBI  下面是一些尝用命令"
 echo "常用命令: (ubuntu need sudo)"
 echo " docker-compose up  # 创建容器，并启动容器 "
 echo " docker-compose up -d # 创建容器，并在后台运行容器 "

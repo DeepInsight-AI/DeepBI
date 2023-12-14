@@ -8,7 +8,7 @@ ARG skip_dev_deps=yes
 #RUN sed -i 's/deb.debian.org/mirrors.aliyun.com/g' /etc/apt/sources.list
 #RUN echo "deb http://mirrors.aliyun.com/debian/ buster main" > /etc/apt/sources.list
 ## Create user
-RUN useradd --create-home holmes
+RUN useradd --create-home deepai
 ## Ubuntu use aliyun source
 RUN apt-get update
 ## Ubuntu packages

@@ -113,7 +113,34 @@ const SelectSource = forwardRef(({ confirmLoading, Charttable, chat_type, onChan
     setIndeterminate(false);
     setCheckAll(false);
   };
-
+  const getSchemaList =async (val,max=50) => {
+    let num = 0;
+    let isCalled = false;
+    const timer = setInterval(async () => {
+      num++;
+      if(num>max){
+        clearInterval(timer);
+        errorSetting()
+        return
+      }
+      try {
+        const res = await axios.get(`/api/data_sources/${val}/schema`);
+        if (res.schema&& !isCalled) {
+          isCalled = true;
+          clearInterval(timer);
+          return res.schema;
+        } else {
+          if(res.job.error){
+            clearInterval(timer);
+            return
+          }
+          // console.log(res, 'query_result_id_undefined');
+        }
+      } catch (err) {
+        // console.log(err, 'getquery_result_id_error');
+      }
+    }, 200);
+  };
   const schemaList = async (val, type) => {
     try {
       let optionsList;
@@ -127,17 +154,12 @@ const SelectSource = forwardRef(({ confirmLoading, Charttable, chat_type, onChan
         }));
       };
 
-      if (type === "csv") {
+      if (type === "csv") { 
         const { data } = await axios.get(`api/upload`);
         optionsList = getOptionsList(data, type);
       } else {
-        const res = await axios.get(`/api/data_sources/${val}/schema`);
-        if(res.schema){
-          optionsList = getOptionsList(res.schema, type);
-        }else{
-          const res = await axios.get(`/api/data_sources/${val}/schema`);
-          optionsList = getOptionsList(res.schema, type);
-        }
+        const schemaList = await getSchemaList(val);
+        optionsList = getOptionsList(schemaList, type);
       }
 
       setSchemaList(optionsList);

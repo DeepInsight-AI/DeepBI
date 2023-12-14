@@ -1,7 +1,7 @@
 import { useState, useCallback,useEffect,useRef } from 'react';
 import { axios } from "@/services/axios";
 
-export const useChartCode = (sendSocketMessage,saveDashboardId, props, successSetting,HolmestableDate,new_sql,DashboardId,sendDashId) => {
+export const useChartCode = (sendSocketMessage,saveDashboardId, props, successSetting,CharttableDate,new_sql,DashboardId,sendDashId) => {
   const [state, setState] = useState({ dashboard_id: null });
   const DashId = useRef(null);
   useEffect(() => {
@@ -87,7 +87,7 @@ export const useChartCode = (sendSocketMessage,saveDashboardId, props, successSe
 const publishQuery = useCallback(async (type = null,task_id) => {
   // console.log(task_id,"publishQuery")
   const sqlId = new_sql.current;
-    const HolmestableDate = HolmestableDate;
+    const CharttableDate = CharttableDate;
     const data = {
       id: sqlId,
       is_draft: true,
@@ -96,7 +96,7 @@ const publishQuery = useCallback(async (type = null,task_id) => {
     try {
       const res = await axios.post(`/api/queries/${sqlId}`, data);
       // console.log(res, 'publishQuery_success');
-      if (HolmestableDate && HolmestableDate.dashboard_id) {
+      if (CharttableDate && CharttableDate.dashboard_id) {
         await dashboardsId(res,type,task_id);
       } else {
         await newReport(type,task_id);
@@ -105,7 +105,7 @@ const publishQuery = useCallback(async (type = null,task_id) => {
       // console.log(err, 'publishQuery_error');
       sendSocketMessage(500, 'bi', 'chart_code', err,task_id)
     }
-}, [state, HolmestableDate, dashboardsId, newReport, sendSocketMessage]);
+}, [state, CharttableDate, dashboardsId, newReport, sendSocketMessage]);
 // deleteReports
 const deleteReports = (async (report_name) => {
   const res = await axios.get(`/api/dashboards?order&page=1&page_size=20&q=${report_name}`);
@@ -144,7 +144,7 @@ const dashboardsId = useCallback(async (response, type = null,task_id) => {
     }else{
       dashboard_id = response.id;
     }
-    // if (!HolmestableDate.publicUrl && type === "ask_data") {
+    // if (!CharttableDate.publicUrl && type === "ask_data") {
     //   sendSocketMessage(500, 'bi', 'ask_data', [],task_id)
     //   return
     // }

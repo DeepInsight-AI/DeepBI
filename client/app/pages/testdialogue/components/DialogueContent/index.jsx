@@ -8,7 +8,7 @@ import SendOutlinedIcon from "@ant-design/icons/SendOutlined";
 import PauseCircleOutlinedIcon from "@ant-design/icons/PauseCircleOutlined";
 const { TextArea } = Input;
 const DialogueContent = forwardRef(({
-  Holmestable,
+  Charttable,
   confirmLoading,
   onChange,
   sendTableDate,
@@ -40,10 +40,10 @@ const DialogueContent = forwardRef(({
     <div className="dialogue-content-all">
       <div className="dialogue-content-message">
         <div className="dialogue-content-message-auto">
-        <SelectSource ref={selectSourceRef} onSuccess={onSuccess} chat_type={chat_type} Holmestable={Holmestable} confirmLoading={confirmLoading} onChange={onChange} percent={percent}></SelectSource>
+        <SelectSource ref={selectSourceRef} onSuccess={onSuccess} chat_type={chat_type} Charttable={Charttable} confirmLoading={confirmLoading} onChange={onChange} percent={percent}></SelectSource>
             {
-          sendTableDate!==1 && messages.length<=0&&Holmestable?
-          (<Overlay loadingMask={loadingMask} Holmestable={Holmestable} onUse={onUse}></Overlay>)
+          sendTableDate!==1 && messages.length<=0&&Charttable?
+          (<Overlay loadingMask={loadingMask} Charttable={Charttable} onUse={onUse}></Overlay>)
           :
           null
             }

@@ -41,7 +41,7 @@ const baseHref = CONFIG.baseHref || "/";
 const cdn_domain = process.env.CDN_DOMAIN || ""
 
 const staticPath = CONFIG.staticPath || "/static/";
-const htmlTitle = CONFIG.title || "Holmes";
+const htmlTitle = CONFIG.title || "DeepBI";
 
 const basePath = path.join(__dirname, "client");
 const appPath = path.join(__dirname, "client", "app");
@@ -78,7 +78,8 @@ const config = {
   },
   output: {
     path: path.join(basePath, "./dist"),
-    filename: isProduction ? "[name].[chunkhash].js" : "[name].js",
+    // filename: isProduction ? "[name].[chunkhash].js" : "[name].js",
+    filename: "[name].js",
     publicPath: cdn_domain + staticPath
   },
   resolve: {
@@ -90,7 +91,7 @@ const config = {
     }
   },
   plugins: [
-    new WebpackBuildNotifierPlugin({ title: "Holmes" }),
+    new WebpackBuildNotifierPlugin({ title: "DeepBI" }),
     // bundle only default `moment` locale (`en`)
     new webpack.ContextReplacementPlugin(/moment[\/\\]locale$/, /en/),
     new webpack.DefinePlugin({
@@ -117,7 +118,8 @@ const config = {
     }),
     isProduction &&
       new MiniCssExtractPlugin({
-        filename: "[name].[chunkhash].css"
+        // filename: "[name].[chunkhash].css"
+        filename: "[name].css"
       }),
     new ManifestPlugin({
       fileName: "asset-manifest.json",

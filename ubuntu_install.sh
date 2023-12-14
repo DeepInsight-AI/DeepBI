@@ -86,29 +86,30 @@ else
 fi
 echo "start postgresql"
 sudo service postgresql start
-echo "create database holmes"
-if sudo -u postgres psql -lqt | cut -d \| -f 1 | grep -qw holmes; then
-    echo "Database 'holmes' already exists."
+echo "create database deepbi"
+if sudo -u postgres psql -lqt | cut -d \| -f 1 | grep -qw deepbi; then
+    echo "Database 'deepbi' already exists."
 else
-    sudo -u postgres psql -c "CREATE DATABASE holmes;"
-    echo "Database 'holmes' created."
+    sudo -u postgres psql -c "CREATE DATABASE deepbi;"
+    echo "Database 'deepbi' created."
 fi
 # shellcheck disable=SC2006
-if sudo -u postgres psql -tAc "SELECT 1 FROM pg_roles WHERE rolname='holmes'" | grep -q 1; then
-     echo "User 'holmes' created."
+if sudo -u postgres psql -tAc "SELECT 1 FROM pg_roles WHERE rolname='deepbi'" | grep -q 1; then
+     echo "User 'deepbi' created."
 else
-     sudo su postgres -c "`printf 'psql -c "create user holmes password %s;"' "'holmes_8338'"`"
+     sudo su postgres -c "`printf 'psql -c "create user deepbi password %s;"' "'deepbi_8338'"`"
 fi
 echo "change database owner"
-sudo -u postgres psql -c "ALTER DATABASE holmes OWNER TO holmes;"
+sudo -u postgres psql -c "ALTER DATABASE deepbi OWNER TO deepbi;"
 echo "Setting user and database can connect"
-sudo sh -c "sed -i '/^#\s*TYPE/ahost holmes holmes 127.0.0.1/32  md5' /etc/postgresql/16/main/pg_hba.conf && service postgresql restart "
+sudo sh -c "sed -i '/^#\s*TYPE/ahost deepbi deepbi 127.0.0.1/32  md5' /etc/postgresql/16/main/pg_hba.conf && service postgresql restart "
 
 line
 echo "install sys extends"
 # shellcheck disable=SC1004
 sudo dpkg --remove-architecture i386
-sudo apt-get update &&  apt-get install -y python3-pip \
+sudo apt-get update
+sudo apt-get install -y python3-pip \
     libaio1 libaio-dev alien curl gnupg build-essential pwgen libffi-dev git-core wget \
     libpq-dev g++ unixodbc-dev xmlsec1 libssl-dev default-libmysqlclient-dev freetds-dev \
     libsasl2-dev unzip libsasl2-modules-gssapi-mit
@@ -138,39 +139,6 @@ else
       exit 1
   fi
 fi
-
-line
-echo "check front extends"
-line
-if command -v node &>/dev/null; then
-    echo "node is ok"
-else
-    sudo apt-get update
-    sudo apt-get -y install nodejs npm
-fi
-line
-
-if command -v n &>/dev/null; then
-    echo "node manager n is ok"
-else
-    sudo npm install n -g
-fi
-echo "node manager n is ok"
-line
-echo "install  node version 14.17"
-sudo n 14.17
-line
-# check node is version 14.17
-while true; do
-    node_version=$(node -v)
-    if [[ "$node_version" == "v14.17"* ]]; then
-      break
-    else
-        echo "node version is not 14.17.*, please select it"
-        sudo n
-    fi
-done
-line
 echo "make .env config file"
 #
 if [ -f .env ]; then
@@ -199,7 +167,7 @@ while true; do
     fi
 done
 # shellcheck disable=SC2162
-read -p "We need server port 8338 8339 ,is that ports not use？(Y/N): " confirm
+read -p "We need server port 8338 8339 8340,is that ports not use？(Y/N): " confirm
 if [[ $confirm == "N" || $confirm == "n" ]]; then
     exit 1
 fi
@@ -209,14 +177,21 @@ web_port=8338
 # get socket port
 # shellcheck disable=SC2162
 socket_port=8339
+
+# ai server port
+# shellcheck disable=SC2162
+ai_web_port=8340
 # get env_template content
 env_content=$(cat .env.template)
 # replace postgresql
 # shellcheck disable=SC2001
-env_content=$(echo "$env_content" | sed "s/# HOLMES_DATABASE_URL=\"postgresql:\/\/user:pwd@ip\/database\"/HOLMES_DATABASE_URL=\"postgresql:\/\/holmes:holmes_8338@127.0.0.1\/holmes\"/g")
+env_content=$(echo "$env_content" | sed "s/# DEEPBI_DATABASE_URL=\"postgresql:\/\/user:pwd@ip\/database\"/DEEPBI_DATABASE_URL=\"postgresql:\/\/deepbi:deepbi_8338@127.0.0.1\/deepbi\"/g")
 # replace redis
 # shellcheck disable=SC2001
-env_content=$(echo "$env_content" | sed "s/# HOLMES_REDIS_URL/HOLMES_REDIS_URL/g")
+env_content=$(echo "$env_content" | sed "s/# DEEPBI_REDIS_URL/DEEPBI_REDIS_URL/g")
+# replace ai port server
+# shellcheck disable=SC2001
+env_content=$(echo "$env_content" | sed "s/AI_WEB_PORT/$ai_web_port/g")
 # replace language
 # shellcheck disable=SC2001
 env_content=$(echo "$env_content" | sed "s/LANGTYPE/EN/g")
@@ -239,23 +214,16 @@ env_content=$(echo "$env_content" | sed "s/SEC_KEY/$sec_key/g")
 echo "$env_content" > .env
 root=$(pwd)
 echo "DATA_SOURCE_FILE_DIR=$root/user_upload_files" >> .env
-
-
-if command -v yarn &>/dev/null; then
-    echo "yarn manager n is ok"
-else
-    sudo npm install yarn -g
-fi
+echo "Rename files "
+rm -rf ./client/dist
+cp -R ./client/dist_source ./client/dist
+echo "Replace ip port"
+sed -i "s|192.168.5.165:8339|$ip:$socket_port|g" ./client/dist/vendors~app.js
+sed -i "s|192.168.5.165:8339|$ip:$socket_port|g" ./client/dist/app.js
 line
-
-sudo yarn config set registry https://registry.npmmirror.com
-sed -i 's#github.com/getredash/sql-formatter.git#gitee.com/apgmer/sql-formatter.git#g'  yarn.lock
-line
-
-echo "begin build web page"
-sudo yarn && yarn build
-line
-
+# copy language
+rm -rf./client/app/Language.CN.js
+cp ./client/app/Language_EN.js ./client/app/Language.CN.js
 source venv/bin/activate
 
 line

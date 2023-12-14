@@ -1,4 +1,4 @@
-<h1 align="center">Holmes User Manual</h1>
+<h1 align="center">DeepBI User Manual</h1>
 
 <div align="center">
 

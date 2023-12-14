@@ -2,7 +2,7 @@ from __future__ import absolute_import
 import itertools
 from funcy import flatten
 from sqlalchemy import union_all
-from bi import redis_connection, rq_redis_connection, __version__, settings, __Holmes_version__
+from bi import redis_connection, rq_redis_connection, __version__, settings, __DeepBI_version__
 from bi.models import db, DataSource, Query, QueryResult, Dashboard, Widget
 from bi.utils import json_loads
 from rq import Queue, Worker
@@ -50,7 +50,7 @@ def get_db_sizes():
 
 
 def get_status():
-    status = {"version": __Holmes_version__, "workers": []}
+    status = {"version": __DeepBI_version__, "workers": []}
     status.update(get_redis_status())
     status.update(get_object_counts())
     status["manager"] = redis_connection.hgetall("bi:status")

@@ -61,14 +61,14 @@ class Mysql(BaseSQLQueryRunner):
         schema = {
             "type": "object",
             "properties": {
-                "host": {"type": "string", "title": "服务器", "default": "127.0.0.1"},
-                "user": {"type": "string", "title": "用户"},
-                "passwd": {"type": "string", "title": "密码"},
-                "db": {"type": "string", "title": "数据库"},
-                "port": {"type": "number", "title": "端口", "default": 3306},
-                "connect_timeout": {"type": "number", "default": 60, "title": "连接超时"},
-                "charset": {"type": "string", "default": "utf8", "title": "字符集"},
-                "use_unicode": {"type": "boolean", "default": True, "title": "使用unicode"},
+                "host": {"type": "string", "title": "服务器 Server IP", "default": "127.0.0.1"},
+                "user": {"type": "string", "title": "用户 Username"},
+                "passwd": {"type": "string", "title": "密码 Password"},
+                "db": {"type": "string", "title": "数据库 Database"},
+                "port": {"type": "number", "title": "端口 Port", "default": 3306},
+                "connect_timeout": {"type": "number", "default": 60, "title": "连接超时 Timeout"},
+                "charset": {"type": "string", "default": "utf8", "title": "字符集 "},
+                "use_unicode": {"type": "boolean", "default": True, "title": "使用 Unicode"},
             },
             "order": ["host", "port", "user", "passwd", "db", "connect_timeout", "charset", "use_unicode"],
             "required": ["db"],
@@ -78,18 +78,18 @@ class Mysql(BaseSQLQueryRunner):
         if show_ssl_settings:
             schema["properties"].update(
                 {
-                    "use_ssl": {"type": "boolean", "title": "使用 SSL"},
+                    "use_ssl": {"type": "boolean", "title": "使用 (Use SSL)"},
                     "ssl_cacert": {
                         "type": "string",
-                        "title": "服务器证书文件路径 (SSL)",
+                        "title": "服务器证书文件路径 (SSL server certificate path)",
                     },
                     "ssl_cert": {
                         "type": "string",
-                        "title": "客户端证书文件路径 (SSL)",
+                        "title": "客户端证书文件路径 (SSL client certificate path)",
                     },
                     "ssl_key": {
                         "type": "string",
-                        "title": "私钥文件路径 (SSL)",
+                        "title": "私钥文件路径 (SSL private key file path)",
                     },
                 }
             )

@@ -19,12 +19,12 @@ const Dialogue = (props) => {
   const DialogueContentRef = useRef();
   const new_logData = useRef([]);
   const messagesRef = useRef();
-  const Holmestable_id = useRef(null);
-  const Holmestable_item = useRef({});
+  const Charttable_id = useRef(null);
+  const Charttable_item = useRef({});
   const Dashboard_id = useRef(null);
-  const HolmestableD_date = useRef(null);
+  const CharttableD_date = useRef(null);
   const [dashboardId, setDashboardId] = useState(null);
-  const [holmestableDate, setHolmestableDate] = useState(null);
+  const [CharttableDate, setCharttableDate] = useState(null);
   const [LoadingState, setLoadingState] = useState(false);
   const [startUse ,setStartUse] = useState(false);
   const [SendTableDate, setSendTableDate] = useState(0);
@@ -69,8 +69,8 @@ const Dialogue = (props) => {
     selectTableNameRef.current = selectTableName;
   }, [selectTableName]);
   useEffect(() => {
-    HolmestableD_date.current = holmestableDate;
-  }, [holmestableDate]);
+    CharttableD_date.current = CharttableDate;
+  }, [CharttableDate]);
 
 
 const sendSocketMessage = useCallback((state, sender, data_type, content,id=0) => {
@@ -81,7 +81,7 @@ const sendSocketMessage = useCallback((state, sender, data_type, content,id=0) =
       chat_type,
       data: {
         data_type,
-        databases_id:Holmestable_id.current || 0,
+        databases_id:Charttable_id.current || 0,
         language_mode:window.W_L.language_mode,
         content,
       },
@@ -106,10 +106,10 @@ if(chat_type==="chat" ||chat_type==="report" ||chat_type==="autopilot"){
       break;
   }
   if (res&&res.length>0) {
-    setHolmestableDate(res[0].table_name);
-    saveDashboardId("", res[0].Holmestable_id);
+    setCharttableDate(res[0].table_name);
+    saveDashboardId("", res[0].Charttable_id);
     sourceTypeRef.current = res[0].type;
-    Holmestable_item.current = {
+    Charttable_item.current = {
       label: res[0].label,
       id: res[0].id,
       type: res[0].type,
@@ -140,7 +140,7 @@ if(chat_type==="chat" ||chat_type==="report" ||chat_type==="autopilot"){
     if(chat_type==="report"){
       sendUrl("");
     }
-    setHolmestableDate(null);
+    setCharttableDate(null);
     saveDashboardId(null, null);
     setState(prevState => ({
       ...prevState,
@@ -149,15 +149,15 @@ if(chat_type==="chat" ||chat_type==="report" ||chat_type==="autopilot"){
     setLoadingMask(false);
     setSendTableDate(0);
     setStartUse(false);
-    Holmestable_item.current = {};
+    Charttable_item.current = {};
   }
 }else if(chat_type==="viewConversation"){
     const res = getAllStorage();
     if (res&&res.length>0 && uuid) {
       const currentList = res.filter(item=>item.uuid===uuid);
-      setHolmestableDate(currentList[0].table_name);
-      saveDashboardId("", currentList[0].Holmestable_id);
-      Holmestable_item.current = {
+      setCharttableDate(currentList[0].table_name);
+      saveDashboardId("", currentList[0].Charttable_id);
+      Charttable_item.current = {
         label: currentList[0].label,
         id: currentList[0].id,
         type: currentList[0].type,
@@ -177,15 +177,15 @@ if(chat_type==="chat" ||chat_type==="report" ||chat_type==="autopilot"){
 // setStorage
 const setDialogueDashboardStorage = () => {
   let existingDialogueStorage =[]
-  let HoImes_Dashboard ={
+  let Chart_Dashboard ={
     table_name:selectTableNameRef.current,
-    Holmestable_id:Holmestable_id.current,
-    ...Holmestable_item.current,
+    Charttable_id:Charttable_id.current,
+    ...Charttable_item.current,
   }
-  HoImes_Dashboard.title=window.W_L.new_dialogue + String(getAllStorage().length + 1);
-  HoImes_Dashboard.uuid= Date.now();
-  HoImes_Dashboard.messages=[];
-  existingDialogueStorage.push(HoImes_Dashboard)
+  Chart_Dashboard.title=window.W_L.new_dialogue + String(getAllStorage().length + 1);
+  Chart_Dashboard.uuid= Date.now();
+  Chart_Dashboard.messages=[];
+  existingDialogueStorage.push(Chart_Dashboard)
   if(chat_type==="report"){
   addDashboard(existingDialogueStorage);
   }else if(chat_type==="chat"){
@@ -207,8 +207,8 @@ const closeDialogue = () => {
   DialogueContentRef.current.sourceEdit([]);
   getDialogueDashboardStorage("report")
 };
-const updateHolmestableDate = () => {
-  setHolmestableDate(selectTableNameRef.current);
+const updateCharttableDate = () => {
+  setCharttableDate(selectTableNameRef.current);
 
   // test
   setDialogueDashboardStorage()
@@ -221,8 +221,8 @@ const onSuccess = useCallback((code, value,source_item,result,firstTableData) =>
     openSocket();
     return
   }
-  Holmestable_id.current = source_item.id;
-  Holmestable_item.current = {
+  Charttable_id.current = source_item.id;
+  Charttable_item.current = {
     label: source_item.label,
     id: source_item.id,
     type: source_item.type,
@@ -396,16 +396,16 @@ const handleSocketMessage = useCallback(() => {
               notification.info(window.W_L.please_fill_in_the_description);
               setConfirmLoading(false);
               DialogueContentRef.current.sourceEdit(table_desc);
-              handleSuccess(Holmestable_id.current,data.data.content);
+              handleSuccess(Charttable_id.current,data.data.content);
             } else {
-              updateHolmestableDate();
+              updateCharttableDate();
 
               // notification.success(window.W_L.connection_success);
               setConfirmLoading(false);
               if(chat_type==="report"){
                 sendUrl("new_report");
               }
-              handleSuccess(Holmestable_id.current,data.data.content,"success");
+              handleSuccess(Charttable_id.current,data.data.content,"success");
             }
             setPercent(0)
           } catch (error) {
@@ -533,8 +533,8 @@ const openSocket = useCallback(() => {
    
     // console.log(`selected ${value}`);
     // console.log(`selectedtype ${type}`);
-    // Holmestable_id.current = value;
-    // Holmestable_item.current = {
+    // Charttable_id.current = value;
+    // Charttable_item.current = {
     //   label: item.label,
     //   id: item.id,
     //   type: item.type,
@@ -550,7 +550,7 @@ const openSocket = useCallback(() => {
       setDashboardId(value);
       return
     }
-    Holmestable_id.current = value;
+    Charttable_id.current = value;
   }, []);
 
   const isSendTableDate = useCallback((data_type) => {
@@ -563,14 +563,14 @@ const openSocket = useCallback(() => {
       openSocket();
       return;
     }
-    if (HolmestableD_date.current && HolmestableD_date.current.tableName.length > 0) {
+    if (CharttableD_date.current && CharttableD_date.current.tableName.length > 0) {
       if (SendTableDate === 0) {
         setState(prevState => ({ ...prevState,data_type }));
         setLoadingMask(true);
         setLoadingState(true);
         let promisesList = [];
-        const promises = HolmestableD_date.current.tableName.map(async (item) => {
-          const res = await axios.get(`/api/data_table/columns/${Holmestable_id.current}/${item.name}`);
+        const promises = CharttableD_date.current.tableName.map(async (item) => {
+          const res = await axios.get(`/api/data_table/columns/${Charttable_id.current}/${item.name}`);
           promisesList.push({
             table_name: res.table_name,
             table_comment: res.table_desc,
@@ -636,7 +636,7 @@ const openSocket = useCallback(() => {
     if(!startUse){
       return
     }
-    if (HolmestableD_date.current && HolmestableD_date.current.tableName.length > 0) {
+    if (CharttableD_date.current && CharttableD_date.current.tableName.length > 0) {
       handleSendMessage1();
     }
   }, [state, setState, openSocket, handleSendMessage1]);
@@ -720,20 +720,20 @@ const openSocket = useCallback(() => {
   const onOpenKeyClick = useCallback(() => {
     // OpenKeyRef.current.showModal();
   }, [setState, OpenKeyRef]);
-  const { new_sql,testAndVerifySql } = useSql(Holmestable_id.current,sendSocketMessage,errorSetting);
-  const { saveChart,dashboardsId,publishQuery }=useChartCode(sendSocketMessage,saveDashboardId, props, successSetting,HolmestableD_date.current,new_sql,dashboardId,sendDashId);
+  const { new_sql,testAndVerifySql } = useSql(Charttable_id.current,sendSocketMessage,errorSetting);
+  const { saveChart,dashboardsId,publishQuery }=useChartCode(sendSocketMessage,saveDashboardId, props, successSetting,CharttableD_date.current,new_sql,dashboardId,sendDashId);
   const { setDialogueStorageDashboardId, addDashboard, getDashboard,addDialogueStorage,getDialogueStorage,addChatList,getAllStorage,addAutopilotStorage}=dialogueStorage();
 //   const Dialogue = () => {
     const { messages, inputMessage, newInputMessage } = state;
 
     return (
       <div className="dialogue-content">
-        <DialogueTop loadingMask={LoadingMask} Holmestable={holmestableDate} HolmestableItem={Holmestable_item.current} closeDialogue={closeDialogue} chat_type={chat_type}></DialogueTop>
+        <DialogueTop loadingMask={LoadingMask} Charttable={CharttableDate} CharttableItem={Charttable_item.current} closeDialogue={closeDialogue} chat_type={chat_type}></DialogueTop>
         {/* <OpenKey ref={OpenKeyRef}></OpenKey> */}
        {LoadingState&& <MenuMask/>}
         <DialogueContent
         ref={DialogueContentRef}
-        Holmestable={holmestableDate}
+        Charttable={CharttableDate}
         onUse={onUse}
         sendTableDate={SendTableDate}
         onChange={onChange}

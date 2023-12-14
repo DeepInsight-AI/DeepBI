@@ -41,7 +41,7 @@ while true; do
     fi
 done
 # shellcheck disable=SC2162
-read -p "我们会使用服务端口 8338 8339 ,确保它们没有使用？(Y/N): " confirm
+read -p "我们会使用服务端口 8338 8339 8340,确保它们没有使用？(Y/N): " confirm
 if [[ $confirm == "N" || $confirm == "n" ]]; then
     exit 1
 fi
@@ -52,6 +52,20 @@ web_port=8338
 # shellcheck disable=SC2162
 socket_port=8339
 ai_web_port=8340
+
+# replace front file ip
+echo "Rename files "
+rm -rf ./client/dist
+cp -R ./client/dist_source ./client/dist
+echo "Replace ip port"
+os_name=$(uname)
+if [[ "$os_name" == "Darwin" ]]; then
+    sed -i '' "s|192.168.5.165:8339|$ip:$socket_port|g" ./client/dist/vendors~app.js
+    sed -i '' "s|192.168.5.165:8339|$ip:$socket_port|g" ./client/dist/app.js
+else
+    sed -i "s|192.168.5.165:8339|$ip:$socket_port|g" ./client/dist/vendors~app.js
+    sed -i "s|192.168.5.165:8339|$ip:$socket_port|g" ./client/dist/app.js
+fi
 # 复制 .env file基础内容
 env_content=$(cat .env.template)
 # replace language
@@ -86,7 +100,7 @@ echo "镜像拉取创建完毕，开始初始化镜像中数据库"
 docker-compose run --rm server create_db
 echo "数据库初始化完毕"
 echo "--------------------------------"
-echo "下面开始启动Holmes  下面是一些尝用命令"
+echo "下面开始启动DeepBI  下面是一些尝用命令"
 echo "常用命令: (ubuntu need sudo)"
 echo " docker-compose up  # 创建容器，并启动容器 "
 echo " docker-compose up -d # 创建容器，并在后台运行容器 "

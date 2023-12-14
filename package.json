@@ -4,7 +4,7 @@
   "description": "The frontend part.",
   "main": "index.js",
   "scripts": {
-    "clean": "rm -rf ./client/dist/",
+    "clean": "rm -rf client/dist/",
     "build": "yarn clean && NODE_ENV=production webpack",
     "build:old-node-version": "yarn clean && NODE_ENV=production node --max-old-space-size=4096 node_modules/.bin/webpack",
     "watch:app": "webpack --watch --progress --colors -d",

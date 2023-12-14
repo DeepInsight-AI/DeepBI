@@ -1,4 +1,4 @@
-<h1 align="center">Holmes 使用说明</h1>
+<h1 align="center">DeepBI 使用说明</h1>
 
 <div align="center">
 

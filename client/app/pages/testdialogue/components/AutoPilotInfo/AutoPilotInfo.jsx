@@ -42,13 +42,13 @@ const CreateAutoPilot = () => {
     if (!report_name || !report_desc) {
         return;
     }
-    const HoImes_Dialogue = getAutopilotStorage();
-    if(HoImes_Dialogue && HoImes_Dialogue.length>0){
-        if (HoImes_Dialogue[0].table_name &&HoImes_Dialogue[0].table_name.tableName && HoImes_Dialogue[0].table_name.tableName.length > 0) {
+    const Chart_Dialogue = getAutopilotStorage();
+    if(Chart_Dialogue && Chart_Dialogue.length>0){
+        if (Chart_Dialogue[0].table_name &&Chart_Dialogue[0].table_name.tableName && Chart_Dialogue[0].table_name.tableName.length > 0) {
             setBtn_disabled(true);
               let promisesList = [];
-              const promises = HoImes_Dialogue[0].table_name.tableName.map(async (item) => {
-                const res = await axios.get(`/api/data_table/columns/${HoImes_Dialogue[0].Holmestable_id}/${item.name}`);
+              const promises = Chart_Dialogue[0].table_name.tableName.map(async (item) => {
+                const res = await axios.get(`/api/data_table/columns/${Chart_Dialogue[0].Charttable_id}/${item.name}`);
                 promisesList.push({
                   table_name: res.table_name,
                   table_comment: res.table_desc,
@@ -58,7 +58,7 @@ const CreateAutoPilot = () => {
 
               
               Promise.all(promises).then(() => {
-                autoPilot(HoImes_Dialogue[0].Holmestable_id,{
+                autoPilot(Chart_Dialogue[0].Charttable_id,{
                     databases_desc: "",
                     table_desc: promisesList
                   });

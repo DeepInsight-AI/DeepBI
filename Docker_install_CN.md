@@ -55,38 +55,38 @@ sudo ln -s /usr/bin/docker-compose /usr/local/bin/docker-compose
 ```
 11. 安装网络管理 命令: ```sudo apt install net-tools```
 12. 上面安装完毕docker ,以后就不用再次安装
-## 配置Holmes
+## 配置DeepBi
 13. 运行命令 ```service docker status``` 确认docker是在运行 "active (running)" <br>
 14. 获取本机内网IP地址,记录下来，一般是192.168.1.xxx,稍后可以用在安装路径下 如下图:<br>
 ![ip.png](user_manual/cn/img/ip.png)
 
-15.然后，安装Holmes有两种方式，任选其一 如下
+15.然后，安装DeepBi有两种方式，任选其一 如下
 
 - （1）直接下载压做包 (推荐)
 - 在WSL命令行中运行命令 : ```pwd``` 你会看到你目前的文件夹地址 比如 ```/mnt/c/Windows/system32```
-- 点击”<a href="https://github.com/DeepThought-AI/Holmes" target='_blank'>链接</a>“通过网页下载我们的代码 如下图
+- 点击”<a href="https://github.com/DeepThought-AI/DeepBi" target='_blank'>链接</a>“通过网页下载我们的代码 如下图
 - ![download.png](user_manual/cn/img/download.png)
-- 解压后的文件夹 "Holmes" 移动到  C:/Windows/system32 (也就是上面看到的文件夹地址,c表示C盘)
-- 回到WSL命令行，运行命令```cd Holmes ```进入项目文件夹
+- 解压后的文件夹 "DeepBi" 移动到  C:/Windows/system32 (也就是上面看到的文件夹地址,c表示C盘)
+- 回到WSL命令行，运行命令```cd DeepBi ```进入项目文件夹
 - 修改权限 ```sudo chmod +x ./Install.sh```
 - 运行命令```sudo ./Install_cn.sh ``` 开始安装，安装结束后会有一个网址提示，直接浏览器访问即可
 
 - （2）通过命令下载代码 (需要本地github公钥)
-- 下载我们的代码，```git clone git@github.com:DeepThought-AI/Holmes.git```
+- 下载我们的代码，```git clone git@github.com:DeepThought-AI/DeepBi.git```
 - 出现 ```Are you sure you want to continue connecting (yes/no/[fingerprint])? ```
 - 输入 ```yes```  回车
-- 进入项目文件夹 ```cd Holmes ```
+- 进入项目文件夹 ```cd DeepBi ```
 - 修改权限 ```sudo chmod +x ./Install.sh```
 - 运行命令```sudo ./Install_cn.sh ``` 开始安装<br>
 16. 安装结束后会有一个网址提示，直接浏览器访问即可<br>
-（注意*关闭命令符窗口将无法访问属于Holmes网址
-   再次使用Holmes，打开“命令提示符”窗口“以管理员身份运行”
+（注意*关闭命令符窗口将无法访问属于DeepBi网址
+   再次使用DeepBi，打开“命令提示符”窗口“以管理员身份运行”
   ```
    1.运行“wsl”命令
-   2.运行“cd Holmes”命令
+   2.运行“cd DeepBi”命令
    3.运行“sudo docker-compose start”命令
   ```
-   就可以去浏览器中打开自己Holmes网址了【网址都是http://‘本机内网IP地址’:8338】
+   就可以去浏览器中打开自己DeepBi网址了【网址都是http://‘本机内网IP地址’:8338】
 
 
 # Ubuntu
@@ -108,14 +108,14 @@ systemctl start docker
 sud apt-get -y install apt-transport-https ca-certificates curl software-properties-common
 sudo systemctl enable docker
 ```
-## 配置Holmes
+## 配置DeepBi
 3. 开始下载我们的代码文件
 ```
-git clone git@github.com:DeepThought-AI/Holmes.git
+git clone git@github.com:DeepThought-AI/DeepBi.git
 ```
-4. 解压后重命名为 "Holmes" 然后进入目录
+4. 解压后重命名为 "DeepBi" 然后进入目录
 ```
- cd Holmes && sudo chmod+x./Install.sh
+ cd DeepBi && sudo chmod+x./Install.sh
  . Install_cn.sh
 ```
 5. 注意上面运行的是 . Install_cn.sh
@@ -146,9 +146,9 @@ git clone git@github.com:DeepThought-AI/Holmes.git
 - 运行命令：```brew services start docker```
 - 检查命令：```brew services list |grep docker```
 
-## 配置Holmes
-- 下载代码```git clone git@github.com:DeepThought-AI/Holmes.git```
-- 运行命令到对应文件夹 ```cd Holmes ```
+## 配置DeepBi
+- 下载代码```git clone git@github.com:DeepThought-AI/DeepBi.git```
+- 运行命令到对应文件夹 ```cd DeepBi ```
 - 修改权限 ```sudo chmod+x ./Install.sh```
 - 运行命令```sudo ./Install_cn.sh ``` 开始安装，安装结束后会有一个网址提示，直接浏览器访问即可
 

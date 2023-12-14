@@ -97,7 +97,7 @@ export default function DesktopNavbar() {
       <NavbarSection className="desktop-navbar-logo">
         <div role="menuitem">
           <Link href="./">
-            <img src={logoUrl} alt="Holmes" />
+            <img src={logoUrl} alt="DeepBI" />
           </Link>
         </div>
       </NavbarSection>

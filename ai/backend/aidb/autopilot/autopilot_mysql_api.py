@@ -196,7 +196,7 @@ class AutopilotMysql(Autopilot):
         try:
             # report_html_code['report_name'] = '电商销售报告'
             report_html_code['report_name'] = q_name
-            report_html_code['report_author'] = 'Holmes'
+            report_html_code['report_author'] = 'DeepBI'
 
             report_html_code['report_question'] = []
             report_html_code['report_thought'] = []

@@ -9,7 +9,7 @@ export function PreviewCard({ imageUrl, roundedImage, title, body, children, cla
   return (
     <div {...props} className={className + " w-100 d-flex align-items-center"}>
       <img
-        src={process.env.CDN_DOMAIN +"/"+ imageUrl}
+        src={process.env.CDN_DOMAIN + imageUrl}
         data-pr={process.env.CDN_DOMAIN}
         width="32"
         data={imageUrl}

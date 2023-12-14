@@ -2,14 +2,14 @@ import os
 import psycopg2
 
 # 创建数据库连接引擎，URL 形式
-HOLMES_DATABASE_URL = os.environ.get("HOLMES_DATABASE_URL", "postgresql://postgres@postgres/postgres")
-print('HOLMES_DATABASE_URL : ', HOLMES_DATABASE_URL)
+DEEPBI_DATABASE_URL = os.environ.get("DEEPBI_DATABASE_URL", "postgresql://postgres@postgres/postgres")
+print('DEEPBI_DATABASE_URL : ', DEEPBI_DATABASE_URL)
 
 
 class PsgReport:
     def connect(self):
         try:
-            conn = psycopg2.connect(HOLMES_DATABASE_URL)
+            conn = psycopg2.connect(DEEPBI_DATABASE_URL)
             print("Connected to PostgreSQL database!")
             return conn
         except (Exception, psycopg2.Error) as error:
@@ -68,7 +68,7 @@ class PsgReport:
 
 # 示例用法
 if __name__ == "__main__":
-    HOLMES_DATABASE_URL = "postgresql://redash:aaa123456@192.168.5.165/redash"
+    DEEPBI_DATABASE_URL = "postgresql://redash:aaa123456@192.168.5.165/redash"
     psg = PsgReport()
     data = (0, 37)
     re = psg.update_data(data)

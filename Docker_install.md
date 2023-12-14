@@ -44,8 +44,8 @@ sudo ln -s /usr/bin/docker-compose /usr/local/bin/docker-compose
 - Start the docker command ```sudo service docker start```
 - Check the docker running status command``` service docker status``` It should be "active (running)"
 - Install network management commands```sudo apt install net-tools```
-- Download the Holmes code by the command : ```git clone git@github.com:DeepThought-AI/Holmes.git```
-- Run the command ```cd Holmes```  to the corresponding folder and run install file ```sudo ./install.sh```
+- Download the DeepBi code by the command : ```git clone git@github.com:DeepThought-AI/DeepBi.git```
+- Run the command ```cd DeepBi```  to the corresponding folder and run install file ```sudo ./install.sh```
 
 ## Ubuntu
 - Run the command as follows:

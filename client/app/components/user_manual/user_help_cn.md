@@ -1,4 +1,4 @@
-# Holmes 使用说明
+# DeepBI 使用说明
 
 
 ## 1，配置 API KEY

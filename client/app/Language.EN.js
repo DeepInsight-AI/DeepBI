@@ -599,7 +599,7 @@ window.W_L = {
   'AutoPilot_start':'Please choose your data source & table to start AutoPilot, or',
   'sheet_description':'Please fill in the data sheet description',
   'field_description':'Please fill in the data sheet field description',
-  'source_tooltip':'Select your data source and complete the corresponding table and field descriptions, Holmes enables you to translate human Languageuage into Xusable actions and helps you complete real-world tasks, such as those related to your data.',
+  'source_tooltip':'Select your data source and complete the corresponding table and field descriptions, DeepBI enables you to translate human Languageuage into Xusable actions and helps you complete real-world tasks, such as those related to your data.',
   'source_first_tooltip':'Please complete the form and field comments so that the Agent can better help you complete the task.',
   'source_second_tooltip':'The above comments did not pass the large model detection, please modify and submit again.',
 
@@ -810,4 +810,5 @@ window.W_L = {
   "region": "Region",
   "column": "Column",
   "option": "Option",
+  'click_here_to_get_apikey':'Click here to get API key',
 }

@@ -18,7 +18,7 @@
     max-width: 260px;
     min-width: 220px;
     box-shadow: 2px 0 5px rgba(0,0,0,.25);
-    z-index: 9;
+    z-index: 10;
     background:#fff;
 }
 .dia-top{

@@ -82,7 +82,7 @@ useEffect(() => {
     return (
       <div className="dia-top">
         {!ReSize&&<img src={icon_small} alt="" />}
-        <span>Holmes</span>
+        <span>DeepBI</span>
       </div>
     )
   }

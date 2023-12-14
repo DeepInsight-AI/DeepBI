@@ -167,7 +167,7 @@ while true; do
     fi
 done
 # shellcheck disable=SC2162
-read -p "We need server port 8338 8339 ,is that ports not use？(Y/N): " confirm
+read -p "We need server port 8338 8339 8340,is that ports not use？(Y/N): " confirm
 if [[ $confirm == "N" || $confirm == "n" ]]; then
     exit 1
 fi
@@ -177,6 +177,10 @@ web_port=8338
 # get socket port
 # shellcheck disable=SC2162
 socket_port=8339
+
+# ai server port
+# shellcheck disable=SC2162
+ai_web_port=8340
 # get env_template content
 env_content=$(cat .env.template)
 # replace postgresql
@@ -185,6 +189,9 @@ env_content=$(echo "$env_content" | sed "s/# DEEPBI_DATABASE_URL=\"postgresql:\/
 # replace redis
 # shellcheck disable=SC2001
 env_content=$(echo "$env_content" | sed "s/# DEEPBI_REDIS_URL/DEEPBI_REDIS_URL/g")
+# replace ai port server
+# shellcheck disable=SC2001
+env_content=$(echo "$env_content" | sed "s/AI_WEB_PORT/$ai_web_port/g")
 # replace language
 # shellcheck disable=SC2001
 env_content=$(echo "$env_content" | sed "s/LANGTYPE/EN/g")

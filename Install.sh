@@ -42,7 +42,7 @@ while true; do
     fi
 done
 # shellcheck disable=SC2162
-read -p "We need server port 8338 8339 ,is that ports not use？(Y/N): " confirm
+read -p "We need server port 8338 8339 8340,is that ports not use？(Y/N): " confirm
 if [[ $confirm == "N" || $confirm == "n" ]]; then
     exit 1
 fi

@@ -1,4 +1,4 @@
-<h1 align="center">DeepBi</h1>
+<h1 align="center">DeepBI</h1>
 
 <div align="center">
 

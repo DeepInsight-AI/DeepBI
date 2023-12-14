@@ -120,8 +120,7 @@ const SelectSource = forwardRef(({ confirmLoading, Charttable, chat_type, onChan
       num++;
       if(num>max){
         clearInterval(timer);
-        errorSetting()
-        return
+        return []
       }
       try {
         const res = await axios.get(`/api/data_sources/${val}/schema`);

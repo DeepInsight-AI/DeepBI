@@ -211,8 +211,8 @@ echo "Rename files "
 rm -rf ./client/dist
 cp -R ./client/dist_source ./client/dist
 echo "Replace ip port"
-sed -i "s|192.168.5.165:8339|$ip:$socket_port|g" ./client/dist/vendors~app.444824b5848130ebfd0c.js
-sed -i "s|192.168.5.165:8339|$ip:$socket_port|g" ./client/dist/app.1cc9a8f83919bcbf32d5.js
+sed -i "s|192.168.5.165:8339|$ip:$socket_port|g" ./client/dist/vendors~app.cbcd037aa89230e022c8.js
+sed -i "s|192.168.5.165:8339|$ip:$socket_port|g" ./client/dist/app.3598c94c9eb6f2d9857b.js
 line
 # copy language
 rm -rf./client/app/Language.CN.js

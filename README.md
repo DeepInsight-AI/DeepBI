@@ -90,7 +90,8 @@ Install directly on the ubuntu system, you need to install redis, postgresql pyt
 ```
 
 ## Contact Us
-![image](https://github.com/DeepInsight-AI/DeepBI/assets/151519374/b0ba1fc3-8c71-4bf7-bd53-ecf17050581a)
+<a><img src="https://github.com/DeepInsight-AI/DeepBI/assets/151519374/b0ba1fc3-8c71-4bf7-bd53-ecf17050581a" width="40%"/></a>
+
 
 
 ## 📑 Other

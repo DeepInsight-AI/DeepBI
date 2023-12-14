@@ -11,6 +11,7 @@ from ai.agents.code_utils import (
     execute_code,
     extract_code,
     infer_lang,
+    append_report_logger,
 )
 import traceback
 from ai.backend.util.write_log import logger
@@ -63,6 +64,9 @@ class PythonProxyAgent(Agent):
         outgoing: Optional = None,
         incoming: Optional = None,
         db_id: Optional = None,
+        is_log_out: Optional[bool] = True,
+        report_file_name: Optional[str] = None,
+
     ):
         """
         Args:
@@ -141,6 +145,8 @@ class PythonProxyAgent(Agent):
         self.outgoing = outgoing
         self.incoming = incoming
         self.db_id = db_id
+        self.is_log_out = is_log_out
+        self.report_file_name = report_file_name
 
     def register_reply(
         self,
@@ -452,7 +458,9 @@ class PythonProxyAgent(Agent):
         print("\n", "-" * 80, flush=True, sep="")
 
         log_str = log_str + '\n' + "-" * 80
-        await tell_logger(self.websocket, log_str)
+        if self.is_log_out:
+            await tell_logger(self.websocket, log_str)
+            append_report_logger(self.report_file_name, log_str)
 
     async def _process_received_message(self, message, sender, silent):
         message = self._message_to_dict(message)

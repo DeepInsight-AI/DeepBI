@@ -11,7 +11,7 @@ from ai.agents.code_utils import (
     UNKNOWN,
     execute_code,
     extract_code,
-    infer_lang,
+    infer_lang, append_report_logger,
 )
 from ai.agents.code_utils import tell_logger
 
@@ -46,21 +46,22 @@ class ConversableAgent(Agent):
     MAX_CONSECUTIVE_AUTO_REPLY = 100  # maximum number of consecutive auto replies (subject to future change)
 
     def __init__(
-            self,
-            name: str,
-            system_message: Optional[str] = "You are a helpful AI Assistant.",
-            is_termination_msg: Optional[Callable[[Dict], bool]] = None,
-            max_consecutive_auto_reply: Optional[int] = None,
-            human_input_mode: Optional[str] = "TERMINATE",
-            function_map: Optional[Dict[str, Callable]] = None,
-            code_execution_config: Optional[Union[Dict, bool]] = None,
-            llm_config: Optional[Union[Dict, bool]] = None,
-            default_auto_reply: Optional[Union[str, Dict, None]] = "",
-            is_log_out: Optional[bool] = True,
-            websocket: Optional = None,
-            user_name: Optional[str] = "default_user",
-            openai_proxy: Optional[str] = None,
-            use_cache: Optional[bool] = True,
+        self,
+        name: str,
+        system_message: Optional[str] = "You are a helpful AI Assistant.",
+        is_termination_msg: Optional[Callable[[Dict], bool]] = None,
+        max_consecutive_auto_reply: Optional[int] = None,
+        human_input_mode: Optional[str] = "TERMINATE",
+        function_map: Optional[Dict[str, Callable]] = None,
+        code_execution_config: Optional[Union[Dict, bool]] = None,
+        llm_config: Optional[Union[Dict, bool]] = None,
+        default_auto_reply: Optional[Union[str, Dict, None]] = "",
+        is_log_out: Optional[bool] = True,
+        websocket: Optional = None,
+        user_name: Optional[str] = "default_user",
+        openai_proxy: Optional[str] = None,
+        use_cache: Optional[bool] = True,
+        report_file_name: Optional[str] = None,
 
     ):
         """
@@ -141,14 +142,15 @@ class ConversableAgent(Agent):
         self.user_name = user_name
         self.openai_proxy = openai_proxy
         self.use_cache = use_cache
+        self.report_file_name = report_file_name
 
     def register_reply(
-            self,
-            trigger: Union[Type[Agent], str, Agent, Callable[[Agent], bool], List],
-            reply_func: Callable,
-            position: Optional[int] = 0,
-            config: Optional[Any] = None,
-            reset_config: Optional[Callable] = None,
+        self,
+        trigger: Union[Type[Agent], str, Agent, Callable[[Agent], bool], List],
+        reply_func: Callable,
+        position: Optional[int] = 0,
+        config: Optional[Any] = None,
+        reset_config: Optional[Callable] = None,
     ):
         """Register a reply function.
 
@@ -308,11 +310,11 @@ class ConversableAgent(Agent):
         return True
 
     async def send(
-            self,
-            message: Union[Dict, str],
-            recipient: Agent,
-            request_reply: Optional[bool] = None,
-            silent: Optional[bool] = False,
+        self,
+        message: Union[Dict, str],
+        recipient: Agent,
+        request_reply: Optional[bool] = None,
+        silent: Optional[bool] = False,
     ) -> bool:
         """Send a message to another agent.
 
@@ -358,11 +360,11 @@ class ConversableAgent(Agent):
             )
 
     async def a_send(
-            self,
-            message: Union[Dict, str],
-            recipient: Agent,
-            request_reply: Optional[bool] = None,
-            silent: Optional[bool] = False,
+        self,
+        message: Union[Dict, str],
+        recipient: Agent,
+        request_reply: Optional[bool] = None,
+        silent: Optional[bool] = False,
     ) -> bool:
         """(async) Send a message to another agent.
 
@@ -453,6 +455,7 @@ class ConversableAgent(Agent):
         log_str = log_str + '\n' + "-" * 80
         if self.is_log_out:
             await tell_logger(self.websocket, log_str)
+            append_report_logger(self.report_file_name, log_str)
 
     async def _process_received_message(self, message, sender, silent):
         message = self._message_to_dict(message)
@@ -467,11 +470,11 @@ class ConversableAgent(Agent):
             await self._print_received_message(message, sender)
 
     async def receive(
-            self,
-            message: Union[Dict, str],
-            sender: Agent,
-            request_reply: Optional[bool] = None,
-            silent: Optional[bool] = False,
+        self,
+        message: Union[Dict, str],
+        sender: Agent,
+        request_reply: Optional[bool] = None,
+        silent: Optional[bool] = False,
     ):
         """Receive a message from another agent.
 
@@ -506,11 +509,11 @@ class ConversableAgent(Agent):
             await self.send(reply, sender, silent=silent)
 
     async def a_receive(
-            self,
-            message: Union[Dict, str],
-            sender: Agent,
-            request_reply: Optional[bool] = None,
-            silent: Optional[bool] = False,
+        self,
+        message: Union[Dict, str],
+        sender: Agent,
+        request_reply: Optional[bool] = None,
+        silent: Optional[bool] = False,
     ):
         """(async) Receive a message from another agent.
 
@@ -551,11 +554,11 @@ class ConversableAgent(Agent):
             recipient.clear_history(self)
 
     async def initiate_chat(
-            self,
-            recipient: "ConversableAgent",
-            clear_history: Optional[bool] = True,
-            silent: Optional[bool] = False,
-            **context,
+        self,
+        recipient: "ConversableAgent",
+        clear_history: Optional[bool] = True,
+        silent: Optional[bool] = False,
+        **context,
     ):
         """Initiate a chat with the recipient agent.
 
@@ -574,11 +577,11 @@ class ConversableAgent(Agent):
         await self.send(self.generate_init_message(**context), recipient, silent=silent)
 
     async def a_initiate_chat(
-            self,
-            recipient: "ConversableAgent",
-            clear_history: Optional[bool] = True,
-            silent: Optional[bool] = False,
-            **context,
+        self,
+        recipient: "ConversableAgent",
+        clear_history: Optional[bool] = True,
+        silent: Optional[bool] = False,
+        **context,
     ):
         """(async) Initiate a chat with the recipient agent.
 
@@ -634,10 +637,10 @@ class ConversableAgent(Agent):
             self._oai_messages[agent].clear()
 
     async def generate_oai_reply(
-            self,
-            messages: Optional[List[Dict]] = None,
-            sender: Optional[Agent] = None,
-            config: Optional[Any] = None,
+        self,
+        messages: Optional[List[Dict]] = None,
+        sender: Optional[Agent] = None,
+        config: Optional[Any] = None,
     ) -> Tuple[bool, Union[str, Dict, None]]:
         """Generate a reply using autogen.oai.
         """
@@ -692,10 +695,10 @@ class ConversableAgent(Agent):
         return asyncio.run_coroutine_threadsafe(coro, loop)
 
     def generate_code_execution_reply(
-            self,
-            messages: Optional[List[Dict]] = None,
-            sender: Optional[Agent] = None,
-            config: Optional[Any] = None,
+        self,
+        messages: Optional[List[Dict]] = None,
+        sender: Optional[Agent] = None,
+        config: Optional[Any] = None,
     ):
         """Generate a reply using code execution.
         """
@@ -731,10 +734,10 @@ class ConversableAgent(Agent):
         return False, None
 
     async def generate_function_call_reply(
-            self,
-            messages: Optional[List[Dict]] = None,
-            sender: Optional[Agent] = None,
-            config: Optional[Any] = None,
+        self,
+        messages: Optional[List[Dict]] = None,
+        sender: Optional[Agent] = None,
+        config: Optional[Any] = None,
     ):
         """Generate a reply using function call.
         """
@@ -750,13 +753,14 @@ class ConversableAgent(Agent):
         return False, None
 
     def check_termination_and_human_reply(
-            self,
-            messages: Optional[List[Dict]] = None,
-            sender: Optional[Agent] = None,
-            config: Optional[Any] = None,
+        self,
+        messages: Optional[List[Dict]] = None,
+        sender: Optional[Agent] = None,
+        config: Optional[Any] = None,
     ) -> Tuple[bool, Union[str, Dict, None]]:
         """Check if the conversation should be terminated, and if human reply is provided.
         """
+        print('run functon check_termination_and_human_reply ', self.user_name)
         if config is None:
             config = self
         if messages is None:
@@ -822,10 +826,10 @@ class ConversableAgent(Agent):
         return False, None
 
     async def generate_reply(
-            self,
-            messages: Optional[List[Dict]] = None,
-            sender: Optional[Agent] = None,
-            exclude: Optional[List[Callable]] = None,
+        self,
+        messages: Optional[List[Dict]] = None,
+        sender: Optional[Agent] = None,
+        exclude: Optional[List[Callable]] = None,
     ) -> Union[str, Dict, None]:
         """Reply based on the conversation history and the sender.
 
@@ -881,10 +885,10 @@ class ConversableAgent(Agent):
         return self._default_auto_reply
 
     async def a_generate_reply(
-            self,
-            messages: Optional[List[Dict]] = None,
-            sender: Optional[Agent] = None,
-            exclude: Optional[List[Callable]] = None,
+        self,
+        messages: Optional[List[Dict]] = None,
+        sender: Optional[Agent] = None,
+        exclude: Optional[List[Callable]] = None,
     ) -> Union[str, Dict, None]:
         """(async) Reply based on the conversation history and the sender.
 

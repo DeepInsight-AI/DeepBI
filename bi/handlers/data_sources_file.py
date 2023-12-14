@@ -4,14 +4,10 @@ from flask import request
 from flask_restful import abort
 from bi import models
 from bi.handlers.base import BaseResource, json_response
-from bi.permissions import (
-    require_permission,
-)
 from bi import settings
 
 
 class DataSourceFileResource(BaseResource):  # BaseResource
-    @require_permission("list_data_sources")
     def get(self, data_source_file_id=None, is_use=None):
         result = {}
         user_id = self.current_user.id
@@ -33,7 +29,6 @@ class DataSourceFileResource(BaseResource):  # BaseResource
         )
         return json_response({'code': 200, 'data': result})
 
-    @require_permission("list_data_sources")
     def post(self):
         """save csv file"""
         if not settings.DATA_SOURCE_FILE_DIR:
@@ -48,8 +43,8 @@ class DataSourceFileResource(BaseResource):  # BaseResource
             file_ext = os.path.splitext(filename)[1]
             source_name = filename.replace(file_ext, "")
             file_ext = file_ext.lower()
-            if file_ext != '.csv':
-                abort(400, message='Please upload the csv format file')
+            if file_ext != '.csv' and file_ext != '.xls' and file_ext != '.xlsx':
+                abort(400, message='Please upload the csv or excel format file')
             # check have filename
             show_source_name = source_name + file_ext
             try:
@@ -57,14 +52,15 @@ class DataSourceFileResource(BaseResource):  # BaseResource
                 while True:
                     result = models.DataSourceFile.check_have_name(show_source_name, user_id)
                     if result:
-                        show_source_name = source_name + "(" + str(add_file_name)+")" + file_ext
+                        show_source_name = source_name + "(" + str(add_file_name) + ")" + file_ext
                         add_file_name += 1
                     else:
                         break
             except Exception as e:
                 abort(400, message='Upload check file_name error')
 
-            new_filename = str(user_id) + "_" + str(uuid.uuid4()) + '.csv'
+            # new_filename = str(user_id) + "_" + str(uuid.uuid4()) + '.csv'
+            new_filename = str(user_id) + "_" + str(uuid.uuid4()) + file_ext
             file.save(os.path.join(settings.DATA_SOURCE_FILE_DIR, new_filename))
             result = models.DataSourceFile(
                 user_id=user_id,

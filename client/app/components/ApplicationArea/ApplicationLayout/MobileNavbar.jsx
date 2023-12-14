@@ -19,7 +19,7 @@ export default function MobileNavbar({ getPopupContainer }) {
     <div className="mobile-navbar">
       <div className="mobile-navbar-logo">
         <Link href="./">
-          <img src={logoUrl} alt="Holmes" />
+          <img src={logoUrl} alt="DeepBI" />
         </Link>
       </div>
       <div>
@@ -47,6 +47,12 @@ export default function MobileNavbar({ getPopupContainer }) {
               <Menu.Item key="dashboards">
                 <Link href="dashboards">{window.W_L.dashboard}</Link>
               </Menu.Item>
+              <Menu.Item key="autopilot">
+                <Link href="autopilot">{window.W_L.auto_pilot}</Link>
+              </Menu.Item>
+              <Menu.Item key="autopilot_list"> 
+                <Link href="autopilot_list">{window.W_L.history_autopilot}</Link>
+              </Menu.Item> 
               {/* <Menu.Divider /> */}
               {firstSettingsTab && (
                 <Menu.Item key="settings">

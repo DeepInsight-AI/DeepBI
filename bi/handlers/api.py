@@ -97,6 +97,9 @@ from bi.handlers.data_sources_file import (
 from bi.handlers.ai_token_resource import (
     AiTokenResource
 )
+from bi.handlers.data_report_file import (
+    DataReportFileResource,
+)
 
 from bi.handlers.widgets import WidgetListResource, WidgetResource
 from bi.utils import json_dumps
@@ -361,6 +364,17 @@ api.add_org_resource(
     "/api/upload/delete/<int:data_source_file_id>",
     endpoint="upload_file"
 )
+
+
+#  auto_pilot New api
+api.add_org_resource(
+    DataReportFileResource,
+    "/api/auto_pilot",
+    "/api/auto_pilot/<int:data_report_file_id>",
+    "/api/auto_pilot/delete/<int:data_report_file_id>",
+    endpoint="report_file"
+)
+
 
 # define Ai Token op
 api.add_org_resource(

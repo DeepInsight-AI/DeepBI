@@ -79,8 +79,8 @@
   margin-right: 20px;
   border-radius: 50%;
 }
-.chat {
-  cursor: pointer;
+.Chat {
+  cursor: default;
   line-height: 1.5;
   font-size: 15px;
   box-shadow: rgba(0, 0, 0, 0.2) 0px 3px 3px -2px, rgba(0, 0, 0, 0.14) 0px 3px 4px 0px, rgba(0, 0, 0, 0.12) 0px 1px 8px 0px;
@@ -107,9 +107,28 @@
   color: #292a2d;
   width: 100%;
 }
-.h-\[500px\] {
+.autopilot {
+  padding: 0 !important;
+  width: 90%;
+}
+.autopilot .bot {
+  max-width: 100% !important;
+}
+.chat_type .h-500 {
   height: 500px !important;
 }
 .w-full {
   width: 100%!important;
+}
+.h-500 {
+  height: 500px !important;
+}
+.auto-pilot {
+  display: flex;
+  width: 100%;
+}
+.auto-pilot .autopilot-item {
+  max-width: none !important;
+  background: transparent !important;
+  width: 100%;
 }

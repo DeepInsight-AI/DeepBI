@@ -6,7 +6,7 @@ const DialogueLeftList = (props) => {
   const [arr ,setArr] = useState([]);
   const [uuid ,setUuid] = useState("");
 useEffect(()=>{
-    setArr(JSON.parse(localStorage.getItem("HoImes_All")) || [])
+    setArr(JSON.parse(localStorage.getItem("Chart_All")) || [])
 },[])
 const modeSwitch = (item) => () => {
     setUuid(item.uuid)
@@ -16,7 +16,7 @@ const modeSwitch = (item) => () => {
     return (
       <div className="dia-top">
         <img src={icon_small} alt="" />
-        <span>HoImes</span>
+        <span>DeepBI</span>
       </div>
     )
   }
@@ -24,7 +24,7 @@ const modeSwitch = (item) => () => {
     return (
       <div className="dia-content">
       {arr.map((item,index)=>{
-        return <div className="flex-d h-30 dia-info" key={index}>
+        return <div className="flex-d dia-info" key={index}>
         <div className="dia-chats" >
         
              <div className="dia-chat" onClick={modeSwitch(item)}>

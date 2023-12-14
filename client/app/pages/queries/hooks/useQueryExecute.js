@@ -78,7 +78,7 @@ export default function useQueryExecute(query) {
           }
 
           if (executionState.loadedInitialResults) {
-            notifications.showNotification("Holmes", `${query.name} updated.`);
+            notifications.showNotification("DeepBI", `${query.name} updated.`);
           }
 
           setExecutionState({
@@ -94,7 +94,7 @@ export default function useQueryExecute(query) {
       .catch(queryResult => {
         if (queryResultInExecution.current === newQueryResult) {
           if (executionState.loadedInitialResults) {
-            notifications.showNotification("Holmes", `${query.name} failed to run: ${queryResult.getError()}`);
+            notifications.showNotification("DeepBI", `${query.name} failed to run: ${queryResult.getError()}`);
           }
 
           setExecutionState({

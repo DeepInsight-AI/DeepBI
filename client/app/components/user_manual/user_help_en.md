@@ -1,4 +1,4 @@
-# Holmes User Manual
+# DeepBI User Manual
 
 ## 1，Configure API KEY
 

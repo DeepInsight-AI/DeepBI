@@ -61,4 +61,5 @@ supervisor_checks==0.8.1
 werkzeug==0.16.1
 Authlib==0.15.5
 advocate==1.0.0
+openpyxl==3.0.7
 

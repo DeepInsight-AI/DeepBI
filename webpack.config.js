@@ -41,7 +41,7 @@ const baseHref = CONFIG.baseHref || "/";
 const cdn_domain = process.env.CDN_DOMAIN || ""
 
 const staticPath = CONFIG.staticPath || "/static/";
-const htmlTitle = CONFIG.title || "Holmes";
+const htmlTitle = CONFIG.title || "DeepBI";
 
 const basePath = path.join(__dirname, "client");
 const appPath = path.join(__dirname, "client", "app");
@@ -90,7 +90,7 @@ const config = {
     }
   },
   plugins: [
-    new WebpackBuildNotifierPlugin({ title: "Holmes" }),
+    new WebpackBuildNotifierPlugin({ title: "DeepBI" }),
     // bundle only default `moment` locale (`en`)
     new webpack.ContextReplacementPlugin(/moment[\/\\]locale$/, /en/),
     new webpack.DefinePlugin({
@@ -129,6 +129,7 @@ const config = {
       { from: "client/app/unsupportedRedirect.js" },
       { from: `client/app/${web_language_js}` },
       { from: "client/app/cdn.plot.ly_plotly-locale-zh-cn-latest.js" },
+      { from: "client/app/echarts-main.js" },
       { from: "client/app/assets/css/*.css", to: "styles/", flatten: true },
       { from: "client/app/assets/fonts", to: "fonts/" }
     ]),

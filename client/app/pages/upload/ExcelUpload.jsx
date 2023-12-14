@@ -41,10 +41,18 @@ const ExcelUpload = () => {
   };
   const props = {
     name: 'file',
-    accept:".csv",
+    accept:".csv,.xlsx,.xls",
     customRequest: fileUpload,
     onChange(info) {
     },
+    // progress: {
+    //   strokeColor: {
+    //     '0%': '#108ee9',
+    //     '100%': '#87d068',
+    //   },
+    //   strokeWidth: 3,
+    //   format: (percent) => percent && `${parseFloat(percent.toFixed(2))}%`,
+    // },
   };
   
   

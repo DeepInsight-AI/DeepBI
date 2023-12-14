@@ -114,7 +114,9 @@ function QueriesList({ controller }) {
     Component: ExtraActionsComponent,
     selectedItems,
   } = useItemsListExtraActions(controller, listColumns, QueriesListExtraActions);
-
+  console.log(controller,"controller====")
+  console.log(listColumns,"listColumns====")
+  console.log(tableColumns,"tableColumns-----")
   return (
     <div className="page-queries-list">
       <div className="container">

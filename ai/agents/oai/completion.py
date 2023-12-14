@@ -9,6 +9,7 @@ from flaml import tune, BlendSearch
 from flaml.tune.space import is_constant
 from flaml.automl.logger import logger_formatter
 from .openai_utils import get_key
+import requests
 
 try:
     import openai
@@ -23,7 +24,6 @@ try:
     )
     from openai import Completion as openai_Completion
     import diskcache
-
 
     ERROR = None
 except ImportError:
@@ -190,6 +190,7 @@ class Completion(openai_Completion):
         key = get_key(config)
         if use_cache:
             response = cls._cache.get(key, None)
+            print('use_cache_response: ', response)
             if response is not None and (response != -1 or not raise_on_ratelimit_or_timeout):
                 # print("using cached response")
                 cls._book_keeping(config, response)
@@ -206,13 +207,52 @@ class Completion(openai_Completion):
         retry_wait_time = config.pop("retry_wait_time", cls.retry_wait_time)
         while True:
             try:
-                if "request_timeout" in config:
-                    response = openai_completion.create(**config)
+                print('_get_response function +++++++++++++++++++')
+                print("config :", config)
+                print("config.get('api_base')", config.get('api_base'))
+                if config.get('api_base') is not None:
+                    # and str(config['api_base']).__contains__('apiserver.deep-thought.io')\
+
+                    if config.get('functions'):
+                        data = {
+                            "messages": config['messages'],
+                            "functions": config['functions']
+                        }
+                    else:
+                        data = {
+                            "messages": config['messages']
+                        }
+
+                    # set header
+                    headers = {
+                        "token": config['api_key'],
+                        "ai_name": "openai",
+                        "module": config['model']
+                    }
+                    print('request json : ', data)
+
+                    # url = 'http://apiserver.deep-thought.io/proxy'
+                    url = config['api_base']
+                    print('create_url : ', url)
+                    res = requests.post(url, json=data, headers=headers)
+                    print("res :", res)
+                    print('res.text +++++++++ : ', res.text)
+
+                    # check response status_code
+                    if res.status_code != 200:
+                        res.raise_for_status()
+
+                    response = res.json()
                 else:
-                    response = openai_completion.create(request_timeout=request_timeout, **config)
+                    if "request_timeout" in config:
+                        response = openai_completion.create(**config)
+                    else:
+                        response = openai_completion.create(request_timeout=request_timeout, **config)
+                print("response: ", response)
+
             except (
-                    ServiceUnavailableError,
-                    APIConnectionError,
+                ServiceUnavailableError,
+                APIConnectionError,
             ):
                 # transient error
                 logger.info(f"retrying in {retry_wait_time} seconds...", exc_info=1)
@@ -228,11 +268,11 @@ class Completion(openai_Completion):
             except (RateLimitError, Timeout) as err:
                 time_left = max_retry_period - (time.time() - start_time + retry_wait_time)
                 if (
-                        time_left > 0
-                        and isinstance(err, RateLimitError)
-                        or time_left > request_timeout
-                        and isinstance(err, Timeout)
-                        and "request_timeout" not in config
+                    time_left > 0
+                    and isinstance(err, RateLimitError)
+                    or time_left > request_timeout
+                    and isinstance(err, Timeout)
+                    and "request_timeout" not in config
                 ):
                     if isinstance(err, Timeout):
                         request_timeout <<= 1
@@ -439,10 +479,10 @@ class Completion(openai_Completion):
                     result["cost"] = cost
                     return result
                 if (
-                        prune
-                        and target_output_tokens
-                        and avg_n_tokens <= target_output_tokens * (1 - ratio)
-                        and (num_completions < config_n or num_completions == config_n and data_limit == data_length)
+                    prune
+                    and target_output_tokens
+                    and avg_n_tokens <= target_output_tokens * (1 - ratio)
+                    and (num_completions < config_n or num_completions == config_n and data_limit == data_length)
                 ):
                     # update valid n
                     cls._max_valid_n_per_max_tokens[region_key] = valid_n = cls._max_valid_n_per_max_tokens.get(
@@ -480,7 +520,7 @@ class Completion(openai_Completion):
                     cls.avg_input_tokens = np.mean(input_tokens)
                     if prune:
                         target_output_tokens = (
-                                                       inference_budget * 1000 - cls.avg_input_tokens * price_input
+                                                   inference_budget * 1000 - cls.avg_input_tokens * price_input
                                                ) / price_output
                 result["inference_cost"] = (avg_n_tokens * price_output + cls.avg_input_tokens * price_input) / 1000
                 break
@@ -496,17 +536,17 @@ class Completion(openai_Completion):
 
     @classmethod
     def tune(
-            cls,
-            data: List[Dict],
-            metric: str,
-            mode: str,
-            eval_func: Callable,
-            log_file_name: Optional[str] = None,
-            inference_budget: Optional[float] = None,
-            optimization_budget: Optional[float] = None,
-            num_samples: Optional[int] = 1,
-            logging_level: Optional[int] = logging.WARNING,
-            **config,
+        cls,
+        data: List[Dict],
+        metric: str,
+        mode: str,
+        eval_func: Callable,
+        log_file_name: Optional[str] = None,
+        inference_budget: Optional[float] = None,
+        optimization_budget: Optional[float] = None,
+        num_samples: Optional[int] = 1,
+        logging_level: Optional[int] = logging.WARNING,
+        **config,
     ):
         """Tune the parameters for the OpenAI API call.
 
@@ -692,15 +732,15 @@ class Completion(openai_Completion):
 
     @classmethod
     def create(
-            cls,
-            context: Optional[Dict] = None,
-            use_cache: Optional[bool] = True,
-            config_list: Optional[List[Dict]] = None,
-            filter_func: Optional[Callable[[Dict, Dict, Dict], bool]] = None,
-            raise_on_ratelimit_or_timeout: Optional[bool] = True,
-            allow_format_str_template: Optional[bool] = False,
-            openai_proxy: Optional[str] = None,
-            **config,
+        cls,
+        context: Optional[Dict] = None,
+        use_cache: Optional[bool] = True,
+        config_list: Optional[List[Dict]] = None,
+        filter_func: Optional[Callable[[Dict, Dict, Dict], bool]] = None,
+        raise_on_ratelimit_or_timeout: Optional[bool] = True,
+        allow_format_str_template: Optional[bool] = False,
+        openai_proxy: Optional[str] = None,
+        **config,
     ):
         """Make a completion for a given context.
 
@@ -801,6 +841,7 @@ class Completion(openai_Completion):
                         openai_proxy=openai_proxy,
                         **base_config,
                     )
+                    print('response: ', response)
                     if response == -1:
                         return response
                     pass_filter = filter_func is None or filter_func(
@@ -830,10 +871,10 @@ class Completion(openai_Completion):
 
     @classmethod
     def instantiate(
-            cls,
-            template: Union[str, None],
-            context: Optional[Dict] = None,
-            allow_format_str_template: Optional[bool] = False,
+        cls,
+        template: Union[str, None],
+        context: Optional[Dict] = None,
+        allow_format_str_template: Optional[bool] = False,
     ):
         if not context or template is None:
             return template
@@ -881,14 +922,14 @@ class Completion(openai_Completion):
 
     @classmethod
     def test(
-            cls,
-            data,
-            eval_func=None,
-            use_cache=True,
-            agg_method="avg",
-            return_responses_and_per_instance_result=False,
-            logging_level=logging.WARNING,
-            **config,
+        cls,
+        data,
+        eval_func=None,
+        use_cache=True,
+        agg_method="avg",
+        return_responses_and_per_instance_result=False,
+        logging_level=logging.WARNING,
+        **config,
     ):
         """Evaluate the responses created with the config for the OpenAI API call.
 
@@ -1086,8 +1127,8 @@ class Completion(openai_Completion):
 
     @classmethod
     def start_logging(
-            cls, history_dict: Optional[Dict] = None, compact: Optional[bool] = True,
-            reset_counter: Optional[bool] = True
+        cls, history_dict: Optional[Dict] = None, compact: Optional[bool] = True,
+        reset_counter: Optional[bool] = True
     ):
         """Start book keeping.
 

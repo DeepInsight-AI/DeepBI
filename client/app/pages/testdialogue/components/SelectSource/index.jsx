@@ -10,6 +10,7 @@ import Progress from "antd/lib/progress";
 import pg from "@/assets/images/db-logos/pg.png";
 import mysql from "@/assets/images/db-logos/mysql.png";
 import excel from "@/assets/images/db-logos/excel.png";
+import starrocks from "@/assets/images/db-logos/starrocks.png";
 import InboxOutlinedIcon from "@ant-design/icons/InboxOutlined";
 import QuestionCircleOutlinedIcon from "@ant-design/icons/QuestionCircleOutlined";
 import InfoCircleOutlinedIcon from "@ant-design/icons/InfoCircleOutlined";
@@ -17,7 +18,7 @@ import Link from "@/components/Link";
 import Tooltip from "@/components/Tooltip";
 import SecondChoice from "./SecondChoice";
 import './index.less';
-const SelectSource = forwardRef(({ confirmLoading, Holmestable, chat_type, onChange, onSuccess,percent },ref) => {
+const SelectSource = forwardRef(({ confirmLoading, Charttable, chat_type, onChange, onSuccess,percent },ref) => {
   const [options, setOptions] = useState([]);
   const [source_item, setSourceItem] = useState({type:"mysql"});
   const [source_id, setSource_id] = useState();
@@ -112,7 +113,28 @@ const SelectSource = forwardRef(({ confirmLoading, Holmestable, chat_type, onCha
     setIndeterminate(false);
     setCheckAll(false);
   };
-
+  const getSchemaList = (val, max = 50) => {
+    return new Promise((resolve, reject) => {
+      let num = 0;
+      const timer = setInterval(async () => {
+        num++;
+        if (num > max) {
+          clearInterval(timer);
+          reject([]);
+        }
+        try {
+          const res = await axios.get(`/api/data_sources/${val}/schema`);
+          if (res.schema) {
+            clearInterval(timer);
+            resolve(res.schema);
+          }
+        } catch (err) {
+          clearInterval(timer);
+          reject(err);
+        }
+      }, 200);
+    });
+  };
   const schemaList = async (val, type) => {
     try {
       let optionsList;
@@ -126,12 +148,12 @@ const SelectSource = forwardRef(({ confirmLoading, Holmestable, chat_type, onCha
         }));
       };
 
-      if (type === "mysql" || type === "pg") {
-        const res = await axios.get(`/api/data_sources/${val}/schema`);
-        optionsList = getOptionsList(res.schema, type);
-      } else {
+      if (type === "csv") { 
         const { data } = await axios.get(`api/upload`);
         optionsList = getOptionsList(data, type);
+      } else {
+        const schemaList = await getSchemaList(val);
+        optionsList = getOptionsList(schemaList, type);
       }
 
       setSchemaList(optionsList);
@@ -372,16 +394,13 @@ const SelectSource = forwardRef(({ confirmLoading, Holmestable, chat_type, onCha
   }
   const dataSourceOptions = options.map((option) => {
     const { type, value, label } = option;
-    let icon = null;
-  
-    if (type === "csv") {
-      icon = excel;
-    } else if (type === "mysql") {
-      icon = mysql;
-    } else if (type === "pg") {
-      icon = pg;
-    }
-
+    const iconMap = {
+      csv: excel,
+      mysql: mysql,
+      pg: pg,
+      starrocks: starrocks
+    };
+    const icon = iconMap[type];
     return (
       <Select.Option key={value} value={value}>
         <Space>
@@ -413,11 +432,11 @@ const SelectSource = forwardRef(({ confirmLoading, Holmestable, chat_type, onCha
   const tableIsShow = SchemaListDataItem && SchemaListDataItem.table_name && SchemaListDataItem.field_desc.length > 0;
 
   return (
-    !Holmestable && (
+    !Charttable && (
       <div className="flex-column">
         <div className="dislogue-caption">
             <h1>Hi !</h1>
-            <span>{chat_type==="chat"?window.W_L.chat_start:window.W_L.report_start}
+            <span>{chat_type==="chat"?window.W_L.chat_start:chat_type==="autopilot"?window.W_L.AutoPilot_start:window.W_L.report_start}
             <Link href="/data_sources">{window.W_L.add_datasource}</Link>
             </span> 
         </div>

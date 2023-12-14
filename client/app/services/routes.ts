@@ -58,6 +58,18 @@ class Routes {
       this._items = filter(this.items, item => item.id !== id);
     }
   }
+  public navigate(id: string, params: Record<string, string | number>) {
+    const route = this._items.find(item => item.id === id);
+    if (route) {
+      let url = route.path;
+      for (const key in params) {
+        url = url.replace(`:${key}`, String(params[key]));
+      }
+      window.location.href = url;
+    } else {
+      console.error(`No route found with id: ${id}`);
+    }
+  }
 }
 
 export default new Routes();

@@ -2,6 +2,7 @@ import React,{useState,useEffect,useCallback} from 'react';
 import Button from "antd/lib/button";
 import Form from "antd/lib/form";
 import Input from "antd/lib/input";
+import Radio from "antd/lib/radio";
 // import * as XLSX from 'xlsx';
 import routeWithUserSession from "@/components/ApplicationArea/routeWithUserSession";
 // import LoadingState from "@/components/items-list/components/LoadingState";
@@ -9,14 +10,28 @@ import wrapSettingsTab from "@/components/SettingsWrapper";
 import notification from "@/services/notification";
 import routes from "@/services/routes";
 import { axios } from "@/services/axios";
-import { websocket,createWebSocket } from '../testdialogue/components/Dialogue/websocket';
+import { websocket,createWebSocket,closeWebSocket } from '../testdialogue/components/Dialogue/websocket';
 const SettingsOpenKey = () => {
     const [form] = Form.useForm();
   const [disabled, setDisabled] = useState(false);
+  const [aiOption, setAiOption] = useState('DeepThought'); // 默认选项
+
   const getOpenKey = useCallback(async () => {
     setDisabled(true);
     const {data} = await axios.get(`/api/ai_token`);
-    form.setFieldsValue(data);
+      if(!data.in_use){
+        form.setFieldsValue(data);
+      }else{
+        setAiOption(data.in_use);
+        const {OpenAI, DeepThought} = data;
+        form.setFieldsValue({
+        ApiKey: DeepThought.ApiKey|| "",
+        OpenaiApiKey: OpenAI.OpenaiApiKey|| "",
+        HttpProxyHost: OpenAI.HttpProxyHost|| "",
+        HttpProxyPort: OpenAI.HttpProxyPort|| "",
+        ApiHost: OpenAI.ApiHost|| "",
+    });
+      }
     createWebSocket()
     setDisabled(false)
   }, [form]);
@@ -24,11 +39,30 @@ const SettingsOpenKey = () => {
   useEffect(() => {
     getOpenKey();
   }, [getOpenKey]);
-  const handOpenKey = (info)=>{
-    axios.post("/api/ai_token",info).then((res) => {
-        setDisabled(false)
+  const handOpenKey = ()=>{
+    const data ={
+      in_use: aiOption,
+      OpenAI: {
+        OpenaiApiKey: form.getFieldValue("OpenaiApiKey") || "",
+        HttpProxyHost:  form.getFieldValue("HttpProxyHost") || "",
+        HttpProxyPort: form.getFieldValue("HttpProxyPort") || "",
+        ApiHost: form.getFieldValue("ApiHost") || "",
+      },
+      DeepThought: {
+        ApiKey: form.getFieldValue("ApiKey") || "",
+      }
+      
+    }
+    axios.post("/api/ai_token",data).then((res) => {
+      if(res.code===200){
         notification.success(window.W_L.save_success)
+        closeWebSocket()
         getOpenKey();
+      }else{
+        notification.error(window.W_L.save_failed)
+        
+      }
+      setDisabled(false)
     }).catch((err) => {
         notification.error(window.W_L.save_failed)
       setDisabled(false)
@@ -43,7 +77,10 @@ const SettingsOpenKey = () => {
     if (values.HttpProxyHost === undefined) {
       values.HttpProxyHost = '';
     }
-    handOpenKey(values)
+    if(values.ApiHost === undefined){
+      values.ApiHost = '';
+    }
+    handOpenKey()
   };
   const handleMessage=()=>{
     try {
@@ -82,6 +119,9 @@ const SettingsOpenKey = () => {
   })
     
   }
+  const handleRadioChange = e => {
+    setAiOption(e.target.value);
+  };
   return (
    
      <React.Fragment>
@@ -94,7 +134,25 @@ const SettingsOpenKey = () => {
       disabled={disabled}
       onFinish={onFinish}
     >
-      <Form.Item name="OpenaiApiKey" label="OpenaiApiKey"  rules={[{ required: true, message: 'Please enter API Key!' }]}>
+      <Form.Item>
+      <div style={{display:"flex",alignItems:"center"}}>
+      <h4 style={{marginRight:"30px"}}>AI:</h4>
+            <Radio.Group onChange={handleRadioChange} value={aiOption}>
+           
+              <Radio value="DeepThought">DeepThought</Radio>
+              <Radio value="OpenAI">OpenAI</Radio>
+            </Radio.Group>
+      </div>
+          </Form.Item>
+          {aiOption === 'DeepThought' && (
+            <Form.Item name="ApiKey" label="ApiKey" rules={[{ required: true, message: 'Please enter API key' }]}>
+              <Input placeholder="ApiKey" />
+            </Form.Item>
+          )}
+
+{aiOption === 'OpenAI' && (
+            <>
+             <Form.Item name="OpenaiApiKey" label="OpenaiApiKey"  rules={[{ required: true, message: window.W_L.please_enter_api_key }]}>
         <Input placeholder="OpenaiApiKey" />
       </Form.Item>
       <Form.Item
@@ -107,10 +165,18 @@ const SettingsOpenKey = () => {
         label="HttpProxyPort">
         <Input placeholder="HttpProxyPort" />
       </Form.Item>
+      <Form.Item
+      name="ApiHost"
+        label="ApiHost">
+        <Input placeholder="ApiHost" />
+      </Form.Item>
+            </>
+          )}
+     
       <Form.Item style={{textAlign: "right"}}>
       <Button disabled={disabled} style={{marginRight:"10px"}}
       onClick={() => connectTest()}>{window.W_L.connect_test}</Button>
-      <Button disabled={disabled} htmlType="submit" type="primary">{window.W_L.submit}</Button>
+      <Button disabled={disabled} htmlType="submit" type="primary">{window.W_L.apply}</Button>
       </Form.Item>
     </Form>
      </div>

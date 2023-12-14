@@ -7,6 +7,8 @@ import "./admin/SystemStatus";
 import "./alerts/AlertsList";
 import "./alert/Alert";
 import "./testdialogue/DialogueList";
+import "./testdialogue/AutopilotHistory";
+import "./testdialogue/AutopilotView";
 
 import "./dashboards/DashboardList";
 import "./dashboards/DashboardPage";

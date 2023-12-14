@@ -1,0 +1,10 @@
+.gpt-descriptions-btn{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    margin-top: 10px;
+}
+.my-custom-label .ant-descriptions-item-label{
+    width: 100px;
+    text-align: center;
+  }

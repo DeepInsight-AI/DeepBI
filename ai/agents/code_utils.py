@@ -49,7 +49,7 @@ def infer_lang(code):
 
 
 def extract_code(
-        text: str, pattern: str = CODE_BLOCK_PATTERN, detect_single_line_code: bool = False
+    text: str, pattern: str = CODE_BLOCK_PATTERN, detect_single_line_code: bool = False
 ) -> List[Tuple[str, str]]:
     """Extract code from a text.
 
@@ -217,12 +217,12 @@ def _cmd(lang):
 
 
 def execute_code(
-        code: Optional[str] = None,
-        timeout: Optional[int] = None,
-        filename: Optional[str] = None,
-        work_dir: Optional[str] = None,
-        use_docker: Optional[Union[List[str], str, bool]] = True,
-        lang: Optional[str] = "python",
+    code: Optional[str] = None,
+    timeout: Optional[int] = None,
+    filename: Optional[str] = None,
+    work_dir: Optional[str] = None,
+    use_docker: Optional[Union[List[str], str, bool]] = True,
+    lang: Optional[str] = "python",
 ) -> Tuple[int, str, str]:
     """Execute code in a docker container.
     This function is not tested on MacOS.
@@ -447,13 +447,13 @@ def _remove_check(response):
 
 
 def eval_function_completions(
-        responses: List[str],
-        definition: str,
-        test: Optional[str] = None,
-        entry_point: Optional[str] = None,
-        assertions: Optional[Union[str, Callable[[str], Tuple[str, float]]]] = None,
-        timeout: Optional[float] = 3,
-        use_docker: Optional[bool] = True,
+    responses: List[str],
+    definition: str,
+    test: Optional[str] = None,
+    entry_point: Optional[str] = None,
+    assertions: Optional[Union[str, Callable[[str], Tuple[str, float]]]] = None,
+    timeout: Optional[float] = 3,
+    use_docker: Optional[bool] = True,
 ) -> Dict:
     """Select a response from a list of responses for the function completion task (using generated assertions), and/or evaluate if the task is successful using a gold test.
 
@@ -556,9 +556,9 @@ class PassAssertionFilter:
 
 
 def implement(
-        definition: str,
-        configs: Optional[List[Dict]] = None,
-        assertions: Optional[Union[str, Callable[[str], Tuple[str, float]]]] = generate_assertions,
+    definition: str,
+    configs: Optional[List[Dict]] = None,
+    assertions: Optional[Union[str, Callable[[str], Tuple[str, float]]]] = generate_assertions,
 ) -> Tuple[str, float]:
     """Implement a function from a definition.
 
@@ -623,9 +623,50 @@ async def tell_logger(websocket, log_str):
         }
 
         send_json_str = json.dumps(result_message)
-        await websocket.send(send_json_str)
+
+        # await websocket.send(send_json_str)
+
+        if websocket is not None:
+            await websocket.send(send_json_str)
 
     except Exception as e:
         traceback.print_exc()
         logger.error(str(e))
 
+
+def append_report_logger(file_name: Optional[str], log_str):
+    try:
+
+        if file_name is not None and log_str is not None and len(log_str) > 0:
+            log_str = str(log_str)
+            if if_hide_sensitive:
+                # Replace hidden python code blocks to prevent private information from being exposed in logs
+                CODE_BLOCK_PATTERN = r"```(\w*)\n(.*?)\n```"
+                match = re.findall(CODE_BLOCK_PATTERN, log_str, flags=re.DOTALL)
+                if len(match) > 0 and match[0][0] == 'python':
+                    replacement = """
+                                           ```python
+                                           ******* python code ************
+                                           ******* python code ************
+                                           ******* python code ************
+
+                                           ```
+                                               """
+                    log_str = re.sub(CODE_BLOCK_PATTERN, replacement, log_str, flags=re.DOTALL)
+                    # print("new_text :", new_text)
+
+            # log_list.append(log_str)
+            with open(file_name, 'r') as file:
+                data = json.load(file)
+            if data['chat_log'] is not None and len(data['chat_log']) > 0:
+                if str(data['chat_log'][0]).__contains__("The report is being generated"):
+                    del data['chat_log'][0]
+                data['chat_log'].append(log_str)
+
+            # 将更改后的内容写回文件
+            with open(file_name, 'w') as file:
+                json.dump(data, file, indent=4)
+
+    except Exception as e:
+        traceback.print_exc()
+        logger.error(str(e))

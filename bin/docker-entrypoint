@@ -13,6 +13,13 @@ server_socket() {
   exec /app/manage.py run_ai
 }
 
+server_api() {
+  echo "Starting ai web-api server.."
+
+  exec /app/manage.py run_ai_api
+}
+
+
 worker() {
   echo "Starting RQ worker..."
 
@@ -25,7 +32,7 @@ worker() {
 workers_healthcheck() {
   WORKERS_COUNT=${WORKERS_COUNT}
   echo "Checking active workers count against $WORKERS_COUNT..."
-  ACTIVE_WORKERS_COUNT=`echo $(rq info --url $HOLMES_REDIS_URL -R | grep workers | grep -oP ^[0-9]+)`
+  ACTIVE_WORKERS_COUNT=`echo $(rq info --url $DEEPBI_REDIS_URL -R | grep workers | grep -oP ^[0-9]+)`
   if [ "$ACTIVE_WORKERS_COUNT" -lt "$WORKERS_COUNT"  ]; then
     echo "$ACTIVE_WORKERS_COUNT workers are active, Exiting"
     exit 1
@@ -40,8 +47,8 @@ server() {
   # Recycle gunicorn workers every n-th request. See http://docs.gunicorn.org/en/stable/settings.html#max-requests for more details.
   MAX_REQUESTS=${MAX_REQUESTS:-1000}
   MAX_REQUESTS_JITTER=${MAX_REQUESTS_JITTER:-100}
-  TIMEOUT=${HOLMES_GUNICORN_TIMEOUT:-60}
-  exec /usr/local/bin/gunicorn -b 0.0.0.0:8338 --name holmes -w${HOLMES_WEB_WORKERS:-4} bi.wsgi:app --max-requests $MAX_REQUESTS --max-requests-jitter $MAX_REQUESTS_JITTER --timeout $TIMEOUT
+  TIMEOUT=${DEEPBI_GUNICORN_TIMEOUT:-60}
+  exec /usr/local/bin/gunicorn -b 0.0.0.0:8338 --name deepbi -w${DEEPBI_WEB_WORKERS:-4} bi.wsgi:app --max-requests $MAX_REQUESTS --max-requests-jitter $MAX_REQUESTS_JITTER --timeout $TIMEOUT
 }
 
 create_db() {
@@ -49,19 +56,19 @@ create_db() {
 }
 
 help() {
-  echo "Holmes Docker."
+  echo "DeepBi Docker."
   echo ""
   echo "Usage:"
   echo ""
 
-  echo "server -- start holmes server (with gunicorn)"
+  echo "server -- start deepbi server (with gunicorn)"
   echo "worker -- start a single RQ worker"
   echo "scheduler -- start an rq-scheduler instance"
   echo ""
   echo "shell -- open shell"
   echo "debug -- start Flask development server with remote debugger via ptvsd"
   echo "create_db -- create database tables"
-  echo "manage -- CLI to manage holmes"
+  echo "manage -- CLI to manage deepbi"
 }
 
 tests() {
@@ -121,6 +128,9 @@ case "$1" in
     ;;
   server_socket)
     server_socket
+    ;;
+  server_api)
+    server_api
     ;;
   manage)
     shift

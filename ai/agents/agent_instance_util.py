@@ -52,22 +52,43 @@ class AgentInstanceUtil:
         self.openai_proxy = None
         self.db_id = db_id
 
-    def set_api_key(self, api_key):
+    def set_api_key(self, api_key, api_host=None):
         self.api_key = api_key
+        if api_host is not None:
+            # api_base = "https://api.openai.com/"
+            print('api_host: ', api_host)
 
-        self.config_list_gpt4 = [
-            {
-                'model': 'gpt-4',
-                'api_key': api_key
-            },
-        ]
+            self.config_list_gpt4 = [
+                {
+                    'model': 'gpt-4',
+                    'api_key': api_key,
+                    'api_base': api_host,
+                },
+            ]
 
-        self.config_list_gpt4_turbo = [
-            {
-                'model': 'gpt-4-1106-preview',
-                'api_key': self.api_key,
-            },
-        ]
+            self.config_list_gpt4_turbo = [
+                {
+                    'model': 'gpt-4-1106-preview',
+                    'api_key': self.api_key,
+                    'api_base': api_host,
+                },
+            ]
+        else:
+            self.config_list_gpt4 = [
+                {
+                    'model': 'gpt-4',
+                    'api_key': api_key,
+                    'api_base': api_host,
+                },
+            ]
+
+            self.config_list_gpt4_turbo = [
+                {
+                    'model': 'gpt-4-1106-preview',
+                    'api_key': self.api_key,
+                    'api_base': api_host,
+                },
+            ]
 
         self.gpt4_turbo_config = {
             "seed": 42,  # change the seed for different trials
@@ -481,7 +502,7 @@ class AgentInstanceUtil:
         )
         return bi_proxy
 
-    def get_agent_planner_user(self, is_log_out=True):
+    def get_agent_planner_user(self, is_log_out=True, report_file_name=None):
         """Disposable conversation initiator, no reply"""
         planner_user = UserProxyAgent(
             name="planner_user",
@@ -490,6 +511,7 @@ class AgentInstanceUtil:
             websocket=self.websocket,
             is_log_out=is_log_out,
             openai_proxy=self.openai_proxy,
+            report_file_name=report_file_name,
         )
         return planner_user
 
@@ -668,7 +690,7 @@ class AgentInstanceUtil:
         )
         return chart_planner
 
-    def get_agent_python_executor(self):
+    def get_agent_python_executor(self, report_file_name=None):
         python_executor = PythonProxyAgent(
             name="python_executor",
             system_message="python executor. Execute the python code and report the result.",
@@ -680,6 +702,7 @@ class AgentInstanceUtil:
             # outgoing=self.outgoing,
             # incoming=self.incoming,
             db_id=self.db_id,
+            report_file_name=report_file_name,
         )
         return python_executor
 
@@ -710,7 +733,7 @@ class AgentInstanceUtil:
         )
         return csv_echart_assistant
 
-    def get_agent_mysql_echart_assistant(self, use_cache=True):
+    def get_agent_mysql_echart_assistant(self, use_cache=True, report_file_name=None):
         """mysql_echart_assistant"""
         mysql_echart_assistant = AssistantAgent(
             name="mysql_echart_assistant",
@@ -727,6 +750,7 @@ class AgentInstanceUtil:
                                           Reply "TERMINATE" in the end when everything is done.
                                           When you find an answer,  You are a report analysis, you have the knowledge and skills to turn raw data into information and insight, which can be used to make business decisions.include your analysis in your reply.
                                           Be careful to avoid using mysql special keywords in mysql code.
+                                          One SQL query result is limited to 20 items.
                                           """ + '\n' + self.base_mysql_info + '\n' + python_base_dependency + '\n' + MYSQL_ECHART_TIPS_MESS,
             human_input_mode="NEVER",
             user_name=self.user_name,
@@ -734,6 +758,7 @@ class AgentInstanceUtil:
             llm_config=self.gpt4_turbo_config,
             openai_proxy=self.openai_proxy,
             use_cache=use_cache,
+            report_file_name=report_file_name,
 
         )
         return mysql_echart_assistant

@@ -42,22 +42,42 @@ while true; do
     fi
 done
 # shellcheck disable=SC2162
-read -p "We need server port 8338 8339 ,is that ports not use？(Y/N): " confirm
+read -p "We need server port 8338 8339 8340,is that ports not use？(Y/N): " confirm
 if [[ $confirm == "N" || $confirm == "n" ]]; then
     exit 1
 fi
 # get web port
 # shellcheck disable=SC2162
 web_port=8338
+ai_web_port=8340
 # get socket port
 # shellcheck disable=SC2162
 socket_port=8339
+
+# replace front file ip
+echo "Rename files "
+rm -rf ./client/dist
+cp -R ./client/dist_source ./client/dist
+echo "Replace ip port"
+os_name=$(uname)
+if [[ "$os_name" == "Darwin" ]]; then
+    sed -i '' "s|192.168.5.165:8339|$ip:$socket_port|g" ./client/dist/vendors~app.cbcd037aa89230e022c8.js
+    sed -i '' "s|192.168.5.165:8339|$ip:$socket_port|g" ./client/dist/app.1cc9a8f83919bcbf32d5.js
+else
+    sed -i "s|192.168.5.165:8339|$ip:$socket_port|g" ./client/dist/vendors~app.cbcd037aa89230e022c8.js
+    sed -i "s|192.168.5.165:8339|$ip:$socket_port|g" ./client/dist/app.3598c94c9eb6f2d9857b.js
+fi
+
+rm -f ./client/app/Language.CN.js
+cp ./client/app/Language.EN.js ./client/dist/Language.CN.js
 # get env_template content
 env_content=$(cat .env.template)
 # replace language
 # shellcheck disable=SC2001
 env_content=$(echo "$env_content" | sed "s/LANGTYPE/EN/g")
 # replace web port
+# shellcheck disable=SC2001
+env_content=$(echo "$env_content" | sed "s/AI_WEB_PORT/$ai_web_port/g")
 # shellcheck disable=SC2001
 env_content=$(echo "$env_content" | sed "s/WEB_PORT/$web_port/g")
 # replace language

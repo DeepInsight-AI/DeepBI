@@ -1,0 +1,17 @@
+.auto_pilot{
+    position: relative;
+}
+.auto_pilot_icon{
+    display:flex;
+    align-items:center;
+    justify-content: flex-end;
+    margin-bottom: 10px;
+    cursor: pointer;
+}
+.auto_pilot_icon p{
+    margin: 0;
+    margin-left: 7px;
+    color: #766b6b;
+    font-size: 14px;
+    margin-right: 10px;
+}

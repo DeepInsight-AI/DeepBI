@@ -13,8 +13,7 @@ import logoUrl from "@/assets/images/icon_small.png";
 import CommentOutlinedIcon from "@ant-design/icons/CommentOutlined";
 import LineChartOutlinedIcon from "@ant-design/icons/LineChartOutlined";
 import DashboardOutlinedIcon from "@ant-design/icons/DashboardOutlined";
-
-
+import RobotOutlinedIcon from "@ant-design/icons/RobotOutlined";
 
 import QuestionCircleOutlinedIcon from "@ant-design/icons/QuestionCircleOutlined";
 import SettingOutlinedIcon from "@ant-design/icons/SettingOutlined";
@@ -64,7 +63,9 @@ function useNavbarActiveState() {
       testdialogue: includes(["Dialogue.List"], currentRoute.id),
       report_route : includes(["Dialogue.List.Report"], currentRoute.id),
       dialogue_list : includes(["Dialogue.List.Dialogue"], currentRoute.id),
-
+      autopilot : includes(["Dialogue.List.autopilot"], currentRoute.id),
+      autopilot_list : includes(["Dialogue.List.autopilot_list"], currentRoute.id),
+      autopilot_view : includes(["Dialogue.List.autopilot_view"], currentRoute.id),
     }),
     [currentRoute.id]
   );
@@ -96,7 +97,7 @@ export default function DesktopNavbar() {
       <NavbarSection className="desktop-navbar-logo">
         <div role="menuitem">
           <Link href="./">
-            <img src={logoUrl} alt="Holmes" />
+            <img src={logoUrl} alt="DeepBI" />
           </Link>
         </div>
       </NavbarSection>
@@ -153,15 +154,47 @@ export default function DesktopNavbar() {
 
 
 
-      <NavbarSection style={{flex:"1"}}>
+      <NavbarSection style={{flex:"0"}}>
           <Menu.Item key="dashboards" className={activeState.dashboards ? "navbar-active-item" : null}>
             <Link href="dashboards">
               <DashboardOutlinedIcon aria-label="dashboards navigation button" />
               <span className="desktop-navbar-label">{window.W_L.dashboards}</span>
             </Link>
           </Menu.Item>
-      </NavbarSection>
 
+          {/* <Menu.Item key="autopilot" className={activeState.autopilot ? "navbar-active-item" : null}>
+            <Link href="autopilot">
+              <RobotOutlinedIcon aria-label="autopilot navigation button" />
+              <span className="desktop-navbar-label">{window.W_L.auto_pilot}</span>
+            </Link>
+          </Menu.Item> */}
+
+      </NavbarSection>
+      <NavbarSection className="desktop-navbar-spacer" style={{flex:"1"}}>
+          <Menu.SubMenu
+            key="create"
+            popupClassName="desktop-navbar-submenu"
+            data-test="autopilotButton"
+            className={activeState.autopilot || activeState.autopilot_view || activeState.autopilot_list ? "navbar-active-item" : null}
+            tabIndex={0}
+            title={
+              <React.Fragment>
+                 <RobotOutlinedIcon aria-label="autopilot navigation button" />
+                <span className="desktop-navbar-label">{window.W_L.auto_pilot}</span>
+              </React.Fragment>
+            }>
+              <Menu.Item key="autopilot">
+                <Link href="autopilot" data-test="autopilot">
+                  {window.W_L.auto_pilot}
+                </Link>
+              </Menu.Item>
+              <Menu.Item key="autopilot_list">
+                <Link data-test="autopilot_list" href="autopilot_list">
+                  {window.W_L.history_autopilot}
+                </Link>
+              </Menu.Item>
+          </Menu.SubMenu>
+      </NavbarSection>
  
 
       <NavbarSection>

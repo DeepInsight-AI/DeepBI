@@ -19,7 +19,7 @@ class Config():
         self.language_english = 'EN'
         self.default_language_mode = self.language_chinese
 
-        self.if_hide_sensitive = True
+        self.if_hide_sensitive = False
 
         self.python_base_dependency = """python installed dependency environment: pymysql, pandas, mysql-connector-python, pyecharts, sklearn, psycopg2, sqlalchemy"""
 
@@ -70,7 +70,7 @@ language_chinese = 'CN'
 language_english = 'EN'
 default_language_mode = language_chinese
 
-if_hide_sensitive = True
+if_hide_sensitive = False
 
 python_base_dependency = """python installed dependency environment: pymysql, pandas, mysql-connector-python, pyecharts, sklearn, psycopg2, sqlalchemy"""
 

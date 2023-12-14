@@ -1,4 +1,4 @@
-<h1 align="center">Holmes 使用说明</h1>
+<h1 align="center">DeepBI 使用说明</h1>
 
 <div align="center">
 
@@ -115,7 +115,7 @@ Languages：中文  [English](../en/user_manual_en.md)
 
 ![doc.png](img/doc_11.png)
 
-#### 4.1.5, 重选数据源 
+#### 4.1.5, 重选数据源
 
 - 若要重选数据源，进行新一轮对话，请点击【新对话】，重置当前对话
 

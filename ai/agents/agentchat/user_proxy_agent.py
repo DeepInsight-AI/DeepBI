@@ -19,19 +19,20 @@ class UserProxyAgent(ConversableAgent):
     """
 
     def __init__(
-            self,
-            name: str,
-            is_termination_msg: Optional[Callable[[Dict], bool]] = None,
-            max_consecutive_auto_reply: Optional[int] = None,
-            human_input_mode: Optional[str] = "ALWAYS",
-            function_map: Optional[Dict[str, Callable]] = None,
-            code_execution_config: Optional[Union[Dict, bool]] = None,
-            default_auto_reply: Optional[Union[str, Dict, None]] = "",
-            llm_config: Optional[Union[Dict, bool]] = False,
-            system_message: Optional[str] = "",
-            websocket: Optional = None,
-            is_log_out: Optional[bool] = True,
-            openai_proxy: Optional[str] = None,
+        self,
+        name: str,
+        is_termination_msg: Optional[Callable[[Dict], bool]] = None,
+        max_consecutive_auto_reply: Optional[int] = None,
+        human_input_mode: Optional[str] = "ALWAYS",
+        function_map: Optional[Dict[str, Callable]] = None,
+        code_execution_config: Optional[Union[Dict, bool]] = None,
+        default_auto_reply: Optional[Union[str, Dict, None]] = "",
+        llm_config: Optional[Union[Dict, bool]] = False,
+        system_message: Optional[str] = "",
+        websocket: Optional = None,
+        is_log_out: Optional[bool] = True,
+        openai_proxy: Optional[str] = None,
+        report_file_name: Optional[str] = None,
     ):
         """
         Args:
@@ -89,6 +90,7 @@ class UserProxyAgent(ConversableAgent):
             default_auto_reply,
             websocket,
             openai_proxy,
+            report_file_name,
         )
         self.websocket = websocket
         self.is_log_out = is_log_out

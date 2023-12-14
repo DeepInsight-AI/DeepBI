@@ -113,32 +113,27 @@ const SelectSource = forwardRef(({ confirmLoading, Charttable, chat_type, onChan
     setIndeterminate(false);
     setCheckAll(false);
   };
-  const getSchemaList =async (val,max=50) => {
-    let num = 0;
-    let isCalled = false;
-    const timer = setInterval(async () => {
-      num++;
-      if(num>max){
-        clearInterval(timer);
-        return []
-      }
-      try {
-        const res = await axios.get(`/api/data_sources/${val}/schema`);
-        if (res.schema&& !isCalled) {
-          isCalled = true;
+  const getSchemaList = (val, max = 50) => {
+    return new Promise((resolve, reject) => {
+      let num = 0;
+      const timer = setInterval(async () => {
+        num++;
+        if (num > max) {
           clearInterval(timer);
-          return res.schema;
-        } else {
-          if(res.job.error){
-            clearInterval(timer);
-            return
-          }
-          // console.log(res, 'query_result_id_undefined');
+          reject([]);
         }
-      } catch (err) {
-        // console.log(err, 'getquery_result_id_error');
-      }
-    }, 200);
+        try {
+          const res = await axios.get(`/api/data_sources/${val}/schema`);
+          if (res.schema) {
+            clearInterval(timer);
+            resolve(res.schema);
+          }
+        } catch (err) {
+          clearInterval(timer);
+          reject(err);
+        }
+      }, 200);
+    });
   };
   const schemaList = async (val, type) => {
     try {

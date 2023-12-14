@@ -78,7 +78,8 @@ const config = {
   },
   output: {
     path: path.join(basePath, "./dist"),
-    filename: isProduction ? "[name].[chunkhash].js" : "[name].js",
+    // filename: isProduction ? "[name].[chunkhash].js" : "[name].js",
+    filename: "[name].js",
     publicPath: cdn_domain + staticPath
   },
   resolve: {
@@ -117,7 +118,8 @@ const config = {
     }),
     isProduction &&
       new MiniCssExtractPlugin({
-        filename: "[name].[chunkhash].css"
+        // filename: "[name].[chunkhash].css"
+        filename: "[name]..css"
       }),
     new ManifestPlugin({
       fileName: "asset-manifest.json",

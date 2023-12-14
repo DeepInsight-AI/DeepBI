@@ -11,6 +11,7 @@ import notification from "@/services/notification";
 import routes from "@/services/routes";
 import { axios } from "@/services/axios";
 import Link from "@/components/Link";
+import InfoCircleOutlinedIcon from "@ant-design/icons/InfoCircleOutlined";
 import { websocket,createWebSocket,closeWebSocket } from '../testdialogue/components/Dialogue/websocket';
 const SettingsOpenKey = () => {
     const [form] = Form.useForm();
@@ -175,12 +176,16 @@ const SettingsOpenKey = () => {
           )}
      
       <Form.Item style={{textAlign: "right"}}>
-     <div style={{width:"100%",display:"flex",alignItems: "center",justifyContent: "spaceBetween"}}>
+     <div style={{width:"100%",display:"flex",alignItems: "center",justifyContent: "space-between"}}>
+     <div style={{display:"flex",alignItems: "center"}}>
+     <InfoCircleOutlinedIcon style={{marginRight:"3px"}} />
      <Link
              href="https://holmes.bukeshiguang.com/"
              rel="noopener noreferrer"
              target="_blank">
+          {window.W_L.click_here_to_get_apikey}
       </Link>
+     </div>
     <div>
     <Button disabled={disabled} style={{marginRight:"10px"}}
       onClick={() => connectTest()}>{window.W_L.connect_test}</Button>

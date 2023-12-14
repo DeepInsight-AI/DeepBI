@@ -810,4 +810,5 @@ window.W_L = {
   "region": "Region",
   "column": "Column",
   "option": "Option",
+  'click_here_to_get_apikey':'Click here to get API key',
 }

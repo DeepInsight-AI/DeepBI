@@ -813,5 +813,5 @@ window.W_L=  {
   "region": "地区",
   "column": "列",
   "option": "选项",
-  
+  'click_here_to_get_apikey':'点击这里获取ApiKey',
 }

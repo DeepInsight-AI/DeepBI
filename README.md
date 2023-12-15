@@ -14,7 +14,7 @@ Developer：dev@deep-insight.co  Business：hi@deep-insight.co
 
   <div style="display: flex; align-items: center;">
 
-If you think DeepBi is helpful to you, please help by clicking <a style="display: flex; align-items: center;margin:0px 6px" target="_blank" href='https://github.com/DeepThought-AI/DeepBi'>here</a> on the ⭐ Star and Fork in the upper right corner. Your support is the greatest driving force for DeepBi to become better.
+If you think DeepBi is helpful to you, please help by clicking <a style="display: flex; align-items: center;margin:0px 6px" target="_blank" href='https://github.com/DeepInsight-AI/DeepBi'>here</a> on the ⭐ Star and Fork in the upper right corner. Your support is the greatest driving force for DeepBi to become better.
 
 
   </div>
@@ -24,7 +24,7 @@ If you think DeepBi is helpful to you, please help by clicking <a style="display
 
 ## Video example
 
-https://github.com/DeepThought-AI/DeepBi/assets/151519374/d1effbe1-5c11-4c77-86ef-e01b1ea7f2f6
+https://github.com/DeepInsight-AI/DeepBi/assets/151519374/d1effbe1-5c11-4c77-86ef-e01b1ea7f2f6
 
 
 ## user manual
@@ -53,7 +53,7 @@ The database connections supported by DeepBi are:
 
 - The local environment needs to have docker and docker-compose. <br>
 - [Installl docker](Docker_install.md)
-- Download project files by git:``` git clone https://github.com/DeepThought-AI/DeepBi.git ``` <br>
+- Download project files by git:``` git clone https://github.com/DeepInsight-AI/DeepBi.git ``` <br>
   or drirect download zip file, unzip it. <br>
   ![download.png](user_manual/cn/img/download.png)
 
@@ -96,5 +96,5 @@ Install directly on the ubuntu system, you need to install redis, postgresql pyt
 
 ## 📑 Other
 - We have tested on Mac OS 12.7/13.X /14.1.1, Ubuntu 20.04/22.04, and Windows11 WSL 22.04. <br>If you have any question, please contact us at dev@deep-insight.co
-- <a href="https://github.com/DeepThought-AI/DeepBi/issues">Issue</a>
+- <a href="https://github.com/DeepInsight-AI/DeepBi/issues">Issue</a>
 

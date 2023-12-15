@@ -179,7 +179,7 @@ class AnalysisStarrocks(Analysis):
             use_cache = True
             for i in range(max_retry_times):
                 try:
-                    mysql_echart_assistant = self.agent_instance_util.get_agent_mysql_echart_assistant(use_cache=use_cache)
+                    mysql_echart_assistant = self.agent_instance_util.get_agent_starrocks_echart_assistant(use_cache=use_cache)
                     python_executor = self.agent_instance_util.get_agent_python_executor()
 
                     await python_executor.initiate_chat(

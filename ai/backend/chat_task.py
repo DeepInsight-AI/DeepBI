@@ -6,8 +6,8 @@ from ai.backend.util.write_log import logger
 from ai.agents import AgentInstanceUtil
 from ai.backend.memory import ChatMemoryManager
 from ai.backend.base_config import CONFIG
-from ai.backend.aidb.report import ReportMysql, ReportPostgresql
-from ai.backend.aidb.analysis import AnalysisMysql, AnalysisCsv, AnalysisPostgresql,AnalysisStarrocks
+from ai.backend.aidb.report import ReportMysql, ReportPostgresql, ReportStarrocks
+from ai.backend.aidb.analysis import AnalysisMysql, AnalysisCsv, AnalysisPostgresql, AnalysisStarrocks
 from ai.backend.aidb import AIDB
 from ai.backend.aidb.autopilot import autopilot_mysql, AutopilotMysql
 
@@ -53,6 +53,8 @@ class ChatClass:
 
         self.reportMysql = ReportMysql(self)
         self.reportPostgresql = ReportPostgresql(self)
+        self.reportStarrocks = ReportStarrocks(self)
+
         self.autopilotMysql = AutopilotMysql(self)
 
     async def get_message(self):
@@ -140,6 +142,8 @@ class ChatClass:
                         # await self.deal_report_pg(json_str, message)
                         # await ReportPostgresql(self).deal_report(json_str, message)
                         await self.reportPostgresql.deal_report(json_str, message)
+                    elif q_database == 'starrocks':
+                        await self.reportStarrocks.deal_report(json_str, message)
                 elif q_chat_type == 'autopilot':
                     if q_database == 'mysql':
                         await self.autopilotMysql.deal_question(json_str, message)

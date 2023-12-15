@@ -43,7 +43,8 @@ class ConversableAgent(Agent):
     DEFAULT_CONFIG = {
         "model": DEFAULT_MODEL,
     }
-    MAX_CONSECUTIVE_AUTO_REPLY = 100  # maximum number of consecutive auto replies (subject to future change)
+    # MAX_CONSECUTIVE_AUTO_REPLY = 100  # maximum number of consecutive auto replies (subject to future change)
+    MAX_CONSECUTIVE_AUTO_REPLY = 10  # maximum number of consecutive auto replies (subject to future change)
 
     def __init__(
         self,

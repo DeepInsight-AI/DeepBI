@@ -20,6 +20,7 @@
 
 - 如果出现，下面的提示<br>
  ![docker_err.jpg](user_manual/cn/img/docker_err.jpg)
+
 - 解决方案
 ```
  运行: wsl --list --online 查看可以安装的版本
@@ -56,9 +57,11 @@ sudo ln -s /usr/bin/docker-compose /usr/local/bin/docker-compose
 ```
 11. 安装网络管理 命令: ```sudo apt install net-tools```
 12. 上面安装完毕docker ,以后就不用再次安装
+
 ## 配置DeepBi
-13. 运行命令 ```service docker status``` 确认docker是在运行 "active (running)" <br>
-14. 获取本机内网IP地址,记录下来，一般是192.168.1.xxx,稍后可以用在安装路径下 如下图:<br>
+
+14. 运行命令 ```service docker status``` 确认docker是在运行 "active (running)" <br>
+15. 获取本机内网IP地址,记录下来，一般是192.168.1.xxx,稍后可以用在安装路径下 如下图:<br>
 ![ip.png](user_manual/cn/img/ip.png)
 
 15.然后，安装DeepBi有两种方式，任选其一 如下
@@ -106,7 +109,7 @@ sudo usermod -aG docker $USER
 2. 需要退出当前账户重新登录， 重新登录后，进入命令行
 ```
 systemctl start docker
-sud apt-get -y install apt-transport-https ca-certificates curl software-properties-common
+sudo apt-get -y install apt-transport-https ca-certificates curl software-properties-common
 sudo systemctl enable docker
 ```
 ## 配置DeepBi
@@ -116,7 +119,7 @@ git clone git@github.com:DeepInsight-AI/DeepBi.git
 ```
 4. 解压后重命名为 "DeepBi" 然后进入目录
 ```
- cd DeepBi && sudo chmod+x./Install.sh
+ cd DeepBi && sudo chmod +x./Install.sh
  . Install_cn.sh
 ```
 5. 注意上面运行的是 . Install_cn.sh

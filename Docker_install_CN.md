@@ -1,8 +1,11 @@
 ### Docker安装说明pdf 下载
 
-- [PDF 中文Docker安装下载](user_manaual/中文docker安装说明.pdf)
+- [PDF 中文Docker安装下载](./user_manual/中文docker安装说明.pdf)
 
 # Windows
+- windows 11 可以直接安装
+- 注意 Windows 10 需要更新到 22H2版本及以上命令行运行<br>
+  打开文件夹，在文件夹地址栏输入 ```cmd```按回车(ERTER)，然后命令行输入 ``` winver ```按回车(ENTER) 查看版本号
 
 ## 安装docker
 1. 需要调整本地主板虚拟化选项<br>

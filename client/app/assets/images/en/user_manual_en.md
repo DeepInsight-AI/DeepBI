@@ -30,7 +30,7 @@ Languages： [中文](../cn/user_manual_cn.md) English
 
 ![doc_0.png](img/doc_0.png)
 
-### 1.3, 关于 DeepInsight API KEY:
+### 1.3, About DeepInsight API KEY:
 - You can click the connection below the set key to register and get the API Key.(You can add our wechat group (contact us on the home page) to apply for a free Token.)
 
 ![doc_0.png](img/us_key.png)

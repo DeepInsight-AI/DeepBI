@@ -19,7 +19,7 @@ Languages： [中文](../cn/user_manual_cn.md) English
 ### 1.1, About OPENAI API KEY:
 
 - Requires access to gpt4 models.
-- Other large models will be supported in the future, so stay tuned.
+- You can apply for our Key to use
 
 ### 1.2, About the proxy:
 
@@ -29,6 +29,11 @@ Languages： [中文](../cn/user_manual_cn.md) English
   fails, please check whether the API KEY is available and whether the proxy is configured correctly.
 
 ![doc_0.png](img/doc_0.png)
+
+### 1.3, 关于 DeepInsight API KEY:
+- You can click the connection below the set key to register and get the API Key.(You can add our wechat group (contact us on the home page) to apply for a free Token.)
+
+![doc_0.png](img/us_key.png)
 
 <h2 align="left">2,Configure Data Source</h2>
 

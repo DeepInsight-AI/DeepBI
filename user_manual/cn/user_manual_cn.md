@@ -18,7 +18,7 @@ Languages：中文  [English](../en/user_manual_en.md)
 ### 1.1, 关于 OPENAI API KEY:
 
 - API KEY 需要 OPENAI GPT4 模型的访问权限
-- 后续会陆续支持其他大模型，敬请期待
+- 你可以申请我们的Key 进行使用
 
 ### 1.2, 关于 代理:
 
@@ -28,6 +28,11 @@ Languages：中文  [English](../en/user_manual_en.md)
 测试不通过的情况，请自行检查 API KEY是否可用，以及代理是否配置正确。
 
 ![doc_0.png](img/doc_0.png)
+
+### 1.3, 关于 DeepInsight API KEY:
+- 可以点击 设置key 下面的连接，进行注册，获取API Key.(可以加我们微信群(首页联系我们)，申请免费的Token)
+
+![doc_0.png](img/us_key.png)
 
 <h2 align="left">2, 配置 数据源</h2>
 

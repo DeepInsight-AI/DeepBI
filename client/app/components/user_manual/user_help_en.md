@@ -16,12 +16,12 @@
 - After the KEY and proxy are configured, click [Connection Test] and "Test success" will be displayed. If the test
   fails, please check whether the API KEY is available and whether the proxy is configured correctly.
 
-![doc_0.png](/static/images/cn/img/doc_0.png)
+![doc_0.png](/static/images/en/img/doc_0.png)
 
 ### 1.3, About DeepInsight API KEY:
 - You can click the connection below the set key to register and get the API Key.(You can add our wechat group (contact us on the home page) to apply for a free Token.)
 
-![doc_0.png](/static/images/cn/img/us_key.png)
+![doc_0.png](/static/images/en/img/us_key.png)
 
 ## 2,Configure Data Source
 
@@ -32,7 +32,7 @@
 
 - [Setting]-[CSV Data Source]-[Click to upload]-select the csv file to be uploaded
 
-![doc.png](/static/images/cn/img/doc_1.png)
+![doc.png](/static/images/en/img/doc_1.png)
 
 ### 2.2, [MySql, Doris, starRocks, PostgreSql] data source configure:
 
@@ -40,9 +40,9 @@
 - Select the data source, fill in the database information, and save. After the configuration is completed,
   click [Test Connection ] and "Connection Success" will be displayed.
 
-![doc.png](/static/images/cn/img/doc_2.png)
+![doc.png](/static/images/en/img/doc_2.png)
 
-![doc.png](/static/images/cn/img/doc_3.png)
+![doc.png](/static/images/en/img/doc_3.png)
 
 ## 3,Chat Builder
 
@@ -57,33 +57,33 @@
 - Try to improve the form and field annotations as much as possible to help AI better understand the data and enable the
   Agent to better complete the data analysis task.
 
-![doc.png](/static/images/cn/img/doc_4.png)
+![doc.png](/static/images/en/img/doc_4.png)
 
 #### 3.1.3, modify the failed comments and submit again
 
 - AI will feedback the comments that have not passed. Please revise and add them and submit again until all the comments
   pass.
 
-![doc.png](/static/images/cn/img/doc_5.png)
+![doc.png](/static/images/en/img/doc_5.png)
 
 #### 3.1.4, after all annotations pass the detection, start the conversation
 
 - 🔥 Note: If you want to generate a persistent report, please use [Query Builder]-[Report Generation]. The reports that
   appear in [Chat Builder] are temporary reports and do not support persistence.
 
-![doc.png](/static/images/cn/img/doc_6.png)
+![doc.png](/static/images/en/img/doc_6.png)
 
 #### 3.1.5, reselect data source
 
 - If you want to reselect the data source and start a new round of dialogue, please click [New Dialogue] to reset the
   current conversation. The current conversation record will be stored in [History Dialogue].
 
-![doc.png](/static/images/cn/img/doc_7.png)
+![doc.png](/static/images/en/img/doc_7.png)
 
 ### 3.2, [Chat Builder] - [History Dialogue]
 Can view historical conversation records
 
-![doc.png](/static/images/cn/img/doc_8.png)
+![doc.png](/static/images/en/img/doc_8.png)
 
 ## 4, Query Builder 
 
@@ -100,14 +100,14 @@ Can view historical conversation records
 - Try to improve the form and field annotations as much as possible to help AI better understand the data and enable the
   Agent to better complete the report generation task.
 
-![doc.png](/static/images/cn/img/doc_9.png)
+![doc.png](/static/images/en/img/doc_9.png)
 
 #### 4.1.3, modify the failed comments and submit again
 
 - AI will feedback the annotations that have failed. Please revise and add them and submit again until all annotations
   pass the test.
 
-![doc.png](/static/images/cn/img/doc_10.png)
+![doc.png](/static/images/en/img/doc_10.png)
 
 #### 4.1.4, after all annotations pass the detection, start the dialogue to generate reports
 
@@ -115,13 +115,13 @@ Can view historical conversation records
 - 🔥 Note: The [Report Generation] module currently only supports persistent report generation tasks. For analysis
   questions, please use [Chat Builder] - [Dialogue].
 
-![doc.png](/static/images/cn/img/doc_11.png)
+![doc.png](/static/images/en/img/doc_11.png)
 
 #### 4.1.5, reselect data source
 
 - If you want to reselect the data source and start a new round of dialogue, please click [New Dialogue] to reset the current dialogue.
 
-![doc.png](/static/images/cn/img/doc_12.png)
+![doc.png](/static/images/en/img/doc_12.png)
 
 ### 4.2, [Query]-[Report List]
 
@@ -131,30 +131,30 @@ Can view historical conversation records
   draft status. If you want to display the report in the [Dashboards], please click the [Publish] button, change report
   status to published status.
 
-![doc.png](/static/images/cn/img/doc_13.png)
+![doc.png](/static/images/en/img/doc_13.png)
 
-![doc.png](/static/images/cn/img/doc_14.png)
+![doc.png](/static/images/en/img/doc_14.png)
 
 #### 4.2.2, Modify SQL statement
 
 - Click [Edit Source] to customize the SQL statement of the report.
 
-![doc.png](/static/images/cn/img/doc_15.png)
+![doc.png](/static/images/en/img/doc_15.png)
 
 #### 4.2.3, modify chart style
 
 - Click [Edit Visualization] to customize and edit the visualization chart style.
 - Click [Add Visualization] to add a visual chart.
 
-![doc.png](/static/images/cn/img/doc_16.png)
+![doc.png](/static/images/en/img/doc_16.png)
 
-![doc.png](/static/images/cn/img/doc_17.png)
+![doc.png](/static/images/en/img/doc_17.png)
 
 #### 4.2.4. Deleting a report
 
 - Click [Archive] to change the report status to archive (delete) status.
 
-![doc.png](/static/images/cn/img/doc_18.png)
+![doc.png](/static/images/en/img/doc_18.png)
 
 ### 5, Dashboards
 
@@ -162,21 +162,21 @@ Can view historical conversation records
 
 - [Dashboards]-[Create]-Edit Dashboard
 
-![doc.png](/static/images/cn/img/doc_19.png)
+![doc.png](/static/images/en/img/doc_19.png)
 
 - Add the newly generated Published report to the dashboard
 
-![doc.png](/static/images/cn/img/doc_20.png)
+![doc.png](/static/images/en/img/doc_20.png)
 
 - Click [Publish] Dashboard
 
-![doc.png](/static/images/cn/img/doc_21.png)
+![doc.png](/static/images/en/img/doc_21.png)
 
 #### 5.2 Share Dashboard 
 
 - After clicking [Publish], you can share the dashboard
 
-![doc.png](/static/images/cn/img/doc_22.png)
+![doc.png](/static/images/en/img/doc_22.png)
 ## 6. Automatic Data Analysis
 
 #### 6.1 Add Analysis Task
@@ -185,7 +185,7 @@ Can view historical conversation records
 3. Click on the dropdown.
 4. Select the data source.
 
-![doc.png](/static/images/cn/img/doc_23.png)
+![doc.png](/static/images/en/img/doc_23.png)
 
 #### 6.2 Confirm Required Tables for the Report
 1. Select table remarks and field information.
@@ -193,21 +193,21 @@ Can view historical conversation records
 3. Provide remarks for table fields.
 4. Submit.
 
-![doc.png](/static/images/cn/img/doc_25.png)
+![doc.png](/static/images/en/img/doc_25.png)
 
 #### 6.3 Wait for Report Completion
 1. In historical analysis, check the report status.
 
-![doc.png](/static/images/cn/img/doc_26.png)
+![doc.png](/static/images/en/img/doc_26.png)
 2. Automatically changes to generating.
 
-![doc.png](/static/images/cn/img/doc_27.png)
+![doc.png](/static/images/en/img/doc_27.png)
 3. When the status changes to successful.
 
-![doc.png](/static/images/cn/img/doc_28.png)
+![doc.png](/static/images/en/img/doc_28.png)
 4. View the report details.
 
-![doc.png](/static/images/cn/img/doc_29.png)
+![doc.png](/static/images/en/img/doc_29.png)
 
 
 

@@ -182,6 +182,7 @@ Languages：中文  [English](../en/user_manual_en.md)
 2. 选择自动数据分析
 3. 点击下拉框
 4. 选择数据源
+
 ![doc.png](img/doc_23.png)
 
 <h4 align="left">6.2 确认报告所需表  </h4>
@@ -189,14 +190,19 @@ Languages：中文  [English](../en/user_manual_en.md)
 2. 选择报告使用的表，可以选择多个表
 3. 备注表字段信息
 4. 然后提交
+
 ![doc.png](img/doc_25.png)
 
 <h4 align="left">6.3 等待报告完成  </h4>
 1. 历史分析，查看报告状态
+
 ![doc.png](img/doc_26.png)
+
 2. 自动更改为生成中
 ![doc.png](img/doc_27.png)
-3. 当状态更换为成功时
+
+4. 当状态更换为成功时
 ![doc.png](img/doc_28.png)
-4. 查看报告详情
+
+6. 查看报告详情
 ![doc.png](img/doc_29.png)

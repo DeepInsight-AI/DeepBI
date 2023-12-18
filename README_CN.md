@@ -28,7 +28,10 @@ DeepBi是一款AI原生的数据分析平台。DeepBi充分利用大语言模型
 https://github.com/DeepInsight-AI/DeepBi/assets/151519374/f0d2fcd4-32b0-4095-a892-b9bbf8a51602
 
 ## 使用说明
-[DeepBi 使用说明](client/app/assets/images/cn/user_manual_cn.md)
+- [DeepBi 在线使用说明](client/app/assets/images/cn/user_manual_cn.md)
+- [PDF 中文软件说明下载](user_manaual/中文软件说明.pdf)
+- [PDF 中文Docker安装下载](user_manaual/中文docker安装说明.pdf)
+- [PDF 使用说操作手册载](user_manaual/中文使用说明.pdf)
 
 
 ## ✨ 特性

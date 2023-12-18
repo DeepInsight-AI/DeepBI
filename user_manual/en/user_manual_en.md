@@ -191,6 +191,7 @@ Can view historical conversation records
 2. Choose Automatic Data Analysis.
 3. Click on the dropdown.
 4. Select the data source.
+
 ![doc.png](img/doc_23.png)
 
 <h4 align="left">6.2 Confirm Required Tables for the Report</h4>
@@ -198,16 +199,21 @@ Can view historical conversation records
 2. Choose the tables to be used in the report; multiple tables can be selected.
 3. Provide remarks for table fields.
 4. Submit.
+
 ![doc.png](img/doc_25.png)
 
 <h4 align="left">6.3 Wait for Report Completion</h4>
 1. In historical analysis, check the report status.
+
 ![doc.png](img/doc_26.png)
 2. Automatically changes to generating.
+
 ![doc.png](img/doc_27.png)
 3. When the status changes to successful.
+
 ![doc.png](img/doc_28.png)
 4. View the report details.
+
 ![doc.png](img/doc_29.png)
 
 

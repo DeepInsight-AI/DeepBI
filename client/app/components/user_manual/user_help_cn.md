@@ -19,6 +19,11 @@
 
 ![doc_0.png](/static/images/cn/img/doc_0.png)
 
+### 1.3, 关于 DeepInsight API KEY:
+- 可以点击 设置key 下面的连接，进行注册，获取API Key.(可以加我们微信群(首页联系我们)，申请免费的Token)
+
+![doc_0.png](/static/images/cn/img/us_key.png)
+
 ## 2, 配置 数据源
 
 - 目前支持的数据源有， MySql，Doris, starRocks, PostgreSql, 和 CSV
@@ -105,7 +110,7 @@
 
 ![doc.png](/static/images/cn/img/doc_11.png)
 
-#### 4.1.5, 重选数据源 
+#### 4.1.5, 重选数据源
 
 - 若要重选数据源，进行新一轮对话，请点击【新对话】，重置当前对话
 
@@ -158,8 +163,41 @@
 
 ![doc.png](/static/images/cn/img/doc_21.png)
 
-#### 5.2 分享仪表盘
+#### 5.2 分享仪表盘 
 
 - 点击【发布】后，即可分享仪表盘
 
 ![doc.png](/static/images/cn/img/doc_22.png)
+
+
+## 6, 自动数据分析 
+
+#### 6.1 添加分析任务 
+1. 点击自动数据分析
+2. 选择自动数据分析
+3. 点击下拉框
+4. 选择数据源
+
+![doc.png](/static/images/cn/img/doc_23.png)
+
+#### 6.2 确认报告所需表  
+1. 选择数据表备注表字段信息
+2. 选择报告使用的表，可以选择多个表
+3. 备注表字段信息
+4. 然后提交
+
+![doc.png](/static/images/cn/img/doc_25.png)
+
+#### 6.3 等待报告完成  
+1. 历史分析，查看报告状态
+
+![doc.png](/static/images/cn/img/doc_26.png)
+
+2. 自动更改为生成中
+![doc.png](/static/images/cn/img/doc_27.png)
+
+4. 当状态更换为成功时
+![doc.png](/static/images/cn/img/doc_28.png)
+
+6. 查看报告详情
+![doc.png](/static/images/cn/img/doc_29.png)

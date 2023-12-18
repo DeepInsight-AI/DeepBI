@@ -18,7 +18,7 @@ Languages：中文  [English](../en/user_manual_en.md)
 ### 1.1, 关于 OPENAI API KEY:
 
 - API KEY 需要 OPENAI GPT4 模型的访问权限
-- 后续会陆续支持其他大模型，敬请期待
+- 你可以申请我们的Key 进行使用
 
 ### 1.2, 关于 代理:
 
@@ -28,6 +28,11 @@ Languages：中文  [English](../en/user_manual_en.md)
 测试不通过的情况，请自行检查 API KEY是否可用，以及代理是否配置正确。
 
 ![doc_0.png](img/doc_0.png)
+
+### 1.3, 关于 DeepInsight API KEY:
+- 可以点击 设置key 下面的连接，进行注册，获取API Key.(可以加我们微信群(首页联系我们)，申请免费的Token)
+
+![doc_0.png](img/us_key.png)
 
 <h2 align="left">2, 配置 数据源</h2>
 
@@ -115,7 +120,7 @@ Languages：中文  [English](../en/user_manual_en.md)
 
 ![doc.png](img/doc_11.png)
 
-#### 4.1.5, 重选数据源 
+#### 4.1.5, 重选数据源
 
 - 若要重选数据源，进行新一轮对话，请点击【新对话】，重置当前对话
 
@@ -175,4 +180,34 @@ Languages：中文  [English](../en/user_manual_en.md)
 ![doc.png](img/doc_22.png)
 
 
+<h2 align="left">6, 自动数据分析 </h2>
 
+<h4 align="left">6.1 添加分析任务 </h4>
+1. 点击自动数据分析
+2. 选择自动数据分析
+3. 点击下拉框
+4. 选择数据源
+
+![doc.png](img/doc_23.png)
+
+<h4 align="left">6.2 确认报告所需表  </h4>
+1. 选择数据表备注表字段信息
+2. 选择报告使用的表，可以选择多个表
+3. 备注表字段信息
+4. 然后提交
+
+![doc.png](img/doc_25.png)
+
+<h4 align="left">6.3 等待报告完成  </h4>
+1. 历史分析，查看报告状态
+
+![doc.png](img/doc_26.png)
+
+2. 自动更改为生成中
+![doc.png](img/doc_27.png)
+
+4. 当状态更换为成功时
+![doc.png](img/doc_28.png)
+
+6. 查看报告详情
+![doc.png](img/doc_29.png)

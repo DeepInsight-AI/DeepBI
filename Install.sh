@@ -41,6 +41,7 @@ while true; do
         fi
     fi
 done
+echo "If external access is enabled, you need to adjust the firewall permission."
 # shellcheck disable=SC2162
 read -p "We need server port 8338 8339 8340,is that ports not use？(Y/N): " confirm
 if [[ $confirm == "N" || $confirm == "n" ]]; then

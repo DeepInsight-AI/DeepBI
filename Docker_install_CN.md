@@ -1,4 +1,12 @@
+### Docker安装说明pdf 下载
+
+- [PDF 中文Docker安装下载](./user_manual/中文docker安装说明.pdf)
+
+
 # Windows
+- windows 11 可以直接安装
+- 注意 Windows 10 需要更新到 22H2版本及以上命令行运行<br>
+  打开文件夹，在文件夹地址栏输入 ```cmd```按回车(ERTER)，然后命令行输入 ``` winver ```按回车(ENTER) 查看版本号
 
 ## 安装docker
 1. 需要调整本地主板虚拟化选项<br>
@@ -20,6 +28,7 @@
 
 - 如果出现，下面的提示<br>
  ![docker_err.jpg](user_manual/cn/img/docker_err.jpg)
+
 - 解决方案
 ```
  运行: wsl --list --online 查看可以安装的版本
@@ -56,9 +65,11 @@ sudo ln -s /usr/bin/docker-compose /usr/local/bin/docker-compose
 ```
 11. 安装网络管理 命令: ```sudo apt install net-tools```
 12. 上面安装完毕docker ,以后就不用再次安装
+
 ## 配置DeepBi
-13. 运行命令 ```service docker status``` 确认docker是在运行 "active (running)" <br>
-14. 获取本机内网IP地址,记录下来，一般是192.168.1.xxx,稍后可以用在安装路径下 如下图:<br>
+
+14. 运行命令 ```service docker status``` 确认docker是在运行 "active (running)" <br>
+15. 获取本机内网IP地址,记录下来，一般是192.168.1.xxx,稍后可以用在安装路径下 如下图:<br>
 ![ip.png](user_manual/cn/img/ip.png)
 
 15.然后，安装DeepBi有两种方式，任选其一 如下
@@ -72,8 +83,15 @@ sudo ln -s /usr/bin/docker-compose /usr/local/bin/docker-compose
 - 修改权限 ```sudo chmod +x ./Install.sh```
 - 运行命令```sudo ./Install_cn.sh ``` 开始安装，安装结束后会有一个网址提示，直接浏览器访问即可
 
-- （2）通过命令下载代码 (需要本地github公钥)
-- 下载我们的代码，```git clone git@github.com:DeepInsight-AI/DeepBi.git```
+- （2）通过命令下载代码
+- 下载我们的代码
+ ```
+git clone https://github.com/DeepInsight-AI/DeepBI.git
+ ```
+如果下载失败更换协议，运行下面的代码
+ ```
+git clone http://github.com/DeepInsight-AI/DeepBI.git
+ ```
 - 出现 ```Are you sure you want to continue connecting (yes/no/[fingerprint])? ```
 - 输入 ```yes```  回车
 - 进入项目文件夹 ```cd DeepBi ```
@@ -103,20 +121,30 @@ sudo apt-get update
 apt-get install docker-ce docker-ce-cli containerd.io
 sudo usermod -aG docker $USER
 ```
-2. 需要退出当前账户重新登录， 重新登录后，进入命令行
+2. 安装 docker-compose
+```
+sudo apt-get install docker-compose
+sudo rm /usr/local/bin/docker-compose
+sudo ln -s /usr/bin/docker-compose /usr/local/bin/docker-compose
+```
+3. 需要退出当前账户重新登录， 重新登录后，进入命令行
 ```
 systemctl start docker
-sud apt-get -y install apt-transport-https ca-certificates curl software-properties-common
+sudo apt-get -y install apt-transport-https ca-certificates curl software-properties-common
 sudo systemctl enable docker
 ```
 ## 配置DeepBi
 3. 开始下载我们的代码文件
 ```
-git clone git@github.com:DeepInsight-AI/DeepBi.git
+git clone https://github.com/DeepInsight-AI/DeepBI.git
+```
+如果下载不下来更换协议
+```
+git clone http://github.com/DeepInsight-AI/DeepBI.git
 ```
 4. 解压后重命名为 "DeepBi" 然后进入目录
 ```
- cd DeepBi && sudo chmod+x./Install.sh
+ cd DeepBi && sudo chmod +x./Install.sh
  . Install_cn.sh
 ```
 5. 注意上面运行的是 . Install_cn.sh
@@ -152,4 +180,11 @@ git clone git@github.com:DeepInsight-AI/DeepBi.git
 - 运行命令到对应文件夹 ```cd DeepBi ```
 - 修改权限 ```sudo chmod+x ./Install.sh```
 - 运行命令```sudo ./Install_cn.sh ``` 开始安装，安装结束后会有一个网址提示，直接浏览器访问即可
+
+
+# 联系我们
+
+<a><img src="https://github.com/DeepInsight-AI/DeepBI/assets/151519374/b0ba1fc3-8c71-4bf7-bd53-ecf17050581a" width="40%"/></a>
+<br>
+为感谢各位支持，本地化部署完成可以联系群内DeepBI小助手，免费领取Token。
 

@@ -41,6 +41,8 @@ while true; do
     fi
 done
 # shellcheck disable=SC2162
+echo "如果开放外部访问，需要调整防火墙允许访问"
+# shellcheck disable=SC2162
 read -p "我们会使用服务端口 8338 8339 8340,确保它们没有使用？(Y/N): " confirm
 if [[ $confirm == "N" || $confirm == "n" ]]; then
     exit 1

@@ -1,6 +1,11 @@
 # How to install docker and docker-compose
 
 ## Windows
+- Windows 11 can be installed directly.
+- Note: Windows 10 needs to be updated to version 22H2 or later. Run the following command in the command prompt:
+  Open a folder, enter ```cmd``` in the folder address bar, and press Enter. Then, in the command prompt, enter ```winver``` and press Enter to check the version number.
+
+
 
 - You are in WSL system,you need to adjust the local motherboard virtualization options
 Press the del key to enter Bios, go to the advanced options "Intel (VMX) Virtualization Technology" or "Intel (VMX) Virtualization Technology" or "AMD-V", and set "enable on", then restart the computer (or like this picture).
@@ -44,7 +49,15 @@ sudo ln -s /usr/bin/docker-compose /usr/local/bin/docker-compose
 - Start the docker command ```sudo service docker start```
 - Check the docker running status command``` service docker status``` It should be "active (running)"
 - Install network management commands```sudo apt install net-tools```
-- Download the DeepBi code by the command : ```git clone git@github.com:DeepInsight-AI/DeepBi.git```
+- Download the DeepBi code by the command :
+```
+git clone https://github.com/DeepInsight-AI/DeepBI.git
+```
+If the download fails to replace the protocol, run the following code
+```
+git clone http://github.com/DeepInsight-AI/DeepBI.git
+ ```
+
 - Run the command ```cd DeepBi```  to the corresponding folder and run install file ```sudo ./install.sh```
 
 ## Ubuntu
@@ -55,6 +68,12 @@ sudo apt-get update
 sudo apt-get install ca-certificates curl gnupg lsb-release
 apt-get install docker-ce docker-ce-cli containerd.io
 sudo usermod -aG docker $USER
+```
+- Install docker-compose
+```
+sudo apt-get install docker-compose
+sudo rm /usr/local/bin/docker-compose
+sudo ln -s /usr/bin/docker-compose /usr/local/bin/docker-compose
 ```
 - Need user exit and relogin
 ```

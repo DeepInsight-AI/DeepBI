@@ -95,6 +95,8 @@ Install directly on the ubuntu system, you need to install redis, postgresql pyt
 
 
 ## 📑 Other
-- We have tested on Mac OS 12.7/13.X /14.1.1, Ubuntu 20.04/22.04, and Windows11 WSL 22.04. <br>If you have any question, please contact us at dev@deep-insight.co
+- We have tested on Mac OS 12.7/13.X /14.1.1, Ubuntu 20.04/22.04, and Windows11 WSL 22.04.
+- Windows 10 requires version 22H2 or higher to install WSL
+- If you have any question, please contact us at dev@deep-insight.co
 - <a href="https://github.com/DeepInsight-AI/DeepBi/issues">Issue</a>
 

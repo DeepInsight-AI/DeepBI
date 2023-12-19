@@ -6,7 +6,7 @@
 
 <div align="center">
 
-Languages：中文  [English](../en/user_manual_en.md)
+Languages：中文  [English](../en/user_manual_en.md)  [中文PDF 使用说明下载](../../../../../user_manual/中文使用说明.pdf)
 
 </div>
 

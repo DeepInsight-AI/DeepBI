@@ -20,6 +20,9 @@ DeepBi是一款AI原生的数据分析平台。DeepBi充分利用大语言模型
     的右上角点个⭐ Star 和 Fork，您的支持是 DeepBi 变得更好最大的动力
   </div>
 </div>
+<div align="center">
+    DeepBI官网 <a href="http://www.deep-insight.co/" target="_blank">http://www.deep-insight.co/</a>
+</div>
 
 
 
@@ -28,7 +31,10 @@ DeepBi是一款AI原生的数据分析平台。DeepBi充分利用大语言模型
 https://github.com/DeepInsight-AI/DeepBi/assets/151519374/f0d2fcd4-32b0-4095-a892-b9bbf8a51602
 
 ## 使用说明
-[DeepBi 使用说明](client/app/assets/images/cn/user_manual_cn.md)
+- [DeepBi 在线使用说明](client/app/assets/images/cn/user_manual_cn.md)
+- [PDF 中文软件说明下载](./user_manual/中文软件说明.pdf)
+- [PDF 中文Docker安装下载](./user_manual/中文docker安装说明.pdf)
+- [PDF 使用说明下载](./user_manual/中文使用说明.pdf)
 
 
 ## ✨ 特性
@@ -49,7 +55,7 @@ DeepBi 支持的数据库连接有:
 - PostgreSQL
 - csv/Excel导入
 
-## 📦 Docker 安装部署
+## 📦 Docker 安装和DeepBI部署
 
 按照 [使用 Docker 安装](Docker_install_CN.md) 中对应自己的系统操作步骤操作，最后获取DeepBi网址，即可使用
 
@@ -85,13 +91,17 @@ DeepBi 支持的数据库连接有:
 ```
 
 ## Contact Us
+
 <a><img src="https://github.com/DeepInsight-AI/DeepBI/assets/151519374/b0ba1fc3-8c71-4bf7-bd53-ecf17050581a" width="40%"/></a>
+<br>
+为感谢各位支持，本地化部署完成可以联系群内DeepBI小助手，免费领取Token。
 
 
 
 
 ## 📑 文档
 - 我们已经在 Mac OS 12.7/13.X /14.1.1 , Ubuntu 20.04/22.04 和  Windows11 WSL 22.04 系统测试。
-  <br> 如果有什么问题，可以联系我们 dev@deep-insight.co
+- Windows 10 安装WSL需要 22H2版本，详见  [使用 Docker 安装](Docker_install_CN.md)
+- 如果有什么问题，可以联系我们 dev@deep-insight.co
 - <a href="https://github.com/DeepInsight-AI/DeepBi/issues">Issue</a>
 

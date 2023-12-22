@@ -13,6 +13,8 @@ import { axios } from "@/services/axios";
 import Link from "@/components/Link";
 import QuestionCircleOutlinedIcon from "@ant-design/icons/QuestionCircleOutlined";
 import { websocket,createWebSocket,closeWebSocket } from '../testdialogue/components/Dialogue/websocket';
+import toast, { Toaster } from 'react-hot-toast';
+
 const SettingsOpenKey = () => {
     const [form] = Form.useForm();
   const [disabled, setDisabled] = useState(false);
@@ -58,6 +60,7 @@ const SettingsOpenKey = () => {
     axios.post("/api/ai_token",data).then((res) => {
       if(res.code===200){
         notification.success(window.W_L.save_success)
+        toast('Here is your toast.');
         closeWebSocket()
         getOpenKey();
       }else{
@@ -129,7 +132,7 @@ const SettingsOpenKey = () => {
      <React.Fragment>
      <div className="row1" style={{width:"50%",margin:"auto"}}>
        {/* {! && <LoadingState className="" />} */}
-     
+       <Toaster />
        <Form
       form={form}
       layout="vertical"

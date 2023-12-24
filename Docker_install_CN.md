@@ -68,9 +68,8 @@ sudo ln -s /usr/bin/docker-compose /usr/local/bin/docker-compose
 
 ## 配置DeepBi
 
-14. 运行命令 ```service docker status``` 确认docker是在运行 "active (running)" <br>
-15.然后，安装DeepBi有两种方式，任选其一 如下
-
+14. 运行命令 ```service docker status``` 确认docker是在运行 "active (running)"
+15. 然后，安装DeepBi有两种方式，任选其一 如下
 - （1）直接下载压缩包 (推荐)
 - 在WSL命令行中运行命令 : ```pwd``` 你会看到你目前的文件夹地址 比如 ```/mnt/c/Windows/system32```
 - 点击”<a href="https://github.com/DeepInsight-AI/DeepBi" target='_blank'>链接</a>“通过网页下载我们的代码 如下图
@@ -104,6 +103,9 @@ git clone http://github.com/DeepInsight-AI/DeepBI.git
    3.运行“sudo docker-compose start”命令
   ```
    就可以去浏览器中打开自己DeepBi网址了【网址都是http://‘本机内网IP地址’:8338】
+   启动后关闭所有代理软件
+  
+ 17. 如果再次向获取wsl内网ip地址 ``` ifconfig | grep -Eo 'inet (addr:)?([0-9]*\.){3}[0-9]*' | grep -vE '^inet 127(\.[0-9]{1,3}){3}' ```
 
 
 # Ubuntu

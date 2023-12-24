@@ -69,9 +69,6 @@ sudo ln -s /usr/bin/docker-compose /usr/local/bin/docker-compose
 ## 配置DeepBi
 
 14. 运行命令 ```service docker status``` 确认docker是在运行 "active (running)" <br>
-15. 获取本机内网IP地址,记录下来，一般是192.168.1.xxx,稍后可以用在安装路径下 如下图:<br>
-![ip.png](user_manual/cn/img/ip.png)
-
 15.然后，安装DeepBi有两种方式，任选其一 如下
 
 - （1）直接下载压缩包 (推荐)
@@ -96,7 +93,8 @@ git clone http://github.com/DeepInsight-AI/DeepBI.git
 - 输入 ```yes```  回车
 - 进入项目文件夹 ```cd DeepBi ```
 - 修改权限 ```sudo chmod +x ./Install.sh```
-- 运行命令```sudo ./Install_cn.sh ``` 开始安装<br>
+- 下面按安装过程会有 选择IP 的，选择内网开头的 172.x.x.x 
+- 运行命令```sudo ./Install_cn.sh ``` 开始安装
 16. 安装结束后会有一个网址提示，直接浏览器访问即可<br>
 （注意*关闭命令符窗口将无法访问属于DeepBi网址
    再次使用DeepBi，打开“命令提示符”窗口“以管理员身份运行”

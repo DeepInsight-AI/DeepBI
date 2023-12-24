@@ -7,7 +7,6 @@ import Radio from "antd/lib/radio";
 import routeWithUserSession from "@/components/ApplicationArea/routeWithUserSession";
 // import LoadingState from "@/components/items-list/components/LoadingState";
 import wrapSettingsTab from "@/components/SettingsWrapper";
-import notification from "@/services/notification";
 import routes from "@/services/routes";
 import { axios } from "@/services/axios";
 import Link from "@/components/Link";
@@ -59,17 +58,17 @@ const SettingsOpenKey = () => {
     }
     axios.post("/api/ai_token",data).then((res) => {
       if(res.code===200){
-        notification.success(window.W_L.save_success)
+        toast.success(window.W_L.save_success)
         toast('Here is your toast.');
         closeWebSocket()
         getOpenKey();
       }else{
-        notification.error(window.W_L.save_failed)
+        toast.error(window.W_L.save_failed)
         
       }
       setDisabled(false)
     }).catch((err) => {
-        notification.error(window.W_L.save_failed)
+      toast.error(window.W_L.save_failed)
       setDisabled(false)
     })
 
@@ -92,7 +91,7 @@ const SettingsOpenKey = () => {
       websocket.onmessage = async (event) => {
         let data = JSON.parse(event.data)
         if (data.receiver === 'api') {
-          notification.info(data.data.content)
+          toast.success(data.data.content)
           setDisabled(false)
         }
       }

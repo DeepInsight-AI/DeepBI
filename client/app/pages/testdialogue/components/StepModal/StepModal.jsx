@@ -19,7 +19,7 @@ const StepModal =React.forwardRef((props, ref)  => {
   const [selectedTemplate, setSelectedTemplate] = useState(1);
   const [selectedDashboard, setSelectedDashboard] = useState(null);
   const templates = [{ id: 1, image: dashboards_prettify_1 }];
-
+  const [loading, setLoading] = useState(false);
   const openModal = () => {
     setVisible(true);
   };
@@ -77,14 +77,19 @@ const StepModal =React.forwardRef((props, ref)  => {
   }
 
   const handleOk =async () => {
+    setLoading(true);
     toast.promise(getDashboardDetail(), {
       loading: 'Loading...',
-      success: async (detail) => {
+      success: (detail) => {
+        setLoading(false);
         console.log(detail)
         // const res = await axios.post('/api/another-endpoint', detail);
         return window.W_L.submit_success;
       },
-      error: window.W_L.submit_fail,
+      error: (err) => {
+        setLoading(false);
+        return window.W_L.submit_fail;
+      },
     });
     // const detail = await getDashboardDetail();
     // console.log(detail,123);
@@ -149,6 +154,8 @@ const StepModal =React.forwardRef((props, ref)  => {
         title="仪表盘美化"
         visible={visible}
         onCancel={handleCancel}
+        confirmLoading={loading}
+        closable={!loading}
         footer={
           current === 0 ? (
             <Button type="primary" onClick={next} disabled={!selectedContent}>

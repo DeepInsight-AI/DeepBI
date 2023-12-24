@@ -15,9 +15,9 @@
   font-size: 18px;
   border-radius: 40em;
   width: 8em;
-  height: 3em;
-  z-index: 1;
-  color: white;
+  height: 2.5em;
+  font-size: 14px;
+  color: #f7f4f4;
   overflow: hidden;
   border: 1px solid rgba(255, 255, 255, 0.18);
 }
@@ -36,6 +36,9 @@
   display: flex;
   justify-content: center;
   align-items: center;
+}
+.dashbord_button .text strong {
+  margin-right: 3px;
 }
 .dashbord_button .blob {
   position: absolute;

@@ -57,26 +57,30 @@ const StepModal =React.forwardRef((props, ref)  => {
     return Promise.all(promises);
   }
   
-  const getDashboardDetail = async () => {
-    try {
-      const res = await axios.get(`/api/dashboards/${selectedContent}`);
-      if(res.widgets && res.widgets.length > 0){
-        return {
-          dashboard_name: res.name,
-          query_result: await getQueryResult(res.widgets)
-        };
-      } else {
-        throw new Error(window.W_L.no_dashboard_data);
-      }
-    } catch (error) {
-      throw error;
-    }
+  const getDashboardDetail = () => {
+    return axios.get(`/api/dashboards/${selectedContent}`)
+      .then(async res => {
+        if(res.data.widgets && res.data.widgets.length > 0){
+          const queryResult = await getQueryResult(res.data.widgets);
+          return {
+            dashboard_name: res.data.name,
+            query_result: queryResult
+          };
+        } else {
+          throw new Error(window.W_L.no_dashboard_data);
+        }
+      })
+      .catch(error => {
+        console.error(error);
+        throw error;
+      });
   }
 
   const handleOk =async () => {
     toast.promise(getDashboardDetail(), {
       loading: 'Loading...',
       success: async (detail) => {
+        console.log(detail)
         // const res = await axios.post('/api/another-endpoint', detail);
         return window.W_L.submit_success;
       },

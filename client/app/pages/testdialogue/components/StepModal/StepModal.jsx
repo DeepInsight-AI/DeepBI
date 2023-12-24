@@ -60,10 +60,10 @@ const StepModal =React.forwardRef((props, ref)  => {
   const getDashboardDetail = () => {
     return axios.get(`/api/dashboards/${selectedContent}`)
       .then(async res => {
-        if(res.data.widgets && res.data.widgets.length > 0){
-          const queryResult = await getQueryResult(res.data.widgets);
+        if(res.widgets && res.widgets.length > 0){
+          const queryResult = await getQueryResult(res.widgets);
           return {
-            dashboard_name: res.data.name,
+            dashboard_name: res.name,
             query_result: queryResult
           };
         } else {

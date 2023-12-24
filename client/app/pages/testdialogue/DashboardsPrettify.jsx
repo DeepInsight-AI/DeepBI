@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState,useRef } from "react";
 import routeWithUserSession from "@/components/ApplicationArea/routeWithUserSession";
 import routes from "@/services/routes";
 import Table from "antd/lib/table";
@@ -11,10 +11,12 @@ import Modal from "antd/lib/modal";
 import { axios } from "@/services/axios";
 import PageHeader from "@/components/PageHeader";
 import DeleteOutlinedIcon from "@ant-design/icons/DeleteOutlined";
+import StepModal from "./components/StepModal/StepModal";
 import toast, { Toaster } from 'react-hot-toast';
 import "./index.less";
 
 function DashboardsPrettify() {
+    const stepModalRef = useRef();
     const [DashboardsPrettifyList, setDashboardsPrettifyList] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const listColumns = [
@@ -94,12 +96,15 @@ function DashboardsPrettify() {
         }
         setIsLoading(false);
     };
+    const handleClick = () => {
+        stepModalRef.current.openModal();
+    };
     useEffect(() => {
         getDashboardsPrettifyList();
     }, []);
     const pre_btn = () => {
         return (
-            <button className="dashbord_button"> <span class="text">
+            <button className="dashbord_button" onClick={handleClick}> <span class="text">
                 
 
                 <strong>大屏美化</strong>
@@ -115,6 +120,7 @@ function DashboardsPrettify() {
     }
         return (
             <div className="page-queries-list">
+                <StepModal ref={stepModalRef}></StepModal>
                 <div className="container">
                     <Toaster />
                     <PageHeader

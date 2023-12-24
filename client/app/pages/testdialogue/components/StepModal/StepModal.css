@@ -1,0 +1,37 @@
+.steps-content {
+    height: 300px;
+    overflow-y: auto;
+  }
+.content-container {
+    display: flex;
+    justify-content: center;
+  }
+  
+  .content-select {
+    min-width: 70%;
+    margin-top:20px !important;
+  }
+  
+  .template-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    padding: 10px;
+  }
+  
+  .template-item {
+    position: relative;
+    margin-bottom: 10px;
+    width: 49%;
+    cursor: pointer;
+  }
+  
+  .template-img {
+    width: 100%;
+  }
+  
+  .template-checkbox {
+    position: absolute;
+    top: 0;
+    right: 0;
+  }

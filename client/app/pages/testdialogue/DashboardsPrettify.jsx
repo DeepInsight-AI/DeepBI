@@ -87,6 +87,9 @@ function DashboardsPrettify() {
         setIsLoading(true);
         const res = await axios.get("/api/auto_pilot");
         if (res.code === 200) {
+            res.data.sort(function(a,b){
+                return Date.parse(b.created_at) - Date.parse(a.created_at);
+            });
             setDashboardsPrettifyList(res.data);
         }
         setIsLoading(false);

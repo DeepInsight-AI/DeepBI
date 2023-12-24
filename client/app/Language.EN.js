@@ -811,4 +811,8 @@ window.W_L = {
   "column": "Column",
   "option": "Option",
   'click_here_to_get_apikey':'Click here to get API key',
+  'dashboards_prettify':'Dashboards Prettify',
+  'dashboards_prettify_all':'Dashboards Prettify',
+  'delete_success':'Delete Success',
+  'delete_fail':'Delete Fail',
 }

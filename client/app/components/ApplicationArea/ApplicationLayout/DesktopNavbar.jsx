@@ -66,6 +66,7 @@ function useNavbarActiveState() {
       autopilot : includes(["Dialogue.List.autopilot"], currentRoute.id),
       autopilot_list : includes(["Dialogue.List.autopilot_list"], currentRoute.id),
       autopilot_view : includes(["Dialogue.List.autopilot_view"], currentRoute.id),
+      dashboards_prettify : includes(["Dialogue.List.dashboards_prettify"], currentRoute.id),
     }),
     [currentRoute.id]
   );
@@ -152,15 +153,34 @@ export default function DesktopNavbar() {
           </Menu.SubMenu>
       </NavbarSection>
 
-
+        
 
       <NavbarSection style={{flex:"0"}}>
-          <Menu.Item key="dashboards" className={activeState.dashboards ? "navbar-active-item" : null}>
-            <Link href="dashboards">
-              <DashboardOutlinedIcon aria-label="dashboards navigation button" />
-              <span className="desktop-navbar-label">{window.W_L.dashboards}</span>
-            </Link>
-          </Menu.Item>
+
+      <Menu.SubMenu
+            key="create"
+            popupClassName="desktop-navbar-submenu"
+            data-test="queriesButton"
+            tabIndex={0}
+            className={activeState.dashboards || activeState.dashboards_prettify ? "navbar-active-item" : null}
+            title={
+              <React.Fragment>
+                <DashboardOutlinedIcon />
+                <span className="desktop-navbar-label">{window.W_L.dashboards}</span>
+              </React.Fragment>
+            }>
+              <Menu.Item key="dashboards">
+                <Link href="dashboards" data-test="dashboards">
+                  {window.W_L.dashboards}
+                </Link>
+              </Menu.Item>
+
+              <Menu.Item key="dashboards_prettify">
+                <Link href="dashboards_prettify" data-test="dashboards_prettify">
+                  {window.W_L.dashboards_prettify}
+                </Link>
+              </Menu.Item>
+      </Menu.SubMenu>
 
           {/* <Menu.Item key="autopilot" className={activeState.autopilot ? "navbar-active-item" : null}>
             <Link href="autopilot">

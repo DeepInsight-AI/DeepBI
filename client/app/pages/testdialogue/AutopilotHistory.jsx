@@ -11,6 +11,7 @@ import Modal from "antd/lib/modal";
 import { axios } from "@/services/axios";
 import PageHeader from "@/components/PageHeader";
 import  DeleteOutlinedIcon  from "@ant-design/icons/DeleteOutlined";
+import toast, { Toaster } from 'react-hot-toast';
 import "./index.less";
 
 function AutopilotHistory() {
@@ -67,8 +68,14 @@ const listColumns = [
       onOk: async () => {
         try {
           const res = await axios.delete(`/api/auto_pilot/delete/${id}`);
+          if(res.code === 200){
+            toast.success(window.W_L.delete_success);
+            getAutoPilotList();
+          }else{
+            toast.error(window.W_L.delete_fail);
+          }
           // Handle the response as needed
-          getAutoPilotList();
+          
         } catch (error) {
           // Handle any errors
         }
@@ -92,6 +99,7 @@ const listColumns = [
   return (
     <div className="page-queries-list">
       <div className="container">
+      <Toaster />
         <PageHeader
           title={window.W_L.all_autopilot}
           actions={

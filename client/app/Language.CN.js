@@ -814,4 +814,8 @@ window.W_L=  {
   "column": "列",
   "option": "选项",
   'click_here_to_get_apikey':'点击这里获取ApiKey',
+  'dashboards_prettify':'仪表盘美化',
+  'dashboards_prettify_all':'所有仪表盘美化',
+  'delete_success':'删除成功',
+  'delete_fail':'删除失败',
 }

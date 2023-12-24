@@ -9,6 +9,7 @@ import "./alert/Alert";
 import "./testdialogue/DialogueList";
 import "./testdialogue/AutopilotHistory";
 import "./testdialogue/AutopilotView";
+import "./testdialogue/DashboardsPrettify";
 
 import "./dashboards/DashboardList";
 import "./dashboards/DashboardPage";

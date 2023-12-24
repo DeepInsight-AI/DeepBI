@@ -59,7 +59,6 @@ const SettingsOpenKey = () => {
     axios.post("/api/ai_token",data).then((res) => {
       if(res.code===200){
         toast.success(window.W_L.save_success)
-        toast('Here is your toast.');
         closeWebSocket()
         getOpenKey();
       }else{

@@ -10,13 +10,13 @@ fi
 # Install.sh, you mast have installed docker and docker-compose
 # check docker support
 if ! command -v docker &> /dev/null; then
-    echo "Docker has not installed. Solve this problem : https://github.com/DeepThought-AI/Holmes/blob/main/InstallDocker.md"
+    echo "Docker has not installed. Solve this problem : https://github.com/DeepInsight-AI/DeepBI/blob/main/Docker_install.md"
     exit 1
 fi
 
 # check Docker Compose support
 if ! command -v docker-compose &> /dev/null; then
-    echo "Docker Compose has not installed. Solve this problem : https://github.com/DeepThought-AI/Holmes/blob/main/InstallDocker.md"
+    echo "Docker Compose has not installed. Solve this problem : https://github.com/DeepInsight-AI/DeepBI/blob/main/Docker_install.md"
     exit 1
 fi
 # get local ip

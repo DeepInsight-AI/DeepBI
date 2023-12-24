@@ -18,6 +18,11 @@
 
 ![doc_0.png](/static/images/en/img/doc_0.png)
 
+### 1.3, About DeepInsight API KEY:
+- You can click the connection below the set key to register and get the API Key.(You can add our wechat group (contact us on the home page) to apply for a free Token.)
+
+![doc_0.png](/static/images/en/img/us_key.png)
+
 ## 2,Configure Data Source
 
 - Currently supported data sources are MySql, Doris, starRocks, PostgreSql, and CSV. More data sources will be supported
@@ -86,7 +91,7 @@ Can view historical conversation records
 
 #### 4.1.1. Check the data (data source and table)
 
-- The checked data will be used as the basic data of AI in report generation. 
+- The checked data will be used as the basic data of AI in report generation.
 - 🔥Note: Currently the CSV data source does
   not support [Report Generation]
 
@@ -112,7 +117,7 @@ Can view historical conversation records
 
 ![doc.png](/static/images/en/img/doc_11.png)
 
-#### 4.1.5, reselect data source 
+#### 4.1.5, reselect data source
 
 - If you want to reselect the data source and start a new round of dialogue, please click [New Dialogue] to reset the current dialogue.
 
@@ -172,6 +177,37 @@ Can view historical conversation records
 - After clicking [Publish], you can share the dashboard
 
 ![doc.png](/static/images/en/img/doc_22.png)
+## 6. Automatic Data Analysis
+
+#### 6.1 Add Analysis Task
+1. Click on Automatic Data Analysis.
+2. Choose Automatic Data Analysis.
+3. Click on the dropdown.
+4. Select the data source.
+
+![doc.png](/static/images/en/img/doc_23.png)
+
+#### 6.2 Confirm Required Tables for the Report
+1. Select table remarks and field information.
+2. Choose the tables to be used in the report; multiple tables can be selected.
+3. Provide remarks for table fields.
+4. Submit.
+
+![doc.png](/static/images/en/img/doc_25.png)
+
+#### 6.3 Wait for Report Completion
+1. In historical analysis, check the report status.
+
+![doc.png](/static/images/en/img/doc_26.png)
+2. Automatically changes to generating.
+
+![doc.png](/static/images/en/img/doc_27.png)
+3. When the status changes to successful.
+
+![doc.png](/static/images/en/img/doc_28.png)
+4. View the report details.
+
+![doc.png](/static/images/en/img/doc_29.png)
 
 
 

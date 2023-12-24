@@ -19,7 +19,7 @@ Languages： [中文](../cn/user_manual_cn.md) English
 ### 1.1, About OPENAI API KEY:
 
 - Requires access to gpt4 models.
-- Other large models will be supported in the future, so stay tuned.
+- You can apply for our Key to use
 
 ### 1.2, About the proxy:
 
@@ -29,6 +29,11 @@ Languages： [中文](../cn/user_manual_cn.md) English
   fails, please check whether the API KEY is available and whether the proxy is configured correctly.
 
 ![doc_0.png](img/doc_0.png)
+
+### 1.3, About DeepInsight API KEY:
+- You can click the connection below the set key to register and get the API Key.(You can add our wechat group (contact us on the home page) to apply for a free Token.)
+
+![doc_0.png](img/us_key.png)
 
 <h2 align="left">2,Configure Data Source</h2>
 
@@ -98,7 +103,7 @@ Can view historical conversation records
 
 #### 4.1.1. Check the data (data source and table)
 
-- The checked data will be used as the basic data of AI in report generation. 
+- The checked data will be used as the basic data of AI in report generation.
 - 🔥Note: Currently the CSV data source does
   not support [Report Generation]
 
@@ -124,7 +129,7 @@ Can view historical conversation records
 
 ![doc.png](img/doc_11.png)
 
-#### 4.1.5, reselect data source 
+#### 4.1.5, reselect data source
 
 - If you want to reselect the data source and start a new round of dialogue, please click [New Dialogue] to reset the current dialogue.
 
@@ -184,6 +189,37 @@ Can view historical conversation records
 - After clicking [Publish], you can share the dashboard
 
 ![doc.png](img/doc_22.png)
+<h2 align="left">6. Automatic Data Analysis</h2>
+
+<h4 align="left">6.1 Add Analysis Task</h4>
+1. Click on Automatic Data Analysis.
+2. Choose Automatic Data Analysis.
+3. Click on the dropdown.
+4. Select the data source.
+
+![doc.png](img/doc_23.png)
+
+<h4 align="left">6.2 Confirm Required Tables for the Report</h4>
+1. Select table remarks and field information.
+2. Choose the tables to be used in the report; multiple tables can be selected.
+3. Provide remarks for table fields.
+4. Submit.
+
+![doc.png](img/doc_25.png)
+
+<h4 align="left">6.3 Wait for Report Completion</h4>
+1. In historical analysis, check the report status.
+
+![doc.png](img/doc_26.png)
+2. Automatically changes to generating.
+
+![doc.png](img/doc_27.png)
+3. When the status changes to successful.
+
+![doc.png](img/doc_28.png)
+4. View the report details.
+
+![doc.png](img/doc_29.png)
 
 
 

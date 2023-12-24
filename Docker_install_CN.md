@@ -4,7 +4,8 @@
 1. 需要调整本地主板虚拟化选项<br>
   首先重启电脑，重启电脑时不断按“F1”和“F2”和“DEL”这三个键进入Bios（因为大部分主板是这三个按键的其中一个，所以一起按，另外注意笔记本是按“ESC”键）<br>
   ![bios.png](user_manual/cn/img/bios1.png)
-  ![bios.png](user_manual/cn/img/bios2.jpg)
+  ![bios.png](user_manual/cn/img/bios2.png)
+  ![bios.png](user_manual/cn/img/bios3.png)
 
 
 2. 你可以通过 https://learn.microsoft.com/en-us/windows/wsl/install 或者在微软商店进行安装 WSL
@@ -62,9 +63,9 @@ sudo ln -s /usr/bin/docker-compose /usr/local/bin/docker-compose
 
 15.然后，安装DeepBi有两种方式，任选其一 如下
 
-- （1）直接下载压做包 (推荐)
+- （1）直接下载压缩包 (推荐)
 - 在WSL命令行中运行命令 : ```pwd``` 你会看到你目前的文件夹地址 比如 ```/mnt/c/Windows/system32```
-- 点击”<a href="https://github.com/DeepThought-AI/DeepBi" target='_blank'>链接</a>“通过网页下载我们的代码 如下图
+- 点击”<a href="https://github.com/DeepInsight-AI/DeepBi" target='_blank'>链接</a>“通过网页下载我们的代码 如下图
 - ![download.png](user_manual/cn/img/download.png)
 - 解压后的文件夹 "DeepBi" 移动到  C:/Windows/system32 (也就是上面看到的文件夹地址,c表示C盘)
 - 回到WSL命令行，运行命令```cd DeepBi ```进入项目文件夹
@@ -72,7 +73,7 @@ sudo ln -s /usr/bin/docker-compose /usr/local/bin/docker-compose
 - 运行命令```sudo ./Install_cn.sh ``` 开始安装，安装结束后会有一个网址提示，直接浏览器访问即可
 
 - （2）通过命令下载代码 (需要本地github公钥)
-- 下载我们的代码，```git clone git@github.com:DeepThought-AI/DeepBi.git```
+- 下载我们的代码，```git clone git@github.com:DeepInsight-AI/DeepBi.git```
 - 出现 ```Are you sure you want to continue connecting (yes/no/[fingerprint])? ```
 - 输入 ```yes```  回车
 - 进入项目文件夹 ```cd DeepBi ```
@@ -111,7 +112,7 @@ sudo systemctl enable docker
 ## 配置DeepBi
 3. 开始下载我们的代码文件
 ```
-git clone git@github.com:DeepThought-AI/DeepBi.git
+git clone git@github.com:DeepInsight-AI/DeepBi.git
 ```
 4. 解压后重命名为 "DeepBi" 然后进入目录
 ```
@@ -147,7 +148,7 @@ git clone git@github.com:DeepThought-AI/DeepBi.git
 - 检查命令：```brew services list |grep docker```
 
 ## 配置DeepBi
-- 下载代码```git clone git@github.com:DeepThought-AI/DeepBi.git```
+- 下载代码```git clone git@github.com:DeepInsight-AI/DeepBi.git```
 - 运行命令到对应文件夹 ```cd DeepBi ```
 - 修改权限 ```sudo chmod+x ./Install.sh```
 - 运行命令```sudo ./Install_cn.sh ``` 开始安装，安装结束后会有一个网址提示，直接浏览器访问即可

@@ -45,7 +45,7 @@ const StepModal =React.forwardRef((props, ref)  => {
   
   const getQueryResult = async (widgets) => {
     const promises = widgets.map(async (widget) => {
-      const res = await axios.get(`/api/queries/${widget.visualization.query.id}/results/${widget.visualization.latest_query_data_id}.json`);
+      const res = await axios.get(`/api/queries/${widget.visualization.query.id}/results/${widget.visualization.query.latest_query_data_id}.json`);
       return {
         id: widget.id,
         chart_name: widget.visualization.query.name,
@@ -74,7 +74,7 @@ const StepModal =React.forwardRef((props, ref)  => {
 
   const handleOk =async () => {
     const detail = await getDashboardDetail();
-    console.log(detail);
+    console.log(detail,123);
   };
 
   const handleCancel = () => {

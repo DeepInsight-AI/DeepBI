@@ -815,4 +815,5 @@ window.W_L = {
   'dashboards_prettify_all':'Dashboards Prettify',
   'delete_success':'Delete Success',
   'delete_fail':'Delete Fail',
+  'no_dashboard_data':'No dashboard data',
 }

@@ -6,8 +6,10 @@ import Checkbox from "antd/lib/checkbox";
 import Button from "antd/lib/button";
 import Form from "antd/lib/form";
 import { axios } from "@/services/axios";
+import toast, { Toaster } from 'react-hot-toast';
 import dashboards_prettify_1 from "../../../../assets/images/dashboard-example/dashboards_prettify_1.jpg";
 import "./StepModal.css";
+import { get } from "lodash";
 const { Step } = Steps;
 const { Option } = Select;
 const StepModal =React.forwardRef((props, ref)  => {
@@ -34,8 +36,45 @@ const StepModal =React.forwardRef((props, ref)  => {
       setSelectedDashboard([]);
     }
   });
-  const handleOk = () => {
-    setVisible(false);
+  const seriesTypeMapping = {
+    'CHART': (widget) => widget.visualization.options.globalSeriesType === 'column' ? 'bar' : widget.visualization.options.globalSeriesType,
+    'TABLE': () => 'table'
+  };
+  
+  const globalSeriesType = (widget) => seriesTypeMapping[widget.visualization.type](widget);
+  
+  const getQueryResult = async (widgets) => {
+    const promises = widgets.map(async (widget) => {
+      const res = await axios.get(`/api/queries/${widget.visualization.query.id}/results/${widget.visualization.latest_query_data_id}.json`);
+      return {
+        id: widget.id,
+        chart_name: widget.visualization.query.name,
+        chart_type: globalSeriesType(widget),
+        data: res.query_result.data,
+        columnMapping: widget.visualization.options.columnMapping
+      };
+    });
+    return Promise.all(promises);
+  }
+  
+  const getDashboardDetail = async () => {
+    try {
+      const res = await axios.get(`/api/dashboards/${selectedContent}`);
+      if(res.widgets && res.widgets.length > 0){
+        return {
+          dashboard_name: res.name,
+          query_result: await getQueryResult(res.widgets)
+        };
+      } else {
+        toast.error(window.W_L.no_dashboard_data);
+      }
+    } catch (error) {
+    }
+  }
+
+  const handleOk =async () => {
+    const detail = await getDashboardDetail();
+    console.log(detail);
   };
 
   const handleCancel = () => {
@@ -91,6 +130,8 @@ const StepModal =React.forwardRef((props, ref)  => {
     getDashboardList();
   }, []);
   return (
+    <>
+     <Toaster />
       <Modal
         title="仪表盘美化"
         visible={visible}
@@ -118,6 +159,7 @@ const StepModal =React.forwardRef((props, ref)  => {
         </Steps>
         <div className="steps-content">{steps[current].content}</div>
       </Modal>
+    </>
   );
 });
 

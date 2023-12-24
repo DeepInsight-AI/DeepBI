@@ -818,4 +818,5 @@ window.W_L=  {
   'dashboards_prettify_all':'所有仪表盘美化',
   'delete_success':'删除成功',
   'delete_fail':'删除失败',
+  'no_dashboard_data':'未获取到仪表盘数据',
 }

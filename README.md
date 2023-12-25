@@ -70,6 +70,14 @@ Install directly on the ubuntu system, you need to install redis, postgresql pyt
 - Require python version  3.8+
 - Recommend using virtual environments such as pyenv coda
 - postgresql needs to install postgresql-16 version
+- Download the DeepBi code by the command :
+```
+git clone https://github.com/DeepInsight-AI/DeepBI.git
+```
+If the download fails to replace the protocol, run the following code
+```
+git clone http://github.com/DeepInsight-AI/DeepBI.git
+ ```
 - Just run ```. ubuntu_install.sh``` directly (note that you run . ubuntu_install.sh instead of sh xxx here, because you need to run the python virtual environment)
 - Default port is 8338 and 8339
 - Web access: http://ip:8338

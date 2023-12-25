@@ -8,8 +8,8 @@ import toast, { Toaster } from "react-hot-toast";
 import dashboards_prettify_1 from "../../../../assets/images/dashboard-example/dashboards_prettify_1.jpg";
 import "./StepModal.css";
 const StepModal = React.forwardRef((props, ref) => {
+  const {dashboardId} = props;
   const [visible, setVisible] = useState(false);
-  const [selectedContent, setSelectedContent] = useState(null);
   const [selectedTemplate, setSelectedTemplate] = useState(1);
   const templates = [
     { id: 1, title: window.W_L.example1, image: dashboards_prettify_1 },
@@ -26,12 +26,6 @@ const StepModal = React.forwardRef((props, ref) => {
   React.useImperativeHandle(ref, () => ({
     openModal,
   }));
-  const getDashboardList = async () => {
-    const res = await axios.get(`/api/dashboards?order&page=1&page_size=50`);
-    if (res.results.length > 0) {
-      setSelectedContent(res.results[0].id);
-    }
-  };
   const seriesTypeMapping = {
     CHART: widget =>
       widget.visualization.options.globalSeriesType === "column"
@@ -60,7 +54,7 @@ const StepModal = React.forwardRef((props, ref) => {
 
   const getDashboardDetail = () => {
     return axios
-      .get(`/api/dashboards/${selectedContent}`)
+      .get(`/api/dashboards/${dashboardId}`)
       .then(async res => {
         if (res.widgets && res.widgets.length > 0) {
           const queryResult = await getQueryResult(res.widgets);
@@ -123,9 +117,6 @@ const StepModal = React.forwardRef((props, ref) => {
   const handleTemplateSelect = id => {
     setSelectedTemplate(id);
   };
-  useEffect(() => {
-    getDashboardList();
-  }, []);
   return (
     <>
       <Toaster />

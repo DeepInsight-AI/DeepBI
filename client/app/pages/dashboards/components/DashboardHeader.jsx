@@ -18,7 +18,7 @@ import { policy } from "@/services/policy";
 import recordEvent from "@/services/recordEvent";
 import { durationHumanize } from "@/lib/utils";
 import { DashboardStatusEnum } from "../hooks/useDashboard";
-// import StepModal from "@/pages/testdialogue/components/StepModal/StepModal";
+import StepModal from "@/pages/testdialogue/components/StepModal/StepModal";
 import "./DashboardHeader.less";
 
 function getDashboardTags() {
@@ -124,7 +124,7 @@ function DashboardMoreOptionsButton({ dashboardConfiguration }) {
   const archive = () => {
     Modal.confirm({
       title: window.W_L.dashboard_archived,
-      content: window.W_L.are_you_sure+ ` "${dashboard.name}" `+ window.W_L.dashboard_archived,
+      content: window.W_L.are_you_sure + ` "${dashboard.name}" ` + window.W_L.dashboard_archived,
       okText: window.W_L.ok_text,
       cancelText: window.W_L.cancel,
       okType: "danger",
@@ -185,17 +185,85 @@ function DashboardControl({ dashboardConfiguration, headerExtra }) {
   const canShareDashboard = canEditDashboard && !dashboard.is_draft;
   const showShareButton = !clientConfig.disablePublicUrls && (dashboard.publicAccessEnabled || canShareDashboard);
   const showMoreOptionsButton = canEditDashboard;
-  console.log(dashboard, "dashboard======")
+  const stepModalRef = React.useRef();
+  const openStepModal = () => {
+    if (stepModalRef.current) {
+      stepModalRef.current.openModal();
+    }
+  };
+  const pre_btn = () => {
+    return (
+      <button className="dashbord_button" onClick={openStepModal}>
+        {" "}
+        <span class="text">
+          <strong>{window.W_L.prettify_dashboard}</strong>
+          <svg
+            t="1703404031302"
+            class="icon"
+            viewBox="0 0 1024 1024"
+            version="1.1"
+            xmlns="http://www.w3.org/2000/svg"
+            p-id="6245"
+            width="20"
+            height="20">
+            <path
+              d="M954.368 999.296a69.376 69.376 0 0 1-47.04-18.304l-556.8-510.464a69.632 69.632 0 0 1-4.288-98.368 69.632 69.632 0 0 1 98.368-4.224l556.8 510.464a69.632 69.632 0 0 1-47.04 120.896z"
+              fill="#333333"
+              p-id="6246"></path>
+            <path
+              d="M571.52 648.384a69.376 69.376 0 0 1-47.04-18.304L350.528 470.528a69.632 69.632 0 0 1-4.288-98.368 69.632 69.632 0 0 1 98.368-4.224l174.016 159.488a69.632 69.632 0 0 1-47.04 120.896z"
+              fill="#FFCC00"
+              p-id="6247"></path>
+            <path
+              d="M1000.832 163.968h-185.6a23.232 23.232 0 0 1-23.232-23.168 23.232 23.232 0 0 1 23.232-23.232h185.6a23.232 23.232 0 0 1 23.232 23.232 23.232 23.232 0 0 1-23.232 23.168z"
+              fill="#333333"
+              p-id="6248"></path>
+            <path
+              d="M722.368 256.768h-185.6a23.232 23.232 0 0 1-23.232-23.168 23.232 23.232 0 0 1 23.232-23.232h185.6a23.232 23.232 0 0 1 23.232 23.232 23.232 23.232 0 0 1-23.232 23.168z"
+              fill="#333333"
+              p-id="6249"></path>
+            <path
+              d="M351.168 163.968h-185.6a23.232 23.232 0 0 1-23.232-23.168 23.232 23.232 0 0 1 23.232-23.232h185.6a23.232 23.232 0 0 1 23.232 23.232 23.232 23.232 0 0 1-23.232 23.168z"
+              fill="#333333"
+              p-id="6250"></path>
+            <path
+              d="M211.904 522.176h-185.6a23.232 23.232 0 0 1-23.232-23.168 23.232 23.232 0 0 1 23.232-23.232h185.6a23.232 23.232 0 0 1 23.232 23.232 23.232 23.232 0 0 1-23.232 23.168z"
+              fill="#333333"
+              p-id="6251"></path>
+            <path
+              d="M884.736 233.6V48a23.232 23.232 0 0 1 46.4 0v185.6a23.232 23.232 0 0 1-46.4 0z"
+              fill="#333333"
+              p-id="6252"></path>
+            <path
+              d="M606.336 326.4V140.8a23.232 23.232 0 0 1 46.4 0v185.6a23.232 23.232 0 0 1-46.4 0z"
+              fill="#333333"
+              p-id="6253"></path>
+            <path
+              d="M235.136 233.6V48a23.232 23.232 0 0 1 46.4 0v185.6a23.232 23.232 0 0 1-46.4 0z"
+              fill="#333333"
+              p-id="6254"></path>
+            <path
+              d="M95.936 591.808v-185.6a23.232 23.232 0 0 1 46.4 0v185.6a23.232 23.232 0 0 1-46.4 0z"
+              fill="#333333"
+              p-id="6255"></path>
+          </svg>
+        </span>
+        <span class="blob"></span>
+        <span class="blob"></span>
+        <span class="blob"></span>
+        <span class="blob"></span>
+      </button>
+    );
+  };
   const unarchiveDashboard = () => {
     recordEvent("unarchive", "dashboard", dashboard.id);
     updateDashboard({ is_archived: false }, false);
   };
   return (
     <div className="dashboard-control">
+      <StepModal ref={stepModalRef} dashboardId={dashboard.id} />
       {dashboard.can_edit && dashboard.is_archived && <Button onClick={unarchiveDashboard}>Unarchive</Button>}
-      <Button className="m-r-5 hidden-xs" onClick={togglePublished}>
-          <span className="far fa-magic m-r-5" /> {window.W_L.prettify_dashboard}
-      </Button>
+      {pre_btn()}
       {!dashboard.is_archived && (
         <span className="hidden-print">
           {showPublishButton && (
@@ -239,7 +307,7 @@ DashboardControl.propTypes = {
   dashboardConfiguration: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
   headerExtra: PropTypes.node,
 };
- 
+
 function DashboardEditControl({ dashboardConfiguration, headerExtra }) {
   const {
     setEditingLayout,

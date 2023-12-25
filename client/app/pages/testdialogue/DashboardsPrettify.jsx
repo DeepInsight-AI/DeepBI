@@ -126,7 +126,7 @@ function DashboardsPrettify() {
                     <PageHeader
                         title={window.W_L.dashboards_prettify_all}
                         actions={
-                            pre_btn()
+                            // pre_btn()
                         }
                     />
                     <Layout>

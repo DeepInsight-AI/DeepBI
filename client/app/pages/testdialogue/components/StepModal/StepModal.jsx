@@ -131,14 +131,16 @@ const StepModal = React.forwardRef((props, ref) => {
         onClose={handleCancel}
         closable={!loading}
         footer={
-          <Button type="primary" onClick={handleOk}>
-            完成
-          </Button>
+          <div className="drawer-footer">
+            <Button className="finish-button" type="primary" onClick={handleOk}>
+              完成
+            </Button>
+          </div>
         }>
         <div className="template-container">
           {templates.map(template => (
-            <div key={template.id} className={`template-item ${selectedTemplate === template.id ? 'template-item-selected' : ''}`} onClick={() => handleTemplateSelect(template.id)}>
-              <img alt="example" src={template.image} className="template-img" />
+            <div key={template.id} className={`template-item`} onClick={() => handleTemplateSelect(template.id)}>
+              <img alt="example" src={template.image} className={`template-img ${selectedTemplate === template.id ? 'template-item-selected' : ''}`} />
               <div className="template-overlay">
                 <button className="preview-button" onClick={(e) => { e.stopPropagation(); handlePreview(template.image); }}>预览</button>
               </div>
@@ -147,7 +149,7 @@ const StepModal = React.forwardRef((props, ref) => {
           ))}
         </div>
       </Drawer>
-      <Modal visible={isModalVisible} onCancel={() => setIsModalVisible(false)} footer={null}>
+      <Modal className="preview-modal" visible={isModalVisible} onCancel={() => setIsModalVisible(false)} footer={null} width='80%'>
         <img alt="example" style={{ width: '100%' }} src={previewImage} />
       </Modal>
     </>

@@ -24,19 +24,20 @@
     margin-bottom: 10px;
     width: 100%;
     cursor: pointer;
-    border:1px solid transparent;
   }
   .template-item-selected {
-    border: 1px solid #1849f6;
+    border-color: #1849f6;
   }
   .template-img {
     width: 100%;
+    border-radius: 5px;
+    border: 2px solid transparent;
   }
   
   .template-checkbox {
     position: absolute;
-    bottom: 1px;
-    right: 1px;
+    bottom: 2px;
+    right: 5px;
   }
   .template-checkbox .ant-checkbox-checked .ant-checkbox-inner {
     background-color: #1849f6;
@@ -59,6 +60,7 @@
     align-items: center;
     opacity: 0;
     transition: opacity 0.3s ease;
+    border-radius: 5px;
   }
   
   .template-item:hover .template-overlay {
@@ -69,6 +71,26 @@
     color: #fff;
     background: #1849f6;
     border: none;
-    padding: 10px 20px;
+    padding: 5px 20px;
     cursor: pointer;
+    border-radius: 5px;
+    font-size: 12px;
+  }
+
+  .preview-modal .ant-modal-content {
+    background: transparent;
+    box-shadow: none;
+  }
+  
+  .preview-modal .ant-modal-body {
+    padding: 0;
+  }
+
+  .drawer-footer {
+    text-align: right;
+  }
+  
+  .finish-button {
+    background-color: #1849f6;
+    border-color: #1849f6;
   }

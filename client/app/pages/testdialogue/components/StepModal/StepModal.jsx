@@ -11,7 +11,11 @@ const StepModal = React.forwardRef((props, ref) => {
   const [visible, setVisible] = useState(false);
   const [selectedContent, setSelectedContent] = useState(null);
   const [selectedTemplate, setSelectedTemplate] = useState(1);
-  const templates = [{ id: 1, image: dashboards_prettify_1 }];
+  const templates = [
+    { id: 1, title: "案例1", image: dashboards_prettify_1 },
+    { id: 2, title: "案例2", image: dashboards_prettify_1 },
+    { id: 999, title: "更多案例", image: dashboards_prettify_1 },
+  ];
   const [loading, setLoading] = useState(false);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [previewImage, setPreviewImage] = useState(null);
@@ -74,7 +78,7 @@ const StepModal = React.forwardRef((props, ref) => {
       });
   };
 
-  const handlePreview = (image) => {
+  const handlePreview = image => {
     setPreviewImage(image);
     setIsModalVisible(true);
   };
@@ -129,28 +133,51 @@ const StepModal = React.forwardRef((props, ref) => {
         title="仪表盘美化"
         visible={visible}
         onClose={handleCancel}
-        closable={!loading}
+        closable={false}
         footer={
           <div className="drawer-footer">
             <Button loading={loading} className="finish-button" type="primary" onClick={handleOk}>
-              完成
+              立即应用
+            </Button>
+            <Button loading={loading} className="cancel-button" onClick={handleCancel}>
+              关闭
             </Button>
           </div>
         }>
         <div className="template-container">
           {templates.map(template => (
             <div key={template.id} className={`template-item`} onClick={() => handleTemplateSelect(template.id)}>
-              <img alt="example" src={template.image} className={`template-img ${selectedTemplate === template.id ? 'template-item-selected' : ''}`} />
-              <div className="template-overlay">
-                <button className="preview-button" onClick={(e) => { e.stopPropagation(); handlePreview(template.image); }}>预览</button>
-              </div>
-              <Checkbox checked={selectedTemplate === template.id} className="template-checkbox" />
+              <p>{template.title}</p>
+              <img
+                alt="example"
+                src={template.image}
+                className={`template-img ${selectedTemplate === template.id ? "template-item-selected" : ""}`}>
+                <div className={`template-overlay ${template.id === 999 ? "always-show" : ""}`}>
+                  <button
+                    className={`preview-button ${template.id === 999 ? "coming-soon-button" : ""}`}
+                    onClick={e => {
+                      e.stopPropagation();
+                      handlePreview(template.image);
+                    }}>
+                    {template.id === 999 ? "即将上线" : "预览"}
+                  </button>
+                </div>
+              </img>
+              {template.id !== 999 && (
+                <Checkbox checked={selectedTemplate === template.id} className="template-checkbox" />
+              )}
             </div>
           ))}
         </div>
       </Drawer>
-      <Modal className="preview-modal" visible={isModalVisible} onCancel={() => setIsModalVisible(false)} footer={null} width='80%'>
-        <img alt="example" style={{ width: '100%' }} src={previewImage} />
+      <Modal
+        className="preview-modal"
+        visible={isModalVisible}
+        onCancel={() => setIsModalVisible(false)}
+        footer={null}
+        closable={false}
+        width="80%">
+        <img alt="example" style={{ width: "100%" }} src={previewImage} />
       </Modal>
     </>
   );

@@ -14,8 +14,7 @@
   
   .template-container {
     display: flex;
-    flex-wrap: wrap;
-    justify-content: space-between;
+    flex-direction: column;
     padding: 10px;
   }
   
@@ -26,7 +25,13 @@
     cursor: pointer;
   }
   
+  .template-item p{
+    margin-bottom: 5px;
+    font-size: 12px;
+  }
+
   .template-img {
+    position: relative;
     width: 100%;
     border-radius: 5px;
     border: 2px solid transparent;
@@ -89,10 +94,22 @@
   }
 
   .drawer-footer {
-    text-align: right;
+    display: flex;
+    justify-content: cetner;
+    align-items: center;
   }
   
   .finish-button {
     background-color: #1849f6 !important;
     border-color: #1849f6 !important;
+    margin-right: 20px;
+  }
+
+  .template-overlay.always-show {
+    display: block !important;
+  }
+  
+  .preview-button.coming-soon-button {
+    border-color: white !important;
+    background-color: black !important;
   }

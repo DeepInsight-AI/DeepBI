@@ -125,9 +125,6 @@ function DashboardsPrettify() {
                     <Toaster />
                     <PageHeader
                         title={window.W_L.dashboards_prettify_all}
-                        actions={
-                            // pre_btn()
-                        }
                     />
                     <Layout>
                         <Layout.Content>

@@ -144,8 +144,8 @@ git clone http://github.com/DeepInsight-AI/DeepBI.git
 ```
 4. 解压后重命名为 "DeepBi" 然后进入目录
 ```
- cd DeepBi && sudo chmod +x./Install.sh
- . Install_cn.sh
+ cd DeepBi && sudo chmod +x ./Install_CN.sh
+ . Install_CN.sh
 ```
 5. 注意上面运行的是 . Install_cn.sh
 6. 安装结束后会有一个网址提示，直接浏览器访问即可

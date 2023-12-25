@@ -67,7 +67,14 @@ DeepBi 支持的数据库连接有:
     1. redis 可以直接通过127.0.0.1,无密码命令行访问
     2. python版本要求3.8+ 建议使用pyenv coda 等虚拟环境
     3. postgresql 需要安装postgresql-16 版本
-- 下载代码``` git clone git@github.com:DeepInsight-AI/DeepBi.git ```
+- 下载我们的代码
+ ```
+git clone https://github.com/DeepInsight-AI/DeepBI.git
+ ```
+如果下载失败更换协议，运行下面的代码
+ ```
+git clone http://github.com/DeepInsight-AI/DeepBI.git
+ ```
 - 直接运行 ```. ubuntu_CN_install.sh ```即可 <br>(注意，这里运行的是 . ubuntu_CN_install.sh 而不是sh xxx， 因为需要运行python 虚拟环境)
 - 默认使用端口 8338 8339
 - web访问: http://[ip]:8338

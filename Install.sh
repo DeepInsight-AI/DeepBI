@@ -1,4 +1,5 @@
 #!/bin/bash
+set -e
 export LANG=en_US.UTF-8
 if [ -f .env ]; then
     rm .env

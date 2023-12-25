@@ -1,4 +1,5 @@
 #!/bin/bash
+set -e
 export LANG=en_US.UTF-8
 function line() {
     line=""
@@ -126,7 +127,7 @@ pip config set global.index-url https://pypi.tuna.tsinghua.edu.cn/simple
 pip install --upgrade pip
 line
 echo "need python require"
-pip install -r requirements.txt -r requirements_ai.txt
+pip install -r vrequment.txt
 line
 # check mysql config file
 if [ -f /usr/include/mysql/my_config.h ]; then

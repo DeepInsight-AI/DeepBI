@@ -92,7 +92,7 @@ git clone http://github.com/DeepInsight-AI/DeepBI.git
 - 输入 ```yes```  回车
 - 进入项目文件夹 ```cd DeepBi ```
 - 修改权限 ```sudo chmod +x ./Install.sh```
-- 下面按安装过程会有 选择IP 的，选择内网开头的 172.x.x.x 
+- 下面按安装过程会有 选择IP 的，选择内网开头的 172.x.x.x
 - 运行命令```sudo ./Install_cn.sh ``` 开始安装
 16. 安装结束后会有一个网址提示，直接浏览器访问即可<br>
 （注意*关闭命令符窗口将无法访问属于DeepBi网址
@@ -104,7 +104,7 @@ git clone http://github.com/DeepInsight-AI/DeepBI.git
   ```
    就可以去浏览器中打开自己DeepBi网址了【网址都是http://‘本机内网IP地址’:8338】
    启动后关闭所有代理软件
-  
+
  17. 如果再次向获取wsl内网ip地址 ``` ifconfig | grep -Eo 'inet (addr:)?([0-9]*\.){3}[0-9]*' | grep -vE '^inet 127(\.[0-9]{1,3}){3}' ```
 
 
@@ -118,7 +118,7 @@ sudo apt-get install ca-certificates curl gnupg lsb-release
 sudo curl -fsSL http://mirrors.aliyun.com/docker-ce/linux/ubuntu/gpg | sudo apt-key add -
 sudo add-apt-repository "deb [arch=amd64] http://mirrors.aliyun.com/docker-ce/linux/ubuntu $(lsb_release -cs) stable"
 sudo apt-get update
-apt-get install docker-ce docker-ce-cli containerd.io
+sudo apt-get install docker-ce docker-ce-cli containerd.io
 sudo usermod -aG docker $USER
 ```
 2. 安装 docker-compose

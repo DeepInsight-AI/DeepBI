@@ -93,7 +93,7 @@ const StepModal = React.forwardRef((props, ref) => {
     toast.promise(getDashboardDetail(), {
       loading: "Loading...",
       success: detail => {
-        postDashboardDetail(detail)
+        return postDashboardDetail(detail)
           .then(() => {
             setLoading(false);
             return window.W_L.submit_success;

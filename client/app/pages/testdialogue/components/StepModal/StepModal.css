@@ -25,15 +25,17 @@
     width: 100%;
     cursor: pointer;
   }
-  .template-item-selected {
-    border-color: #1849f6;
-  }
+  
   .template-img {
     width: 100%;
     border-radius: 5px;
     border: 2px solid transparent;
   }
   
+  .template-item-selected {
+    border-color: #1849f6;
+  }
+
   .template-checkbox {
     position: absolute;
     bottom: 2px;
@@ -91,6 +93,6 @@
   }
   
   .finish-button {
-    background-color: #1849f6;
-    border-color: #1849f6;
+    background-color: #1849f6 !important;
+    border-color: #1849f6 !important;
   }

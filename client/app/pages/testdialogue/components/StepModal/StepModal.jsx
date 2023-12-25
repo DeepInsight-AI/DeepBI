@@ -132,7 +132,7 @@ const StepModal = React.forwardRef((props, ref) => {
         closable={!loading}
         footer={
           <div className="drawer-footer">
-            <Button className="finish-button" type="primary" onClick={handleOk}>
+            <Button loading={loading} className="finish-button" type="primary" onClick={handleOk}>
               完成
             </Button>
           </div>

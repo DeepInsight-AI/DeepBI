@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import Drawer from "antd/lib/drawer";
 import Checkbox from "antd/lib/checkbox";
+import Modal from "antd/lib/modal";
 import Button from "antd/lib/button";
 import { axios } from "@/services/axios";
 import toast, { Toaster } from "react-hot-toast";

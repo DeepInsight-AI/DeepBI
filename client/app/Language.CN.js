@@ -819,4 +819,9 @@ window.W_L=  {
   'delete_success':'删除成功',
   'delete_fail':'删除失败',
   'no_dashboard_data':'未获取到仪表盘数据',
+  'prettify_dashboard':'一键美化',
+  'coming_soon':'即将上线',
+  'example1':'示例1',
+  'example2':'示例2',
+  'more':'更多',
 }

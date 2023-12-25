@@ -81,10 +81,11 @@
     color: #fff;
     background: #1849f6;
     border: none;
-    padding: 5px 20px;
+    padding: 5px 0;
     cursor: pointer;
     border-radius: 5px;
     font-size: 12px;
+    width:40%;
   }
 
   .preview-modal .ant-modal-content {
@@ -98,7 +99,7 @@
 
   .drawer-footer {
     display: flex;
-    justify-content: cetner;
+    justify-content: center;
     align-items: center;
   }
   
@@ -113,6 +114,6 @@
   }
   
   .preview-button.coming-soon-button {
-    border-color: white !important;
+    border: 1px solid #fff;
     background-color: black !important;
   }

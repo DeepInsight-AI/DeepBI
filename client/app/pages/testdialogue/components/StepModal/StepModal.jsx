@@ -12,9 +12,9 @@ const StepModal = React.forwardRef((props, ref) => {
   const [selectedContent, setSelectedContent] = useState(null);
   const [selectedTemplate, setSelectedTemplate] = useState(1);
   const templates = [
-    { id: 1, title: "案例1", image: dashboards_prettify_1 },
-    { id: 2, title: "案例2", image: dashboards_prettify_1 },
-    { id: 999, title: "更多案例", image: dashboards_prettify_1 },
+    { id: 1, title: window.W_L.example1, image: dashboards_prettify_1 },
+    { id: 2, title: window.W_L.example2, image: dashboards_prettify_1 },
+    { id: 999, title: window.W_L.more, image: dashboards_prettify_1 },
   ];
   const [loading, setLoading] = useState(false);
   const [isModalVisible, setIsModalVisible] = useState(false);
@@ -130,17 +130,17 @@ const StepModal = React.forwardRef((props, ref) => {
     <>
       <Toaster />
       <Drawer
-        title="仪表盘美化"
+        title={window.W_L.prettify_dashboard}
         visible={visible}
         onClose={handleCancel}
         closable={false}
         footer={
           <div className="drawer-footer">
             <Button loading={loading} className="finish-button" type="primary" onClick={handleOk}>
-              立即应用
+            {window.W_L.apply}
             </Button>
             <Button loading={loading} className="cancel-button" onClick={handleCancel}>
-              关闭
+            {window.W_L.close}
             </Button>
           </div>
         }>
@@ -161,7 +161,7 @@ const StepModal = React.forwardRef((props, ref) => {
                       e.stopPropagation();
                       handlePreview(template.image);
                     }}>
-                    {template.id === 999 ? "即将上线" : "预览"}
+                    {template.id === 999 ? window.W_L.coming_soon : window.W_L.preview}
                   </button>
                 </div>
                 </div>

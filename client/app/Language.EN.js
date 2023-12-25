@@ -816,4 +816,9 @@ window.W_L = {
   'delete_success':'Delete Success',
   'delete_fail':'Delete Fail',
   'no_dashboard_data':'No dashboard data',
+  'prettify_dashboard':'Prettify Dashboard',
+  'coming_soon':'Coming Soon',
+  'example1':'Example1',
+  'example2':'Example2',
+  'more':'More',
 }

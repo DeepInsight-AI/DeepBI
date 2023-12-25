@@ -95,6 +95,9 @@ const StepModal = React.forwardRef((props, ref) => {
     }
   };
   const handleCancel = () => {
+    if (loading) {
+      return;
+    }
     setVisible(false);
   };
 
@@ -115,7 +118,7 @@ const StepModal = React.forwardRef((props, ref) => {
             <Button loading={loading} className="finish-button" type="primary" onClick={handleOk}>
             {window.W_L.apply}
             </Button>
-            <Button loading={loading} className="cancel-button" onClick={handleCancel}>
+            <Button className="cancel-button" onClick={handleCancel}>
             {window.W_L.close}
             </Button>
           </div>

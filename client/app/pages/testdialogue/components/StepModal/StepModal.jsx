@@ -13,7 +13,6 @@ const StepModal = React.forwardRef((props, ref) => {
   const [selectedTemplate, setSelectedTemplate] = useState(1);
   const templates = [
     { id: 1, title: window.W_L.example1, image: dashboards_prettify_1 },
-    { id: 2, title: window.W_L.example2, image: dashboards_prettify_1 },
     { id: 999, title: window.W_L.more, image: dashboards_prettify_1 },
   ];
   const [loading, setLoading] = useState(false);
@@ -110,6 +109,7 @@ const StepModal = React.forwardRef((props, ref) => {
         visible={visible}
         onClose={handleCancel}
         closable={false}
+        mask={false}
         footer={
           <div className="drawer-footer">
             <Button loading={loading} className="finish-button" type="primary" onClick={handleOk}>

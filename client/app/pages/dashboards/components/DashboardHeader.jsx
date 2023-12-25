@@ -201,8 +201,8 @@ function DashboardControl({ dashboardConfiguration, headerExtra }) {
       {dashboard.can_edit && dashboard.is_archived && <Button onClick={unarchiveDashboard}>Unarchive</Button>}
       {!dashboard.is_archived && (
         <span className="hidden-print">
-          <Button className="m-r-5 hidden-xs" onClick={openStepModal}>
-              <span className="fa fa-paper-plane m-r-5" /> {window.W_L.prettify_dashboard}
+          <Button className="m-r-5" onClick={openStepModal}>
+              <span className="fa fa-magic m-r-5" /> {window.W_L.prettify_dashboard}
           </Button>
           {showPublishButton && (
             <Button className="m-r-5 hidden-xs" onClick={togglePublished}>

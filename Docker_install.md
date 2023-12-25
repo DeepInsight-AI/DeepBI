@@ -57,8 +57,27 @@ If the download fails to replace the protocol, run the following code
 ```
 git clone http://github.com/DeepInsight-AI/DeepBI.git
  ```
-
+- During the installation process, you will be prompted to choose an IP address. Select an internal IP starting with 172.x.x.x
 - Run the command ```cd DeepBi```  to the corresponding folder and run install file ```sudo ./install.sh```
+- Run the command:```sudo ./Install_cn.sh ``` to start the installation.
+- After the installation is complete, there will be a URL prompt. Open it directly in your browser.
+  (Note: *Closing the command prompt window will result in no access to the DeepBi URL.
+  To use DeepBi again, open "Command Prompt" window "Run as Administrator"
+  ```
+   1.Run command "wsl"
+   2.Run command“cd DeepBi”
+   3.Run command“sudo docker-compose start”
+  ```
+   You can then open your DeepBi URL in the browser [URLs are in the format http://‘local machine's internal IP address’:8338]
+
+
+- If you need to obtain the WSL internal IP address again: ``` ifconfig | grep -Eo 'inet (addr:)?([0-9]*\.){3}[0-9]*' | grep -vE '^inet 127(\.[0-9]{1,3}){3}' ```
+- Starting from version 1.1, if updating the code, simply pull the new code with```git pull``` and then restart Docker. <br>
+    Stop command:  ```sudo docker-compose stop```<br>
+    Start command:  ```sudo docker-compose start```<br>
+    For older versions, Docker containers may need to be reinstalled.
+- If reinstalling, make sure to first stop and uninstall the previous containers:   ```sudo docker-compose down```
+
 
 ## Ubuntu
 - Run the command as follows:

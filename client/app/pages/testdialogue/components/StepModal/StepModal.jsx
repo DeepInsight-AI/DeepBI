@@ -13,6 +13,8 @@ const StepModal = React.forwardRef((props, ref) => {
   const [selectedTemplate, setSelectedTemplate] = useState(1);
   const templates = [{ id: 1, image: dashboards_prettify_1 }];
   const [loading, setLoading] = useState(false);
+  const [isModalVisible, setIsModalVisible] = useState(false);
+  const [previewImage, setPreviewImage] = useState(null);
   const openModal = () => {
     setVisible(true);
   };
@@ -72,6 +74,11 @@ const StepModal = React.forwardRef((props, ref) => {
       });
   };
 
+  const handlePreview = (image) => {
+    setPreviewImage(image);
+    setIsModalVisible(true);
+  };
+
   const postDashboardDetail = detail => {
     return new Promise((resolve, reject) => {
       setTimeout(() => {
@@ -124,22 +131,25 @@ const StepModal = React.forwardRef((props, ref) => {
         onClose={handleCancel}
         closable={!loading}
         footer={
-          <Button loading={loading} type="primary" onClick={handleOk}>
+          <Button type="primary" onClick={handleOk}>
             完成
           </Button>
         }>
         <div className="template-container">
           {templates.map(template => (
-            <div
-              key={template.id}
-              className={`template-item ${selectedTemplate === template.id ? "template-item-selected" : ""}`}
-              onClick={() => handleTemplateSelect(template.id)}>
-              <Image alt="example" src={template.image} className="template-img" preview={true} />
+            <div key={template.id} className={`template-item ${selectedTemplate === template.id ? 'template-item-selected' : ''}`} onClick={() => handleTemplateSelect(template.id)}>
+              <img alt="example" src={template.image} className="template-img" />
+              <div className="template-overlay">
+                <button className="preview-button" onClick={(e) => { e.stopPropagation(); handlePreview(template.image); }}>预览</button>
+              </div>
               <Checkbox checked={selectedTemplate === template.id} className="template-checkbox" />
             </div>
           ))}
         </div>
       </Drawer>
+      <Modal visible={isModalVisible} onCancel={() => setIsModalVisible(false)} footer={null}>
+        <img alt="example" style={{ width: '100%' }} src={previewImage} />
+      </Modal>
     </>
   );
 });

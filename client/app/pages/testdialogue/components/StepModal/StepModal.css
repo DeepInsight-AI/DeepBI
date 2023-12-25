@@ -45,3 +45,30 @@
   .template-checkbox .ant-checkbox-checked::after {
     border-color: #1849f6;
   }
+
+
+  .template-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+  
+  .template-item:hover .template-overlay {
+    opacity: 1;
+  }
+  
+  .preview-button {
+    color: #fff;
+    background: #1849f6;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+  }

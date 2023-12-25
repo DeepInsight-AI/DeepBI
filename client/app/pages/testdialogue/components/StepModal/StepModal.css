@@ -22,16 +22,26 @@
   .template-item {
     position: relative;
     margin-bottom: 10px;
-    width: 49%;
+    width: 100%;
     cursor: pointer;
+    border:1px solid transparent;
   }
-  
+  .template-item-selected {
+    border: 1px solid #1849f6;
+  }
   .template-img {
     width: 100%;
   }
   
   .template-checkbox {
     position: absolute;
-    top: 0;
-    right: 0;
+    bottom: 1px;
+    right: 1px;
+  }
+  .template-checkbox .ant-checkbox-checked .ant-checkbox-inner {
+    background-color: #1849f6;
+    border-color: #1849f6;
+  }
+  .template-checkbox .ant-checkbox-checked::after {
+    border-color: #1849f6;
   }

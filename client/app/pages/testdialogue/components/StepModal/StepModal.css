@@ -30,8 +30,11 @@
     font-size: 12px;
   }
 
-  .template-img {
+  .template-div{
+    width: 100%;
     position: relative;
+  }
+  .template-img {
     width: 100%;
     border-radius: 5px;
     border: 2px solid transparent;
@@ -70,7 +73,7 @@
     border-radius: 5px;
   }
   
-  .template-item:hover .template-overlay {
+  .template-div:hover .template-overlay {
     opacity: 1;
   }
   
@@ -106,7 +109,7 @@
   }
 
   .template-overlay.always-show {
-    display: block !important;
+    opacity: 1 !important;
   }
   
   .preview-button.coming-soon-button {

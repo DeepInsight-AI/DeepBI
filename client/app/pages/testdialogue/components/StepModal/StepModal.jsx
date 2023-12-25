@@ -148,11 +148,13 @@ const StepModal = React.forwardRef((props, ref) => {
           {templates.map(template => (
             <div key={template.id} className={`template-item`} onClick={() => handleTemplateSelect(template.id)}>
               <p>{template.title}</p>
+              <div className="template-div">
               <img
                 alt="example"
                 src={template.image}
                 className={`template-img ${selectedTemplate === template.id ? "template-item-selected" : ""}`}>
-                <div className={`template-overlay ${template.id === 999 ? "always-show" : ""}`}>
+              </img>
+              <div className={`template-overlay ${template.id === 999 ? "always-show" : ""}`}>
                   <button
                     className={`preview-button ${template.id === 999 ? "coming-soon-button" : ""}`}
                     onClick={e => {
@@ -162,7 +164,7 @@ const StepModal = React.forwardRef((props, ref) => {
                     {template.id === 999 ? "即将上线" : "预览"}
                   </button>
                 </div>
-              </img>
+                </div>
               {template.id !== 999 && (
                 <Checkbox checked={selectedTemplate === template.id} className="template-checkbox" />
               )}

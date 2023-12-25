@@ -66,6 +66,7 @@ sudo ln -s /usr/bin/docker-compose /usr/local/bin/docker-compose
 11. 安装网络管理 命令: ```sudo apt install net-tools```
 12. 上面安装完毕docker ,以后就不用再次安装
 
+
 ## 配置DeepBi
 
 14. 运行命令 ```service docker status``` 确认docker是在运行 "active (running)"
@@ -106,6 +107,21 @@ git clone http://github.com/DeepInsight-AI/DeepBI.git
    启动后关闭所有代理软件
 
  17. 如果再次向获取wsl内网ip地址 ``` ifconfig | grep -Eo 'inet (addr:)?([0-9]*\.){3}[0-9]*' | grep -vE '^inet 127(\.[0-9]{1,3}){3}' ```
+ 18. 从版本1.1 如果更新代码，直接拉取 新的代码```git pull```,然后重启docker即可 <br>
+    停止命令  ```sudo docker-compose stop```<br>
+    启动命令  ```sudo docker-compose start```<br>
+    老版本 docker 容器则需要重新安装
+ 19. 如果重新安装 一定先要关闭并卸载之前的容器  ```sudo docker-compose down```
+
+## 注意事项
+- 注意*关闭命令符窗口将无法访问属于DeepBi网址
+- 再次使用DeepBi，打开“命令提示符”窗口“以管理员身份运行”
+```
+ 1.运行“wsl”命令
+ 2.运行“cd DeepBi”命令
+ 3.运行“sudo docker-compose start”命令
+```
+- 就可以去浏览器中打开自己DeepBi网址了【网址都是http://‘本机
 
 
 # Ubuntu
@@ -149,6 +165,12 @@ git clone http://github.com/DeepInsight-AI/DeepBI.git
 ```
 5. 注意上面运行的是 . Install_cn.sh
 6. 安装结束后会有一个网址提示，直接浏览器访问即可
+7. 从版本1.1 如果更新代码，直接拉取 新的代码```git pull```,然后重启docker即可 <br>
+    停止命令  ```sudo docker-compose stop```<br>
+    启动命令  ```sudo docker-compose start```<br>
+    老版本 docker 容器则需要重新安装
+8. 如果重新安装 一定先要关闭并卸载之前的容器  ```sudo docker-compose down```
+
 
 
 # Mac
@@ -180,6 +202,12 @@ git clone http://github.com/DeepInsight-AI/DeepBI.git
 - 运行命令到对应文件夹 ```cd DeepBi ```
 - 修改权限 ```sudo chmod+x ./Install.sh```
 - 运行命令```sudo ./Install_cn.sh ``` 开始安装，安装结束后会有一个网址提示，直接浏览器访问即可
+- 从版本1.1 如果更新代码，直接拉取 新的代码```git pull```,然后重启docker即可 <br>
+    停止命令  ```sudo docker-compose stop```<br>
+    启动命令  ```sudo docker-compose start```<br>
+    老版本 docker 容器则需要重新安装
+- 如果重新安装 一定先要关闭并卸载之前的容器  ```sudo docker-compose down```
+
 
 
 # 联系我们

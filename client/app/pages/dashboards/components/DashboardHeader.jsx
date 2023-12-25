@@ -18,7 +18,7 @@ import { policy } from "@/services/policy";
 import recordEvent from "@/services/recordEvent";
 import { durationHumanize } from "@/lib/utils";
 import { DashboardStatusEnum } from "../hooks/useDashboard";
-
+// import StepModal from "@/pages/testdialogue/components/StepModal/StepModal";
 import "./DashboardHeader.less";
 
 function getDashboardTags() {
@@ -185,7 +185,7 @@ function DashboardControl({ dashboardConfiguration, headerExtra }) {
   const canShareDashboard = canEditDashboard && !dashboard.is_draft;
   const showShareButton = !clientConfig.disablePublicUrls && (dashboard.publicAccessEnabled || canShareDashboard);
   const showMoreOptionsButton = canEditDashboard;
-
+  console.log(dashboard, "dashboard======")
   const unarchiveDashboard = () => {
     recordEvent("unarchive", "dashboard", dashboard.id);
     updateDashboard({ is_archived: false }, false);
@@ -193,6 +193,9 @@ function DashboardControl({ dashboardConfiguration, headerExtra }) {
   return (
     <div className="dashboard-control">
       {dashboard.can_edit && dashboard.is_archived && <Button onClick={unarchiveDashboard}>Unarchive</Button>}
+      <Button className="m-r-5 hidden-xs" onClick={togglePublished}>
+          <span className="far fa-magic m-r-5" /> {window.W_L.prettify_dashboard}
+      </Button>
       {!dashboard.is_archived && (
         <span className="hidden-print">
           {showPublishButton && (
@@ -236,7 +239,7 @@ DashboardControl.propTypes = {
   dashboardConfiguration: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
   headerExtra: PropTypes.node,
 };
-
+ 
 function DashboardEditControl({ dashboardConfiguration, headerExtra }) {
   const {
     setEditingLayout,

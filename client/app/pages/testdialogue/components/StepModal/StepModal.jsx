@@ -77,39 +77,24 @@ const StepModal = React.forwardRef((props, ref) => {
     setIsModalVisible(true);
   };
 
-  const postDashboardDetail = detail => {
-    return new Promise((resolve, reject) => {
-      setTimeout(() => {
-        console.log("Posting detail:", detail);
-        resolve("Post success");
-      }, 2000);
-    });
-  };
+  // const postDashboardDetail = detail => {
+  //   return ""
+  // };
 
-  const handleOk = () => {
+  const handleOk = async () => {
     setLoading(true);
-    toast.promise(getDashboardDetail(), {
-      loading: "Loading...",
-      success: detail => {
-        return postDashboardDetail(detail)
-          .then(() => {
-            setLoading(false);
-            return window.W_L.submit_success;
-          })
-          .catch(err => {
-            setLoading(false);
-            console.error(err);
-            return window.W_L.submit_fail;
-          });
-      },
-      error: err => {
-        setLoading(false);
-        console.error(err);
-        return window.W_L.submit_fail;
-      },
-    });
+    try {
+      const detail = await getDashboardDetail();
+      console.log("Detail:", detail);
+      // const result = await postDashboardDetail(detail);
+      setLoading(false);
+      toast.success(window.W_L.submit_success);
+    } catch (err) {
+      setLoading(false);
+      console.error(err);
+      toast.error(window.W_L.submit_fail);
+    }
   };
-
   const handleCancel = () => {
     setVisible(false);
   };

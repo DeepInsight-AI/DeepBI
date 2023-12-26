@@ -98,20 +98,6 @@ class Autopilot(AIDB):
     async def task_generate_echart(self, qustion_message):
         return self.qustion_message
 
-    def get_agent_questioner(self):
-        """ Questioner  """
-        questioner = Questioner(
-            name="questioner",
-            human_input_mode="NEVER",
-            max_consecutive_auto_reply=2,
-            llm_config=self.agent_instance_util.gpt4_turbo_config,
-            default_auto_reply="请继续补充分析维度，不要重复.",
-            websocket=self.websocket,
-            openai_proxy=self.agent_instance_util.openai_proxy,
-            log_list=self.log_list,
-        )
-
-        return questioner
 
     def get_agent_ai_analyst(self):
         """ ai_analyst """
@@ -199,3 +185,19 @@ class Autopilot(AIDB):
 
         print("HTML文件已生成：output.html")
         return str(rendered_html)
+
+    def get_agent_questioner(self, report_file_name):
+        """ Questioner  """
+        questioner = Questioner(
+            name="questioner",
+            human_input_mode="NEVER",
+            max_consecutive_auto_reply=2,
+            llm_config=self.agent_instance_util.gpt4_turbo_config,
+            default_auto_reply="Please continue to add analysis dimensions and do not repeat them.",
+            websocket=self.websocket,
+            openai_proxy=self.agent_instance_util.openai_proxy,
+            report_file_name=report_file_name,
+        )
+
+        return questioner
+

@@ -3,7 +3,7 @@ x-service: &deepbi-service
   build:
     context: .
   volumes:
-    - ./user_upload_files:/app/user_upload_files
+    - .:/app
   env_file:
     - .env
 x-environment: &deepbi-environment

@@ -59,6 +59,7 @@ const StepModal = React.forwardRef((props, ref) => {
           const queryResult = await getQueryResult(res.widgets);
           return {
             dashboard_name: res.name,
+            dashboard_id : res.id,
             query_result: queryResult,
           };
         } else {

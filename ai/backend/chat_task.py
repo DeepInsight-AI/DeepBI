@@ -147,6 +147,8 @@ class ChatClass:
                 elif q_chat_type == 'autopilot':
                     if q_database == 'mysql':
                         await self.autopilotMysql.deal_question(json_str, message)
+                    elif q_database == 'starrocks':
+                        await self.autopilotMysql.deal_question(json_str, message)
 
             else:
                 result['state'] = 500

@@ -66,11 +66,14 @@ class AnalysisStarrocks(Analysis):
                     if if_suss:
                         self.agent_instance_util.base_starrocks_info = ' When connecting to the database, be sure to bring the port. This is starrocks database info :' + '\n' + str(
                             db_info)
-                        self.agent_instance_util.base_message = str(q_str)
+                        # self.agent_instance_util.base_message = str(q_str)
+                        self.agent_instance_util.set_base_message(q_str)
+
                         self.agent_instance_util.db_id = db_id
 
                 else:
-                    self.agent_instance_util.base_message = str(q_str)
+                    # self.agent_instance_util.base_message = str(q_str)
+                    self.agent_instance_util.set_base_message(q_str)
 
                 await self.get_data_desc(q_str)
             elif q_data_type == 'mysql_comment_second':
@@ -89,10 +92,13 @@ class AnalysisStarrocks(Analysis):
                     if if_suss:
                         self.agent_instance_util.base_starrocks_info = '  When connecting to the database, be sure to bring the port. This is starrocks database info :' + '\n' + str(
                             db_info)
-                        self.agent_instance_util.base_message = str(q_str)
+                        # self.agent_instance_util.base_message = str(q_str)
+                        self.agent_instance_util.set_base_message(q_str)
+
                         self.agent_instance_util.db_id = db_id
                 else:
-                    self.agent_instance_util.base_message = str(q_str)
+                    # self.agent_instance_util.base_message = str(q_str)
+                    self.agent_instance_util.set_base_message(q_str)
 
                 await self.put_message(200, receiver=CONFIG.talker_bi, data_type=CONFIG.type_comment_second,
                                        content='')

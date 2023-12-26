@@ -130,6 +130,21 @@ class AgentInstanceUtil:
             "request_timeout": request_timeout,
         }
 
+    def set_base_message(self, message):
+        print('run function set_base_message ... ')
+        for table in message['table_desc']:
+            for field in table['field_desc']:
+                field_keys = list(field.keys())
+                for key in field_keys:
+                    if key not in ['name', 'comment']:
+                        field.pop(key)
+
+        self.base_message = str(message)
+        print('base_message : ', message)
+
+
+
+
     def get_agent_mysql_engineer(self):
         """mysql engineer"""
         mysql_llm_config = {

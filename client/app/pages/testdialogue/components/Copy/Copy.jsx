@@ -1,12 +1,14 @@
 import React from 'react';
 import copy from "@/assets/images/copy.png";
+import toast, { Toaster } from 'react-hot-toast';
 // import Retry from "@/assets/images/retry.png";
 import './index.less';
 
 const Copy = (props) => {
   const { sender ,source} = props;
   const copyCentent = () => {
-    const input = document.createElement('input');
+    try {
+      const input = document.createElement('input');
     input.setAttribute('readonly', 'readonly');
     input.setAttribute('value', source);
     document.body.appendChild(input);
@@ -16,6 +18,10 @@ const Copy = (props) => {
       document.execCommand('copy');
     }
     document.body.removeChild(input);
+    toast.success(window.W_L.copy_success);
+    } catch (error) {
+      toast.error(window.W_L.copy_failed);
+    }
   }
   // const retryCentent = () => {
   //   retry(index)
@@ -23,6 +29,7 @@ const Copy = (props) => {
   return (
     
     <div className={`copy${sender}`}>
+       <Toaster />
         <div className="copt-item" onClick={copyCentent}>
             <img src={copy} alt="" />
             <div className="copy-text">{window.W_L.copy}</div>

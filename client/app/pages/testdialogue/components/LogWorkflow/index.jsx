@@ -69,10 +69,8 @@ const LogWorkflow = props => {
           {workTitle}
         </div>
       </div>
-      <div
-        className="log_terminal_content"
-        style={{ position: "relative", overflow: "hidden", height: "auto", margin: "0" }}>
-          <Button icon={<CopyOutlinedIcon />} type="text" size="small" className="copy_btn" onClick={copy}>
+      <div className="log_terminal_content_div">
+          <Button icon={<CopyOutlinedIcon />} style={{position: "absolute",color: "#9d9d9d"}} type="text" size="small" className="copy_btn" onClick={copy}>
             {window.W_L.copy}
           </Button>
         <div className="log_terminal_content" ref={logTerminal}>

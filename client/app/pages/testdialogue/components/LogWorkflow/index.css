@@ -9,6 +9,13 @@
   overflow: hidden;
   cursor: default;
 }
+.log_terminal_content_div {
+  position: relative;
+  overflow: hidden;
+  height: auto;
+  margin: 8px 0;
+  background: transparent;
+}
 .log_terminal_content {
   background-color: #000;
   border-radius: 13px;
@@ -21,7 +28,6 @@
   /* Firefox */
   -ms-overflow-style: none;
   /* Internet Explorer 10+ */
-  margin: 8px 0;
   position: relative;
 }
 .copy_btn {

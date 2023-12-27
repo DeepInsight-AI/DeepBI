@@ -7,7 +7,7 @@ import { axios } from "@/services/axios";
 import routes from "@/services/routes";
 import { dialogueStorage } from "../Dialogue/method/dialogueStorage";
 import InfoCircleOutlinedIcon from "@ant-design/icons/InfoCircleOutlined";
-import notification from "@/services/notification";
+import toast from "react-hot-toast";
 import "./index.css";
 
 const { TextArea } = Input;
@@ -28,14 +28,14 @@ const autoPilot =async (databases_id,db_comment) => {
         setBtn_disabled(false);
         if(res.code===200){
         setBtn_isShow(false);
-        notification.success(window.W_L.submit_success,window.W_L.submit_success_tip);
+        toast.success(window.W_L.submit_success+" "+window.W_L.submit_success_tip);
         routes.navigate("Dialogue.List.autopilot_list");
         }else{
-        notification.error(res.data);
+        toast.error(res.data);
         }
     }).catch((err)=>{
         setBtn_disabled(false);
-        notification.error(window.W_L.submit_fail);
+        toast.error(window.W_L.submit_fail);
     })
 };
 const CreateAutoPilot = () => {

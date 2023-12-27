@@ -10,7 +10,7 @@ import "./index.less";
 import icon_small from "@/assets/images/icon_small.png";
 
 const TypingCard = (props) => {
-  const { chat_type,autopilot,chart, source, logData, index, Cardloading, sender, time, ChangeScrollTop,retry } = props;
+  const {databases_type, chat_type,autopilot,chart, source, logData, index, Cardloading, sender, time, ChangeScrollTop,retry } = props;
   const sourceEl = useRef();
   const [sourceText, setSourceText] = useState("");
   const [showComponent, setShowComponent] = useState(false);
@@ -48,7 +48,7 @@ const TypingCard = (props) => {
     );
   }, [sourceText]);
   const renderUser = useMemo(() => {
-    return chat_type === "autopilot" ? <AutoPilotInfo/> : <div className={`Chat ${sender}`}>{source}</div>;
+    return chat_type === "autopilot" ? <AutoPilotInfo databases_type={databases_type} /> : <div className={`Chat ${sender}`}>{source}</div>;
   }, [chat_type, sender, source]);
 
   const renderAutoPilot = useMemo(() => {

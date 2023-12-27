@@ -2,7 +2,7 @@ import React from "react";
 import Loading from "../loading";
 import Button from "antd/lib/button";
 import CopyOutlinedIcon from "@ant-design/icons/CopyOutlined";
-import toast, { Toaster } from "react-hot-toast";
+import toast from "react-hot-toast";
 import "./index.css";
 
 const LogWorkflow = props => {
@@ -57,7 +57,6 @@ const LogWorkflow = props => {
   };
   return (
     <div className={`log_terminal`}>
-      {/* <Toaster /> */}
       <div className="log_terminal_header">
         {Cardloading ? (
           <Loading></Loading>

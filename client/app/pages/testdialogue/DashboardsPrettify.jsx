@@ -12,7 +12,7 @@ import { axios } from "@/services/axios";
 import PageHeader from "@/components/PageHeader";
 import DeleteOutlinedIcon from "@ant-design/icons/DeleteOutlined";
 import StepModal from "./components/StepModal/StepModal";
-import toast, { Toaster } from 'react-hot-toast';
+import toast from 'react-hot-toast';
 import "./index.less";
 
 function DashboardsPrettify() {
@@ -122,7 +122,6 @@ function DashboardsPrettify() {
             <div className="page-queries-list">
                 <StepModal ref={stepModalRef}></StepModal>
                 <div className="container">
-                    {/* <Toaster /> */}
                     <PageHeader
                         title={window.W_L.dashboards_prettify_all}
                     />

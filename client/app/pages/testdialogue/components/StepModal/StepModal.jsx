@@ -4,7 +4,7 @@ import Checkbox from "antd/lib/checkbox";
 import Modal from "antd/lib/modal";
 import Button from "antd/lib/button";
 import { axios } from "@/services/axios";
-import toast, { Toaster } from "react-hot-toast";
+import toast from "react-hot-toast";
 import dashboards_prettify_1 from "../../../../assets/images/dashboard-example/dashboards_prettify_1.jpg";
 import "./StepModal.css";
 const StepModal = React.forwardRef((props, ref) => {
@@ -110,7 +110,6 @@ const StepModal = React.forwardRef((props, ref) => {
   };
   return (
     <>
-      {/* <Toaster /> */}
       <Drawer
         title={window.W_L.prettify_dashboard}
         visible={visible}

@@ -122,7 +122,7 @@ function DashboardsPrettify() {
             <div className="page-queries-list">
                 <StepModal ref={stepModalRef}></StepModal>
                 <div className="container">
-                    <Toaster />
+                    {/* <Toaster /> */}
                     <PageHeader
                         title={window.W_L.dashboards_prettify_all}
                     />

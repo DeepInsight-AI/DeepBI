@@ -102,7 +102,7 @@ const listColumns = [
   return (
     <div className="page-queries-list">
       <div className="container">
-      <Toaster />
+      {/* <Toaster /> */}
         <PageHeader
           title={window.W_L.all_autopilot}
           actions={

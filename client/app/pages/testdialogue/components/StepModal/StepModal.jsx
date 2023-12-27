@@ -25,30 +25,33 @@ const StepModal = React.forwardRef((props, ref) => {
   React.useImperativeHandle(ref, () => ({
     openModal,
   }));
-  const seriesTypeMapping = {
-    CHART: widget =>
-      widget.visualization.options.globalSeriesType === "column"
-        ? "bar"
-        : widget.visualization.options.globalSeriesType,
-    TABLE: () => "table",
+  const globalSeriesType = widget => {
+    if (widget.visualization.type === "TABLE") {
+      return "table";
+    }
+    const type = widget.visualization.options.globalSeriesType;
+    if (["column", "line", "pie", "area"].includes(type)) {
+      return type === "column" ? "bar" : type;
+    }
+    return null;
   };
-
-  const globalSeriesType = widget => seriesTypeMapping[widget.visualization.type](widget);
-
   const getQueryResult = async widgets => {
     const promises = widgets.map(async widget => {
-      const res = await axios.get(
-        `/api/queries/${widget.visualization.query.id}/results/${widget.visualization.query.latest_query_data_id}.json`
-      );
-      return {
-        id: widget.id,
-        chart_name: widget.visualization.query.name,
-        chart_type: globalSeriesType(widget),
-        data: res.query_result.data,
-        columnMapping: widget.visualization.options.columnMapping,
-      };
+      const chartType = globalSeriesType(widget);
+      if (chartType) {
+        const res = await axios.get(
+          `/api/queries/${widget.visualization.query.id}/results/${widget.visualization.query.latest_query_data_id}.json`
+        );
+        return {
+          id: widget.id,
+          chart_name: widget.visualization.query.name,
+          chart_type: chartType,
+          data: res.query_result.data,
+          columnMapping: widget.visualization.options.columnMapping,
+        };
+      }
     });
-    return Promise.all(promises);
+    return Promise.all(promises.filter(Boolean));
   };
 
   const getDashboardDetail = () => {
@@ -107,7 +110,7 @@ const StepModal = React.forwardRef((props, ref) => {
   };
   return (
     <>
-      <Toaster />
+      {/* <Toaster /> */}
       <Drawer
         title={window.W_L.prettify_dashboard}
         visible={visible}

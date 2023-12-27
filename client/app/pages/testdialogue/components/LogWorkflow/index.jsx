@@ -57,7 +57,7 @@ const LogWorkflow = props => {
   };
   return (
     <div className={`log_terminal`}>
-      <Toaster />
+      {/* <Toaster /> */}
       <div className="log_terminal_header">
         {Cardloading ? (
           <Loading></Loading>

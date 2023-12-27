@@ -33,11 +33,12 @@ const StepModal = React.forwardRef((props, ref) => {
     if (["column", "line", "pie", "area"].includes(type)) {
       return type === "column" ? "bar" : type;
     }
-    return null;
+    return false
   };
   const getQueryResult = async widgets => {
     const promises = widgets.map(async widget => {
       const chartType = globalSeriesType(widget);
+      console.log("chartType:-----", chartType)
       if (chartType) {
         const res = await axios.get(
           `/api/queries/${widget.visualization.query.id}/results/${widget.visualization.query.latest_query_data_id}.json`

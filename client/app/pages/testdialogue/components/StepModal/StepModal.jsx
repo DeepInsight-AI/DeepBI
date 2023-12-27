@@ -50,6 +50,8 @@ const StepModal = React.forwardRef((props, ref) => {
           data: res.query_result.data,
           columnMapping: widget.visualization.options.columnMapping,
         };
+      }else{
+        return false;
       }
     });
     return Promise.all(promises.filter(Boolean));

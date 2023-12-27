@@ -20,7 +20,7 @@ const [btn_isShow, setBtn_isShow] = useState(true);
 const autoPilot =async (databases_id,db_comment) => {
     const data={
         databases_id,
-        databases_type,
+        databases_type:databases_type.current,
         report_name,
         report_desc,
         db_comment

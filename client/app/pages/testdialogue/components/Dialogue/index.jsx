@@ -752,6 +752,7 @@ const openSocket = useCallback(() => {
         onOpenKeyClick={onOpenKeyClick}
         onSuccess={onSuccess}
         percent={percent}
+        sourceTypeRef={sourceTypeRef}
         />
       </div>
     );

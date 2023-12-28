@@ -225,6 +225,20 @@ const config = {
         ]
       },
       {
+        test: /\.(png|jpe?g|gif|svg|css)(\?.*)?$/,
+        include: [path.resolve(appPath, "./assets/static/")],
+        use: [
+          {
+            loader: "file-loader",
+            options: {
+              context: path.resolve(appPath, "./assets/static/"),
+              outputPath: "static/",
+              name: "[path][name].[ext]"
+            }
+          }
+        ]
+      },
+      {
         test: /\.geo\.json$/,
         type: "javascript/auto",
         use: [

@@ -226,13 +226,12 @@ const config = {
       },
       {
         test: /\.(png|jpe?g|gif|svg|css)(\?.*)?$/,
-        include: [path.resolve(appPath, "./assets/static/")],
         use: [
           {
             loader: "file-loader",
             options: {
               context: path.resolve(appPath, "./assets/static/"),
-              outputPath: "static/",
+              outputPath: "prettify/",
               name: "[path][name].[ext]"
             }
           }

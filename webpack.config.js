@@ -133,7 +133,8 @@ const config = {
       { from: "client/app/cdn.plot.ly_plotly-locale-zh-cn-latest.js" },
       { from: "client/app/echarts-main.js" },
       { from: "client/app/assets/css/*.css", to: "styles/", flatten: true },
-      { from: "client/app/assets/fonts", to: "fonts/" }
+      { from: "client/app/assets/fonts", to: "fonts/" },
+      { from: "client/app/assets/prettify", to: "prettify" }
     ]),
     isHotReloadingEnabled && new ReactRefreshWebpackPlugin({ overlay: false })
   ].filter(Boolean),
@@ -219,19 +220,6 @@ const config = {
             options: {
               context: path.resolve(appPath, "./assets/images/"),
               outputPath: "images/",
-              name: "[path][name].[ext]"
-            }
-          }
-        ]
-      },
-      {
-        test: /\.(png|jpe?g|gif|svg|css)(\?.*)?$/,
-        use: [
-          {
-            loader: "file-loader",
-            options: {
-              context: path.resolve(appPath, "./assets/static/"),
-              outputPath: "prettify/",
               name: "[path][name].[ext]"
             }
           }

@@ -1,0 +1,269 @@
+﻿<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8" />
+  <title>222test</title>
+  <script src="https://cdn.jsdelivr.net/npm/echarts/dist/echarts.min.js"></script>
+  <script src="http://apps.bdimg.com/libs/jquery/1.6.4/jquery.js"></script>
+  <link rel="stylesheet" type="text/css" href="../static/example1/style.css" />
+</head>
+<script>
+  $(document).ready(function () {
+    var whei = $(window).width();
+    $("html").css({ fontSize: whei / 20 });
+    $(window).resize(function () {
+      var whei = $(window).width();
+      $("html").css({ fontSize: whei / 20 });
+    });
+  });
+</script>
+
+<body>
+  <div class="loading">
+    <div class="loadbox">
+      <img src="../static/example1/images/loading.gif" /> loading...
+    </div>
+  </div>
+  <div style="display: none;" id="query_result">
+    [{'id': 70, 'chart_name': '流程测试010', 'chart_type': 'pie', 'data': {'columns': [{'name': 'Month', 'friendly_name': 'Month', 'type': 'integer'}, {'name': 'SalesAmount', 'friendly_name': 'SalesAmount', 'type': 'float'}], 'rows': [{'Month': 1, 'SalesAmount': 61439}, {'Month': 2, 'SalesAmount': 38424}, {'Month': 3, 'SalesAmount': 58937}]}, 'columnMapping': {'Month': 'x', 'SalesAmount': 'y'}, 'echart_code': "{\n   color: ['#36F097', '#3DFFDC', '#5A3FFF'],\n   tooltip: {\n      trigger: 'item'\n   },\n   series: [\n      {\n         name: 'Sales Amount',\n         type: 'pie',\n         center: ['50%', '50%'],\n         roseType: 'radius',\n         itemStyle: {\n            borderRadius: 5,\n            borderColor: '#00206d',\n            borderWidth: 2,\n            shadowColor: 'rgba(0, 0, 0, 0.5)',\n            shadowBlur: 10\n         },\n         label: {\n            show: true,\n            position: 'outside',\n            formatter: '{b}: {@y} ({d}%)',\n            color: '#fff',\n            fontFamily: 'Arial',\n            fontWeight: 'bold'\n         },\n         labelLine: {\n            show: true,\n            length: 20,\n            length2: 30,\n            lineStyle: {\n               color: '#a2a8d3'\n            }\n         },\n         emphasis: {\n            itemStyle: {\n               shadowColor: 'rgba(0, 0, 0, 0.5)',\n               shadowBlur: 10\n            }\n         },\n         animationType: 'scale',\n         animationEasing: 'elasticOut',\n         data: [\n            { value: 61439, name: 'January', itemStyle: { color: { type: 'linear', x: 0, y: 0, x2: 0, y2: 1, colorStops: [{ offset: 0, color: '#36F097' }, { offset: 1, color: '#268AFF' }] } } },\n            { value: 38424, name: 'February', itemStyle: { color: { type: 'linear', x: 0, y: 0, x2: 0, y2: 1, colorStops: [{ offset: 0, color: '#3DFFDC' }, { offset: 1, color: '#1ED6FF' }] } } },\n            { value: 58937, name: 'March', itemStyle: { color: { type: 'linear', x: 0, y: 0, x2: 0, y2: 1, colorStops: [{ offset: 0, color: '#5A3FFF' }, { offset: 1, color: '#ADE1FF' }] } } }\n         ]\n      }\n   ]\n}"}, {'id': 72, 'chart_name': '流程测试010', 'chart_type': 'area', 'data': {'columns': [{'name': 'Month', 'friendly_name': 'Month', 'type': 'integer'}, {'name': 'Total_Sales', 'friendly_name': 'Total_Sales', 'type': 'float'}], 'rows': [{'Month': 1, 'Total_Sales': 61439}, {'Month': 2, 'Total_Sales': 38424}, {'Month': 3, 'Total_Sales': 58937}]}, 'columnMapping': {'Month': 'x', 'Total_Sales': 'y'}, 'echart_code': '{\n  tooltip: {\n    trigger: "axis",\n    axisPointer: {\n      type: "shadow",\n      label: {\n        show: true\n      }\n    }\n  },\n  legend: {\n    data: ["Total Sales"],\n    top: "2%",\n    right: \'10\',\n    textStyle: {\n      color: "rgba(250,250,250,0.6)",\n      fontSize: 16\n    }\n  },\n  xAxis: {\n    data: ["January", "February", "March"],\n    axisLine: {\n      show: true,\n      lineStyle: {\n        color: \'#26D9FF\',\n        width:2\n      }\n    },\n    axisTick: {\n      show: true\n    },\n    axisLabel: {\n      show: true,\n      textStyle: {\n        color: "rgba(250,250,250,0.6)",\n        fontSize: 16\n      }\n    },\n    splitArea: {\n      show: false\n    }\n  },\n  yAxis: {\n    type: "value",\n    splitLine: {\n      show: false\n    },\n    axisTick: {\n      show: true\n    },\n    axisLine: {\n      show: true,\n      lineStyle: {\n        color: \'#26D9FF\',\n        width:2\n      }\n    },\n    axisLabel: {\n      show: true,\n      textStyle: {\n        color: "rgba(250,250,250,0.6)",\n        fontSize: 16\n      }\n    },\n  },\n  series: {\n    name: "Total Sales",\n    type: "bar",\n    barWidth: 35,\n    itemStyle: {\n      borderRadius: [5, 5, 0, 0],\n      color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [\n        { offset: 0, color: \'rgba(15,197,243,1)\' },\n        { offset: 1, color: \'rgba(15,197,243,0)\' }\n      ]),\n      shadowColor: \'rgba(0,0,0,0.4)\',\n      shadowBlur: 8\n    },\n    emphasis: {\n      focus: \'series\'\n    },\n    data: [61439, 38424, 58937],\n    animationEasing: \'elasticOut\'\n  }\n}'}, {'id': 80, 'chart_name': 'sales_analysis', 'chart_type': 'line', 'data': {'columns': [{'name': 'Month', 'friendly_name': 'Month', 'type': 'string'}, {'name': 'Total_Sales', 'friendly_name': 'Total_Sales', 'type': 'float'}, {'name': 'Quantity_of_Orders', 'friendly_name': 'Quantity_of_Orders', 'type': 'integer'}, {'name': 'Total_Profit', 'friendly_name': 'Total_Profit', 'type': 'float'}], 'rows': [{'Month': '2018-04', 'Total_Sales': 32726, 'Quantity_of_Orders': 101, 'Total_Profit': -3960}, {'Month': '2018-05', 'Total_Sales': 28545, 'Quantity_of_Orders': 118, 'Total_Profit': -3584}, {'Month': '2018-06', 'Total_Sales': 23658, 'Quantity_of_Orders': 101, 'Total_Profit': -4970}, {'Month': '2018-07', 'Total_Sales': 12966, 'Quantity_of_Orders': 64, 'Total_Profit': -2138}, {'Month': '2018-08', 'Total_Sales': 30899, 'Quantity_of_Orders': 120, 'Total_Profit': -2180}, {'Month': '2018-09', 'Total_Sales': 26628, 'Quantity_of_Orders': 83, 'Total_Profit': -4963}, {'Month': '2018-10', 'Total_Sales': 31615, 'Quantity_of_Orders': 106, 'Total_Profit': 3093}, {'Month': '2018-11', 'Total_Sales': 48086, 'Quantity_of_Orders': 159, 'Total_Profit': 11619}, {'Month': '2018-12', 'Total_Sales': 37579, 'Quantity_of_Orders': 111, 'Total_Profit': 5284}, {'Month': '2019-01', 'Total_Sales': 61439, 'Quantity_of_Orders': 192, 'Total_Profit': 9760}, {'Month': '2019-02', 'Total_Sales': 38424, 'Quantity_of_Orders': 140, 'Total_Profit': 5917}, {'Month': '2019-03', 'Total_Sales': 58937, 'Quantity_of_Orders': 205, 'Total_Profit': 10077}]}, 'columnMapping': {'Month': 'x', 'Total_Sales': 'y', 'Quantity_of_Orders': 'y', 'Total_Profit': 'y'}, 'echart_code': '{\n    color: [\'#83bff6\'],\n    tooltip: {\n      trigger: \'axis\',\n      axisPointer: {\n        type: \'cross\',\n        label: {\n          backgroundColor: \'#6a7985\'\n        }\n      }\n    },\n    grid: {\n      left: \'3%\',\n      right: \'4%\',\n      bottom: \'3%\',\n      containLabel: true\n    },\n    xAxis: [\n      {\n        type: \'category\',\n        boundaryGap: false,\n        data: ["2018-04","2018-05","2018-06","2018-07","2018-08","2018-09","2018-10","2018-11","2018-12","2019-01","2019-02","2019-03"],\n        axisTick: {\n          alignWithLabel: true\n        },\n        axisLine:{\n          lineStyle:{\n            color: \'#fff\'\n          }\n        }\n      }\n    ],\n    yAxis: [\n      {\n        type: \'value\',\n        axisLine:{\n          lineStyle:{\n            color: \'#fff\'\n          }\n        },\n        splitLine: {\n          show: true,\n          lineStyle: {\n            color: \'rgba(255,255,255,0.1)\',\n            type: \'dashed\'\n          }\n        }\n      }\n    ],\n    series: [\n      {\n        name: \'Total Sales\',\n        type: \'line\',\n        stack: \'sales\',\n        areaStyle: {\n          normal: {\n            color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [{\n              offset: 0,\n              color: \'rgba(255, 255, 255, 0.3)\'\n            }, {\n              offset: 0.8,\n              color: \'rgba(255, 255, 255, 0)\'\n            }], false),\n            shadowColor: \'rgba(0,0,0,0.1)\',\n            shadowBlur: 10\n          }\n        },\n        emphasis: {\n          focus: \'series\'\n        },\n        data: [32726, 28545, 23658, 12966, 30899, 26628, 31615, 48086, 37579, 61439, 38424, 58937],\n        smooth: true,\n        symbol: \'circle\',\n        symbolSize: 8,\n        showSymbol: false,\n        lineStyle: {\n          width: 2,\n          color: \'#4c84ff\'\n        },\n        itemStyle: {\n          borderWidth: 2,\n          borderColor: \'#fff\',\n          color: \'#4c84ff\'\n        },\n        animation: true\n      }\n    ]\n}'}, {'id': 83, 'chart_name': 'sales_analysis', 'chart_type': 'line', 'data': {'columns': [{'name': 'Month', 'friendly_name': 'Month', 'type': 'string'}, {'name': 'Total_Sales', 'friendly_name': 'Total_Sales', 'type': 'float'}, {'name': 'Quantity_of_Orders', 'friendly_name': 'Quantity_of_Orders', 'type': 'integer'}, {'name': 'Total_Profit', 'friendly_name': 'Total_Profit', 'type': 'float'}], 'rows': [{'Month': '2018-04', 'Total_Sales': 32726, 'Quantity_of_Orders': 101, 'Total_Profit': -3960}, {'Month': '2018-05', 'Total_Sales': 28545, 'Quantity_of_Orders': 118, 'Total_Profit': -3584}, {'Month': '2018-06', 'Total_Sales': 23658, 'Quantity_of_Orders': 101, 'Total_Profit': -4970}, {'Month': '2018-07', 'Total_Sales': 12966, 'Quantity_of_Orders': 64, 'Total_Profit': -2138}, {'Month': '2018-08', 'Total_Sales': 30899, 'Quantity_of_Orders': 120, 'Total_Profit': -2180}, {'Month': '2018-09', 'Total_Sales': 26628, 'Quantity_of_Orders': 83, 'Total_Profit': -4963}, {'Month': '2018-10', 'Total_Sales': 31615, 'Quantity_of_Orders': 106, 'Total_Profit': 3093}, {'Month': '2018-11', 'Total_Sales': 48086, 'Quantity_of_Orders': 159, 'Total_Profit': 11619}, {'Month': '2018-12', 'Total_Sales': 37579, 'Quantity_of_Orders': 111, 'Total_Profit': 5284}, {'Month': '2019-01', 'Total_Sales': 61439, 'Quantity_of_Orders': 192, 'Total_Profit': 9760}, {'Month': '2019-02', 'Total_Sales': 38424, 'Quantity_of_Orders': 140, 'Total_Profit': 5917}, {'Month': '2019-03', 'Total_Sales': 58937, 'Quantity_of_Orders': 205, 'Total_Profit': 10077}]}, 'columnMapping': {'Month': 'x', 'Total_Sales': 'y', 'Quantity_of_Orders': 'y', 'Total_Profit': 'y'}, 'echart_code': "{\n  color: ['#C6FFDD'],\n  tooltip: {\n    trigger: 'axis',\n    axisPointer: {\n      type: 'shadow'\n    }\n  },\n  grid: {\n    left: '3%',\n    right: '4%',\n    bottom: '3%',\n    containLabel: true\n  },\n  xAxis: {\n    type: 'category',\n    data: ['2018-04', '2018-05', '2018-06', '2018-07', '2018-08', '2018-09', '2018-10', '2018-11', '2018-12', '2019-01', '2019-02', '2019-03'],\n    axisTick: {\n      alignWithLabel: true\n    },\n    axisLine: {\n      lineStyle: {\n        color: '#fff'\n      }\n    }\n  },\n  yAxis: {\n    type: 'value',\n    axisLine: {\n      lineStyle: {\n        color: '#fff'\n      }\n    },\n    splitLine: {\n      lineStyle: {\n        color: 'rgba(204, 204, 204, 0.2)'\n      }\n    }\n  },\n  series: [\n    {\n      name: 'Total Sales',\n      type: 'line',\n      smooth: true,\n      symbol: 'circle',\n      symbolSize: 8,\n      lineStyle: {\n        color: 'rgba(255, 255, 255, 0.5)',\n        width: 2,\n        type: 'solid'\n      },\n      itemStyle: {\n        borderColor: 'rgba(198, 255, 221, 0.4)',\n        borderWidth: 12\n      },\n      areaStyle: {\n        color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [{\n          offset: 0,\n          color: 'rgba(198, 255, 221, 0.3)'\n        }, {\n          offset: 0.8,\n          color: 'rgba(198, 255, 221, 0)'\n        }], false),\n        shadowColor: 'rgba(0, 0, 0, 0.1)',\n        shadowBlur: 10\n      },\n      emphasis: {\n        focus: 'series'\n      },\n      data: [32726, 28545, 23658, 12966, 30899, 26628, 31615, 48086, 37579, 61439, 38424, 58937]\n    },\n    {\n      name: 'Quantity of Orders',\n      type: 'line',\n      smooth: true,\n      symbol: 'square',\n      symbolSize: 8,\n      lineStyle: {\n        color: 'rgba(255, 236, 179, 0.5)',\n        width: 2,\n        type: 'dotted'\n      },\n      itemStyle: {\n        borderColor: 'rgba(255, 236, 179, 0.4)',\n        borderWidth: 12\n      },\n      areaStyle: {\n        color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [{\n          offset: 0,\n          color: 'rgba(255, 236, 179, 0.3)'\n        }, {\n          offset: 0.8,\n          color: 'rgba(255, 236, 179, 0)'\n        }], false),\n        shadowColor: 'rgba(0, 0, 0, 0.1)',\n        shadowBlur: 10\n      },\n      emphasis: {\n        focus: 'series'\n      },\n      data: [101, 118, 101, 64, 120, 83, 106, 159, 111, 192, 140, 205]\n    },\n    {\n      name: 'Total Profit',\n      type: 'line',\n      smooth: true,\n      symbol: 'triangle',\n      symbolSize: 8,\n      lineStyle: {\n        color: 'rgba(255, 177, 177, 0.5)',\n        width: 2,\n        type: 'dashed'\n      },\n      itemStyle: {\n        borderColor: 'rgba(255, 177, 177, 0.4)',\n        borderWidth: 12\n      },\n      areaStyle: {\n        color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [{\n          offset: 0,\n          color: 'rgba(255, 177, 177, 0.3)'\n        }, {\n          offset: 0.8,\n          color: 'rgba(255, 177, 177, 0)'\n        }], false),\n        shadowColor: 'rgba(0, 0, 0, 0.1)',\n        shadowBlur: 10\n      },\n      emphasis: {\n        focus: 'series'\n      },\n      data: [-3960, -3584, -4970, -2138, -2180, -4963, 3093, 11619, 5284, 9760, 5917, 10077]\n    }\n  ],\n  animationDuration: 3000\n}"}, {'id': 78, 'chart_name': '流程测试010', 'chart_type': 'line', 'data': {'columns': [{'name': 'Month', 'friendly_name': 'Month', 'type': 'string'}, {'name': 'Total Sales', 'friendly_name': 'Total Sales', 'type': 'float'}], 'rows': [{'Month': '2019-01', 'Total Sales': 61439}, {'Month': '2019-02', 'Total Sales': 38424}, {'Month': '2019-03', 'Total Sales': 58937}]}, 'columnMapping': {'Month': 'x', 'Total Sales': 'y'}, 'echart_code': "{\n    color: ['#33FFA3'],\n    tooltip: {\n        trigger: 'axis',\n        axisPointer: {\n            type: 'line',\n            lineStyle: {\n                color: '#33FFA3',\n                width: 2\n            }\n        }\n    },\n    grid: {\n        left: '3%',\n        right: '4%',\n        bottom: '3%',\n        containLabel: true,\n        borderColor: '#33FFA3'\n    },\n    xAxis: {\n        type: 'category',\n        boundaryGap: false,\n        data: ['2019-01', '2019-02', '2019-03'],\n        axisLine:{\n            lineStyle:{\n                color:'#33FFA3',\n                width:2\n            }\n        },\n        axisLabel: {\n            color: '#ffffff'\n        },\n    },\n    yAxis: {\n        type: 'value',\n        axisLine:{\n            lineStyle:{\n                color:'#33FFA3',\n                width:2\n            }\n        },\n        axisLabel: {\n            color: '#ffffff'\n        },\n        splitLine: {\n            lineStyle: {\n                color: 'rgba(255,255,255,0.1)',\n                type: 'dashed'\n            }\n        }\n    },\n    series: [\n        {\n            name:'Total Sales',\n            type:'line',\n            smooth: true,\n            symbol: 'circle',\n            symbolSize: 8,\n            showSymbol: true,\n            lineStyle: {\n                normal: {\n                    width: 2,\n                    shadowColor: 'rgba(51, 255, 163, 0.5)',\n                    shadowBlur: 10,\n                    type: 'solid'\n                }\n            },\n            itemStyle: {\n                normal: {\n                    borderWidth: 2,\n                    borderColor: 'rgba(51, 255, 163, 0.4)',\n                    color: 'rgba(51, 255, 163, 1)'\n                }\n            },\n            areaStyle: {\n                normal: {\n                    color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [{\n                        offset: 0,\n                        color: 'rgba(51, 255, 163, 0.3)'\n                    }, {\n                        offset: 1,\n                        color: 'rgba(51, 255, 163, 0)'\n                    }], false),\n                    shadowColor: 'rgba(0, 0, 0, 0.1)',\n                    shadowBlur: 10\n                }\n            },\n            data: [61439, 38424, 58937],\n            animationDuration: 2800,\n            animationEasing: 'cubicInOut'\n        }\n    ]\n}"}, {'id': 79, 'chart_name': '流程测试010', 'chart_type': 'pie', 'data': {'columns': [{'name': 'Month', 'friendly_name': 'Month', 'type': 'string'}, {'name': 'Total Sales', 'friendly_name': 'Total Sales', 'type': 'float'}], 'rows': [{'Month': '2019-01', 'Total Sales': 61439}, {'Month': '2019-02', 'Total Sales': 38424}, {'Month': '2019-03', 'Total Sales': 58937}]}, 'columnMapping': {'Month': 'x', 'Total Sales': 'y'}, 'echart_code': "{\n   color: ['#fa709a', '#fee140', '#8ec5fc'],\n   tooltip: {\n      trigger: 'item'\n   },\n   series: [\n      {\n         name: 'Total Sales',\n         type: 'pie',\n         radius: '65%',\n         center: ['50%', '50%'],\n         roseType: 'radius',\n         itemStyle: {\n            borderRadius: 8,\n            shadowBlur: 60,\n            shadowOffsetX: 0,\n            shadowOffsetY: 0,\n            shadowColor: 'rgba(0, 0, 0, 0.5)',\n            emphasis: {\n               shadowBlur: 110,\n               shadowOffsetX: 0,\n               shadowOffsetY: 0,\n               shadowColor: 'rgba(0, 0, 0, 0.35)'\n            }\n         },\n         data: [\n            { value: 61439, name: '2019-01' },\n            { value: 38424, name: '2019-02' },\n            { value: 58937, name: '2019-03' }\n         ],\n         label: {\n            normal: {\n               formatter: '{b}\\n{c} ({d}%)',\n               backgroundColor: '#eee',\n               borderColor: '#aaa',\n               borderWidth: 1,\n               borderRadius: 4,\n               rich: {\n                  a: {\n                     color: '#999',\n                     lineHeight: 22,\n                     align: 'center'\n                  },\n                  hr: {\n                     borderColor: '#aaa',\n                     width: '100%',\n                     borderWidth: 0.5,\n                     height: 0\n                  },\n                  b: {\n                     fontSize: 16,\n                     lineHeight: 33\n                  },\n                  per: {\n                     color: '#eee',\n                     backgroundColor: '#334455',\n                     padding: [2, 4],\n                     borderRadius: 2\n                  }\n               }\n            }\n         },\n         labelLine: {\n            smooth: 0.2,\n            length: 10,\n            length2: 20\n         },\n         animationType: 'scale',\n         animationEasing: 'elasticOut',\n         animationDelay: function (idx) {\n            return Math.random() * 200;\n         }\n      }\n   ]\n}"}, {'id': 76, 'chart_name': '流程测试010', 'chart_type': 'bar', 'data': {'columns': [{'name': 'Date', 'friendly_name': 'Date', 'type': 'string'}, {'name': 'Total_Sales', 'friendly_name': 'Total_Sales', 'type': 'float'}, {'name': 'Total_Profit', 'friendly_name': 'Total_Profit', 'type': 'float'}], 'rows': [{'Date': '2019-01', 'Total_Sales': 61439, 'Total_Profit': 9760}, {'Date': '2019-02', 'Total_Sales': 38424, 'Total_Profit': 5917}, {'Date': '2019-03', 'Total_Sales': 58937, 'Total_Profit': 10077}]}, 'columnMapping': {'Date': 'x', 'Total_Sales': 'y'}, 'echart_code': '{\n  tooltip: {\n    trigger: "axis",\n    axisPointer: {\n      type: "shadow",\n      label: {\n        show: true\n      }\n    }\n  },\n  legend: {\n    data: ["Total Sales", "Total Profit"],\n    top: "2%",\n    right: \'10\',\n    textStyle: {\n      color: "#ebf8ac",\n      fontSize: 16\n    }\n  },\n  xAxis: {\n    data: ["2019-01", "2019-02", "2019-03"],\n    axisLine: {\n      show: true,\n      lineStyle: {\n        color: \'#fff\',\n        width: 2\n      }\n    },\n    axisTick: {\n      show: true\n    },\n    axisLabel: {\n      show: true,\n      textStyle: {\n        color: "#ebf8ac",\n        fontSize: 16\n      }\n    },\n    splitArea: {\n      show: true,\n      areaStyle: {\n        color: ["rgba(255,255,255,0.1)", "transparent"]\n      }\n    }\n  },\n  yAxis: [{\n    type: "value",\n    axisLine: {\n      show: true,\n      lineStyle: {\n        color: \'#fff\',\n        width: 2\n      }\n    },\n    axisTick: {\n      show: true\n    },\n    axisLabel: {\n      show: true,\n      textStyle: {\n        color: "#ebf8ac",\n        fontSize: 16\n      }\n    },\n    splitLine: {\n      show: false\n    }\n  }],\n  series: [\n    {\n      name: "Total Sales",\n      type: "bar",\n      stack: "total",\n      barWidth: \'40%\',\n      itemStyle: {\n        borderRadius: 5,\n        color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [{\n          offset: 0,\n          color: \'rgba(255,203,112,1)\'\n        }, {\n          offset: 1,\n          color: \'rgba(255,203,112,0)\'\n        }]),\n        shadowColor: \'rgba(255,203,112,0.5)\',\n        shadowBlur: 10\n      },\n      emphasis: {\n        focus: \'series\'\n      },\n      data: [61439, 38424, 58937],\n      animationEasing: \'elasticOut\'\n    },\n    {\n      name: "Total Profit",\n      type: "bar",\n      stack: "total",\n      barWidth: \'40%\',\n      itemStyle: {\n        borderRadius: 5,\n        color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [{\n          offset: 0,\n          color: \'rgba(119,221,255,1)\'\n        }, {\n          offset: 1,\n          color: \'rgba(119,221,255,0)\'\n        }]),\n        shadowColor: \'rgba(119,221,255,0.5)\',\n        shadowBlur: 10\n      },\n      emphasis: {\n        focus: \'series\'\n      },\n      data: [9760, 5917, 10077],\n      animationEasing: \'elasticOut\'\n    }\n  ],\n  backgroundColor: \'#00206d\'\n}'}, {'id': 84, 'chart_name': 'category_wise_sales_analysis', 'chart_type': 'bar', 'data': {'columns': [{'name': 'category', 'friendly_name': 'category', 'type': 'string'}, {'name': 'sub_category', 'friendly_name': 'sub_category', 'type': 'string'}, {'name': 'Total_Sales', 'friendly_name': 'Total_Sales', 'type': 'float'}, {'name': 'Quantity_of_Orders', 'friendly_name': 'Quantity_of_Orders', 'type': 'integer'}], 'rows': [{'category': 'Furniture', 'sub_category': 'Bookcases', 'Total_Sales': 56861, 'Quantity_of_Orders': 79}, {'category': 'Clothing', 'sub_category': 'Stole', 'Total_Sales': 18546, 'Quantity_of_Orders': 192}, {'category': 'Clothing', 'sub_category': 'Hankerchief', 'Total_Sales': 14608, 'Quantity_of_Orders': 198}, {'category': 'Electronics', 'sub_category': 'Electronic Games', 'Total_Sales': 39168, 'Quantity_of_Orders': 79}, {'category': 'Electronics', 'sub_category': 'Phones', 'Total_Sales': 46119, 'Quantity_of_Orders': 83}, {'category': 'Clothing', 'sub_category': 'Saree', 'Total_Sales': 53511, 'Quantity_of_Orders': 210}, {'category': 'Clothing', 'sub_category': 'Trousers', 'Total_Sales': 30039, 'Quantity_of_Orders': 39}, {'category': 'Furniture', 'sub_category': 'Chairs', 'Total_Sales': 34222, 'Quantity_of_Orders': 74}, {'category': 'Clothing', 'sub_category': 'Kurti', 'Total_Sales': 3361, 'Quantity_of_Orders': 47}, {'category': 'Clothing', 'sub_category': 'T-shirt', 'Total_Sales': 7382, 'Quantity_of_Orders': 77}, {'category': 'Clothing', 'sub_category': 'Shirt', 'Total_Sales': 7555, 'Quantity_of_Orders': 69}, {'category': 'Clothing', 'sub_category': 'Leggings', 'Total_Sales': 2106, 'Quantity_of_Orders': 53}, {'category': 'Furniture', 'sub_category': 'Tables', 'Total_Sales': 22614, 'Quantity_of_Orders': 17}, {'category': 'Electronics', 'sub_category': 'Printers', 'Total_Sales': 58252, 'Quantity_of_Orders': 74}, {'category': 'Electronics', 'sub_category': 'Accessories', 'Total_Sales': 21728, 'Quantity_of_Orders': 72}, {'category': 'Furniture', 'sub_category': 'Furnishings', 'Total_Sales': 13484, 'Quantity_of_Orders': 73}, {'category': 'Clothing', 'sub_category': 'Skirt', 'Total_Sales': 1946, 'Quantity_of_Orders': 64}]}, 'columnMapping': {'category': 'x', 'sub_category': 'x_series', 'Total_Sales': 'y', 'Quantity_of_Orders': 'y'}, 'echart_code': "{\n  tooltip: {\n    trigger: 'axis',\n    axisPointer: {\n      type: 'shadow'\n    }\n  },\n  legend: {\n    data: ['Total Sales', 'Quantity of Orders'],\n    textStyle: {\n      color: '#fff'\n    }\n  },\n  grid: {\n    left: '3%',\n    right: '4%',\n    bottom: '3%',\n    containLabel: true\n  },\n  xAxis: {\n    type: 'category',\n    data: ['Furniture', 'Clothing', 'Electronics'],\n    axisLine: {\n      lineStyle: {\n        color: '#26D9FF'\n      }\n    },\n    axisTick: {\n      alignWithLabel: true\n    },\n    axisLabel: {\n      textStyle: {\n        color: '#fff'\n      }\n    }\n  },\n  yAxis: [{\n    type: 'value',\n    name: 'Total Sales',\n    min: 0,\n    position: 'left',\n    axisLine: {\n      show: false\n    },\n    axisTick: {\n      show: false\n    },\n    axisLabel: {\n      textStyle: {\n        color: '#fff'\n      }\n    },\n    splitLine: {\n      show: false\n    }\n  }, {\n    type: 'value',\n    name: 'Qty of Orders',\n    min: 0,\n    position: 'right',\n    axisLine: {\n      show: false\n    },\n    axisTick: {\n      show: false\n    },\n    axisLabel: {\n      formatter: '{value} qty',\n      textStyle: {\n        color: '#fff'\n      }\n    },\n    splitLine: {\n      show: false\n    }\n  }],\n  series: [{\n    name: 'Total Sales',\n    type: 'bar',\n    data: [91197, 123063, 155267],\n    itemStyle: {\n      barBorderRadius: [5, 5, 0, 0],\n      color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [{ offset: 0, color: '#83bff6' }, { offset: 0.5, color: '#188df0' }, { offset: 1, color: '#188df0' }])\n    },\n    emphasis: {\n      focus: 'series'\n    },\n    animationEasing: 'elasticOut',\n    animationDelayUpdate: function (idx) {\n      return idx * 5;\n    }\n  }, {\n    name: 'Quantity of Orders',\n    type: 'bar',\n    yAxisIndex: 1,\n    data: [243, 1076, 308],\n    itemStyle: {\n      barBorderRadius: [5, 5, 0, 0],\n      color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [{ offset: 0, color: '#00da9c' }, { offset: 0.7, color: '#59d4ab' }, { offset: 1, color: '#59d4ab' }])\n    },\n    emphasis: {\n      focus: 'series'\n    },\n    animationEasing: 'elasticOut',\n    animationDelayUpdate: function (idx) {\n      return idx * 5;\n    }\n  }]\n}"}, {'id': 77, 'chart_name': '流程测试010', 'chart_type': 'area', 'data': {'columns': [{'name': 'month', 'friendly_name': 'month', 'type': 'string'}, {'name': 'total_sales', 'friendly_name': 'total_sales', 'type': 'float'}], 'rows': [{'month': '2019-01', 'total_sales': 61439}, {'month': '2019-02', 'total_sales': 38424}, {'month': '2019-03', 'total_sales': 58937}]}, 'columnMapping': {'month': 'x', 'total_sales': 'y'}, 'echart_code': '{\n  tooltip: {\n    trigger: "axis",\n    axisPointer: {\n      type: "shadow",\n      label: {\n        show: true\n      }\n    }\n  },\n  legend: {\n    data: ["Total Sales"],\n    top: "2%",\n    right: \'10\',\n    textStyle: {\n      color: "rgba(250,250,250,0.6)",\n      fontSize: 16\n    }\n  },\n  xAxis: {\n    data: [\n      "2019-01",\n      "2019-02",\n      "2019-03"\n    ],\n    axisLine: {\n      show: true,\n      lineStyle: {\n        color: \'#26D9FF\',\n        width: 2\n      }\n    },\n    axisTick: {\n      show: true\n    },\n    axisLabel: {\n      show: true,\n      textStyle: {\n        color: "rgba(250,250,250,0.6)",\n        fontSize: 16\n      }\n    },\n  },\n  yAxis: {\n    type: "value",\n    axisLine: {\n      show: true,\n      lineStyle: {\n        color: \'#26D9FF\',\n        width: 2\n      }\n    },\n    axisLabel: {\n      show: true,\n      textStyle: {\n        color: "rgba(250,250,250,0.6)",\n        fontSize: 16\n      }\n    },\n    splitLine: {\n      show: false\n    },\n  },\n  series: [{\n    name: "Total Sales",\n    type: "line",\n    smooth: true,\n    symbol: "circle",\n    symbolSize: 8,\n    itemStyle: {\n      color: "rgba(255,215,0,0.8)",\n      borderColor: "rgba(255,215,0,0.8)",\n      borderWidth: 2,\n    },\n    lineStyle: {\n      color: "rgba(255,215,0,0.8)",\n      width: 2\n    },\n    areaStyle: {\n      color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [{\n        offset: 0,\n        color: "rgba(255,215,0,0.6)"\n      }, {\n        offset: 1,\n        color: "rgba(255,215,0,0)"\n      }])\n    },\n    data: [61439, 38424, 58937],\n    animationDuration: 2800,\n    animationEasing: "cubicInOut"\n  }]\n}'}, {'id': 81, 'chart_name': 'category_wise_sales_analysis', 'chart_type': 'bar', 'data': {'columns': [{'name': 'category', 'friendly_name': 'category', 'type': 'string'}, {'name': 'sub_category', 'friendly_name': 'sub_category', 'type': 'string'}, {'name': 'Total_Sales', 'friendly_name': 'Total_Sales', 'type': 'float'}, {'name': 'Quantity_of_Orders', 'friendly_name': 'Quantity_of_Orders', 'type': 'integer'}], 'rows': [{'category': 'Furniture', 'sub_category': 'Bookcases', 'Total_Sales': 56861, 'Quantity_of_Orders': 79}, {'category': 'Clothing', 'sub_category': 'Stole', 'Total_Sales': 18546, 'Quantity_of_Orders': 192}, {'category': 'Clothing', 'sub_category': 'Hankerchief', 'Total_Sales': 14608, 'Quantity_of_Orders': 198}, {'category': 'Electronics', 'sub_category': 'Electronic Games', 'Total_Sales': 39168, 'Quantity_of_Orders': 79}, {'category': 'Electronics', 'sub_category': 'Phones', 'Total_Sales': 46119, 'Quantity_of_Orders': 83}, {'category': 'Clothing', 'sub_category': 'Saree', 'Total_Sales': 53511, 'Quantity_of_Orders': 210}, {'category': 'Clothing', 'sub_category': 'Trousers', 'Total_Sales': 30039, 'Quantity_of_Orders': 39}, {'category': 'Furniture', 'sub_category': 'Chairs', 'Total_Sales': 34222, 'Quantity_of_Orders': 74}, {'category': 'Clothing', 'sub_category': 'Kurti', 'Total_Sales': 3361, 'Quantity_of_Orders': 47}, {'category': 'Clothing', 'sub_category': 'T-shirt', 'Total_Sales': 7382, 'Quantity_of_Orders': 77}, {'category': 'Clothing', 'sub_category': 'Shirt', 'Total_Sales': 7555, 'Quantity_of_Orders': 69}, {'category': 'Clothing', 'sub_category': 'Leggings', 'Total_Sales': 2106, 'Quantity_of_Orders': 53}, {'category': 'Furniture', 'sub_category': 'Tables', 'Total_Sales': 22614, 'Quantity_of_Orders': 17}, {'category': 'Electronics', 'sub_category': 'Printers', 'Total_Sales': 58252, 'Quantity_of_Orders': 74}, {'category': 'Electronics', 'sub_category': 'Accessories', 'Total_Sales': 21728, 'Quantity_of_Orders': 72}, {'category': 'Furniture', 'sub_category': 'Furnishings', 'Total_Sales': 13484, 'Quantity_of_Orders': 73}, {'category': 'Clothing', 'sub_category': 'Skirt', 'Total_Sales': 1946, 'Quantity_of_Orders': 64}]}, 'columnMapping': {'category': 'x', 'sub_category': 'x_series', 'Total_Sales': 'y', 'Quantity_of_Orders': 'y'}, 'echart_code': "{\n  tooltip: {\n    trigger: 'axis',\n    axisPointer: {\n      type: 'shadow'\n    }\n  },\n  legend: {\n    data: ['Total Sales', 'Quantity of Orders'],\n    textStyle: {\n      color: '#fff'\n    }\n  },\n  xAxis: {\n    type: 'category',\n    data: ['Furniture', 'Clothing', 'Electronics'],\n    axisLine: {\n      show: true,\n      lineStyle: {\n        color: '#fff'\n      }\n    }\n  },\n  yAxis: [\n    {\n      type: 'value',\n      name: 'Total Sales',\n      min: 0,\n      axisLine: {\n        show: true,\n        lineStyle: {\n          color: '#fff'\n        }\n      },\n      axisLabel: {\n        formatter: '{value}'\n      },\n      splitLine: {show: false}\n    },\n    {\n      type: 'value',\n      name: 'Quantity of Orders',\n      min: 0,\n      position: 'right',\n      axisLine: {\n        show: true,\n        lineStyle: {\n          color: '#fff'\n        }\n      },\n      axisLabel: {\n        formatter: '{value}'\n      },\n      splitLine: {show: false}\n    }\n  ],\n  series: [\n    {\n      name: 'Total Sales',\n      type: 'bar',\n      barWidth: '35%',\n      stack: 'sales',\n      itemStyle: {\n        borderRadius: 5,\n        color: new echarts.graphic.LinearGradient(\n          0, 0, 0, 1,\n          [\n            {offset: 0, color: '#83bff6'},\n            {offset: 0.5, color: '#188df0'},\n            {offset: 1, color: '#188df0'}\n          ]\n        )\n      },\n      emphasis: {\n        focus: 'series'\n      },\n      data: [56861 + 34222 + 22614 + 13484, 18546 + 14608 + 53511 + 30039 + 3361 + 7382 + 7555 + 2106 + 1946, 39168 + 46119 + 58252 + 21728]\n    },\n    {\n      name: 'Quantity of Orders',\n      type: 'bar',\n      barWidth: '35%',\n      stack: 'orders',\n      yAxisIndex: 1,\n      itemStyle: {\n        borderRadius: 5,\n        color: new echarts.graphic.LinearGradient(\n          0, 0, 0, 1,\n          [\n            {offset: 0, color: '#ffa022'},\n            {offset: 0.7, color: '#ffa022'},\n            {offset: 1, color: '#d09805'}\n          ]\n        )\n      },\n      emphasis: {\n        focus: 'series'\n      },\n      data: [79 + 74 + 17 + 73, 192 + 198 + 210 + 39 + 47 + 77 + 69 + 53 + 64, 79 + 83 + 74 + 72]\n    }\n  ],\n  backgroundColor: '#00206d',\n  animationDuration: 1000,\n  animationEasing: 'cubicOut'\n}"}, {'id': 71, 'chart_name': '流程测试010', 'chart_type': 'line', 'data': {'columns': [{'name': 'Month', 'friendly_name': 'Month', 'type': 'integer'}, {'name': 'Total_Sales', 'friendly_name': 'Total_Sales', 'type': 'float'}], 'rows': [{'Month': 1, 'Total_Sales': 61439}, {'Month': 2, 'Total_Sales': 38424}, {'Month': 3, 'Total_Sales': 58937}]}, 'columnMapping': {'Month': 'x', 'Total_Sales': 'y'}, 'echart_code': '{\n  color: [\'#3398DB\'],\n  tooltip: {\n    trigger: \'axis\',\n    axisPointer: {\n      type: \'cross\',\n      crossStyle: {\n        color: \'#999\'\n      }\n    }\n  },\n  grid: {\n    left: \'3%\',\n    right: \'4%\',\n    bottom: \'3%\',\n    containLabel: true\n  },\n  xAxis: [\n    {\n      type: \'category\',\n      data: [\'1\', \'2\', \'3\'],\n      axisPointer: {\n        type: \'shadow\'\n      },\n      axisLine: {\n        lineStyle: {\n          color: \'#ffffff\'\n        }\n      }\n    }\n  ],\n  yAxis: [\n    {\n      type: \'value\',\n      axisLine: {\n        lineStyle: {\n          color: \'#ffffff\'\n        }\n      },\n      splitLine: {\n        show: false\n      }\n    }\n  ],\n  series: [\n    {\n      name: \'Total Sales\',\n      type: \'line\',\n      data: [61439, 38424, 58937],\n      smooth: true,\n      symbol: \'circle\',\n      symbolSize: 8,\n      itemStyle: {\n        color: \'#00d897\',\n        borderColor: "#fff",\n        borderWidth: 2\n      },\n      lineStyle: {\n        color: \'#00d897\',\n        width: 2,\n        type: \'solid\',\n        shadowColor: \'rgba(0, 0, 0, 0.3)\',\n        shadowBlur: 10,\n        shadowOffsetY: 5\n      },\n      areaStyle: {\n        color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [\n          { offset: 0, color: \'rgba(0, 216, 151, 0.3)\' },\n          { offset: 0.7, color: \'rgba(0, 216, 151, 0)\' }\n        ])\n      },\n      animation: true,\n      animationDuration: 1000\n    }\n  ]\n}'}, {'id': 75, 'chart_name': '流程测试010', 'chart_type': 'bar', 'data': {'columns': [{'name': 'Date', 'friendly_name': 'Date', 'type': 'string'}, {'name': 'Total_Sales', 'friendly_name': 'Total_Sales', 'type': 'float'}, {'name': 'Total_Profit', 'friendly_name': 'Total_Profit', 'type': 'float'}], 'rows': [{'Date': '2019-01', 'Total_Sales': 61439, 'Total_Profit': 9760}, {'Date': '2019-02', 'Total_Sales': 38424, 'Total_Profit': 5917}, {'Date': '2019-03', 'Total_Sales': 58937, 'Total_Profit': 10077}]}, 'columnMapping': {'Date': 'x', 'Total_Sales': 'y'}, 'echart_code': "{\n  tooltip: {\n    trigger: 'axis',\n    axisPointer: {\n      type: 'shadow'\n    }\n  },\n  legend: {\n    data: ['Total_Sales', 'Total_Profit'],\n    textStyle: {\n      color: '#fff',\n      fontSize: 16\n    }\n  },\n  grid: {\n    top: '20%',\n    left: '3%',\n    right: '4%',\n    bottom: '3%',\n    containLabel: true\n  },\n  xAxis: {\n    type: 'category',\n    data: ['2019-01', '2019-02', '2019-03'],\n    axisLine: {\n      lineStyle: {\n        color: '#fff'\n      }\n    },\n    axisTick: {\n      alignWithLabel: true\n    },\n    axisLabel: {\n      textStyle: {\n        color: '#fff'\n      }\n    }\n  },\n  yAxis: [\n    {\n      type: 'value',\n      name: 'Total_Sales',\n      min: 0,\n      position: 'left',\n      axisLine: {\n        lineStyle: {\n          color: '#fff'\n        }\n      },\n      axisLabel: {\n        formatter: '{value}',\n        textStyle: {\n          color: '#fff'\n        }\n      }\n    },\n    {\n      type: 'value',\n      name: 'Total_Profit',\n      min: 0,\n      position: 'right',\n      axisLine: {\n        show: false\n      },\n      axisLabel: {\n        formatter: '{value}',\n        textStyle: {\n          color: '#fff'\n        }\n      },\n      splitLine: {\n        show: false\n      }\n    }\n  ],\n  series: [\n    {\n      name: 'Total_Sales',\n      type: 'bar',\n      barWidth: '40%',\n      stack: 'total',\n      emphasis: {\n        focus: 'series'\n      },\n      data: [61439, 38424, 58937],\n      itemStyle: {\n        borderRadius: 5,\n        color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [\n          { offset: 0, color: '#1e90ff' },\n          { offset: 1, color: '#87cefa' }\n        ]),\n        shadowColor: 'rgba(0, 0, 0, 0.4)',\n        shadowBlur: 10\n      }\n    },\n    {\n      name: 'Total_Profit',\n      type: 'bar',\n      barWidth: '40%',\n      yAxisIndex: 1,\n      stack: 'total',\n      emphasis: {\n        focus: 'series'\n      },\n      data: [9760, 5917, 10077],\n      itemStyle: {\n        borderRadius: 5,\n        color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [\n          { offset: 0, color: '#ff7f50' },\n          { offset: 1, color: '#ff6347' }\n        ]),\n        shadowColor: 'rgba(0, 0, 0, 0.4)',\n        shadowBlur: 10\n      }\n    }\n  ],\n  animationDuration: 2000\n}"}]
+  </div>
+  <div class="head">
+    <h1>222test</h1>
+    <h1 style="display: none" id="dashboardId">37</h1>
+    <div class="weather"><span id="showTime"></span></div>
+    <script>
+      var t = null;
+      t = setTimeout(time, 1000); //開始运行
+      function time() {
+        clearTimeout(t); //清除定时器
+        dt = new Date();
+        var y = dt.getFullYear();
+        var mt = dt.getMonth() + 1;
+        var day = dt.getDate();
+        var h = dt.getHours(); //获取时
+        var m = dt.getMinutes(); //获取分
+        var s = dt.getSeconds(); //获取秒
+        document.getElementById("showTime").innerHTML =
+          y + "年" + mt + "月" + day + "日" + h + "时" + m + "分" + s + "秒";
+        t = setTimeout(time, 1000); //设定定时器，循环运行
+      }
+    </script>
+  </div>
+  <div class="mainbox">
+    <ul class="clearfix">
+      <li>
+         
+        
+        <div class="boxall">
+          <div class="alltitle">流程测试010</div>
+          <div style="height: 3.47rem" id="echart70"></div>
+          <div class="boxfoot"></div>
+        </div>
+           
+        
+        <div class="boxall">
+          <div class="alltitle">流程测试010</div>
+          <div style="height: 3.47rem" id="echart72"></div>
+          <div class="boxfoot"></div>
+        </div>
+                 
+        
+        <div class="boxall">
+          <div class="alltitle">流程测试010</div>
+          <div style="height: 3.47rem" id="echart79"></div>
+          <div class="boxfoot"></div>
+        </div>
+           
+        
+        <div class="boxall">
+          <div class="alltitle">流程测试010</div>
+          <div style="height: 3.47rem" id="echart76"></div>
+          <div class="boxfoot"></div>
+        </div>
+           
+        
+        <div class="boxall">
+          <div class="alltitle">category_wise_sales_analysis</div>
+          <div style="height: 3.47rem" id="echart84"></div>
+          <div class="boxfoot"></div>
+        </div>
+                 
+        
+        <div class="boxall">
+          <div class="alltitle">流程测试010</div>
+          <div style="height: 3.47rem" id="echart75"></div>
+          <div class="boxfoot"></div>
+        </div>
+          
+      </li>
+
+      <li>
+        <div class="map">
+          <div class="map1">
+            <img src="../static/example1/images/lbx.png" />
+          </div>
+          <div class="map2">
+            <img src="../static/example1/images/jt.png" />
+          </div>
+          <div class="map3">
+            <img src="../static/example1/images/map.png" />
+          </div>
+          <div class="map4" id="map_1"></div>
+        </div>
+              
+        <div class="boxall">
+          <div class="alltitle">sales_analysis</div>
+          <div style="height: 2.86rem" id="echart80"></div>
+          <div class="boxfoot"></div>
+        </div>
+                      
+        <div class="boxall">
+          <div class="alltitle">流程测试010</div>
+          <div style="height: 2.86rem" id="echart77"></div>
+          <div class="boxfoot"></div>
+        </div>
+                
+      </li>
+      <li>
+               
+        
+        <div class="boxall">
+          <div class="alltitle">sales_analysis</div>
+          <div style="height: 3.47rem" id="echart83"></div>
+          <div class="boxfoot"></div>
+        </div>
+           
+        
+        <div class="boxall">
+          <div class="alltitle">流程测试010</div>
+          <div style="height: 3.47rem" id="echart78"></div>
+          <div class="boxfoot"></div>
+        </div>
+                   
+        
+        <div class="boxall">
+          <div class="alltitle">category_wise_sales_analysis</div>
+          <div style="height: 3.47rem" id="echart81"></div>
+          <div class="boxfoot"></div>
+        </div>
+           
+        
+        <div class="boxall">
+          <div class="alltitle">流程测试010</div>
+          <div style="height: 3.47rem" id="echart71"></div>
+          <div class="boxfoot"></div>
+        </div>
+            
+      </li>
+    </ul>
+  </div>
+  <div class="back"></div>
+  <script>
+    $(window).load(function () {
+      $(".loading").fadeOut();
+    });
+  </script>
+  <script>
+    function getDashboardDatainfo(){
+      $.ajax({
+        url: 'http://192.168.5.165:8338/api/dashboards/126',
+        type: 'get',
+        dataType: 'json',
+        headers: {
+          'Access-Control-Allow-Origin': '*'
+        },
+        success: function (res) {
+          console.log(res, "res===")
+        },
+        error: function (err) {
+          console.log(err,"err===")
+        }
+      })
+    }
+    function getDashboardData() {
+        var DashboardData =document.getElementById("query_result").innerHTML
+        DashboardData = eval('(' + DashboardData + ')');
+        console.log(DashboardData,"DashboardData")
+        return DashboardData
+    }
+    function echart_code() {
+      
+    
+    // var dashboard_id = document.getElementById('dashboardId').innerHTML
+    var query_result = getDashboardData()
+    for (var i = 0; i < query_result.length; i++) {
+      // $.ajax({
+      //   url: 'http://xxx/api/queries/' + dashboard_id + '/results/' + query_result[i].id + '.json',
+      //   type: 'get',
+      //   dataType: 'json',
+      //   success: function (res) {
+      if (query_result[i].chart_type == 'table') {
+        var table = document.getElementById('table' + query_result[i].id)
+        // columns
+        var columns = query_result[i]['data']['columns']
+        var columns_html = ''
+        for (var j = 0; j < columns.length; j++) {
+          columns_html += '<span>' + columns[j].name + '</span>'
+        }
+        table.getElementsByClassName('gdhead')[0].innerHTML = columns_html
+        // rows
+        var rows = query_result[i]['data']['rows']
+        var rows_html = ''
+        for (var j = 0; j < rows.length; j++) {
+          rows_html += '<li>'
+          for (var k = 0; k < columns.length; k++) {
+            rows_html += '<span>' + rows[j][columns[k].name] + '</span>'
+          }
+          rows_html += '</li>'
+        }
+        table.getElementsByClassName('smjl')[0].innerHTML = rows_html
+
+      } else {
+        var chart = echarts.init(document.getElementById('echart' + query_result[i].id))
+        var option =query_result[i]['echart_code']
+        console.log(option, "option====")
+        option = eval('(' + option + ')');
+        var x_field = Object.keys(query_result[i]['columnMapping']).find(key => query_result[i]['columnMapping'][key] === 'x');
+        var y_fields = Object.keys(query_result[i]['columnMapping']).filter(key => query_result[i]['columnMapping'][key] === 'y');
+        
+        if (query_result[i].chart_type == 'line' || query_result[i].chart_type == 'bar' || query_result[i].chart_type == 'area') {
+          option.xAxis.data = query_result[i]['data']['rows'].map(function (item) {
+            return item[x_field]
+          })
+          option.series.data = y_fields.map(function (y_field) {
+            return query_result[i]['data']['rows'].map(function (item) {
+                return item[y_field]
+              })
+          })
+        } else if (query_result[i].chart_type == 'pie') {
+          option.series[0].data = query_result[i]['data']['rows'].map(function (item) {
+            return {
+              name: item[x_field],
+              value: y_fields.reduce(function (sum, y_field) {
+                return sum + item[y_field]
+              }, 0)
+            }
+          })
+        }
+        chart.setOption(option)
+        window.addEventListener("resize", function () {
+          chart.resize()
+        })
+      }
+      // }
+      // })
+    }
+  }
+
+  $(window).load(function () {
+    echart_code()
+    getDashboardDatainfo()
+  });
+    </script>
+
+    <script>
+    </script>
+</body>
+
+</html>

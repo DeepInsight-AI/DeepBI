@@ -1,0 +1,32 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+  <div>
+    123213213
+    <span>
+      duozhuan888
+    </span>
+  </div>
+  <script>
+     function getDashboardData(){
+      var xhr = new XMLHttpRequest();
+      xhr.open('get', 'http://192.168.5.165:8338/api/dashboards/126', true);
+      xhr.onreadystatechange = function () {
+        if (xhr.readyState == 4 && xhr.status == 200 || xhr.status == 304) { // readyState == 4说明请求已完成
+          var res = JSON.parse(xhr.responseText);
+          console.log(res, "res===")
+        }else{
+          console.log(xhr.status,"xhr.status")
+        }
+      };
+      xhr.send();
+    }
+    getDashboardData()
+  </script>
+</body>
+</html>

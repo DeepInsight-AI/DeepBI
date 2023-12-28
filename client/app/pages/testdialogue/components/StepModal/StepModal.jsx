@@ -44,7 +44,8 @@ const StepModal = React.forwardRef((props, ref) => {
           `/api/queries/${widget.visualization.query.id}/results/${widget.visualization.query.latest_query_data_id}.json`
         );
         return {
-          id: widget.id,
+          id: widget.visualization.query.id,
+          latest_query_data_id: widget.visualization.query.latest_query_data_id,
           chart_name: widget.visualization.query.name,
           chart_type: chartType,
           data: res.query_result.data,

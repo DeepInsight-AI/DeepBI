@@ -176,6 +176,7 @@
     // var dashboard_id = document.getElementById('dashboardId').innerHTML
     var query_result = getDashboardData()
     for (var i = 0; i < query_result.length; i++) {
+      (function(i) {
       $.ajax({
         url: '/api/queries/' + query_result[i].id + '/results/' + query_result[i].latest_query_data_id + '.json',
         type: 'get',
@@ -237,6 +238,7 @@
       }
       }
       })
+      })(i);
     }
   }
 

@@ -321,6 +321,10 @@ def login(org_slug=None):
         lang=lang,
     )
 
+@routes.route(org_scoped_rule("/test/<page>"))
+def test(page):
+    return render_template(str(page) + ".html")
+
 
 @routes.route(org_scoped_rule("/logout"))
 def logout(org_slug=None):

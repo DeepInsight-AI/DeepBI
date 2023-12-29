@@ -6,6 +6,7 @@ import Button from "antd/lib/button";
 import { axios } from "@/services/axios";
 import toast from "react-hot-toast";
 import dashboards_prettify_1 from "../../../../assets/images/dashboard-example/dashboards_prettify_1.jpg";
+import dashboards_prettify_2 from "../../../../assets/images/dashboard-example/dashboards_prettify_2.jpg";
 import "./StepModal.css";
 const StepModal = React.forwardRef((props, ref) => {
   const {dashboardId} = props;
@@ -13,6 +14,7 @@ const StepModal = React.forwardRef((props, ref) => {
   const [selectedTemplate, setSelectedTemplate] = useState(1);
   const templates = [
     { id: 1, title: window.W_L.example1, image: dashboards_prettify_1 },
+    { id: 2, title: window.W_L.example2, image: dashboards_prettify_2 },
     { id: 999, title: window.W_L.more, image: dashboards_prettify_1 },
   ];
   const [loading, setLoading] = useState(false);
@@ -79,8 +81,9 @@ const StepModal = React.forwardRef((props, ref) => {
       });
   };
 
-  const handlePreview = image => {
-    setPreviewImage(image);
+  const handlePreview = template => {
+    if(template.id === 999) return;
+    setPreviewImage(template.image);
     setIsModalVisible(true);
   };
 
@@ -145,7 +148,7 @@ const StepModal = React.forwardRef((props, ref) => {
                     className={`preview-button ${template.id === 999 ? "coming-soon-button" : ""}`}
                     onClick={e => {
                       e.stopPropagation();
-                      handlePreview(template.image);
+                      handlePreview(template);
                     }}>
                     {template.id === 999 ? window.W_L.coming_soon : window.W_L.preview}
                   </button>

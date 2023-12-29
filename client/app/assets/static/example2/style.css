@@ -64,28 +64,25 @@ html,body{height: 100%;}
 .tit01{background: linear-gradient(to right,rgba(48,82,174,.5),rgba(48,82,174,0)); color: #fff; font-size: .2rem; padding: .03rem .1rem;}
 
 
-.topnav{ height:calc(50% - .2rem); margin-bottom: .2rem;}
-.topnav>ul,.topnav>ul>li,.topnav>ul>li>.boxall{height: 100%;}
-.topnav>ul{
-	display: flex;
-    align-items: center;
-    justify-content: space-around;
-    flex-wrap: wrap;
+.topnav{width: 100%; height:100%; margin-bottom: .2rem;}
+/* .topnav>ul,.topnav>ul>li,.topnav>ul>li>.boxall{ height:100%} */
+.topnav>ul>li{
+	height:calc(50% - .2rem);
 }
-.topnav>ul>li{float: left; width: 25%; margin-bottom: 0.2rem;}
-.topnav>ul>li:nth-child(2){ width: 45%; padding: 0 .2rem;}
-.topnav>ul>li:nth-child(5){ width: 45%; padding: 0 .2rem;}
-.topnav>ul>li:nth-child(8){ width: 45%; padding: 0 .2rem;}
-.topnav>ul>li:nth-child(11){ width: 45%; padding: 0 .2rem;}
-.topnav>ul>li:nth-child(14){ width: 45%; padding: 0 .2rem;}
-.topnav>ul>li:nth-child(17){ width: 45%; padding: 0 .2rem;}
-.topnav>ul>li:nth-child(20){ width: 45%; padding: 0 .2rem;}
-.topnav>ul>li:nth-child(23){ width: 45%; padding: 0 .2rem;}
-.topnav>ul>li:nth-child(26){ width: 45%; padding: 0 .2rem;}
-.topnav>ul>li:nth-child(29){ width: 45%; padding: 0 .2rem;}
-.topnav>ul>li:nth-child(32){ width: 45%; padding: 0 .2rem;}
-.topnav>ul>li:nth-child(35){ width: 45%; padding: 0 .2rem;}
-/* .topnav>ul>li:nth-child(3){ width: 30%; } */
+.topnav>ul{
+	display: inline-block;
+	height:100%;
+	width: 100%;
+}
+.topnav>ul>li{float:left; width:25%; margin-bottom: 0.2rem;}
+.topnav>ul>li:nth-child(3n+2) {
+	width:50%;
+	padding: 0 .2rem;
+  }
+  .topnav>ul::after {
+    content: ''; /* 使用伪元素撑开空间，占满一行 */
+    flex-grow: 1;
+}
 
 
 .nav01{ height: calc(100% - .3rem); padding-top: .2rem; }
@@ -95,7 +92,7 @@ html,body{height: 100%;}
 
 .ulheight,.ulheight>li{height: 100%;}
 .ulheight>li{float: left; width: 25%;}
-.ulheight>li:nth-child(2){ width: 45%; padding: 0 .2rem;}
+.ulheight>li:nth-child(2){ flex: 0 0 45%; padding: 0 .2rem;}
 .ulheight>li:nth-child(3){ width: 30%; }
 
 

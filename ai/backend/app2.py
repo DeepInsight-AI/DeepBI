@@ -41,7 +41,7 @@ class MainHandler(tornado.web.RequestHandler):
 class DashboardHandler(tornado.web.RequestHandler):
     def get(self, page_name):
         print("view html :", page_name)
-        self.render(f"{page_name}.html")
+        self.render(f"{page_name}")
 
     async def post(self):
         data = json.loads(self.request.body.decode('utf-8'))
@@ -86,7 +86,7 @@ class CustomApplication(tornado.web.Application):
         handlers = [
             (r"/api/autopilot", MainHandler),
             (r"/api/dashboard", DashboardHandler),
-            (r"/api/dashboard/([0-9a-zA-Z]+)", DashboardHandler),
+            (r"/api/dashboard/.+\.html", DashboardHandler),
         ]
 
         print('template_path :', CONFIG.up_file_path)

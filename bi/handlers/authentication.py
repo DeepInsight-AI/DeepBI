@@ -321,7 +321,7 @@ def login(org_slug=None):
         lang=lang,
     )
 
-@routes.route(org_scoped_rule("/test/<page>"))
+@routes.route(org_scoped_rule("/pretty_dashboard/<page>"))
 def test(page):
     return render_template(str(page) + ".html")
 

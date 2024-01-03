@@ -71,9 +71,12 @@ class ReportMysql(Report):
                     if if_suss:
                         self.agent_instance_util.base_mysql_info = '  When connecting to the database, be sure to bring the port. This is database info :' + '\n' + str(
                             db_info)
-                        self.agent_instance_util.base_message = str(q_str)
+                        # self.agent_instance_util.base_message = str(q_str)
+                        self.agent_instance_util.set_base_message(q_str)
+
                 else:
-                    self.agent_instance_util.base_message = str(q_str)
+                    # self.agent_instance_util.base_message = str(q_str)
+                    self.agent_instance_util.set_base_message(q_str)
 
                 # result['data']['content'] = json_str['data']['content']
 
@@ -93,9 +96,12 @@ class ReportMysql(Report):
                     if if_suss:
                         self.agent_instance_util.base_mysql_info = '  When connecting to the database, be sure to bring the port. This is database info :' + '\n' + str(
                             db_info)
-                        self.agent_instance_util.base_message = str(q_str)
+                        # self.agent_instance_util.base_message = str(q_str)
+                        self.agent_instance_util.set_base_message(q_str)
+
                 else:
-                    self.agent_instance_util.base_message = str(q_str)
+                    # self.agent_instance_util.base_message = str(q_str)
+                    self.agent_instance_util.set_base_message(q_str)
 
                 # result = ask_commentengineer(q_str, result)
                 # result['data']['content'] = await get_data_desc(agent_instance_util, q_str)

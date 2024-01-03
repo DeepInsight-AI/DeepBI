@@ -9,8 +9,9 @@ import ast
 from ai.agents.agentchat import TaskSelectorAgent
 from ai.backend.util import base_util
 
-
 max_retry_times = CONFIG.max_retry_times
+
+
 class AnalysisMysql(Analysis):
 
     async def deal_question(self, json_str, message):
@@ -26,6 +27,7 @@ class AnalysisMysql(Analysis):
         print("self.agent_instance_util.api_key_use :", self.agent_instance_util.api_key_use)
         if not self.agent_instance_util.api_key_use:
             re_check = await self.check_api_key()
+            print('re_check : ', re_check)
             if not re_check:
                 return
 
@@ -66,11 +68,13 @@ class AnalysisMysql(Analysis):
                     if if_suss:
                         self.agent_instance_util.base_mysql_info = ' When connecting to the database, be sure to bring the port. This is mysql database info :' + '\n' + str(
                             db_info)
-                        self.agent_instance_util.base_message = str(q_str)
+                        # self.agent_instance_util.base_message = str(q_str)
+                        self.agent_instance_util.set_base_message(q_str)
                         self.agent_instance_util.db_id = db_id
 
                 else:
-                    self.agent_instance_util.base_message = str(q_str)
+                    # self.agent_instance_util.base_message = str(q_str)
+                    self.agent_instance_util.set_base_message(q_str)
 
                 await self.get_data_desc(q_str)
             elif q_data_type == 'mysql_comment_second':
@@ -89,10 +93,13 @@ class AnalysisMysql(Analysis):
                     if if_suss:
                         self.agent_instance_util.base_mysql_info = '  When connecting to the database, be sure to bring the port. This is mysql database info :' + '\n' + str(
                             db_info)
-                        self.agent_instance_util.base_message = str(q_str)
+                        # self.agent_instance_util.base_message = str(q_str)
+                        self.agent_instance_util.set_base_message(q_str)
                         self.agent_instance_util.db_id = db_id
                 else:
-                    self.agent_instance_util.base_message = str(q_str)
+                    # self.agent_instance_util.base_message = str(q_str)
+                    self.agent_instance_util.set_base_message(q_str)
+
 
                 await self.put_message(200, receiver=CONFIG.talker_bi, data_type=CONFIG.type_comment_second,
                                        content='')
@@ -100,6 +107,10 @@ class AnalysisMysql(Analysis):
                 self.delay_messages['bi'][q_data_type].append(message)
                 print("delay_messages : ", self.delay_messages)
                 return
+        else:
+            print('error : q_sender is not user or bi')
+            await self.put_message(500, receiver=CONFIG.talker_bi, data_type=CONFIG.type_comment_second,
+                                   content='error : q_sender is not user or bi')
 
     async def task_base(self, qustion_message):
         """ Task type: mysql data analysis"""
@@ -179,7 +190,8 @@ class AnalysisMysql(Analysis):
             use_cache = True
             for i in range(max_retry_times):
                 try:
-                    mysql_echart_assistant = self.agent_instance_util.get_agent_mysql_echart_assistant(use_cache=use_cache)
+                    mysql_echart_assistant = self.agent_instance_util.get_agent_mysql_echart_assistant(
+                        use_cache=use_cache)
                     python_executor = self.agent_instance_util.get_agent_python_executor()
 
                     await python_executor.initiate_chat(
@@ -217,7 +229,7 @@ class AnalysisMysql(Analysis):
 
                                         for jstr in report_demand_list:
                                             if str(jstr).__contains__('echart_name') and str(jstr).__contains__(
-                                                    'echart_code'):
+                                                'echart_code'):
                                                 base_content.append(jstr)
                                     else:
                                         # String instantiated as object
@@ -225,7 +237,7 @@ class AnalysisMysql(Analysis):
                                         print("report_demand_list: ", report_demand_list)
                                         for jstr in report_demand_list:
                                             if str(jstr).__contains__('echart_name') and str(jstr).__contains__(
-                                                    'echart_code'):
+                                                'echart_code'):
                                                 base_content.append(jstr)
 
                     print("base_content: ", base_content)
@@ -299,5 +311,3 @@ class AnalysisMysql(Analysis):
             traceback.print_exc()
             logger.error("from user:[{}".format(self.user_name) + "] , " + "error: " + str(e))
         return self.agent_instance_util.data_analysis_error
-
-

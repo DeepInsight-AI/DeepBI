@@ -130,6 +130,18 @@ class AgentInstanceUtil:
             "request_timeout": request_timeout,
         }
 
+    def set_base_message(self, message):
+        print('run function set_base_message ... ')
+        for table in message['table_desc']:
+            for field in table['field_desc']:
+                field_keys = list(field.keys())
+                for key in field_keys:
+                    if key not in ['name', 'comment']:
+                        field.pop(key)
+
+        self.base_message = str(message)
+        print('base_message : ', message)
+
     def get_agent_mysql_engineer(self):
         """mysql engineer"""
         mysql_llm_config = {
@@ -841,7 +853,7 @@ class AgentInstanceUtil:
         )
         return postgresql_echart_assistant
 
-    def get_agent_starrocks_echart_assistant(self, use_cache=True):
+    def get_agent_starrocks_echart_assistant(self, use_cache=True, report_file_name=None):
         """starrocks_echart_assistant"""
         starrocks_echart_assistant = AssistantAgent(
             name="starrocks_echart_assistant",
@@ -864,6 +876,7 @@ class AgentInstanceUtil:
             llm_config=self.gpt4_turbo_config,
             openai_proxy=self.openai_proxy,
             use_cache=use_cache,
+            report_file_name=report_file_name,
 
         )
         return starrocks_echart_assistant

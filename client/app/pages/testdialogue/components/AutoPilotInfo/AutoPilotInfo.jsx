@@ -11,7 +11,7 @@ import toast from "react-hot-toast";
 import "./index.css";
 
 const { TextArea } = Input;
-const AutoPilotInfo =()=>{
+const AutoPilotInfo =({databases_type})=>{
 const [btn_disabled, setBtn_disabled] = useState(false);
 const [report_name, setReportName] = useState('');
 const [report_desc, setReportDesc] = useState('');
@@ -20,6 +20,7 @@ const [btn_isShow, setBtn_isShow] = useState(true);
 const autoPilot =async (databases_id,db_comment) => {
     const data={
         databases_id,
+        databases_type:databases_type.current,
         report_name,
         report_desc,
         db_comment

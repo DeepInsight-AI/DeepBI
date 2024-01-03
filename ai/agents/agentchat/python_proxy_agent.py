@@ -710,10 +710,11 @@ class PythonProxyAgent(Agent):
             code_execution_config["last_n_messages"] = last_n_messages
             exitcode2str = "execution succeeded" if exitcode == 0 else "execution failed"
 
-            length = 5000
-            if len(logs) > length:
-                print(' ++++++++++ Length exceeds 5000 characters limit, cropped  +++++++++++++++++')
-                logs = logs[:length]
+            length = 10000
+            if not str(logs).__contains__('echart_name'):
+                if len(logs) > length:
+                    print(' ++++++++++ Length exceeds 10000 characters limit, cropped  +++++++++++++++++')
+                    logs = logs[:length]
 
             return True, f"exitcode: {exitcode} ({exitcode2str})\nCode output: {logs}"
 

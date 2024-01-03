@@ -7,16 +7,17 @@ from ai.backend.util import database_util
 from .autopilot import Autopilot
 import re
 import ast
-from ai.agents.agentchat import TaskSelectorAgent
 from ai.backend.util import base_util
 from ai.backend.util.db.postgresql_report import PsgReport
 from ai.agents.agentchat import HumanProxyAgent, TaskSelectorAgent, Questioner, AssistantAgent
+from ai.agents.prompt import CSV_ECHART_TIPS_MESS, \
+    MYSQL_ECHART_TIPS_MESS
 
 max_retry_times = CONFIG.max_retry_times
 max_report_question = 5
 
 
-class AutopilotMysql(Autopilot):
+class AutopilotStarrocks(Autopilot):
 
     async def deal_question(self, json_str):
         """
@@ -50,7 +51,7 @@ class AutopilotMysql(Autopilot):
         obj = database_util.Main(db_id)
         if_suss, db_info = obj.run()
         if if_suss:
-            self.agent_instance_util.base_mysql_info = '  When connecting to the database, be sure to bring the port. This is mysql database info :' + '\n' + str(
+            self.agent_instance_util.base_mysql_info = '  When connecting to the database, be sure to bring the port. This is starrocks database info :' + '\n' + str(
                 db_info)
             # self.agent_instance_util.base_message = str(db_comment)
             self.agent_instance_util.set_base_message(db_comment)
@@ -379,7 +380,7 @@ class AutopilotMysql(Autopilot):
             use_cache = True
             for i in range(max_retry_times):
                 try:
-                    mysql_echart_assistant = self.agent_instance_util.get_agent_mysql_echart_assistant(
+                    mysql_echart_assistant = self.agent_instance_util.get_agent_starrocks_echart_assistant(
                         use_cache=use_cache, report_file_name=report_file_name)
                     # mysql_echart_assistant = self.agent_instance_util.get_agent_mysql_echart_assistant35(
                     #     use_cache=use_cache, report_file_name=report_file_name)
@@ -534,41 +535,3 @@ class AutopilotMysql(Autopilot):
             logger.error("from user:[{}".format(self.user_name) + "] , " + "error: " + str(e))
         print(self.agent_instance_util.data_analysis_error)
         return None, None
-
-    def get_agent_questioner(self, report_file_name):
-        """ Questioner  """
-        questioner = Questioner(
-            name="questioner",
-            human_input_mode="NEVER",
-            max_consecutive_auto_reply=2,
-            llm_config=self.agent_instance_util.gpt4_turbo_config,
-            default_auto_reply="请继续补充分析维度，不要重复.",
-            websocket=self.websocket,
-            openai_proxy=self.agent_instance_util.openai_proxy,
-            report_file_name=report_file_name,
-        )
-
-        return questioner
-
-    def get_agent_ai_analyst(self, report_file_name):
-        """ ai_analyst """
-        ai_analyst = AssistantAgent(
-            name="ai_data_analyst",
-            system_message="""You are a helpful AI data analysis.
-             Please tell me from which dimensions you need to analyze and help me make a report plan.
-             Reports need to be represented from multiple dimensions. To keep them compact, merge them properly.
-             Give a description of the purpose of each report.
-         The output should be formatted as a JSON instance that conforms to the JSON schema below, the JSON is a list of dict,
-         [
-         {“report_name”: “report_1”, “description”:”description of the report”;},
-         {},
-         {},
-         ].
-         Reply "TERMINATE" in the end when everything is done.
-             """ + '\n' + '请用中文回答',
-            llm_config=self.agent_instance_util.gpt4_turbo_config,
-            websocket=self.websocket,
-            openai_proxy=self.agent_instance_util.openai_proxy,
-            report_file_name=report_file_name,
-        )
-        return ai_analyst

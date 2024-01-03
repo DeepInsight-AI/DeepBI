@@ -48,7 +48,7 @@ const TypingCard = (props) => {
     );
   }, [sourceText]);
   const renderUser = useMemo(() => {
-    return chat_type === "autopilot" ? <AutoPilotInfo databases_type={databases_type} /> : <div className={`Chat ${sender}`}>{source}</div>;
+    return chat_type === "autopilot" ? <AutoPilotInfo databases_type={databases_type}/> : <div className={`Chat ${sender}`}>{source}</div>;
   }, [chat_type, sender, source]);
 
   const renderAutoPilot = useMemo(() => {

@@ -732,6 +732,7 @@ const openSocket = useCallback(() => {
         {/* <OpenKey ref={OpenKeyRef}></OpenKey> */}
        {LoadingState&& <MenuMask/>}
         <DialogueContent
+        databases_type={sourceTypeRef}
         ref={DialogueContentRef}
         Charttable={CharttableDate}
         onUse={onUse}

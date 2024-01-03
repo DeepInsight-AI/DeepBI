@@ -22,7 +22,6 @@ const autoPilot =async (databases_id,db_comment) => {
         databases_id,
         databases_type:databases_type.current,
         report_name,
-        databases_type:databases_type.current,
         report_desc,
         db_comment
     }

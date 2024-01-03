@@ -76,7 +76,7 @@ class PrettifyDashboard(AIDB):
             except Exception as e:
                 # print("Exception: ", e)
                 traceback.print_exc()
-                logger.error("from user:[{}".format(self.user_name) + "] , " + str(e))
+                # logger.error("from user:[{}".format(self.user_name) + "] , " + str(e))
 
                 # 默认配置
                 print("调用openai失败，使用默认配置,第" + str(query_result['id']) + "个图表,图表类型为：" + query_result[

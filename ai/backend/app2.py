@@ -7,7 +7,6 @@ from ai.backend.base_config import CONFIG
 from ai.backend.aidb.dashboard.prettify_dashboard import PrettifyDashboard
 
 
-
 class MainHandler(tornado.web.RequestHandler):
     async def post(self):
         data = json.loads(self.request.body.decode('utf-8'))
@@ -41,6 +40,7 @@ class MainHandler(tornado.web.RequestHandler):
 
 class DashboardHandler(tornado.web.RequestHandler):
     def get(self, page_name):
+        print("view html :", page_name)
         self.render(f"{page_name}.html")
 
     async def post(self):
@@ -74,12 +74,12 @@ class DashboardHandler(tornado.web.RequestHandler):
         await prettifyDashboard.deal_question(json_str)
 
 
-
 def make_app():
     return tornado.web.Application([
         (r"/api/autopilot", MainHandler),
         (r"/api/dashboard", DashboardHandler),
     ])
+
 
 class CustomApplication(tornado.web.Application):
     def __init__(self):
@@ -89,12 +89,13 @@ class CustomApplication(tornado.web.Application):
             (r"/api/dashboard/([0-9a-zA-Z]+)", DashboardHandler),
         ]
 
+        print('template_path :', CONFIG.up_file_path)
+
         settings = {
             "template_path": CONFIG.up_file_path,  # 指定模板路径
         }
 
         super().__init__(handlers, **settings)
-
 
 # if __name__ == "__main__":
 #     app = make_app()

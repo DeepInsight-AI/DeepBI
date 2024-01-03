@@ -23,7 +23,9 @@ const StepModal = React.forwardRef((props, ref) => {
   const openModal = () => {
     setVisible(true);
   };
-
+  const getDashboardsPrettifyList = async () => {
+    await axios.get("/api/pretty_dashboard");
+};
   React.useImperativeHandle(ref, () => ({
     openModal,
   }));
@@ -88,16 +90,22 @@ const StepModal = React.forwardRef((props, ref) => {
 
   const postDashboardDetail =async detail => {
     const res = await axios.post("/api/pretty_dashboard", detail);
+    return res;
   };
 
   const handleOk = async () => {
     setLoading(true);
     try {
       const detail = await getDashboardDetail();
-      console.log("Detail:", detail);
-      await postDashboardDetail(detail);
+      const res = await postDashboardDetail(detail);
+      if(res && res.code === 200){
+        toast.success(window.W_L.submit_success);
+        getDashboardsPrettifyList();
+      }else{
+        toast.error(res.data || window.W_L.submit_fail);
+      }
       setLoading(false);
-      toast.success(window.W_L.submit_success);
+      
     } catch (err) {
       setLoading(false);
       console.error(err);

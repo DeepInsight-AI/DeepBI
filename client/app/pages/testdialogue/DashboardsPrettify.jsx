@@ -64,9 +64,9 @@ function DashboardsPrettify() {
 
     // open html
     const handleClickHtml = async (item) => {
-        console.log(window.location.protocol, window.location.host, item.html_name);
         if(item.is_generate === 2 && item.html_name){
-            const url = window.location.protocol + "//" + window.location.host + "/" + item.html_name;
+            const html_name = item.html_name.split(".")[0];
+            const url = window.location.protocol + "//" + window.location.host + "/pretty_dashboard/" + html_name;
             window.open(url);
         }else{
             switch (item.is_generate) {

@@ -2,9 +2,7 @@ from pathlib import Path
 import traceback
 from jinja2 import Template
 import json
-from llm import openai_response
 from chartSetting import acquiesce_echarts_code
-import ast
 from ai.backend.base_config import CONFIG
 from ai.backend.aidb import AIDB
 from ai.backend.util.db.postgresql_dashboard import PsgReport

@@ -7,9 +7,9 @@ load_dotenv()
 # from ai.backend.app import app
 # app.run(port=8340)
 
-from ai.backend import app2
+from ai.backend.app2 import CustomApplication
 
-app = app2.make_app()
+app = CustomApplication()
 app.listen(8340)
 tornado.ioloop.IOLoop.current().start()
 

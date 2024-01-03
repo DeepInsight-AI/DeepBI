@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8" />
+  <title>{{ dashboard_name }}</title>
+  <script src="https://cdn.jsdelivr.net/npm/echarts/dist/echarts.min.js"></script>
+  <script src="http://apps.bdimg.com/libs/jquery/1.6.4/jquery.js"></script>
+  <link rel="stylesheet" type="text/css" href="/static/prettify/example1/style.css" />
+</head>
+<script>
+  $(document).ready(function () {
+    var whei = $(window).width();
+    $("html").css({ fontSize: whei / 20 });
+    $(window).resize(function () {
+      var whei = $(window).width();
+      $("html").css({ fontSize: whei / 20 });
+    });
+  });
+</script>
+
+<body>
+  <div class="loading">
+    <div class="loadbox">
+      <img src="/static/prettify/example1/images/loading.gif" /> loading...
+    </div>
+  </div>
+  <div style="display: none;" id="query_result">
+    {{query_result}}
+  </div>
+  <div class="head">
+    <h1>{{ dashboard_name }}</h1>
+    <h1 style="display: none" id="dashboardId">{{ dashboard_id }}</h1>
+    <div class="weather"><span id="showTime"></span></div>
+    <script>
+      var t = null;
+      t = setTimeout(time, 1000); //開始运行
+      function time() {
+        clearTimeout(t); //清除定时器
+        dt = new Date();
+        var y = dt.getFullYear();
+        var mt = dt.getMonth() + 1;
+        var day = dt.getDate();
+        var h = dt.getHours(); //获取时
+        var m = dt.getMinutes(); //获取分
+        var s = dt.getSeconds(); //获取秒
+        document.getElementById("showTime").innerHTML =
+          y + "年" + mt + "月" + day + "日" + h + "时" + m + "分" + s + "秒";
+        t = setTimeout(time, 1000); //设定定时器，循环运行
+      }
+    </script>
+  </div>
+  <div class="mainbox">
+    <ul class="clearfix">
+      <li>
+        {% for query in query_result %} {% if loop.index0 % 6 == 0 or
+        loop.index0 % 6 == 1 or loop.index0 % 6 == 5 or loop.index0 % 6 == 6%}
+        {%if query.chart_type == 'table'%}
+        <div class="boxall" id="table{{ query.id }}">
+          <div class="alltitle">{{ query.chart_name }}</div>
+          <ul class="tabnav">
+            <li style="height: 3.47rem">
+              <div class="gdhead">
+                {% for column in query['data']['columns'] %}
+                <span>{{ column.name }}</span>
+                {% endfor %}
+              </div>
+              <div class="scrollDiv" style="height: 100%">
+                <ul class="smjl">
+                  {% for row in query['data']['rows'] %}
+                  <li>
+                    {% for column in query['data']['columns'] %}
+                    <span>{{ row[column.name] }}</span>
+                    {% endfor %}
+                  </li>
+                  {% endfor %}
+                </ul>
+              </div>
+            </li>
+          </ul>
+          <div class="boxfoot"></div>
+        </div>
+        {% else %}
+        <div class="boxall">
+          <div class="alltitle">{{ query.chart_name }}</div>
+          <div style="height: 3.47rem" id="echart{{ query.id }}"></div>
+          <div class="boxfoot"></div>
+        </div>
+        {% endif %} {% endif %} {% endfor %}
+      </li>
+
+      <li>
+        <div class="map">
+          <div class="map1">
+            <img src="/static/prettify/example1/images/lbx.png" />
+          </div>
+          <div class="map2">
+            <img src="/static/prettify/example1/images/jt.png" />
+          </div>
+          <div class="map3">
+            <img src="/static/prettify/example1/images/map.png" />
+          </div>
+          <div class="map4" id="map_1"></div>
+        </div>
+        {% for query in query_result %} {% if loop.index0 % 6 == 2 or
+        loop.index0 % 6 == 7%} {%if query.chart_type == 'table'%}
+        <div class="boxall" id="table{{ query.id }}">
+          <div class="alltitle">{{ query.chart_name }}</div>
+          <ul class="tabnav">
+            <li style="height: 2.86rem">
+              <div class="gdhead">
+                {% for column in query['data']['columns'] %}
+                <span>{{ column.name }}</span>
+                {% endfor %}
+              </div>
+              <div class="scrollDiv" style="height: 100%">
+                <ul class="smjl">
+                  {% for row in query['data']['rows'] %}
+                  <li>
+                    {% for column in query['data']['columns'] %}
+                    <span>{{ row[column.name] }}</span>
+                    {% endfor %}
+                  </li>
+                  {% endfor %}
+                </ul>
+              </div>
+            </li>
+          </ul>
+          <div class="boxfoot"></div>
+        </div>
+        {% else %}
+        <div class="boxall">
+          <div class="alltitle">{{ query.chart_name }}</div>
+          <div style="height: 2.86rem" id="echart{{ query.id }}"></div>
+          <div class="boxfoot"></div>
+        </div>
+        {% endif %} {% endif %} {% endfor %}
+      </li>
+      <li>
+        {% for query in query_result %} {% if loop.index0 % 6 == 3 or
+        loop.index0 % 6 == 4 or loop.index0 % 6 == 8 or loop.index0 % 6 == 9%}
+        {%if query.chart_type == 'table'%}
+        <div class="boxall" id="table{{ query.id }}">
+          <div class="alltitle">{{ query.chart_name }}</div>
+          <ul class="tabnav">
+            <li style="height: 3.47rem">
+              <div class="gdhead">
+                {% for column in query['data']['columns'] %}
+                <span>{{ column.name }}</span>
+                {% endfor %}
+              </div>
+              <div class="scrollDiv" style="height: 100%">
+                <ul class="smjl">
+                  {% for row in query['data']['rows'] %}
+                  <li>
+                    {% for column in query['data']['columns'] %}
+                    <span>{{ row[column.name] }}</span>
+                    {% endfor %}
+                  </li>
+                  {% endfor %}
+                </ul>
+              </div>
+            </li>
+          </ul>
+          <div class="boxfoot"></div>
+        </div>
+        {% else %}
+        <div class="boxall">
+          <div class="alltitle">{{ query.chart_name }}</div>
+          <div style="height: 3.47rem" id="echart{{ query.id }}"></div>
+          <div class="boxfoot"></div>
+        </div>
+        {% endif %} {% endif %} {% endfor %}
+      </li>
+    </ul>
+  </div>
+  <div class="back"></div>
+  <script>
+    $(window).load(function () {
+      $(".loading").fadeOut();
+    });
+  </script>
+  <script>
+    function getDashboardData() {
+        var DashboardData =document.getElementById("query_result").innerHTML
+        DashboardData = eval('(' + DashboardData + ')');
+        console.log(DashboardData,"DashboardData")
+        return DashboardData
+    }
+    function echart_code() {
+
+    // var dashboard_id = document.getElementById('dashboardId').innerHTML
+    var query_result = getDashboardData()
+    for (var i = 0; i < query_result.length; i++) {
+      (function(i) {
+      $.ajax({
+        url: '/api/queries/' + query_result[i].id + '/results/' + query_result[i].latest_query_data_id + '.json',
+        type: 'get',
+        dataType: 'json',
+        success: function (res) {
+      if (query_result[i].chart_type == 'table') {
+        var table = document.getElementById('table' + query_result[i].id)
+        // columns
+        var columns = res['query_result']['data']['columns']
+        var columns_html = ''
+        for (var j = 0; j < columns.length; j++) {
+          columns_html += '<span>' + columns[j].name + '</span>'
+        }
+        table.getElementsByClassName('gdhead')[0].innerHTML = columns_html
+        // rows
+        var rows = res['query_result']['data']['rows']
+        var rows_html = ''
+        for (var j = 0; j < rows.length; j++) {
+          rows_html += '<li>'
+          for (var k = 0; k < columns.length; k++) {
+            rows_html += '<span>' + rows[j][columns[k].name] + '</span>'
+          }
+          rows_html += '</li>'
+        }
+        table.getElementsByClassName('smjl')[0].innerHTML = rows_html
+
+      } else {
+        var chart = echarts.init(document.getElementById('echart' + query_result[i].id))
+        var option =query_result[i]['echart_code']
+        console.log(option, "option====")
+        option = eval('(' + option + ')');
+        var x_field = Object.keys(query_result[i]['columnMapping']).find(key => query_result[i]['columnMapping'][key] === 'x');
+        var y_fields = Object.keys(query_result[i]['columnMapping']).filter(key => query_result[i]['columnMapping'][key] === 'y');
+
+        if (query_result[i].chart_type == 'line' || query_result[i].chart_type == 'bar' || query_result[i].chart_type == 'area') {
+          option.xAxis.data = res['query_result']['data']['rows'].map(function (item) {
+            return item[x_field]
+          })
+          option.series.data = y_fields.map(function (y_field) {
+            return res['query_result']['data']['rows'].map(function (item) {
+                return item[y_field]
+              })
+          })
+        } else if (query_result[i].chart_type == 'pie') {
+          option.series[0].data = res['query_result']['data']['rows'].map(function (item) {
+            return {
+              name: item[x_field],
+              value: y_fields.reduce(function (sum, y_field) {
+                return sum + item[y_field]
+              }, 0)
+            }
+          })
+        }
+        chart.setOption(option)
+        window.addEventListener("resize", function () {
+          chart.resize()
+        })
+      }
+      }
+      })
+    })(i);
+    }
+  }
+
+  $(window).load(function () {
+    setInterval(function () {
+      echart_code()
+    }, 60000)
+    echart_code()
+  });
+    </script>
+
+    <script>
+    </script>
+</body>
+
+</html>

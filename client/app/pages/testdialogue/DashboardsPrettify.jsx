@@ -27,7 +27,7 @@ function DashboardsPrettify() {
             align: "center",
             render: (text, item) => (
                 <React.Fragment>
-                    <span className="table-main-title" style={{color:"#2196f3"}} onClick={() => handleClickHtml(item)}>{item.report_name}</span>
+                    <span className="table-main-title" style={{color:"#2196f3",cursor: "pointer"}} onClick={() => handleClickHtml(item)}>{item.report_name}</span>
                 </React.Fragment>
             )
         },

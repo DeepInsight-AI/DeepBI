@@ -40,7 +40,6 @@ const StepModal = React.forwardRef((props, ref) => {
   const getQueryResult = async widgets => {
     const promises = widgets.map(async widget => {
       const chartType = globalSeriesType(widget);
-      console.log("chartType:-----", chartType)
       if (chartType) {
         const res = await axios.get(
           `/api/queries/${widget.visualization.query.id}/results/${widget.visualization.query.latest_query_data_id}.json`
@@ -88,7 +87,7 @@ const StepModal = React.forwardRef((props, ref) => {
   };
 
   const postDashboardDetail =async detail => {
-    const res = await axios.post("/api/dashboard", detail);
+    const res = await axios.post("/api/pretty_dashboard", detail);
   };
 
   const handleOk = async () => {

@@ -27,11 +27,7 @@ function DashboardsPrettify() {
             align: "center",
             render: (text, item) => (
                 <React.Fragment>
-                    {/* 设置点击事件 */}
-                    {/* <Link className="table-main-title" href={"autopilot/" + item.id}> */}
-                        {/* {item.report_name} */}
-                    {/* </Link> */}
-                    <span className="table-main-title" onClick={() => handleClickHtml(item)}>{item.report_name}</span>
+                    <span className="table-main-title" style={{color:"#2196f3",cursor: "pointer"}} onClick={() => handleClickHtml(item)}>{item.report_name}</span>
                 </React.Fragment>
             )
         },
@@ -99,7 +95,7 @@ function DashboardsPrettify() {
             content: window.W_L.confirm_delete_tip,
             onOk: async () => {
                 try {
-                    const res = await axios.delete(`/api/dashboard/delete/${id}`);
+                    const res = await axios.delete(`/api/pretty_dashboard/delete/${id}`);
                     if (res.code === 200) {
                         toast.success(window.W_L.delete_success);
                         getDashboardsPrettifyList();
@@ -117,7 +113,7 @@ function DashboardsPrettify() {
     };
     const getDashboardsPrettifyList = async () => {
         setIsLoading(true);
-        const res = await axios.get("/api/dashboard");
+        const res = await axios.get("/api/pretty_dashboard");
         if (res.code === 200) {
             res.data.sort(function(a,b){
                 return Date.parse(b.created_at) - Date.parse(a.created_at);

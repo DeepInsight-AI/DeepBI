@@ -58,10 +58,13 @@ const SettingsOpenKey = () => {
     }
     axios.post("/api/ai_token",data).then((res) => {
       if(res.code===200){
+        if(callback){
+          callback(values)
+          return
+        }
         toast.success(window.W_L.save_success)
         closeWebSocket()
         getOpenKey();
-        callback && callback(values);
       }else{
         toast.error(window.W_L.save_failed)
         

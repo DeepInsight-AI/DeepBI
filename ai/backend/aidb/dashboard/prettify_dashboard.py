@@ -64,7 +64,7 @@ class PrettifyDashboard(AIDB):
                 # echart_code = openai_response(query_result)
 
                 planner_user = self.agent_instance_util.get_agent_planner_user()
-                pretty_dashboard = self.get_agent_pretty_dashboard(echart_json['chart_type'])
+                pretty_dashboard = self.get_agent_pretty_dashboard(chart_type=query_result['chart_type'])
 
                 await planner_user.initiate_chat(
                     pretty_dashboard,
@@ -75,6 +75,9 @@ class PrettifyDashboard(AIDB):
 
             except Exception as e:
                 # print("Exception: ", e)
+                traceback.print_exc()
+                logger.error("from user:[{}".format(self.user_name) + "] , " + str(e))
+
                 # 默认配置
                 print("调用openai失败，使用默认配置,第" + str(query_result['id']) + "个图表,图表类型为：" + query_result[
                     'chart_type'] + "-----")

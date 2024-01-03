@@ -142,7 +142,7 @@ class DataDashboardFileResource(BaseResource):  # BaseResource
 
     def send_post_request(self, user_id, report_id, file_name):
         user_name = str(user_id) + '_user'
-        data = {"user_name": user_name, "report_id": report_id, "file_name": file_name
+        data = {"user_name": user_name, "task_id": report_id, "file_name": file_name
                 }
 
         ai_web_server = settings.AI_WEB_SERVER

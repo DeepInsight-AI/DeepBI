@@ -83,7 +83,18 @@ class PrettifyDashboard(AIDB):
             # write_echart_code(echart_json)
             # return
         print("生成完毕======")
-        self.generate_html(echart_json, CONFIG.up_file_path + html_file_name)
+
+        # 获取当前工作目录的路径
+        current_directory = Path.cwd()
+
+        if str(current_directory).endswith('/ai'):
+            # html_template_path = str(current_directory) + '/backend/aidb/dashboard/html_template'
+            html_file_path = str(current_directory).replace('/ai', '') + '/bi/templates'
+
+        else:
+            html_file_path = str(current_directory) + '/bi/templates'
+
+        self.generate_html(echart_json, html_file_path + html_file_name)
 
         # 更新数据
         data_to_update = (2, task_id)
@@ -99,7 +110,9 @@ class PrettifyDashboard(AIDB):
         current_directory = Path.cwd()
 
         if str(current_directory).endswith('/ai'):
+            # html_template_path = str(current_directory) + '/backend/aidb/dashboard/html_template'
             html_template_path = str(current_directory) + '/backend/aidb/dashboard/html_template'
+
         else:
             html_template_path = str(current_directory) + '/ai/backend/aidb/dashboard/html_template'
 

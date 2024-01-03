@@ -89,10 +89,10 @@ class PrettifyDashboard(AIDB):
 
         if str(current_directory).endswith('/ai'):
             # html_template_path = str(current_directory) + '/backend/aidb/dashboard/html_template'
-            html_file_path = str(current_directory).replace('/ai', '') + '/bi/templates'
+            html_file_path = str(current_directory).replace('/ai', '') + '/bi/templates/'
 
         else:
-            html_file_path = str(current_directory) + '/bi/templates'
+            html_file_path = str(current_directory) + '/bi/templates/'
 
         self.generate_html(echart_json, html_file_path + html_file_name)
 

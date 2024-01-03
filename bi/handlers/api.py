@@ -100,6 +100,10 @@ from bi.handlers.ai_token_resource import (
 from bi.handlers.data_report_file import (
     DataReportFileResource,
 )
+from bi.handlers.data_dashboard_file import (
+    DataDashboardFileResource,
+)
+
 
 from bi.handlers.widgets import WidgetListResource, WidgetResource
 from bi.utils import json_dumps
@@ -373,6 +377,15 @@ api.add_org_resource(
     "/api/auto_pilot/<int:data_report_file_id>",
     "/api/auto_pilot/delete/<int:data_report_file_id>",
     endpoint="report_file"
+)
+
+#  pretty dashboard New api
+api.add_org_resource(
+    DataDashboardFileResource,
+    "/api/databoard",
+    "/api/databoard/<int:data_report_file_id>",
+    "/api/databoard/delete/<int:data_report_file_id>",
+    endpoint="dashboard_file"
 )
 
 

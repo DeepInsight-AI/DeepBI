@@ -200,7 +200,7 @@ This is an ECharts bar chart example, you need to generate the option for the ba
 - If there are multiple y-axis data, combine with line charts to make the chart richer.
 - Use gradient colors and shadow effects to enhance the visual effect of the chart.
 - Add multi-dimensional labels and legends to provide more information and interactivity.
-- Avoid situations where iteration is used, such as .map(), .sort(), for loops, etc.
+- Do not use iterative cases, for example. map(),.sort(), for loop, etc.
 - Do not include the title part.
 - Only need the option part, do not include "var option = {...}".
 - Do not add comments in the code, such as "<!-- Add other navigation links as needed -->" and "<!-- ...other news items... -->", but write out the complete code.
@@ -267,7 +267,7 @@ This is an ECharts pie chart example, you need to generate the option for the pi
 - Set animation effects to make the chart more lively.
 - Use gradient colors and shadow effects to enhance the visual effect of the chart.
 - Add multi-dimensional labels and legends to provide more information and interactivity.
-- Avoid situations where iteration is used, such as .map(), .sort(), for loops, etc.
+- Do not use iterative cases, for example. map(),.sort(), for loop, etc.
 - Do not include the title part.
 - Only need the option part, do not include "var option = {...}".
 - Do not add comments in the code, such as "<!-- Add other navigation links as needed -->" and "<!-- ...other news items... -->", but write out the complete code.
@@ -385,7 +385,7 @@ This is an ECharts line chart example, you need to generate the option for the l
 - Change the border style of the chart.
 - Ensure the integrity of the data, for example, the data on the x-axis and the y-axis should correspond one by one.
 - Set animation effects to make the chart more lively.
-- Avoid situations where iteration is used, such as .map(), .sort(), for loops, etc.
+- Do not use iterative cases, for example. map(),.sort(), for loop, etc.
 - Do not include the title part.
 - Only need the option part, do not include "var option = {...}".
 - Do not add comments in the code, such as "<!-- Add other navigation links as needed -->" and "<!-- ...other news items... -->", but write out the complete code.

@@ -27,9 +27,11 @@ function DashboardsPrettify() {
             align: "center",
             render: (text, item) => (
                 <React.Fragment>
-                    <Link className="table-main-title" href={"autopilot/" + item.id}>
-                        {item.report_name}
-                    </Link>
+                    {/* 设置点击事件 */}
+                    {/* <Link className="table-main-title" href={"autopilot/" + item.id}> */}
+                        {/* {item.report_name} */}
+                    {/* </Link> */}
+                    <span className="table-main-title" onClick={() => handleClickHtml(item)}>{item.report_name}</span>
                 </React.Fragment>
             )
         },
@@ -63,13 +65,41 @@ function DashboardsPrettify() {
             )
         }
     ];
+
+    // open html
+    const handleClickHtml = async (item) => {
+        console.log(window.location.protocol, window.location.host, item.html_name);
+        if(item.is_generate === 2 && item.html_name){
+            const url = window.location.protocol + "//" + window.location.host + item.html_name;
+            window.open(url);
+        }else{
+            switch (item.is_generate) {
+                case 0:
+                    toast.error(window.W_L.waiting);
+                    break;
+                case 1:
+                    toast.error(window.W_L.generating);
+                    break;
+                case -1:
+                    toast.error(window.W_L.fail);
+                    break;
+                default:
+                    break;
+            }
+        }
+        // const res = await axios.get(`/api/dashboard/${id}`);
+        // if (res.code === 200) {
+        //     window.open(res.data);
+        // }
+    };
+
     const handleDelete = async (id) => {
         Modal.confirm({
             title: window.W_L.confirm_delete,
             content: window.W_L.confirm_delete_tip,
             onOk: async () => {
                 try {
-                    const res = await axios.delete(`/api/auto_pilot/delete/${id}`);
+                    const res = await axios.delete(`/api/dashboard/delete/${id}`);
                     if (res.code === 200) {
                         toast.success(window.W_L.delete_success);
                         getDashboardsPrettifyList();
@@ -87,7 +117,7 @@ function DashboardsPrettify() {
     };
     const getDashboardsPrettifyList = async () => {
         setIsLoading(true);
-        const res = await axios.get("/api/auto_pilot");
+        const res = await axios.get("/api/dashboard");
         if (res.code === 200) {
             res.data.sort(function(a,b){
                 return Date.parse(b.created_at) - Date.parse(a.created_at);

@@ -87,16 +87,16 @@ const StepModal = React.forwardRef((props, ref) => {
     setIsModalVisible(true);
   };
 
-  // const postDashboardDetail = detail => {
-  //   return ""
-  // };
+  const postDashboardDetail =async detail => {
+    const res = await axios.post("/api/dashboard", detail);
+  };
 
   const handleOk = async () => {
     setLoading(true);
     try {
       const detail = await getDashboardDetail();
       console.log("Detail:", detail);
-      // const result = await postDashboardDetail(detail);
+      await postDashboardDetail(detail);
       setLoading(false);
       toast.success(window.W_L.submit_success);
     } catch (err) {

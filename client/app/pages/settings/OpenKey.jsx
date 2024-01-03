@@ -42,7 +42,7 @@ const SettingsOpenKey = () => {
   useEffect(() => {
     getOpenKey();
   }, [getOpenKey]);
-  const handOpenKey = (callback)=>{
+  const handOpenKey = (values,callback)=>{
     const data ={
       in_use: aiOption,
       OpenAI: {
@@ -61,7 +61,7 @@ const SettingsOpenKey = () => {
         toast.success(window.W_L.save_success)
         closeWebSocket()
         getOpenKey();
-        callback && callback();
+        callback && callback(values);
       }else{
         toast.error(window.W_L.save_failed)
         
@@ -84,7 +84,7 @@ const SettingsOpenKey = () => {
     if(values.ApiHost === undefined){
       values.ApiHost = '';
     }
-    handOpenKey()
+    handOpenKey(values)
   };
   const handleMessage=()=>{
     try {
@@ -99,7 +99,7 @@ const SettingsOpenKey = () => {
       setDisabled(false)
     }
   }
-  const connectTest=()=>{
+  const connectTest=(values)=>{
     
     if(!websocket){
       createWebSocket()
@@ -107,7 +107,6 @@ const SettingsOpenKey = () => {
     }
     handleMessage();
     
-    form.validateFields().then((values) => {
       setDisabled(true)
       let sendInfo={
         state:200,
@@ -120,11 +119,12 @@ const SettingsOpenKey = () => {
         }
     }
     websocket.send(JSON.stringify(sendInfo))
-  })
     
   }
   const handleConnectTestClick = () => {
-    handOpenKey(connectTest);
+    form.validateFields().then((values) => {
+      handOpenKey(values, connectTest);
+    });
   }
   const handleRadioChange = e => {
     setAiOption(e.target.value);

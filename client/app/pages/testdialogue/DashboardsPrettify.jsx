@@ -66,7 +66,7 @@ function DashboardsPrettify() {
     const handleClickHtml = async (item) => {
         console.log(window.location.protocol, window.location.host, item.html_name);
         if(item.is_generate === 2 && item.html_name){
-            const url = window.location.protocol + "//" + window.location.host + item.html_name;
+            const url = window.location.protocol + "//" + window.location.host + "/" + item.html_name;
             window.open(url);
         }else{
             switch (item.is_generate) {

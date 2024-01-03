@@ -27,7 +27,7 @@ const DialogueContent = forwardRef(({
   onOpenKeyClick,
   onSuccess,
   percent,
-  sourceTypeRef
+  databases_type,
 },ref) => {
   const selectSourceRef = useRef(null);
   const sourceEdit = (data) => {
@@ -50,7 +50,7 @@ const DialogueContent = forwardRef(({
             }
           {messages.map((message, index) => (
             <div key={index} className="chat-content" style={{margin:chat_type==="report"?'0 30px':'',marginTop:index===0?"30px":""}}>
-                  <TypingCard databases_type={sourceTypeRef} chat_type={chat_type} autopilot={message.autopilot} chart={message.chart} logData={message.logData} sender={message.sender} time={message.time} Cardloading={message.Cardloading} source={message.content} index={index} ChangeScrollTop={ChangeScrollTop} retry={retry} />
+                  <TypingCard databases_type={databases_type} chat_type={chat_type} autopilot={message.autopilot} chart={message.chart} logData={message.logData} sender={message.sender} time={message.time} Cardloading={message.Cardloading} source={message.content} index={index} ChangeScrollTop={ChangeScrollTop} retry={retry} />
             </div>
           ))}
         </div>

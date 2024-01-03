@@ -2,7 +2,7 @@ from pathlib import Path
 import traceback
 from jinja2 import Template
 import json
-from chartSetting import acquiesce_echarts_code
+from ai.backend.aidb.dashboard.chartSetting import acquiesce_echarts_code
 from ai.backend.base_config import CONFIG
 from ai.backend.aidb import AIDB
 from ai.backend.util.db.postgresql_dashboard import PsgReport

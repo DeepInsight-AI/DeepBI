@@ -45,6 +45,7 @@ class DashboardHandler(tornado.web.RequestHandler):
 
     async def post(self):
         data = json.loads(self.request.body.decode('utf-8'))
+        print('/api/dashboard data : ', data)
 
         # 异步处理接收到的数据
         await self.process_data(data)

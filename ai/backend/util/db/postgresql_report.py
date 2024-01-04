@@ -65,29 +65,3 @@ class PsgReport:
             print("Error while updating data:", error)
             return False
 
-
-# 示例用法
-if __name__ == "__main__":
-    DEEPBI_DATABASE_URL = "postgresql://redash:aaa123456@192.168.5.165/redash"
-    psg = PsgReport()
-    data = (0, 37)
-    re = psg.update_data(data)
-
-    data = 37
-    re = psg.select_data(data)
-    print(re)
-    if re is not None and len(re) > 0:
-        print('存在需处理任务')
-    else:
-        print('不存在需处理任务')
-
-    data = (2, 37)
-    re = psg.update_data(data)
-
-    data = 37
-    re = psg.select_data(data)
-    print(re)
-    if re is not None and len(re) > 0:
-        print('存在需处理任务')
-    else:
-        print('不存在需处理任务')

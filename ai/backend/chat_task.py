@@ -30,7 +30,7 @@ class ChatClass:
         self.uid = self.user_name.split('_')[0]
 
         print(str(time.strftime("%Y-%m-%d %H:%M:%S",
-                                time.localtime())) + ' ---- ' + " 【New user connected successfully】:{}".format(
+                                time.localtime())) + ' ---- ' + " New user connected successfully:{}".format(
             self.user_name))
 
         self.agent_instance_util = AgentInstanceUtil(user_name=str(self.user_name),

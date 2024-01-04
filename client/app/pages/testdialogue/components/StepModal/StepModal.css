@@ -1,0 +1,119 @@
+.steps-content {
+    height: 300px;
+    overflow-y: auto;
+  }
+.content-container {
+    display: flex;
+    justify-content: center;
+  }
+  
+  .content-select {
+    min-width: 70%;
+    margin-top:20px !important;
+  }
+  
+  .template-container {
+    display: flex;
+    flex-direction: column;
+    padding: 10px;
+  }
+  
+  .template-item {
+    position: relative;
+    margin-bottom: 10px;
+    width: 100%;
+    cursor: pointer;
+  }
+  
+  .template-item p{
+    margin-bottom: 5px;
+    font-size: 12px;
+  }
+
+  .template-div{
+    width: 100%;
+    position: relative;
+  }
+  .template-img {
+    width: 100%;
+    border-radius: 5px;
+    border: 2px solid transparent;
+  }
+  
+  .template-item-selected {
+    border-color: #1849f6;
+  }
+
+  .template-checkbox {
+    position: absolute;
+    bottom: 2px;
+    right: 5px;
+  }
+  .template-checkbox .ant-checkbox-checked .ant-checkbox-inner {
+    background-color: #1849f6;
+    border-color: #1849f6;
+  }
+  .template-checkbox .ant-checkbox-checked::after {
+    border-color: #1849f6;
+  }
+
+
+  .template-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    border-radius: 5px;
+  }
+  
+  .template-div:hover .template-overlay {
+    opacity: 1;
+  }
+  
+  .preview-button {
+    color: #fff;
+    background: #1849f6;
+    border: none;
+    padding: 5px 0;
+    cursor: pointer;
+    border-radius: 5px;
+    font-size: 12px;
+    width:40%;
+  }
+
+  .preview-modal .ant-modal-content {
+    background: transparent;
+    box-shadow: none;
+  }
+  
+  .preview-modal .ant-modal-body {
+    padding: 0;
+  }
+
+  .drawer-footer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .finish-button {
+    background-color: #1849f6 !important;
+    border-color: #1849f6 !important;
+    margin-right: 20px;
+  }
+
+  .template-overlay.always-show {
+    opacity: 1 !important;
+  }
+  
+  .preview-button.coming-soon-button {
+    border: 1px solid #fff;
+    background-color: black !important;
+  }

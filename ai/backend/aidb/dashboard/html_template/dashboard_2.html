@@ -1,0 +1,165 @@
+﻿<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>{{ dashboard_name }}</title>
+    <script src="https://cdn.jsdelivr.net/npm/echarts/dist/echarts.min.js"></script>
+    <script src="http://apps.bdimg.com/libs/jquery/1.6.4/jquery.js"></script>
+    <link rel="stylesheet" href="/static/prettify/example2/style.css" />
+  </head>
+  <body>
+    <div class="loading">
+      <div class="loadbox"><img src="/static/prettify/example2/images/loading.gif" /> loading...</div>
+    </div>
+
+    <div class="head">
+      <h1><a href="#">{{ dashboard_name }}</a></h1>
+      <div style="display: none;" id="query_result">
+        {{query_result}}
+      </div>
+      <h1 style="display: none" id="dashboardId">{{ dashboard_id }}</h1>
+    </div>
+    <div class="mainbox">
+      <div class="topnav">
+        <ul class="clearfix">
+          {% for query in query_result %}
+            {%if query.chart_type == 'table'%}
+            <li>
+              <div class="boxall" id="table{{ query.id }}">
+                <div class="tit01">{{ query.chart_name }}</div>
+                <div class="boxnav">
+                  <div class="listhead gdhead">
+                  {% for column in query['data']['columns'] %}
+                    <span>{{ column.name }}</span>
+                  {% endfor %}
+                  </div>
+                  <div class="listnav scrollDiv">
+                    <ul class="smjl">
+                      {% for row in query['data']['rows'] %}
+                        <li>
+                          {% for column in query['data']['columns'] %}
+                            <span>{{ row[column.name] }}</span>
+                          {% endfor %}
+                        </li>
+                      {% endfor %}
+                    </ul>
+                  </div>
+                </div>
+                <div class="boxfoot"></div>
+              </div>
+            </li>
+          {% else %}
+          <li>
+            <div class="boxall">
+              <div class="tit01">{{ query.chart_name }}</div>
+              <div class="boxnav" id="echart{{ query.id }}"></div>
+              <div class="boxfoot"></div>
+            </div>
+          </li>
+          {% endif %}
+        {% endfor %}
+        </ul>
+      </div>
+      
+    </div>
+
+    <script>
+      $(window).load(function () {
+        $(".loading").fadeOut();
+      });
+
+      $(document).ready(function () {
+        var whei = $(window).width();
+        $("html").css({ fontSize: whei / 20 });
+        $(window).resize(function () {
+          var whei = $(window).width();
+          $("html").css({ fontSize: whei / 20 });
+        });
+      });
+    </script>
+     <script>
+      function getDashboardData() {
+          var DashboardData =document.getElementById("query_result").innerHTML
+          DashboardData = eval('(' + DashboardData + ')');
+          console.log(DashboardData,"DashboardData")
+          return DashboardData
+      }
+      function echart_code() {
+      
+      // var dashboard_id = document.getElementById('dashboardId').innerHTML
+      var query_result = getDashboardData()
+      for (var i = 0; i < query_result.length; i++) {
+        (function(i) {
+        $.ajax({
+          url: '/api/queries/' + query_result[i].id + '/results/' + query_result[i].latest_query_data_id + '.json',
+          type: 'get',
+          dataType: 'json',
+          success: function (res) {
+        if (query_result[i].chart_type == 'table') {
+          var table = document.getElementById('table' + query_result[i].id)
+          // columns
+          var columns = res['query_result']['data']['columns']
+          var columns_html = ''
+          for (var j = 0; j < columns.length; j++) {
+            columns_html += '<span>' + columns[j].name + '</span>'
+          }
+          table.getElementsByClassName('gdhead')[0].innerHTML = columns_html
+          // rows
+          var rows = res['query_result']['data']['rows']
+          var rows_html = ''
+          for (var j = 0; j < rows.length; j++) {
+            rows_html += '<li>'
+            for (var k = 0; k < columns.length; k++) {
+              rows_html += '<span>' + rows[j][columns[k].name] + '</span>'
+            }
+            rows_html += '</li>'
+          }
+          table.getElementsByClassName('smjl')[0].innerHTML = rows_html
+  
+        } else {
+          var chart = echarts.init(document.getElementById('echart' + query_result[i].id))
+          var option =query_result[i]['echart_code']
+          console.log(option, "option====")
+          option = eval('(' + option + ')');
+          var x_field = Object.keys(query_result[i]['columnMapping']).find(key => query_result[i]['columnMapping'][key] === 'x');
+          var y_fields = Object.keys(query_result[i]['columnMapping']).filter(key => query_result[i]['columnMapping'][key] === 'y');
+          
+          if (query_result[i].chart_type == 'line' || query_result[i].chart_type == 'bar' || query_result[i].chart_type == 'area') {
+            option.xAxis.data = res['query_result']['data']['rows'].map(function (item) {
+              return item[x_field]
+            })
+            option.series.data = y_fields.map(function (y_field) {
+              return res['query_result']['data']['rows'].map(function (item) {
+                  return item[y_field]
+                })
+            })
+          } else if (query_result[i].chart_type == 'pie') {
+            option.series[0].data = res['query_result']['data']['rows'].map(function (item) {
+              return {
+                name: item[x_field],
+                value: y_fields.reduce(function (sum, y_field) {
+                  return sum + item[y_field]
+                }, 0)
+              }
+            })
+          }
+          chart.setOption(option)
+          window.addEventListener("resize", function () {
+            chart.resize()
+          })
+        }
+        }
+        })
+      })(i);
+      }
+    }
+  
+    $(window).load(function () {
+      setInterval(function () {
+        echart_code()
+      }, 60000)
+      echart_code()
+    });
+      </script>
+  </body>
+</html>

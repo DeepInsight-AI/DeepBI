@@ -37,7 +37,7 @@ class Analysis(AIDB):
                        - base tasks: analyze existing data and draw conclusions about the given problem.
 
                    Reply "TERMINATE" in the end when everything is done.
-                        """ + '\n' + self.agent_instance_util.base_mysql_info,
+                        """,
             human_input_mode="NEVER",
             user_name=self.user_name,
             websocket=self.websocket,
@@ -51,7 +51,7 @@ class Analysis(AIDB):
                             "properties": {
                                 "qustion_message": {
                                     "type": "string",
-                                    "description": "Task content",
+                                    "description": "qustion message",
                                 }
                             },
                             "required": ["qustion_message"],
@@ -65,7 +65,7 @@ class Analysis(AIDB):
                             "properties": {
                                 "qustion_message": {
                                     "type": "string",
-                                    "description": "Task content",
+                                    "description": "qustion message",
                                 }
                             },
                             "required": ["qustion_message"],
@@ -85,7 +85,8 @@ class Analysis(AIDB):
 
         await user_proxy.initiate_chat(
             base_mysql_assistant,
-            message=self.agent_instance_util.base_message + '\n' + self.question_ask + '\n' + str(q_str),
+            # message=self.agent_instance_util.base_message + '\n' + self.question_ask + '\n' + str(q_str),
+            message=self.question_ask + '\n' + str(q_str),
         )
 
     async def task_base(self, qustion_message):
@@ -94,5 +95,3 @@ class Analysis(AIDB):
 
     async def task_generate_echart(self, qustion_message):
         return self.qustion_message
-
-

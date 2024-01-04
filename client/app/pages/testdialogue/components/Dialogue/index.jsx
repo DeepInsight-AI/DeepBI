@@ -7,7 +7,7 @@ import { dialogueStorage } from "./method/dialogueStorage.js";
 import DialogueTop from "../DialogueTop";
 // import OpenKey from "../OpenKey"
 import DialogueContent from "../DialogueContent"
-import notification from "@/services/notification";
+import toast from "react-hot-toast";
 import MenuMask from "../MenuMask/index.jsx";
 import "./index.less";
 import moment from "moment";
@@ -216,7 +216,7 @@ const updateCharttableDate = () => {
 
 const onSuccess = useCallback((code, value,source_item,result,firstTableData) => {
   if (!lockReconnect) {
-    notification.warning(window.W_L.connection_seems_lost);
+    toast.error(window.W_L.connection_seems_lost);
     setConfirmLoading(false);
     openSocket();
     return
@@ -306,7 +306,6 @@ const handleSuccess =async (tableId,table,isSendTableDateType=null) => {
     });
 
 } catch (error) {
-  // notification.warning("Error");
   setConfirmLoading(false);
 }
 
@@ -361,7 +360,7 @@ const handleSocketMessage = useCallback(() => {
 
         setConfirmLoading(false);
         if (data.receiver === 'log') {
-          notification.warning(data.data.content);
+          toast.error(data.data.content);
           return
         }
         errorSetting();
@@ -393,14 +392,13 @@ const handleSocketMessage = useCallback(() => {
             const table_desc_list = JSON.parse(JSON.stringify(data.data.content.table_desc));
             const table_desc = await filterTableDesc(table_desc_list);
             if (table_desc.length > 0) {
-              notification.info(window.W_L.please_fill_in_the_description);
+              toast(window.W_L.please_fill_in_the_description);
               setConfirmLoading(false);
               DialogueContentRef.current.sourceEdit(table_desc);
               handleSuccess(Charttable_id.current,data.data.content);
             } else {
               updateCharttableDate();
 
-              // notification.success(window.W_L.connection_success);
               setConfirmLoading(false);
               if(chat_type==="report"){
                 sendUrl("new_report");
@@ -429,7 +427,9 @@ const handleSocketMessage = useCallback(() => {
           setSendTableDate(1);
           setStartUse(true);
           setLoadingState(false);
-          notification.success(window.W_L.configuration_completed, chat_type==="autopilot"?"":window.W_L.start_the_dialogue);
+          toast.success(window.W_L.configuration_completed + " " + chat_type==="autopilot"?"":window.W_L.start_the_dialogue,{
+            icon: '👏',
+          });
           
         } else if(data.data.data_type === 'mysql_comment_second'){
           setState(prevState => ({
@@ -556,7 +556,7 @@ const openSocket = useCallback(() => {
   const isSendTableDate = useCallback((data_type) => {
     handleSocketMessage();
     if (!lockReconnect) {
-      notification.warning(window.W_L.connection_failed, window.W_L.connection_failed_tip);
+      toast.error(window.W_L.connection_failed);
       // setState(prevState => ({ ...prevState, sendTableDate: 0 }));
       setSendTableDate(0);
       setLoadingState(false);
@@ -626,7 +626,7 @@ const openSocket = useCallback(() => {
       return
     }
     if (!lockReconnect) {
-      notification.warning(window.W_L.connection_failed, window.W_L.connection_failed_tip);
+      toast.error(window.W_L.connection_failed);
       // setState(prevState => ({ ...prevState, sendTableDate: 0 }));
       setSendTableDate(0);
       setLoadingState(false);
@@ -645,7 +645,7 @@ const openSocket = useCallback(() => {
     if(stopGeneration){
       return
     }
-    notification.warning(window.W_L.connection_failed);
+    toast.error(window.W_L.connection_failed);
     // setState(prevState => ({ ...prevState, Cardloading: false }));
     setLoadingState(false);
   }, [setState]);
@@ -665,7 +665,7 @@ const openSocket = useCallback(() => {
     if(stopGeneration){
       return
     }
-    notification.success(window.W_L.report_generation_completed);
+    toast.success(window.W_L.report_generation_completed);
   }, []);
 
   function filterColumnsByInUse(columnsInfo) {
@@ -732,6 +732,7 @@ const openSocket = useCallback(() => {
         {/* <OpenKey ref={OpenKeyRef}></OpenKey> */}
        {LoadingState&& <MenuMask/>}
         <DialogueContent
+        databases_type={sourceTypeRef}
         ref={DialogueContentRef}
         Charttable={CharttableDate}
         onUse={onUse}
@@ -752,6 +753,7 @@ const openSocket = useCallback(() => {
         onOpenKeyClick={onOpenKeyClick}
         onSuccess={onSuccess}
         percent={percent}
+        sourceTypeRef={sourceTypeRef}
         />
       </div>
     );

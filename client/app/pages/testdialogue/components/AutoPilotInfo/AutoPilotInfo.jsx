@@ -7,11 +7,11 @@ import { axios } from "@/services/axios";
 import routes from "@/services/routes";
 import { dialogueStorage } from "../Dialogue/method/dialogueStorage";
 import InfoCircleOutlinedIcon from "@ant-design/icons/InfoCircleOutlined";
-import notification from "@/services/notification";
+import toast from "react-hot-toast";
 import "./index.css";
 
 const { TextArea } = Input;
-const AutoPilotInfo =()=>{
+const AutoPilotInfo =({databases_type})=>{
 const [btn_disabled, setBtn_disabled] = useState(false);
 const [report_name, setReportName] = useState('');
 const [report_desc, setReportDesc] = useState('');
@@ -20,6 +20,7 @@ const [btn_isShow, setBtn_isShow] = useState(true);
 const autoPilot =async (databases_id,db_comment) => {
     const data={
         databases_id,
+        databases_type:databases_type.current,
         report_name,
         report_desc,
         db_comment
@@ -28,14 +29,14 @@ const autoPilot =async (databases_id,db_comment) => {
         setBtn_disabled(false);
         if(res.code===200){
         setBtn_isShow(false);
-        notification.success(window.W_L.submit_success,window.W_L.submit_success_tip);
+        toast.success(window.W_L.submit_success+" "+window.W_L.submit_success_tip);
         routes.navigate("Dialogue.List.autopilot_list");
         }else{
-        notification.error(res.data);
+        toast.error(res.data);
         }
     }).catch((err)=>{
         setBtn_disabled(false);
-        notification.error(window.W_L.submit_fail);
+        toast.error(window.W_L.submit_fail);
     })
 };
 const CreateAutoPilot = () => {

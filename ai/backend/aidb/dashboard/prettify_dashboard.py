@@ -58,30 +58,35 @@ class PrettifyDashboard(AIDB):
         for query_result in echart_json['query_result']:
             if query_result['chart_type'] == 'table':
                 continue
-            try:
-                # ai
-                print("开始调用openai,第" + str(query_result['id']) + "个图表,图表类型为：" + query_result['chart_type'] + "+++++")
-                # echart_code = openai_response(query_result)
+            use_cache = True
+            for i in range(2):
+                try:
+                    # ai
+                    print(
+                        "开始调用openai,第" + str(query_result['id']) + "个图表,图表类型为：" + query_result['chart_type'] + "+++++")
+                    # echart_code = openai_response(query_result)
 
-                planner_user = self.agent_instance_util.get_agent_planner_user()
-                pretty_dashboard = self.get_agent_pretty_dashboard(chart_type=query_result['chart_type'])
+                    planner_user = self.agent_instance_util.get_agent_planner_user()
+                    pretty_dashboard = self.get_agent_pretty_dashboard(chart_type=query_result['chart_type'],
+                                                                       use_cache=use_cache)
 
-                await planner_user.initiate_chat(
-                    pretty_dashboard,
-                    message=str(echart_json))
+                    await planner_user.initiate_chat(
+                        pretty_dashboard,
+                        message=str(echart_json))
 
-                echart_code = planner_user.last_message()["content"]
-                print('echart_code : ', echart_code)
+                    echart_code = planner_user.last_message()["content"]
+                    print('echart_code : ', echart_code)
+                    break
 
-            except Exception as e:
-                # print("Exception: ", e)
-                traceback.print_exc()
-                # logger.error("from user:[{}".format(self.user_name) + "] , " + str(e))
-
-                # 默认配置
-                print("调用openai失败，使用默认配置,第" + str(query_result['id']) + "个图表,图表类型为：" + query_result[
-                    'chart_type'] + "-----")
-                echart_code = acquiesce_echarts_code(query_result)
+                except Exception as e:
+                    # print("Exception: ", e)
+                    traceback.print_exc()
+                    # logger.error("from user:[{}".format(self.user_name) + "] , " + str(e))
+                    use_cache = False
+                    # 默认配置
+                    print("调用openai失败，使用默认配置,第" + str(query_result['id']) + "个图表,图表类型为：" + query_result[
+                        'chart_type'] + "-----")
+                    echart_code = acquiesce_echarts_code(query_result)
             query_result['echart_code'] = echart_code
             # write_echart_code(echart_json)
             # return
@@ -134,7 +139,7 @@ class PrettifyDashboard(AIDB):
 
         print("HTML文件已生成：", html_file_name)
 
-    def get_agent_pretty_dashboard(self, chart_type, report_file_name=None):
+    def get_agent_pretty_dashboard(self, chart_type, report_file_name=None, use_cache=True):
         system_content = ECHARTS_BAR_PROMPT
         if chart_type == "bar":
             system_content = ECHARTS_BAR_PROMPT
@@ -151,5 +156,6 @@ class PrettifyDashboard(AIDB):
             user_name=self.agent_instance_util.user_name,
             openai_proxy=self.agent_instance_util.openai_proxy,
             report_file_name=report_file_name,
+            use_cache=use_cache
         )
         return pretty_dashboard

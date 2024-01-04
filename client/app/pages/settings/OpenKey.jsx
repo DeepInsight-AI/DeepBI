@@ -154,7 +154,7 @@ const SettingsOpenKey = () => {
       </div>
           </Form.Item>
           {aiOption === 'DeepInsight' && (
-            <Form.Item name="ApiKey" label="ApiKey" rules={[{ required: true, message: 'Please enter API key' }]}>
+            <Form.Item name="ApiKey" label="ApiKey" rules={[{ required: true, message: window.W_L.please_enter_api_key }]}>
               <Input placeholder="ApiKey" />
             </Form.Item>
           )}

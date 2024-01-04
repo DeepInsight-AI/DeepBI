@@ -51,7 +51,7 @@ class Analysis(AIDB):
                             "properties": {
                                 "qustion_message": {
                                     "type": "string",
-                                    "description": "qustion message",
+                                    "description": "Task content",
                                 }
                             },
                             "required": ["qustion_message"],
@@ -65,7 +65,7 @@ class Analysis(AIDB):
                             "properties": {
                                 "qustion_message": {
                                     "type": "string",
-                                    "description": "qustion message",
+                                    "description": "Task content",
                                 }
                             },
                             "required": ["qustion_message"],

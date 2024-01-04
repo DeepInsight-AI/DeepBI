@@ -212,4 +212,6 @@ def acquiesce_echarts_code(data):
         echarts_code = acquiesce_echarts_code_line(x_data, y_fields, data)
     elif data['chart_type'] == 'pie':
         echarts_code = acquiesce_echarts_code_pie(x_data, y_fields, data)
+    elif data['chart_type'] == 'area':
+        echarts_code = acquiesce_echarts_code_line(x_data,y_fields,data)
     return json.dumps(echarts_code, indent=4)

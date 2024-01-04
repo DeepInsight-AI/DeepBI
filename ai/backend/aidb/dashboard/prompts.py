@@ -191,7 +191,8 @@ option = {
   ]
 };
 This is an ECharts bar chart example, you need to generate the option for the bar chart based on the data, and then return it.
-- Pay attention to the data field in the option, you need to generate the corresponding array based on the data.
+- Pay attention to the data field in the option, you need to generate the corresponding array based on this data, not generate data on your own.
+- In the data field, fill in the complete data, such as ["0.09", "0.10", "0.11", ..., "0.92"], instead of using ... to omit.
 - My page background color is #00206d, change the color, shape (such as rounded corners, right angles, etc.), stacking method, data label style, etc. of the bar chart to make the chart more beautiful and eye-catching.
 - Ensure the integrity of the data, for example, the data on the x-axis and the y-axis should correspond one by one.
 - Set animation effects to make the chart more lively.
@@ -205,6 +206,7 @@ This is an ECharts bar chart example, you need to generate the option for the ba
 - Only need the option part, do not include "var option = {...}".
 - Do not add comments in the code, such as "<!-- Add other navigation links as needed -->" and "<!-- ...other news items... -->", but write out the complete code.
 - Do not include markdown "```" or "```html" at the beginning or end.
+- Please only return code, do not include any explanatory text or comments.
 """
 
 ECHARTS_PIE_PROMPT = """
@@ -260,7 +262,8 @@ option = {
    ]
 };
 This is an ECharts pie chart example, you need to generate the option for the pie chart based on the data, and then return it.
-- Pay attention to the data field in the option, you need to generate the corresponding array based on the data.
+- Pay attention to the data field in the option, you need to generate the corresponding array based on this data, not generate data on your own.
+- In the data field, fill in the complete data, such as ["0.09", "0.10", "0.11", ..., "0.92"], instead of using ... to omit.
 - My page background color is #00206d, modify the color, transparency, rounded corners, etc., to make the chart more beautiful and eye-catching.
 - Ensure the integrity of the data, for example, the data on the x-axis and the y-axis should correspond one by one.
 - Ensure the uniqueness of the color for each data, there should not be a situation where the colors between the data are the same.
@@ -272,6 +275,7 @@ This is an ECharts pie chart example, you need to generate the option for the pi
 - Only need the option part, do not include "var option = {...}".
 - Do not add comments in the code, such as "<!-- Add other navigation links as needed -->" and "<!-- ...other news items... -->", but write out the complete code.
 - Do not include markdown "```" or "```html" at the beginning or end.
+- Please only return code, do not include any explanatory text or comments.
 """
 
 ECHARTS_LINE_PROMPT = """
@@ -377,7 +381,8 @@ ECHARTS_LINE_PROMPT = """
 };
 
 This is an ECharts line chart example, you need to generate the option for the line chart based on the data, and then return it.
-- Pay attention to the data field in the option, you need to generate the corresponding array based on the data.
+- Pay attention to the data field in the option, you need to generate the corresponding array based on this data, not generate data on your own.
+- In the data field, fill in the complete data, such as ["0.09", "0.10", "0.11", ..., "0.92"], instead of using ... to omit.
 - My page background color is #00206d, change the color, width, shadow color, and shadow blur of the line. In the area style, change the color and transparency to make the chart more beautiful and eye-catching.
 - Change the shape of the line, such as solid, dashed, dotted, etc.
 - Change the style of the line, such as smooth, polyline, etc.
@@ -390,6 +395,7 @@ This is an ECharts line chart example, you need to generate the option for the l
 - Only need the option part, do not include "var option = {...}".
 - Do not add comments in the code, such as "<!-- Add other navigation links as needed -->" and "<!-- ...other news items... -->", but write out the complete code.
 - Do not include markdown "```" or "```html" at the beginning or end.
+- Please only return code, do not include any explanatory text or comments.
 """
 
 

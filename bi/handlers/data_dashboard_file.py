@@ -84,7 +84,7 @@ class DataDashboardFileResource(BaseResource):  # BaseResource
         dashboard_name = req["dashboard_name"]
         dashboard_id = req["dashboard_id"]
         query_result = req["query_result"]
-
+        template_id = req["template_id"]
 
         new_filename = str(user_id) + "_dashboard_" + str(uuid.uuid4()) + '.json'
         file_name = os.path.join(settings.DATA_SOURCE_FILE_DIR, new_filename)
@@ -93,7 +93,8 @@ class DataDashboardFileResource(BaseResource):  # BaseResource
             "dashboard_name": dashboard_name,
             "dashboard_id": dashboard_id,
             "query_result": query_result,
-            "chat_log": ["The report is being generated, please wait patiently..."]
+            "chat_log": ["The report is being generated, please wait patiently..."],
+            "template_id": template_id
         }
 
         with open(file_name, 'w') as file:

@@ -113,16 +113,14 @@ class PrettifyDashboard(AIDB):
         current_directory = Path.cwd()
 
         if str(current_directory).endswith('/ai'):
-            # html_template_path = str(current_directory) + '/backend/aidb/dashboard/html_template'
             html_template_path = str(current_directory) + '/backend/aidb/dashboard/html_template'
-
         else:
             html_template_path = str(current_directory) + '/ai/backend/aidb/dashboard/html_template'
-
         print('html_template_path:', html_template_path)
 
+        template_id = data['template_id']
         # 读取模板文件
-        with open(html_template_path + '/dashboard_1.html', 'r') as file:
+        with open(html_template_path + '/dashboard_' + str(template_id) + '.html', 'r') as file:
             template_str = file.read()
             # print('template_str :', template_str)
 

@@ -55,6 +55,8 @@ def uuid_vectorizer(column):
 
 
 Column = functools.partial(db.Column, nullable=False)
+ColumnNull = functools.partial(db.Column, nullable=True)
+
 
 # AccessPermission and Change use a 'generic foreign key' approach to refer to
 # either queries or dashboards.

@@ -42,7 +42,7 @@ from bi.utils import (
 from bi.utils.configuration import ConfigurationContainer
 from bi.models.parameterized_query import ParameterizedQuery
 
-from .base import db, gfk_type, Column, GFKBase, SearchBaseQuery, key_type, primary_key
+from .base import db, gfk_type, Column, GFKBase, SearchBaseQuery, key_type, primary_key, ColumnNull
 from .changes import ChangeTrackingMixin, Change  # noqa
 from .mixins import BelongsToOrgMixin, TimestampMixin
 from .organizations import Organization
@@ -1104,7 +1104,7 @@ class DataDashboardFile(BelongsToOrgMixin, db.Model):
     is_use = Column(db.Boolean, default=True)
     created_at = Column(db.DateTime(True), default=db.func.now())
     is_generate = Column(db.Integer, default=0)
-    html_name = Column(db.String(255))
+    html_name = ColumnNull(db.String(255))
 
 
     __tablename__ = "data_dashboard_file"

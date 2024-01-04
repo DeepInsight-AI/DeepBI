@@ -820,5 +820,6 @@ window.W_L = {
   'coming_soon':'Coming Soon',
   'example1':'Example1',
   'example2':'Example2',
+  'example3':'Example3',
   'more':'More',
 }

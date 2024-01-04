@@ -7,6 +7,7 @@ import { axios } from "@/services/axios";
 import toast from "react-hot-toast";
 import dashboards_prettify_1 from "../../../../assets/images/dashboard-example/dashboards_prettify_1.jpg";
 import dashboards_prettify_2 from "../../../../assets/images/dashboard-example/dashboards_prettify_2.jpg";
+import dashboards_prettify_3 from "../../../../assets/images/dashboard-example/dashboards_prettify_3.jpg";
 import "./StepModal.css";
 const StepModal = React.forwardRef((props, ref) => {
   const {dashboardId} = props;
@@ -15,6 +16,7 @@ const StepModal = React.forwardRef((props, ref) => {
   const templates = [
     { id: 1, title: window.W_L.example1, image: dashboards_prettify_1 },
     { id: 2, title: window.W_L.example2, image: dashboards_prettify_2 },
+    { id: 3, title: window.W_L.example3, image: dashboards_prettify_3 },
     { id: 999, title: window.W_L.more, image: dashboards_prettify_1 },
   ];
   const [loading, setLoading] = useState(false);

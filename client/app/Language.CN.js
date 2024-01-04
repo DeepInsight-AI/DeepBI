@@ -823,5 +823,6 @@ window.W_L=  {
   'coming_soon':'即将上线',
   'example1':'示例1',
   'example2':'示例2',
+  'example3':'示例3',
   'more':'更多',
 }

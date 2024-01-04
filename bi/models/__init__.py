@@ -1104,7 +1104,7 @@ class DataDashboardFile(BelongsToOrgMixin, db.Model):
     is_use = Column(db.Boolean, default=True)
     created_at = Column(db.DateTime(True), default=db.func.now())
     is_generate = Column(db.Integer, default=0)
-    html_name = Column(db.String(255))
+    html_name = None
 
 
     __tablename__ = "data_dashboard_file"

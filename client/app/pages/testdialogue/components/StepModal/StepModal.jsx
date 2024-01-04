@@ -89,7 +89,11 @@ const StepModal = React.forwardRef((props, ref) => {
   };
 
   const postDashboardDetail =async detail => {
-    const res = await axios.post("/api/pretty_dashboard", detail);
+    const data={
+      ...detail,
+      template_id: selectedTemplate,
+    }
+    const res = await axios.post("/api/pretty_dashboard", data);
     return res;
   };
 

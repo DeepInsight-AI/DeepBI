@@ -23,6 +23,9 @@ class Report(AIDB):
 
     def get_agent_select_report_assistant(self):
         """select_report_assistant"""
+        function_names = ['task_generate_echart', 'task_base']
+        function_select = f"Read the conversation above. Then select the type of task from {function_names}. Only the task type is returned.",
+
         select_report_assistant = TaskSelectorAgent(
             name="select_report_assistant",
             system_message="""You are a helpful AI assistant.
@@ -33,7 +36,61 @@ class Report(AIDB):
                      - base tasks: analyze existing data and draw conclusions about the given problem.
 
                  Reply "TERMINATE" in the end when everything is done.
-                      """ + '\n' + self.agent_instance_util.base_mysql_info,
+                      """ + str(function_select),
+            human_input_mode="NEVER",
+            user_name=self.user_name,
+            websocket=self.websocket,
+            llm_config={
+                "functions": [
+                    {
+                        "name": "task_generate_report",
+                        "description": """chart generation task, The user ask that the data be finally displayed in the form of a chart.If the question does not clearly state that a  chart is to be generated, it does not belong to this task.""",
+                        "parameters": {
+                            "type": "object",
+                            "properties": {
+                                "qustion_message": {
+                                    "type": "string",
+                                    "description": "Task content",
+                                }
+                            },
+                            "required": ["qustion_message"],
+                        },
+                    },
+                    {
+                        "name": "task_base",
+                        "description": "Processing a task ",
+                        "parameters": {
+                            "type": "object",
+                            "properties": {
+                                "qustion_message": {
+                                    "type": "string",
+                                    "description": "Task content",
+                                }
+                            },
+                            "required": ["qustion_message"],
+                        },
+                    },
+                ],
+                "config_list": self.agent_instance_util.config_list_gpt4_turbo,
+                "request_timeout": CONFIG.request_timeout,
+            },
+            openai_proxy=self.agent_instance_util.openai_proxy,
+        )
+        return select_report_assistant
+
+    def get_agent_select_report_assistant_old(self):
+        """select_report_assistant"""
+        select_report_assistant = TaskSelectorAgent(
+            name="select_report_assistant",
+            system_message="""You are a helpful AI assistant.
+                     Divide the questions raised by users into corresponding task types.
+                     Different tasks have different processing methods.
+                     Task types are generally divided into the following categories:
+                     - Report generation task: query data, and finally display the data in the form of charts.
+                     - base tasks: analyze existing data and draw conclusions about the given problem.
+
+                 Reply "TERMINATE" in the end when everything is done.
+                      """,
             human_input_mode="NEVER",
             user_name=self.user_name,
             websocket=self.websocket,

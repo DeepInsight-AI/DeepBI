@@ -8,6 +8,7 @@ from ai.agents.agentchat import HumanProxyAgent, TaskSelectorAgent
 
 
 class Analysis(AIDB):
+
     def get_agent_user_proxy(self):
         """ Human Proxy  """
         user_proxy = HumanProxyAgent(
@@ -27,6 +28,9 @@ class Analysis(AIDB):
 
     def get_agent_select_analysis_assistant(self):
         """select_analysis_assistant"""
+        function_names = ['task_generate_echart', 'task_base']
+        function_select = f"Read the conversation above. Then select the type of task from {function_names}. Only the task type is returned.",
+
         select_analysis_assistant = TaskSelectorAgent(
             name="select_analysis_assistant",
             system_message="""You are a helpful AI assistant.
@@ -36,8 +40,31 @@ class Analysis(AIDB):
                        - Report generation task: query data, and finally display the data in the form of charts.
                        - base tasks: analyze existing data and draw conclusions about the given problem.
 
-                   Reply "TERMINATE" in the end when everything is done.
-                        """,
+                        """ + str(function_select),
+            human_input_mode="NEVER",
+            user_name=self.user_name,
+            websocket=self.websocket,
+            llm_config={
+                "config_list": self.agent_instance_util.config_list_gpt4_turbo,
+                "request_timeout": CONFIG.request_timeout,
+            },
+            openai_proxy=self.agent_instance_util.openai_proxy,
+        )
+        return select_analysis_assistant
+
+    def get_agent_select_analysis_assistant_old(self):
+        """select_analysis_assistant"""
+        select_analysis_assistant = TaskSelectorAgent(
+            name="select_analysis_assistant",
+            system_message="""You are a helpful AI assistant.
+                          Divide the questions raised by users into corresponding task types.
+                          Different tasks have different processing methods.
+                          Task types are generally divided into the following categories:
+                          - Report generation task: query data, and finally display the data in the form of charts.
+                          - base tasks: analyze existing data and draw conclusions about the given problem.
+
+                      Reply "TERMINATE" in the end when everything is done.
+                           """,
             human_input_mode="NEVER",
             user_name=self.user_name,
             websocket=self.websocket,

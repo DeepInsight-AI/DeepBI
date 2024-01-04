@@ -851,6 +851,8 @@ class HumanProxyAgent(Agent):
                 else:
                     final, reply = reply_func(self, messages=messages, sender=sender, config=reply_func_tuple["config"])
                 if final:
+                    print('human messages[-1][content] :', messages[-1]['content'])
+
                     return reply
         return self._default_auto_reply
 

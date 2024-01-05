@@ -197,7 +197,7 @@ option = {
 - Use gradient colors and shadow effects to enhance the visual effect of the chart.
 - Add multi-dimensional labels and legends for more information and interactivity.
 - Avoid using iterations, such as .map(), .sort(), for loop, etc.
-- Only return the options part, do not include "var option = {...}", the title part, code comments, and markdown "" or "html".
+- Only return the options part, do not include "var option = {...}", the title part, code comments, and markdown "```" or "```json".
 - The return should be code only, without any explanatory text or comments.
 """
 
@@ -257,7 +257,7 @@ option = {
 - Use gradient colors and shadow effects to enhance the visual effect of the chart.
 - Add multi-dimensional labels and legends for more information and interactivity.
 - Avoid using iterations, such as .map(), .sort(), for loop, etc.
-- Only return the options part, do not include "var option = {...}", the title part, code comments, and markdown "" or "html".
+- Only return the options part, do not include "var option = {...}", the title part, code comments, and markdown "```" or "```json".
 - The return should be code only, without any explanatory text or comments.
 """
 
@@ -372,7 +372,7 @@ This is an ECharts line chart example.
 - Adjust the border style of the chart.
 - Set animation effects to add vitality.
 - Avoid using iterations, such as .map(), .sort(), for loop, etc.
-- Only return the options part, do not include "var option = {...}", the title part, code comments, and markdown "" or "html".
+- Only return the options part, do not include "var option = {...}", the title part, code comments, and markdown "```" or "```json".
 - The return should be code only, without any explanatory text or comments.
 """
 

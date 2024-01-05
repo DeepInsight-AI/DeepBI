@@ -184,6 +184,7 @@ option = {
 - Generate and return the ECharts bar chart options based on the provided data.
 - Refer to the sample styles, but do not use the sample data.
 - The chart must be generated using the provided data. Do not create new data or fields.
+- The chart must be generated using all row data provided. Do not omit any data.
 - Generate data fields based on the x-axis and y-axis fields defined in columnMapping. As many x-axis and y-axis fields as there are in columnMapping, how many x-axis and y-axis data are displayed. The data for the x-axis and y-axis are obtained from the row fields.
 - For each field marked as 'y' in columnMapping, there should be its own data series, and it should be displayed in the chart with a different color.
 - Completely fill in the data fields, such as ["0.09", "0.10", "0.11", ..., "0.92"], do not use ... to omit.
@@ -245,6 +246,7 @@ option = {
 - Generate and return the ECharts pie chart options based on the provided data.
 - Refer to the example styles, but do not use the example data.
 - The chart must be generated using the provided data. Do not create new data or fields.
+- The chart must be generated using all row data provided. Do not omit any data.
 - Generate data fields based on the x-axis and y-axis fields defined in columnMapping. As many x-axis and y-axis fields as there are in columnMapping, how many x-axis and y-axis data are displayed. The data for the x-axis and y-axis are obtained from the row fields.
 - For each field marked as 'y' in columnMapping, there should be its own data series, and it should be displayed in the chart with a different color.
 - Fill in the data field completely, such as ["0.09", "0.10", "0.11", ..., "0.92"], do not use ... to omit.
@@ -360,6 +362,7 @@ This is an ECharts line chart example.
 - Generate and return the ECharts line chart options based on the provided data.
 - Refer to the example styles, but do not use the example data.
 - The chart must be generated using the provided data. Do not create new data or fields.
+- The chart must be generated using all row data provided. Do not omit any data.
 - Generate data fields based on the x-axis and y-axis fields defined in columnMapping. As many x-axis and y-axis fields as there are in columnMapping, how many x-axis and y-axis data are displayed. The data for the x-axis and y-axis are obtained from the row fields.
 - For each field marked as 'y' in columnMapping, there should be its own data series, and it should be displayed in the chart with a different color.
 - Fill in the data field completely, such as ["0.09", "0.10", "0.11", ..., "0.92"], do not use ... to omit.

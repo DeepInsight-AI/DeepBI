@@ -194,32 +194,36 @@
 
 <script>
   function getDashboardData() {
-        var DashboardData =document.getElementById("query_result").innerHTML
-        DashboardData = eval('(' + DashboardData + ')');
-        console.log(DashboardData,"DashboardData")
-        var dashboard_id = document.getElementById('dashboardId').innerHTML
-      $.ajax({
-        url: '/api/dashboards/' + dashboard_id,
-        type: 'get',
-        dataType: 'json',
-        success: function (res) {
-          if(res && res['widgets']){
-            for (var i = 0; i < res['widgets'].length; i++) {
-              if(res['widgets'][i]['visualization']['query']){
-                if(res['widgets'][i]['visualization']['query']['id'] === DashboardData[i]['id']){
-                  DashboardData[i]['latest_query_data_id'] = res['widgets'][i]['visualization']['query']['latest_query_data_id']
-                }
+  return new Promise((resolve, reject) => {
+    var DashboardData = document.getElementById("query_result").innerHTML;
+    DashboardData = eval('(' + DashboardData + ')');
+    var dashboard_id = document.getElementById('dashboardId').innerHTML;
+    $.ajax({
+      url: '/api/dashboards/' + dashboard_id,
+      type: 'get',
+      dataType: 'json',
+      success: function (res) {
+        if (res && res['widgets']) {
+          for (var i = 0; i < res['widgets'].length; i++) {
+            if (res['widgets'][i]['visualization']['query']) {
+              if (res['widgets'][i]['visualization']['query']['id'] === DashboardData[i]['id']) {
+                DashboardData[i]['latest_query_data_id'] = res['widgets'][i]['visualization']['query']['latest_query_data_id'];
               }
             }
           }
-        },
-      })
-      return DashboardData
-    }
-  function echart_code() {
+        }
+        resolve(DashboardData);
+      },
+      error: function (error) {
+        reject(error);
+      }
+    });
+  });
+}
+  async function echart_code() {
   
   // var dashboard_id = document.getElementById('dashboardId').innerHTML
-  var query_result = getDashboardData()
+  var query_result =await getDashboardData()
   for (var i = 0; i < query_result.length; i++) {
     (function(i) {
     $.ajax({

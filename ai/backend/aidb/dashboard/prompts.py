@@ -1,4 +1,5 @@
 ECHARTS_BAR_PROMPT = """
+This is an ECharts bar chart example.
 option = {
 /*  grid: {
     top: "20%",
@@ -25,19 +26,19 @@ option = {
   xAxis: {
     data: [],
     axisLine: {
-      show: true, //隐藏X轴轴线
+      show: true,
       lineStyle: {
         color: '#26D9FF',
         width:2
       }
     },
     axisTick: {
-      show: true //隐藏X轴刻度
+      show: true
     },
     axisLabel: {
       show: true,
       textStyle: {
-        color: "rgba(250,250,250,0.6)", //X轴文字颜色
+        color: "rgba(250,250,250,0.6)",
         fontSize: 16
       }
     },
@@ -94,7 +95,7 @@ option = {
       },
       axisLabel: {
         show: true,
-        formatter: "{value} %", //右侧Y轴文字显示
+        formatter: "{value} %",
         textStyle: {
           color: "rgba(250,250,250,0.6)",
           fontSize: 16
@@ -105,13 +106,12 @@ option = {
   series: [{
     name: "销售量",
     type: "line",
-    yAxisIndex: 1, //使用的 y 轴的 index，在单个图表实例中存在多个 y轴的时候有用
-    smooth: true, //平滑曲线显示
-    showAllSymbol: true, //显示所有图形。
-    symbol: "circle", //标记的图形为实心圆
-    symbolSize: 8, //标记的大小
+    yAxisIndex: 1,
+    smooth: true,
+    showAllSymbol: true,
+    symbol: "circle",
+    symbolSize: 8,
     itemStyle: {
-      //折线拐点标志的样式
       color: "#1045A0",
       borderColor: "#3D7EEB",
       width: 2,
@@ -181,41 +181,30 @@ option = {
     }
   ]
 };
-This is an ECharts bar chart example, you need to generate the option for the bar chart based on the data, and then return it.
-- Don't use the data from the examples, just refer to the styles.
-- Pay attention to the data field in the option, you need to generate the corresponding array based on this data, not generate data on your own.
-- In the data field, fill in the complete data, such as ["0.09", "0.10", "0.11", ..., "0.92"], instead of using ... to omit.
-- My page background color is #00206d, change the color, shape (such as rounded corners, right angles, etc.), stacking method, data label style, etc. of the bar chart to make the chart more beautiful and eye-catching.
-- Set the background of echarts to transparent, that is, backgroundColor: 'rgba(0,0,0,0)', do not set it to white.
-- You must use the x-axis and y-axis fields defined in columnMapping. If there are multiple y-axis fields, you need to display multiple y-axis data. The data for the x-axis and y-axis should be obtained from rows.
-- Set animation effects to make the chart more lively.
-- Draw multiple series of bar charts for comparing different data.
-- Set stacked bar charts to show the proportion of data.
-- If there are multiple y-axis data, combine with line charts to make the chart richer.
+- Generate and return the ECharts bar chart options based on the provided data.
+- Refer to the sample styles, but do not use the sample data.
+- Generate data fields based on the x-axis and y-axis fields defined in columnMapping. If there are several y-axis fields in columnMapping, several y-axis data will be displayed. The data of x-axis and y-axis are obtained from row field.
+- Completely fill in the data fields, such as ["0.09", "0.10", "0.11", ..., "0.92"], do not use ... to omit.
+- Adjust the color, shape (such as rounded corners, right angles, etc.), stacking method, data label style, etc. of the bar chart to match the page background color #00206d and enhance the visual effect.
+- Set the background of echarts to transparent, i.e., backgroundColor: 'rgba(0,0,0,0)'.
+- Set animation effects to add vitality.
+- Draw multiple series of bar charts for data comparison.
+- Set stacked bar charts to show data proportions.
+- If there are multiple y-axis data, combine with line charts to enrich the chart.
 - Use gradient colors and shadow effects to enhance the visual effect of the chart.
-- Add multi-dimensional labels and legends to provide more information and interactivity.
-- Do not use iterative cases, for example. map(),.sort(), for loop, etc.
-- Do not include the title part.
-- Only need the option part, do not include "var option = {...}".
-- Do not add comments in the code, such as "<!-- Add other navigation links as needed -->" and "<!-- ...other news items... -->", but write out the complete code.
-- Do not include markdown "```" or "```html" at the beginning or end.
-- Please only return code, do not include any explanatory text or comments.
+- Add multi-dimensional labels and legends for more information and interactivity.
+- Avoid using iterations, such as .map(), .sort(), for loop, etc.
+- Only return the options part, do not include "var option = {...}", the title part, code comments, and markdown "" or "html".
+- The return should be code only, without any explanatory text or comments.
 """
 
 ECHARTS_PIE_PROMPT = """
+This is an ECharts pie chart example.
 option = {
    color: ['#36F097', '#3DFFDC', '#5A3FFF', '#268AFF', '#1ED6FF', '#ADE1FF'],
    tooltip: {
       trigger: 'item'
    },
-   //   legend: {
-   //     orient: 'horizontal',
-   //     bottom:20,
-   //     right:20,
-   //     textStyle:{
-   //        color:'#fff'
-   //     }
-   //   },
    grid: {
       left: '3%',
       right: '4%',
@@ -230,9 +219,6 @@ option = {
          radius: '70%',
          center: ["50%", "48%"],
          itemStyle: {
-            // 需要间距时打开
-            // borderColor: '#000',
-            // borderWidth: 3,
             shadowColor: 'rgba(0, 0, 0, 0.3)',
             shadowBlur: 20
          },
@@ -254,23 +240,19 @@ option = {
       }
    ]
 };
-This is an ECharts pie chart example, you need to generate the option for the pie chart based on the data, and then return it.
-- Don't use the data from the examples, just refer to the styles.
-- Pay attention to the data field in the option, you need to generate the corresponding array based on this data, not generate data on your own.
-- In the data field, fill in the complete data, such as ["0.09", "0.10", "0.11", ..., "0.92"], instead of using ... to omit.
-- My page background color is #00206d, modify the color, transparency, rounded corners, etc., to make the chart more beautiful and eye-catching.
-- Set the background of echarts to transparent, that is, backgroundColor: 'rgba(0,0,0,0)', do not set it to white.
-- You must use the x-axis and y-axis fields defined in columnMapping. If there are multiple y-axis fields, you need to display multiple y-axis data. The data for the x-axis and y-axis should be obtained from rows.
-- Ensure the uniqueness of the color for each data, there should not be a situation where the colors between the data are the same.
-- Set animation effects to make the chart more lively.
+- Generate and return the ECharts pie chart options based on the provided data.
+- Refer to the example styles, but do not use the example data.
+- Generate data fields based on the x-axis and y-axis fields defined in columnMapping. If there are several y-axis fields in columnMapping, several y-axis data will be displayed. The data of x-axis and y-axis are obtained from row field.
+- Fill in the data field completely, such as ["0.09", "0.10", "0.11", ..., "0.92"], do not use ... to omit.
+- Adjust the color, transparency, rounded corners, etc. of the pie chart to match the page background color #00206d and enhance the visual effect.
+- Set the background of echarts to transparent, i.e., backgroundColor: 'rgba(0,0,0,0)'.
+- Ensure each data point has a unique color, there should not be any instances where the colors between the data are the same.
+- Set animation effects to add vitality.
 - Use gradient colors and shadow effects to enhance the visual effect of the chart.
-- Add multi-dimensional labels and legends to provide more information and interactivity.
-- Do not use iterative cases, for example. map(),.sort(), for loop, etc.
-- Do not include the title part.
-- Only need the option part, do not include "var option = {...}".
-- Do not add comments in the code, such as "<!-- Add other navigation links as needed -->" and "<!-- ...other news items... -->", but write out the complete code.
-- Do not include markdown "```" or "```html" at the beginning or end.
-- Please only return code, do not include any explanatory text or comments.
+- Add multi-dimensional labels and legends for more information and interactivity.
+- Avoid using iterations, such as .map(), .sort(), for loop, etc.
+- Only return the options part, do not include "var option = {...}", the title part, code comments, and markdown "" or "html".
+- The return should be code only, without any explanatory text or comments.
 """
 
 ECHARTS_LINE_PROMPT = """
@@ -373,7 +355,7 @@ This is an ECharts line chart example.
 
 - Generate and return the ECharts line chart options based on the provided data.
 - Refer to the example styles, but do not use the example data.
-- Generate data fields based on the x-axis and y-axis fields defined in columnMapping. If there are several y-axis fields in columnMapping, several y-axis data will be displayed. The data of x-axis and y-axis are obtained from row.
+- Generate data fields based on the x-axis and y-axis fields defined in columnMapping. If there are several y-axis fields in columnMapping, several y-axis data will be displayed. The data of x-axis and y-axis are obtained from row field.
 - Fill in the data field completely, such as ["0.09", "0.10", "0.11", ..., "0.92"], do not use ... to omit.
 - Adjust the color, width, shadow color, and blur of the line to match the page background color #00206d. In the area style, adjust the color and transparency to enhance the visual effect.
 - Set the background of echarts to transparent, i.e., backgroundColor: 'rgba(0,0,0,0)'.

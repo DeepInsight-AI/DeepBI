@@ -194,11 +194,27 @@
 
 <script>
   function getDashboardData() {
-      var DashboardData =document.getElementById("query_result").innerHTML
-      DashboardData = eval('(' + DashboardData + ')');
-      console.log(DashboardData,"DashboardData")
+        var DashboardData =document.getElementById("query_result").innerHTML
+        DashboardData = eval('(' + DashboardData + ')');
+        console.log(DashboardData,"DashboardData")
+        var dashboard_id = document.getElementById('dashboardId').innerHTML
+      $.ajax({
+        url: '/api/dashboards/' + dashboard_id,
+        type: 'get',
+        dataType: 'json',
+        success: function (res) {
+          if(res && res['widgets']){
+            for (var i = 0; i < res['widgets'].length; i++) {
+              if(res['widgets'][i]['visualization']['query']){
+                DashboardData[i]['id'] = res['widgets'][i]['visualization']['query']['id']
+                DashboardData[i]['latest_query_data_id'] = res['widgets'][i]['visualization']['query']['latest_query_data_id']
+              }
+            }
+          }
+        },
+      })
       return DashboardData
-  }
+    }
   function echart_code() {
   
   // var dashboard_id = document.getElementById('dashboardId').innerHTML

@@ -14,7 +14,7 @@ option = {
     }
   },
   legend: {
-    data: ["销售量", "业务1", "业务2"],
+    data: [],
     top: "2%",
     right:'10',
     textStyle: {
@@ -23,14 +23,7 @@ option = {
     }
   },
   xAxis: {
-    data: [
-      "区域1",
-      "区域2",
-      "区域3",
-      "区域4",
-      "区域5",
-      "区域6"
-    ],
+    data: [],
     axisLine: {
       show: true, //隐藏X轴轴线
       lineStyle: {
@@ -57,7 +50,6 @@ option = {
   },
   yAxis: [{
     type: "value",
-    /*name: "亿元",*/
     nameTextStyle: {
       color: "#ebf8ac",
       fontSize: 16
@@ -86,7 +78,6 @@ option = {
   },
     {
       type: "value",
-      /*name: "同比",*/
       nameTextStyle: {
         color: "#ebf8ac",
         fontSize: 16
@@ -191,6 +182,7 @@ option = {
   ]
 };
 This is an ECharts bar chart example, you need to generate the option for the bar chart based on the data, and then return it.
+- Don't use the data from the examples, just refer to the styles.
 - Pay attention to the data field in the option, you need to generate the corresponding array based on this data, not generate data on your own.
 - In the data field, fill in the complete data, such as ["0.09", "0.10", "0.11", ..., "0.92"], instead of using ... to omit.
 - My page background color is #00206d, change the color, shape (such as rounded corners, right angles, etc.), stacking method, data label style, etc. of the bar chart to make the chart more beautiful and eye-catching.
@@ -262,6 +254,7 @@ option = {
    ]
 };
 This is an ECharts pie chart example, you need to generate the option for the pie chart based on the data, and then return it.
+- Don't use the data from the examples, just refer to the styles.
 - Pay attention to the data field in the option, you need to generate the corresponding array based on this data, not generate data on your own.
 - In the data field, fill in the complete data, such as ["0.09", "0.10", "0.11", ..., "0.92"], instead of using ... to omit.
 - My page background color is #00206d, modify the color, transparency, rounded corners, etc., to make the chart more beautiful and eye-catching.
@@ -381,6 +374,7 @@ ECHARTS_LINE_PROMPT = """
 };
 
 This is an ECharts line chart example, you need to generate the option for the line chart based on the data, and then return it.
+- Don't use the data from the examples, just refer to the styles.
 - Pay attention to the data field in the option, you need to generate the corresponding array based on this data, not generate data on your own.
 - In the data field, fill in the complete data, such as ["0.09", "0.10", "0.11", ..., "0.92"], instead of using ... to omit.
 - My page background color is #00206d, change the color, width, shadow color, and shadow blur of the line. In the area style, change the color and transparency to make the chart more beautiful and eye-catching.

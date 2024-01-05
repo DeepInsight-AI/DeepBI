@@ -183,7 +183,7 @@ option = {
 };
 - Generate and return the ECharts bar chart options based on the provided data.
 - Refer to the sample styles, but do not use the sample data.
-- Generate data fields based on the x-axis and y-axis fields defined in columnMapping. If there are several y-axis fields in columnMapping, several y-axis data will be displayed. The data of x-axis and y-axis are obtained from row field.
+- Generate data fields based on the x-axis and y-axis fields defined in columnMapping. As many x-axis and y-axis fields as there are in columnMapping, how many x-axis and y-axis data are displayed. The data for the x-axis and y-axis are obtained from the row fields.
 - Completely fill in the data fields, such as ["0.09", "0.10", "0.11", ..., "0.92"], do not use ... to omit.
 - Adjust the color, shape (such as rounded corners, right angles, etc.), stacking method, data label style, etc. of the bar chart to match the page background color #00206d and enhance the visual effect.
 - Set the background of echarts to transparent, i.e., backgroundColor: 'rgba(0,0,0,0)'.
@@ -242,7 +242,7 @@ option = {
 };
 - Generate and return the ECharts pie chart options based on the provided data.
 - Refer to the example styles, but do not use the example data.
-- Generate data fields based on the x-axis and y-axis fields defined in columnMapping. If there are several y-axis fields in columnMapping, several y-axis data will be displayed. The data of x-axis and y-axis are obtained from row field.
+- Generate data fields based on the x-axis and y-axis fields defined in columnMapping. As many x-axis and y-axis fields as there are in columnMapping, how many x-axis and y-axis data are displayed. The data for the x-axis and y-axis are obtained from the row fields.
 - Fill in the data field completely, such as ["0.09", "0.10", "0.11", ..., "0.92"], do not use ... to omit.
 - Adjust the color, transparency, rounded corners, etc. of the pie chart to match the page background color #00206d and enhance the visual effect.
 - Set the background of echarts to transparent, i.e., backgroundColor: 'rgba(0,0,0,0)'.
@@ -355,7 +355,7 @@ This is an ECharts line chart example.
 
 - Generate and return the ECharts line chart options based on the provided data.
 - Refer to the example styles, but do not use the example data.
-- Generate data fields based on the x-axis and y-axis fields defined in columnMapping. If there are several y-axis fields in columnMapping, several y-axis data will be displayed. The data of x-axis and y-axis are obtained from row field.
+- Generate data fields based on the x-axis and y-axis fields defined in columnMapping. As many x-axis and y-axis fields as there are in columnMapping, how many x-axis and y-axis data are displayed. The data for the x-axis and y-axis are obtained from the row fields.
 - Fill in the data field completely, such as ["0.09", "0.10", "0.11", ..., "0.92"], do not use ... to omit.
 - Adjust the color, width, shadow color, and blur of the line to match the page background color #00206d. In the area style, adjust the color and transparency to enhance the visual effect.
 - Set the background of echarts to transparent, i.e., backgroundColor: 'rgba(0,0,0,0)'.

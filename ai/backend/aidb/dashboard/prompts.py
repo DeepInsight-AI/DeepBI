@@ -186,6 +186,7 @@ This is an ECharts bar chart example, you need to generate the option for the ba
 - Pay attention to the data field in the option, you need to generate the corresponding array based on this data, not generate data on your own.
 - In the data field, fill in the complete data, such as ["0.09", "0.10", "0.11", ..., "0.92"], instead of using ... to omit.
 - My page background color is #00206d, change the color, shape (such as rounded corners, right angles, etc.), stacking method, data label style, etc. of the bar chart to make the chart more beautiful and eye-catching.
+- Set the background of echarts to transparent, that is, backgroundColor: 'rgba(0,0,0,0)', do not set it to white.
 - Ensure the integrity of the data, for example, the data on the x-axis and the y-axis should correspond one by one.
 - Set animation effects to make the chart more lively.
 - Draw multiple series of bar charts for comparing different data.
@@ -258,6 +259,7 @@ This is an ECharts pie chart example, you need to generate the option for the pi
 - Pay attention to the data field in the option, you need to generate the corresponding array based on this data, not generate data on your own.
 - In the data field, fill in the complete data, such as ["0.09", "0.10", "0.11", ..., "0.92"], instead of using ... to omit.
 - My page background color is #00206d, modify the color, transparency, rounded corners, etc., to make the chart more beautiful and eye-catching.
+- Set the background of echarts to transparent, that is, backgroundColor: 'rgba(0,0,0,0)', do not set it to white.
 - Ensure the integrity of the data, for example, the data on the x-axis and the y-axis should correspond one by one.
 - Ensure the uniqueness of the color for each data, there should not be a situation where the colors between the data are the same.
 - Set animation effects to make the chart more lively.
@@ -378,6 +380,7 @@ This is an ECharts line chart example, you need to generate the option for the l
 - Pay attention to the data field in the option, you need to generate the corresponding array based on this data, not generate data on your own.
 - In the data field, fill in the complete data, such as ["0.09", "0.10", "0.11", ..., "0.92"], instead of using ... to omit.
 - My page background color is #00206d, change the color, width, shadow color, and shadow blur of the line. In the area style, change the color and transparency to make the chart more beautiful and eye-catching.
+- Set the background of echarts to transparent, that is, backgroundColor: 'rgba(0,0,0,0)', do not set it to white.
 - Change the shape of the line, such as solid, dashed, dotted, etc.
 - Change the style of the line, such as smooth, polyline, etc.
 - Change the style of the data points, such as round, square, star, etc.

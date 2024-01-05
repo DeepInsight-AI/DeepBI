@@ -12,7 +12,7 @@
 	<div class="canvas">
 	</div>
 <div class="loading">
-  <div class="loadbox"> <img src="/static/prettify/example1/images/loading.gif"> loading... </div>
+  <div class="loadbox"> <img src="/static/prettify/example3/images/loading.gif"> loading... </div>
 </div>
 <div style="display: none;" id="query_result">
   {{query_result}}
@@ -25,11 +25,38 @@
       <li>
         {% for query in query_result %}
           {% if loop.index0 == 0 or loop.index0 == 1%}
-          <div class="boxall" style="height:350px;">
-            <div class="alltitle">{{ query.chart_name }}</div>
-            <div class="navboxall" id="echart{{ query.id }}" >
-            </div>
-          </div>
+          {%if query.chart_type == 'table'%}
+                <div class="boxall" id="table{{ query.id }}">
+                  <div class="alltitle">{{ query.chart_name }}</div>
+                  <ul class="tabnav">
+                    <li  style="height:350px">
+                      <div class="gdhead">
+                        {% for column in query['data']['columns'] %}
+                          <span>{{ column.name }}</span>
+                        {% endfor %}
+                      </div>
+                      <div class="scrollDiv" style="height: 100%">
+                        <ul class="smjl">
+                          {% for row in query['data']['rows'] %}
+                            <li>
+                              {% for column in query['data']['columns'] %}
+                                <span>{{ row[column.name] }}</span>
+                              {% endfor %}
+                            </li>
+                          {% endfor %}
+                        </ul>
+                      </div>
+                    </li>
+                  </ul>
+                  <div class="boxfoot"></div>
+                </div>
+              {% else %}
+                <div class="boxall" style="height:350px">
+                  <div class="alltitle">{{ query.chart_name }}</div>
+                  <div class="navboxall" id="echart{{ query.id }}"> </div>
+
+                </div>
+          {% endif %}
           {% endif %}
         {% endfor %}
        
@@ -40,10 +67,38 @@
         </div>
         {% for query in query_result %}
             {% if loop.index0 == 2%}
-            <div class="boxall" style="height:600px">
+              {%if query.chart_type == 'table'%}
+                <div class="boxall"  id="table{{ query.id }}">
+                  <div class="alltitle">{{ query.chart_name }}</div>
+                  <ul class="tabnav">
+                    <li style="height:600px">
+                      <div class="gdhead">
+                        {% for column in query['data']['columns'] %}
+                          <span>{{ column.name }}</span>
+                        {% endfor %}
+                      </div>
+                      <div class="scrollDiv" style="height: 100%">
+                        <ul class="smjl">
+                          {% for row in query['data']['rows'] %}
+                            <li>
+                              {% for column in query['data']['columns'] %}
+                                <span>{{ row[column.name] }}</span>
+                              {% endfor %}
+                            </li>
+                          {% endfor %}
+                        </ul>
+                      </div>
+                    </li>
+                  </ul>
+                  <div class="boxfoot"></div>
+                </div>
+              {% else %}
+                <div class="boxall" style="height:600px">
           
-              <div class="navboxall" id="echart{{ query.id }}"> </div>
-            </div>
+                  <div class="navboxall" id="echart{{ query.id }}"> </div>
+                </div>
+              {% endif %}
+            
             {% endif %}
         {% endfor %}
         
@@ -51,11 +106,38 @@
       <li>
         {% for query in query_result %}
         {% if loop.index0 == 3 or loop.index0 == 4 %}
-          <div class="boxall" style="height:350px">
-            <div class="alltitle">{{ query.chart_name }}</div>
-            <div class="navboxall" id="echart{{ query.id }}"> </div>
-          </div>
+          {%if query.chart_type == 'table'%}
+                <div class="boxall" id="table{{ query.id }}">
+                  <div class="alltitle">{{ query.chart_name }}</div>
+                  <ul class="tabnav">
+                    <li  style="height:350px">
+                      <div class="gdhead">
+                        {% for column in query['data']['columns'] %}
+                          <span>{{ column.name }}</span>
+                        {% endfor %}
+                      </div>
+                      <div class="scrollDiv" style="height: 100%">
+                        <ul class="smjl">
+                          {% for row in query['data']['rows'] %}
+                            <li>
+                              {% for column in query['data']['columns'] %}
+                                <span>{{ row[column.name] }}</span>
+                              {% endfor %}
+                            </li>
+                          {% endfor %}
+                        </ul>
+                      </div>
+                    </li>
+                  </ul>
+                  <div class="boxfoot"></div>
+                </div>
+              {% else %}
+                <div class="boxall" style="height:350px">
+                  <div class="alltitle">{{ query.chart_name }}</div>
+                  <div class="navboxall" id="echart{{ query.id }}"> </div>
+                </div>
           {% endif %}
+        {% endif %}
         {% endfor %}
   
       </li>
@@ -64,10 +146,37 @@
     {% for query in query_result %}
       {% if loop.index0 >= 5 %}
       <li style="width:50%">
-        <div class="boxall" style="height:300px;">
-          <div class="alltitle">{{ query.chart_name }}</div>
-          <div class="navboxall " id="echart{{ query.id }}" ></div>
-        </div>
+        {%if query.chart_type == 'table'%}
+                <div class="boxall"  id="table{{ query.id }}">
+                  <div class="alltitle">{{ query.chart_name }}</div>
+                  <ul class="tabnav">
+                    <li style="height:300px;">
+                      <div class="gdhead">
+                        {% for column in query['data']['columns'] %}
+                          <span>{{ column.name }}</span>
+                        {% endfor %}
+                      </div>
+                      <div class="scrollDiv" style="height: 100%">
+                        <ul class="smjl">
+                          {% for row in query['data']['rows'] %}
+                            <li>
+                              {% for column in query['data']['columns'] %}
+                                <span>{{ row[column.name] }}</span>
+                              {% endfor %}
+                            </li>
+                          {% endfor %}
+                        </ul>
+                      </div>
+                    </li>
+                  </ul>
+                  <div class="boxfoot"></div>
+                </div>
+              {% else %}
+                <div class="boxall" style="height:300px;">
+                  <div class="alltitle">{{ query.chart_name }}</div>
+                  <div class="navboxall" id="echart{{ query.id }}"> </div>
+                </div>
+        {% endif %}
       </li>
       {% endif %}
     {% endfor %}
@@ -101,29 +210,30 @@
       type: 'get',
       dataType: 'json',
       success: function (res) {
-    // if (query_result[i].chart_type != 'table') {
-    //   var table = document.getElementById('table' + query_result[i].id)
-    //   // columns
-    //   var columns = res['query_result']['data']['columns']
-    //   var columns_html = ''
-    //   for (var j = 0; j < columns.length; j++) {
-    //     columns_html += '<span>' + columns[j].name + '</span>'
-    //   }
-    //   table.getElementsByClassName('gdhead')[0].innerHTML = columns_html
-    //   // rows
-    //   var rows = res['query_result']['data']['rows']
-    //   var rows_html = ''
-    //   for (var j = 0; j < rows.length; j++) {
-    //     rows_html += '<li>'
-    //     for (var k = 0; k < columns.length; k++) {
-    //       rows_html += '<span>' + rows[j][columns[k].name] + '</span>'
-    //     }
-    //     rows_html += '</li>'
-    //   }
-    //   table.getElementsByClassName('smjl')[0].innerHTML = rows_html
-
-    // } else
     if (query_result[i].chart_type != 'table') {
+      var table = document.getElementById('table' + query_result[i].id)
+      // columns
+      var columns = res['query_result']['data']['columns']
+      var columns_html = ''
+      for (var j = 0; j < columns.length; j++) {
+        columns_html += '<span>' + columns[j].name + '</span>'
+      }
+      table.getElementsByClassName('gdhead')[0].innerHTML = columns_html
+      // rows
+      var rows = res['query_result']['data']['rows']
+      var rows_html = ''
+      for (var j = 0; j < rows.length; j++) {
+        rows_html += '<li>'
+        for (var k = 0; k < columns.length; k++) {
+          rows_html += '<span>' + rows[j][columns[k].name] + '</span>'
+        }
+        rows_html += '</li>'
+      }
+      table.getElementsByClassName('smjl')[0].innerHTML = rows_html
+
+    } else
+    // if (query_result[i].chart_type != 'table')
+     {
       var chart = echarts.init(document.getElementById('echart' + query_result[i].id))
       var option =query_result[i]['echart_code']
       console.log(option, "option====")

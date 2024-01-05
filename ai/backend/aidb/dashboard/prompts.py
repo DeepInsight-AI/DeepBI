@@ -274,17 +274,14 @@ This is an ECharts pie chart example, you need to generate the option for the pi
 """
 
 ECHARTS_LINE_PROMPT = """
-这是一个ECharts折线图示例
+This is an ECharts line chart example.
  option = {
-   //你的代码
-
     color: ['#165DFF'],
     tooltip: {
       show:false,
       trigger: 'axis',
       axisPointer: {
-        // 坐标轴指示器，坐标轴触发有效
-        type: 'shadow' // 默认为直线，可选为：'line' | 'shadow'
+        type: 'shadow'
       }
     },
     grid: {
@@ -299,7 +296,7 @@ ECHARTS_LINE_PROMPT = """
         data: ['2023/01','2023/02','2023/03','2023/04','2023/05','2023/06','2023/07','2023/08','2023/09','2023/10','2023/11','2023/12'],
         boundaryGap: false,
         axisTick:{
-          show:false // 不显示坐标轴刻度线
+          show:false
         },
         splitLine: {
           show: false,
@@ -318,12 +315,10 @@ ECHARTS_LINE_PROMPT = """
       {
         type: 'value',
         show: false,
-        //y右侧文字
         axisLabel: {
           color: 'rgba(230, 247, 255, 0.50)',
           fontSize:16
         },
-        // y轴的分割线
         splitLine: {
           show: true,
           lineStyle: {
@@ -339,7 +334,7 @@ ECHARTS_LINE_PROMPT = """
         name: '',
         type: 'line',
         smooth: true,
-        symbol: 'none', // 不显示连接点
+        symbol: 'none',
         tooltip: {
           trigger: 'axis'
         },
@@ -378,7 +373,7 @@ ECHARTS_LINE_PROMPT = """
 
 - Generate and return the ECharts line chart options based on the provided data.
 - Refer to the example styles, but do not use the example data.
-- Generate the data field based on the x-axis and y-axis fields defined in columnMapping. If there are multiple y-axis fields, display multiple y-axis data. The data should be obtained from rows.
+- Generate data fields based on the x-axis and y-axis fields defined in columnMapping. If there are several y-axis fields in columnMapping, several y-axis data will be displayed. The data of x-axis and y-axis are obtained from row.
 - Fill in the data field completely, such as ["0.09", "0.10", "0.11", ..., "0.92"], do not use ... to omit.
 - Adjust the color, width, shadow color, and blur of the line to match the page background color #00206d. In the area style, adjust the color and transparency to enhance the visual effect.
 - Set the background of echarts to transparent, i.e., backgroundColor: 'rgba(0,0,0,0)'.

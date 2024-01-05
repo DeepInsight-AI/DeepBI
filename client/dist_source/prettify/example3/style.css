@@ -89,3 +89,17 @@ a:hover{ color:#06c; text-decoration: none!important}
 .sycm p:before{content: ""; position: absolute; border-left: 8px solid transparent;border-right: 8px solid transparent;border-top: 8px solid rgba(255,255,255,.3); bottom: -8px; left: 49%}
 
 
+.tabnav>li{ overflow:scroll;}
+.gdhead{display: flex; justify-content: space-between; line-height:30px;}
+.gdhead span{width: 100%; text-align: center;font-size: 13px;color: #fff;}
+
+.smjl li{display: flex; padding: 5px 0;}
+.smjl li span{ width: 100%; text-align: center; font-size: 12px; opacity: .8;overflow: hidden; white-space: nowrap; text-overflow: ellipsis;color: #fff;}
+
+/*谷哥滚动条样式*/
+
+::-webkit-scrollbar {width:5px;height:5px;position:absolute; }
+::-webkit-scrollbar-thumb {background-color:#006fef;}
+::-webkit-scrollbar-track {background:rgba(0,0,0,.2); }
+
+/***/

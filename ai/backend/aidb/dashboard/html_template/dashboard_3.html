@@ -210,7 +210,7 @@
       type: 'get',
       dataType: 'json',
       success: function (res) {
-    if (query_result[i].chart_type != 'table') {
+    if (query_result[i].chart_type == 'table') {
       var table = document.getElementById('table' + query_result[i].id)
       // columns
       var columns = res['query_result']['data']['columns']

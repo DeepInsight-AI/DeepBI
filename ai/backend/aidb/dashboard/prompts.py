@@ -187,7 +187,7 @@ This is an ECharts bar chart example, you need to generate the option for the ba
 - In the data field, fill in the complete data, such as ["0.09", "0.10", "0.11", ..., "0.92"], instead of using ... to omit.
 - My page background color is #00206d, change the color, shape (such as rounded corners, right angles, etc.), stacking method, data label style, etc. of the bar chart to make the chart more beautiful and eye-catching.
 - Set the background of echarts to transparent, that is, backgroundColor: 'rgba(0,0,0,0)', do not set it to white.
-- Ensure the integrity of the data, for example, the data on the x-axis and the y-axis should correspond one by one.
+- Must follow the x-axis and y-axis defined in columnMapping to generate the corresponding data.
 - Set animation effects to make the chart more lively.
 - Draw multiple series of bar charts for comparing different data.
 - Set stacked bar charts to show the proportion of data.
@@ -260,7 +260,7 @@ This is an ECharts pie chart example, you need to generate the option for the pi
 - In the data field, fill in the complete data, such as ["0.09", "0.10", "0.11", ..., "0.92"], instead of using ... to omit.
 - My page background color is #00206d, modify the color, transparency, rounded corners, etc., to make the chart more beautiful and eye-catching.
 - Set the background of echarts to transparent, that is, backgroundColor: 'rgba(0,0,0,0)', do not set it to white.
-- Ensure the integrity of the data, for example, the data on the x-axis and the y-axis should correspond one by one.
+- Must follow the x-axis and y-axis defined in columnMapping to generate the corresponding data.
 - Ensure the uniqueness of the color for each data, there should not be a situation where the colors between the data are the same.
 - Set animation effects to make the chart more lively.
 - Use gradient colors and shadow effects to enhance the visual effect of the chart.
@@ -385,7 +385,7 @@ This is an ECharts line chart example, you need to generate the option for the l
 - Change the style of the line, such as smooth, polyline, etc.
 - Change the style of the data points, such as round, square, star, etc.
 - Change the border style of the chart.
-- Ensure the integrity of the data, for example, the data on the x-axis and the y-axis should correspond one by one.
+- Must follow the x-axis and y-axis defined in columnMapping to generate the corresponding data.
 - Set animation effects to make the chart more lively.
 - Do not use iterative cases, for example. map(),.sort(), for loop, etc.
 - Do not include the title part.

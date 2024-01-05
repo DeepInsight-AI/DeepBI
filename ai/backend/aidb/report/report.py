@@ -23,11 +23,11 @@ class Report(AIDB):
 
     def get_agent_select_report_assistant(self):
         """select_report_assistant"""
-        function_names = ['task_generate_echart', 'task_base']
+        function_names = ['task_generate_report', 'task_base']
         function_select = f"Read the conversation above. Then select the type of task from {function_names}. Only the task type is returned.",
 
         task_message = {
-            'task_generate_echart': 'chart generation task, The user ask that the data be finally displayed in the form of a chart.If the question does not clearly state that a  chart is to be generated, it does not belong to this task.',
+            'task_generate_report': 'chart generation task, The user ask that the data be finally displayed in the form of a chart.If the question does not clearly state that a  chart is to be generated, it does not belong to this task.',
             'task_base': 'base task'
         }
 
@@ -109,7 +109,8 @@ class Report(AIDB):
 
         await user_proxy.initiate_chat(
             base_mysql_assistant,
-            message=self.agent_instance_util.base_message + '\n' + self.question_ask + '\n' + str(q_str),
+            # message=self.agent_instance_util.base_message + '\n' + self.question_ask + '\n' + str(q_str),
+            message=str(q_str),
         )
 
     async def task_base(self, qustion_message):

@@ -115,8 +115,7 @@ class Analysis(AIDB):
 
         await user_proxy.initiate_chat(
             base_mysql_assistant,
-            # message=self.agent_instance_util.base_message + '\n' + self.question_ask + '\n' + str(q_str),
-            message=self.question_ask + '\n' + str(q_str),
+            message=str(q_str),
         )
 
     async def task_base(self, qustion_message):

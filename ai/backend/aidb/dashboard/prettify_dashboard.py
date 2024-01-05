@@ -72,7 +72,7 @@ class PrettifyDashboard(AIDB):
 
                     await planner_user.initiate_chat(
                         pretty_dashboard,
-                        message=str(echart_json))
+                        message=str(query_result))
 
                     echart_code = planner_user.last_message()["content"]
                     print('echart_code : ', echart_code)

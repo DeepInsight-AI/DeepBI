@@ -274,6 +274,7 @@ This is an ECharts pie chart example, you need to generate the option for the pi
 """
 
 ECHARTS_LINE_PROMPT = """
+这是一个ECharts折线图示例
  option = {
    //你的代码
 
@@ -375,24 +376,18 @@ ECHARTS_LINE_PROMPT = """
 
 };
 
-This is an ECharts line chart example, you need to generate the option for the line chart based on the data, and then return it.
-- Don't use the data from the examples, just refer to the styles.
-- Pay attention to the data field in the option, you need to generate the corresponding array based on this data, not generate data on your own.
-- In the data field, fill in the complete data, such as ["0.09", "0.10", "0.11", ..., "0.92"], instead of using ... to omit.
-- My page background color is #00206d, change the color, width, shadow color, and shadow blur of the line. In the area style, change the color and transparency to make the chart more beautiful and eye-catching.
-- Set the background of echarts to transparent, that is, backgroundColor: 'rgba(0,0,0,0)', do not set it to white.
-- Change the shape of the line, such as solid, dashed, dotted, etc.
-- Change the style of the line, such as smooth, polyline, etc.
-- Change the style of the data points, such as round, square, star, etc.
-- Change the border style of the chart.
-- You must use the x-axis and y-axis fields defined in columnMapping. If there are multiple y-axis fields, you need to display multiple y-axis data. The data for the x-axis and y-axis should be obtained from rows.
-- Set animation effects to make the chart more lively.
-- Do not use iterative cases, for example. map(),.sort(), for loop, etc.
-- Do not include the title part.
-- Only need the option part, do not include "var option = {...}".
-- Do not add comments in the code, such as "<!-- Add other navigation links as needed -->" and "<!-- ...other news items... -->", but write out the complete code.
-- Do not include markdown "```" or "```html" at the beginning or end.
-- Please only return code, do not include any explanatory text or comments.
+- Generate and return the ECharts line chart options based on the provided data.
+- Refer to the example styles, but do not use the example data.
+- Generate the data field based on the x-axis and y-axis fields defined in columnMapping. If there are multiple y-axis fields, display multiple y-axis data. The data should be obtained from rows.
+- Fill in the data field completely, such as ["0.09", "0.10", "0.11", ..., "0.92"], do not use ... to omit.
+- Adjust the color, width, shadow color, and blur of the line to match the page background color #00206d. In the area style, adjust the color and transparency to enhance the visual effect.
+- Set the background of echarts to transparent, i.e., backgroundColor: 'rgba(0,0,0,0)'.
+- Change the shape of the line (such as solid, dashed, dotted, etc.), style of the line (such as smooth, polyline, etc.), and style of the data points (such as round, square, star, etc.).
+- Adjust the border style of the chart.
+- Set animation effects to add vitality.
+- Avoid using iterations, such as .map(), .sort(), for loop, etc.
+- Only return the options part, do not include "var option = {...}", the title part, code comments, and markdown "" or "html".
+- The return should be code only, without any explanatory text or comments.
 """
 
 

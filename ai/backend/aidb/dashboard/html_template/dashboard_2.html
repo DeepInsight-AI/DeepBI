@@ -91,8 +91,9 @@
           if(res && res['widgets']){
             for (var i = 0; i < res['widgets'].length; i++) {
               if(res['widgets'][i]['visualization']['query']){
-                DashboardData[i]['id'] = res['widgets'][i]['visualization']['query']['id']
-                DashboardData[i]['latest_query_data_id'] = res['widgets'][i]['visualization']['query']['latest_query_data_id']
+                if(res['widgets'][i]['visualization']['query']['id'] === DashboardData[i]['id']){
+                  DashboardData[i]['latest_query_data_id'] = res['widgets'][i]['visualization']['query']['latest_query_data_id']
+                }
               }
             }
           }

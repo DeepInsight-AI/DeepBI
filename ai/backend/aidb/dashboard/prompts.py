@@ -187,6 +187,7 @@ option = {
 - The chart must be generated using all row data provided. Do not omit any data.
 - Generate data fields based on the x-axis and y-axis fields defined in columnMapping. As many x-axis and y-axis fields as there are in columnMapping, how many x-axis and y-axis data are displayed. The data for the x-axis and y-axis are obtained from the row fields.
 - For each field marked as 'y' in columnMapping, there should be its own data series, and it should be displayed in the chart with a different color.
+- Do not translate the field names. Use the field names as they are provided.
 - Completely fill in the data fields, such as ["0.09", "0.10", "0.11", ..., "0.92"], do not use ... to omit.
 - Adjust the color, shape (such as rounded corners, right angles, etc.), stacking method, data label style, etc. of the bar chart to match the page background color #00206d and enhance the visual effect.
 - Set the background of echarts to transparent, i.e., backgroundColor: 'rgba(0,0,0,0)'.
@@ -249,6 +250,7 @@ option = {
 - The chart must be generated using all row data provided. Do not omit any data.
 - Generate data fields based on the x-axis and y-axis fields defined in columnMapping. As many x-axis and y-axis fields as there are in columnMapping, how many x-axis and y-axis data are displayed. The data for the x-axis and y-axis are obtained from the row fields.
 - For each field marked as 'y' in columnMapping, there should be its own data series, and it should be displayed in the chart with a different color.
+- Do not translate the field names. Use the field names as they are provided.
 - Fill in the data field completely, such as ["0.09", "0.10", "0.11", ..., "0.92"], do not use ... to omit.
 - Adjust the color, transparency, rounded corners, etc. of the pie chart to match the page background color #00206d and enhance the visual effect.
 - Set the background of echarts to transparent, i.e., backgroundColor: 'rgba(0,0,0,0)'.
@@ -365,6 +367,7 @@ This is an ECharts line chart example.
 - The chart must be generated using all row data provided. Do not omit any data.
 - Generate data fields based on the x-axis and y-axis fields defined in columnMapping. As many x-axis and y-axis fields as there are in columnMapping, how many x-axis and y-axis data are displayed. The data for the x-axis and y-axis are obtained from the row fields.
 - For each field marked as 'y' in columnMapping, there should be its own data series, and it should be displayed in the chart with a different color.
+- Do not translate the field names. Use the field names as they are provided.
 - Fill in the data field completely, such as ["0.09", "0.10", "0.11", ..., "0.92"], do not use ... to omit.
 - Adjust the color, width, shadow color, and blur of the line to match the page background color #00206d. In the area style, adjust the color and transparency to enhance the visual effect.
 - Set the background of echarts to transparent, i.e., backgroundColor: 'rgba(0,0,0,0)'.

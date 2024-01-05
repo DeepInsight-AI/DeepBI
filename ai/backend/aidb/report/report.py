@@ -26,51 +26,22 @@ class Report(AIDB):
         function_names = ['task_generate_echart', 'task_base']
         function_select = f"Read the conversation above. Then select the type of task from {function_names}. Only the task type is returned.",
 
+        task_message = {
+            'task_generate_echart': 'chart generation task, The user ask that the data be finally displayed in the form of a chart.If the question does not clearly state that a  chart is to be generated, it does not belong to this task.',
+            'task_base': 'base task'
+        }
+
         select_report_assistant = TaskSelectorAgent(
             name="select_report_assistant",
             system_message="""You are a helpful AI assistant.
                      Divide the questions raised by users into corresponding task types.
                      Different tasks have different processing methods.
                      Task types are generally divided into the following categories:
-                     - Report generation task: query data, and finally display the data in the form of charts.
-                     - base tasks: analyze existing data and draw conclusions about the given problem.
-
-                 Reply "TERMINATE" in the end when everything is done.
-                      """ + str(function_select),
+                      """ + str(task_message) + '\n' + str(function_select),
             human_input_mode="NEVER",
             user_name=self.user_name,
             websocket=self.websocket,
             llm_config={
-                "functions": [
-                    {
-                        "name": "task_generate_report",
-                        "description": """chart generation task, The user ask that the data be finally displayed in the form of a chart.If the question does not clearly state that a  chart is to be generated, it does not belong to this task.""",
-                        "parameters": {
-                            "type": "object",
-                            "properties": {
-                                "qustion_message": {
-                                    "type": "string",
-                                    "description": "Task content",
-                                }
-                            },
-                            "required": ["qustion_message"],
-                        },
-                    },
-                    {
-                        "name": "task_base",
-                        "description": "Processing a task ",
-                        "parameters": {
-                            "type": "object",
-                            "properties": {
-                                "qustion_message": {
-                                    "type": "string",
-                                    "description": "Task content",
-                                }
-                            },
-                            "required": ["qustion_message"],
-                        },
-                    },
-                ],
                 "config_list": self.agent_instance_util.config_list_gpt4_turbo,
                 "request_timeout": CONFIG.request_timeout,
             },
@@ -141,11 +112,9 @@ class Report(AIDB):
             message=self.agent_instance_util.base_message + '\n' + self.question_ask + '\n' + str(q_str),
         )
 
-
     async def task_base(self, qustion_message):
         """ Task type: base question """
         return self.error_no_report_question
-
 
     async def task_generate_report(self, qustion_message):
         return self.qustion_message

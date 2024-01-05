@@ -31,16 +31,19 @@ class Analysis(AIDB):
         function_names = ['task_generate_echart', 'task_base']
         function_select = f"Read the conversation above. Then select the type of task from {function_names}. Only the task type is returned.",
 
+        task_message = {
+            'task_generate_echart': 'chart generation task, The user ask that the data be finally displayed in the form of a chart.If the question does not clearly state that a  chart is to be generated, it does not belong to this task.',
+            'task_base': 'base task'
+        }
+
         select_analysis_assistant = TaskSelectorAgent(
             name="select_analysis_assistant",
             system_message="""You are a helpful AI assistant.
                        Divide the questions raised by users into corresponding task types.
                        Different tasks have different processing methods.
                        Task types are generally divided into the following categories:
-                       - Report generation task: query data, and finally display the data in the form of charts.
-                       - base tasks: analyze existing data and draw conclusions about the given problem.
 
-                        """ + str(function_select),
+                        """ + str(task_message) + '\n' + str(function_select),
             human_input_mode="NEVER",
             user_name=self.user_name,
             websocket=self.websocket,

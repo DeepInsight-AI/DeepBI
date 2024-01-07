@@ -61,7 +61,7 @@ html,body{height: 100%;}
 .boxfoot:before,
 .boxfoot:after{ position:absolute; width: .15rem; height: .15rem;  content: "";border-bottom:3px solid #3486da; bottom:-2px;}
 
-.tit01{background: linear-gradient(to right,rgba(48,82,174,.5),rgba(48,82,174,0)); color: #fff; font-size: .2rem; padding: .03rem .1rem;}
+.tit01{background: linear-gradient(to right,rgba(48,82,174,.5),rgba(48,82,174,0)); color: #fff; font-size: .2rem; padding: .03rem .1rem;white-space: nowrap;overflow: hidden; text-overflow: ellipsis;}
 
 
 .topnav{width: 100%; height:100%; margin-bottom: .2rem;}

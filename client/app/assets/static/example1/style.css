@@ -64,7 +64,7 @@ a:hover{ color:#06c; text-decoration: none!important}
 .boxall:before,.boxfoot:before{border-left: 2px solid #02a6b5;left: 0;}
 .boxall:after,.boxfoot:after{border-right: 2px solid #02a6b5; right: 0;}
 
-.alltitle{ font-size:.2rem; color:#fff;  line-height: .5rem; position: relative}
+.alltitle{ font-size:.2rem; color:#fff;  line-height: .5rem; position: relative;white-space: nowrap;overflow: hidden; text-overflow: ellipsis;}
 
 .alltitle2{  line-height: .5rem; position: relative}
 .alltitle2 a{ font-size:.2rem; color:#fff;  opacity: .6; padding:  .05rem .1rem;}

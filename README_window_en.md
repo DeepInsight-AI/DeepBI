@@ -1,4 +1,4 @@
-#DeepBI windows exe Local installation instructions
+# DeepBI windows exe Local installation instructions
 
 1. Software download, click here to download!
  ![docker err.jpg](user_manual/en/exe/1.jpg)

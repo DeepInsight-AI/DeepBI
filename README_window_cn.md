@@ -1,4 +1,4 @@
-#DeepBI windows exe 本地安装版本说明
+# DeepBI windows exe 本地安装版本说明
 
 1. 软件下载， 点击这里去下载
  ![docker_err.jpg](user_manual/cn/exe/1.jpg)

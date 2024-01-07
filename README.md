@@ -50,6 +50,11 @@ The database connections supported by DeepBI are:
 - csv/Excel Import
 
 
+## 📦 Windows exe installation
+- Download ```window_install_exe_EN.zip``` from the <a href="https://github.com/DeepInsight-AI/DeepBI/releases">tag list</a>.The current test supports Win10 and Win11
+- Unzip the zip package and double-click the.exe file to run DeepBI
+- Local installation instructions [Installl exe](README_window_en.md)
+
 ## 📦 Docker build
 
 - The local environment needs to have docker and docker-compose. <br>
@@ -96,10 +101,7 @@ git clone http://github.com/DeepInsight-AI/DeepBI.git
 - Web access: http://ip:8338
 
 
-## 📦 Windows exe installation
-- Download ```window_install_exe_EN.zip``` from the <a href="https://github.com/DeepInsight-AI/DeepBI/releases">tag list</a>.The current test supports Win10 and Win11
-- Unzip the zip package and double-click the.exe file to run DeepBI
-- Local installation instructions
+
 
 ## Contact Us
 <a><img src="https://github.com/DeepInsight-AI/DeepBI/assets/151519374/b0ba1fc3-8c71-4bf7-bd53-ecf17050581a" width="40%"/></a>

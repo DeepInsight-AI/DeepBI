@@ -2,7 +2,7 @@
 
 <div align="center">
 
-DeepBi is an AI-native data analysis platform. DeepBi leverages the power of large language models to explore, query, visualize, and share data from any data source. Users can use DeepBi to gain data insight and make data-driven decisions.
+DeepBI is an AI-native data analysis platform. DeepBI leverages the power of large language models to explore, query, visualize, and share data from any data source. Users can use DeepBI to gain data insight and make data-driven decisions.
 
 
 </div>
@@ -14,7 +14,7 @@ Developer：dev@deep-insight.co  Business：hi@deep-insight.co
 
   <div style="display: flex; align-items: center;">
 
-If you think DeepBi is helpful to you, please help by clicking <a style="display: flex; align-items: center;margin:0px 6px" target="_blank" href='https://github.com/DeepInsight-AI/DeepBi'>here</a> on the ⭐ Star and Fork in the upper right corner. Your support is the greatest driving force for DeepBi to become better.
+If you think DeepBI is helpful to you, please help by clicking <a style="display: flex; align-items: center;margin:0px 6px" target="_blank" href='https://github.com/DeepInsight-AI/DeepBI'>here</a> on the ⭐ Star and Fork in the upper right corner. Your support is the greatest driving force for DeepBI to become better.
 
 
   </div>
@@ -24,11 +24,11 @@ If you think DeepBi is helpful to you, please help by clicking <a style="display
 
 ## Video example
 
-https://github.com/DeepInsight-AI/DeepBi/assets/151519374/d1effbe1-5c11-4c77-86ef-e01b1ea7f2f6
+https://github.com/DeepInsight-AI/DeepBI/assets/151519374/d1effbe1-5c11-4c77-86ef-e01b1ea7f2f6
 
 
 ## user manual
-[DeepBi user manual](client/app/assets/images/en/user_manual_en.md)
+[DeepBI user manual](client/app/assets/images/en/user_manual_en.md)
 
 
 ## ✨ Features
@@ -44,24 +44,37 @@ https://github.com/DeepInsight-AI/DeepBi/assets/151519374/d1effbe1-5c11-4c77-86e
 
 ## 🚀 Supported Databases
 
-The database connections supported by DeepBi are:
+The database connections supported by DeepBI are:
 - MySQL
 - PostgreSQL
 - csv/Excel Import
+
 
 ## 📦 Docker build
 
 - The local environment needs to have docker and docker-compose. <br>
 - [Installl docker](Docker_install.md)
-- Download project files by git:``` git clone https://github.com/DeepInsight-AI/DeepBi.git ``` <br>
+- Download project files by git:``` git clone https://github.com/DeepInsight-AI/DeepBI.git ``` <br>
   or drirect download zip file, unzip it. <br>
   ![download.png](user_manual/cn/img/download.png)
 
-- Enter the project directory:``` cd DeepBi ```
+- Enter the project directory:``` cd DeepBI ```
 - Just run``` ./Install.sh ```directly
 - Default port: 8338 8339
 - Web access: http://ip:8338
-
+#### DeepBI docker command
+- Enter project DeepBI dir:
+```
+    docker-compose start # start DeepBI servie
+    docker-compose stop # stop DeepBI servie
+    docker-compose ps # see DeepBI servie states
+```
+- If it appears... PermissionError ... ' or ' Permission denied', please add 'sudo' before executing the command
+```
+    sudo docker-compose start # start DeepBI servie
+    sudo docker-compose stop # stop DeepBI servie
+    sudo docker-compose ps # see DeepBI servie states
+```
 
 ## Ubuntu build
 Install directly on the ubuntu system, you need to install redis, postgresql python3.8.17 environment.
@@ -70,7 +83,7 @@ Install directly on the ubuntu system, you need to install redis, postgresql pyt
 - Require python version  3.8+
 - Recommend using virtual environments such as pyenv coda
 - postgresql needs to install postgresql-16 version
-- Download the DeepBi code by the command :
+- Download the DeepBI code by the command :
 ```
 git clone https://github.com/DeepInsight-AI/DeepBI.git
 ```
@@ -83,19 +96,10 @@ git clone http://github.com/DeepInsight-AI/DeepBI.git
 - Web access: http://ip:8338
 
 
-## DeepBI command
-- Enter project DeepBi dir:
-```
-    docker-compose start # start DeepBi servie
-    docker-compose stop # stop DeepBi servie
-    docker-compose ps # see DeepBi servie states
-```
-- If it appears... PermissionError ... ' or ' Permission denied', please add 'sudo' before executing the command
-```
-    sudo docker-compose start # start DeepBi servie
-    sudo docker-compose stop # stop DeepBi servie
-    sudo docker-compose ps # see DeepBi servie states
-```
+## 📦 Windows exe installation
+- Download ```window_install_exe_EN.zip``` from the <a href="https://github.com/DeepInsight-AI/DeepBI/releases">tag list</a>.The current test supports Win10 and Win11
+- Unzip the zip package and double-click the.exe file to run DeepBI
+- Local installation instructions
 
 ## Contact Us
 <a><img src="https://github.com/DeepInsight-AI/DeepBI/assets/151519374/b0ba1fc3-8c71-4bf7-bd53-ecf17050581a" width="40%"/></a>
@@ -106,5 +110,5 @@ git clone http://github.com/DeepInsight-AI/DeepBI.git
 - We have tested on Mac OS 12.7/13.X /14.1.1, Ubuntu 20.04/22.04, and Windows11 WSL 22.04.
 - Windows 10 requires version 22H2 or higher to install WSL
 - If you have any question, please contact us at dev@deep-insight.co
-- <a href="https://github.com/DeepInsight-AI/DeepBi/issues">Issue</a>
+- <a href="https://github.com/DeepInsight-AI/DeepBI/issues">Issue</a>
 

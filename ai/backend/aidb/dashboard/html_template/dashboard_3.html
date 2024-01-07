@@ -26,10 +26,10 @@
         {% for query in query_result %}
           {% if loop.index0 == 0 or loop.index0 == 1%}
           {%if query.chart_type == 'table'%}
-                <div class="boxall" id="table{{ query.id }}">
+                <div class="boxall"  style="height:350px" id="table{{ query.id }}">
                   <div class="alltitle">{{ query.chart_name }}</div>
                   <ul class="tabnav">
-                    <li  style="height:350px">
+                    <li >
                       <div class="gdhead">
                         {% for column in query['data']['columns'] %}
                           <span>{{ column.name }}</span>
@@ -68,10 +68,10 @@
         {% for query in query_result %}
             {% if loop.index0 == 2%}
               {%if query.chart_type == 'table'%}
-                <div class="boxall"  id="table{{ query.id }}">
+                <div class="boxall" style="height:600px"  id="table{{ query.id }}">
                   <div class="alltitle">{{ query.chart_name }}</div>
                   <ul class="tabnav">
-                    <li style="height:600px">
+                    <li >
                       <div class="gdhead">
                         {% for column in query['data']['columns'] %}
                           <span>{{ column.name }}</span>
@@ -107,10 +107,10 @@
         {% for query in query_result %}
         {% if loop.index0 == 3 or loop.index0 == 4 %}
           {%if query.chart_type == 'table'%}
-                <div class="boxall" id="table{{ query.id }}">
+                <div class="boxall"  style="height:350px" id="table{{ query.id }}">
                   <div class="alltitle">{{ query.chart_name }}</div>
                   <ul class="tabnav">
-                    <li  style="height:350px">
+                    <li >
                       <div class="gdhead">
                         {% for column in query['data']['columns'] %}
                           <span>{{ column.name }}</span>
@@ -147,10 +147,10 @@
       {% if loop.index0 >= 5 %}
       <li style="width:50%">
         {%if query.chart_type == 'table'%}
-                <div class="boxall"  id="table{{ query.id }}">
+                <div class="boxall" style="height:300px;"  id="table{{ query.id }}">
                   <div class="alltitle">{{ query.chart_name }}</div>
                   <ul class="tabnav">
-                    <li style="height:300px;">
+                    <li >
                       <div class="gdhead">
                         {% for column in query['data']['columns'] %}
                           <span>{{ column.name }}</span>
@@ -272,12 +272,14 @@
             })
           }
       } else if (query_result[i].chart_type == 'pie') {
-        option.series[0].data = res['query_result']['data']['rows'].map(function (item) {
-          return {
-            name: item[x_field],
-            value: item[y_fields[0]]
+        for (var j = 0; j < option.series.length; j++) {
+            option.series[j].data = res['query_result']['data']['rows'].map(function (item) {
+              return {
+                name: item[x_field],
+                value: item[y_fields[0]]
+              }
+            })
           }
-        })
       }
       chart.setOption(option)
       window.addEventListener("resize", function () {

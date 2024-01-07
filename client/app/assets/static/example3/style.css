@@ -88,8 +88,8 @@ a:hover{ color:#06c; text-decoration: none!important}
 .sycm p{ border: 1px solid rgba(255,255,255,.3);color: rgba(255,255,255,.6); text-align: center; margin: 10px; border-radius: 5px; padding: 8px ; position: relative;}
 .sycm p:before{content: ""; position: absolute; border-left: 8px solid transparent;border-right: 8px solid transparent;border-top: 8px solid rgba(255,255,255,.3); bottom: -8px; left: 49%}
 
-
-.tabnav>li{ overflow:scroll;}
+.boxall .tabnav{height:100%}
+.tabnav>li{ overflow:scroll;height: 90%;}
 .gdhead{display: flex; justify-content: space-between; line-height:30px;}
 .gdhead span{width: 100%; text-align: center;font-size: 13px;color: #fff;}
 

@@ -53,8 +53,8 @@
   <div class="mainbox">
     <ul class="clearfix">
       <li>
-        {% for query in query_result %} {% if loop.index0 % 6 == 0 or
-        loop.index0 % 6 == 1 or loop.index0 % 6 == 5 or loop.index0 % 6 == 6%}
+        {% for query in query_result %} {% if loop.index0 % 10 == 0 or
+        loop.index0 % 10 == 1 or loop.index0 % 10 == 5 or loop.index0 % 10 == 6 %}
         {%if query.chart_type == 'table'%}
         <div class="boxall" id="table{{ query.id }}">
           <div class="alltitle">{{ query.chart_name }}</div>
@@ -102,8 +102,8 @@
           </div>
           <div class="map4" id="map_1"></div>
         </div>
-        {% for query in query_result %} {% if loop.index0 % 6 == 2 or
-        loop.index0 % 6 == 7%} {%if query.chart_type == 'table'%}
+        {% for query in query_result %} {% if loop.index0 % 10 == 2 or
+        loop.index0 % 10 == 7%} {%if query.chart_type == 'table'%}
         <div class="boxall" id="table{{ query.id }}">
           <div class="alltitle">{{ query.chart_name }}</div>
           <ul class="tabnav">
@@ -137,8 +137,8 @@
         {% endif %} {% endif %} {% endfor %}
       </li>
       <li>
-        {% for query in query_result %} {% if loop.index0 % 6 == 3 or
-        loop.index0 % 6 == 4 or loop.index0 % 6 == 8 or loop.index0 % 6 == 9%}
+        {% for query in query_result %} {% if loop.index0 % 10 == 3 or
+        loop.index0 % 10 == 4 or loop.index0 % 10 == 8 or loop.index0 % 10 == 9%}
         {%if query.chart_type == 'table'%}
         <div class="boxall" id="table{{ query.id }}">
           <div class="alltitle">{{ query.chart_name }}</div>
@@ -185,6 +185,7 @@
   return new Promise((resolve, reject) => {
     var DashboardData = document.getElementById("query_result").innerHTML;
     DashboardData = eval('(' + DashboardData + ')');
+    console.log(DashboardData, "DashboardData====")
     var dashboard_id = document.getElementById('dashboardId').innerHTML;
     $.ajax({
       url: '/api/dashboards/' + dashboard_id,
@@ -267,12 +268,21 @@
           //     })
           // })
         } else if (query_result[i].chart_type == 'pie') {
-          option.series[0].data = res['query_result']['data']['rows'].map(function (item) {
-            return {
-              name: item[x_field],
-              value: item[y_fields[0]]
-            }
-          })
+          
+          // option.series[0].data = res['query_result']['data']['rows'].map(function (item) {
+          //   return {
+          //     name: item[x_field],
+          //     value: item[y_fields[0]]
+          //   }
+          // })
+          for (var j = 0; j < option.series.length; j++) {
+            option.series[j].data = res['query_result']['data']['rows'].map(function (item) {
+              return {
+                name: item[x_field],
+                value: item[y_fields[0]]
+              }
+            })
+          }
         }
         chart.setOption(option)
         window.addEventListener("resize", function () {

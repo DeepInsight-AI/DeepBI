@@ -47,6 +47,7 @@ class ChartPresenterAgent(ConversableAgent):
         code_execution_config: Optional[Union[Dict, bool]] = False,
         openai_proxy: Optional[str] = None,
         use_cache: Optional[bool] = True,
+        function_call_name: Optional[str] = None,
         **kwargs,
     ):
         """
@@ -78,6 +79,7 @@ class ChartPresenterAgent(ConversableAgent):
             use_cache=use_cache,
             **kwargs,
         )
+        self.function_call_name = function_call_name
 
     async def generate_reply(
         self,
@@ -121,12 +123,6 @@ class ChartPresenterAgent(ConversableAgent):
             messages = self._oai_messages[sender]
         # print("messages: ", messages)
 
-        if messages[-1].get("role") == "function":
-            message_content = messages[-1].get("content")
-            # print("message :", message)
-            # print(colored("*" * 80, "green"), flush=True)
-            return message_content
-
         for reply_func_tuple in self._reply_func_list:
             reply_func = reply_func_tuple["reply_func"]
             if exclude and reply_func in exclude:
@@ -140,20 +136,11 @@ class ChartPresenterAgent(ConversableAgent):
                     final, reply = reply_func(self, messages=messages, sender=sender,
                                               config=reply_func_tuple["config"])
 
-                print(self.user_name, ' final : ', final)
-                print(self.user_name, 'reply : ', reply)
+                # print(self.user_name, ' final : ', final)
+                # print(self.user_name, 'reply : ', reply)
 
                 if final:
-                    # ***** Suggested function Call: task_base *****
-                    # Arguments:
-                    # {"qustion_message":"\nWhat is the most common house layout in the dataset?"}
-                    # **********************************************
                     print('messages[-1][content] :', messages[-1]['content'])
-
-                    # suggest_function = {'role': 'assistant', 'content': None, 'function_call': {'name': 'task_base',
-                    #                                                          'arguments': '{"qustion_message":"\\nWhat is the most common house layout in the dataset?"}'}}
-
-                    # {"qustion_message": " """ + str(messages[-1]['content']) + """"}
 
                     if not str(reply).__contains__('function_call'):
                         try:

@@ -157,7 +157,7 @@ class AgentInstanceUtil:
                             },
                             "data_name": {
                                 "type": "string",
-                                "description": "Annotations for MySQL code generated data. Generally, it is the name of the chart or report, and supports Chinese. If a name is specified in the question, the given name is used.",
+                                "description": "Annotations for MySQL code generated data. Generally, it is the name of the chart or report, and supports Chinese. If a name is specified in the question, use the given name, otherwise generate a suitable name. ",
                             }
                         },
                         "required": ["mysql_code_str", "data_name"],
@@ -237,10 +237,12 @@ class AgentInstanceUtil:
 
     def get_agent_chart_presenter(self):
         """chart designer"""
+        function_call_name = "bi_run_chart_code"
+
         chart_llm_config = {
             "functions": [
                 {
-                    "name": "bi_run_chart_code",
+                    "name": function_call_name,
                     "description": "Convert data into chart",
                     "parameters": {
                         "type": "object",
@@ -284,6 +286,8 @@ class AgentInstanceUtil:
                      ''',
             user_name=self.user_name,
             openai_proxy=self.openai_proxy,
+            function_call_name=function_call_name,
+
         )
         return chart_presenter
 

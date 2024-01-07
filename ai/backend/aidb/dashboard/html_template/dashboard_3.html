@@ -272,12 +272,14 @@
             })
           }
       } else if (query_result[i].chart_type == 'pie') {
-        option.series[0].data = res['query_result']['data']['rows'].map(function (item) {
-          return {
-            name: item[x_field],
-            value: item[y_fields[0]]
+        for (var j = 0; j < option.series.length; j++) {
+            option.series[j].data = res['query_result']['data']['rows'].map(function (item) {
+              return {
+                name: item[x_field],
+                value: item[option.series[j].name]
+              }
+            })
           }
-        })
       }
       chart.setOption(option)
       window.addEventListener("resize", function () {

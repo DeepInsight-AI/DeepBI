@@ -277,7 +277,7 @@ This is an ECharts line chart example.
     xAxis: [
       {
         type: 'category',
-        data: [],
+         data: ['2023/01','2023/02','2023/03','2023/04','2023/05','2023/06','2023/07','2023/08','2023/09','2023/10','2023/11','2023/12'],
         boundaryGap: false,
         axisTick:{
           show:false
@@ -349,7 +349,7 @@ This is an ECharts line chart example.
 
 		    }
 		},
-        data: []
+        data: [140, 232, 101, 264, 90, 340, 250, 232, 101, 264, 90, 340]
       }
     ]
 

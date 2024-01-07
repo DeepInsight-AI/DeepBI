@@ -3,7 +3,6 @@ import re
 import json
 from ai.backend.util.write_log import logger
 import traceback
-import ast
 from ai.backend.util.token_util import num_tokens_from_messages
 from ai.backend.base_config import request_timeout, max_retry_times, language_chinese, \
     language_english, \
@@ -11,9 +10,9 @@ from ai.backend.base_config import request_timeout, max_retry_times, language_ch
     csv_file_path, python_base_dependency, default_language_mode
 from ai.agents.prompt import CSV_ECHART_TIPS_MESS, \
     MYSQL_ECHART_TIPS_MESS, MYSQL_MATPLOTLIB_TIPS_MESS, POSTGRESQL_ECHART_TIPS_MESS
-from ai.agents.agentchat import UserProxyAgent, GroupChat, AssistantAgent, GroupChatManager, \
-    PythonProxyAgent, BIProxyAgent, HumanProxyAgent, TaskPlannerAgent, TaskSelectorAgent, CheckAgent
-from ai.backend.util import base_util
+from ai.agents.agentchat import (UserProxyAgent, GroupChat, AssistantAgent, GroupChatManager,
+                                 PythonProxyAgent, BIProxyAgent, TaskPlannerAgent, TaskSelectorAgent, CheckAgent,
+                                 ChartPresenterAgent)
 
 
 class AgentInstanceUtil:
@@ -259,7 +258,8 @@ class AgentInstanceUtil:
             "request_timeout": request_timeout,
         }
 
-        chart_presenter = AssistantAgent(
+        # chart_presenter = AssistantAgent(
+        chart_presenter = ChartPresenterAgent(
             name="chart_presenter",
             llm_config=chart_llm_config,
             system_message='''You are a chart data presenter, and your task is to choose the appropriate presentation method for the data.
@@ -281,8 +281,59 @@ class AgentInstanceUtil:
                          {"globalSeriesType": "table", "columnMapping": ""}
                       ]
 
-                      Reply "TERMINATE" in the end when everything is done.
                      ''',
+            user_name=self.user_name,
+            openai_proxy=self.openai_proxy,
+        )
+        return chart_presenter
+
+    def get_agent_chart_presenter_old(self):
+        """chart designer"""
+        chart_llm_config = {
+            "functions": [
+                {
+                    "name": "bi_run_chart_code",
+                    "description": "Convert data into chart",
+                    "parameters": {
+                        "type": "object",
+                        "properties": {
+                            "chart_code_str": {
+                                "type": "string",
+                                "description": "chart json code ",
+                            }
+                        },
+                        "required": ["chart_code_str"],
+                    },
+                }
+            ],
+            "config_list": self.config_list_gpt4_turbo,
+            "request_timeout": request_timeout,
+        }
+
+        chart_presenter = AssistantAgent(
+            name="chart_presenter",
+            llm_config=chart_llm_config,
+            system_message='''You are a chart data presenter, and your task is to choose the appropriate presentation method for the data.
+                      There are currently several types of charts that can be used, including line, column, area, pie, scanner, bubble, heatmap, box, and table.
+                      For example, selecting a set of data to display in a column chart format and specifying the x and y axis data.
+                      Usually, there can only be one set of x-axis data, while there can be multiple sets of y-axis data.
+                      Hand over your code to the Executor for execution.
+                      There can only be x-axis and y-axis mappings in columnMapping
+                      In columnMapping, some or all data can be mapped.
+                      There can only be one mapping on the x-axis, such as {"mon": "x"}.
+                      There can be one or more mappings on the y-axis, such as {"prao": "y", "prbo": "y"}.
+                      The output should be formatted as a JSON instance that conforms to the JSON schema below, the JSON is a list of dict,
+                       [
+                           {"globalSeriesType":"box","columnMapping":{"mon":"x","prao":"y","prbo":"y","prco":"y"}}
+                       ].
+
+                       If there is no suitable chart, or if the user requests a table, use the table to display, and the returned results are as follows:
+                       [
+                          {"globalSeriesType": "table", "columnMapping": ""}
+                       ]
+
+                       Reply "TERMINATE" in the end when everything is done.
+                      ''',
             user_name=self.user_name,
             openai_proxy=self.openai_proxy,
         )

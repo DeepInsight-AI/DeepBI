@@ -3,6 +3,14 @@ from typing import Callable, Dict, List, Optional, Union
 from ai.backend.util.write_log import logger
 from .conversable_agent import ConversableAgent
 from .agent import Agent
+from ai.agents.code_utils import (
+    DEFAULT_MODEL,
+    UNKNOWN,
+    execute_code,
+    extract_code,
+    infer_lang,
+    append_report_logger,
+)
 
 
 class ChartPresenterAgent(ConversableAgent):
@@ -147,16 +155,20 @@ class ChartPresenterAgent(ConversableAgent):
                     # suggest_function = {'role': 'assistant', 'content': None, 'function_call': {'name': 'task_base',
                     #                                                          'arguments': '{"qustion_message":"\\nWhat is the most common house layout in the dataset?"}'}}
 
-                    suggest_function = {'role': 'assistant', 'content': None, 'function_call': {'name': reply,
-                                                                                                'arguments': '{"qustion_message":"' + str(
-                                                                                                    messages[-1][
-                                                                                                        'content']) + '"}'}}
-
                     # {"qustion_message": " """ + str(messages[-1]['content']) + """"}
 
                     print('reply : ', reply)
 
-                    # return reply
-                    return suggest_function
+                    code_blocks = extract_code(reply)
+                    if len(code_blocks) == 1 and code_blocks[0][0] == 'json':
+                        suggest_function = {'role': 'assistant', 'content': None,
+                                            'function_call': {'name': 'bi_run_chart_code',
+                                                              'arguments': '{"qustion_message":"' + str(
+                                                                  code_blocks[0][
+                                                                      1]) + '"}'}}
+                        return suggest_function
+
+                    return reply
+                    # return suggest_function
         # return messages
         return self._default_auto_reply

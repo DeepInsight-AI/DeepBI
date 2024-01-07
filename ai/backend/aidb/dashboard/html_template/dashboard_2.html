@@ -159,7 +159,7 @@
             option.series[j].data = res['query_result']['data']['rows'].map(function (item) {
               return {
                 name: item[x_field],
-                value: item[option.series[j].name]
+                value: item[y_fields[0]]
               }
             })
           }

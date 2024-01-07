@@ -169,7 +169,7 @@ class ReportMysql(Report):
 
                 num_tokens = num_tokens_from_messages(message, model='gpt-4')
                 print("num_tokens : ", num_tokens)
-                if num_tokens < 20000:
+                if num_tokens < 10000:
                     error_times = 0
                     for i in range(max_retry_times):
                         try:

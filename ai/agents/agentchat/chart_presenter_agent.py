@@ -3,6 +3,9 @@ from typing import Callable, Dict, List, Optional, Union
 from ai.backend.util.write_log import logger
 from .conversable_agent import ConversableAgent
 from .agent import Agent
+import traceback
+import json
+import re
 
 
 class ChartPresenterAgent(ConversableAgent):
@@ -44,6 +47,7 @@ class ChartPresenterAgent(ConversableAgent):
         code_execution_config: Optional[Union[Dict, bool]] = False,
         openai_proxy: Optional[str] = None,
         use_cache: Optional[bool] = True,
+        function_call_name: Optional[str] = None,
         **kwargs,
     ):
         """
@@ -75,6 +79,7 @@ class ChartPresenterAgent(ConversableAgent):
             use_cache=use_cache,
             **kwargs,
         )
+        self.function_call_name = function_call_name
 
     async def generate_reply(
         self,
@@ -118,12 +123,6 @@ class ChartPresenterAgent(ConversableAgent):
             messages = self._oai_messages[sender]
         # print("messages: ", messages)
 
-        if messages[-1].get("role") == "function":
-            message_content = messages[-1].get("content")
-            # print("message :", message)
-            # print(colored("*" * 80, "green"), flush=True)
-            return message_content
-
         for reply_func_tuple in self._reply_func_list:
             reply_func = reply_func_tuple["reply_func"]
             if exclude and reply_func in exclude:
@@ -137,26 +136,40 @@ class ChartPresenterAgent(ConversableAgent):
                     final, reply = reply_func(self, messages=messages, sender=sender,
                                               config=reply_func_tuple["config"])
 
+                # print(self.user_name, ' final : ', final)
+                # print(self.user_name, 'reply : ', reply)
+
                 if final:
-                    # ***** Suggested function Call: task_base *****
-                    # Arguments:
-                    # {"qustion_message":"\nWhat is the most common house layout in the dataset?"}
-                    # **********************************************
                     print('messages[-1][content] :', messages[-1]['content'])
 
-                    # suggest_function = {'role': 'assistant', 'content': None, 'function_call': {'name': 'task_base',
-                    #                                                          'arguments': '{"qustion_message":"\\nWhat is the most common house layout in the dataset?"}'}}
+                    if not str(reply).__contains__('function_call'):
+                        try:
+                            code_blocks = self.find_extract_code(reply)
+                            if len(code_blocks) == 1 and code_blocks[0][0] == 'json':
+                                arguments = {"chart_code_str": code_blocks[0][1]}
 
-                    suggest_function = {'role': 'assistant', 'content': None, 'function_call': {'name': reply,
-                                                                                                'arguments': '{"qustion_message":"' + str(
-                                                                                                    messages[-1][
-                                                                                                        'content']) + '"}'}}
+                                suggest_function = {'role': 'assistant', 'content': None,
+                                                    'function_call': {'name': 'bi_run_chart_code',
+                                                                      'arguments': json.dumps(arguments)}}
+                                return suggest_function
+                        except Exception as e:
+                            traceback.print_exc()
 
-                    # {"qustion_message": " """ + str(messages[-1]['content']) + """"}
-
-                    print('reply : ', reply)
-
-                    # return reply
-                    return suggest_function
+                    return reply
+                    # return suggest_function
         # return messages
         return self._default_auto_reply
+
+    def find_extract_code(self, text: str):
+        code_pattern = re.compile(r"`{3}(\w+)?\s*([\s\S]*?)`{3}|`([^`]+)`")
+        code_blocks = code_pattern.findall(text)
+
+        # Extract the individual code blocks and languages from the matched groups
+        extracted = []
+        for lang, group1, group2 in code_blocks:
+            if group1:
+                extracted.append((lang.strip(), group1.strip()))
+            elif group2:
+                extracted.append(("", group2.strip()))
+
+        return extracted

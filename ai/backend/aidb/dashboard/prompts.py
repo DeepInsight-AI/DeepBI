@@ -104,7 +104,7 @@ option = {
     }
   ],
   series: [{
-    name: "销售量",
+    name: "",
     type: "line",
     yAxisIndex: 1,
     smooth: true,
@@ -135,10 +135,10 @@ option = {
         }
       ])
     },
-    data: [4.2, 3.5, 2.9, 7.8, 5, 3]
+    data: []
   },
     {
-      name: "业务1",
+      name: "",
       type: "bar",
       barWidth: 15,
       itemStyle: {
@@ -164,10 +164,10 @@ option = {
           borderWidth: 2
         }
       },
-      data: [4, 3, 2, 8, 3, 5]
+      data: []
     },
     {
-      name: "业务2",
+      name: "",
       type: "bar",
       barWidth: 15,
       itemStyle: {
@@ -177,7 +177,7 @@ option = {
           borderWidth: 2
         }
       },
-      data: [3, 2, 3, 5, 4, 3]
+      data: []
     }
   ]
 };
@@ -227,13 +227,7 @@ option = {
             shadowBlur: 20
          },
          data: [
-            { value: 648, name: 'Search Engine' },
-            { value: 535, name: 'Direct' },
-            { value: 500, name: 'Email' },
-            { value: 484, name: 'Union Ads' },
-            { value: 400, name: 'Video Ads' },
-            { value: 366, name: 'Audio Ads' }
-
+            { value: 648, name: 'Search Engine' }
          ],
          labelLine: {
             show: true,
@@ -283,7 +277,7 @@ This is an ECharts line chart example.
     xAxis: [
       {
         type: 'category',
-        data: ['2023/01','2023/02','2023/03','2023/04','2023/05','2023/06','2023/07','2023/08','2023/09','2023/10','2023/11','2023/12'],
+        data: [],
         boundaryGap: false,
         axisTick:{
           show:false
@@ -355,7 +349,7 @@ This is an ECharts line chart example.
 
 		    }
 		},
-        data: [140, 232, 101, 264, 90, 340, 250, 232, 101, 264, 90, 340]
+        data: []
       }
     ]
 

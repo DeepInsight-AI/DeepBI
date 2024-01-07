@@ -172,11 +172,27 @@ Can view historical conversation records
 
 ![doc.png](/static/images/en/img/doc_21.png)
 
-#### 5.2 Share Dashboard 
+#### 5.1.2 Share Dashboard 
 
 - After clicking [Publish], you can share the dashboard
 
 ![doc.png](/static/images/en/img/doc_22.png)
+
+#### 5.2 Dashboards Prettify
+- Select an existing dashboard
+![doc.png](/static/images/en/img/doc_22_1.png)
+- Click to enter
+![doc.png](/static/images/en/img/doc_22_2.png)
+- Select the template and click Apply
+![doc.png](/static/images/en/img/doc_22_3.png)
+- Enter the beautification screen and wait for the AI automatic conversion to complete
+![doc.png](/static/images/en/img/doc_22_4.png)
+![doc.png](/static/images/en/img/doc_22_5.png)
+- Conversion complete
+![doc.png](/static/images/en/img/doc_22_6.png)
+- Click to view large screen
+![doc.png](/static/images/en/img/doc_22_7.png)
+
 ## 6. Automatic Data Analysis
 
 #### 6.1 Add Analysis Task

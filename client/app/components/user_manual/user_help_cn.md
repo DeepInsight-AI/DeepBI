@@ -163,12 +163,26 @@
 
 ![doc.png](/static/images/cn/img/doc_21.png)
 
-#### 5.2 分享仪表盘 
+#### 5.1.2 分享仪表盘 
 
 - 点击【发布】后，即可分享仪表盘
 
 ![doc.png](/static/images/cn/img/doc_22.png)
 
+#### 5.2 仪表盘美化
+- 选中一个已经存在的仪表盘
+![doc.png](/static/images/cn/img/doc_22_1.png)
+- 点击进入
+![doc.png](/static/images/cn/img/doc_22_2.png)
+- 选择模板，点击应用
+![doc.png](/static/images/cn/img/doc_22_3.png)
+- 进入美化大屏，等待AI自动转换完成
+![doc.png](/static/images/cn/img/doc_22_4.png)
+![doc.png](/static/images/cn/img/doc_22_5.png)
+- 转换完成
+![doc.png](/static/images/cn/img/doc_22_6.png)
+- 点击查看大屏
+![doc.png](/static/images/cn/img/doc_22_7.png)
 
 ## 6, 自动数据分析 
 

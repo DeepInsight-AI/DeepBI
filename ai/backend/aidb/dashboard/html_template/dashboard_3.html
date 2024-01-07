@@ -193,16 +193,10 @@
 </script>
 
 <script>
-  function decodeEntities(encodedString) {
-      var textArea = document.createElement('textarea');
-      textArea.innerHTML = encodedString;
-      return textArea.value;
-    }
   function getDashboardData() {
   return new Promise((resolve, reject) => {
     var DashboardData = document.getElementById("query_result").innerHTML;
     DashboardData = eval('(' + DashboardData + ')');
-    DashboardData=decodeEntities(DashboardData);
     var dashboard_id = document.getElementById('dashboardId').innerHTML;
     $.ajax({
       url: '/api/dashboards/' + dashboard_id,

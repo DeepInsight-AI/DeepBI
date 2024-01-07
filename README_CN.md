@@ -55,6 +55,11 @@ DeepBI 支持的数据库连接有:
 - PostgreSQL
 - csv/Excel导入
 
+## 📦 Windows exe 安装文件安装
+- 下载最新版本的 ```window_install_exe_CN.zip``` 安装包. <a href="https://github.com/DeepInsight-AI/DeepBI/releases">点击这里去下载</a>，目前测试支持 Win10 Win11
+- 解压zip 文件后,双击运行.exe 文件安装即可。
+- 本地安装版本说明 [PDF 使用说明下载](./user_manual/exe安装.pdf)
+
 ## 📦 Docker 安装和DeepBI部署
 
 按照 [使用 Docker 安装](Docker_install_CN.md) 中对应自己的系统操作步骤操作，最后获取DeepBI网址，即可使用
@@ -82,10 +87,7 @@ git clone http://github.com/DeepInsight-AI/DeepBI.git
     完成安装后, 请看上面的使用说明进行设置和使用
 - 查看本机IP ```ifconfig | grep -Eo 'inet (addr:)?([0-9]*\.){3}[0-9]*' | grep -vE '^inet 127(\.[0-9]{1,3}){3}'```
 
-## 📦 Windows exe 安装文件安装
-- 下载最新版本的 ```window_install_exe_CN.zip``` 安装包. <a href="https://github.com/DeepInsight-AI/DeepBI/releases">点击这里去下载</a>
-- 解压zip 文件后,双击运行.exe 文件安装即可。
-- 安装使用参考  [PDF 使用说明下载](./user_manual/exe安装.pdf)
+
 
 ## Contact Us
 

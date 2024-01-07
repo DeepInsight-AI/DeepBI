@@ -1,4 +1,4 @@
-#DeepBI windows exe 本地安装版本 说明
+#DeepBI windows exe 本地安装版本说明
 
 1. 软件下载， 点击这里去下载
  ![docker_err.jpg](user_manual/cn/exe/1.jpg)
@@ -24,4 +24,4 @@
 11. 重新启动服务
  ![docker_err.jpg](user_manual/cn/exe/12.jpg)
 
-- 以上就是 DeepBI安装过程，使用说明，请点击这里
+- 以上就是 DeepBI安装过程，使用说明，请点击 [DeepBI 在线使用说明](client/app/assets/images/cn/user_manual_cn.md)

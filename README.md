@@ -97,8 +97,9 @@ git clone http://github.com/DeepInsight-AI/DeepBI.git
 
 
 ## 📦 Windows exe installation
-- Download ```window_install_exe_EN.zip``` from the <a href="https://github.com/DeepInsight-AI/DeepBI/releases">tag list</a>.
+- Download ```window_install_exe_EN.zip``` from the <a href="https://github.com/DeepInsight-AI/DeepBI/releases">tag list</a>.The current test supports Win10 and Win11
 - Unzip the zip package and double-click the.exe file to run DeepBI
+- Local installation instructions
 
 ## Contact Us
 <a><img src="https://github.com/DeepInsight-AI/DeepBI/assets/151519374/b0ba1fc3-8c71-4bf7-bd53-ecf17050581a" width="40%"/></a>

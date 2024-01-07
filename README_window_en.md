@@ -23,5 +23,5 @@
  ![docker err.jpg](user_manual/en/exe/11.jpg)
 11. Restart service
  ![docker err.jpg](user_manual/en/exe/12.jpg)
-- Above is DeepBI installation process, use instructions, please click here
+- Above is DeepBI installation process, use instructions, [DeepBI user manual](client/app/assets/images/en/user_manual_en.md)
 

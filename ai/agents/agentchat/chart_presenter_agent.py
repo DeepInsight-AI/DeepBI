@@ -146,6 +146,9 @@ class ChartPresenterAgent(ConversableAgent):
                     final, reply = reply_func(self, messages=messages, sender=sender,
                                               config=reply_func_tuple["config"])
 
+                print(self.user_name, ' final : ', final)
+                print(self.user_name, 'reply : ', reply)
+
                 if final:
                     # ***** Suggested function Call: task_base *****
                     # Arguments:
@@ -158,7 +161,6 @@ class ChartPresenterAgent(ConversableAgent):
 
                     # {"qustion_message": " """ + str(messages[-1]['content']) + """"}
 
-                    print('reply : ', reply)
                     if not str(reply).__contains__('function_call'):
                         try:
                             code_blocks = extract_code(reply)

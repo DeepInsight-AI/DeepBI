@@ -3,15 +3,9 @@ from typing import Callable, Dict, List, Optional, Union
 from ai.backend.util.write_log import logger
 from .conversable_agent import ConversableAgent
 from .agent import Agent
-from ai.agents.code_utils import (
-    DEFAULT_MODEL,
-    UNKNOWN,
-    execute_code,
-    extract_code,
-    infer_lang,
-    append_report_logger,
-)
 import traceback
+import json
+import re
 
 
 class ChartPresenterAgent(ConversableAgent):
@@ -163,13 +157,13 @@ class ChartPresenterAgent(ConversableAgent):
 
                     if not str(reply).__contains__('function_call'):
                         try:
-                            code_blocks = extract_code(reply)
+                            code_blocks = self.find_extract_code(reply)
                             if len(code_blocks) == 1 and code_blocks[0][0] == 'json':
+                                arguments = {"chart_code_str": code_blocks[0][1]}
+
                                 suggest_function = {'role': 'assistant', 'content': None,
                                                     'function_call': {'name': 'bi_run_chart_code',
-                                                                      'arguments': '{"chart_code_str":"' + str(
-                                                                          code_blocks[0][
-                                                                              1]) + '"}'}}
+                                                                      'arguments': json.dumps(arguments)}}
                                 return suggest_function
                         except Exception as e:
                             traceback.print_exc()
@@ -178,3 +172,17 @@ class ChartPresenterAgent(ConversableAgent):
                     # return suggest_function
         # return messages
         return self._default_auto_reply
+
+    def find_extract_code(self, text: str):
+        code_pattern = re.compile(r"`{3}(\w+)?\s*([\s\S]*?)`{3}|`([^`]+)`")
+        code_blocks = code_pattern.findall(text)
+
+        # Extract the individual code blocks and languages from the matched groups
+        extracted = []
+        for lang, group1, group2 in code_blocks:
+            if group1:
+                extracted.append((lang.strip(), group1.strip()))
+            elif group2:
+                extracted.append(("", group2.strip()))
+
+        return extracted

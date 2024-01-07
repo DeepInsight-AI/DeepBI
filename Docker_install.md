@@ -49,7 +49,7 @@ sudo ln -s /usr/bin/docker-compose /usr/local/bin/docker-compose
 - Start the docker command ```sudo service docker start```
 - Check the docker running status command``` service docker status``` It should be "active (running)"
 - Install network management commands```sudo apt install net-tools```
-- Download the DeepBi code by the command :
+- Download the DeepBI code by the command :
 ```
 git clone https://github.com/DeepInsight-AI/DeepBI.git
 ```
@@ -58,17 +58,17 @@ If the download fails to replace the protocol, run the following code
 git clone http://github.com/DeepInsight-AI/DeepBI.git
  ```
 - During the installation process, you will be prompted to choose an IP address. Select an internal IP starting with 172.x.x.x
-- Run the command ```cd DeepBi```  to the corresponding folder and run install file ```sudo ./install.sh```
+- Run the command ```cd DeepBI```  to the corresponding folder and run install file ```sudo ./install.sh```
 - Run the command:```sudo ./Install_cn.sh ``` to start the installation.
 - After the installation is complete, there will be a URL prompt. Open it directly in your browser.
-  (Note: *Closing the command prompt window will result in no access to the DeepBi URL.
-  To use DeepBi again, open "Command Prompt" window "Run as Administrator"
+  (Note: *Closing the command prompt window will result in no access to the DeepBI URL.
+  To use DeepBI again, open "Command Prompt" window "Run as Administrator"
   ```
    1.Run command "wsl"
-   2.Run command“cd DeepBi”
+   2.Run command“cd DeepBI”
    3.Run command“sudo docker-compose start”
   ```
-   You can then open your DeepBi URL in the browser [URLs are in the format http://‘local machine's internal IP address’:8338]
+   You can then open your DeepBI URL in the browser [URLs are in the format http://‘local machine's internal IP address’:8338]
 
 
 - If you need to obtain the WSL internal IP address again: ``` ifconfig | grep -Eo 'inet (addr:)?([0-9]*\.){3}[0-9]*' | grep -vE '^inet 127(\.[0-9]{1,3}){3}' ```

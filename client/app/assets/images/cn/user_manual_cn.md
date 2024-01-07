@@ -181,17 +181,28 @@ Languages：中文  [English](../en/user_manual_en.md)  [中文PDF 使用说明�
 
 <h4 align="left">5.2 仪表盘美化 </h4>
 - 选中一个已经存在的仪表盘
+
 ![doc.png](img/doc_22_1.png)
+
 - 点击进入
+
 ![doc.png](img/doc_22_2.png)
+
 - 选择模板，点击应用
+
 ![doc.png](img/doc_22_3.png)
+
 - 进入美化大屏，等待AI自动转换完成
+
 ![doc.png](img/doc_22_4.png)
 ![doc.png](img/doc_22_5.png)
+
 - 转换完成
+
 ![doc.png](img/doc_22_6.png)
+
 - 点击查看大屏
+
 ![doc.png](img/doc_22_7.png)
 
 <h2 align="left">6, 自动数据分析 </h2>

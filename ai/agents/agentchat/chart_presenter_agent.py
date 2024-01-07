@@ -5,7 +5,7 @@ from .conversable_agent import ConversableAgent
 from .agent import Agent
 
 
-class TaskSelectorAgent(ConversableAgent):
+class ChartPresenterAgent(ConversableAgent):
     """(In preview) A class for generic conversable agents which can be configured as assistant or user proxy.
 
     After receiving each message, the agent will send a reply to the sender unless the msg is a termination msg.

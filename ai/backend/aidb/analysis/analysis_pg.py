@@ -6,7 +6,7 @@ from ai.backend.util import database_util
 from .analysis import Analysis
 import re
 import ast
-from ai.agents.agentchat import TaskSelectorAgent
+from ai.agents.agentchat import AssistantAgent
 from ai.backend.util import base_util
 
 language_chinese = CONFIG.language_chinese
@@ -153,7 +153,7 @@ class AnalysisPostgresql(Analysis):
 
     def get_agent_base_postgresql_assistant(self):
         """ Basic Agent, processing postgresql data source"""
-        base_postgresql_assistant = TaskSelectorAgent(
+        base_postgresql_assistant = AssistantAgent(
             name="base_postgresql_assistant",
             system_message="""You are a helpful AI assistant.
                          Solve tasks using your coding and language skills.

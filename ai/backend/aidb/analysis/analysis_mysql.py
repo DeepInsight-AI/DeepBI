@@ -6,7 +6,7 @@ from ai.backend.util import database_util
 from .analysis import Analysis
 import re
 import ast
-from ai.agents.agentchat import TaskSelectorAgent
+from ai.agents.agentchat import AssistantAgent
 from ai.backend.util import base_util
 
 max_retry_times = CONFIG.max_retry_times
@@ -153,7 +153,7 @@ class AnalysisMysql(Analysis):
 
     def get_agent_base_mysql_assistant(self):
         """ Basic Agent, processing mysql data source """
-        base_mysql_assistant = TaskSelectorAgent(
+        base_mysql_assistant = AssistantAgent(
             name="base_mysql_assistant",
             system_message="""You are a helpful AI assistant.
                   Solve tasks using your coding and language skills.

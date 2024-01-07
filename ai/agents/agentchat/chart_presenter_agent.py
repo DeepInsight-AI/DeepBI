@@ -11,6 +11,7 @@ from ai.agents.code_utils import (
     infer_lang,
     append_report_logger,
 )
+import traceback
 
 
 class ChartPresenterAgent(ConversableAgent):
@@ -158,15 +159,18 @@ class ChartPresenterAgent(ConversableAgent):
                     # {"qustion_message": " """ + str(messages[-1]['content']) + """"}
 
                     print('reply : ', reply)
-
-                    code_blocks = extract_code(reply)
-                    if len(code_blocks) == 1 and code_blocks[0][0] == 'json':
-                        suggest_function = {'role': 'assistant', 'content': None,
-                                            'function_call': {'name': 'bi_run_chart_code',
-                                                              'arguments': '{"qustion_message":"' + str(
-                                                                  code_blocks[0][
-                                                                      1]) + '"}'}}
-                        return suggest_function
+                    if not str(reply).__contains__('function_call'):
+                        try:
+                            code_blocks = extract_code(reply)
+                            if len(code_blocks) == 1 and code_blocks[0][0] == 'json':
+                                suggest_function = {'role': 'assistant', 'content': None,
+                                                    'function_call': {'name': 'bi_run_chart_code',
+                                                                      'arguments': '{"chart_code_str":"' + str(
+                                                                          code_blocks[0][
+                                                                              1]) + '"}'}}
+                                return suggest_function
+                        except Exception as e:
+                            traceback.print_exc()
 
                     return reply
                     # return suggest_function

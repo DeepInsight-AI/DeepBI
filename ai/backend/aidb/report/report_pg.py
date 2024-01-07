@@ -4,7 +4,6 @@ from ai.backend.util.write_log import logger
 import traceback
 from ai.backend.base_config import CONFIG
 from ai.backend.util import database_util
-from ai.agents.agentchat import HumanProxyAgent, TaskSelectorAgent
 
 max_retry_times = CONFIG.max_retry_times
 from ai.backend.util.token_util import num_tokens_from_messages

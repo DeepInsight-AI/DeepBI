@@ -18,7 +18,7 @@ import { policy } from "@/services/policy";
 import recordEvent from "@/services/recordEvent";
 import { durationHumanize } from "@/lib/utils";
 import { DashboardStatusEnum } from "../hooks/useDashboard";
-
+import StepModal from "@/pages/testdialogue/components/StepModal/StepModal";
 import "./DashboardHeader.less";
 
 function getDashboardTags() {
@@ -124,7 +124,7 @@ function DashboardMoreOptionsButton({ dashboardConfiguration }) {
   const archive = () => {
     Modal.confirm({
       title: window.W_L.dashboard_archived,
-      content: window.W_L.are_you_sure+ ` "${dashboard.name}" `+ window.W_L.dashboard_archived,
+      content: window.W_L.are_you_sure + ` "${dashboard.name}" ` + window.W_L.dashboard_archived,
       okText: window.W_L.ok_text,
       cancelText: window.W_L.cancel,
       okType: "danger",
@@ -185,16 +185,25 @@ function DashboardControl({ dashboardConfiguration, headerExtra }) {
   const canShareDashboard = canEditDashboard && !dashboard.is_draft;
   const showShareButton = !clientConfig.disablePublicUrls && (dashboard.publicAccessEnabled || canShareDashboard);
   const showMoreOptionsButton = canEditDashboard;
-
+  const stepModalRef = React.useRef();
+  const openStepModal = () => {
+    if (stepModalRef.current) {
+      stepModalRef.current.openModal();
+    }
+  };
   const unarchiveDashboard = () => {
     recordEvent("unarchive", "dashboard", dashboard.id);
     updateDashboard({ is_archived: false }, false);
   };
   return (
     <div className="dashboard-control">
+      <StepModal ref={stepModalRef} dashboardId={dashboard.id} />
       {dashboard.can_edit && dashboard.is_archived && <Button onClick={unarchiveDashboard}>Unarchive</Button>}
       {!dashboard.is_archived && (
         <span className="hidden-print">
+          <Button className="m-r-5" onClick={openStepModal}>
+              <span className="fa fa-magic m-r-5" /> {window.W_L.prettify_dashboard}
+          </Button>
           {showPublishButton && (
             <Button className="m-r-5 hidden-xs" onClick={togglePublished}>
               <span className="fa fa-paper-plane m-r-5" /> {window.W_L.publish}

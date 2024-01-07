@@ -23,6 +23,34 @@ class Report(AIDB):
 
     def get_agent_select_report_assistant(self):
         """select_report_assistant"""
+        function_names = ['task_generate_report', 'task_base']
+        function_select = f"Read the conversation above. Then select the type of task from {function_names}. Only the task type is returned.",
+
+        task_message = {
+            'task_generate_report': 'chart generation task, The user ask that the data be finally displayed in the form of a chart.If the question does not clearly state that a  chart is to be generated, it does not belong to this task.',
+            'task_base': 'base task'
+        }
+
+        select_report_assistant = TaskSelectorAgent(
+            name="select_report_assistant",
+            system_message="""You are a helpful AI assistant.
+                     Divide the questions raised by users into corresponding task types.
+                     Different tasks have different processing methods.
+                     Task types are generally divided into the following categories:
+                      """ + str(task_message) + '\n' + str(function_select),
+            human_input_mode="NEVER",
+            user_name=self.user_name,
+            websocket=self.websocket,
+            llm_config={
+                "config_list": self.agent_instance_util.config_list_gpt4_turbo,
+                "request_timeout": CONFIG.request_timeout,
+            },
+            openai_proxy=self.agent_instance_util.openai_proxy,
+        )
+        return select_report_assistant
+
+    def get_agent_select_report_assistant_old(self):
+        """select_report_assistant"""
         select_report_assistant = TaskSelectorAgent(
             name="select_report_assistant",
             system_message="""You are a helpful AI assistant.
@@ -33,7 +61,7 @@ class Report(AIDB):
                      - base tasks: analyze existing data and draw conclusions about the given problem.
 
                  Reply "TERMINATE" in the end when everything is done.
-                      """ + '\n' + self.agent_instance_util.base_mysql_info,
+                      """,
             human_input_mode="NEVER",
             user_name=self.user_name,
             websocket=self.websocket,
@@ -81,14 +109,13 @@ class Report(AIDB):
 
         await user_proxy.initiate_chat(
             base_mysql_assistant,
-            message=self.agent_instance_util.base_message + '\n' + self.question_ask + '\n' + str(q_str),
+            # message=self.agent_instance_util.base_message + '\n' + self.question_ask + '\n' + str(q_str),
+            message=str(q_str),
         )
-
 
     async def task_base(self, qustion_message):
         """ Task type: base question """
         return self.error_no_report_question
-
 
     async def task_generate_report(self, qustion_message):
         return self.qustion_message

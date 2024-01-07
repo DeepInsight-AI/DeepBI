@@ -12,7 +12,7 @@ import { axios } from "@/services/axios";
 import Link from "@/components/Link";
 import QuestionCircleOutlinedIcon from "@ant-design/icons/QuestionCircleOutlined";
 import { websocket,createWebSocket,closeWebSocket } from '../testdialogue/components/Dialogue/websocket';
-import toast, { Toaster } from 'react-hot-toast';
+import toast from 'react-hot-toast';
 
 const SettingsOpenKey = () => {
     const [form] = Form.useForm();
@@ -42,7 +42,7 @@ const SettingsOpenKey = () => {
   useEffect(() => {
     getOpenKey();
   }, [getOpenKey]);
-  const handOpenKey = ()=>{
+  const handOpenKey = (values,callback)=>{
     const data ={
       in_use: aiOption,
       OpenAI: {
@@ -58,6 +58,10 @@ const SettingsOpenKey = () => {
     }
     axios.post("/api/ai_token",data).then((res) => {
       if(res.code===200){
+        if(callback){
+          callback(values)
+          return
+        }
         toast.success(window.W_L.save_success)
         closeWebSocket()
         getOpenKey();
@@ -83,7 +87,7 @@ const SettingsOpenKey = () => {
     if(values.ApiHost === undefined){
       values.ApiHost = '';
     }
-    handOpenKey()
+    handOpenKey(values)
   };
   const handleMessage=()=>{
     try {
@@ -98,7 +102,7 @@ const SettingsOpenKey = () => {
       setDisabled(false)
     }
   }
-  const connectTest=()=>{
+  const connectTest=(values)=>{
     
     if(!websocket){
       createWebSocket()
@@ -106,7 +110,6 @@ const SettingsOpenKey = () => {
     }
     handleMessage();
     
-    form.validateFields().then((values) => {
       setDisabled(true)
       let sendInfo={
         state:200,
@@ -119,8 +122,12 @@ const SettingsOpenKey = () => {
         }
     }
     websocket.send(JSON.stringify(sendInfo))
-  })
     
+  }
+  const handleConnectTestClick = () => {
+    form.validateFields().then((values) => {
+      handOpenKey(values, connectTest);
+    });
   }
   const handleRadioChange = e => {
     setAiOption(e.target.value);
@@ -130,7 +137,6 @@ const SettingsOpenKey = () => {
      <React.Fragment>
      <div className="row1" style={{width:"50%",margin:"auto"}}>
        {/* {! && <LoadingState className="" />} */}
-       <Toaster />
        <Form
       form={form}
       layout="vertical"
@@ -148,7 +154,7 @@ const SettingsOpenKey = () => {
       </div>
           </Form.Item>
           {aiOption === 'DeepInsight' && (
-            <Form.Item name="ApiKey" label="ApiKey" rules={[{ required: true, message: 'Please enter API key' }]}>
+            <Form.Item name="ApiKey" label="ApiKey" rules={[{ required: true, message: window.W_L.please_enter_api_key }]}>
               <Input placeholder="ApiKey" />
             </Form.Item>
           )}
@@ -188,9 +194,9 @@ const SettingsOpenKey = () => {
       </Link>
      </div>
     <div>
-    <Button disabled={disabled} style={{marginRight:"10px"}}
-      onClick={() => connectTest()}>{window.W_L.connect_test}</Button>
-      <Button disabled={disabled} htmlType="submit" type="primary">{window.W_L.apply}</Button>
+    <Button loading={disabled} style={{marginRight:"10px"}}
+      onClick={() => handleConnectTestClick()}>{window.W_L.connect_test}</Button>
+      <Button loading={disabled} htmlType="submit" type="primary">{window.W_L.apply}</Button>
     </div>
      </div>
       </Form.Item>

@@ -208,8 +208,8 @@ class Completion(openai_Completion):
         while True:
             try:
                 print('_get_response function +++++++++++++++++++')
-                print("config :", config)
-                print("config.get('api_base')", config.get('api_base'))
+                # print("config :", config)
+                # print("config.get('api_base')", config.get('api_base'))
                 if config.get('api_base') is not None:
                     # and str(config['api_base']).__contains__('apiserver.deep-thought.io')\
 
@@ -229,7 +229,7 @@ class Completion(openai_Completion):
                         "ai_name": "openai",
                         "module": config['model']
                     }
-                    print('request json : ', data)
+                    # print('request json : ', data)
 
                     # url = 'http://apiserver.deep-thought.io/proxy'
                     url = config['api_base']
@@ -841,7 +841,7 @@ class Completion(openai_Completion):
                         openai_proxy=openai_proxy,
                         **base_config,
                     )
-                    print('response: ', response)
+                    # print('response: ', response)
                     if response == -1:
                         return response
                     pass_filter = filter_func is None or filter_func(

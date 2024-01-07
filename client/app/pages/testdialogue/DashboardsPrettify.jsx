@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState,useRef } from "react";
 import routeWithUserSession from "@/components/ApplicationArea/routeWithUserSession";
 import routes from "@/services/routes";
 import Table from "antd/lib/table";
@@ -11,10 +11,12 @@ import Modal from "antd/lib/modal";
 import { axios } from "@/services/axios";
 import PageHeader from "@/components/PageHeader";
 import DeleteOutlinedIcon from "@ant-design/icons/DeleteOutlined";
-import toast, { Toaster } from 'react-hot-toast';
+import StepModal from "./components/StepModal/StepModal";
+import toast from 'react-hot-toast';
 import "./index.less";
 
 function DashboardsPrettify() {
+    const stepModalRef = useRef();
     const [DashboardsPrettifyList, setDashboardsPrettifyList] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const listColumns = [
@@ -25,9 +27,7 @@ function DashboardsPrettify() {
             align: "center",
             render: (text, item) => (
                 <React.Fragment>
-                    <Link className="table-main-title" href={"autopilot/" + item.id}>
-                        {item.report_name}
-                    </Link>
+                    <span className="table-main-title" style={{color:"#2196f3",cursor: "pointer"}} onClick={() => handleClickHtml(item)}>{item.report_name}</span>
                 </React.Fragment>
             )
         },
@@ -61,13 +61,41 @@ function DashboardsPrettify() {
             )
         }
     ];
+
+    // open html
+    const handleClickHtml = async (item) => {
+        if(item.is_generate === 2 && item.html_name){
+            const html_name = item.html_name.split(".")[0];
+            const url = window.location.protocol + "//" + window.location.host + "/pretty_dashboard/" + html_name;
+            window.open(url);
+        }else{
+            switch (item.is_generate) {
+                case 0:
+                    toast.error(window.W_L.waiting);
+                    break;
+                case 1:
+                    toast.error(window.W_L.generating);
+                    break;
+                case -1:
+                    toast.error(window.W_L.fail);
+                    break;
+                default:
+                    break;
+            }
+        }
+        // const res = await axios.get(`/api/dashboard/${id}`);
+        // if (res.code === 200) {
+        //     window.open(res.data);
+        // }
+    };
+
     const handleDelete = async (id) => {
         Modal.confirm({
             title: window.W_L.confirm_delete,
             content: window.W_L.confirm_delete_tip,
             onOk: async () => {
                 try {
-                    const res = await axios.delete(`/api/auto_pilot/delete/${id}`);
+                    const res = await axios.delete(`/api/pretty_dashboard/delete/${id}`);
                     if (res.code === 200) {
                         toast.success(window.W_L.delete_success);
                         getDashboardsPrettifyList();
@@ -85,7 +113,7 @@ function DashboardsPrettify() {
     };
     const getDashboardsPrettifyList = async () => {
         setIsLoading(true);
-        const res = await axios.get("/api/auto_pilot");
+        const res = await axios.get("/api/pretty_dashboard");
         if (res.code === 200) {
             res.data.sort(function(a,b){
                 return Date.parse(b.created_at) - Date.parse(a.created_at);
@@ -94,12 +122,15 @@ function DashboardsPrettify() {
         }
         setIsLoading(false);
     };
+    const handleClick = () => {
+        stepModalRef.current.openModal();
+    };
     useEffect(() => {
         getDashboardsPrettifyList();
     }, []);
     const pre_btn = () => {
         return (
-            <button className="dashbord_button"> <span class="text">
+            <button className="dashbord_button" onClick={handleClick}> <span class="text">
                 
 
                 <strong>大屏美化</strong>
@@ -115,13 +146,10 @@ function DashboardsPrettify() {
     }
         return (
             <div className="page-queries-list">
+                <StepModal ref={stepModalRef}></StepModal>
                 <div className="container">
-                    <Toaster />
                     <PageHeader
                         title={window.W_L.dashboards_prettify_all}
-                        actions={
-                            pre_btn()
-                        }
                     />
                     <Layout>
                         <Layout.Content>

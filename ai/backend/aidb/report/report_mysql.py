@@ -4,9 +4,7 @@ from ai.backend.util.write_log import logger
 import traceback
 from ai.backend.base_config import CONFIG
 from ai.backend.util import database_util
-import re
 from ai.backend.util.token_util import num_tokens_from_messages
-from ai.agents.agentchat import HumanProxyAgent, TaskSelectorAgent
 
 max_retry_times = CONFIG.max_retry_times
 
@@ -171,7 +169,7 @@ class ReportMysql(Report):
 
                 num_tokens = num_tokens_from_messages(message, model='gpt-4')
                 print("num_tokens : ", num_tokens)
-                if num_tokens < 20000:
+                if num_tokens < 10000:
                     error_times = 0
                     for i in range(max_retry_times):
                         try:

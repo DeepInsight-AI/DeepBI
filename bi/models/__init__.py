@@ -42,7 +42,7 @@ from bi.utils import (
 from bi.utils.configuration import ConfigurationContainer
 from bi.models.parameterized_query import ParameterizedQuery
 
-from .base import db, gfk_type, Column, GFKBase, SearchBaseQuery, key_type, primary_key
+from .base import db, gfk_type, Column, GFKBase, SearchBaseQuery, key_type, primary_key, ColumnNull
 from .changes import ChangeTrackingMixin, Change  # noqa
 from .mixins import BelongsToOrgMixin, TimestampMixin
 from .organizations import Organization
@@ -1086,6 +1086,65 @@ class DataReportFile(BelongsToOrgMixin, db.Model):
             "is_use": self.is_use,
             "created_at": self.created_at.strftime('%Y-%m-%d %H:%M:%S'),
             "is_generate": self.is_generate
+        }
+
+    pass
+
+
+# new Dashboard table
+@generic_repr("id", "user_id", "org_id", "report_name", "file_name", "is_use", "created_at", "is_generate", "html_name")
+class DataDashboardFile(BelongsToOrgMixin, db.Model):
+    id = primary_key("DataDashboardFile")
+    user_id = Column(key_type("User"), db.ForeignKey("users.id"))
+    users = db.relationship(User, backref="data_dashboard_file")
+    org_id = Column(key_type("Organization"), db.ForeignKey("organizations.id"))
+    organizations = db.relationship(Organization, backref="data_dashboard_file")
+    report_name = Column(db.String(255))
+    file_name = Column(db.String(255))
+    is_use = Column(db.Boolean, default=True)
+    created_at = Column(db.DateTime(True), default=db.func.now())
+    is_generate = Column(db.Integer, default=0)
+    html_name = ColumnNull(db.String(255))
+
+
+    __tablename__ = "data_dashboard_file"
+    __table_args__ = (db.Index("file_id_dashboard_name", "user_id", "file_name", unique=True),)
+
+    @classmethod
+    def have_it(cls, user_id, file_name):
+        return cls.query.filter(cls.file_name == file_name,
+                                cls.user_id == user_id).count() > 0
+
+    @classmethod
+    def file_info(cls, file_id, user_id):
+        return cls.query.filter(cls.user_id == user_id,
+                                cls.id == file_id).one()
+
+    @classmethod
+    def check_have_name(cls, source_name, user_id):
+        return cls.query.filter(cls.user_id == user_id,
+                                cls.report_name == source_name).count() > 0
+
+    @classmethod
+    def get_user_files(cls, user_id):
+        return [item.to_dict() for item in cls.query.filter(cls.user_id == user_id).distinct()]
+
+    @property
+    def filename(self):
+        return self.file_name
+
+    def to_dict(self):
+        return {
+            "id": self.id,
+            "user_id": self.user_id,
+            "org_id": self.org_id,
+            "report_name": self.report_name,
+            "file_name": self.file_name,
+            "is_use": self.is_use,
+            "created_at": self.created_at.strftime('%Y-%m-%d %H:%M:%S'),
+            "is_generate": self.is_generate,
+            "html_name": self.html_name
+
         }
 
     pass

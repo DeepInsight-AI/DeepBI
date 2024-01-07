@@ -2,7 +2,6 @@
 
 - [PDF 中文Docker安装下载](./user_manual/中文docker安装说明.pdf)
 
-
 # Windows
 - windows 11 可以直接安装
 - 注意 Windows 10 需要更新到 22H2版本及以上命令行运行<br>
@@ -34,9 +33,11 @@
  运行: wsl --list --online 查看可以安装的版本
  然后运行: wsl --install -d Ubuntu-20.04 # 这里的Ubuntu-20.04 就是版本号
 ```
-3. 打开管理员命令行，登录 WSL
-4. 运行命令```wsl```或者 ```wsl -u [username]``` username 是你之前安装的用户名
-5. 登录后，我们开始安装 docker（每行为一个命令依次运行，下同）
+
+4. 打开管理员命令行，登录 WSL
+5. 运行命令```wsl```或者 ```wsl -u [username]``` username 是你之前安装的用户名
+6. 登录后，我们开始安装 docker（每行为一个命令依次运行，下同）
+
 ```
    sudo apt update
    sudo apt install apt-transport-https ca-certificates curl software-properties-common
@@ -67,16 +68,16 @@ sudo ln -s /usr/bin/docker-compose /usr/local/bin/docker-compose
 12. 上面安装完毕docker ,以后就不用再次安装
 
 
-## 配置DeepBi
+## 配置DeepBI
 
 14. 运行命令 ```service docker status``` 确认docker是在运行 "active (running)"
-15. 然后，安装DeepBi有两种方式，任选其一 如下
+15. 然后，安装DeepBI有两种方式，任选其一 如下
 - （1）直接下载压缩包 (推荐)
 - 在WSL命令行中运行命令 : ```pwd``` 你会看到你目前的文件夹地址 比如 ```/mnt/c/Windows/system32```
-- 点击”<a href="https://github.com/DeepInsight-AI/DeepBi" target='_blank'>链接</a>“通过网页下载我们的代码 如下图
+- 点击”<a href="https://github.com/DeepInsight-AI/DeepBI" target='_blank'>链接</a>“通过网页下载我们的代码 如下图
 - ![download.png](user_manual/cn/img/download.png)
-- 解压后的文件夹 "DeepBi" 移动到  C:/Windows/system32 (也就是上面看到的文件夹地址,c表示C盘)
-- 回到WSL命令行，运行命令```cd DeepBi ```进入项目文件夹
+- 解压后的文件夹 "DeepBI" 移动到  C:/Windows/system32 (也就是上面看到的文件夹地址,c表示C盘)
+- 回到WSL命令行，运行命令```cd DeepBI ```进入项目文件夹
 - 修改权限 ```sudo chmod +x ./Install.sh```
 - 运行命令```sudo ./Install_cn.sh ``` 开始安装，安装结束后会有一个网址提示，直接浏览器访问即可
 
@@ -91,19 +92,19 @@ git clone http://github.com/DeepInsight-AI/DeepBI.git
  ```
 - 出现 ```Are you sure you want to continue connecting (yes/no/[fingerprint])? ```
 - 输入 ```yes```  回车
-- 进入项目文件夹 ```cd DeepBi ```
+- 进入项目文件夹 ```cd DeepBI ```
 - 修改权限 ```sudo chmod +x ./Install.sh```
 - 下面按安装过程会有 选择IP 的，选择内网开头的 172.x.x.x
 - 运行命令```sudo ./Install_cn.sh ``` 开始安装
 16. 安装结束后会有一个网址提示，直接浏览器访问即可<br>
-（注意*关闭命令符窗口将无法访问属于DeepBi网址
-   再次使用DeepBi，打开“命令提示符”窗口“以管理员身份运行”
+（注意*关闭命令符窗口将无法访问属于DeepBI网址
+   再次使用DeepBI，打开“命令提示符”窗口“以管理员身份运行”
   ```
    1.运行“wsl”命令
-   2.运行“cd DeepBi”命令
+   2.运行“cd DeepBI”命令
    3.运行“sudo docker-compose start”命令
   ```
-   就可以去浏览器中打开自己DeepBi网址了【网址都是http://‘本机内网IP地址’:8338】
+   就可以去浏览器中打开自己DeepBI网址了【网址都是http://‘本机内网IP地址’:8338】
    启动后关闭所有代理软件
 
  17. 如果再次向获取wsl内网ip地址 ``` ifconfig | grep -Eo 'inet (addr:)?([0-9]*\.){3}[0-9]*' | grep -vE '^inet 127(\.[0-9]{1,3}){3}' ```
@@ -114,14 +115,14 @@ git clone http://github.com/DeepInsight-AI/DeepBI.git
  19. 如果重新安装 一定先要关闭并卸载之前的容器  ```sudo docker-compose down```
 
 ## 注意事项
-- 注意*关闭命令符窗口将无法访问属于DeepBi网址
-- 再次使用DeepBi，打开“命令提示符”窗口“以管理员身份运行”
+- 注意*关闭命令符窗口将无法访问属于DeepBI网址
+- 再次使用DeepBI，打开“命令提示符”窗口“以管理员身份运行”
 ```
  1.运行“wsl”命令
- 2.运行“cd DeepBi”命令
+ 2.运行“cd DeepBI”命令
  3.运行“sudo docker-compose start”命令
 ```
-- 就可以去浏览器中打开自己DeepBi网址了【网址都是http://‘本机
+- 就可以去浏览器中打开自己DeepBI网址了【网址都是http://‘本机
 
 
 # Ubuntu
@@ -149,7 +150,7 @@ systemctl start docker
 sudo apt-get -y install apt-transport-https ca-certificates curl software-properties-common
 sudo systemctl enable docker
 ```
-## 配置DeepBi
+## 配置DeepBI
 3. 开始下载我们的代码文件
 ```
 git clone https://github.com/DeepInsight-AI/DeepBI.git
@@ -158,9 +159,9 @@ git clone https://github.com/DeepInsight-AI/DeepBI.git
 ```
 git clone http://github.com/DeepInsight-AI/DeepBI.git
 ```
-4. 解压后重命名为 "DeepBi" 然后进入目录
+4. 解压后重命名为 "DeepBI" 然后进入目录
 ```
- cd DeepBi && sudo chmod +x ./Install_CN.sh
+ cd DeepBI && sudo chmod +x ./Install_CN.sh
  . Install_CN.sh
 ```
 5. 注意上面运行的是 . Install_cn.sh
@@ -197,9 +198,9 @@ git clone http://github.com/DeepInsight-AI/DeepBI.git
 - 运行命令：```brew services start docker```
 - 检查命令：```brew services list |grep docker```
 
-## 配置DeepBi
-- 下载代码```git clone git@github.com:DeepInsight-AI/DeepBi.git```
-- 运行命令到对应文件夹 ```cd DeepBi ```
+## 配置DeepBI
+- 下载代码```git clone git@github.com:DeepInsight-AI/DeepBI.git```
+- 运行命令到对应文件夹 ```cd DeepBI ```
 - 修改权限 ```sudo chmod+x ./Install.sh```
 - 运行命令```sudo ./Install_cn.sh ``` 开始安装，安装结束后会有一个网址提示，直接浏览器访问即可
 - 从版本1.1 如果更新代码，直接拉取 新的代码```git pull```,然后重启docker即可 <br>
@@ -207,8 +208,6 @@ git clone http://github.com/DeepInsight-AI/DeepBI.git
     启动命令  ```sudo docker-compose start```<br>
     老版本 docker 容器则需要重新安装
 - 如果重新安装 一定先要关闭并卸载之前的容器  ```sudo docker-compose down```
-
-
 
 # 联系我们
 

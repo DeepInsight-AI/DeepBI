@@ -7,7 +7,7 @@ import pandas as pd
 from ai.backend.util import base_util
 import re
 import ast
-from ai.agents.agentchat import TaskSelectorAgent
+from ai.agents.agentchat import AssistantAgent
 import chardet
 
 language_chinese = CONFIG.language_chinese
@@ -315,7 +315,7 @@ class AnalysisCsv(Analysis):
 
     def get_agent_base_csv_assistant(self):
         """ Basic Agent, processing csv data source """
-        base_csv_assistant = TaskSelectorAgent(
+        base_csv_assistant = AssistantAgent(
             name="base_csv_assistant",
             system_message="""You are a helpful AI assistant.
                        Solve tasks using your coding and language skills.

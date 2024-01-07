@@ -552,7 +552,6 @@ class HumanProxyAgent(Agent):
         if reply is not None:
             await self.a_send(reply, sender, silent=silent)
 
-    # 准备聊天
     def _prepare_chat(self, recipient, clear_history):
         self.reset_consecutive_auto_reply_counter(recipient)
         recipient.reset_consecutive_auto_reply_counter(self)
@@ -852,6 +851,8 @@ class HumanProxyAgent(Agent):
                 else:
                     final, reply = reply_func(self, messages=messages, sender=sender, config=reply_func_tuple["config"])
                 if final:
+                    print('human messages[-1][content] :', messages[-1]['content'])
+
                     return reply
         return self._default_auto_reply
 

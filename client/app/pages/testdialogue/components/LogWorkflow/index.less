@@ -11,6 +11,13 @@
   cursor: default;
     // transition: all 0.5s ease-in-out;
   }
+  .log_terminal_content_div{
+    position: relative;
+    overflow: hidden;
+    height: auto;
+     margin: 8px 0;
+     background: transparent;
+  }
   .log_terminal_content{
     background-color: #000;
     border-radius: 13px;
@@ -23,7 +30,15 @@
     overflow-y: auto;
     scrollbar-width: none; /* Firefox */
     -ms-overflow-style: none;  /* Internet Explorer 10+ */
-    margin: 8px 0;
+    position: relative;
+    }
+    .copy_btn{
+      position: absolute;
+      right: 8px;
+      z-index: 99;
+      color: #cecece;
+      cursor: pointer;
+      font-size: 14px;
     }
     .log_terminal_content::-webkit-scrollbar { display: none; }
   .log-item {

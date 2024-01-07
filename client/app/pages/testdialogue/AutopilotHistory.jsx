@@ -11,7 +11,7 @@ import Modal from "antd/lib/modal";
 import { axios } from "@/services/axios";
 import PageHeader from "@/components/PageHeader";
 import  DeleteOutlinedIcon  from "@ant-design/icons/DeleteOutlined";
-import toast, { Toaster } from 'react-hot-toast';
+import toast from 'react-hot-toast';
 import "./index.less";
 
 function AutopilotHistory() {
@@ -102,7 +102,6 @@ const listColumns = [
   return (
     <div className="page-queries-list">
       <div className="container">
-      <Toaster />
         <PageHeader
           title={window.W_L.all_autopilot}
           actions={

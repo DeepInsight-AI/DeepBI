@@ -133,7 +133,8 @@ const config = {
       { from: "client/app/cdn.plot.ly_plotly-locale-zh-cn-latest.js" },
       { from: "client/app/echarts-main.js" },
       { from: "client/app/assets/css/*.css", to: "styles/", flatten: true },
-      { from: "client/app/assets/fonts", to: "fonts/" }
+      { from: "client/app/assets/fonts", to: "fonts/" },
+      { from: "client/app/assets/static", to: "prettify" }
     ]),
     isHotReloadingEnabled && new ReactRefreshWebpackPlugin({ overlay: false })
   ].filter(Boolean),

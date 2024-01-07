@@ -34,17 +34,17 @@ class TaskSelectorAgent(ConversableAgent):
         """
 
     def __init__(
-            self,
-            name: str,
-            system_message: Optional[str] = DEFAULT_SYSTEM_MESSAGE,
-            llm_config: Optional[Union[Dict, bool]] = None,
-            is_termination_msg: Optional[Callable[[Dict], bool]] = None,
-            max_consecutive_auto_reply: Optional[int] = None,
-            human_input_mode: Optional[str] = "NEVER",
-            code_execution_config: Optional[Union[Dict, bool]] = False,
-            openai_proxy: Optional[str] = None,
-            use_cache: Optional[bool] = True,
-            **kwargs,
+        self,
+        name: str,
+        system_message: Optional[str] = DEFAULT_SYSTEM_MESSAGE,
+        llm_config: Optional[Union[Dict, bool]] = None,
+        is_termination_msg: Optional[Callable[[Dict], bool]] = None,
+        max_consecutive_auto_reply: Optional[int] = None,
+        human_input_mode: Optional[str] = "NEVER",
+        code_execution_config: Optional[Union[Dict, bool]] = False,
+        openai_proxy: Optional[str] = None,
+        use_cache: Optional[bool] = True,
+        **kwargs,
     ):
         """
         Args:
@@ -77,10 +77,10 @@ class TaskSelectorAgent(ConversableAgent):
         )
 
     async def generate_reply(
-            self,
-            messages: Optional[List[Dict]] = None,
-            sender: Optional[Agent] = None,
-            exclude: Optional[List[Callable]] = None,
+        self,
+        messages: Optional[List[Dict]] = None,
+        sender: Optional[Agent] = None,
+        exclude: Optional[List[Callable]] = None,
     ) -> Union[str, Dict, None]:
         """Reply based on the conversation history and the sender.
 
@@ -138,6 +138,25 @@ class TaskSelectorAgent(ConversableAgent):
                                               config=reply_func_tuple["config"])
 
                 if final:
-                    return reply
+                    # ***** Suggested function Call: task_base *****
+                    # Arguments:
+                    # {"qustion_message":"\nWhat is the most common house layout in the dataset?"}
+                    # **********************************************
+                    print('messages[-1][content] :', messages[-1]['content'])
+
+                    # suggest_function = {'role': 'assistant', 'content': None, 'function_call': {'name': 'task_base',
+                    #                                                          'arguments': '{"qustion_message":"\\nWhat is the most common house layout in the dataset?"}'}}
+
+                    suggest_function = {'role': 'assistant', 'content': None, 'function_call': {'name': reply,
+                                                                                                'arguments': '{"qustion_message":"' + str(
+                                                                                                    messages[-1][
+                                                                                                        'content']) + '"}'}}
+
+                    # {"qustion_message": " """ + str(messages[-1]['content']) + """"}
+
+                    print('reply : ', reply)
+
+                    # return reply
+                    return suggest_function
         # return messages
         return self._default_auto_reply

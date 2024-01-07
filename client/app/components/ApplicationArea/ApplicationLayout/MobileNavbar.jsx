@@ -33,6 +33,9 @@ export default function MobileNavbar({ getPopupContainer }) {
                 <Menu.Item key="testdialogue">
                   <Link href="./">{window.W_L.data_analysis}</Link>
                 </Menu.Item>
+                <Menu.Item key="dialogue-list">
+                  <Link href="dialogue-list">{window.W_L.history_dialogue}</Link>
+                </Menu.Item>
                {/* )} */}
               {/* {currentUser.hasPermission("view_query") && ( */}
                 <Menu.Item key="report-route">
@@ -47,6 +50,9 @@ export default function MobileNavbar({ getPopupContainer }) {
               <Menu.Item key="dashboards">
                 <Link href="dashboards">{window.W_L.dashboard}</Link>
               </Menu.Item>
+              <Menu.Item key="dashboards_prettify">
+                  <Link href="dashboards_prettify">{window.W_L.dashboards_prettify}</Link>
+                </Menu.Item>
               <Menu.Item key="autopilot">
                 <Link href="autopilot">{window.W_L.auto_pilot}</Link>
               </Menu.Item>

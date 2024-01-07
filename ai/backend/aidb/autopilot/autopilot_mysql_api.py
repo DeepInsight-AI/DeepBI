@@ -7,10 +7,9 @@ from ai.backend.util import database_util
 from .autopilot import Autopilot
 import re
 import ast
-from ai.agents.agentchat import TaskSelectorAgent
 from ai.backend.util import base_util
 from ai.backend.util.db.postgresql_report import PsgReport
-from ai.agents.agentchat import HumanProxyAgent, TaskSelectorAgent, Questioner, AssistantAgent
+from ai.agents.agentchat import Questioner, AssistantAgent
 
 max_retry_times = CONFIG.max_retry_times
 max_report_question = 5
@@ -116,7 +115,7 @@ class AutopilotMysql(Autopilot):
 
     def get_agent_base_mysql_assistant(self):
         """ Basic Agent, processing mysql data source """
-        base_mysql_assistant = TaskSelectorAgent(
+        base_mysql_assistant = AssistantAgent(
             name="base_mysql_assistant",
             system_message="""You are a helpful AI assistant.
                   Solve tasks using your coding and language skills.
@@ -385,7 +384,6 @@ class AutopilotMysql(Autopilot):
                     #     use_cache=use_cache, report_file_name=report_file_name)
                     python_executor = self.agent_instance_util.get_agent_python_executor(
                         report_file_name=report_file_name)
-
 
                     await python_executor.initiate_chat(
                         mysql_echart_assistant,

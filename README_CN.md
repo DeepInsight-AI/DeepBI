@@ -2,7 +2,7 @@
 
 <div align="center">
 
-DeepBi是一款AI原生的数据分析平台。DeepBi充分利用大语言模型的能力来探索、查询、可视化和共享来自任何数据源的数据。用户可以使用DeepBi洞察数据并做出数据驱动的决策。
+DeepBi是一款AI原生的数据分析平台。DeepBI充分利用大语言模型的能力来探索、查询、可视化和共享来自任何数据源的数据。用户可以使用DeepBI洞察数据并做出数据驱动的决策。
 
 
 </div>
@@ -16,8 +16,8 @@ DeepBi是一款AI原生的数据分析平台。DeepBi充分利用大语言模型
  开发：dev@deep-insight.co，工作及商务：hi@deep-insight.co
 
   <div style="display: flex; align-items: center;">
-    如果觉得 DeepBi 对您有帮助的话，请帮忙<a style="display: flex; align-items: center;margin:0px 6px" target="_blank" href='https://github.com/DeepInsight-AI/DeepBi'></a>
-    的右上角点个⭐ Star 和 Fork，您的支持是 DeepBi 变得更好最大的动力
+    如果觉得 DeepBI 对您有帮助的话，请帮忙<a style="display: flex; align-items: center;margin:0px 6px" target="_blank" href='https://github.com/DeepInsight-AI/DeepBI'></a>
+    的右上角点个⭐ Star 和 Fork，您的支持是 DeepBI 变得更好最大的动力
   </div>
 </div>
 <div align="center">
@@ -28,10 +28,10 @@ DeepBi是一款AI原生的数据分析平台。DeepBi充分利用大语言模型
 
 ## 案例视频
 
-https://github.com/DeepInsight-AI/DeepBi/assets/151519374/f0d2fcd4-32b0-4095-a892-b9bbf8a51602
+https://github.com/DeepInsight-AI/DeepBI/assets/151519374/f0d2fcd4-32b0-4095-a892-b9bbf8a51602
 
 ## 使用说明
-- [DeepBi 在线使用说明](client/app/assets/images/cn/user_manual_cn.md)
+- [DeepBI 在线使用说明](client/app/assets/images/cn/user_manual_cn.md)
 - [PDF 中文软件说明下载](./user_manual/中文软件说明.pdf)
 - [PDF 中文Docker安装下载](./user_manual/中文docker安装说明.pdf)
 - [PDF 使用说明下载](./user_manual/中文使用说明.pdf)
@@ -50,14 +50,19 @@ https://github.com/DeepInsight-AI/DeepBi/assets/151519374/f0d2fcd4-32b0-4095-a89
 
 ## 🚀 支持的数据库
 
-DeepBi 支持的数据库连接有:
+DeepBI 支持的数据库连接有:
 - MySQL
 - PostgreSQL
 - csv/Excel导入
 
+## 📦 Windows exe 安装文件安装
+- 下载最新版本的 ```window_install_exe_CN.zip``` 安装包. <a href="https://github.com/DeepInsight-AI/DeepBI/releases">点击这里去下载</a>，目前测试支持 Win10 Win11
+- 解压zip 文件后,双击运行.exe 文件安装即可。
+- 本地安装版本说明 [PDF 使用说明下载](./user_manual/exe安装.pdf)
+
 ## 📦 Docker 安装和DeepBI部署
 
-按照 [使用 Docker 安装](Docker_install_CN.md) 中对应自己的系统操作步骤操作，最后获取DeepBi网址，即可使用
+按照 [使用 Docker 安装](Docker_install_CN.md) 中对应自己的系统操作步骤操作，最后获取DeepBI网址，即可使用
 
 ## 📦 Ubuntu 直接安装
 
@@ -82,20 +87,7 @@ git clone http://github.com/DeepInsight-AI/DeepBI.git
     完成安装后, 请看上面的使用说明进行设置和使用
 - 查看本机IP ```ifconfig | grep -Eo 'inet (addr:)?([0-9]*\.){3}[0-9]*' | grep -vE '^inet 127(\.[0-9]{1,3}){3}'```
 
-## DeepBi 命令
 
-- 进入项目目录后运行命令：
-```
-    docker-compose start # 启动DeepBi 服务
-    docker-compose stop # 停止DeepBi 服务
-    docker-compose ps # 查看 DeepBi 服务
-```
-- 如果出现 ```... PermissionError ...``` 或者 ```... Permission denied ...``` 请在执行命令前 加sudo
-```
-    sudo docker-compose start # 启动DeepBi 服务
-    sudo docker-compose stop # 停止DeepBi 服务
-    sudo docker-compose ps # 查看 DeepBi 服务
-```
 
 ## Contact Us
 
@@ -110,5 +102,5 @@ git clone http://github.com/DeepInsight-AI/DeepBI.git
 - 我们已经在 Mac OS 12.7/13.X /14.1.1 , Ubuntu 20.04/22.04 和  Windows11 WSL 22.04 系统测试。
 - Windows 10 安装WSL需要 22H2版本，详见  [使用 Docker 安装](Docker_install_CN.md)
 - 如果有什么问题，可以联系我们 dev@deep-insight.co
-- <a href="https://github.com/DeepInsight-AI/DeepBi/issues">Issue</a>
+- <a href="https://github.com/DeepInsight-AI/DeepBI/issues">Issue</a>
 

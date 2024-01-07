@@ -185,6 +185,7 @@
   return new Promise((resolve, reject) => {
     var DashboardData = document.getElementById("query_result").innerHTML;
     DashboardData = eval('(' + DashboardData + ')');
+    console.log(DashboardData, "DashboardData====")
     var dashboard_id = document.getElementById('dashboardId').innerHTML;
     $.ajax({
       url: '/api/dashboards/' + dashboard_id,

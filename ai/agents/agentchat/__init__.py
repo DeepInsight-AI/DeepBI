@@ -10,7 +10,7 @@ from .task_planner_agent import TaskPlannerAgent
 from .task_selector_agent import TaskSelectorAgent
 from .check_agent import CheckAgent
 from .report_questioner import Questioner
-
+from .chart_presenter_agent import ChartPresenterAgent
 
 __all__ = [
     "Agent",

@@ -8,7 +8,6 @@ from ai.backend.util.token_util import num_tokens_from_messages
 
 max_retry_times = CONFIG.max_retry_times
 
-
 class ReportStarrocks(Report):
     async def deal_report(self, json_str, message):
         """ Process mysql data sources, generate reports, and select corresponding workflows """
@@ -26,26 +25,7 @@ class ReportStarrocks(Report):
         if q_sender == CONFIG.talker_user:
             if q_data_type == CONFIG.type_question:
                 if self.agent_instance_util.base_message is not None:
-                    try:
-                        # result['receiver'] = 'user'
-                        # result['data']['data_type'] = 'answer'
-                        # result['data']['content'] = await self.agent_instance_util.task_generate_report(q_str)
-                        # consume_output = json.dumps(result)
-                        # await self.outgoing.put(consume_output)
-
-                        # await self.task_generate_report(q_str)
-
-                        await self.start_chatgroup(q_str)
-
-                    except Exception as e:
-                        traceback.print_exc()
-                        logger.error("from user:[{}".format(self.user_name) + "] , " + str(e))
-
-                        result['receiver'] = 'user'
-                        result['data']['data_type'] = 'answer'
-                        result['data']['content'] = self.error_message_timeout
-                        consume_output = json.dumps(result)
-                        await self.outgoing.put(consume_output)
+                    await self.start_chatgroup(q_str)
                 else:
                     await self.put_message(500, receiver=CONFIG.talker_user, data_type=CONFIG.type_answer,
                                            content=self.error_miss_data)

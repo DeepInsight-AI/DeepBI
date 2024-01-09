@@ -4,15 +4,23 @@ import json
 from ai.backend.util.write_log import logger
 import traceback
 from ai.backend.util.token_util import num_tokens_from_messages
-from ai.backend.base_config import request_timeout, max_retry_times, language_chinese, \
-    language_english, \
-    local_base_postgresql_info, local_base_mysql_info, local_base_xls_info, \
-    csv_file_path, python_base_dependency, default_language_mode
+from ai.backend.base_config import request_timeout, \
+    python_base_dependency
 from ai.agents.prompt import CSV_ECHART_TIPS_MESS, \
     MYSQL_ECHART_TIPS_MESS, MYSQL_MATPLOTLIB_TIPS_MESS, POSTGRESQL_ECHART_TIPS_MESS
 from ai.agents.agentchat import (UserProxyAgent, GroupChat, AssistantAgent, GroupChatManager,
                                  PythonProxyAgent, BIProxyAgent, TaskPlannerAgent, TaskSelectorAgent, CheckAgent,
                                  ChartPresenterAgent)
+from ai.backend.base_config import CONFIG
+
+max_retry_times = CONFIG.max_retry_times
+language_chinese = CONFIG.language_chinese
+language_english = CONFIG.language_chinese
+default_language_mode = CONFIG.default_language_mode
+local_base_postgresql_info = CONFIG.local_base_postgresql_info
+local_base_xls_info = CONFIG.local_base_xls_info
+local_base_mysql_info = CONFIG.local_base_mysql_info
+python_base_dependency = CONFIG.python_base_dependency
 
 
 class AgentInstanceUtil:
@@ -1072,7 +1080,7 @@ class AgentInstanceUtil:
 
                 tb_desc = {
                     "file_comment": table_comment,
-                    "file_path": csv_file_path + table_name,
+                    "file_path": CONFIG.csv_file_path + table_name,
                 }
                 print('tb_desc : ', tb_desc)
                 csv_content.append(tb_desc)

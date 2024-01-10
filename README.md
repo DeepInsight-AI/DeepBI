@@ -38,7 +38,7 @@ https://github.com/DeepInsight-AI/DeepBI/assets/151519374/d1effbe1-5c11-4c77-86e
 3 Dashboard : Assemble persistent visualizations into dashboards.\
 4 Automated data analysis reports (to be developed) : Complete data analysis reports automatically according to user instructions.\
 5 Support multiple data sources, including MySQL, PostgreSQL, Doris, StarRocks, CSV/Excel, etc.\
-6 Multi-platform support, support Windows-WSL, Linux, Mac. \
+6 Multi-platform support, support Windows-WSL,Windows, Linux, Mac. \
 7 International, support Chinese, English.
 
 

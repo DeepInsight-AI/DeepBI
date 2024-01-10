@@ -1,4 +1,8 @@
 # Version
+### 1.2.0
+- Added the AI intelligent Prettify Large-screen function
+- Fiex some bugs
+- Updated the installation and usage instructions
 
 ### 1.1.0
 - Externalize Docker code.

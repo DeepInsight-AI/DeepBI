@@ -17,7 +17,6 @@ import ast
 from ai.backend.util.write_log import logger
 from ai.backend.util.token_util import num_tokens_from_messages
 import traceback
-from ai.backend.base_config import if_hide_sensitive
 
 try:
     from termcolor import colored

@@ -4,8 +4,6 @@ import json
 from ai.backend.util.write_log import logger
 import traceback
 from ai.backend.util.token_util import num_tokens_from_messages
-from ai.backend.base_config import request_timeout, \
-    python_base_dependency
 from ai.agents.prompt import CSV_ECHART_TIPS_MESS, \
     MYSQL_ECHART_TIPS_MESS, MYSQL_MATPLOTLIB_TIPS_MESS, POSTGRESQL_ECHART_TIPS_MESS
 from ai.agents.agentchat import (UserProxyAgent, GroupChat, AssistantAgent, GroupChatManager,
@@ -21,7 +19,7 @@ local_base_postgresql_info = CONFIG.local_base_postgresql_info
 local_base_xls_info = CONFIG.local_base_xls_info
 local_base_mysql_info = CONFIG.local_base_mysql_info
 python_base_dependency = CONFIG.python_base_dependency
-
+request_timeout = CONFIG.request_timeout
 
 class AgentInstanceUtil:
     def __init__(
@@ -80,7 +78,7 @@ class AgentInstanceUtil:
                     'model': 'gpt-4-1106-preview',
                     'api_key': self.api_key,
                     'api_base': api_host,
-                    'api_type': 'azure',
+
                 },
             ]
 

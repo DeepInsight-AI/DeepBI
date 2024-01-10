@@ -11,6 +11,7 @@ from ai.backend.util import base_util
 from ai.backend.util.db.postgresql_report import PsgReport
 from ai.agents.agentchat import AssistantAgent
 
+
 max_retry_times = CONFIG.max_retry_times
 max_report_question = 5
 

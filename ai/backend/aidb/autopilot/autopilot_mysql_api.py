@@ -10,6 +10,7 @@ import ast
 from ai.backend.util import base_util
 from ai.backend.util.db.postgresql_report import PsgReport
 from ai.agents.agentchat import Questioner, AssistantAgent
+from ai.backend.language_info import LanguageInfo
 
 max_retry_times = CONFIG.max_retry_times
 max_report_question = 5
@@ -38,12 +39,6 @@ class AutopilotMysql(Autopilot):
             re_check = await self.check_api_key()
             if not re_check:
                 return
-
-        # if json_str.get('data').get('language_mode'):
-        #     q_language_mode = json_str['data']['language_mode']
-        #     if q_language_mode == CONFIG.language_chinese or q_language_mode == CONFIG.language_english:
-        #         self.set_language_mode(q_language_mode)
-        #         self.agent_instance_util.set_language_mode(q_language_mode)
 
         print("db_id:", db_id)
         obj = database_util.Main(db_id)
@@ -75,43 +70,7 @@ class AutopilotMysql(Autopilot):
                 PsgReport().update_data(data_to_update)
 
     async def task_base(self, qustion_message):
-        """ Task type: mysql data analysis"""
-        try:
-            error_times = 0
-            for i in range(max_retry_times):
-                try:
-                    base_mysql_assistant = self.get_agent_base_mysql_assistant()
-                    python_executor = self.agent_instance_util.get_agent_python_executor()
-
-                    await python_executor.initiate_chat(
-                        base_mysql_assistant,
-                        message=self.agent_instance_util.base_message + '\n' + self.question_ask + '\n' + str(
-                            qustion_message),
-                    )
-
-                    answer_message = python_executor.chat_messages[base_mysql_assistant]
-                    print("answer_message: ", answer_message)
-
-                    for i in range(len(answer_message)):
-                        answer_mess = answer_message[len(answer_message) - 1 - i]
-                        # print("answer_mess :", answer_mess)
-                        if answer_mess['content'] and answer_mess['content'] != 'TERMINATE':
-                            print("answer_mess['content'] ", answer_mess['content'])
-                            return answer_mess['content']
-
-                except Exception as e:
-                    traceback.print_exc()
-                    logger.error("from user:[{}".format(self.user_name) + "] , " + "error: " + str(e))
-                    error_times = error_times + 1
-
-            if error_times >= max_retry_times:
-                return self.error_message_timeout
-
-        except Exception as e:
-            traceback.print_exc()
-            logger.error("from user:[{}".format(self.user_name) + "] , " + "error: " + str(e))
-
-        return self.agent_instance_util.data_analysis_error
+        return qustion_message
 
     def get_agent_base_mysql_assistant(self):
         """ Basic Agent, processing mysql data source """
@@ -146,7 +105,6 @@ class AutopilotMysql(Autopilot):
 
         report_html_code = {}
         try:
-            # report_html_code['report_name'] = '电商销售报告'
             report_html_code['report_name'] = q_name
             report_html_code['report_author'] = 'DeepBI'
 
@@ -188,14 +146,12 @@ class AutopilotMysql(Autopilot):
             planner_user = self.agent_instance_util.get_agent_planner_user(report_file_name=report_file_name)
             analyst = self.get_agent_analyst(report_file_name=report_file_name)
 
-            question_supplement = 'Please make an analysis and summary in English, including which charts were generated, and briefly introduce the contents of these charts.'
-            if self.language_mode == CONFIG.language_chinese:
-                question_supplement = " 请用中文帮我对报告做最终总结，给我有价值的结论"
+            question_supplement = " Make a final summary of the report and give me valuable conclusions. "
 
             await planner_user.initiate_chat(
                 analyst,
                 message=str(
-                    question_list) + '\n' + "这是本次报告的目标：" + '\n' + q_str + '\n' + self.question_ask + '\n' + question_supplement,
+                    question_list) + '\n' + " This is the goal of this report：" + '\n' + q_str + '\n' + LanguageInfo.question_ask + '\n' + question_supplement,
             )
 
             last_analyst = planner_user.last_message()["content"]
@@ -249,12 +205,12 @@ class AutopilotMysql(Autopilot):
         questioner = self.get_agent_questioner(report_file_name)
         ai_analyst = self.get_agent_ai_analyst(report_file_name)
 
-        message = self.agent_instance_util.base_message + '\n' + self.question_ask + '\n\n' + q_str
+        message = self.agent_instance_util.base_message + '\n' + LanguageInfo.question_ask + '\n\n' + q_str
         print(' generate_quesiton message:  ', message)
 
         await questioner.initiate_chat(
             ai_analyst,
-            message=self.agent_instance_util.base_message + '\n' + self.question_ask + '\n\n' + q_str,
+            message=message,
         )
 
         base_content = []
@@ -280,11 +236,15 @@ class AutopilotMysql(Autopilot):
                     chart_code_str = str(json_str).replace("\n", "")
                     if len(chart_code_str) > 0:
                         print("chart_code_str: ", chart_code_str)
+                        report_demand_list = None
                         if base_util.is_json(chart_code_str):
                             report_demand_list = json.loads(chart_code_str)
-                            print("report_demand_list: ", report_demand_list)
+                        else:
+                            # String instantiated as object
+                            report_demand_list = ast.literal_eval(chart_code_str)
+                        print("report_demand_list: ", report_demand_list)
+                        if report_demand_list is not None:
                             for jstr in report_demand_list:
-
                                 # 检查列表中是否存在相同名字的对象
                                 name_exists = any(item['report_name'] == jstr['report_name'] for item in base_content)
 
@@ -295,25 +255,6 @@ class AutopilotMysql(Autopilot):
                                     # print("插入成功")
                                 else:
                                     print("对象已存在，不重复插入")
-
-
-                        else:
-                            # String instantiated as object
-                            report_demand_list = ast.literal_eval(chart_code_str)
-                            print("report_demand_list: ", report_demand_list)
-                            for jstr in report_demand_list:
-
-                                # 检查列表中是否存在相同名字的对象
-                                name_exists = any(item['report_name'] == jstr['report_name'] for item in base_content)
-
-                                if not name_exists:
-                                    if len(base_content) > max_report_question:
-                                        break
-                                    base_content.append(jstr)
-                                    print("插入成功")
-                                else:
-                                    print("对象已存在，不重复插入")
-
         return base_content
 
     async def task_generate_echart(self, qustion_message, report_file_name):
@@ -328,14 +269,12 @@ class AutopilotMysql(Autopilot):
                 try:
                     mysql_echart_assistant = self.agent_instance_util.get_agent_mysql_echart_assistant(
                         use_cache=use_cache, report_file_name=report_file_name)
-                    # mysql_echart_assistant = self.agent_instance_util.get_agent_mysql_echart_assistant35(
-                    #     use_cache=use_cache, report_file_name=report_file_name)
                     python_executor = self.agent_instance_util.get_agent_python_executor(
                         report_file_name=report_file_name)
 
                     await python_executor.initiate_chat(
                         mysql_echart_assistant,
-                        message=self.agent_instance_util.base_message + '\n' + self.question_ask + '\n' + str(
+                        message=self.agent_instance_util.base_message + '\n' + LanguageInfo.question_ask + '\n' + str(
                             qustion_message),
                     )
 
@@ -442,7 +381,7 @@ class AutopilotMysql(Autopilot):
                     await planner_user.initiate_chat(
                         analyst,
                         message=str(
-                            base_mess) + '\n' + self.question_ask + '\n' + question_supplement,
+                            base_mess) + '\n' + LanguageInfo.question_ask + '\n' + question_supplement,
                     )
 
                     answer_message = planner_user.last_message()["content"]
@@ -481,40 +420,5 @@ class AutopilotMysql(Autopilot):
         print(self.agent_instance_util.data_analysis_error)
         return None, None
 
-    def get_agent_questioner(self, report_file_name):
-        """ Questioner  """
-        questioner = Questioner(
-            name="questioner",
-            human_input_mode="NEVER",
-            max_consecutive_auto_reply=2,
-            llm_config=self.agent_instance_util.gpt4_turbo_config,
-            default_auto_reply="请继续补充分析维度，不要重复.",
-            websocket=self.websocket,
-            openai_proxy=self.agent_instance_util.openai_proxy,
-            report_file_name=report_file_name,
-        )
 
-        return questioner
 
-    def get_agent_ai_analyst(self, report_file_name):
-        """ ai_analyst """
-        ai_analyst = AssistantAgent(
-            name="ai_data_analyst",
-            system_message="""You are a helpful AI data analysis.
-             Please tell me from which dimensions you need to analyze and help me make a report plan.
-             Reports need to be represented from multiple dimensions. To keep them compact, merge them properly.
-             Give a description of the purpose of each report.
-         The output should be formatted as a JSON instance that conforms to the JSON schema below, the JSON is a list of dict,
-         [
-         {“report_name”: “report_1”, “description”:”description of the report”;},
-         {},
-         {},
-         ].
-         Reply "TERMINATE" in the end when everything is done.
-             """ + '\n' + '请用中文回答',
-            llm_config=self.agent_instance_util.gpt4_turbo_config,
-            websocket=self.websocket,
-            openai_proxy=self.agent_instance_util.openai_proxy,
-            report_file_name=report_file_name,
-        )
-        return ai_analyst

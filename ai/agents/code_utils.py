@@ -11,8 +11,10 @@ import logging
 from ai.agents import oai
 import json
 import traceback
-from ai.backend.base_config import if_hide_sensitive
+from ai.backend.base_config import CONFIG
 
+
+if_hide_sensitive = CONFIG.if_hide_sensitive
 try:
     import docker
 except ImportError:

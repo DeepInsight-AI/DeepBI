@@ -16,6 +16,8 @@ class Config():
 
         self.web_server_ip = base_util.get_web_server_ip()
 
+        self.web_language = base_util.get_web_language()
+
         self.language_chinese = 'CN'
         self.language_english = 'EN'
         self.default_language_mode = self.language_chinese
@@ -57,12 +59,6 @@ class Config():
 
         self.default_base_message = """
                 """
+
+
 CONFIG = Config()
-
-
-request_timeout = 55
-
-if_hide_sensitive = False
-
-
-

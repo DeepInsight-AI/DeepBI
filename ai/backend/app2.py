@@ -34,7 +34,10 @@ class MainHandler(tornado.web.RequestHandler):
         with open(report_file_name, 'r') as file:
             data = json.load(file)
 
-        databases_type = data['databases_type']
+        databases_type = 'mysql'
+        if data.get('databases_type') is not None:
+            databases_type = data['databases_type']
+
         chat_class = ChatClass(None, user_name)
         json_str = {
             "file_name": file_name,

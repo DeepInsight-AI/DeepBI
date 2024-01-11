@@ -2,7 +2,7 @@ import asyncio
 import json
 import time
 import traceback
-from ai.backend.util.write_log import logger
+# from ai.backend.util.write_log import logger
 from ai.agents import AgentInstanceUtil
 from ai.backend.memory import ChatMemoryManager
 from ai.backend.base_config import CONFIG

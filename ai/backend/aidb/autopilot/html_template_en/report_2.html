@@ -18,7 +18,7 @@
       color: #fff;
     }
 
-    /* 样式定义 */
+    /* Style Definition */
     .content {
       background: #0a1532;
       color: #fff;
@@ -88,7 +88,7 @@
   <h5 class="color-white">----Powered by {{ report_author }}</h5>
 
   <ul class="m-b-5 bg-border thought">
-    <p>【分析思路】</p>
+    <p>【Analysis Framework】</p>
     {% for thought in report_thought %}
       <li><strong>{{ thought['report_name'] }}：</strong>{{ thought['description'] }} </li>
     {% endfor %}
@@ -98,7 +98,7 @@
       <h2 class="m-b-5 bg-border color-white">{{ question_data['question']['report_name'] }}</h2>
 
       <ul class="m-b-5 bg-border">
-        <p>【数据解读】</p>
+        <p>【Data Interpretation】</p>
         {% for answer_item in question_data['answer'] %}
           <li><strong>{{ answer_item['analysis_item'] }}：</strong>{{ answer_item['description'] }} </li>
         {% endfor %}
@@ -116,7 +116,7 @@
   {% endfor %}
 
   <div class="report-summary">
-    <h2 class="m-b-5 bg-border color-white">报告总结</h2>
+    <h2 class="m-b-5 bg-border color-white">Report Summary</h2>
     <ul class="m-b-5 bg-border">
       {% for summary in report_analyst %}
         <li><strong>{{ summary['analysis_item'] }}：</strong>{{ summary['description'] }} </li>

@@ -1,14 +1,9 @@
-import traceback
-from ai.backend.util.write_log import logger
 from ai.backend.base_config import CONFIG
-import re
-import ast
 from ai.backend.aidb import AIDB
 from ai.agents.agentchat import HumanProxyAgent, TaskSelectorAgent, Questioner, AssistantAgent
 from jinja2 import Template
 from pathlib import Path
 import time
-
 
 class Autopilot(AIDB):
     def get_agent_user_proxy(self):
@@ -161,11 +156,16 @@ class Autopilot(AIDB):
         current_directory = Path.cwd()
 
         if str(current_directory).endswith('/ai'):
-            html_template_path = str(current_directory) + '/backend/aidb/autopilot/html_template'
+            html_template_path = str(current_directory) + '/backend/aidb/autopilot/'
         else:
-            html_template_path = str(current_directory) + '/ai/backend/aidb/autopilot/html_template'
+            html_template_path = str(current_directory) + '/ai/backend/aidb/autopilot/'
 
         print('html_template_path:', html_template_path)
+
+        if CONFIG.web_language == 'CN':
+            html_template_path = html_template_path + 'html_template'
+        else:
+            html_template_path = html_template_path + 'html_template_en'
 
         # 读取模板文件
         with open(html_template_path + '/report_2.html', 'r') as file:

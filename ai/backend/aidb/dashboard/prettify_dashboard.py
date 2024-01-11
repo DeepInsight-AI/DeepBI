@@ -50,7 +50,7 @@ class PrettifyDashboard(AIDB):
             data_to_update = (-1, task_id)
             PsgReport().update_data(data_to_update)
 
-    # 生成echart代码
+
     async def generate_echart_code(self, echart_json, task_file_name, task_id, html_file_name):
 
         # echart_json = generate_json()

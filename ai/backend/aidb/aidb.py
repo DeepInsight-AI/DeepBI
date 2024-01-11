@@ -10,6 +10,7 @@ import os
 import time
 from ai.backend.util import base_util
 import asyncio
+from requests.exceptions import HTTPError
 
 
 class AIDB:
@@ -59,6 +60,11 @@ class AIDB:
             )
             answer_message = planner_user.last_message()["content"]
             # print("answer_message: ", answer_message)
+        except HTTPError as http_err:
+            traceback.print_exc()
+            error_message = self.generate_error_message(http_err)
+            return await self.put_message(500, CONFIG.talker_bi, CONFIG.type_comment_first, error_message)
+
         except Exception as e:
             traceback.print_exc()
             logger.error("from user:[{}".format(self.user_name) + "] , " + "error: " + str(e))
@@ -259,6 +265,11 @@ class AIDB:
                 self.agent_instance_util.api_key_use = True
 
                 return True
+            except HTTPError as http_err:
+                traceback.print_exc()
+                error_miss_key = self.generate_error_message(http_err, error_message=self.error_miss_key)
+                await self.put_message(500, CONFIG.talker_log, CONFIG.type_log_data, error_miss_key)
+                return False
             except Exception as e:
                 traceback.print_exc()
                 logger.error("from user:[{}".format(self.user_name) + "] , " + "error: " + str(e))
@@ -307,6 +318,11 @@ class AIDB:
                     return await self.put_message(200, CONFIG.talker_api, CONFIG.type_test, 'test success')
 
 
+            except HTTPError as http_err:
+                traceback.print_exc()
+                error_miss_key = self.generate_error_message(http_err, error_message=self.error_miss_key)
+                await self.put_message(500, CONFIG.talker_log, CONFIG.type_log_data, error_miss_key)
+                return False
 
             except Exception as e:
                 traceback.print_exc()
@@ -359,3 +375,26 @@ class AIDB:
             print('HttpProxyPort : ', HttpProxyPort)
 
         return ApiKey, HttpProxyHost, HttpProxyPort, ApiHost
+
+    def generate_error_message(self, http_err, error_message=' ERROR '):
+        # print(f'HTTP error occurred: {http_err}')
+        # print(f'Response status code: {http_err.response.status_code}')
+        # print(f'Response text: {http_err.response.text}')
+
+        # error_message = self.error_miss_key
+        status_code = http_err.response.status_code
+        if str(http_err.response.text).__contains__('deep-thought'):
+            if status_code == 401:
+                error_message = self.error_miss_key + ' , APIKEY Empty，apikey为空'
+            elif status_code == 402:
+                error_message = self.error_miss_key + ' , Data Error, data为空'
+            elif status_code == 403:
+                error_message = self.error_miss_key + ' , APIKEY Error，APIKEY 不正确'
+            elif status_code == 404:
+                error_message = self.error_miss_key + ' , 不支持的 ai 引擎'
+            elif status_code == 405:
+                error_message = self.error_miss_key + ' , token 余额不足,请充值'
+            elif status_code == 500:
+                error_message = self.error_miss_key + ' , OpenaiAPI 异常, ' + str(http_err.response.text)
+
+        return error_message

@@ -1,10 +1,9 @@
 import traceback
 from ai.backend.util.write_log import logger
 from ai.backend.base_config import CONFIG
-import re
-import ast
 from ai.backend.aidb import AIDB
 from ai.agents.agentchat import HumanProxyAgent, TaskSelectorAgent
+from requests.exceptions import HTTPError
 
 
 class Analysis(AIDB):
@@ -110,13 +109,22 @@ class Analysis(AIDB):
         return select_analysis_assistant
 
     async def start_chatgroup(self, q_str):
-        user_proxy = self.get_agent_user_proxy()
-        base_mysql_assistant = self.get_agent_select_analysis_assistant()
+        try:
+            user_proxy = self.get_agent_user_proxy()
+            base_mysql_assistant = self.get_agent_select_analysis_assistant()
 
-        await user_proxy.initiate_chat(
-            base_mysql_assistant,
-            message=str(q_str),
-        )
+            await user_proxy.initiate_chat(
+                base_mysql_assistant,
+                message=str(q_str),
+            )
+        except HTTPError as http_err:
+            traceback.print_exc()
+            error_message = self.generate_error_message(http_err)
+            await self.put_message(200, CONFIG.talker_user, CONFIG.type_answer, error_message)
+        except Exception as e:
+            traceback.print_exc()
+            logger.error("from user:[{}".format(self.user_name) + "] , " + str(e))
+            await self.put_message(200, CONFIG.talker_user, CONFIG.type_answer, self.error_message_timeout)
 
     async def task_base(self, qustion_message):
         """ Task type: base question """

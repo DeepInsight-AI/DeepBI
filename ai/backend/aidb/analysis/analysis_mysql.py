@@ -35,18 +35,8 @@ class AnalysisMysql(Analysis):
             if q_data_type == 'question':
                 # print("agent_instance_util.base_message :", self.agent_instance_util.base_message)
                 if self.agent_instance_util.base_message is not None:
-                    try:
-                        await self.start_chatgroup(q_str)
+                    await self.start_chatgroup(q_str)
 
-                    except Exception as e:
-                        traceback.print_exc()
-                        logger.error("from user:[{}".format(self.user_name) + "] , " + str(e))
-
-                        result['receiver'] = 'user'
-                        result['data']['data_type'] = 'answer'
-                        result['data']['content'] = self.error_message_timeout
-                        consume_output = json.dumps(result)
-                        await self.outgoing.put(consume_output)
                 else:
                     await self.put_message(500, receiver=CONFIG.talker_user, data_type=CONFIG.type_answer,
                                            content=self.error_miss_data)
@@ -68,16 +58,14 @@ class AnalysisMysql(Analysis):
                     if if_suss:
                         self.agent_instance_util.base_mysql_info = ' When connecting to the database, be sure to bring the port. This is mysql database info :' + '\n' + str(
                             db_info)
-                        # self.agent_instance_util.base_message = str(q_str)
                         self.agent_instance_util.set_base_message(q_str)
                         self.agent_instance_util.db_id = db_id
 
                 else:
-                    # self.agent_instance_util.base_message = str(q_str)
                     self.agent_instance_util.set_base_message(q_str)
 
                 await self.get_data_desc(q_str)
-            elif q_data_type == 'mysql_comment_second':
+            elif q_data_type == CONFIG.type_comment_second:
                 if json_str.get('data').get('language_mode'):
                     q_language_mode = json_str['data']['language_mode']
                     if q_language_mode == CONFIG.language_chinese or q_language_mode == CONFIG.language_english:
@@ -93,11 +81,9 @@ class AnalysisMysql(Analysis):
                     if if_suss:
                         self.agent_instance_util.base_mysql_info = '  When connecting to the database, be sure to bring the port. This is mysql database info :' + '\n' + str(
                             db_info)
-                        # self.agent_instance_util.base_message = str(q_str)
                         self.agent_instance_util.set_base_message(q_str)
                         self.agent_instance_util.db_id = db_id
                 else:
-                    # self.agent_instance_util.base_message = str(q_str)
                     self.agent_instance_util.set_base_message(q_str)
 
 

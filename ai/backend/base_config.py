@@ -12,8 +12,11 @@ class Config():
         self.max_retry_period = 90
         self.max_retry_times = 3
         self.up_file_path = base_util.get_upload_path()
+        self.csv_file_path = base_util.get_upload_path()
 
         self.web_server_ip = base_util.get_web_server_ip()
+
+        self.web_language = base_util.get_web_language()
 
         self.language_chinese = 'CN'
         self.language_english = 'EN'
@@ -56,44 +59,6 @@ class Config():
 
         self.default_base_message = """
                 """
+
+
 CONFIG = Config()
-
-
-database_model = 'online'
-request_timeout = 55
-max_retry_period = 90
-max_retry_times = 3
-csv_file_path = base_util.get_upload_path()
-print('csv_file_path :', csv_file_path)
-
-language_chinese = 'CN'
-language_english = 'EN'
-default_language_mode = language_chinese
-
-if_hide_sensitive = False
-
-python_base_dependency = """python installed dependency environment: pymysql, pandas, mysql-connector-python, pyecharts, sklearn, psycopg2, sqlalchemy"""
-
-receiver_BI = 'redash'
-receiver_user = 'user'
-
-local_base_mysql_info = """
-"""
-
-# 在线数据库信息
-online_base_mysql_info = """
-"""
-
-# 在线数据库信息
-local_base_postgresql_info = """
-"""
-
-local_base_csv_info = """
-"""
-
-local_base_xls_info = """
-"""
-
-default_base_message = """
-
-        """

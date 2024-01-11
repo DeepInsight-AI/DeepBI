@@ -9,7 +9,7 @@ from ai.backend.base_config import CONFIG
 from ai.backend.aidb.report import ReportMysql, ReportPostgresql, ReportStarrocks
 from ai.backend.aidb.analysis import AnalysisMysql, AnalysisCsv, AnalysisPostgresql, AnalysisStarrocks
 from ai.backend.aidb import AIDB
-from ai.backend.aidb.autopilot import autopilot_mysql, AutopilotMysql
+from ai.backend.aidb.autopilot import AutopilotMysql
 
 message_pool: ChatMemoryManager = ChatMemoryManager(name="message_pool")
 
@@ -116,18 +116,12 @@ class ChatClass:
 
                 elif q_chat_type == 'chat':
                     if q_database == 'mysql':
-                        # await self.deal_question_mysql(json_str, message)
                         print(" q_database ==  mysql ")
-                        # await AnalysisMysql(self).deal_question(json_str, message)
                         await self.analysisMysql.deal_question(json_str, message)
                     elif q_database == 'csv':
-                        # await self.deal_question_csv(json_str, message)
-                        # await AnalysisCsv(self).deal_question(json_str, message)
                         await self.analysisCsv.deal_question(json_str, message)
                     elif q_database == 'pg':
                         # postgresql
-                        # await self.deal_question_postgresql(json_str, message)
-                        # await AnalysisPostgresql(self).deal_question(json_str, message)
                         await self.analysisPostgresql.deal_question(json_str, message)
                     elif q_database == 'starrocks':
                         print(" q_database ==  starrocks ")
@@ -135,12 +129,8 @@ class ChatClass:
 
                 elif q_chat_type == 'report':
                     if q_database == 'mysql':
-                        # await self.deal_report_mysql(json_str, message)
-                        # await ReportMysql(self).deal_report(json_str, message)
                         await self.reportMysql.deal_report(json_str, message)
                     elif q_database == 'pg':
-                        # await self.deal_report_pg(json_str, message)
-                        # await ReportPostgresql(self).deal_report(json_str, message)
                         await self.reportPostgresql.deal_report(json_str, message)
                     elif q_database == 'starrocks':
                         await self.reportStarrocks.deal_report(json_str, message)

@@ -373,15 +373,12 @@ class AutopilotMysql(Autopilot):
                     planner_user = self.agent_instance_util.get_agent_planner_user(report_file_name=report_file_name)
                     analyst = self.get_agent_analyst(report_file_name=report_file_name)
 
-                    question_supplement = 'Please make an analysis and summary in English, including which charts were generated, and briefly introduce the contents of these charts.'
-                    if self.language_mode == CONFIG.language_chinese:
-                        question_supplement = qustion_message + ".  请用中文帮我分析以上的报表数据，给我有价值的结论"
-                        print("question_supplement ：", question_supplement)
+                    question_supplement = qustion_message + '\n' + "Analyze the above report data and give me valuable conclusions"
+                    print("question_supplement ：", question_supplement)
 
                     await planner_user.initiate_chat(
                         analyst,
-                        message=str(
-                            base_mess) + '\n' + LanguageInfo.question_ask + '\n' + question_supplement,
+                        message=str(base_mess) + '\n' + LanguageInfo.question_ask + '\n' + question_supplement,
                     )
 
                     answer_message = planner_user.last_message()["content"]
@@ -419,6 +416,3 @@ class AutopilotMysql(Autopilot):
             logger.error("from user:[{}".format(self.user_name) + "] , " + "error: " + str(e))
         print(self.agent_instance_util.data_analysis_error)
         return None, None
-
-
-

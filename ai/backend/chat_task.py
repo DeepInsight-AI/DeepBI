@@ -151,7 +151,7 @@ class ChatClass:
 
         except Exception as e:
             traceback.print_exc()
-            logger.error("from user:[{}".format(self.user_name) + "] , " + str(e))
+            # logger.error("from user:[{}".format(self.user_name) + "] , " + str(e))
 
             result['state'] = 500
             if self.language_mode == CONFIG.language_chinese:

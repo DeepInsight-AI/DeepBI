@@ -111,6 +111,7 @@ git clone http://github.com/DeepInsight-AI/DeepBI.git
 ## 📑 Other
 - We have tested on Mac OS 12.7/13.X /14.1.1, Ubuntu 20.04/22.04, and Windows11 WSL 22.04.
 - Windows 10 requires version 22H2 or higher to install WSL
+- The minimum memory requirement for server operation is 1 core 2G memory, and 2 core 4G memory is recommended
 - If you have any question, please contact us at dev@deep-insight.co
 - <a href="https://github.com/DeepInsight-AI/DeepBI/issues">Issue</a>
 

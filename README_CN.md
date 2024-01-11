@@ -101,6 +101,7 @@ git clone http://github.com/DeepInsight-AI/DeepBI.git
 ## 📑 文档
 - 我们已经在 Mac OS 12.7/13.X /14.1.1 , Ubuntu 20.04/22.04 和  Windows11 WSL 22.04 系统测试。
 - Windows 10 安装WSL需要 22H2版本，详见  [使用 Docker 安装](Docker_install_CN.md)
+- 服务器运行需求 最低 1核心 2G内存，建议2核心 4G内存 以上
 - 如果有什么问题，可以联系我们 dev@deep-insight.co
 - <a href="https://github.com/DeepInsight-AI/DeepBI/issues">Issue</a>
 

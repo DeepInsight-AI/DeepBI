@@ -6,11 +6,11 @@ class LanguageInfo():
         select_language = ['EN', 'CN']
         if CONFIG.web_language in select_language:
             if CONFIG.web_language == 'CN':
-                self.load_conf_cn()
+                self.load_info_cn()
             else:
                 self.load_info_en()
         else:
-            self.load_conf_cn()
+            self.load_info_cn()
 
     def load_info_cn(self):
         self.question_ask = ' 以下是我的问题，请用中文回答: '

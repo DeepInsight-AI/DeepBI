@@ -27,7 +27,7 @@ class Config():
 
         self.python_base_dependency = """python installed dependency environment: pymysql, pandas, mysql-connector-python, pyecharts, sklearn, psycopg2, sqlalchemy"""
 
-        self.max_token_num = 5000
+        self.max_token_num = 6000
 
         self.talker_bi = 'bi'
         self.talker_user = 'user'

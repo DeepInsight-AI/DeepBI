@@ -61,6 +61,7 @@ class AnalysisMysql(Analysis):
                         self.agent_instance_util.set_base_message(q_str)
                         self.agent_instance_util.db_id = db_id
 
+
                 else:
                     self.agent_instance_util.set_base_message(q_str)
 

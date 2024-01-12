@@ -4,17 +4,16 @@ import tornado.web
 # 加载 .env 文件中的环境变量
 load_dotenv()
 
-# from ai.backend.app import app
-# app.run(port=8340)
-
 from ai.backend.app2 import CustomApplication
 
-app = CustomApplication()
-app.listen(8340)
-tornado.ioloop.IOLoop.current().start()
+# app = CustomApplication()
+# app.listen(8340)
+# tornado.ioloop.IOLoop.current().start()
 
-from ai.backend.util.db.postgresql_report import PsgReport
-# 更新数据
-report_id = 36
-# data_to_update = (2, report_id)
-# PsgReport().update_data(data_to_update)
+
+from ai.backend.util.database_util import Main
+db_id = str(1)
+obj = Main(db_id)
+obj.run()
+
+obj.run_decode()

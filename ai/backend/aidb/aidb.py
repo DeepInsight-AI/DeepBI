@@ -138,8 +138,8 @@ class AIDB:
 
                         qustion_message = """Help me check that the following data comments are complete and correct."""
 
-                        if self.language_mode == CONFIG.language_chinese:
-                            qustion_message = "帮助我检查下列数据注释是否完整且正确: "
+                        # if self.language_mode == CONFIG.language_chinese:
+                        #     qustion_message = "帮助我检查下列数据注释是否完整且正确: "
 
                         await asyncio.wait_for(planner_user.initiate_chat(
                             database_describer,
@@ -231,9 +231,12 @@ class AIDB:
         # await self.ws.send(consume_output)
         if self.websocket is not None:
             await asyncio.wait_for(self.websocket.send(consume_output), timeout=CONFIG.request_timeout)
-        print(str(time.strftime("%Y-%m-%d %H:%M:%S",
-                                time.localtime())) + ' ---- ' + "from user:[{}".format(
-            self.user_name) + "], reply a message:{}".format(consume_output))
+
+        send_mess = str(time.strftime("%Y-%m-%d %H:%M:%S",
+                                      time.localtime())) + ' ---- ' + "from user:[{}".format(
+            self.user_name) + "], reply a message:{}".format(consume_output)
+        print(send_mess)
+        logger.info(send_mess)
 
     async def check_api_key(self):
         # self.agent_instance_util.api_key_use = True

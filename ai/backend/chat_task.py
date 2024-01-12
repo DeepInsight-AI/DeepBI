@@ -2,7 +2,7 @@ import asyncio
 import json
 import time
 import traceback
-# from ai.backend.util.write_log import logger
+from ai.backend.util.write_log import logger
 from ai.agents import AgentInstanceUtil
 from ai.backend.memory import ChatMemoryManager
 from ai.backend.base_config import CONFIG
@@ -61,15 +61,19 @@ class ChatClass:
         """ Receive messages and put them into the [pending] message queue """
         msg_in = await self.ws.recv()
         await self.incoming.put(msg_in)
-        print(str(time.strftime("%Y-%m-%d %H:%M:%S",
-                                time.localtime())) + ' ---- ' + "from user:[{}".format(
-            self.user_name) + "], got a message:{}".format(msg_in))
+        got_mess = str(time.strftime("%Y-%m-%d %H:%M:%S",
+                                     time.localtime())) + ' ---- ' + "from user:[{}".format(
+            self.user_name) + "], got a message:{}".format(msg_in)
+        print(got_mess)
+        logger.info(got_mess)
 
     async def send_message(self, message):
-        print(str(time.strftime("%Y-%m-%d %H:%M:%S",
-                                time.localtime())) + ' ---- ' + "from user:[{}".format(
-            self.user_name) + "], reply a message:{}".format(message))
+        send_mess = str(time.strftime("%Y-%m-%d %H:%M:%S",
+                                      time.localtime())) + ' ---- ' + "from user:[{}".format(
+            self.user_name) + "], reply a message:{}".format(message)
+        print(send_mess)
         await self.ws.send(message)
+        logger.info(send_mess)
 
     async def produce(self):
         """Get a message to be sent"""
@@ -160,3 +164,8 @@ class ChatClass:
                 result['data']['content'] = 'Abnormal data format'
             consume_output = json.dumps(result)
             await self.outgoing.put(consume_output)
+
+            # 捕获异常并记录日志
+            logger.error("from user:[{}".format(self.user_name))
+            logger.error("An error occurred: %s", str(e))
+            logger.error(traceback.format_exc())

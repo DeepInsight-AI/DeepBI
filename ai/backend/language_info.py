@@ -22,8 +22,8 @@ class LanguageInfo():
         self.error_no_report_question = "非常抱歉，本对话只处理报表生成类问题，这个问题请您到数据分析对话中提问"
 
         self.no_api_key = '未检测到apikey,请核查'
-        self.api_key_success = '检测通过~'
-        self.api_key_fail = '检测未通过~'
+        self.api_key_success = 'API Key 检测通过~'
+        self.api_key_fail = 'API Key 检测未通过~'
 
     def load_info_en(self):
         self.question_ask = ' This is my question，Answer user questions in English: '
@@ -34,7 +34,7 @@ class LanguageInfo():
         self.error_no_report_question = 'Sorry, this conversation only deals with report generation issues. Please ask this question in the data analysis conversation.'
 
         self.no_api_key = 'apikey not detected, please check'
-        self.api_key_success = 'Test Success~'
-        self.api_key_fail = 'Test Fail~'
+        self.api_key_success = 'API Key Test Success~'
+        self.api_key_fail = 'API Key Test Fail~'
 
 LanguageInfo = LanguageInfo()

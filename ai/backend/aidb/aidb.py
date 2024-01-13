@@ -271,7 +271,8 @@ class AIDB:
                 return True
             except HTTPError as http_err:
                 traceback.print_exc()
-                error_miss_key = self.generate_error_message(http_err, error_message=self.error_miss_key)
+
+                error_miss_key = self.generate_error_message(http_err, error_message=LanguageInfo.api_key_fail)
                 await self.put_message(500, CONFIG.talker_log, CONFIG.type_log_data, error_miss_key)
                 return False
             except Exception as e:
@@ -296,8 +297,7 @@ class AIDB:
             try:
                 ApiKey, HttpProxyHost, HttpProxyPort, ApiHost = self.load_api_key(token_path)
                 if ApiKey is None or len(ApiKey) == 0:
-                    await self.put_message(500, CONFIG.talker_log, CONFIG.type_log_data, self.error_miss_key)
-                    return False
+                    return await self.put_message(200, CONFIG.talker_api, CONFIG.type_test, LanguageInfo.no_api_key)
 
                 self.agent_instance_util.set_api_key(ApiKey, ApiHost)
 

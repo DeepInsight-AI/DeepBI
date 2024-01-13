@@ -115,7 +115,6 @@ class ChatClass:
                     q_chat_type = json_str.get('chat_type')
 
                 if q_chat_type == 'test':
-
                     await AIDB(self).test_api_key()
 
                 elif q_chat_type == 'chat':

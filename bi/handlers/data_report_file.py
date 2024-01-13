@@ -85,6 +85,7 @@ class DataReportFileResource(BaseResource):  # BaseResource
         report_desc = req["report_desc"]
         db_comment = req["db_comment"]
         databases_id = req["databases_id"]
+        databases_type = req["databases_type"]
 
         new_filename = str(user_id) + "_report_" + str(uuid.uuid4()) + '.json'
         file_name = os.path.join(settings.DATA_SOURCE_FILE_DIR, new_filename)
@@ -95,7 +96,8 @@ class DataReportFileResource(BaseResource):  # BaseResource
             "db_comment": db_comment,
             "html_code": "",
             "chat_log": ["The report is being generated, please wait patiently..."],
-            "databases_id": databases_id
+            "databases_id": databases_id,
+            "databases_type": databases_type
         }
 
         with open(file_name, 'w') as file:

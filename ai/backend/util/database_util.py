@@ -113,7 +113,7 @@ class Main:
         print('json_data :', json_data)
         if 200 == json_data['code']:
             decode_json = decode_data_info(json_data['data'])
-            # print("解密后", decode_json)
+            # print("decode", decode_json)
 
             # 敏感信息隐藏
             decode_json = dbinfo_encode(decode_json)
@@ -151,6 +151,8 @@ class Main:
 
 
 if __name__ == "__main__":
+
+
     db_id = str(18)
     obj = Main(db_id)
     obj.run()

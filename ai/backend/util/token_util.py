@@ -4,6 +4,23 @@ import tiktoken
 # 定义函数 num_tokens_from_messages，该函数返回由一组消息所使用的token数。
 def num_tokens_from_messages(messages, model="gpt-3.5-turbo"):
     """Return the number of tokens used by a list of messages."""
+
+    num_tokens = 0
+    # 计算每条消息的token数
+    tokens_per_message = 4
+    tokens_per_name = 1
+    for message in messages:
+        num_tokens += tokens_per_message
+        for key, value in message.items():
+            num_tokens += len(str(value)) / 4
+            if key == "name":
+                num_tokens += tokens_per_name
+    num_tokens += 3  # 每条回复都以助手为首
+    return num_tokens
+
+
+def num_tokens_from_messages_old(messages, model="gpt-3.5-turbo"):
+    """Return the number of tokens used by a list of messages."""
     # 尝试获取模型的编码
     try:
         encoding = tiktoken.encoding_for_model(model)
@@ -65,11 +82,12 @@ def num_tokens_from_messages(messages, model="gpt-3.5-turbo"):
     return num_tokens
 
 
+
 if __name__ == '__main__':
     message = [
         {
             "role": "system",
-            "content": """234""",
+            "content": """12345678901234""",
         }
     ]
 

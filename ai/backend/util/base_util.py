@@ -42,6 +42,13 @@ def get_web_server_ip():
     else:
         return None
 
+def get_web_language():
+    web_language = os.environ.get("WEB_LANGUAGE", None)
+    if web_language and len(str(web_language)) > 0:
+        return str(web_language)
+    else:
+        return 'CN'
+
 def dbinfo_encode(json_data):
     if json_data.get('user'):
         json_data['user'] = user_secret

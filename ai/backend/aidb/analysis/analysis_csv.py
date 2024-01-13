@@ -31,13 +31,15 @@ class AnalysisCsv(Analysis):
         if q_sender == CONFIG.talker_user:
             if q_data_type == CONFIG.type_question:
                 if self.agent_instance_util.base_message is not None:
-                    try:
-                        await self.start_chatgroup_csv(q_str)
-                    except Exception as e:
-                        traceback.print_exc()
-                        logger.error("from user:[{}".format(self.user_name) + "] , " + str(e))
-                        await self.put_message(200, receiver=CONFIG.talker_user, data_type=CONFIG.type_answer,
-                                               content=self.error_message_timeout)
+                    await self.start_chatgroup(q_str)
+
+                    # try:
+                    #     await self.start_chatgroup_csv(q_str)
+                    # except Exception as e:
+                    #     traceback.print_exc()
+                    #     logger.error("from user:[{}".format(self.user_name) + "] , " + str(e))
+                    #     await self.put_message(200, receiver=CONFIG.talker_user, data_type=CONFIG.type_answer,
+                    #                            content=self.error_message_timeout)
                 else:
                     await self.put_message(500, receiver=CONFIG.talker_user, data_type=CONFIG.type_answer,
                                            content=self.error_miss_data)

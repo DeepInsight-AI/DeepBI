@@ -10,6 +10,8 @@ import os
 import time
 from ai.backend.util import base_util
 import asyncio
+from requests.exceptions import HTTPError
+from ai.backend.language_info import LanguageInfo
 
 
 class AIDB:
@@ -59,6 +61,11 @@ class AIDB:
             )
             answer_message = planner_user.last_message()["content"]
             # print("answer_message: ", answer_message)
+        except HTTPError as http_err:
+            traceback.print_exc()
+            error_message = self.generate_error_message(http_err)
+            return await self.put_message(500, CONFIG.talker_bi, CONFIG.type_comment_first, error_message)
+
         except Exception as e:
             traceback.print_exc()
             logger.error("from user:[{}".format(self.user_name) + "] , " + "error: " + str(e))
@@ -132,8 +139,8 @@ class AIDB:
 
                         qustion_message = """Help me check that the following data comments are complete and correct."""
 
-                        if self.language_mode == CONFIG.language_chinese:
-                            qustion_message = "帮助我检查下列数据注释是否完整且正确: "
+                        # if self.language_mode == CONFIG.language_chinese:
+                        #     qustion_message = "帮助我检查下列数据注释是否完整且正确: "
 
                         await asyncio.wait_for(planner_user.initiate_chat(
                             database_describer,
@@ -225,9 +232,12 @@ class AIDB:
         # await self.ws.send(consume_output)
         if self.websocket is not None:
             await asyncio.wait_for(self.websocket.send(consume_output), timeout=CONFIG.request_timeout)
-        print(str(time.strftime("%Y-%m-%d %H:%M:%S",
-                                time.localtime())) + ' ---- ' + "from user:[{}".format(
-            self.user_name) + "], reply a message:{}".format(consume_output))
+
+        send_mess = str(time.strftime("%Y-%m-%d %H:%M:%S",
+                                      time.localtime())) + ' ---- ' + "from user:[{}".format(
+            self.user_name) + "], reply a message:{}".format(consume_output)
+        print(send_mess)
+        logger.info(send_mess)
 
     async def check_api_key(self):
         # self.agent_instance_util.api_key_use = True
@@ -259,6 +269,12 @@ class AIDB:
                 self.agent_instance_util.api_key_use = True
 
                 return True
+            except HTTPError as http_err:
+                traceback.print_exc()
+
+                error_miss_key = self.generate_error_message(http_err, error_message=LanguageInfo.api_key_fail)
+                await self.put_message(500, CONFIG.talker_log, CONFIG.type_log_data, error_miss_key)
+                return False
             except Exception as e:
                 traceback.print_exc()
                 logger.error("from user:[{}".format(self.user_name) + "] , " + "error: " + str(e))
@@ -281,8 +297,7 @@ class AIDB:
             try:
                 ApiKey, HttpProxyHost, HttpProxyPort, ApiHost = self.load_api_key(token_path)
                 if ApiKey is None or len(ApiKey) == 0:
-                    await self.put_message(500, CONFIG.talker_log, CONFIG.type_log_data, self.error_miss_key)
-                    return False
+                    return await self.put_message(200, CONFIG.talker_api, CONFIG.type_test, LanguageInfo.no_api_key)
 
                 self.agent_instance_util.set_api_key(ApiKey, ApiHost)
 
@@ -301,28 +316,21 @@ class AIDB:
 
                 self.agent_instance_util.api_key_use = True
 
-                if self.language_mode == CONFIG.language_chinese:
-                    return await self.put_message(200, CONFIG.talker_api, CONFIG.type_test, '检测通过')
-                else:
-                    return await self.put_message(200, CONFIG.talker_api, CONFIG.type_test, 'test success')
+                return await self.put_message(200, CONFIG.talker_api, CONFIG.type_test, LanguageInfo.api_key_success)
 
+            except HTTPError as http_err:
+                traceback.print_exc()
 
+                error_miss_key = self.generate_error_message(http_err, error_message=LanguageInfo.api_key_fail)
+                return await self.put_message(200, CONFIG.talker_api, CONFIG.type_test, error_miss_key)
 
             except Exception as e:
                 traceback.print_exc()
                 logger.error("from user:[{}".format(self.user_name) + "] , " + "error: " + str(e))
-
-                if self.language_mode == CONFIG.language_chinese:
-                    return await self.put_message(200, CONFIG.talker_api, CONFIG.type_test, '检测未通过...')
-                else:
-                    return await self.put_message(200, CONFIG.talker_api, CONFIG.type_test, 'test fail')
+                return await self.put_message(200, CONFIG.talker_api, CONFIG.type_test, LanguageInfo.api_key_fail)
 
         else:
-            if self.language_mode == CONFIG.language_chinese:
-                return await self.put_message(200, CONFIG.talker_api, CONFIG.type_test, '未检测到apikey,请先保存')
-            else:
-                return await self.put_message(200, CONFIG.talker_api, CONFIG.type_test,
-                                              'apikey not detected, please save first')
+            return await self.put_message(200, CONFIG.talker_api, CONFIG.type_test, LanguageInfo.no_api_key)
 
     def load_api_key(self, token_path):
         ApiKey = None
@@ -349,7 +357,8 @@ class AIDB:
             elif in_use == 'DeepInsight':
                 ApiKey = data[in_use]['ApiKey']
                 print('DeepBIApiKey : ', ApiKey)
-                ApiHost = "https://apiserver.deep-thought.io/proxy"
+                # ApiHost = "https://apiserver.deep-thought.io/proxy"
+                ApiHost = CONFIG.ApiHost
         else:
             ApiKey = data['OpenaiApiKey']
             print('OpenaiApiKey : ', ApiKey)
@@ -359,3 +368,27 @@ class AIDB:
             print('HttpProxyPort : ', HttpProxyPort)
 
         return ApiKey, HttpProxyHost, HttpProxyPort, ApiHost
+
+    def generate_error_message(self, http_err, error_message=' API ERROR '):
+        # print(f'HTTP error occurred: {http_err}')
+        # print(f'Response status code: {http_err.response.status_code}')
+        # print(f'Response text: {http_err.response.text}')
+
+        # error_message = self.error_miss_key
+        status_code = http_err.response.status_code
+        if str(http_err.response.text).__contains__('deep-thought'):
+            if status_code == 401:
+                error_message = error_message + str(status_code) + ' , APIKEY Empty Error'
+            elif status_code == 402:
+                error_message = error_message + str(status_code) + ' , Data Empty Error'
+            elif status_code == 403:
+                error_message = error_message + str(status_code) + ' , APIKEY Error'
+            elif status_code == 404:
+                error_message = error_message + str(status_code) + ' , Unsupported Ai Engine Error'
+            elif status_code == 405:
+                error_message = error_message + str(status_code) + ' , Insufficient Token Error'
+            elif status_code == 500:
+                error_message = error_message + str(status_code) + ' , OpenAI API Error, ' + str(http_err.response.text)
+        else:
+            error_message = error_message + ' ' + str(status_code) + ' ' + str(http_err.response.text)
+        return error_message

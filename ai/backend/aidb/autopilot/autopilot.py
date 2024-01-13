@@ -1,14 +1,9 @@
-import traceback
-from ai.backend.util.write_log import logger
 from ai.backend.base_config import CONFIG
-import re
-import ast
 from ai.backend.aidb import AIDB
 from ai.agents.agentchat import HumanProxyAgent, TaskSelectorAgent, Questioner, AssistantAgent
 from jinja2 import Template
 from pathlib import Path
 import time
-
 
 class Autopilot(AIDB):
     def get_agent_user_proxy(self):
@@ -98,27 +93,26 @@ class Autopilot(AIDB):
     async def task_generate_echart(self, qustion_message):
         return self.qustion_message
 
-
-    def get_agent_ai_analyst(self):
+    def get_agent_ai_analyst(self, report_file_name=None):
         """ ai_analyst """
         ai_analyst = AssistantAgent(
             name="ai_data_analyst",
             system_message="""You are a helpful AI data analysis.
-            Please tell me from which dimensions you need to analyze and help me make a report plan.
-            Reports need to be represented from multiple dimensions. To keep them compact, merge them properly.
-            Give a description of the purpose of each report.
-        The output should be formatted as a JSON instance that conforms to the JSON schema below, the JSON is a list of dict,
-        [
-        {“report_name”: “report_1”, “description”:”description of the report”;},
-        {},
-        {},
-        ].
-        Reply "TERMINATE" in the end when everything is done.
-            """ + '\n' + '请用中文回答',
+             Please tell me from which dimensions you need to analyze and help me make a report plan.
+             Reports need to be represented from multiple dimensions. To keep them compact, merge them properly.
+             Give a description of the purpose of each report.
+         The output should be formatted as a JSON instance that conforms to the JSON schema below, the JSON is a list of dict,
+         [
+         {“report_name”: “report_1”, “description”:”description of the report”;},
+         {},
+         {},
+         ].
+         Reply "TERMINATE" in the end when everything is done.
+             """,
             llm_config=self.agent_instance_util.gpt4_turbo_config,
             websocket=self.websocket,
             openai_proxy=self.agent_instance_util.openai_proxy,
-            log_list=self.log_list,
+            report_file_name=report_file_name,
         )
         return ai_analyst
 
@@ -162,11 +156,16 @@ class Autopilot(AIDB):
         current_directory = Path.cwd()
 
         if str(current_directory).endswith('/ai'):
-            html_template_path = str(current_directory) + '/backend/aidb/autopilot/html_template'
+            html_template_path = str(current_directory) + '/backend/aidb/autopilot/'
         else:
-            html_template_path = str(current_directory) + '/ai/backend/aidb/autopilot/html_template'
+            html_template_path = str(current_directory) + '/ai/backend/aidb/autopilot/'
 
         print('html_template_path:', html_template_path)
+
+        if CONFIG.web_language == 'CN':
+            html_template_path = html_template_path + 'html_template'
+        else:
+            html_template_path = html_template_path + 'html_template_en'
 
         # 读取模板文件
         with open(html_template_path + '/report_2.html', 'r') as file:
@@ -186,7 +185,7 @@ class Autopilot(AIDB):
         print("HTML文件已生成：output.html")
         return str(rendered_html)
 
-    def get_agent_questioner(self, report_file_name):
+    def get_agent_questioner(self, report_file_name=None):
         """ Questioner  """
         questioner = Questioner(
             name="questioner",
@@ -200,4 +199,3 @@ class Autopilot(AIDB):
         )
 
         return questioner
-

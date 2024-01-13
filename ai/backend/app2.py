@@ -1,8 +1,9 @@
 import tornado.ioloop
 import tornado.web
+import json
 from ai.backend.chat_task import ChatClass
 from ai.backend.aidb.autopilot.autopilot_mysql_api import AutopilotMysql
-import json
+from ai.backend.aidb.autopilot.autopilot_starrocks_api import AutopilotStarrocks
 from ai.backend.base_config import CONFIG
 from ai.backend.aidb.dashboard.prettify_dashboard import PrettifyDashboard
 
@@ -29,13 +30,26 @@ class MainHandler(tornado.web.RequestHandler):
         report_id = data['report_id']
         file_name = data['file_name']
 
+        report_file_name = CONFIG.up_file_path + file_name
+        with open(report_file_name, 'r') as file:
+            data = json.load(file)
+
+        databases_type = 'mysql'
+        if data.get('databases_type') is not None:
+            databases_type = data['databases_type']
+
         chat_class = ChatClass(None, user_name)
-        autopilotMysql = AutopilotMysql(chat_class)
         json_str = {
             "file_name": file_name,
             "report_id": report_id
         }
-        await autopilotMysql.deal_question(json_str)
+
+        if databases_type == 'starrocks':
+            autopilot_starrocks = AutopilotStarrocks(chat_class)
+            await autopilot_starrocks.deal_question(json_str)
+        else:
+            autopilotMysql = AutopilotMysql(chat_class)
+            await autopilotMysql.deal_question(json_str)
 
 
 class DashboardHandler(tornado.web.RequestHandler):
@@ -59,8 +73,6 @@ class DashboardHandler(tornado.web.RequestHandler):
         print("Received data:", data)
         # 模拟异步处理
         print("Data processed asynchronously")
-
-        print('data: ', data)
 
         user_name = data['user_name']
         task_id = data['task_id']

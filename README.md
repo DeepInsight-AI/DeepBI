@@ -38,7 +38,7 @@ https://github.com/DeepInsight-AI/DeepBI/assets/151519374/d1effbe1-5c11-4c77-86e
 3 Dashboard : Assemble persistent visualizations into dashboards.\
 4 Automated data analysis reports (to be developed) : Complete data analysis reports automatically according to user instructions.\
 5 Support multiple data sources, including MySQL, PostgreSQL, Doris, StarRocks, CSV/Excel, etc.\
-6 Multi-platform support, support Windows-WSL, Linux, Mac. \
+6 Multi-platform support, support Windows-WSL,Windows, Linux, Mac. \
 7 International, support Chinese, English.
 
 
@@ -104,13 +104,14 @@ git clone http://github.com/DeepInsight-AI/DeepBI.git
 
 
 ## Contact Us
-<a><img src="https://github.com/DeepInsight-AI/DeepBI/assets/151519374/b0ba1fc3-8c71-4bf7-bd53-ecf17050581a" width="40%"/></a>
+<a><img src="https://github.com/DeepInsight-AI/DeepBI/assets/151519915/1b7d9848-49fb-4f06-bad7-86d751841a6b" width="40%"/></a>
 
 
 
 ## 📑 Other
 - We have tested on Mac OS 12.7/13.X /14.1.1, Ubuntu 20.04/22.04, and Windows11 WSL 22.04.
 - Windows 10 requires version 22H2 or higher to install WSL
+- The minimum memory requirement for server operation is 1 core 2G memory, and 2 core 4G memory is recommended
 - If you have any question, please contact us at dev@deep-insight.co
 - <a href="https://github.com/DeepInsight-AI/DeepBI/issues">Issue</a>
 

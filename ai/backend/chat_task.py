@@ -9,7 +9,7 @@ from ai.backend.base_config import CONFIG
 from ai.backend.aidb.report import ReportMysql, ReportPostgresql, ReportStarrocks
 from ai.backend.aidb.analysis import AnalysisMysql, AnalysisCsv, AnalysisPostgresql, AnalysisStarrocks
 from ai.backend.aidb import AIDB
-from ai.backend.aidb.autopilot import autopilot_mysql, AutopilotMysql
+from ai.backend.aidb.autopilot import AutopilotMysql
 
 message_pool: ChatMemoryManager = ChatMemoryManager(name="message_pool")
 
@@ -61,15 +61,19 @@ class ChatClass:
         """ Receive messages and put them into the [pending] message queue """
         msg_in = await self.ws.recv()
         await self.incoming.put(msg_in)
-        print(str(time.strftime("%Y-%m-%d %H:%M:%S",
-                                time.localtime())) + ' ---- ' + "from user:[{}".format(
-            self.user_name) + "], got a message:{}".format(msg_in))
+        got_mess = str(time.strftime("%Y-%m-%d %H:%M:%S",
+                                     time.localtime())) + ' ---- ' + "from user:[{}".format(
+            self.user_name) + "], got a message:{}".format(msg_in)
+        print(got_mess)
+        logger.info(got_mess)
 
     async def send_message(self, message):
-        print(str(time.strftime("%Y-%m-%d %H:%M:%S",
-                                time.localtime())) + ' ---- ' + "from user:[{}".format(
-            self.user_name) + "], reply a message:{}".format(message))
+        send_mess = str(time.strftime("%Y-%m-%d %H:%M:%S",
+                                      time.localtime())) + ' ---- ' + "from user:[{}".format(
+            self.user_name) + "], reply a message:{}".format(message)
+        print(send_mess)
         await self.ws.send(message)
+        logger.info(send_mess)
 
     async def produce(self):
         """Get a message to be sent"""
@@ -111,23 +115,16 @@ class ChatClass:
                     q_chat_type = json_str.get('chat_type')
 
                 if q_chat_type == 'test':
-
                     await AIDB(self).test_api_key()
 
                 elif q_chat_type == 'chat':
                     if q_database == 'mysql':
-                        # await self.deal_question_mysql(json_str, message)
                         print(" q_database ==  mysql ")
-                        # await AnalysisMysql(self).deal_question(json_str, message)
                         await self.analysisMysql.deal_question(json_str, message)
                     elif q_database == 'csv':
-                        # await self.deal_question_csv(json_str, message)
-                        # await AnalysisCsv(self).deal_question(json_str, message)
                         await self.analysisCsv.deal_question(json_str, message)
                     elif q_database == 'pg':
                         # postgresql
-                        # await self.deal_question_postgresql(json_str, message)
-                        # await AnalysisPostgresql(self).deal_question(json_str, message)
                         await self.analysisPostgresql.deal_question(json_str, message)
                     elif q_database == 'starrocks':
                         print(" q_database ==  starrocks ")
@@ -135,12 +132,8 @@ class ChatClass:
 
                 elif q_chat_type == 'report':
                     if q_database == 'mysql':
-                        # await self.deal_report_mysql(json_str, message)
-                        # await ReportMysql(self).deal_report(json_str, message)
                         await self.reportMysql.deal_report(json_str, message)
                     elif q_database == 'pg':
-                        # await self.deal_report_pg(json_str, message)
-                        # await ReportPostgresql(self).deal_report(json_str, message)
                         await self.reportPostgresql.deal_report(json_str, message)
                     elif q_database == 'starrocks':
                         await self.reportStarrocks.deal_report(json_str, message)
@@ -161,7 +154,7 @@ class ChatClass:
 
         except Exception as e:
             traceback.print_exc()
-            logger.error("from user:[{}".format(self.user_name) + "] , " + str(e))
+            # logger.error("from user:[{}".format(self.user_name) + "] , " + str(e))
 
             result['state'] = 500
             if self.language_mode == CONFIG.language_chinese:
@@ -170,3 +163,8 @@ class ChatClass:
                 result['data']['content'] = 'Abnormal data format'
             consume_output = json.dumps(result)
             await self.outgoing.put(consume_output)
+
+            # 捕获异常并记录日志
+            logger.error("from user:[{}".format(self.user_name))
+            logger.error("An error occurred: %s", str(e))
+            logger.error(traceback.format_exc())

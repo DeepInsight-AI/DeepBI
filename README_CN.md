@@ -2,7 +2,7 @@
 
 <div align="center">
 
-DeepBi是一款AI原生的数据分析平台。DeepBI充分利用大语言模型的能力来探索、查询、可视化和共享来自任何数据源的数据。用户可以使用DeepBI洞察数据并做出数据驱动的决策。
+DeepBI是一款AI原生的数据分析平台。DeepBI充分利用大语言模型的能力来探索、查询、可视化和共享来自任何数据源的数据。用户可以使用DeepBI洞察数据并做出数据驱动的决策。
 
 
 </div>
@@ -44,7 +44,7 @@ https://github.com/DeepInsight-AI/DeepBI/assets/151519374/f0d2fcd4-32b0-4095-a89
 3 仪表板大屏：将持久化的可视化图组装为仪表板。\
 4 自动化数据分析报告（待开发)：根据用户指令自动完成完整的数据分析报告。\
 5 多数据源支持，支持 MySQL、PostgreSQL、Doris，Starrocks, CSV/Excel等。\
-6 多平台支持，支持 Windows-WSL、Linux、Mac。\
+6 多平台支持，支持 Windows-WSL、Windows、Linux、Mac。\
 7 国际化，支持中文、英文。
 
 
@@ -101,6 +101,7 @@ git clone http://github.com/DeepInsight-AI/DeepBI.git
 ## 📑 文档
 - 我们已经在 Mac OS 12.7/13.X /14.1.1 , Ubuntu 20.04/22.04 和  Windows11 WSL 22.04 系统测试。
 - Windows 10 安装WSL需要 22H2版本，详见  [使用 Docker 安装](Docker_install_CN.md)
+- 服务器运行需求 最低 1核心 2G内存，建议2核心 4G内存 以上
 - 如果有什么问题，可以联系我们 dev@deep-insight.co
 - <a href="https://github.com/DeepInsight-AI/DeepBI/issues">Issue</a>
 

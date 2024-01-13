@@ -15,8 +15,8 @@ from .app import create_app  # noqa
 from .query_runner import import_query_runners
 from .destinations import import_destinations
 
-__version__ = "11.0.0-dev"
-__DeepBI_version__ = "1.2.0"
+__version__ = "1.2.1"
+__DeepBI_version__ = "1.2.1"
 
 
 def setup_logging():

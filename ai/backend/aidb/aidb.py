@@ -11,6 +11,7 @@ import time
 from ai.backend.util import base_util
 import asyncio
 from requests.exceptions import HTTPError
+from ai.backend.language_info import LanguageInfo
 
 
 class AIDB:
@@ -315,36 +316,21 @@ class AIDB:
 
                 self.agent_instance_util.api_key_use = True
 
-                if self.language_mode == CONFIG.language_chinese:
-                    return await self.put_message(200, CONFIG.talker_api, CONFIG.type_test, '检测通过')
-                else:
-                    return await self.put_message(200, CONFIG.talker_api, CONFIG.type_test, 'test success')
-
+                return await self.put_message(200, CONFIG.talker_api, CONFIG.type_test, LanguageInfo.api_key_success)
 
             except HTTPError as http_err:
                 traceback.print_exc()
-                if self.language_mode == CONFIG.language_chinese:
-                    error_miss_key = self.generate_error_message(http_err, error_message='检测未通过...')
-                    return await self.put_message(200, CONFIG.talker_api, CONFIG.type_test, error_miss_key)
-                else:
-                    error_miss_key = self.generate_error_message(http_err, error_message='test fail')
-                    return await self.put_message(200, CONFIG.talker_api, CONFIG.type_test, error_miss_key)
+
+                error_miss_key = self.generate_error_message(http_err, error_message=LanguageInfo.api_key_fail)
+                return await self.put_message(200, CONFIG.talker_api, CONFIG.type_test, error_miss_key)
 
             except Exception as e:
                 traceback.print_exc()
                 logger.error("from user:[{}".format(self.user_name) + "] , " + "error: " + str(e))
-
-                if self.language_mode == CONFIG.language_chinese:
-                    return await self.put_message(200, CONFIG.talker_api, CONFIG.type_test, '检测未通过...')
-                else:
-                    return await self.put_message(200, CONFIG.talker_api, CONFIG.type_test, 'test fail')
+                return await self.put_message(200, CONFIG.talker_api, CONFIG.type_test, LanguageInfo.api_key_fail)
 
         else:
-            if self.language_mode == CONFIG.language_chinese:
-                return await self.put_message(200, CONFIG.talker_api, CONFIG.type_test, '未检测到apikey,请先保存')
-            else:
-                return await self.put_message(200, CONFIG.talker_api, CONFIG.type_test,
-                                              'apikey not detected, please save first')
+            return await self.put_message(200, CONFIG.talker_api, CONFIG.type_test, LanguageInfo.no_api_key)
 
     def load_api_key(self, token_path):
         ApiKey = None

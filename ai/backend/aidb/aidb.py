@@ -323,9 +323,12 @@ class AIDB:
 
             except HTTPError as http_err:
                 traceback.print_exc()
-                error_miss_key = self.generate_error_message(http_err, error_message=self.error_miss_key)
-                await self.put_message(500, CONFIG.talker_log, CONFIG.type_log_data, error_miss_key)
-                return False
+                if self.language_mode == CONFIG.language_chinese:
+                    error_miss_key = self.generate_error_message(http_err, error_message='检测未通过...')
+                    return await self.put_message(200, CONFIG.talker_api, CONFIG.type_test, error_miss_key)
+                else:
+                    error_miss_key = self.generate_error_message(http_err, error_message='test fail')
+                    return await self.put_message(200, CONFIG.talker_api, CONFIG.type_test, error_miss_key)
 
             except Exception as e:
                 traceback.print_exc()
@@ -368,7 +371,8 @@ class AIDB:
             elif in_use == 'DeepInsight':
                 ApiKey = data[in_use]['ApiKey']
                 print('DeepBIApiKey : ', ApiKey)
-                ApiHost = "https://apiserver.deep-thought.io/proxy"
+                # ApiHost = "https://apiserver.deep-thought.io/proxy"
+                ApiHost = CONFIG.ApiHost
         else:
             ApiKey = data['OpenaiApiKey']
             print('OpenaiApiKey : ', ApiKey)
@@ -379,7 +383,7 @@ class AIDB:
 
         return ApiKey, HttpProxyHost, HttpProxyPort, ApiHost
 
-    def generate_error_message(self, http_err, error_message=' ERROR '):
+    def generate_error_message(self, http_err, error_message=' API ERROR '):
         # print(f'HTTP error occurred: {http_err}')
         # print(f'Response status code: {http_err.response.status_code}')
         # print(f'Response text: {http_err.response.text}')
@@ -388,16 +392,17 @@ class AIDB:
         status_code = http_err.response.status_code
         if str(http_err.response.text).__contains__('deep-thought'):
             if status_code == 401:
-                error_message = self.error_miss_key + ' , APIKEY Empty，apikey为空'
+                error_message = error_message + str(status_code) + ' , APIKEY Empty Error'
             elif status_code == 402:
-                error_message = self.error_miss_key + ' , Data Error, data为空'
+                error_message = error_message + str(status_code) + ' , Data Empty Error'
             elif status_code == 403:
-                error_message = self.error_miss_key + ' , APIKEY Error，APIKEY 不正确'
+                error_message = error_message + str(status_code) + ' , APIKEY Error'
             elif status_code == 404:
-                error_message = self.error_miss_key + ' , 不支持的 ai 引擎'
+                error_message = error_message + str(status_code) + ' , Unsupported Ai Engine Error'
             elif status_code == 405:
-                error_message = self.error_miss_key + ' , token 余额不足,请充值'
+                error_message = error_message + str(status_code) + ' , Insufficient Token Error'
             elif status_code == 500:
-                error_message = self.error_miss_key + ' , OpenaiAPI 异常, ' + str(http_err.response.text)
-
+                error_message = error_message + str(status_code) + ' , OpenAI API Error, ' + str(http_err.response.text)
+        else:
+            error_message = error_message + ' ' + str(status_code) + ' ' + str(http_err.response.text)
         return error_message

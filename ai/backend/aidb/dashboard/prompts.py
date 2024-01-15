@@ -190,7 +190,7 @@ option = {
 - For each field marked as 'y' in columnMapping, there should be its own data series, and it should be displayed in the chart with a different color.
 - The 'name' field in the series should match exactly with the field names provided in the data. Do not change or translate the field names.
 - Fill in the xAxis data field completely, do not use ... to omit.
-- Set the data field in series to [].
+- Set the data field in series to [], do not fill in the data.
 - Adjust the color, shape (such as rounded corners, right angles, etc.), stacking method, data label style, etc. of the bar chart to match the page background color #00206d and enhance the visual effect.
 - Set the background of echarts to transparent, i.e., backgroundColor: 'rgba(0,0,0,0)'.
 - Set animation effects to add vitality.
@@ -246,7 +246,7 @@ option = {
 - For each field marked as 'y' in columnMapping, there should be its own data series, and it should be displayed in the chart with a different color.
 - The 'name' field in the series should match exactly with the field names provided in the data. Do not change or translate the field names.
 - Fill in the xAxis data field completely, do not use ... to omit.
-- Set the data field in series to [].
+- Set the data field in series to [], do not fill in the data.
 - Adjust the color, transparency, rounded corners, etc. of the pie chart to match the page background color #00206d and enhance the visual effect.
 - Set the background of echarts to transparent, i.e., backgroundColor: 'rgba(0,0,0,0)'.
 - Ensure each data point has a unique color, there should not be any instances where the colors between the data are the same.
@@ -363,7 +363,7 @@ This is an ECharts line chart example.
 - For each field marked as 'y' in columnMapping, there should be its own data series, and it should be displayed in the chart with a different color.
 - The 'name' field in the series should match exactly with the field names provided in the data. Do not change or translate the field names.
 - Fill in the xAxis data field completely, do not use ... to omit.
-- Set the data field in series to [].
+- Set the data field in series to [], do not fill in the data.
 - Adjust the color, width, shadow color, and blur of the line to match the page background color #00206d. In the area style, adjust the color and transparency to enhance the visual effect.
 - Set the background of echarts to transparent, i.e., backgroundColor: 'rgba(0,0,0,0)'.
 - Change the shape of the line (such as solid, dashed, dotted, etc.), style of the line (such as smooth, polyline, etc.), and style of the data points (such as round, square, star, etc.).

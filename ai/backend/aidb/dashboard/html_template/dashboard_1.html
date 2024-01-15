@@ -189,7 +189,7 @@
     function getDashboardData() {
   return new Promise((resolve, reject) => {
     var DashboardData = document.getElementById("query_result").innerHTML;
-    DashboardData = DashboardData.replace(/None/g, "''");
+    DashboardData = DashboardData.replace(/None/g, "''").replace(/<br>/g, "");
     DashboardData = eval('(' + DashboardData + ')');
     console.log(DashboardData, "DashboardData====")
     var dashboard_id = document.getElementById('dashboardId').innerHTML;

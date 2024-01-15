@@ -181,9 +181,15 @@
     });
   </script>
   <script>
+    function decodeHtml(html) {
+  var txt = document.createElement('textarea');
+  txt.innerHTML = html;
+  return txt.value;
+}
     function getDashboardData() {
   return new Promise((resolve, reject) => {
     var DashboardData = document.getElementById("query_result").innerHTML;
+    DashboardData = DashboardData.replace(/None/g, "''");
     DashboardData = eval('(' + DashboardData + ')');
     console.log(DashboardData, "DashboardData====")
     var dashboard_id = document.getElementById('dashboardId').innerHTML;
@@ -246,7 +252,7 @@
 
       } else {
         var chart = echarts.init(document.getElementById('echart' + query_result[i].id))
-        var option =query_result[i]['echart_code']
+        var option =decodeHtml(query_result[i]['echart_code'])
         console.log(option, "option====")
         option = eval('(' + option + ')');
         var x_field = Object.keys(query_result[i]['columnMapping']).find(key => query_result[i]['columnMapping'][key] === 'x');

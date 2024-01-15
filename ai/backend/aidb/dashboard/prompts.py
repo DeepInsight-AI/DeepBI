@@ -103,7 +103,9 @@ option = {
       }
     }
   ],
-  series: [{
+  series: [
+    // 根据columnMapping生成多个系列
+    {
     name: "",
     type: "line",
     yAxisIndex: 1,
@@ -197,8 +199,6 @@ option = {
 - If there are multiple y-axis data, combine with line charts to enrich the chart.
 - Use gradient colors and shadow effects to enhance the visual effect of the chart.
 - Add multi-dimensional labels and legends for more information and interactivity.
-- You must use static methods to generate x-axis and y-axis data, and any form of iteration, such as .map(), .sort(), for loops, etc., is not allowed.
-- When setting animation effects, you must use regular functions, and arrow functions are not allowed. In the function, the use of any form of conditional expressions, including if statements and ternary expressions, is not permitted.
 - Only return the options part, do not include "var option = {...}", the title part, code comments, and markdown "```" or "```json".
 - The return should be code only, without any explanatory text or comments.
 """
@@ -253,8 +253,6 @@ option = {
 - Set animation effects to add vitality.
 - Use gradient colors and shadow effects to enhance the visual effect of the chart.
 - Add multi-dimensional labels and legends for more information and interactivity.
-- You must use static methods to generate x-axis and y-axis data, and any form of iteration, such as .map(), .sort(), for loops, etc., is not allowed.
-- When setting animation effects, you must use regular functions, and arrow functions are not allowed. In the function, the use of any form of conditional expressions, including if statements and ternary expressions, is not permitted.
 - Only return the options part, do not include "var option = {...}", the title part, code comments, and markdown "```" or "```json".
 - The return should be code only, without any explanatory text or comments.
 """
@@ -316,6 +314,7 @@ This is an ECharts line chart example.
       }
     ],
     series: [
+    // 根据columnMapping生成多个系列
       {
         name: '',
         type: 'line',
@@ -370,8 +369,6 @@ This is an ECharts line chart example.
 - Change the shape of the line (such as solid, dashed, dotted, etc.), style of the line (such as smooth, polyline, etc.), and style of the data points (such as round, square, star, etc.).
 - Adjust the border style of the chart.
 - Set animation effects to add vitality.
-- You must use static methods to generate x-axis and y-axis data, and any form of iteration, such as .map(), .sort(), for loops, etc., is not allowed.
-- When setting animation effects, you must use regular functions, and arrow functions are not allowed. In the function, the use of any form of conditional expressions, including if statements and ternary expressions, is not permitted.
 - Only return the options part, do not include "var option = {...}", the title part, code comments, and markdown "```" or "```json".
 - The return should be code only, without any explanatory text or comments.
 """

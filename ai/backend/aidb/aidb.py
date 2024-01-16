@@ -246,7 +246,7 @@ class AIDB:
         token_path = CONFIG.up_file_path + '.token_' + str(self.uid) + '.json'
         if os.path.exists(token_path):
             try:
-                ApiKey, HttpProxyHost, HttpProxyPort, ApiHost = self.load_api_key(token_path)
+                ApiKey, HttpProxyHost, HttpProxyPort, ApiHost, in_use = self.load_api_key(token_path)
                 if ApiKey is None or len(ApiKey) == 0:
                     await self.put_message(500, CONFIG.talker_log, CONFIG.type_log_data, self.error_miss_key)
                     return False
@@ -295,11 +295,11 @@ class AIDB:
         print('token_path : ', token_path)
         if os.path.exists(token_path):
             try:
-                ApiKey, HttpProxyHost, HttpProxyPort, ApiHost = self.load_api_key(token_path)
+                ApiKey, HttpProxyHost, HttpProxyPort, ApiHost, in_use = self.load_api_key(token_path)
                 if ApiKey is None or len(ApiKey) == 0:
                     return await self.put_message(200, CONFIG.talker_api, CONFIG.type_test, LanguageInfo.no_api_key)
 
-                self.agent_instance_util.set_api_key(ApiKey, ApiHost)
+                self.agent_instance_util.set_api_key(ApiKey, ApiHost, in_use)
 
                 if HttpProxyHost is not None and len(str(HttpProxyHost)) > 0 and HttpProxyPort is not None and len(
                     str(HttpProxyPort)) > 0:
@@ -337,6 +337,7 @@ class AIDB:
         HttpProxyHost = None
         HttpProxyPort = None
         ApiHost = None
+        in_use = None
 
         with open(token_path, 'r') as file:
             data = json.load(file)
@@ -353,12 +354,16 @@ class AIDB:
                 openaiApiHost = data[in_use]['ApiHost']
                 if openaiApiHost is not None and len(str(openaiApiHost)) > 0:
                     ApiHost = openaiApiHost
-
             elif in_use == 'DeepInsight':
                 ApiKey = data[in_use]['ApiKey']
                 print('DeepBIApiKey : ', ApiKey)
                 # ApiHost = "https://apiserver.deep-thought.io/proxy"
                 ApiHost = CONFIG.ApiHost
+            elif in_use == 'Azure':
+                ApiKey = data[in_use]['ApiKey']
+                print('DeepBIApiKey : ', ApiKey)
+                # ApiHost = "https://apiserver.deep-thought.io/proxy"
+                ApiHost = data[in_use]['ApiHost']
         else:
             ApiKey = data['OpenaiApiKey']
             print('OpenaiApiKey : ', ApiKey)
@@ -367,7 +372,7 @@ class AIDB:
             HttpProxyPort = data['HttpProxyPort']
             print('HttpProxyPort : ', HttpProxyPort)
 
-        return ApiKey, HttpProxyHost, HttpProxyPort, ApiHost
+        return ApiKey, HttpProxyHost, HttpProxyPort, ApiHost, in_use
 
     def generate_error_message(self, http_err, error_message=' API ERROR '):
         # print(f'HTTP error occurred: {http_err}')

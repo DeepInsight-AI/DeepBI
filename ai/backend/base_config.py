@@ -45,6 +45,10 @@ class Config():
         self.type_log_data = 'log_data'
         self.type_test = 'test'
 
+        self.apikey_openai = 'OpenAI'
+        self.apikey_deepinsight = 'DeepInsight'
+        self.apikey_azure = 'Azure'
+
         self.local_base_mysql_info = """
         """
 

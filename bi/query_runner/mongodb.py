@@ -1,28 +1,36 @@
-import datetime
+# -*- coding: utf-8 -*-
+# step1
 import logging
-import re
-
-from dateutil.parser import parse
-
 from bi.query_runner import *
-from bi.utils import JSONEncoder, json_dumps, json_loads, parse_human_time
 
 logger = logging.getLogger(__name__)
+# step3
+from bi.settings import WEB_LANGUAGE
+from bi.utils import json_loads, parse_human_time  # step 6
+from dateutil.parser import parse  # step 6
+from bi.utils import json_dumps  # step 6
+from bi.utils import JSONEncoder  # step 6
+import re  # step 6
+import datetime
 
+# step2
 try:
+    # step2
     import pymongo
-    from bson.objectid import ObjectId
-    from bson.timestamp import Timestamp
-    from bson.decimal128 import Decimal128
-    from bson.son import SON
-    from bson.json_util import object_hook as bson_object_hook
+
+    from bson.objectid import ObjectId  # step 6
+    from bson.timestamp import Timestamp  # step 6
+    from bson.decimal128 import Decimal128  # step 6
+    from bson.son import SON  # step 6
+    from bson.json_util import object_hook as bson_object_hook  # STEP 6
 
     enabled = True
 
 except ImportError:
     enabled = False
 
-
+date_regex = re.compile('ISODate\("(.*)"\)', re.IGNORECASE)
+# def 6-f2-D1
 TYPES_MAP = {
     str: TYPE_STRING,
     bytes: TYPE_STRING,
@@ -33,27 +41,13 @@ TYPES_MAP = {
 }
 
 
-class MongoDBJSONEncoder(JSONEncoder):
-    def default(self, o):
-        if isinstance(o, ObjectId):
-            return str(o)
-        elif isinstance(o, Timestamp):
-            return super(MongoDBJSONEncoder, self).default(o.as_datetime())
-        elif isinstance(o, Decimal128):
-            return o.to_decimal()
-        return super(MongoDBJSONEncoder, self).default(o)
+# def function 6-f1
+def parse_query_json(query):
+    query_data = json_loads(query, object_hook=datetime_parser)
+    return query_data
 
 
-date_regex = re.compile('ISODate\("(.*)"\)', re.IGNORECASE)
-
-
-def parse_oids(oids):
-    if not isinstance(oids, list):
-        raise Exception("$oids takes an array as input.")
-
-    return [bson_object_hook({"$oid": oid}) for oid in oids]
-
-
+# def function 6-f1-f1
 def datetime_parser(dct):
     for k, v in dct.items():
         if isinstance(v, str):
@@ -70,19 +64,15 @@ def datetime_parser(dct):
     return bson_object_hook(dct)
 
 
-def parse_query_json(query):
-    query_data = json_loads(query, object_hook=datetime_parser)
-    return query_data
+# def function 6-f1-f1-f1
+def parse_oids(oids):
+    if not isinstance(oids, list):
+        raise Exception("$oids takes an array as input.")
+
+    return [bson_object_hook({"$oid": oid}) for oid in oids]
 
 
-def _get_column_by_name(columns, column_name):
-    for c in columns:
-        if "name" in c and c["name"] == column_name:
-            return c
-
-    return None
-
-
+# def 6-f2
 def parse_results(results):
     rows = []
     columns = []
@@ -124,53 +114,116 @@ def parse_results(results):
     return rows, columns
 
 
+# def 6-f2-f1
+def _get_column_by_name(columns, column_name):
+    for c in columns:
+        if "name" in c and c["name"] == column_name:
+            return c
+
+    return None
+
+
+# def 6-f3
+class MongoDBJSONEncoder(JSONEncoder):
+    def default(self, o):
+        if isinstance(o, ObjectId):
+            return str(o)
+        elif isinstance(o, Timestamp):
+            return super(MongoDBJSONEncoder, self).default(o.as_datetime())
+        elif isinstance(o, Decimal128):
+            return o.to_decimal()
+        return super(MongoDBJSONEncoder, self).default(o)
+
+# step1
 class MongoDB(BaseQueryRunner):
-    should_annotate_query = False
+    # init method
+    def __init__(self, configuration):
+        # step 1-1
+        super(MongoDB, self).__init__(configuration)
+        # step 1-2
+        self.db_name = self.configuration["dbName"]
+        # step
+        self.syntax = "json"
+        # step 4-1
+        self.is_replica_set = (
+            True
+            if "replicaSetName" in self.configuration
+               and self.configuration["replicaSetName"]
+            else False
+        )
 
+    # step 1
     @classmethod
-    def configuration_schema(cls):
-        return {
-            "type": "object",
-            "properties": {
-                "connectionString": {"type": "string", "title": "连接字符串"},
-                "username": {"type": "string", "title": "用户名"},
-                "password": {"type": "string", "title": "密码"},
-                "dbName": {"type": "string", "title": "数据库名称"},
-                "replicaSetName": {"type": "string", "title": "副本集名称"},
-                "readPreference": {
-                    "type": "string",
-                    "extendedEnum": [
-                        {"value": "primaryPreferred", "name": "Primary Preferred"},
-                        {"value": "primary", "name": "Primary"},
-                        {"value": "secondary", "name": "Secondary"},
-                        {"value": "secondaryPreferred", "name": "Secondary Preferred"},
-                        {"value": "nearest", "name": "Nearest"},
-                    ],
-                    "title": "副本集读策略",
-                },
-            },
-            "secret": ["password"],
-            "required": ["connectionString", "dbName"],
-        }
+    def name(cls):
+        return "MongoDB"
 
+    # step 2
     @classmethod
     def enabled(cls):
         return enabled
 
-    def __init__(self, configuration):
-        super(MongoDB, self).__init__(configuration)
+    @classmethod  # step3
+    def configuration_schema(cls):
+        # base on WEB_LANGUAGE
+        if 'CN' == WEB_LANGUAGE:
+            return {
+                "type": "object",
+                "properties": {
+                    "connectionString": {"type": "string", "title": "连接字符串"},
+                    "username": {"type": "string", "title": "用户名"},
+                    "password": {"type": "string", "title": "密码"},
+                    "dbName": {"type": "string", "title": "数据库名称"},
+                    "replicaSetName": {"type": "string", "title": "副本集名称"},
+                    "readPreference": {
+                        "type": "string",
+                        "extendedEnum": [
+                            {"value": "primaryPreferred", "name": "首选节点"},
+                            {"value": "primary", "name": "主节点"},
+                            {"value": "secondary", "name": "副节点"},
+                            {"value": "secondaryPreferred", "name": "备选节点"},
+                            {"value": "nearest", "name": "Nearest"},
+                        ],
+                        "title": "副本集读策略",
+                    },
+                },
+                "secret": ["password"],
+                "required": ["connectionString", "dbName"],
+            }
+        else:
+            return {
+                "type": "object",
+                "properties": {
+                    "connectionString": {"type": "string", "title": "Connection name"},
+                    "username": {"type": "string", "title": "User Name"},
+                    "password": {"type": "string", "title": "Password"},
+                    "dbName": {"type": "string", "title": "Authentication Database"},
+                    "replicaSetName": {"type": "string", "title": "副本集名称"},
+                    "readPreference": {
+                        "type": "string",
+                        "extendedEnum": [
+                            {"value": "primaryPreferred", "name": "Primary Preferred"},
+                            {"value": "primary", "name": "Primary"},
+                            {"value": "secondary", "name": "Secondary"},
+                            {"value": "secondaryPreferred", "name": "Secondary Preferred"},
+                            {"value": "nearest", "name": "Nearest"},
+                        ],
+                        "title": "Copy set read policy",
+                    },
+                },
+                "secret": ["password"],  # this mark secret
+                "required": ["connectionString", "dbName"],  # mast input
+            }
+        pass
 
-        self.syntax = "json"
+    # step4
+    def test_connection(self):
+        db = self._get_db()
+        if not db.command("connectionStatus")["ok"]:
+            raise Exception("MongoDB connection error")
 
-        self.db_name = self.configuration["dbName"]
+        return db
 
-        self.is_replica_set = (
-            True
-            if "replicaSetName" in self.configuration
-            and self.configuration["replicaSetName"]
-            else False
-        )
-
+    # step 4-2 The method being called， return connection obj
     def _get_db(self):
         kwargs = {}
         if self.is_replica_set:
@@ -188,27 +241,26 @@ class MongoDB(BaseQueryRunner):
         db_connection = pymongo.MongoClient(
             self.configuration["connectionString"], **kwargs
         )
-
+        # return connect obj
         return db_connection[self.db_name]
 
-    def test_connection(self):
-        db = self._get_db()
-        if not db.command("connectionStatus")["ok"]:
-            raise Exception("MongoDB connection error")
+    # step 5 get schema
+    def get_schema(self, get_stats=False):
+        schema = {}
+        db = self._get_db()  # get connect obj,
+        for collection_name in db.collection_names():
+            if collection_name.startswith("system."):
+                continue
+            columns = self._get_collection_fields(db, collection_name)
+            if columns:
+                schema[collection_name] = {
+                    "name": collection_name,
+                    "columns": sorted(columns),
+                }
 
-        return db
+        return list(schema.values())
 
-    def _merge_property_names(self, columns, document):
-        for property in document:
-            if property not in columns:
-                columns.append(property)
-
-    def _is_collection_a_view(self, db, collection_name):
-        if "viewOn" in db[collection_name].options():
-            return True
-        else:
-            return False
-
+    # step 5-1 The method being called， return connection obj
     def _get_collection_fields(self, db, collection_name):
         # Since MongoDB is a document based database and each document doesn't have
         # to have the same fields as another documet in the collection its a bit hard to
@@ -241,31 +293,29 @@ class MongoDB(BaseQueryRunner):
             self._merge_property_names(columns, d)
         return columns
 
-    def get_schema(self, get_stats=False):
-        schema = {}
-        db = self._get_db()
-        for collection_name in db.collection_names():
-            if collection_name.startswith("system."):
-                continue
-            columns = self._get_collection_fields(db, collection_name)
-            if columns:
-                schema[collection_name] = {
-                    "name": collection_name,
-                    "columns": sorted(columns),
-                }
+    # STEP 5-1-1
+    def _is_collection_a_view(self, db, collection_name):
+        if "viewOn" in db[collection_name].options():
+            return True
+        else:
+            return False
 
-        return list(schema.values())
+    # STEP 5-1-2
+    def _merge_property_names(self, columns, document):
+        for property in document:
+            if property not in columns:
+                columns.append(property)
 
+    # STEP 6
     def run_query(self, query, user):
         db = self._get_db()
-
         logger.debug(
             "mongodb connection string: %s", self.configuration["connectionString"]
         )
         logger.debug("mongodb got query: %s", query)
 
         try:
-            query_data = parse_query_json(query)
+            query_data = parse_query_json(query)  # call 6-1
         except ValueError:
             return None, "Invalid query format. The query is not a valid JSON."
 

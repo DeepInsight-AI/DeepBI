@@ -139,6 +139,7 @@ class MongoDBJSONEncoder(JSONEncoder):
 class MongoDB(BaseQueryRunner):
     # init method
     def __init__(self, configuration):
+        self.should_annotate_query = False  # Whether to display comments in sql
         # step 1-1
         super(MongoDB, self).__init__(configuration)
         # step 1-2

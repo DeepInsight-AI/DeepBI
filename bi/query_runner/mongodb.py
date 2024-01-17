@@ -134,6 +134,7 @@ class MongoDBJSONEncoder(JSONEncoder):
             return o.to_decimal()
         return super(MongoDBJSONEncoder, self).default(o)
 
+
 # step1
 class MongoDB(BaseQueryRunner):
     # init method
@@ -169,22 +170,11 @@ class MongoDB(BaseQueryRunner):
             return {
                 "type": "object",
                 "properties": {
-                    "connectionString": {"type": "string", "title": "连接字符串"},
+                    "connectionString": {"type": "string", "title": "连接字符串", "default": 'mongodb://127.0.0.1:27017'},
                     "username": {"type": "string", "title": "用户名"},
                     "password": {"type": "string", "title": "密码"},
                     "dbName": {"type": "string", "title": "数据库名称"},
                     "replicaSetName": {"type": "string", "title": "副本集名称"},
-                    "readPreference": {
-                        "type": "string",
-                        "extendedEnum": [
-                            {"value": "primaryPreferred", "name": "首选节点"},
-                            {"value": "primary", "name": "主节点"},
-                            {"value": "secondary", "name": "副节点"},
-                            {"value": "secondaryPreferred", "name": "备选节点"},
-                            {"value": "nearest", "name": "Nearest"},
-                        ],
-                        "title": "副本集读策略",
-                    },
                 },
                 "secret": ["password"],
                 "required": ["connectionString", "dbName"],
@@ -197,18 +187,7 @@ class MongoDB(BaseQueryRunner):
                     "username": {"type": "string", "title": "User Name"},
                     "password": {"type": "string", "title": "Password"},
                     "dbName": {"type": "string", "title": "Authentication Database"},
-                    "replicaSetName": {"type": "string", "title": "副本集名称"},
-                    "readPreference": {
-                        "type": "string",
-                        "extendedEnum": [
-                            {"value": "primaryPreferred", "name": "Primary Preferred"},
-                            {"value": "primary", "name": "Primary"},
-                            {"value": "secondary", "name": "Secondary"},
-                            {"value": "secondaryPreferred", "name": "Secondary Preferred"},
-                            {"value": "nearest", "name": "Nearest"},
-                        ],
-                        "title": "Copy set read policy",
-                    },
+                    "replicaSetName": {"type": "string", "title": "Replica Set Name"},
                 },
                 "secret": ["password"],  # this mark secret
                 "required": ["connectionString", "dbName"],  # mast input
@@ -228,9 +207,6 @@ class MongoDB(BaseQueryRunner):
         kwargs = {}
         if self.is_replica_set:
             kwargs["replicaSet"] = self.configuration["replicaSetName"]
-            readPreference = self.configuration.get("readPreference")
-            if readPreference:
-                kwargs["readPreference"] = readPreference
 
         if "username" in self.configuration:
             kwargs["username"] = self.configuration["username"]
@@ -239,7 +215,7 @@ class MongoDB(BaseQueryRunner):
             kwargs["password"] = self.configuration["password"]
 
         db_connection = pymongo.MongoClient(
-            self.configuration["connectionString"], **kwargs
+            self.configuration["connectionString"] + "/" + self.db_name, **kwargs
         )
         # return connect obj
         return db_connection[self.db_name]
@@ -248,7 +224,7 @@ class MongoDB(BaseQueryRunner):
     def get_schema(self, get_stats=False):
         schema = {}
         db = self._get_db()  # get connect obj,
-        for collection_name in db.collection_names():
+        for collection_name in db.list_collection_names():
             if collection_name.startswith("system."):
                 continue
             columns = self._get_collection_fields(db, collection_name)
@@ -256,6 +232,7 @@ class MongoDB(BaseQueryRunner):
                 schema[collection_name] = {
                     "name": collection_name,
                     "columns": sorted(columns),
+                    "comment": sorted(columns)
                 }
 
         return list(schema.values())

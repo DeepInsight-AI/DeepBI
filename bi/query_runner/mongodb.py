@@ -285,6 +285,9 @@ class MongoDB(BaseQueryRunner):
 
     # STEP 6
     def run_query(self, query, user):
+        """
+        {"collection": "users", "fields": {"_id": 1, "name": 2}}
+        """
         db = self._get_db()
         logger.debug(
             "mongodb connection string: %s", self.configuration["connectionString"]

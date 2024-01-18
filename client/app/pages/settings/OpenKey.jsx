@@ -18,21 +18,16 @@ const SettingsOpenKey = () => {
   const [form] = Form.useForm();
   const [disabled, setDisabled] = useState(false);
   const [aiOption, setAiOption] = useState("DeepInsight"); // 默认选项
-
+  const [aiItem, setAiItem] = useState({}); // 默认选项
   const getOpenKey = useCallback(async () => {
     setDisabled(true);
     const { data } = await axios.get(`/api/ai_token`);
-    if (!data.in_use) {
-      form.setFieldsValue(data);
-    } else {
-      setAiOption(data.in_use);
-      const { OpenAI, DeepInsight } = data;
+    if (data) {
+      setAiOption(data.in_use || "DeepInsight");
       form.setFieldsValue({
-        ApiKey: DeepInsight.ApiKey || "",
-        OpenaiApiKey: OpenAI.OpenaiApiKey || "",
-        HttpProxyHost: OpenAI.HttpProxyHost || "",
-        HttpProxyPort: OpenAI.HttpProxyPort || "",
-        ApiHost: OpenAI.ApiHost || "",
+        ...data.DeepInsight,
+        ...data.OpenAI,
+        ...data.Azure
       });
     }
     createWebSocket();
@@ -91,6 +86,8 @@ const SettingsOpenKey = () => {
     if (values.ApiHost === undefined) {
       values.ApiHost = "";
     }
+    console.log(values);
+    return
     handOpenKey(values);
   };
   const handleMessage = () => {
@@ -133,6 +130,21 @@ const SettingsOpenKey = () => {
   };
   const handleRadioChange = e => {
     setAiOption(e.target.value);
+    if (e.target.value === "DeepInsight") {
+      form.setFieldsValue({ ApiKey: aiItem.DeepInsight.ApiKey });
+    } else if (e.target.value === "OpenAI") {
+      form.setFieldsValue({
+        OpenaiApiKey: aiItem.OpenAI.OpenaiApiKey,
+        HttpProxyHost: aiItem.OpenAI.HttpProxyHost,
+        HttpProxyPort: aiItem.OpenAI.HttpProxyPort,
+        ApiHost: aiItem.OpenAI.ApiHost,
+      });
+    } else if (e.target.value === "Azure") {
+      form.setFieldsValue({
+        ApiKey: aiItem.Azure.ApiKey,
+        ApiHost: aiItem.Azure.ApiHost,
+      });
+    }
   };
   return (
     <React.Fragment>

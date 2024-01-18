@@ -26,15 +26,15 @@ const SettingsOpenKey = () => {
       form.setFieldsValue(data);
     } else {
       setAiOption(data.in_use);
-      const { OpenAI, DeepInsight } = data;
+      const { OpenAI, DeepInsight,Azure } = data;
       form.setFieldsValue({
         ApiKey: DeepInsight.ApiKey || "",
         OpenaiApiKey: OpenAI.OpenaiApiKey || "",
         HttpProxyHost: OpenAI.HttpProxyHost || "",
         HttpProxyPort: OpenAI.HttpProxyPort || "",
         ApiHost: OpenAI.ApiHost || "",
-        AzureApiKey: OpenAI.AzureApiKey || "",
-        AzureHost: OpenAI.AzureHost || "",
+        AzureApiKey: Azure.AzureApiKey || "",
+        AzureHost: Azure.AzureHost || "",
       });
     }
     createWebSocket();
@@ -147,6 +147,7 @@ const SettingsOpenKey = () => {
               <Radio.Group onChange={handleRadioChange} value={aiOption}>
                 <Radio value="DeepInsight">DeepInsight</Radio>
                 <Radio value="OpenAI">OpenAI</Radio>
+                <Radio value="Azure">Azure</Radio>
               </Radio.Group>
             </div>
           </Form.Item>

@@ -18,16 +18,23 @@ const SettingsOpenKey = () => {
   const [form] = Form.useForm();
   const [disabled, setDisabled] = useState(false);
   const [aiOption, setAiOption] = useState("DeepInsight"); // 默认选项
-  const [aiItem, setAiItem] = useState({}); // 默认选项
+
   const getOpenKey = useCallback(async () => {
     setDisabled(true);
     const { data } = await axios.get(`/api/ai_token`);
-    if (data) {
-      setAiOption(data.in_use || "DeepInsight");
+    if (!data.in_use) {
+      form.setFieldsValue(data);
+    } else {
+      setAiOption(data.in_use);
+      const { OpenAI, DeepInsight } = data;
       form.setFieldsValue({
-        ...data.DeepInsight,
-        ...data.OpenAI,
-        ...data.Azure
+        ApiKey: DeepInsight.ApiKey || "",
+        OpenaiApiKey: OpenAI.OpenaiApiKey || "",
+        HttpProxyHost: OpenAI.HttpProxyHost || "",
+        HttpProxyPort: OpenAI.HttpProxyPort || "",
+        ApiHost: OpenAI.ApiHost || "",
+        AzureApiKey: OpenAI.AzureApiKey || "",
+        AzureHost: OpenAI.AzureHost || "",
       });
     }
     createWebSocket();
@@ -50,8 +57,8 @@ const SettingsOpenKey = () => {
         ApiKey: form.getFieldValue("ApiKey") || "",
       },
       Azure: {
-        ApiKey: form.getFieldValue("ApiKey") || "",
-        ApiHost: form.getFieldValue("ApiHost") || "",
+        AzureApiKey: form.getFieldValue("AzureApiKey") || "",
+        AzureHost: form.getFieldValue("AzureHost") || "",
       },
     };
     axios
@@ -76,7 +83,7 @@ const SettingsOpenKey = () => {
       });
   };
   const onFinish = values => {
-    // setDisabled(true);
+    setDisabled(true);
     if (values.HttpProxyPort === undefined) {
       values.HttpProxyPort = "";
     }
@@ -86,9 +93,6 @@ const SettingsOpenKey = () => {
     if (values.ApiHost === undefined) {
       values.ApiHost = "";
     }
-    const allValues = form.getFieldsValue();
-    console.log(allValues);
-    return
     handOpenKey(values);
   };
   const handleMessage = () => {
@@ -143,7 +147,6 @@ const SettingsOpenKey = () => {
               <Radio.Group onChange={handleRadioChange} value={aiOption}>
                 <Radio value="DeepInsight">DeepInsight</Radio>
                 <Radio value="OpenAI">OpenAI</Radio>
-                <Radio value="Azure">Azure</Radio>
               </Radio.Group>
             </div>
           </Form.Item>
@@ -176,20 +179,19 @@ const SettingsOpenKey = () => {
             </>
           )}
 
-          {aiOption === "Azure" && (
+          {aiOption === "OpenAI" && (
             <>
               <Form.Item
-                name="ApiKey"
-                label="ApiKey"
+                name="AzureApiKey"
+                label="AzureApiKey"
                 rules={[{ required: true, message: window.W_L.please_enter_api_key }]}>
-                <Input placeholder="ApiKey" />
+                <Input placeholder="AzureApiKey" />
               </Form.Item>
-              <Form.Item name="ApiHost" label="ApiHost" rules={[{ required: true, message: window.W_L.please_enter_api_host }]}>
-                <Input placeholder="ApiHost" />
+              <Form.Item name="AzureHost" label="AzureHost"  rules={[{ required: true, message: window.W_L.please_enter_api_host }]}>
+                <Input placeholder="AzureHost" />
               </Form.Item>
             </>
           )}
-
           <Form.Item style={{ textAlign: "right" }}>
             <div style={{ width: "100%", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
               <div style={{ display: "flex", alignItems: "center" }}>

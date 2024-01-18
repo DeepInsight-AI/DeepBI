@@ -335,3 +335,67 @@ Pay attention to check whether the query statement in the execution code block c
                         ].
 
 '''
+
+MONGODB_ECHART_TIPS_MESS = '''
+Here are some examples of generating mongodb and pyecharts Code based on the given question.
+Please generate new one based on the data and question human asks you, import the neccessary libraries and make sure the code is correct.
+
+IMPORTANT: You need to follow the coding style, and the type of the x, y axis. But also need to focus on the column name of the uploaded tables(if exists). Generally, PyEcharts does not accept numpy.int or numpy.float, etc. It only supports built-in data type like int, float, and str.
+Pay attention to check whether the query statement in the execution code block can correctly query the data.
+
+
+    Q: A `stacked` line chart comparing sales and profit over time would be useful. Could you help plot it?
+    Note: stacked line chart is more fancy in display, while the former is more neat.
+    <code>
+    import pymongo
+    import pandas as pd
+    from pyecharts.charts import Bar
+    from pyecharts import options as opts
+    import json
+
+
+    connectionString = "mongodb://your_host:your_port/your_dbname"
+    kwargs = {
+        'username': 'your_username',
+        'password': 'your_password',
+    }
+
+    db_connection = pymongo.MongoClient(
+        connectionString, **kwargs
+    )
+    conn = db_connection["your_dbname"]
+    res = list(conn['your_table'].find())
+    years = [str(_['year']) for _ in res]
+    sales = [str(_['sales']) for _ in res]
+    bar = Bar()
+    bar.add_xaxis(years)
+    bar.add_yaxis("Sales", sales)
+    bar.set_global_opts(
+        xaxis_opts=opts.AxisOpts(
+            type_="category",
+            name="Year",
+        ),
+        yaxis_opts=opts.AxisOpts(
+            type_="value",
+            name="Sales",
+        ),
+        title_opts=opts.TitleOpts(title="Sales over Years"),
+    )
+
+    ret_json = bar.dump_options()
+    echart_code = json.loads(ret_json)
+
+    out_put = [{"echart_name": "Sales over Years", "echart_code": echart_code}]
+    print(out_put)
+    </code>
+
+
+      The output should be formatted as a JSON instance that conforms to the JSON schema below, the JSON is a list of dict,
+                        [
+                        {"echart_name": "Sales over Years", "echart_code": ret_json}
+                        {},
+                        {},
+                        ].
+
+
+'''

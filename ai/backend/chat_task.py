@@ -6,10 +6,10 @@ from ai.backend.util.write_log import logger
 from ai.agents import AgentInstanceUtil
 from ai.backend.memory import ChatMemoryManager
 from ai.backend.base_config import CONFIG
-from ai.backend.aidb.report import ReportMysql, ReportPostgresql, ReportStarrocks
-from ai.backend.aidb.analysis import AnalysisMysql, AnalysisCsv, AnalysisPostgresql, AnalysisStarrocks
+from ai.backend.aidb.report import ReportMysql, ReportPostgresql, ReportStarrocks, ReportMongoDB
+from ai.backend.aidb.analysis import AnalysisMysql, AnalysisCsv, AnalysisPostgresql, AnalysisStarrocks, AnalysisMongoDB
 from ai.backend.aidb import AIDB
-from ai.backend.aidb.autopilot import AutopilotMysql
+from ai.backend.aidb.autopilot import AutopilotMysql, AutopilotMongoDB
 
 message_pool: ChatMemoryManager = ChatMemoryManager(name="message_pool")
 
@@ -50,12 +50,15 @@ class ChatClass:
         self.analysisCsv = AnalysisCsv(self)
         self.analysisPostgresql = AnalysisPostgresql(self)
         self.analysisStarrocks = AnalysisStarrocks(self)
+        self.analysisMongoDB = AnalysisMongoDB(self)
 
         self.reportMysql = ReportMysql(self)
         self.reportPostgresql = ReportPostgresql(self)
         self.reportStarrocks = ReportStarrocks(self)
+        self.reportMongoDB = ReportMongoDB(self)
 
         self.autopilotMysql = AutopilotMysql(self)
+        self.autopilotMongoDB = AutopilotMongoDB(self)
 
     async def get_message(self):
         """ Receive messages and put them into the [pending] message queue """
@@ -129,6 +132,9 @@ class ChatClass:
                     elif q_database == 'starrocks':
                         print(" q_database ==  starrocks ")
                         await self.analysisStarrocks.deal_question(json_str, message)
+                    elif q_database == 'mongodb':
+                        print(" q_database ==  mongodb ")
+                        await self.analysisMongoDB.deal_question(json_str, message)
 
                 elif q_chat_type == 'report':
                     if q_database == 'mysql':
@@ -137,11 +143,15 @@ class ChatClass:
                         await self.reportPostgresql.deal_report(json_str, message)
                     elif q_database == 'starrocks':
                         await self.reportStarrocks.deal_report(json_str, message)
+                    elif q_database == 'mongodb':
+                        await self.reportMongoDB.deal_report(json_str, message)
                 elif q_chat_type == 'autopilot':
                     if q_database == 'mysql':
                         await self.autopilotMysql.deal_question(json_str, message)
                     elif q_database == 'starrocks':
                         await self.autopilotMysql.deal_question(json_str, message)
+                    elif q_database == 'mongodb':
+                        await self.autopilotMongoDB.deal_question(json_str, message)
 
             else:
                 result['state'] = 500

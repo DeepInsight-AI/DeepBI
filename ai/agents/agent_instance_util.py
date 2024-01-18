@@ -22,6 +22,7 @@ local_base_mongodb_info = CONFIG.local_base_mongodb_info
 python_base_dependency = CONFIG.python_base_dependency
 request_timeout = CONFIG.request_timeout
 
+
 class AgentInstanceUtil:
     def __init__(
         self,
@@ -300,11 +301,11 @@ class AgentInstanceUtil:
         return chart_presenter
 
     def get_agent_mongodb_engineer(self):
-        """ mongodb engineer"""
+        """ mongodb engineer, for web, name mast be 'run_mysql_code'"""
         mongodb_llm_config = {
             "functions": [
                 {
-                    "name": "run_mongodb_code",
+                    "name": "run_mysql_code",
                     "description": "run sql code",
                     "parameters": {
                         "type": "object",
@@ -339,6 +340,14 @@ class AgentInstanceUtil:
                  Hand over your code to the Executor for execution.
                  Don’t query too much data, Try to merge query data as simply as possible.
                  Be careful to avoid using mongodb special keywords in mongodb code.
+                 Example of mongodb interface operations:
+                 The user table users is used as an example，
+                 Example Query information about all users: {"collection": "users"};
+                 Example Query the '_id' and 'name' fields of all users: {"collection": "users", "fields": {"_id": 1, "name": 2}};
+                 Example Query the user named "deep":  {"collection": "users", "query": {"name": "deep"}};
+                 Example Query all users whose names start with 'deep'：{"collection": "users","query":{"name": {"$regex": "^deep"}}}
+                 Example Query the number of users starting with 'deep' among all users :{"collection": "users","query":{"name": {"$regex": "^deep"}},"count":"1"}
+                 Query the top 10 users in descending order of "name":{"collection": "users","sort":[{"name":"name", "direction": -1}],"limit":10}
                  Reply "TERMINATE" in the end when everything is done.
                  ''',
             websocket=self.websocket,
@@ -346,6 +355,9 @@ class AgentInstanceUtil:
             user_name=self.user_name,
             openai_proxy=self.openai_proxy,
         )
+        """
+            define mongodb operate
+        """
         return mongodb_engineer
 
 

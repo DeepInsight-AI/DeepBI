@@ -344,7 +344,7 @@ class MongoDB(BaseQueryRunner):
                 cursor = cursor.limit(query_data["limit"])
 
             if "count" in query_data:
-                cursor = cursor.count()
+                cursor = len(list(cursor))
 
         elif aggregate:
             allow_disk_use = query_data.get("allowDiskUse", False)

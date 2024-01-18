@@ -76,7 +76,7 @@ const SettingsOpenKey = () => {
       });
   };
   const onFinish = values => {
-    setDisabled(true);
+    // setDisabled(true);
     if (values.HttpProxyPort === undefined) {
       values.HttpProxyPort = "";
     }
@@ -86,7 +86,8 @@ const SettingsOpenKey = () => {
     if (values.ApiHost === undefined) {
       values.ApiHost = "";
     }
-    console.log(values);
+    const allValues = form.getFieldsValue();
+    console.log(allValues);
     return
     handOpenKey(values);
   };
@@ -130,21 +131,6 @@ const SettingsOpenKey = () => {
   };
   const handleRadioChange = e => {
     setAiOption(e.target.value);
-    if (e.target.value === "DeepInsight") {
-      form.setFieldsValue({ ApiKey: aiItem.DeepInsight.ApiKey });
-    } else if (e.target.value === "OpenAI") {
-      form.setFieldsValue({
-        OpenaiApiKey: aiItem.OpenAI.OpenaiApiKey,
-        HttpProxyHost: aiItem.OpenAI.HttpProxyHost,
-        HttpProxyPort: aiItem.OpenAI.HttpProxyPort,
-        ApiHost: aiItem.OpenAI.ApiHost,
-      });
-    } else if (e.target.value === "Azure") {
-      form.setFieldsValue({
-        ApiKey: aiItem.Azure.ApiKey,
-        ApiHost: aiItem.Azure.ApiHost,
-      });
-    }
   };
   return (
     <React.Fragment>

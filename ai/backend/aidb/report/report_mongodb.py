@@ -32,7 +32,7 @@ class ReportMongoDB(Report):
                                            content=self.error_miss_data)
 
         elif q_sender == CONFIG.talker_bi:
-            if q_data_type == 'mongodb_comment':
+            if q_data_type == 'mysql_comment':
                 await self.check_data_base(q_str)
             elif q_data_type == CONFIG.type_comment_first:
                 if json_str.get('data').get('language_mode'):
@@ -60,7 +60,7 @@ class ReportMongoDB(Report):
                 # result['data']['content'] = json_str['data']['content']
 
                 await self.get_data_desc(q_str)
-            elif q_data_type == 'mongodb_comment_second':
+            elif q_data_type == 'mysql_comment_second':
                 if json_str.get('data').get('language_mode'):
                     q_language_mode = json_str['data']['language_mode']
                     if q_language_mode == CONFIG.language_chinese or q_language_mode == CONFIG.language_english:
@@ -86,7 +86,7 @@ class ReportMongoDB(Report):
                 # result['data']['content'] = await get_data_desc(agent_instance_util, q_str)
 
                 result['receiver'] = 'bi'
-                result['data']['data_type'] = 'mongodb_comment_second'
+                result['data']['data_type'] = 'mysql_comment_second'
                 # result['data']['content'] = json_str['data']['content']
                 consume_output = json.dumps(result)
                 await self.outgoing.put(consume_output)

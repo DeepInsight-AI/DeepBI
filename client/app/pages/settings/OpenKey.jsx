@@ -26,7 +26,7 @@ const SettingsOpenKey = () => {
       form.setFieldsValue(data);
     } else {
       setAiOption(data.in_use);
-      const { OpenAI, DeepInsight,Azure } = data;
+      const { OpenAI = {}, DeepInsight = {}, Azure = {} } = data;
       form.setFieldsValue({
         ApiKey: DeepInsight.ApiKey || "",
         OpenaiApiKey: OpenAI.OpenaiApiKey || "",

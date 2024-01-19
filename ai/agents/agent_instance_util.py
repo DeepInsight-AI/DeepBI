@@ -1040,9 +1040,9 @@ class AgentInstanceUtil:
         return starrocks_echart_assistant
 
     def get_agent_mongodb_echart_assistant(self, use_cache=True, report_file_name=None):
-        """mongodb_echart_assistant"""
+        """mongodb_echart_assistant # new db """
         mongodb_echart_assistant = AssistantAgent(
-            name="starrocks_echart_assistant",
+            name="mongodb_echart_assistant",
             system_message="""You are a helpful AI assistant.
                                              Solve tasks using your coding and language skills.
                                              In the following cases, suggest python code (in a python coding block) for the user to execute.

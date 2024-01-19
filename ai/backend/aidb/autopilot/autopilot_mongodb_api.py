@@ -17,7 +17,7 @@ max_report_question = 5
 
 
 class AutopilotMongoDB(Autopilot):
-
+    # new db
     async def deal_question(self, json_str):
         """
         Process mongodb data source and select the corresponding workflow
@@ -59,6 +59,7 @@ class AutopilotMongoDB(Autopilot):
                     data_to_update = (1, report_id)
                     update_state = psg.update_data(data_to_update)
                     if update_state:
+                        # new db
                         await self.start_chatgroup(q_str, report_file_name, report_id, q_name)
                 else:
                     print('no task')
@@ -131,7 +132,7 @@ class AutopilotMongoDB(Autopilot):
                 que_num = que_num + 1
                 if que_num > max_report_question:
                     break
-
+                # new db
                 answer_message, echart_code = await self.task_generate_echart(str(report_demand), report_file_name)
                 if answer_message is not None and echart_code is not None:
                     question['answer'] = answer_message
@@ -258,6 +259,7 @@ class AutopilotMongoDB(Autopilot):
         return base_content
 
     async def task_generate_echart(self, qustion_message, report_file_name):
+        # new db
         try:
             base_content = []
             base_mess = []
@@ -267,11 +269,13 @@ class AutopilotMongoDB(Autopilot):
             use_cache = True
             for i in range(max_retry_times):
                 try:
+                    # new db
                     mongodb_echart_assistant = self.agent_instance_util.get_agent_mongodb_echart_assistant(
                         use_cache=use_cache, report_file_name=report_file_name)
+
                     python_executor = self.agent_instance_util.get_agent_python_executor(
                         report_file_name=report_file_name)
-
+                    # new db
                     await python_executor.initiate_chat(
                         mongodb_echart_assistant,
                         message=self.agent_instance_util.base_message + '\n' + LanguageInfo.question_ask + '\n' + str(

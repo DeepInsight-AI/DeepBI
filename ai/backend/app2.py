@@ -49,8 +49,8 @@ class MainHandler(tornado.web.RequestHandler):
             autopilot_starrocks = AutopilotStarrocks(chat_class)
             await autopilot_starrocks.deal_question(json_str)
         elif "mongodb" == databases_type:
-            autopilot_starrocks = AutopilotMongoDB(chat_class)
-            await autopilot_starrocks.deal_question(json_str)
+            autopilot_mongodb = AutopilotMongoDB(chat_class)
+            await autopilot_mongodb.deal_question(json_str)
         else:
             autopilotMysql = AutopilotMysql(chat_class)
             await autopilotMysql.deal_question(json_str)

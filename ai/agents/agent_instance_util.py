@@ -312,7 +312,17 @@ class AgentInstanceUtil:
                         "properties": {
                             "mysql_code_str": {
                                 "type": "string",
-                                "description": "sql code",
+                                "description": """
+                                Example of mongodb output as fellows:
+                 The user table users is used as an example，
+                 Example Query information about all users: {"collection": "users"};
+                 Example Query the '_id' and 'name' fields of all users: {"collection": "users", "fields": {"_id": 1, "name": 2}};
+                 Example Query the user named "deep":  {"collection": "users", "query": {"name": "deep"}};
+                 Example Query all users whose names start with 'deep'：{"collection": "users","query":{"name": {"$regex": "^deep"}}}
+                 Example Query the number of users starting with 'deep' among all users :{"collection": "users","query":{"name": {"$regex": "^deep"}},"count":"1"}
+                 Query the top 10 users in descending order of "name":{"collection": "users","sort":[{"name":"name", "direction": -1}],"limit":10}
+                 This is a mongodb database, not mysql, do not use mysql statements,Must be returned using the sample json format.
+                                """,
                             },
                             "data_name": {
                                 "type": "string",
@@ -341,14 +351,7 @@ class AgentInstanceUtil:
                  Don’t query too much data, Try to merge query data as simply as possible.
                  Be careful to avoid using mongodb special keywords in mongodb code.
                  The output mast be formatted as a JSON instance that conforms to the json schema below, the JSON is a list of dict.
-                 Example of mongodb output as fellows:
-                 The user table users is used as an example，
-                 Example Query information about all users: {"collection": "users"};
-                 Example Query the '_id' and 'name' fields of all users: {"collection": "users", "fields": {"_id": 1, "name": 2}};
-                 Example Query the user named "deep":  {"collection": "users", "query": {"name": "deep"}};
-                 Example Query all users whose names start with 'deep'：{"collection": "users","query":{"name": {"$regex": "^deep"}}}
-                 Example Query the number of users starting with 'deep' among all users :{"collection": "users","query":{"name": {"$regex": "^deep"}},"count":"1"}
-                 Query the top 10 users in descending order of "name":{"collection": "users","sort":[{"name":"name", "direction": -1}],"limit":10}
+
                  Reply "TERMINATE" in the end when everything is done.
                  ''',
             websocket=self.websocket,

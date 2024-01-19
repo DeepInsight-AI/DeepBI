@@ -340,7 +340,8 @@ class AgentInstanceUtil:
                  Hand over your code to the Executor for execution.
                  Don’t query too much data, Try to merge query data as simply as possible.
                  Be careful to avoid using mongodb special keywords in mongodb code.
-                 Example of mongodb interface operations:
+                 The output mast be formatted as a JSON instance that conforms to the json schema below, the JSON is a list of dict.
+                 Example of mongodb output as fellows:
                  The user table users is used as an example，
                  Example Query information about all users: {"collection": "users"};
                  Example Query the '_id' and 'name' fields of all users: {"collection": "users", "fields": {"_id": 1, "name": 2}};

@@ -153,13 +153,14 @@ class Autopilot(AIDB):
                 data['report_thought'].remove(item)
 
         # 获取当前工作目录的路径
-        current_directory = Path.cwd()
-
-        if str(current_directory).endswith('/ai'):
-            html_template_path = str(current_directory) + '/backend/aidb/autopilot/'
+        current_directory = os.path.abspath(os.path.dirname(__file__))
+        
+        if str(current_directory).endswith(r'\ai'):
+            next_level_filename = "/backend/aidb/autopilot/"
         else:
-            html_template_path = str(current_directory) + '/ai/backend/aidb/autopilot/'
-
+            next_level_filename = "/ai/backend/aidb/autopilot/"
+        
+        html_template_path = os.path.join(current_directory, next_level_filename)
         print('html_template_path:', html_template_path)
 
         if CONFIG.web_language == 'CN':

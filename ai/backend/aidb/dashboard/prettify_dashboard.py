@@ -8,7 +8,6 @@ from ai.backend.aidb import AIDB
 from ai.backend.util.db.postgresql_dashboard import PsgReport
 from ai.agents.agentchat import AssistantAgent
 from ai.backend.aidb.dashboard.prompts import ECHARTS_BAR_PROMPT, ECHARTS_PIE_PROMPT, ECHARTS_LINE_PROMPT
-import os
 
 
 class PrettifyDashboard(AIDB):
@@ -117,12 +116,13 @@ class PrettifyDashboard(AIDB):
 
         # 获取当前工作目录的路径
         current_directory = os.path.abspath(os.path.dirname(__file__))
-
-        if str(current_directory).endswith('/ai'):
-            next_level_filename = "/backend/aidb/dashboard/html_template"
+        
+        if str(current_directory).endswith(r'\ai'):
+            next_level_filename = "backend/aidb/dashboard/html_template"
         else:
-            next_level_filename = "/ai/backend/aidb/dashboard/html_template"
-        html_template_path = os.path.join(current_directory,next_level_filename)
+            next_level_filename = "ai/backend/aidb/dashboard/html_template"
+        
+        html_template_path = os.path.join(current_directory, next_level_filename)
         print('html_template_path:', html_template_path)
 
         template_id = data['template_id']

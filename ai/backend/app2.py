@@ -4,6 +4,7 @@ import json
 from ai.backend.chat_task import ChatClass
 from ai.backend.aidb.autopilot.autopilot_mysql_api import AutopilotMysql
 from ai.backend.aidb.autopilot.autopilot_starrocks_api import AutopilotStarrocks
+from ai.backend.aidb.autopilot.autopilot_mongodb_api import AutopilotMongoDB
 from ai.backend.base_config import CONFIG
 from ai.backend.aidb.dashboard.prettify_dashboard import PrettifyDashboard
 
@@ -46,6 +47,9 @@ class MainHandler(tornado.web.RequestHandler):
 
         if databases_type == 'starrocks':
             autopilot_starrocks = AutopilotStarrocks(chat_class)
+            await autopilot_starrocks.deal_question(json_str)
+        elif "mongodb" == databases_type:
+            autopilot_starrocks = AutopilotMongoDB(chat_class)
             await autopilot_starrocks.deal_question(json_str)
         else:
             autopilotMysql = AutopilotMysql(chat_class)

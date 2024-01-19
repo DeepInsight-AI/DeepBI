@@ -44,7 +44,7 @@ class AutopilotMongoDB(Autopilot):
         obj = database_util.Main(db_id)
         if_suss, db_info = obj.run()
         if if_suss:
-            self.agent_instance_util.base_mysql_info = '  When connecting to the database, be sure to bring the port. This is mysql database info :' + '\n' + str(
+            self.agent_instance_util.base_mongodb_info = '  When connecting to the database, be sure to bring the port. This is mongodb database info :' + '\n' + str(
                 db_info)
             # self.agent_instance_util.base_message = str(db_comment)
             self.agent_instance_util.set_base_message(db_comment)
@@ -72,10 +72,10 @@ class AutopilotMongoDB(Autopilot):
     async def task_base(self, qustion_message):
         return qustion_message
 
-    def get_agent_base_mysql_assistant(self):
-        """ Basic Agent, processing mysql data source """
-        base_mysql_assistant = AssistantAgent(
-            name="base_mysql_assistant",
+    def get_agent_base_mongodb_assistant(self):
+        """ Basic Agent, processing mongodb data source """
+        base_mongodb_assistant = AssistantAgent(
+            name="base_mongodb_assistant",
             system_message="""You are a helpful AI assistant.
                   Solve tasks using your coding and language skills.
                   In the following cases, suggest python code (in a python coding block) for the user to execute.
@@ -88,8 +88,8 @@ class AutopilotMongoDB(Autopilot):
                   When you find an answer, verify the answer carefully. Include verifiable evidence in your response if possible.
                   Reply "TERMINATE" in the end when everything is done.
                   When you find an answer,  You are a report analysis, you have the knowledge and skills to turn raw data into information and insight, which can be used to make business decisions.include your analysis in your reply.
-                  Be careful to avoid using mysql special keywords in mysql code.
-                  """ + '\n' + self.agent_instance_util.base_mysql_info + '\n' + CONFIG.python_base_dependency + '\n' + self.agent_instance_util.quesion_answer_language,
+                  Be careful to avoid using mongodb special keywords in mongodb code.
+                  """ + '\n' + self.agent_instance_util.base_mongodb_info + '\n' + CONFIG.python_base_dependency + '\n' + self.agent_instance_util.quesion_answer_language,
             human_input_mode="NEVER",
             user_name=self.user_name,
             websocket=self.websocket,
@@ -99,7 +99,7 @@ class AutopilotMongoDB(Autopilot):
             },
             openai_proxy=self.agent_instance_util.openai_proxy,
         )
-        return base_mysql_assistant
+        return base_mongodb_assistant
 
     async def start_chatgroup(self, q_str, report_file_name, report_id, q_name):
 

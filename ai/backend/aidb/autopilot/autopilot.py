@@ -4,6 +4,7 @@ from ai.agents.agentchat import HumanProxyAgent, TaskSelectorAgent, Questioner, 
 from jinja2 import Template
 from pathlib import Path
 import time
+import os
 
 class Autopilot(AIDB):
     def get_agent_user_proxy(self):
@@ -155,10 +156,10 @@ class Autopilot(AIDB):
         # 获取当前工作目录的路径
         current_directory = os.path.abspath(os.path.dirname(__file__))
         
-        if str(current_directory).endswith(r'\ai'):
-            next_level_filename = "/backend/aidb/autopilot/"
+        if str(current_directory).endswith(r'\autopilot'):
+            next_level_filename = "/html_templat"
         else:
-            next_level_filename = "/ai/backend/aidb/autopilot/"
+            next_level_filename = "autopilot/html_template"
         
         html_template_path = os.path.join(current_directory, next_level_filename)
         print('html_template_path:', html_template_path)

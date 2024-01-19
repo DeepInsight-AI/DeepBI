@@ -20,7 +20,7 @@ class AutopilotMongoDB(Autopilot):
 
     async def deal_question(self, json_str):
         """
-        Process mysql data source and select the corresponding workflow
+        Process mongodb data source and select the corresponding workflow
         """
 
         report_file_name = CONFIG.up_file_path + json_str['file_name']
@@ -267,18 +267,18 @@ class AutopilotMongoDB(Autopilot):
             use_cache = True
             for i in range(max_retry_times):
                 try:
-                    mysql_echart_assistant = self.agent_instance_util.get_agent_mysql_echart_assistant(
+                    mongodb_echart_assistant = self.agent_instance_util.get_agent_mongodb_echart_assistant(
                         use_cache=use_cache, report_file_name=report_file_name)
                     python_executor = self.agent_instance_util.get_agent_python_executor(
                         report_file_name=report_file_name)
 
                     await python_executor.initiate_chat(
-                        mysql_echart_assistant,
+                        mongodb_echart_assistant,
                         message=self.agent_instance_util.base_message + '\n' + LanguageInfo.question_ask + '\n' + str(
                             qustion_message),
                     )
 
-                    answer_message = mysql_echart_assistant.chat_messages[python_executor]
+                    answer_message = mongodb_echart_assistant.chat_messages[python_executor]
 
                     for answer_mess in answer_message:
                         # print("answer_mess :", answer_mess)

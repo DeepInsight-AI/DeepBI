@@ -93,16 +93,12 @@ class PrettifyDashboard(AIDB):
         print("生成完毕======")
 
         # 获取当前工作目录的路径
-        current_directory = Path.cwd()
+        current_directory = CONFIG.up_file_path
 
-        if str(current_directory).endswith('/ai'):
-            # html_template_path = str(current_directory) + '/backend/aidb/dashboard/html_template'
-            html_file_path = str(current_directory).replace('/ai', '') + '/bi/templates/'
+        # 构建路径时使用 os.path.join
+        html_file_path = os.path.join(current_directory.replace(r'\user_upload_files', ''), 'bi', 'templates')
 
-        else:
-            html_file_path = str(current_directory) + '/bi/templates/'
-
-        self.generate_html(echart_json, html_file_path + html_file_name)
+        self.generate_html(echart_json, os.path.join(html_file_path, html_file_name))
 
         # 更新数据
         data_to_update = (2, task_id)
@@ -117,17 +113,18 @@ class PrettifyDashboard(AIDB):
         # 获取当前工作目录的路径
         current_directory = os.path.abspath(os.path.dirname(__file__))
         
-        if str(current_directory).endswith(r'\dashboard'):
-            next_level_filename = "/html_template"
+        if str(current_directory).endswith('dashboard'):
+            next_level_filename = "html_template"
         else:
             next_level_filename = "dashboard/html_template"
         
         html_template_path = os.path.join(current_directory, next_level_filename)
         print('html_template_path:', html_template_path)
+        
 
         template_id = data['template_id']
         # 读取模板文件
-        with open(html_template_path + '/dashboard_' + str(template_id) + '.html', 'r') as file:
+        with open(html_template_path + '/dashboard_' + str(template_id) + '.html', 'r',encoding='utf-8') as file:
             template_str = file.read()
             # print('template_str :', template_str)
 

@@ -154,24 +154,25 @@ class Autopilot(AIDB):
                 data['report_thought'].remove(item)
 
         # 获取当前工作目录的路径
-        current_directory = os.path.abspath(os.path.dirname(__file__))
-        
-        if str(current_directory).endswith(r'\autopilot'):
-            next_level_filename = "/html_templat"
-        else:
-            next_level_filename = "autopilot/html_template"
-        
-        html_template_path = os.path.join(current_directory, next_level_filename)
-        print('html_template_path:', html_template_path)
+        current_directory = CONFIG.up_file_path 
+
+        # 构建路径时使用 os.path.join，并使用 os.path.normpath 进行规范化
+        html_template_path = os.path.join(os.path.normpath(current_directory.replace(r'\user_upload_files', '')), 'ai', 'backend', 'aidb', 'autopilot')
+        html_template_path = html_template_path.replace('\\', '/')
 
         if CONFIG.web_language == 'CN':
-            html_template_path = html_template_path + 'html_template'
+            html_template_path = os.path.join(html_template_path, 'html_template')
         else:
-            html_template_path = html_template_path + 'html_template_en'
+            html_template_path = os.path.join(html_template_path, 'html_template_en')
 
         # 读取模板文件
-        with open(html_template_path + '/report_2.html', 'r') as file:
+        template_file_path = os.path.join(html_template_path, 'report_2.html')
+
+        with open(template_file_path, 'r', encoding='utf-8') as file:
             template_str = file.read()
+
+        print('html_template_path:', html_template_path)
+        print('template_str:', template_str)
             # print('template_str :', template_str)
 
         # 使用Jinja2渲染模板

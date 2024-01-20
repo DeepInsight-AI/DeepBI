@@ -90,7 +90,7 @@ class ReportMongoDB(Report):
                 # result['data']['content'] = json_str['data']['content']
                 consume_output = json.dumps(result)
                 await self.outgoing.put(consume_output)
-            elif q_data_type == 'mongodb_code' or q_data_type == 'chart_code' or q_data_type == 'delete_chart' or q_data_type == 'ask_data':
+            elif q_data_type == 'mysql_code' or q_data_type == 'chart_code' or q_data_type == 'delete_chart' or q_data_type == 'ask_data':
                 self.delay_messages['bi'][q_data_type].append(message)
                 print("delay_messages : ", self.delay_messages)
                 return

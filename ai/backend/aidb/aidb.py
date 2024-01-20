@@ -44,8 +44,14 @@ class AIDB:
 
     async def get_data_desc(self, q_str):
         """Get data description"""
-        planner_user = self.agent_instance_util.get_agent_planner_user()
-        database_describer = self.agent_instance_util.get_agent_database_describer()
+        if self.agent_instance_util.is_rag:
+            docs_path = CONFIG.up_file_path + '.rag_' + str(self.user_name) + '_' + str(
+                self.agent_instance_util.db_id) + '.json'
+            planner_user = self.agent_instance_util.get_agent_retrieve_planner_user(docs_path=docs_path)
+            database_describer = self.agent_instance_util.get_agent_database_describer()
+        else:
+            planner_user = self.agent_instance_util.get_agent_planner_user()
+            database_describer = self.agent_instance_util.get_agent_database_describer()
 
         try:
             qustion_message = "Please explain this data to me."
@@ -59,6 +65,7 @@ class AIDB:
                 message=self.agent_instance_util.base_message + '\n' + self.question_ask + '\n' + str(
                     qustion_message),
             )
+
             answer_message = planner_user.last_message()["content"]
             # print("answer_message: ", answer_message)
         except HTTPError as http_err:
@@ -75,7 +82,7 @@ class AIDB:
         return await self.put_message(200, receiver=CONFIG.talker_bi, data_type=CONFIG.type_comment_first,
                                       content=answer_message)
 
-    async def check_data_base(self, q_str):
+    async def check_data_base(self, q_str, databases_id=-1):
         """Check whether the comments meet the requirements. Those that have passed will not be tested again."""
 
         message = [
@@ -198,7 +205,7 @@ class AIDB:
                                                    content=percentage_integer)
                             num = num + 1
                         except Exception as e:
-                            pass
+                            traceback.print_exc()
 
                 except Exception as e:
                     traceback.print_exc()
@@ -218,12 +225,67 @@ class AIDB:
             print(" 最终 q_str : ", q_str)
             await self.put_message(200, CONFIG.talker_bi, CONFIG.type_comment, q_str)
         else:
-            if self.language_mode == CONFIG.language_chinese:
-                content = '所选表格' + str(num_tokens) + ' , 超过了最大长度:' + str(CONFIG.max_token_num) + ' , 请重新选择'
+            databases_id = 0
+
+            if databases_id == -1:
+                if self.language_mode == CONFIG.language_chinese:
+                    content = '所选表格' + str(num_tokens) + ' , 超过了最大长度:' + str(CONFIG.max_token_num) + ' , 请重新选择'
+                else:
+                    content = 'The selected table length ' + str(num_tokens) + ' ,  exceeds the maximum length: ' + str(
+                        CONFIG.max_token_num) + ' , please select again'
+                return await self.put_message(500, CONFIG.talker_log, CONFIG.type_data_check, content)
             else:
-                content = 'The selected table length ' + str(num_tokens) + ' ,  exceeds the maximum length: ' + str(
-                    CONFIG.max_token_num) + ' , please select again'
-            return await self.put_message(500, CONFIG.talker_log, CONFIG.type_data_check, content)
+                table_content = []
+                if q_str.get('table_desc'):
+                    for tb in q_str.get('table_desc'):
+
+                        table_name = tb.get('table_name')
+                        table_comment = tb.get('table_comment')
+                        if table_comment == '':
+                            table_comment = tb.get('table_name')
+
+                        fd_desc = []
+                        if tb.get('field_desc'):
+                            for fd in tb.get('field_desc'):
+                                fd_comment = fd.get('comment')
+                                if fd_comment == '':
+                                    fd_comment = fd.get('name')
+                                if fd.get('is_pass') and fd.get('is_pass') == 1:
+                                    continue
+                                else:
+                                    fd_desc.append({
+                                        "name": fd.get('name'),
+                                        "comment": fd_comment
+                                    })
+
+                        if len(fd_desc) > 0:
+                            tb_desc = {
+                                "table_name": table_name,
+                                "table_comment": table_comment,
+                                "field_desc": fd_desc
+                            }
+                            table_content.append(tb_desc)
+                        elif tb.get('is_pass') and fd.get('is_pass') == 1:
+                            continue
+                        else:
+                            tb_desc = {
+                                "table_name": table_name,
+                                "table_comment": table_comment
+                            }
+                            table_content.append(tb_desc)
+
+                print("The number of tables to be processed this time： ", len(table_content))
+                if q_str.get('table_desc'):
+                    for tb in q_str.get('table_desc'):
+                        if not tb.get('is_pass'):
+                            tb['is_pass'] = 1
+                        if tb.get('field_desc'):
+                            for fd in tb.get('field_desc'):
+                                if not fd.get('is_pass'):
+                                    fd['is_pass'] = 1
+
+                print(" 最终 q_str : ", q_str)
+                await self.put_message(200, CONFIG.talker_bi, CONFIG.type_comment, q_str)
 
     async def put_message(self, state=200, receiver='log', data_type=None, content=None):
         mess = {'state': state, 'data': {'data_type': data_type, 'content': content}, 'receiver': receiver}

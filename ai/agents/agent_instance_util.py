@@ -10,6 +10,7 @@ from ai.agents.agentchat import (UserProxyAgent, GroupChat, AssistantAgent, Grou
                                  PythonProxyAgent, BIProxyAgent, TaskPlannerAgent, TaskSelectorAgent, CheckAgent,
                                  ChartPresenterAgent)
 from ai.backend.base_config import CONFIG
+from ai.agents.agentchat.contrib import RetrieveAssistantAgent, RetrievePythonProxyAgent, RetrieveUserProxyAgent
 
 max_retry_times = CONFIG.max_retry_times
 language_chinese = CONFIG.language_chinese
@@ -58,6 +59,7 @@ class AgentInstanceUtil:
 
         self.openai_proxy = None
         self.db_id = db_id
+        self.is_rag = False
 
     def set_api_key(self, api_key, api_host=None, in_use=CONFIG.apikey_openai):
         self.api_key = api_key
@@ -179,7 +181,7 @@ class AgentInstanceUtil:
             "request_timeout": request_timeout,
         }
 
-    def set_base_message(self, message):
+    def set_base_message(self, message, databases_id=-1):
         print('run function set_base_message ... ')
         for table in message['table_desc']:
             for field in table['field_desc']:
@@ -188,8 +190,29 @@ class AgentInstanceUtil:
                     if key not in ['name', 'comment']:
                         field.pop(key)
 
-        self.base_message = str(message)
-        print('base_message : ', message)
+        mess = [
+            {
+                "role": "system",
+                "content": str(message),
+            }
+        ]
+
+        num_tokens = num_tokens_from_messages(mess, model='gpt-4')
+        print('num_tokens: ', num_tokens)
+
+        if num_tokens < CONFIG.max_token_num:
+            self.base_message = str(message)
+            print('base_message : ', message)
+        else:
+            if databases_id == -1:
+                content = '所选表格' + str(num_tokens) + ' , 超过了最大长度:' + str(CONFIG.max_token_num) + ' , 请重新选择'
+                print(content)
+            else:
+                with open(CONFIG.up_file_path + '.rag_' + str(self.user_name) + '_' + str(databases_id) + '.json',
+                          'w') as output_file:
+                    output_file.write(message)
+
+                self.is_rag = True
 
     def get_agent_mysql_engineer(self):
         """mysql engineer"""
@@ -652,6 +675,23 @@ class AgentInstanceUtil:
             report_file_name=report_file_name,
         )
         return planner_user
+
+    def get_agent_retrieve_planner_user(self, is_log_out=True, report_file_name=None, docs_path=None):
+        """Disposable conversation initiator, no reply"""
+        retrieve_planner_user = RetrieveUserProxyAgent(
+            name="retrieve_planner_user",
+            max_consecutive_auto_reply=0,  # terminate without auto-reply
+            human_input_mode="NEVER",
+            websocket=self.websocket,
+            is_log_out=is_log_out,
+            openai_proxy=self.openai_proxy,
+            report_file_name=report_file_name,
+            retrieve_config={
+                "task": "qa",
+                "docs_path": docs_path,
+            },
+        )
+        return retrieve_planner_user
 
     def get_agent_api_check(self):
         """Disposable conversation initiator, no reply"""

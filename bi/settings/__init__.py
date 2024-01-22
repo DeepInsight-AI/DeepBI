@@ -344,6 +344,7 @@ ACCESS_CONTROL_ALLOW_HEADERS = os.environ.get(
 default_query_runners = [
     "bi.query_runner.mysql",
     "bi.query_runner.pg",
+    "bi.query_runner.mongodb",
 ]
 
 enabled_query_runners = array_from_string(

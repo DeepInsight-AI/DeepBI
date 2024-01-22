@@ -401,7 +401,7 @@ const SelectSource = forwardRef(({ confirmLoading, Charttable, chat_type, onChan
         <Space>
           <div aria-label={label} style={{ display: "flex", alignItems: "center" }}>
             <span role="img" style={{ marginRight: "5px" }}>
-            <img imageUrl={`${imageFolder}/${type}.png`} alt={type} style={{ width: "30px", height: "30px" }} />
+            <img src={`${imageFolder}/${type}.png`} alt={type} style={{ width: "30px", height: "30px" }} />
             </span>
             {label}
           </div>

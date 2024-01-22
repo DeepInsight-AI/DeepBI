@@ -5,7 +5,7 @@ from ai.backend.util.write_log import logger
 import traceback
 from ai.backend.util.token_util import num_tokens_from_messages
 from ai.agents.prompt import CSV_ECHART_TIPS_MESS, \
-    MYSQL_ECHART_TIPS_MESS, MYSQL_MATPLOTLIB_TIPS_MESS, POSTGRESQL_ECHART_TIPS_MESS
+    MYSQL_ECHART_TIPS_MESS, MYSQL_MATPLOTLIB_TIPS_MESS, POSTGRESQL_ECHART_TIPS_MESS, MONGODB_ECHART_TIPS_MESS
 from ai.agents.agentchat import (UserProxyAgent, GroupChat, AssistantAgent, GroupChatManager,
                                  PythonProxyAgent, BIProxyAgent, TaskPlannerAgent, TaskSelectorAgent, CheckAgent,
                                  ChartPresenterAgent)
@@ -18,6 +18,7 @@ default_language_mode = CONFIG.default_language_mode
 local_base_postgresql_info = CONFIG.local_base_postgresql_info
 local_base_xls_info = CONFIG.local_base_xls_info
 local_base_mysql_info = CONFIG.local_base_mysql_info
+local_base_mongodb_info = CONFIG.local_base_mongodb_info
 python_base_dependency = CONFIG.python_base_dependency
 request_timeout = CONFIG.request_timeout
 
@@ -47,6 +48,7 @@ class AgentInstanceUtil:
         self.base_csv_info = local_base_xls_info
 
         self.base_postgresql_info = local_base_postgresql_info
+        self.base_mongodb_info = local_base_mongodb_info
         self.base_starrocks_info = None
 
         self.is_log_out = True
@@ -341,6 +343,71 @@ class AgentInstanceUtil:
         )
         return chart_presenter
 
+    def get_agent_mongodb_engineer(self):
+        """ mongodb engineer, for web, name mast be 'run_mysql_code'"""
+        mongodb_llm_config = {
+            "functions": [
+                {
+                    "name": "run_mysql_code",
+                    "description": "run sql code",
+                    "parameters": {
+                        "type": "object",
+                        "properties": {
+                            "mysql_code_str": {
+                                "type": "string",
+                                "description": """
+                                Example of mongodb output as fellows:
+                 The user table users is used as an example，
+                 Example Query information about all users: {"collection": "users"};
+                 Example Query the '_id' and 'name' fields of all users: {"collection": "users", "fields": {"_id": 1, "name": 2}};
+                 Example Query the user named "deep":  {"collection": "users", "query": {"name": "deep"}};
+                 Example Query all users whose names start with 'deep'：{"collection": "users","query":{"name": {"$regex": "^deep"}}}
+                 Example Query the number of users starting with 'deep' among all users :{"collection": "users","query":{"name": {"$regex": "^deep"}},"count":"1"}
+                 Query the top 10 users in descending order of "name":{"collection": "users","sort":[{"name":"name", "direction": -1}],"limit":10}
+                 This is a mongodb database, not mysql, do not use mysql statements,Must be returned using the sample json format.
+                                """,
+                            },
+                            "data_name": {
+                                "type": "string",
+                                "description": "Annotations for SQL code generated data. Generally, it is the name of "
+                                               "the chart or report, and supports Chinese. If a name is specified in the question, "
+                                "the given name is used.",
+                            }
+                        },
+                        "required": ["mongodb_code_str", "data_name"],
+                    },
+                },
+
+            ],
+            "config_list": self.config_list_gpt4_turbo,
+            "request_timeout": request_timeout,
+        }
+
+        mongodb_engineer = AssistantAgent(
+            name="mongodb_engineer",
+            llm_config=mongodb_llm_config,
+            system_message='''You are a mongodb report engineer, a world-class engineer that can complete any report by executing mongodb code.
+                 You write mongodb code to solve tasks. Wrap the code in a code block that specifies the script type. The user can't modify your code. So do not suggest incomplete code which requires others to modify. Don't use a code block if it's not intended to be executed by the executor.
+                 Don't include multiple code blocks in one response. Do not ask others to copy and paste the result. Check the execution result returned by the executor.
+                 If the result indicates there is an error, fix the error and output the code again. Suggest the full code instead of partial code or code changes. If the error can't be fixed or if the task is not solved even after the code is executed successfully, analyze the problem, collect additional info you need, and think of a different approach to try.
+                 Hand over your code to the Executor for execution.
+                 Don’t query too much data, Try to merge query data as simply as possible.
+                 Be careful to avoid using mongodb special keywords in mongodb code.
+                 The output mast be formatted as a JSON instance that conforms to the json schema below, the JSON is a list of dict.
+
+                 Reply "TERMINATE" in the end when everything is done.
+                 ''',
+            websocket=self.websocket,
+            is_log_out=self.is_log_out,
+            user_name=self.user_name,
+            openai_proxy=self.openai_proxy,
+        )
+        """
+            define mongodb operate
+        """
+        return mongodb_engineer
+
+
     def get_agent_chart_presenter_old(self):
         """chart designer"""
         chart_llm_config = {
@@ -421,6 +488,35 @@ class AgentInstanceUtil:
             openai_proxy=self.openai_proxy,
         )
         return base_mysql_assistant
+
+    def get_agent_base_mongodb_assistant(self):
+        """ Basic Agent, processing mongodb data source """
+        base_mongodb_assistant = TaskSelectorAgent(
+            name="base_mysql_assistant",
+            system_message="""You are a helpful AI assistant.
+                Solve tasks using your coding and language skills.
+                In the following cases, suggest python code (in a python coding block) for the user to execute.
+                    1. When you need to collect info, use the code to output the info you need, for example, browse or search the web, download/read a file, print the content of a webpage or a file, get the current date/time, check the operating system. After sufficient info is printed and the task is ready to be solved based on your language skill, you can solve the task by yourself.
+                    2. When you need to perform some task with code, use the code to perform the task and output the result. Finish the task smartly.
+                Solve the task step by step if you need to. If a plan is not provided, explain your plan first. Be clear which step uses code, and which step uses your language skill.
+                When using code, you must indicate the script type in the code block. The user cannot provide any other feedback or perform any other action beyond executing the code you suggest. The user can't modify your code. So do not suggest incomplete code which requires users to modify. Don't use a code block if it's not intended to be executed by the user.
+                If you want the user to save the code in a file before executing it, put # filename: <filename> inside the code block as the first line. Don't include multiple code blocks in one response. Do not ask users to copy and paste the result. Instead, use 'print' function for the output when relevant. Check the execution result returned by the user.
+                If the result indicates there is an error, fix the error and output the code again. Suggest the full code instead of partial code or code changes. If the error can't be fixed or if the task is not solved even after the code is executed successfully, analyze the problem, revisit your assumption, collect additional info you need, and think of a different approach to try.
+                When you find an answer, verify the answer carefully. Include verifiable evidence in your response if possible.
+                Reply "TERMINATE" in the end when everything is done.
+                When you find an answer,  You are a report analysis, you have the knowledge and skills to turn raw data into information and insight, which can be used to make business decisions.include your analysis in your reply.
+                Be careful to avoid using mysql special keywords in mysql code.
+                """ + '\n' + self.base_mongodb_info + '\n' + python_base_dependency + '\n' + self.quesion_answer_language,
+            human_input_mode="NEVER",
+            user_name=self.user_name,
+            websocket=self.websocket,
+            llm_config={
+                "config_list": self.config_list_gpt4_turbo,
+                "request_timeout": request_timeout,
+            },
+            openai_proxy=self.openai_proxy,
+        )
+        return base_mongodb_assistant
 
     def get_agent_base_assistant(self, use_cache=True):
         """ Basic Agent """
@@ -986,9 +1082,64 @@ class AgentInstanceUtil:
         )
         return starrocks_echart_assistant
 
+    def get_agent_mongodb_echart_assistant(self, use_cache=True, report_file_name=None):
+        """mongodb_echart_assistant # new db """
+        mongodb_echart_assistant = AssistantAgent(
+            name="mongodb_echart_assistant",
+            system_message="""You are a helpful AI assistant.
+                                             Solve tasks using your coding and language skills.
+                                             In the following cases, suggest python code (in a python coding block) for the user to execute.
+                                                 1. When you need to collect info, use the code to output the info you need, for example, browse or search the web, download/read a file, print the content of a webpage or a file, get the current date/time, check the operating system. After sufficient info is printed and the task is ready to be solved based on your language skill, you can solve the task by yourself.
+                                                 2. When you need to perform some task with code, use the code to perform the task and output the result. Finish the task smartly.
+                                             Solve the task step by step if you need to. If a plan is not provided, explain your plan first. Be clear which step uses code, and which step uses your language skill.
+                                             When using code, you must indicate the script type in the code block. The user cannot provide any other feedback or perform any other action beyond executing the code you suggest. The user can't modify your code. So do not suggest incomplete code which requires users to modify. Don't use a code block if it's not intended to be executed by the user.
+                                             If you want the user to save the code in a file before executing it, put # filename: <filename> inside the code block as the first line. Don't include multiple code blocks in one response. Do not ask users to copy and paste the result. Instead, use 'print' function for the output when relevant. Check the execution result returned by the user.
+                                             If the result indicates there is an error, fix the error and output the code again. Suggest the full code instead of partial code or code changes. If the error can't be fixed or if the task is not solved even after the code is executed successfully, analyze the problem, revisit your assumption, collect additional info you need, and think of a different approach to try.
+                                             When you find an answer, verify the answer carefully. Include verifiable evidence in your response if possible.
+                                             The database name needs to be replaced in the database connection string
+                                             Reply "TERMINATE" in the end when everything is done.
+                                             When you find an answer,  You are a report analysis, you have the knowledge and skills to turn raw data into information and insight, which can be used to make business decisions.include your analysis in your reply.
+                                             """ + '\n' + self.base_mongodb_info + '\n' + python_base_dependency + '\n' + MONGODB_ECHART_TIPS_MESS,
+            human_input_mode="NEVER",
+            user_name=self.user_name,
+            websocket=self.websocket,
+            llm_config=self.gpt4_turbo_config,
+            openai_proxy=self.openai_proxy,
+            use_cache=use_cache,
+            report_file_name=report_file_name,
+
+        )
+        return mongodb_echart_assistant
+
     def get_agent_mysql_matplotlib_assistant(self):
         mysql_matplotlib_assistant = AssistantAgent(
             name="mysql_matplotlib_assistant",
+            system_message="""You are a helpful AI assistant.
+                                    Solve tasks using your coding and language skills.
+                                    In the following cases, suggest python code (in a python coding block) for the user to execute.
+                                        1. When you need to collect info, use the code to output the info you need, for example, browse or search the web, download/read a file, print the content of a webpage or a file, get the current date/time, check the operating system. After sufficient info is printed and the task is ready to be solved based on your language skill, you can solve the task by yourself.
+                                        2. When you need to perform some task with code, use the code to perform the task and output the result. Finish the task smartly.
+                                    Solve the task step by step if you need to. If a plan is not provided, explain your plan first. Be clear which step uses code, and which step uses your language skill.
+                                    When using code, you must indicate the script type in the code block. The user cannot provide any other feedback or perform any other action beyond executing the code you suggest. The user can't modify your code. So do not suggest incomplete code which requires users to modify. Don't use a code block if it's not intended to be executed by the user.
+                                    If you want the user to save the code in a file before executing it, put # filename: <filename> inside the code block as the first line. Don't include multiple code blocks in one response. Do not ask users to copy and paste the result. Instead, use 'print' function for the output when relevant. Check the execution result returned by the user.
+                                    If the result indicates there is an error, fix the error and output the code again. Suggest the full code instead of partial code or code changes. If the error can't be fixed or if the task is not solved even after the code is executed successfully, analyze the problem, revisit your assumption, collect additional info you need, and think of a different approach to try.
+                                    When you find an answer, verify the answer carefully. Include verifiable evidence in your response if possible.
+                                    The database name needs to be replaced with the actual database name in the database connection string, "your_dbname" in the database connection string  "mongodb://your_host:your_port/your_dbname"  must be replaced with the actual database name：q
+                                    Reply "TERMINATE" in the end when everything is done.
+                                    When you find an answer,  You are a report analysis, you have the knowledge and skills to turn raw data into information and insight, which can be used to make business decisions.include your analysis in your reply.
+                                    """ + '\n' + self.base_mysql_info + '\n' + python_base_dependency + '\n' + MYSQL_MATPLOTLIB_TIPS_MESS,
+            human_input_mode="NEVER",
+            user_name=self.user_name,
+            websocket=self.websocket,
+            llm_config=self.gpt4_turbo_config,
+            openai_proxy=self.openai_proxy,
+
+        )
+        return mysql_matplotlib_assistant
+
+    def get_agent_mongodb_matplotlib_assistant(self):
+        mysql_matplotlib_assistant = AssistantAgent(
+            name="mongodb_matplotlib_assistant",
             system_message="""You are a helpful AI assistant.
                                     Solve tasks using your coding and language skills.
                                     In the following cases, suggest python code (in a python coding block) for the user to execute.

@@ -7,16 +7,17 @@ import Spin from "antd/lib/spin";
 import Checkbox from "antd/lib/checkbox";
 import Space from "antd/lib/space";
 import Progress from "antd/lib/progress";
-import pg from "@/assets/images/db-logos/pg.png";
-import mysql from "@/assets/images/db-logos/mysql.png";
-import excel from "@/assets/images/db-logos/excel.png";
-import starrocks from "@/assets/images/db-logos/starrocks.png";
+// import pg from "@/assets/images/db-logos/pg.png";
+// import mysql from "@/assets/images/db-logos/mysql.png";
+// import excel from "@/assets/images/db-logos/excel.png";
+// import starrocks from "@/assets/images/db-logos/starrocks.png";
 import InboxOutlinedIcon from "@ant-design/icons/InboxOutlined";
 import QuestionCircleOutlinedIcon from "@ant-design/icons/QuestionCircleOutlined";
 import InfoCircleOutlinedIcon from "@ant-design/icons/InfoCircleOutlined";
 import Link from "@/components/Link";
 import Tooltip from "@/components/Tooltip";
 import SecondChoice from "./SecondChoice";
+import { IMG_ROOT } from "@/services/data-source";
 import './index.less';
 const SelectSource = forwardRef(({ confirmLoading, Charttable, chat_type, onChange, onSuccess,percent },ref) => {
   const [options, setOptions] = useState([]);
@@ -394,19 +395,13 @@ const SelectSource = forwardRef(({ confirmLoading, Charttable, chat_type, onChan
   }
   const dataSourceOptions = options.map((option) => {
     const { type, value, label } = option;
-    const iconMap = {
-      csv: excel,
-      mysql: mysql,
-      pg: pg,
-      starrocks: starrocks
-    };
-    const icon = iconMap[type];
+    const imageFolder = IMG_ROOT;
     return (
       <Select.Option key={value} value={value}>
         <Space>
           <div aria-label={label} style={{ display: "flex", alignItems: "center" }}>
             <span role="img" style={{ marginRight: "5px" }}>
-            <img src={icon} alt={icon} style={{ width: "30px", height: "30px" }} />
+            <img src={`${imageFolder}/${type}.png`} alt={type} style={{ width: "30px", height: "30px" }} />
             </span>
             {label}
           </div>

@@ -103,7 +103,9 @@ option = {
       }
     }
   ],
-  series: [{
+  series: [
+    // 根据columnMapping生成多个系列
+    {
     name: "",
     type: "line",
     yAxisIndex: 1,
@@ -184,11 +186,11 @@ option = {
 - Generate and return the ECharts bar chart options based on the provided data.
 - Refer to the sample styles, but do not use the sample data.
 - The chart must be generated using the provided data. Do not create new data or fields.
-- The chart must be generated using all row data provided. Do not omit any data.
 - Generate data fields based on the x-axis and y-axis fields defined in columnMapping. As many x-axis and y-axis fields as there are in columnMapping, how many x-axis and y-axis data are displayed. The data for the x-axis and y-axis are obtained from the row fields.
 - For each field marked as 'y' in columnMapping, there should be its own data series, and it should be displayed in the chart with a different color.
 - The 'name' field in the series should match exactly with the field names provided in the data. Do not change or translate the field names.
-- Completely fill in the data fields, such as ["0.09", "0.10", "0.11", ..., "0.92"], do not use ... to omit.
+- Fill in the xAxis data field completely, do not use ... to omit.
+- Set the data field in series to [], do not fill in the data.
 - Adjust the color, shape (such as rounded corners, right angles, etc.), stacking method, data label style, etc. of the bar chart to match the page background color #00206d and enhance the visual effect.
 - Set the background of echarts to transparent, i.e., backgroundColor: 'rgba(0,0,0,0)'.
 - Set animation effects to add vitality.
@@ -197,8 +199,6 @@ option = {
 - If there are multiple y-axis data, combine with line charts to enrich the chart.
 - Use gradient colors and shadow effects to enhance the visual effect of the chart.
 - Add multi-dimensional labels and legends for more information and interactivity.
-- You must use static methods to generate x-axis and y-axis data, and any form of iteration, such as .map(), .sort(), for loops, etc., is not allowed.
-- When setting animation effects, you must use regular functions, and arrow functions are not allowed. In the function, the use of any form of conditional expressions, including if statements and ternary expressions, is not permitted.
 - Only return the options part, do not include "var option = {...}", the title part, code comments, and markdown "```" or "```json".
 - The return should be code only, without any explanatory text or comments.
 """
@@ -242,19 +242,17 @@ option = {
 - Generate and return the ECharts pie chart options based on the provided data.
 - Refer to the example styles, but do not use the example data.
 - The chart must be generated using the provided data. Do not create new data or fields.
-- The chart must be generated using all row data provided. Do not omit any data.
 - Generate data fields based on the x-axis and y-axis fields defined in columnMapping. As many x-axis and y-axis fields as there are in columnMapping, how many x-axis and y-axis data are displayed. The data for the x-axis and y-axis are obtained from the row fields.
 - For each field marked as 'y' in columnMapping, there should be its own data series, and it should be displayed in the chart with a different color.
 - The 'name' field in the series should match exactly with the field names provided in the data. Do not change or translate the field names.
-- Fill in the data field completely, such as ["0.09", "0.10", "0.11", ..., "0.92"], do not use ... to omit.
+- Fill in the xAxis data field completely, do not use ... to omit.
+- Set the data field in series to [], do not fill in the data.
 - Adjust the color, transparency, rounded corners, etc. of the pie chart to match the page background color #00206d and enhance the visual effect.
 - Set the background of echarts to transparent, i.e., backgroundColor: 'rgba(0,0,0,0)'.
 - Ensure each data point has a unique color, there should not be any instances where the colors between the data are the same.
 - Set animation effects to add vitality.
 - Use gradient colors and shadow effects to enhance the visual effect of the chart.
 - Add multi-dimensional labels and legends for more information and interactivity.
-- You must use static methods to generate x-axis and y-axis data, and any form of iteration, such as .map(), .sort(), for loops, etc., is not allowed.
-- When setting animation effects, you must use regular functions, and arrow functions are not allowed. In the function, the use of any form of conditional expressions, including if statements and ternary expressions, is not permitted.
 - Only return the options part, do not include "var option = {...}", the title part, code comments, and markdown "```" or "```json".
 - The return should be code only, without any explanatory text or comments.
 """
@@ -316,6 +314,7 @@ This is an ECharts line chart example.
       }
     ],
     series: [
+    // 根据columnMapping生成多个系列
       {
         name: '',
         type: 'line',
@@ -360,18 +359,16 @@ This is an ECharts line chart example.
 - Generate and return the ECharts line chart options based on the provided data.
 - Refer to the example styles, but do not use the example data.
 - The chart must be generated using the provided data. Do not create new data or fields.
-- The chart must be generated using all row data provided. Do not omit any data.
 - Generate data fields based on the x-axis and y-axis fields defined in columnMapping. As many x-axis and y-axis fields as there are in columnMapping, how many x-axis and y-axis data are displayed. The data for the x-axis and y-axis are obtained from the row fields.
 - For each field marked as 'y' in columnMapping, there should be its own data series, and it should be displayed in the chart with a different color.
 - The 'name' field in the series should match exactly with the field names provided in the data. Do not change or translate the field names.
-- Fill in the data field completely, such as ["0.09", "0.10", "0.11", ..., "0.92"], do not use ... to omit.
+- Fill in the xAxis data field completely, do not use ... to omit.
+- Set the data field in series to [], do not fill in the data.
 - Adjust the color, width, shadow color, and blur of the line to match the page background color #00206d. In the area style, adjust the color and transparency to enhance the visual effect.
 - Set the background of echarts to transparent, i.e., backgroundColor: 'rgba(0,0,0,0)'.
 - Change the shape of the line (such as solid, dashed, dotted, etc.), style of the line (such as smooth, polyline, etc.), and style of the data points (such as round, square, star, etc.).
 - Adjust the border style of the chart.
 - Set animation effects to add vitality.
-- You must use static methods to generate x-axis and y-axis data, and any form of iteration, such as .map(), .sort(), for loops, etc., is not allowed.
-- When setting animation effects, you must use regular functions, and arrow functions are not allowed. In the function, the use of any form of conditional expressions, including if statements and ternary expressions, is not permitted.
 - Only return the options part, do not include "var option = {...}", the title part, code comments, and markdown "```" or "```json".
 - The return should be code only, without any explanatory text or comments.
 """

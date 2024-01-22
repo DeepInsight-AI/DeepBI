@@ -1,6 +1,6 @@
 import React from 'react';
 import PlainButton from "@/components/PlainButton";
-import excel from "@/assets/images/db-logos/excel.png";
+import csv from "@/assets/images/db-logos/csv.png";
 import CloseCircleOutlinedIcon from "@ant-design/icons/CloseCircleOutlined";
 
 const ExcelList = (props) => {
@@ -16,7 +16,7 @@ const ExcelList = (props) => {
           children: (
             <div style={{display: "flex",alignItems: "center",position: "relative",height: "100%",width: "100%"}}>
                 <div style={{position: "absolute",right: "0",top: "-10px",fontSize: "16px",color: "#999898"}} onClick={() => handleDeleteItem(item)}> <CloseCircleOutlinedIcon/></div>
-              <img alt={item.source_name} src={excel} />
+              <img alt={item.source_name} src={csv} />
               <h3>{item.source_name}</h3>
             </div>
           ),

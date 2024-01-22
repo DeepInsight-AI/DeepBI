@@ -156,7 +156,6 @@ class Mysql(BaseSQLQueryRunner):
 
         return list(schema.values())
 
-
     def run_query(self, query, user):
         ev = threading.Event()
         thread_id = ""

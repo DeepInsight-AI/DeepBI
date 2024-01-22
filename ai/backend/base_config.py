@@ -27,7 +27,7 @@ class Config():
 
         self.if_hide_sensitive = False
 
-        self.python_base_dependency = """python installed dependency environment: pymysql, pandas, mysql-connector-python, pyecharts, sklearn, psycopg2, sqlalchemy"""
+        self.python_base_dependency = """python installed dependency environment: pymysql, pandas, mysql-connector-python, pyecharts, sklearn, psycopg2, sqlalchemy，pymongo"""
 
         self.max_token_num = 6000
 
@@ -47,6 +47,9 @@ class Config():
 
         self.local_base_mysql_info = """
         """
+
+        self.local_base_mongodb_info = """
+                """
 
         self.online_base_mysql_info = """
         """

@@ -4,8 +4,8 @@
 <head>
 <meta charset="utf-8">
 <title>index</title>
-<script src="https://cdn.jsdelivr.net/npm/echarts/dist/echarts.min.js"></script>
-<script src="http://apps.bdimg.com/libs/jquery/1.6.4/jquery.js"></script>
+<script src="/static/echarts-main.js"></script>
+<script src="/static/jquery.js"></script>
 <link rel="stylesheet" href="/static/prettify/example3/style.css">
 </head>
 <body>
@@ -193,9 +193,15 @@
 </script>
 
 <script>
+  function decodeHtml(html) {
+  var txt = document.createElement('textarea');
+  txt.innerHTML = html;
+  return txt.value;
+}
   function getDashboardData() {
   return new Promise((resolve, reject) => {
     var DashboardData = document.getElementById("query_result").innerHTML;
+    DashboardData = DashboardData.replace(/None/g, "''").replace(/<br>/g, "");
     DashboardData = eval('(' + DashboardData + ')');
     var dashboard_id = document.getElementById('dashboardId').innerHTML;
     $.ajax({
@@ -256,7 +262,7 @@
     // if (query_result[i].chart_type != 'table')
      {
       var chart = echarts.init(document.getElementById('echart' + query_result[i].id))
-      var option =query_result[i]['echart_code']
+      var option =decodeHtml(query_result[i]['echart_code'])
       console.log(option, "option====")
       option = eval('(' + option + ')');
       var x_field = Object.keys(query_result[i]['columnMapping']).find(key => query_result[i]['columnMapping'][key] === 'x');

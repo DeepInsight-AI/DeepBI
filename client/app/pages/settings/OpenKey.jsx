@@ -180,7 +180,7 @@ const SettingsOpenKey = () => {
             </>
           )}
 
-          {aiOption === "OpenAI" && (
+          {aiOption === "Azure" && (
             <>
               <Form.Item
                 name="AzureApiKey"

@@ -55,6 +55,7 @@ maxminddb==2.5.1
 maxminddb-geolite2==2018.703
 mdurl==0.1.2
 multidict==6.0.4
+pymongo==4.6.1
 mysqlclient==2.1.1
 ndg-httpsclient==0.5.1
 netifaces==0.11.0

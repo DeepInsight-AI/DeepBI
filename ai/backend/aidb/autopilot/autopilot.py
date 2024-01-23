@@ -159,6 +159,7 @@ class Autopilot(AIDB):
         # 构建路径时使用 os.path.join，并使用 os.path.normpath 进行规范化
         html_template_path = os.path.join(os.path.normpath(current_directory.replace('user_upload_files', '')), 'ai', 'backend', 'aidb', 'autopilot')
         html_template_path = html_template_path.replace('\\', '/')
+        html_file_path = os.path.normpath(html_file_path)
 
         if CONFIG.web_language == 'CN':
             html_template_path = os.path.join(html_template_path, 'html_template')

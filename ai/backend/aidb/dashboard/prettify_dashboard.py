@@ -97,7 +97,7 @@ class PrettifyDashboard(AIDB):
 
         # 构建路径时使用 os.path.join
         html_file_path = os.path.join(current_directory.replace('user_upload_files', ''), 'bi', 'templates')
-
+        html_file_path = os.path.normpath(html_file_path)
         self.generate_html(echart_json, os.path.join(html_file_path, html_file_name))
 
         # 更新数据

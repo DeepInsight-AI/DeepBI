@@ -246,7 +246,7 @@ class AIDB:
         token_path = CONFIG.up_file_path + '.token_' + str(self.uid) + '.json'
         if os.path.exists(token_path):
             try:
-                ApiKey, HttpProxyHost, HttpProxyPort, ApiHost = self.load_api_key(token_path)
+                ApiKey, HttpProxyHost, HttpProxyPort, ApiHost, llm_in_use_name = self.load_api_key(token_path)
                 if ApiKey is None or len(ApiKey) == 0:
                     await self.put_message(500, CONFIG.talker_log, CONFIG.type_log_data, self.error_miss_key)
                     return False
@@ -342,7 +342,8 @@ class AIDB:
             data = json.load(file)
 
         if data.get('in_use'):
-            in_use = data.get('in_use')
+            in_use = llm_in_use_name = data.get('in_use')
+
             if in_use == 'OpenAI':
                 ApiKey = data[in_use]['OpenaiApiKey']
                 print('OpenaiApiKey : ', ApiKey)
@@ -366,8 +367,9 @@ class AIDB:
             print('HttpProxyHost : ', HttpProxyHost)
             HttpProxyPort = data['HttpProxyPort']
             print('HttpProxyPort : ', HttpProxyPort)
+            llm_in_use_name = ""
 
-        return ApiKey, HttpProxyHost, HttpProxyPort, ApiHost
+        return ApiKey, HttpProxyHost, HttpProxyPort, ApiHost, llm_in_use_name
 
     def generate_error_message(self, http_err, error_message=' API ERROR '):
         # print(f'HTTP error occurred: {http_err}')

@@ -41,6 +41,8 @@ class AgentInstanceUtil:
         self.delay_messages = delay_messages
         self.outgoing = outgoing
         self.incoming = incoming
+        # add by lu, Set the model name in use
+        self.llm_in_use_name = None
 
         # self.base_mysql_info = online_base_mysql_info
         self.base_mysql_info = local_base_mysql_info

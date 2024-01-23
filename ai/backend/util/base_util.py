@@ -2,7 +2,6 @@ import json
 import os
 from dotenv import load_dotenv
 from pathlib import Path
-from bi.settings import DATA_SOURCE_FILE_DIR as docker_data_source_file_dir
 
 
 host_secret = 'tNGoVq0KpQ4LKr5WMIZM'
@@ -21,7 +20,7 @@ def is_json(myjson):
 
 def get_upload_path():
     # 加载 .env 文件中的环境变量
-    data_source_file_dir = os.environ.get("DATA_SOURCE_FILE_DIR", docker_data_source_file_dir)
+    data_source_file_dir = os.environ.get("DATA_SOURCE_FILE_DIR", None)
     if data_source_file_dir and len(str(data_source_file_dir)) > 0:
         return str(data_source_file_dir) + '/'
     else:

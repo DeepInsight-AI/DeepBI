@@ -157,9 +157,8 @@ class Autopilot(AIDB):
         current_directory = CONFIG.up_file_path 
 
         # 构建路径时使用 os.path.join，并使用 os.path.normpath 进行规范化
-        html_template_path = os.path.join(os.path.normpath(current_directory.replace('user_upload_files', '')), 'ai', 'backend', 'aidb', 'autopilot')
+        html_template_path = os.path.join(os.path.normpath(current_directory.replace(r'\user_upload_files', '')), 'ai', 'backend', 'aidb', 'autopilot')
         html_template_path = html_template_path.replace('\\', '/')
-        html_file_path = os.path.normpath(html_file_path)
 
         if CONFIG.web_language == 'CN':
             html_template_path = os.path.join(html_template_path, 'html_template')
@@ -183,7 +182,7 @@ class Autopilot(AIDB):
         # print('rendered_html : ', rendered_html)
 
         # 将渲染后的HTML写入文件
-        with open(CONFIG.up_file_path + 'output_' + str(timestamp) + '.html', 'w',encoding='utf-8') as output_file:
+        with open(CONFIG.up_file_path + 'output_' + str(timestamp) + '.html', 'w') as output_file:
             output_file.write(rendered_html)
 
         print("HTML文件已生成：output.html")

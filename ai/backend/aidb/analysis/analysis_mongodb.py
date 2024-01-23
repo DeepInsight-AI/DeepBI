@@ -40,7 +40,7 @@ class AnalysisMongoDB(Analysis):
             elif q_data_type == 'mysql_comment_first':
                 if json_str.get('data').get('language_mode'):
                     q_language_mode = json_str['data']['language_mode']
-                    if q_language_mode == CONFIG.language_chinese or q_language_mode == CONFIG.language_english:
+                    if q_language_mode == CONFIG.language_chinese or q_language_mode == CONFIG.language_english or q_language_mode == CONFIG.language_japanese:
                         self.set_language_mode(q_language_mode)
                         self.agent_instance_util.set_language_mode(q_language_mode)
 
@@ -67,7 +67,7 @@ class AnalysisMongoDB(Analysis):
             elif q_data_type == 'mysql_comment_second':
                 if json_str.get('data').get('language_mode'):
                     q_language_mode = json_str['data']['language_mode']
-                    if q_language_mode == CONFIG.language_chinese or q_language_mode == CONFIG.language_english:
+                    if q_language_mode == CONFIG.language_chinese or q_language_mode == CONFIG.language_english or q_language_mode == CONFIG.language_japanese:
                         self.set_language_mode(q_language_mode)
                         self.agent_instance_util.set_language_mode(q_language_mode)
 

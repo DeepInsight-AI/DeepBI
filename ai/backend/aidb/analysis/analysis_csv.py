@@ -52,7 +52,7 @@ class AnalysisCsv(Analysis):
             elif q_data_type == CONFIG.type_comment_first:
                 if json_str.get('data').get('language_mode'):
                     q_language_mode = json_str['data']['language_mode']
-                    if q_language_mode == CONFIG.language_chinese or q_language_mode == CONFIG.language_english:
+                    if q_language_mode == CONFIG.language_chinese or q_language_mode == CONFIG.language_english or q_language_mode == CONFIG.language_japanese:
                         self.set_language_mode(q_language_mode)
                         self.agent_instance_util.set_language_mode(q_language_mode)
 
@@ -68,7 +68,7 @@ class AnalysisCsv(Analysis):
             elif q_data_type == CONFIG.type_comment_second:
                 if json_str.get('data').get('language_mode'):
                     q_language_mode = json_str['data']['language_mode']
-                    if q_language_mode == CONFIG.language_chinese or q_language_mode == CONFIG.language_english:
+                    if q_language_mode == CONFIG.language_chinese or q_language_mode == CONFIG.language_english or q_language_mode == CONFIG.language_japanese:
                         self.set_language_mode(q_language_mode)
                         self.agent_instance_util.set_language_mode(q_language_mode)
 
@@ -268,6 +268,8 @@ class AnalysisCsv(Analysis):
 
             if self.language_mode == language_chinese:
                 return "十分抱歉，无法回答您的问题，请检查相关数据是否充分。"
+            elif self.language_mode == CONFIG.language_japanese:
+                return "申し訳ありませんが、質問にお答えできません。関連データが十分かどうかを確認してください。"
             else:
                 return 'Sorry, we cannot answer your question. Please check whether the relevant data is sufficient.'
         except Exception as e:
@@ -278,6 +280,8 @@ class AnalysisCsv(Analysis):
 
         if self.language_mode == language_chinese:
             return "分析数据失败，请检查相关数据是否充分。"
+        elif self.language_mode == CONFIG.language_japanese:
+            return "データの分析に失敗しました。関連データが十分かどうかを確認してください。"
         else:
             return 'Failed to analyze data, please check whether the relevant data is sufficient.'
 

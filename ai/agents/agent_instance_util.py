@@ -13,7 +13,8 @@ from ai.backend.base_config import CONFIG
 
 max_retry_times = CONFIG.max_retry_times
 language_chinese = CONFIG.language_chinese
-language_english = CONFIG.language_chinese
+language_english = CONFIG.language_english
+language_japanese = CONFIG.language_japanese
 default_language_mode = CONFIG.default_language_mode
 local_base_postgresql_info = CONFIG.local_base_postgresql_info
 local_base_xls_info = CONFIG.local_base_xls_info
@@ -1261,6 +1262,12 @@ class AgentInstanceUtil:
             self.question_ask = ' 以下是我的问题，请用中文回答: '
             self.quesion_answer_language = '用中文回答问题.'
             self.data_analysis_error = '分析数据失败，请检查相关数据是否充分'
+        
+        elif self.language_mode == language_japanese:
+            self.error_message_timeout = "申し訳ありませんが、今回のAI-GPTインターフェース呼び出しがタイムアウトしました。もう一度お試しください。"
+            self.question_ask = ' これが私の質問です。: '
+            self.quesion_answer_language = '日本語で質問に答える。'
+            self.data_analysis_error = 'データの分析に失敗しました。関連データが十分かどうかを確認してください。'
 
     def set_base_csv_info(self, db_info):
         csv_content = []

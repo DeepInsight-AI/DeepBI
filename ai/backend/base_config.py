@@ -23,6 +23,7 @@ class Config():
 
         self.language_chinese = 'CN'
         self.language_english = 'EN'
+        self.language_japanese = 'JP'
         self.default_language_mode = self.language_chinese
 
         self.if_hide_sensitive = False

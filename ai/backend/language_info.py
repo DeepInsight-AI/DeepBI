@@ -26,6 +26,7 @@ class LanguageInfo():
         self.no_api_key = '未检测到apikey,请核查'
         self.api_key_success = 'API Key 检测通过~'
         self.api_key_fail = 'API Key 检测未通过~'
+        self.qustion_message = '请为我解释一下这些数据'
 
     def load_info_en(self):
         self.question_ask = ' This is my question，Answer user questions in English: '
@@ -38,6 +39,7 @@ class LanguageInfo():
         self.no_api_key = 'apikey not detected, please check'
         self.api_key_success = 'API Key Test Success~'
         self.api_key_fail = 'API Key Test Fail~'
+        self.qustion_message = 'Please explain this data to me.'
 
     def load_info_jp(self):
         self.question_ask = '以下が私の質問です。日本語で答えてください: '
@@ -50,6 +52,7 @@ class LanguageInfo():
         self.no_api_key = 'apikeyが検出されませんでした。確認してください'
         self.api_key_success = 'APIキーの検査に成功しました〜'
         self.api_key_fail = 'APIキーの検査に失敗しました〜'
+        self.qustion_message = 'このデータを説明してください。'
 
 
 

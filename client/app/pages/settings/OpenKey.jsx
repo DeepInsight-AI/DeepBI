@@ -188,19 +188,26 @@ const SettingsOpenKey = () => {
                 rules={[{ required: true, message: window.W_L.please_enter_api_key }]}>
                 <Input placeholder="AzureApiKey" />
               </Form.Item>
-              <Form.Item name="AzureHost" label="AzureHost"  rules={[{ required: true, message: window.W_L.please_enter_api_host }]}>
+              <Form.Item
+                name="AzureHost"
+                label="AzureHost"
+                rules={[{ required: true, message: window.W_L.please_enter_api_host }]}>
                 <Input placeholder="AzureHost" />
               </Form.Item>
             </>
           )}
           <Form.Item style={{ textAlign: "right" }}>
             <div style={{ width: "100%", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-              <div style={{ display: "flex", alignItems: "center" }}>
-                <QuestionCircleOutlinedIcon style={{ marginRight: "3px", color: "#2196f3" }} />
-                <Link href="https://holmes.bukeshiguang.com/" rel="noopener noreferrer" target="_blank">
-                  {window.W_L.click_here_to_get_apikey}
-                </Link>
-              </div>
+              {aiOption === "OpenAI" ? (
+                <></>
+              ) : (
+                <div style={{ display: "flex", alignItems: "center" }}>
+                  <QuestionCircleOutlinedIcon style={{ marginRight: "3px", color: "#2196f3" }} />
+                  <Link href="https://holmes.bukeshiguang.com/" rel="noopener noreferrer" target="_blank">
+                    {window.W_L.click_here_to_get_apikey}
+                  </Link>
+                </div>
+              )}
               <div>
                 <Button loading={disabled} style={{ marginRight: "10px" }} onClick={() => handleConnectTestClick()}>
                   {window.W_L.connect_test}

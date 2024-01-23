@@ -96,7 +96,7 @@ class PrettifyDashboard(AIDB):
         current_directory = CONFIG.up_file_path
 
         # 构建路径时使用 os.path.join
-        html_file_path = os.path.join(current_directory.replace(r'\user_upload_files', ''), 'bi', 'templates')
+        html_file_path = os.path.join(current_directory.replace('user_upload_files', ''), 'bi', 'templates')
 
         self.generate_html(echart_json, os.path.join(html_file_path, html_file_name))
 
@@ -133,7 +133,7 @@ class PrettifyDashboard(AIDB):
         rendered_html = template.render(data)
 
         # 将渲染后的HTML写入文件
-        with open(html_file_name, 'w') as output_file:
+        with open(html_file_name, 'w',encoding='utf-8') as output_file:
             output_file.write(rendered_html)
 
         print("HTML文件已生成：", html_file_name)

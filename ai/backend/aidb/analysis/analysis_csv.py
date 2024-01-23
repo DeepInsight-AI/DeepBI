@@ -240,6 +240,11 @@ class AnalysisCsv(Analysis):
                             question_supplement = " 请用中文，简单介绍一下已生成图表中的数据内容."
                         else:
                             question_supplement = " 请用中文，从上诉对话中分析总结出问题的答案."
+                    elif self.language_mode == CONFIG.language_japanese:
+                        if is_chart:
+                            question_supplement = " 生成されたグラフのデータ内容について、簡単に日本語で説明してください。"
+                        else:
+                            question_supplement = " 上記の対話から問題の答えを分析し、日本語で要約してください。"
 
                     # 1,开始分析
                     await planner_user.initiate_chat(

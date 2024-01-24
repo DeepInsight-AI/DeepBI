@@ -210,7 +210,7 @@ class AgentInstanceUtil:
             else:
                 with open(CONFIG.up_file_path + '.rag_' + str(self.user_name) + '_' + str(databases_id) + '.json',
                           'w') as output_file:
-                    output_file.write(message)
+                    output_file.write(str(message))
 
                 self.is_rag = True
 

@@ -1,4 +1,9 @@
 # Version
+### 1.2.2
+- Add mongodb database support.
+- Fix the report generation path bug.
+
+
 ### 1.2.1
 BUG fixes:
 - Fixed the problem of token statistics in some network environments.

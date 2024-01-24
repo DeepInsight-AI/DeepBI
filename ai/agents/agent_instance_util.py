@@ -641,6 +641,19 @@ class AgentInstanceUtil:
         )
         return database_describer
 
+
+
+    def get_agent_retrieve_database_describer(self):
+        database_describer = RetrieveAssistantAgent(
+            name="retrieve_database_describer",
+            system_message="""data_describer.You are a data describer, describing in one sentence your understanding of the data selected by the user. For example, the data selected by the user includes X tables, and what data is in each table.""",
+            llm_config=self.gpt4_turbo_config,
+            user_name=self.user_name,
+            websocket=self.websocket,
+            openai_proxy=self.openai_proxy,
+        )
+        return database_describer
+
     def get_agent_bi_proxy(self):
         """ BI proxy """
         bi_proxy = BIProxyAgent(

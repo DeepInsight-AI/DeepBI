@@ -47,11 +47,13 @@ class AIDB:
         if self.agent_instance_util.is_rag:
             docs_path = CONFIG.up_file_path + '.rag_' + str(self.user_name) + '_' + str(
                 self.agent_instance_util.db_id) + '.json'
+            print('docs_path : ', docs_path)
             planner_user = self.agent_instance_util.get_agent_retrieve_planner_user(docs_path=docs_path)
             database_describer = self.agent_instance_util.get_agent_retrieve_database_describer()
         else:
             planner_user = self.agent_instance_util.get_agent_planner_user()
             database_describer = self.agent_instance_util.get_agent_database_describer()
+
 
         try:
             qustion_message = "Please explain this data to me."

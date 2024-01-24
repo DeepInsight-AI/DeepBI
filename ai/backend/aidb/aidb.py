@@ -44,16 +44,6 @@ class AIDB:
 
     async def get_data_desc(self, q_str):
         """Get data description"""
-        if self.agent_instance_util.is_rag:
-            docs_path = CONFIG.up_file_path + '.rag_' + str(self.user_name) + '_' + str(
-                self.agent_instance_util.db_id) + '.json'
-            print('docs_path : ', docs_path)
-            planner_user = self.agent_instance_util.get_agent_retrieve_planner_user(docs_path=docs_path)
-            database_describer = self.agent_instance_util.get_agent_retrieve_database_describer()
-        else:
-            planner_user = self.agent_instance_util.get_agent_planner_user()
-            database_describer = self.agent_instance_util.get_agent_database_describer()
-
 
         try:
             qustion_message = "Please explain this data to me."
@@ -61,15 +51,38 @@ class AIDB:
             if self.language_mode == CONFIG.language_chinese:
                 qustion_message = "请为我解释一下这些数据"
 
-            await planner_user.initiate_chat(
-                database_describer,
-                # message=content + '\n' + " This is my question: " + '\n' + str(qustion_message),
-                message=self.agent_instance_util.base_message + '\n' + self.question_ask + '\n' + str(
-                    qustion_message),
-            )
+            if self.agent_instance_util.is_rag:
+                docs_path = CONFIG.up_file_path + '.rag_' + str(self.user_name) + '_' + str(
+                    self.agent_instance_util.db_id) + '.json'
+                print('docs_path : ', docs_path)
+                planner_user = self.agent_instance_util.get_agent_retrieve_planner_user(docs_path=docs_path)
+                database_describer = self.agent_instance_util.get_agent_database_describer()
+                await planner_user.initiate_chat(
+                    database_describer,
+                    # message=content + '\n' + " This is my question: " + '\n' + str(qustion_message),
+                    problem=self.agent_instance_util.base_message + '\n' + self.question_ask + '\n' + str(
+                        qustion_message),
+                )
 
-            answer_message = planner_user.last_message()["content"]
-            # print("answer_message: ", answer_message)
+                answer_message = planner_user.last_message()["content"]
+
+            else:
+                planner_user = self.agent_instance_util.get_agent_planner_user()
+                database_describer = self.agent_instance_util.get_agent_database_describer()
+                await planner_user.initiate_chat(
+                    database_describer,
+                    # message=content + '\n' + " This is my question: " + '\n' + str(qustion_message),
+                    message=self.agent_instance_util.base_message + '\n' + self.question_ask + '\n' + str(
+                        qustion_message),
+                )
+
+                answer_message = planner_user.last_message()["content"]
+                # print("answer_message: ", answer_message)
+
+
+
+
+
         except HTTPError as http_err:
             traceback.print_exc()
             error_message = self.generate_error_message(http_err)

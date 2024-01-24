@@ -248,7 +248,8 @@ class Completion(openai_Completion):
                         """
                         The ZhipuAI is called here
                         """
-                        response = "asdf"
+                        from .zhipuaiadpter import ZhiPuAIClient
+                        response = ZhiPuAIClient.run(config['api_key'], data)
                 else:
                     """
                     By default, openai is invoked

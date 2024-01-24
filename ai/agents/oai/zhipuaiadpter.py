@@ -8,7 +8,7 @@ from zhipuai import ZhipuAI
 ZHIPU_AI_MODEL = "glm-4"
 
 
-class ZhiPuAI:
+class ZhiPuAIClient:
 
     @classmethod
     def run(cls, apiKey, data):

@@ -211,8 +211,9 @@ class Completion(openai_Completion):
                 # print("config :", config)
                 # print("config.get('api_base')", config.get('api_base'))
                 if config.get('api_base') is not None:
-                    # and str(config['api_base']).__contains__('apiserver.deep-thought.io')\
-
+                    """
+                    A different LLM is called here
+                    """
                     if config.get('functions'):
                         data = {
                             "messages": config['messages'],
@@ -223,27 +224,35 @@ class Completion(openai_Completion):
                             "messages": config['messages']
                         }
 
-                    # set header
-                    headers = {
-                        "token": config['api_key'],
-                        "ai_name": "openai",
-                        "module": config['model']
-                    }
-                    # print('request json : ', data)
+                    # Here the judgment calls a different LLM
+                    if "DeepInsight" == config.get("api_type"):
+                        """
+                        The DeepInsight webserver is called here
+                        """
+                        headers = {
+                            "token": config['api_key'],
+                            "ai_name": "openai",
+                            "module": config['model']
+                        }
+                        url = config['api_base']
+                        print('create_url : ', url)
+                        res = requests.post(url, json=data, headers=headers)
+                        print("res :", res)
+                        print('res.text +++++++++ : ', res.text)
 
-                    # url = 'http://apiserver.deep-thought.io/proxy'
-                    url = config['api_base']
-                    print('create_url : ', url)
-                    res = requests.post(url, json=data, headers=headers)
-                    print("res :", res)
-                    print('res.text +++++++++ : ', res.text)
-
-                    # check response status_code
-                    if res.status_code != 200:
-                        res.raise_for_status()
-
-                    response = res.json()
+                        # check response status_code
+                        if res.status_code != 200:
+                            res.raise_for_status()
+                        response = res.json()
+                    elif "ZhiPuAI" == config.get("api_type"):
+                        """
+                        The ZhipuAI is called here
+                        """
+                        response = "asdf"
                 else:
+                    """
+                    By default, openai is invoked
+                    """
                     if "request_timeout" in config:
                         response = openai_completion.create(**config)
                     else:

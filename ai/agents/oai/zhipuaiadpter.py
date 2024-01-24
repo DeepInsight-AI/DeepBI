@@ -2,6 +2,7 @@
 """
 info:  Define ZhiPuAI
 """
+import json
 from zhipuai import ZhipuAI
 
 # define default model
@@ -25,39 +26,59 @@ class ZhiPuAIClient:
 
     @classmethod
     def run(cls, apiKey, data):
-        print("start-" * 20)
+        print("---start---------" * 3)
         print(data)
-        print("over-" * 10)
+        print("---over----------" * 3)
         zhipu_data = cls.input_to_openai(data)
+        print(zhipu_data)
+        print("++++++change data+++++" * 3)
         client = ZhipuAI(api_key=apiKey)
         if "functions" in data:
-            tools = zhipu_data['tools']
+            tools = zhipu_data["tools"]
             response = client.chat.completions.create(
                 model=ZHIPU_AI_MODEL,  # 填写需要调用的模型名称
-                messages=zhipu_data['messages'],
+                messages=zhipu_data["messages"],
                 tools=tools,
                 tool_choice="auto",
             )
         else:
+            print("-------------zhipu-------------input---------")
+            print(zhipu_data["messages"])
+            print("-------------zhipu-------------input---------")
             response = client.chat.completions.create(
                 model=ZHIPU_AI_MODEL,
-                messages=zhipu_data['messages']
+                messages=zhipu_data["messages"]
             )
-        return cls.output_to_openai(response)
+        result = cls.output_to_openai(response)
+        return result
         pass
 
     @classmethod
     def input_to_openai(cls, data):
         tools = []
+        messages = []
         if "functions" in data:
-            for item in data['functions']:
+            for item in data["functions"]:
                 new_item = {
                     "type": "function",
                     "function": item
                 }
                 tools.append(new_item)
-        data['tools'] = tools
-        return data
+        if "messages" in data and data["messages"] is not None and len(data["messages"]) > 0:
+            for item in data["messages"]:
+                if item.get("content") is None and "function_call" in item:
+                    new_item = {
+                        "content": None,
+                        "tool_calls": {
+                            "id": 0,
+                            "type": "function",
+                            "function": item.get("function_call")
+                            }
+                        }
+                else:
+                    new_item = item
+                messages.append(new_item)
+        return object_to_dict({"tools": tools, "messages": messages})
         pass
 
     @classmethod

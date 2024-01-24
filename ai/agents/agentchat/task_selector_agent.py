@@ -146,6 +146,12 @@ class TaskSelectorAgent(ConversableAgent):
 
                     # suggest_function = {'role': 'assistant', 'content': None, 'function_call': {'name': 'task_base',
                     #                                                          'arguments': '{"qustion_message":"\\nWhat is the most common house layout in the dataset?"}'}}
+                    if "task_base" in reply:
+                        reply = "task_base"
+                    elif "task_generate_echart" in reply:
+                        reply = "task_generate_echart"
+                    else:
+                        reply = "Undeifned_funcion_in_task_selector_gent"
 
                     suggest_function = {'role': 'assistant', 'content': None, 'function_call': {'name': reply,
                                                                                                 'arguments': '{"qustion_message":"' + str(

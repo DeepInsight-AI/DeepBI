@@ -25,6 +25,9 @@ class ZhiPuAIClient:
 
     @classmethod
     def run(cls, apiKey, data):
+        print("start-" * 20)
+        print(data)
+        print("over-" * 10)
         zhipu_data = cls.input_to_openai(data)
         client = ZhipuAI(api_key=apiKey)
         if "functions" in data:

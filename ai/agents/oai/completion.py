@@ -223,7 +223,9 @@ class Completion(openai_Completion):
                         data = {
                             "messages": config['messages']
                         }
-
+                    print("--config"*10)
+                    print(config)
+                    print("--config over"*10)
                     # Here the judgment calls a different LLM
                     if "DeepInsight" == config.get("api_type"):
                         """

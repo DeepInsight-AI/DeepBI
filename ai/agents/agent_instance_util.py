@@ -213,6 +213,7 @@ class AgentInstanceUtil:
                     output_file.write(str(message))
 
                 self.is_rag = True
+                self.base_message = ' '
 
     def get_agent_mysql_engineer(self):
         """mysql engineer"""

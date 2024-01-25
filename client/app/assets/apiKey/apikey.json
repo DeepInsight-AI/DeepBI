@@ -1,5 +1,4 @@
 {
-    "data": {
         "in_use": "DeepInsight",
         "OpenAI": {
             "OpenaiApiKey": "",
@@ -25,5 +24,4 @@
                 "AzureHost"
             ]
         }
-    }
 }

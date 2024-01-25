@@ -11,12 +11,12 @@ import Link from "@/components/Link";
 import QuestionCircleOutlinedIcon from "@ant-design/icons/QuestionCircleOutlined";
 import { createWebSocket, closeWebSocket } from '../testdialogue/components/Dialogue/websocket';
 import toast from 'react-hot-toast';
-import apiKeyJson from '/static/apiKey/apiKey.json';
+import { JSON_ROOT } from '@/services/api-key-data';
 const SettingsOpenKey = () => {
   const [form] = Form.useForm();
   const [disabled, setDisabled] = useState(false);
   const [aiOption, setAiOption] = useState('DeepInsight');
-  const [aiOptions, setAiOptions] = useState(apiKeyJson.data); // 初始状态设置为本地JSON数据
+  const [aiOptions, setAiOptions] = useState(JSON_ROOT);
   const [requiredFields, setRequiredFields] = useState({});
 
   const getOpenKey = useCallback(async () => {

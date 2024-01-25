@@ -88,8 +88,9 @@ class AnalysisMysql(Analysis):
             retrieve_config={
                 "task": "qa",
                 "docs_path": docs_path,
+                "update_context": False,
             },
-            update_context=False,
+
         )
         return retrieve_python_executor
 

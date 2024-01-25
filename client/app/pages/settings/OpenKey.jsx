@@ -16,7 +16,7 @@ const SettingsOpenKey = () => {
   const [form] = Form.useForm();
   const [disabled, setDisabled] = useState(false);
   const [aiOption, setAiOption] = useState('DeepInsight');
-  const [aiOptions, setAiOptions] = useState(JSON_ROOT);
+  const [aiOptions, setAiOptions] = useState({});
   const [requiredFields, setRequiredFields] = useState({});
 
   const getOpenKey = useCallback(async () => {
@@ -24,13 +24,16 @@ const SettingsOpenKey = () => {
     try {
       const { data } = await axios.get(`/api/ai_token`);
       // 合并接口数据和本地数据
-      const mergedData = { ...aiOptions };
+      const mergedData = { ...JSON_ROOT };
+      console.log('JSON_ROOT', JSON_ROOT);
+      console.log('mergedData', mergedData);
       Object.keys(data).forEach(key => {
         if(data[key]){
           mergedData[key] = { ...mergedData[key], ...data[key] };
         }
        
       });
+      console.log('mergedData-----', mergedData);
       setAiOptions(mergedData);
       setRequiredFields(mergedData[data.in_use].required || []);
       setAiOption(data.in_use);

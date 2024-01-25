@@ -30,6 +30,7 @@ const SettingsOpenKey = () => {
       const JSON_ROOT = await response.json();
       // 合并接口数据和本地数据
       const mergedData = { ...JSON_ROOT };
+      const inUse = data && data.in_use ? data.in_use : mergedData.in_use;
       // del in_use
       delete mergedData.in_use;
       console.log("JSON_ROOT", JSON_ROOT);
@@ -41,9 +42,9 @@ const SettingsOpenKey = () => {
       });
       console.log("mergedData-----", mergedData);
       setAiOptions(mergedData);
-      setRequiredFields(mergedData[data.in_use].required || []);
-      setAiOption(data.in_use);
-      form.setFieldsValue(mergedData[data.in_use]);
+      setRequiredFields(mergedData[inUse].required || []);
+      setAiOption(inUse);
+      form.setFieldsValue(mergedData[inUse]);
     } catch (error) {
       console.log("error", error)
       toast.error(window.W_L.fail);

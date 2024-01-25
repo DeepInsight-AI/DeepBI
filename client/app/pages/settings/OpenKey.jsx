@@ -47,7 +47,7 @@ const SettingsOpenKey = () => {
     }
     createWebSocket();
     setDisabled(false);
-  }, [form, aiOptions]);
+  }, [form]);
 
   useEffect(() => {
     getOpenKey();

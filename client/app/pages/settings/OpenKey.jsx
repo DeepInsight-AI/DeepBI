@@ -67,8 +67,12 @@ const SettingsOpenKey = () => {
           },
         };
         const optionsWithoutRequired = Object.entries(updatedAiOptions).reduce((acc, [key, value]) => {
-          const { required, ...rest } = value; // 解构出'required'字段和剩余的字段
-          acc[key] = rest; // 只保留剩余的字段
+          if (key === 'in_use') {
+            acc[key] = value; // 直接赋值字符串
+          } else {
+            const { required, ...rest } = value; // 解构出'required'字段和剩余的字段
+            acc[key] = rest; // 只保留剩余的字段
+          }
           return acc;
         }, {});
         const response = await axios.post("/api/ai_token", {

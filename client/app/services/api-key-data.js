@@ -1,1 +1,1 @@
-export const JSON_ROOT = "static/apiKey/apiKey.json";
+export const JSON_ROOT = "static/apiKey/apikey.json";

@@ -83,5 +83,27 @@ class ZhiPuAIClient:
 
     @classmethod
     def output_to_openai(cls, data):
-        return object_to_dict(data)
+        return cls.parse_function_call(object_to_dict(data))
+        pass
+
+    @classmethod
+    def parse_function_call(cls, model_response):
+        if "tool_calls" in model_response['choices'][0]['message']:
+            tool_call = model_response['choices'][0]['message'].pop("tool_calls")
+            args = tool_call[0]['function']['arguments']
+            open_ai_choices = {
+                "function_call": {
+                    "name": tool_call[0]["function"]['name'],
+                    "arguments": args
+                }
+            }
+            model_response['choices'][0]['index'] = tool_call[0]['index']
+            model_response['choices'][0]['logprobs'] = None
+            model_response['choices'][0]['message']["content"] = None
+            model_response['choices'][0]['message']["function_call"] = open_ai_choices
+            model_response['choices'][0]['finish_reason'] = "function_call"
+            return model_response
+        else:
+            return model_response
+        pass
         pass

@@ -153,10 +153,13 @@ class TaskSelectorAgent(ConversableAgent):
                     else:
                         reply = "Undeifned_funcion_in_task_selector_gent"
 
-                    suggest_function = {'role': 'assistant', 'content': None, 'function_call': {'name': reply,
-                                                                                                'arguments': '{"qustion_message":"' + str(
-                                                                                                    messages[-1][
-                                                                                                        'content']) + '"}'}}
+                    suggest_function = {'role': 'assistant',
+                                        'content': None,
+                                        'function_call': {
+                                            'name': reply,
+                                            'arguments': '{"qustion_message":"' + str(messages[-1]['content']) + '"}'
+                                        }
+                                        }
 
                     # {"qustion_message": " """ + str(messages[-1]['content']) + """"}
 

@@ -55,7 +55,7 @@ const SettingsOpenKey = () => {
     getOpenKey();
   }, [getOpenKey]);
 
-  const handleOpenKey = useCallback(、
+  const handleOpenKey = useCallback(
     async values => {
       setDisabled(true);
       try {

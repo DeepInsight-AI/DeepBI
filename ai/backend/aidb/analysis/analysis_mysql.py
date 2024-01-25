@@ -188,18 +188,27 @@ class AnalysisMysql(Analysis):
                             self.agent_instance_util.db_id) + '.json'
                         python_executor = self.get_agent_retrieve_python_executor(docs_path=docs_path)
 
+                        await python_executor.initiate_chat(
+                            base_mysql_assistant,
+                            problem=self.agent_instance_util.base_message + '\n' + self.question_ask + '\n' + str(
+                                qustion_message),
+                        )
+
+                        answer_message = python_executor.chat_messages[base_mysql_assistant]
+                        print("answer_message: ", answer_message)
+
                     else:
                         base_mysql_assistant = self.get_agent_base_mysql_assistant()
                         python_executor = self.agent_instance_util.get_agent_python_executor()
 
-                    await python_executor.initiate_chat(
-                        base_mysql_assistant,
-                        message=self.agent_instance_util.base_message + '\n' + self.question_ask + '\n' + str(
-                            qustion_message),
-                    )
+                        await python_executor.initiate_chat(
+                            base_mysql_assistant,
+                            message=self.agent_instance_util.base_message + '\n' + self.question_ask + '\n' + str(
+                                qustion_message),
+                        )
 
-                    answer_message = python_executor.chat_messages[base_mysql_assistant]
-                    print("answer_message: ", answer_message)
+                        answer_message = python_executor.chat_messages[base_mysql_assistant]
+                        print("answer_message: ", answer_message)
 
                     for i in range(len(answer_message)):
                         answer_mess = answer_message[len(answer_message) - 1 - i]

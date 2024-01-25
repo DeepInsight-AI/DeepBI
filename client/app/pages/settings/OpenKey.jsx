@@ -112,7 +112,7 @@ const SettingsOpenKey = () => {
             <div style={{ display: "flex", alignItems: "center" }}>
               <h4 style={{ marginRight: "30px" }}>AI:</h4>
               <Radio.Group onChange={handleRadioChange} value={aiOption}>
-                {Object.keys(aiOptions).map(option => (
+                {Object.keys(aiOptions).filter(key => key !== "in_use").map(option => (
                   <Radio key={option} value={option}>
                     {option}
                   </Radio>

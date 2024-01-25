@@ -199,10 +199,11 @@ class AgentInstanceUtil:
 
         num_tokens = num_tokens_from_messages(mess, model='gpt-4')
         print('num_tokens: ', num_tokens)
+        print('databases_id ：', databases_id)
 
         if num_tokens < CONFIG.max_token_num:
             self.base_message = str(message)
-            print('base_message : ', message)
+            # print('base_message : ', message)
         else:
             if databases_id == -1:
                 content = '所选表格' + str(num_tokens) + ' , 超过了最大长度:' + str(CONFIG.max_token_num) + ' , 请重新选择'
@@ -640,8 +641,6 @@ class AgentInstanceUtil:
             openai_proxy=self.openai_proxy,
         )
         return database_describer
-
-
 
     def get_agent_retrieve_database_describer(self):
         database_describer = RetrieveAssistantAgent(

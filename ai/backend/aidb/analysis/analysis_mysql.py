@@ -159,7 +159,7 @@ class AnalysisMysql(Analysis):
                     if if_suss:
                         self.agent_instance_util.base_mysql_info = '  When connecting to the database, be sure to bring the port. This is mysql database info :' + '\n' + str(
                             db_info)
-                        self.agent_instance_util.set_base_message(q_str)
+                        self.agent_instance_util.set_base_message(q_str, databases_id=db_id)
                         self.agent_instance_util.db_id = db_id
                 else:
                     self.agent_instance_util.set_base_message(q_str)

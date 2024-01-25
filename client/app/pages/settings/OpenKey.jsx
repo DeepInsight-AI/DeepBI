@@ -31,8 +31,6 @@ const SettingsOpenKey = () => {
       // 合并接口数据和本地数据
       const mergedData = { ...JSON_ROOT };
       const inUse = data && data.in_use ? data.in_use : mergedData.in_use;
-      // del in_use
-      delete mergedData.in_use;
       console.log("JSON_ROOT", JSON_ROOT);
       console.log("mergedData", mergedData);
       Object.keys(data).forEach(key => {
@@ -57,7 +55,7 @@ const SettingsOpenKey = () => {
     getOpenKey();
   }, [getOpenKey]);
 
-  const handleOpenKey = useCallback(
+  const handleOpenKey = useCallback(、
     async values => {
       setDisabled(true);
       try {
@@ -68,9 +66,14 @@ const SettingsOpenKey = () => {
             ...values,
           },
         };
+        const optionsWithoutRequired = Object.entries(updatedAiOptions).reduce((acc, [key, value]) => {
+          const { required, ...rest } = value; // 解构出'required'字段和剩余的字段
+          acc[key] = rest; // 只保留剩余的字段
+          return acc;
+        }, {});
         const response = await axios.post("/api/ai_token", {
           in_use: aiOption,
-          ...updatedAiOptions,
+          ...optionsWithoutRequired,
         });
         if (response.code === 200) {
           toast.success(window.W_L.save_success);

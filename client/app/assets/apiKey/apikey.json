@@ -1,0 +1,29 @@
+{
+    "data": {
+        "in_use": "DeepInsight",
+        "OpenAI": {
+            "OpenaiApiKey": "",
+            "HttpProxyHost": "",
+            "HttpProxyPort": "",
+            "ApiHost": "",
+            "required": [
+                "OpenaiApiKey",
+                "HttpProxyHost"
+            ]
+        },
+        "DeepInsight": {
+            "ApiKey": "",
+            "required": [
+                "ApiKey"
+            ]
+        },
+        "Azure": {
+            "AzureApiKey": "",
+            "AzureHost": "",
+            "required": [
+                "AzureApiKey",
+                "AzureHost"
+            ]
+        }
+    }
+}

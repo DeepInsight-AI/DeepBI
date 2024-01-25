@@ -1,208 +1,140 @@
-import React,{useState,useEffect,useCallback} from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import Button from "antd/lib/button";
 import Form from "antd/lib/form";
 import Input from "antd/lib/input";
 import Radio from "antd/lib/radio";
-// import * as XLSX from 'xlsx';
 import routeWithUserSession from "@/components/ApplicationArea/routeWithUserSession";
-// import LoadingState from "@/components/items-list/components/LoadingState";
 import wrapSettingsTab from "@/components/SettingsWrapper";
 import routes from "@/services/routes";
 import { axios } from "@/services/axios";
 import Link from "@/components/Link";
 import QuestionCircleOutlinedIcon from "@ant-design/icons/QuestionCircleOutlined";
-import { websocket,createWebSocket,closeWebSocket } from '../testdialogue/components/Dialogue/websocket';
+import { createWebSocket, closeWebSocket } from '../testdialogue/components/Dialogue/websocket';
 import toast from 'react-hot-toast';
-
+import apiKeyJson from '/static/apiKey/apiKey.json';
 const SettingsOpenKey = () => {
-    const [form] = Form.useForm();
+  const [form] = Form.useForm();
   const [disabled, setDisabled] = useState(false);
-  const [aiOption, setAiOption] = useState('DeepInsight'); // 默认选项
+  const [aiOption, setAiOption] = useState('DeepInsight');
+  const [aiOptions, setAiOptions] = useState(apiKeyJson.data); // 初始状态设置为本地JSON数据
+  const [requiredFields, setRequiredFields] = useState({});
 
   const getOpenKey = useCallback(async () => {
     setDisabled(true);
-    const {data} = await axios.get(`/api/ai_token`);
-      if(!data.in_use){
-        form.setFieldsValue(data);
-      }else{
-        setAiOption(data.in_use);
-        const {OpenAI, DeepInsight} = data;
-        form.setFieldsValue({
-        ApiKey: DeepInsight.ApiKey|| "",
-        OpenaiApiKey: OpenAI.OpenaiApiKey|| "",
-        HttpProxyHost: OpenAI.HttpProxyHost|| "",
-        HttpProxyPort: OpenAI.HttpProxyPort|| "",
-        ApiHost: OpenAI.ApiHost|| "",
-    });
-      }
-    createWebSocket()
-    setDisabled(false)
-  }, [form]);
+    try {
+      const { data } = await axios.get(`/api/ai_token`);
+      // 合并接口数据和本地数据
+      const mergedData = { ...aiOptions };
+      Object.keys(data).forEach(key => {
+        if(data[key]){
+          mergedData[key] = { ...mergedData[key], ...data[key] };
+        }
+       
+      });
+      setAiOptions(mergedData);
+      setRequiredFields(mergedData[data.in_use].required || []);
+      setAiOption(data.in_use);
+      form.setFieldsValue(mergedData[data.in_use]);
+    } catch (error) {
+      toast.error(window.W_L.fail);
+    }
+    createWebSocket();
+    setDisabled(false);
+  }, [form, aiOptions]);
 
   useEffect(() => {
     getOpenKey();
   }, [getOpenKey]);
-  const handOpenKey = (values,callback)=>{
-    const data ={
-      in_use: aiOption,
-      OpenAI: {
-        OpenaiApiKey: form.getFieldValue("OpenaiApiKey") || "",
-        HttpProxyHost:  form.getFieldValue("HttpProxyHost") || "",
-        HttpProxyPort: form.getFieldValue("HttpProxyPort") || "",
-        ApiHost: form.getFieldValue("ApiHost") || "",
-      },
-      DeepInsight: {
-        ApiKey: form.getFieldValue("ApiKey") || "",
-      }
-      
-    }
-    axios.post("/api/ai_token",data).then((res) => {
-      if(res.code===200){
-        if(callback){
-          callback(values)
-          return
-        }
-        toast.success(window.W_L.save_success)
-        closeWebSocket()
-        getOpenKey();
-      }else{
-        toast.error(window.W_L.save_failed)
-        
-      }
-      setDisabled(false)
-    }).catch((err) => {
-      toast.error(window.W_L.save_failed)
-      setDisabled(false)
-    })
 
-  }
-  const onFinish = (values) => {
-    setDisabled(true)
-    if (values.HttpProxyPort === undefined) {
-      values.HttpProxyPort = '';
-    }
-    if (values.HttpProxyHost === undefined) {
-      values.HttpProxyHost = '';
-    }
-    if(values.ApiHost === undefined){
-      values.ApiHost = '';
-    }
-    handOpenKey(values)
-  };
-  const handleMessage=()=>{
+  const handleOpenKey = useCallback(async (values) => {
+    setDisabled(true);
     try {
-      websocket.onmessage = async (event) => {
-        let data = JSON.parse(event.data)
-        if (data.receiver === 'api') {
-          toast.success(data.data.content)
-          setDisabled(false)
-        }
+      const response = await axios.post("/api/ai_token", {
+        in_use: aiOption,
+        ...aiOptions,
+        [aiOption]: values
+      });
+      if (response.code === 200) {
+        toast.success(window.W_L.save_success);
+        getOpenKey();
+      } else {
+        toast.error(window.W_L.save_failed);
       }
     } catch (error) {
-      setDisabled(false)
+      toast.error(window.W_L.save_failed);
     }
-  }
-  const connectTest=(values)=>{
-    
-    if(!websocket){
-      createWebSocket()
-      return
-    }
-    handleMessage();
-    
-      setDisabled(true)
-      let sendInfo={
-        state:200,
-        receiver:"sender",
-        chat_type:"test",
-        data:{
-          data_type:"apikey",
-          content:values,
-          language_mode:window.W_L.language_mode,
-        }
-    }
-    websocket.send(JSON.stringify(sendInfo))
-    
-  }
-  const handleConnectTestClick = () => {
-    form.validateFields().then((values) => {
-      handOpenKey(values, connectTest);
-    });
-  }
+    closeWebSocket();
+    setDisabled(false);
+  }, [aiOption, aiOptions, getOpenKey]);
+
+  const onFinish = (values) => {
+    handleOpenKey(values);
+  };
+
   const handleRadioChange = e => {
     setAiOption(e.target.value);
+    setRequiredFields(aiOptions[e.target.value].required || []);
   };
-  return (
-   
-     <React.Fragment>
-     <div className="row1" style={{width:"50%",margin:"auto"}}>
-       {/* {! && <LoadingState className="" />} */}
-       <Form
-      form={form}
-      layout="vertical"
-      disabled={disabled}
-      onFinish={onFinish}
-    >
-      <Form.Item>
-      <div style={{display:"flex",alignItems:"center"}}>
-      <h4 style={{marginRight:"30px"}}>AI:</h4>
-            <Radio.Group onChange={handleRadioChange} value={aiOption}>
-           
-              <Radio value="DeepInsight">DeepInsight</Radio>
-              <Radio value="OpenAI">OpenAI</Radio>
-            </Radio.Group>
-      </div>
-          </Form.Item>
-          {aiOption === 'DeepInsight' && (
-            <Form.Item name="ApiKey" label="ApiKey" rules={[{ required: true, message: window.W_L.please_enter_api_key }]}>
-              <Input placeholder="ApiKey" />
-            </Form.Item>
-          )}
 
-{aiOption === 'OpenAI' && (
-            <>
-             <Form.Item name="OpenaiApiKey" label="OpenaiApiKey"  rules={[{ required: true, message: window.W_L.please_enter_api_key }]}>
-        <Input placeholder="OpenaiApiKey" />
-      </Form.Item>
-      <Form.Item
-      name="HttpProxyHost"
-        label="HttpProxyHost">
-        <Input placeholder="HttpProxyHost" />
-      </Form.Item>
-      <Form.Item
-      name="HttpProxyPort"
-        label="HttpProxyPort">
-        <Input placeholder="HttpProxyPort" />
-      </Form.Item>
-      <Form.Item
-      name="ApiHost"
-        label="ApiHost">
-        <Input placeholder="ApiHost" />
-      </Form.Item>
-            </>
-          )}
-     
-      <Form.Item style={{textAlign: "right"}}>
-     <div style={{width:"100%",display:"flex",alignItems: "center",justifyContent: "space-between"}}>
-     <div style={{display:"flex",alignItems: "center"}}>
-     <QuestionCircleOutlinedIcon style={{marginRight:"3px",color: "#2196f3"}} />
-     <Link
-             href="https://holmes.bukeshiguang.com/"
-             rel="noopener noreferrer"
-             target="_blank">
-          {window.W_L.click_here_to_get_apikey}
-      </Link>
-     </div>
-    <div>
-    <Button loading={disabled} style={{marginRight:"10px"}}
-      onClick={() => handleConnectTestClick()}>{window.W_L.connect_test}</Button>
-      <Button loading={disabled} htmlType="submit" type="primary">{window.W_L.apply}</Button>
-    </div>
-     </div>
-      </Form.Item>
-    </Form>
-     </div>
-   </React.Fragment>
+  const renderFormItems = () => {
+    const currentOption = aiOptions[aiOption] || {};
+    const requiredKeys = currentOption.required || [];
+    return Object.keys(currentOption).filter(key => key !== 'required').map((key) => {
+      return (
+        <Form.Item
+          key={key}
+          name={key}
+          label={key}
+          rules={[{ required: requiredKeys.includes(key), message: `${window.W_L.please_enter}${key}` }]}
+        >
+          <Input placeholder={key} />
+        </Form.Item>
+      );
+    });
+  };
+
+  return (
+    <React.Fragment>
+      <div className="row1" style={{ width: "50%", margin: "auto" }}>
+        <Form
+          form={form}
+          layout="vertical"
+          disabled={disabled}
+          onFinish={onFinish}
+        >
+          <Form.Item>
+            <div style={{ display: "flex", alignItems: "center" }}>
+              <h4 style={{ marginRight: "30px" }}>AI:</h4>
+              <Radio.Group onChange={handleRadioChange} value={aiOption}>
+                {Object.keys(aiOptions).map(option => (
+                  <Radio key={option} value={option}>{option}</Radio>
+                ))}
+              </Radio.Group>
+            </div>
+          </Form.Item>
+          {renderFormItems()}
+          <Form.Item style={{ textAlign: "right" }}>
+            <div style={{ width: "100%", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+              <div style={{ display: "flex", alignItems: "center" }}>
+                <QuestionCircleOutlinedIcon style={{ marginRight: "3px", color: "#2196f3" }} />
+                <Link
+                  href="https://holmes.bukeshiguang.com/"
+                  rel="noopener noreferrer"
+                  target="_blank"
+                >
+                  {window.W_L.click_here_to_get_apikey}
+                </Link>
+              </div>
+              <div>
+                <Button loading={disabled} style={{ marginRight: "10px" }}
+                  onClick={() => form.submit()}>{window.W_L.connect_test}</Button>
+                <Button loading={disabled} htmlType="submit" type="primary">{window.W_L.apply}</Button>
+              </div>
+            </div>
+          </Form.Item>
+        </Form>
+      </div>
+    </React.Fragment>
   );
 };
 

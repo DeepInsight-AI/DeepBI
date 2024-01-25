@@ -795,6 +795,7 @@ window.W_L = {
   'submit_success_tip':'You can view it in the history analysis',
   'submit_fail':'Submission failed',
   'download':'Download',
+  'please_enter':'Please enter the ',
   'please_enter_api_key':'Please enter the API key',
   'confirm_delete':'Confirm Delete',
   'confirm_delete_tip':'Are you sure you want to delete this item?',

@@ -89,6 +89,7 @@ class AnalysisMysql(Analysis):
                 "task": "qa",
                 "docs_path": docs_path,
             },
+            update_context=False,
         )
         return retrieve_python_executor
 
@@ -247,7 +248,7 @@ class AnalysisMysql(Analysis):
 
                         docs_path = CONFIG.up_file_path + '.rag_' + str(self.user_name) + '_' + str(
                             self.agent_instance_util.db_id) + '.json'
-                        python_executor = self.get_agent_retrieve_python_executor(docs_path = docs_path)
+                        python_executor = self.get_agent_retrieve_python_executor(docs_path=docs_path)
                     else:
                         mysql_echart_assistant = self.agent_instance_util.get_agent_mysql_echart_assistant(
                             use_cache=use_cache)

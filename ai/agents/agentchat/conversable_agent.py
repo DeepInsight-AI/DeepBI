@@ -113,7 +113,7 @@ class ConversableAgent(Agent):
         self._oai_messages = defaultdict(list)
         self._oai_system_message = [{"content": system_message, "role": "system"}]
         self._is_termination_msg = (
-            is_termination_msg if is_termination_msg is not None else (lambda x: x.get("content") == "TERMINATE")
+            is_termination_msg if is_termination_msg is not None else (lambda x: (x.get("content") == "TERMINATE" or "TERMINATE" in x.get('content')))
         )
         if llm_config is False:
             self.llm_config = False

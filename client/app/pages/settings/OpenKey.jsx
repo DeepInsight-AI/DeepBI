@@ -45,7 +45,7 @@ const SettingsOpenKey = () => {
       setAiOption(data.in_use);
       form.setFieldsValue(mergedData[data.in_use]);
     } catch (error) {
-      conosle.log("error", error)
+      console.log("error", error)
       toast.error(window.W_L.fail);
     }
     createWebSocket();
@@ -78,6 +78,7 @@ const SettingsOpenKey = () => {
           toast.error(window.W_L.save_failed);
         }
       } catch (error) {
+        console.log("error22", error)
         toast.error(window.W_L.save_failed);
       }
       closeWebSocket();

@@ -26,12 +26,8 @@ class ZhiPuAIClient:
 
     @classmethod
     def run(cls, apiKey, data):
-        print("---start---------" * 3)
-        print(data)
-        print("---over----------" * 3)
+
         zhipu_data = cls.input_to_openai(data)
-        print(zhipu_data)
-        print("++++++change data+++++" * 3)
         client = ZhipuAI(api_key=apiKey)
         if "functions" in data:
             tools = zhipu_data["tools"]
@@ -42,9 +38,6 @@ class ZhiPuAIClient:
                 tool_choice="auto",
             )
         else:
-            print("-------------zhipu-------------input---------")
-            print(zhipu_data["messages"])
-            print("-------------zhipu-------------input---------")
             response = client.chat.completions.create(
                 model=ZHIPU_AI_MODEL,
                 messages=zhipu_data["messages"]
@@ -73,8 +66,8 @@ class ZhiPuAIClient:
                             "id": 0,
                             "type": "function",
                             "function": item.get("function_call")
-                            }
                         }
+                    }
                 else:
                     new_item = item
                 messages.append(new_item)
@@ -88,7 +81,7 @@ class ZhiPuAIClient:
 
     @classmethod
     def parse_function_call(cls, model_response):
-        if "tool_calls" in model_response['choices'][0]['message']:
+        if "tool_calls" in model_response['choices'][0]['message'] and model_response['choices'][0]['message']['tool_calls'] is not None:
             tool_call = model_response['choices'][0]['message'].pop("tool_calls")
             args = tool_call[0]['function']['arguments']
             open_ai_choices = {

@@ -30,6 +30,8 @@ const SettingsOpenKey = () => {
       const JSON_ROOT = await response.json();
       // 合并接口数据和本地数据
       const mergedData = { ...JSON_ROOT };
+      // del in_use
+      delete mergedData.in_use;
       console.log("JSON_ROOT", JSON_ROOT);
       console.log("mergedData", mergedData);
       Object.keys(data).forEach(key => {
@@ -43,6 +45,7 @@ const SettingsOpenKey = () => {
       setAiOption(data.in_use);
       form.setFieldsValue(mergedData[data.in_use]);
     } catch (error) {
+      conosle.log("error", error)
       toast.error(window.W_L.fail);
     }
     createWebSocket();
@@ -57,10 +60,16 @@ const SettingsOpenKey = () => {
     async values => {
       setDisabled(true);
       try {
+        const updatedAiOptions = {
+          ...aiOptions,
+          [aiOption]: {
+            ...aiOptions[aiOption],
+            ...values,
+          },
+        };
         const response = await axios.post("/api/ai_token", {
           in_use: aiOption,
-          ...aiOptions,
-          [aiOption]: values,
+          ...updatedAiOptions,
         });
         if (response.code === 200) {
           toast.success(window.W_L.save_success);
@@ -82,8 +91,22 @@ const SettingsOpenKey = () => {
   };
 
   const handleRadioChange = e => {
-    setAiOption(e.target.value);
-    setRequiredFields(aiOptions[e.target.value].required || []);
+    const newAiOption = e.target.value;
+    const currentOptionValues = form.getFieldsValue();
+    
+    // 更新当前AI选项的值
+    setAiOptions(prevOptions => ({
+      ...prevOptions,
+      [aiOption]: {
+        ...prevOptions[aiOption],
+        ...currentOptionValues,
+      },
+    }));
+  
+    // 切换到新的AI选项
+    setAiOption(newAiOption);
+    setRequiredFields(aiOptions[newAiOption].required || []);
+    form.setFieldsValue(aiOptions[newAiOption]);
   };
 
   const renderFormItems = () => {

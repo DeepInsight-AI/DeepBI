@@ -1,7 +1,7 @@
 CSV_ECHART_TIPS_MESS = """Here are some examples of generating mysql and pyecharts Code based on the given question.
  Please generate new one based on the data and question human asks you, import the neccessary libraries and make sure the code is correct.
 
-IMPORTANT: You need to follow the coding style, and the type of the x, y axis.Do not display the title and label. If the x-axis can be sorted, please sort by the x-axis, otherwise sort by size.  But also need to focus on the column name of the uploaded tables(if exists). Generally, PyEcharts does not accept numpy.int or numpy.float, etc. It only supports built-in data type like int, float, and str.
+IMPORTANT: You need to follow the coding style, and the type of the x, y axis.Don't show titles and labels. If the x-axis can be sorted according to certain rules (such as date and time size or value size), please sort by the x-axis, otherwise sort by size.But also need to focus on the column name of the uploaded tables(if exists). Generally, PyEcharts does not accept numpy.int or numpy.float, etc. It only supports built-in data type like int, float, and str.
 Pay attention to check whether the query statement in the execution code block can correctly query the data.
 
 
@@ -38,7 +38,6 @@ Pay attention to check whether the query statement in the execution code block c
     line.set_series_opts(
         areastyle_opts=opts.AreaStyleOpts(opacity=0.5),
         label_opts=opts.LabelOpts(is_show=False),
-        realtimeSort_opts=opts.RealtimeSortOpts(is_show=True),
     )
     ret_json = line.dump_options()
     echart_code = json.loads(ret_json)
@@ -81,7 +80,6 @@ Pay attention to check whether the query statement in the execution code block c
     )
     bar.set_series_opts(
         label_opts=opts.LabelOpts(is_show=False),
-        realtimeSort_opts=opts.RealtimeSortOpts(is_show=True),
     )
     # Render the chart
     ret_json = bar.dump_options()
@@ -103,7 +101,7 @@ MYSQL_ECHART_TIPS_MESS = '''
 Here are some examples of generating mysql and pyecharts Code based on the given question.
 Please generate new one based on the data and question human asks you, import the neccessary libraries and make sure the code is correct.
 
-IMPORTANT: You need to follow the coding style, and the type of the x, y axis.Do not display the title and label. If the x-axis can be sorted, please sort by the x-axis, otherwise sort by size.  But also need to focus on the column name of the uploaded tables(if exists). Generally, PyEcharts does not accept numpy.int or numpy.float, etc. It only supports built-in data type like int, float, and str.
+IMPORTANT: You need to follow the coding style, and the type of the x, y axis.Don't show titles and labels. If the x-axis can be sorted according to certain rules (such as date and time size or value size), please sort by the x-axis, otherwise sort by size.But also need to focus on the column name of the uploaded tables(if exists). Generally, PyEcharts does not accept numpy.int or numpy.float, etc. It only supports built-in data type like int, float, and str.
 Pay attention to check whether the query statement in the execution code block can correctly query the data.
 The sql statements that need to be executed in the python code are surrounded by ", for example: query = "SELECT year, sales, profit FROM your_table"
 Pay attention to check whether the sql statement in the code block is correct and available.
@@ -158,7 +156,6 @@ Pay attention to check whether the sql statement in the code block is correct an
     line.set_series_opts(
         areastyle_opts=opts.AreaStyleOpts(opacity=0.5),
         label_opts=opts.LabelOpts(is_show=False),
-        realtimeSort_opts=opts.RealtimeSortOpts(is_show=True),
     )
 
     ret_json = line.dump_options()
@@ -209,7 +206,6 @@ Pay attention to check whether the sql statement in the code block is correct an
     )
     bar.set_series_opts(
         label_opts=opts.LabelOpts(is_show=False),
-        realtimeSort_opts=opts.RealtimeSortOpts(is_show=True),
     )
 
     ret_json = bar.dump_options()
@@ -233,7 +229,7 @@ POSTGRESQL_ECHART_TIPS_MESS = '''
 Here are some examples of generating postgresql and pyecharts Code based on the given question.
 Please generate new one based on the data and question human asks you, import the neccessary libraries and make sure the code is correct.
 
-IMPORTANT: You need to follow the coding style, and the type of the x, y axis.Do not display the title and label. If the x-axis can be sorted, please sort by the x-axis, otherwise sort by size.  But also need to focus on the column name of the uploaded tables(if exists). Generally, PyEcharts does not accept numpy.int or numpy.float, etc. It only supports built-in data type like int, float, and str.
+IMPORTANT: You need to follow the coding style, and the type of the x, y axis.Don't show titles and labels. If the x-axis can be sorted according to certain rules (such as date and time size or value size), please sort by the x-axis, otherwise sort by size.But also need to focus on the column name of the uploaded tables(if exists). Generally, PyEcharts does not accept numpy.int or numpy.float, etc. It only supports built-in data type like int, float, and str.
 Pay attention to check whether the query statement in the execution code block can correctly query the data.
 
 
@@ -286,7 +282,6 @@ Pay attention to check whether the query statement in the execution code block c
     line.set_series_opts(
         areastyle_opts=opts.AreaStyleOpts(opacity=0.5),
         label_opts=opts.LabelOpts(is_show=False),
-        realtimeSort_opts=opts.RealtimeSortOpts(is_show=True),
     )
 
     ret_json = line.dump_options()
@@ -337,7 +332,6 @@ Pay attention to check whether the query statement in the execution code block c
     )
     bar.set_series_opts(
         label_opts=opts.LabelOpts(is_show=False),
-        realtimeSort_opts=opts.RealtimeSortOpts(is_show=True),
     )
 
     ret_json = bar.dump_options()
@@ -361,7 +355,7 @@ MONGODB_ECHART_TIPS_MESS = '''
 Here are some examples of generating mongodb and pyecharts Code based on the given question.
 Please generate new one based on the data and question human asks you, import the neccessary libraries and make sure the code is correct.
 
-IMPORTANT: You need to follow the coding style, and the type of the x, y axis.Do not display the title and label. If the x-axis can be sorted, please sort by the x-axis, otherwise sort by size.  But also need to focus on the column name of the uploaded tables(if exists). Generally, PyEcharts does not accept numpy.int or numpy.float, etc. It only supports built-in data type like int, float, and str.
+IMPORTANT: You need to follow the coding style, and the type of the x, y axis.Don't show titles and labels. If the x-axis can be sorted according to certain rules (such as date and time size or value size), please sort by the x-axis, otherwise sort by size.But also need to focus on the column name of the uploaded tables(if exists). Generally, PyEcharts does not accept numpy.int or numpy.float, etc. It only supports built-in data type like int, float, and str.
 Pay attention to check whether the query statement in the execution code block can correctly query the data.
 
 
@@ -404,7 +398,6 @@ Pay attention to check whether the query statement in the execution code block c
     )
     bar.set_series_opts(
         label_opts=opts.LabelOpts(is_show=False),
-        realtimeSort_opts=opts.RealtimeSortOpts(is_show=True),
     )
 
     ret_json = bar.dump_options()

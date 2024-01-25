@@ -150,8 +150,10 @@ class TaskSelectorAgent(ConversableAgent):
                         reply = "task_base"
                     elif "task_generate_echart" in reply:
                         reply = "task_generate_echart"
+                    elif "task_generate_report" in reply:
+                        reply = "task_generate_report"
                     else:
-                        reply = "Undeifned_funcion_in_task_selector_gent"
+                        reply = "error:file task_selector_agent.py 156"
 
                     suggest_function = {'role': 'assistant',
                                         'content': None,

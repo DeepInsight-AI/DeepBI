@@ -14,6 +14,11 @@ const SecondChoice = forwardRef(({SelectLoading,editData,closeEditData,submit,so
       title: window.W_L.field_name,
       dataIndex: 'name',
       key: 'name',
+      render: (text, record) => (
+        <Tooltip title={text}>
+          <span style={{ display: "inline-block", maxWidth: "100px", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{text}</span>
+        </Tooltip>
+      ),
     },
     {
       title: window.W_L.description,

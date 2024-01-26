@@ -8,7 +8,7 @@ from ai.backend.aidb import AIDB
 from ai.backend.util.db.postgresql_dashboard import PsgReport
 from ai.agents.agentchat import AssistantAgent
 from ai.backend.aidb.dashboard.prompts import ECHARTS_BAR_PROMPT, ECHARTS_PIE_PROMPT, ECHARTS_LINE_PROMPT
-
+import os
 
 class PrettifyDashboard(AIDB):
 
@@ -93,16 +93,13 @@ class PrettifyDashboard(AIDB):
         print("生成完毕======")
 
         # 获取当前工作目录的路径
-        current_directory = Path.cwd()
+        current_directory = CONFIG.up_file_path
 
-        if str(current_directory).endswith('/ai'):
-            # html_template_path = str(current_directory) + '/backend/aidb/dashboard/html_template'
-            html_file_path = str(current_directory).replace('/ai', '') + '/bi/templates/'
+        # 构建路径时使用 os.path.join
+        html_file_path = os.path.join(current_directory.replace('user_upload_files', ''), 'bi', 'templates')
+        html_file_path = os.path.normpath(html_file_path)
 
-        else:
-            html_file_path = str(current_directory) + '/bi/templates/'
-
-        self.generate_html(echart_json, html_file_path + html_file_name)
+        self.generate_html(echart_json, os.path.join(html_file_path, html_file_name))
 
         # 更新数据
         data_to_update = (2, task_id)
@@ -115,17 +112,20 @@ class PrettifyDashboard(AIDB):
     def generate_html(self, data, html_file_name):
 
         # 获取当前工作目录的路径
-        current_directory = Path.cwd()
-
-        if str(current_directory).endswith('/ai'):
-            html_template_path = str(current_directory) + '/backend/aidb/dashboard/html_template'
+        current_directory = os.path.abspath(os.path.dirname(__file__))
+        
+        if str(current_directory).endswith('dashboard'):
+            next_level_filename = "html_template"
         else:
-            html_template_path = str(current_directory) + '/ai/backend/aidb/dashboard/html_template'
+            next_level_filename = "dashboard/html_template"
+        
+        html_template_path = os.path.join(current_directory, next_level_filename)
         print('html_template_path:', html_template_path)
+        
 
         template_id = data['template_id']
         # 读取模板文件
-        with open(html_template_path + '/dashboard_' + str(template_id) + '.html', 'r') as file:
+        with open(html_template_path + '/dashboard_' + str(template_id) + '.html', 'r',encoding='utf-8') as file:
             template_str = file.read()
             # print('template_str :', template_str)
 
@@ -134,7 +134,7 @@ class PrettifyDashboard(AIDB):
         rendered_html = template.render(data)
 
         # 将渲染后的HTML写入文件
-        with open(html_file_name, 'w') as output_file:
+        with open(html_file_name, 'w',encoding='utf-8') as output_file:
             output_file.write(rendered_html)
 
         print("HTML文件已生成：", html_file_name)

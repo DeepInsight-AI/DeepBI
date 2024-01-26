@@ -69,7 +69,7 @@ const SettingsOpenKey = () => {
           };
           return updatedOptions;
         });
-  
+        console.log("currentOptionValues", currentOptionValues);
         // 确保in_use是一个字符串
         const inUseValue = aiOption;
   
@@ -79,7 +79,8 @@ const SettingsOpenKey = () => {
           acc[key] = rest;
           return acc;
         }, {});
-  
+        console.log("optionsWithoutRequired", optionsWithoutRequired);
+        // return;
         // 提交更新后的数据
         const response = await axios.post("/api/ai_token", {
           in_use: inUseValue,

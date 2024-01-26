@@ -1455,10 +1455,11 @@ class BIProxyAgent(Agent):
             current_timestamp = int(time.time())
             # print(current_timestamp)
 
-            chart_code_str = chart_code_str.replace("\n", "")
-
             str_obj = ast.literal_eval(chart_code_str)
             json_str = json.dumps(str_obj)
+
+            chart_code_str = chart_code_str.replace(r"\n", "\\n")
+            
 
             result_message = {
                 'state': 200,

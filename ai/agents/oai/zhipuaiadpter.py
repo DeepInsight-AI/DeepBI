@@ -90,7 +90,7 @@ class ZhiPuAIClient:
                     "arguments": args
                 }
             }
-            model_response['choices'][0]['index'] = tool_call[0]['index']
+            model_response['choices'][0]['index'] = tool_call[0]['index'] if "index" in tool_call[0] else 0
             model_response['choices'][0]['logprobs'] = None
             model_response['choices'][0]['message']["content"] = None
             model_response['choices'][0]['message']["function_call"] = open_ai_choices

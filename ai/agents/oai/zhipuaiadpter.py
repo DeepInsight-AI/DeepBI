@@ -7,6 +7,7 @@ from zhipuai import ZhipuAI
 
 # define default model
 ZHIPU_AI_MODEL = "glm-4"
+ZHIPU_AI_temperature = 0.5
 
 
 def object_to_dict(obj):
@@ -71,7 +72,7 @@ class ZhiPuAIClient:
                 else:
                     new_item = item
                 messages.append(new_item)
-        return object_to_dict({"tools": tools, "messages": messages})
+        return object_to_dict({"tools": tools, "messages": messages, "temperature": ZHIPU_AI_temperature})
         pass
 
     @classmethod

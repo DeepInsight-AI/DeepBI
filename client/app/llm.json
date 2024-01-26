@@ -15,13 +15,5 @@
             "required": [
                 "ApiKey"
             ]
-        },
-        "Azure": {
-            "AzureApiKey": "",
-            "AzureHost": "",
-            "required": [
-                "AzureApiKey",
-                "AzureHost"
-            ]
         }
 }

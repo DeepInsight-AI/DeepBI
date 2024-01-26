@@ -162,9 +162,6 @@ class ChartPresenterAgent(ConversableAgent):
 
     def find_extract_code(self, text: str):
         extracted = []
-        if "None" == text:
-            print("The RE fetch code parameter is null. ai/agents/agentchat/chart_presenter_agent.py 116 ")
-            return extracted
         code_pattern = re.compile(r"`{3}(\w+)?\s*([\s\S]*?)`{3}|`([^`]+)`")
         code_blocks = code_pattern.findall(text)
 

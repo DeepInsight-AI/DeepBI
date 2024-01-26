@@ -23,7 +23,7 @@ const SettingsOpenKey = () => {
     try {
       const { data } = await axios.get(`/api/ai_token`);
 
-      const response = await fetch("/static/apiKey/apikey.json");
+      const response = await fetch("/static/llm.json");
       if (!response.ok) {
         throw new Error("Failed to load local API key data");
       }

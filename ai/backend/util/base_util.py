@@ -2,8 +2,10 @@ import json
 import os
 from dotenv import load_dotenv
 from pathlib import Path
-from bi.settings import DATA_SOURCE_FILE_DIR as docker_data_source_file_dir
 
+# from bi.settings import DATA_SOURCE_FILE_DIR as docker_data_source_file_dir
+
+docker_data_source_file_dir = "./user_upload_files"
 
 host_secret = 'tNGoVq0KpQ4LKr5WMIZM'
 db_secret = 'aCyBIffJv2OSW5dOvREL'
@@ -21,7 +23,7 @@ def is_json(myjson):
 
 def get_upload_path():
     # 加载 .env 文件中的环境变量
-    data_source_file_dir = os.environ.get("DATA_SOURCE_FILE_DIR",docker_data_source_file_dir)
+    data_source_file_dir = os.environ.get("DATA_SOURCE_FILE_DIR", docker_data_source_file_dir)
     if data_source_file_dir and len(str(data_source_file_dir)) > 0:
         return str(data_source_file_dir) + '/'
     else:
@@ -43,12 +45,14 @@ def get_web_server_ip():
     else:
         return None
 
+
 def get_web_language():
     web_language = os.environ.get("WEB_LANGUAGE", None)
     if web_language and len(str(web_language)) > 0:
         return str(web_language)
     else:
         return 'CN'
+
 
 def dbinfo_encode(json_data):
     if json_data.get('user'):
@@ -93,6 +97,3 @@ def dbinfo_decode(data, sql_mess):
         data = data.replace(db_secret, sql_mess['dbname'])
 
     return data
-
-
-

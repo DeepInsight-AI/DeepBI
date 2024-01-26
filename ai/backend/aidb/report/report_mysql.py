@@ -113,8 +113,8 @@ class ReportMysql(Report):
 
                     await planner_user.initiate_chat(
                         manager,
-                        message='This is database related information：' + '\n' + self.agent_instance_util.base_message + '\n' + " This is my question: " + '\n' + str(
-                            qustion_message),
+                        message='This is database related information：' + '\n' + self.agent_instance_util.base_message
+                                + '\n' + " This is my question: " + '\n' + str(qustion_message),
                     )
 
                     answer_message = manager._oai_messages[bi_proxy]

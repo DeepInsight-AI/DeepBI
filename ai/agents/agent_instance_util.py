@@ -217,7 +217,14 @@ class AgentInstanceUtil:
                     output_file.write(str(message))
 
                 self.is_rag = True
-                self.base_message = 'this is base_message \n'
+
+                for table in message['table_desc']:
+                    for field in table['field_desc']:
+                        field_keys = list(field.keys())
+                        for key in field_keys:
+                            if key not in ['']:
+                                field.pop(key)
+                self.base_message = message
 
     def get_agent_mysql_engineer(self):
         """mysql engineer"""
@@ -1315,7 +1322,7 @@ class AgentInstanceUtil:
             self.question_ask = ' 以下是我的问题，请用中文回答: '
             self.quesion_answer_language = '用中文回答问题.'
             self.data_analysis_error = '分析数据失败，请检查相关数据是否充分'
-        
+
         elif self.language_mode == language_japanese:
             self.error_message_timeout = "申し訳ありませんが、今回のAI-GPTインターフェース呼び出しがタイムアウトしました。もう一度お試しください。"
             self.question_ask = ' これが私の質問です。: '

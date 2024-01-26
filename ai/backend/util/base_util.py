@@ -1,6 +1,6 @@
 import json
 import os
-from dotenv import load_dotenv
+# from dotenv import load_dotenv
 from pathlib import Path
 
 # from bi.settings import DATA_SOURCE_FILE_DIR as docker_data_source_file_dir

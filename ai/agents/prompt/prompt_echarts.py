@@ -1,7 +1,7 @@
 CSV_ECHART_TIPS_MESS = """Here are some examples of generating mysql and pyecharts Code based on the given question.
  Please generate new one based on the data and question human asks you, import the neccessary libraries and make sure the code is correct.
 
-IMPORTANT: You need to follow the coding style, and the type of the x, y axis.Don't show titles and labels. If the x-axis can be sorted according to certain rules (such as date and time size or value size), please sort by the x-axis, otherwise sort by size.But also need to focus on the column name of the uploaded tables(if exists). Generally, PyEcharts does not accept numpy.int or numpy.float, etc. It only supports built-in data type like int, float, and str.
+IMPORTANT: You need to follow the coding style, and the type of the x, y axis.Title and label are not displayed under any circumstances. If the x-axis can be sorted according to certain rules (such as date and time size or value size), please sort by the x-axis, otherwise sort by size.But also need to focus on the column name of the uploaded tables(if exists). Generally, PyEcharts does not accept numpy.int or numpy.float, etc. It only supports built-in data type like int, float, and str.
 Pay attention to check whether the query statement in the execution code block can correctly query the data.
 
 
@@ -101,7 +101,7 @@ MYSQL_ECHART_TIPS_MESS = '''
 Here are some examples of generating mysql and pyecharts Code based on the given question.
 Please generate new one based on the data and question human asks you, import the neccessary libraries and make sure the code is correct.
 
-IMPORTANT: You need to follow the coding style, and the type of the x, y axis.Don't show titles and labels. If the x-axis can be sorted according to certain rules (such as date and time size or value size), please sort by the x-axis, otherwise sort by size.But also need to focus on the column name of the uploaded tables(if exists). Generally, PyEcharts does not accept numpy.int or numpy.float, etc. It only supports built-in data type like int, float, and str.
+IMPORTANT: You need to follow the coding style, and the type of the x, y axis.Title and label are not displayed under any circumstances. If the x-axis can be sorted according to certain rules (such as date and time size or value size), please sort by the x-axis, otherwise sort by size.But also need to focus on the column name of the uploaded tables(if exists). Generally, PyEcharts does not accept numpy.int or numpy.float, etc. It only supports built-in data type like int, float, and str.
 Pay attention to check whether the query statement in the execution code block can correctly query the data.
 The sql statements that need to be executed in the python code are surrounded by ", for example: query = "SELECT year, sales, profit FROM your_table"
 Pay attention to check whether the sql statement in the code block is correct and available.
@@ -229,7 +229,7 @@ POSTGRESQL_ECHART_TIPS_MESS = '''
 Here are some examples of generating postgresql and pyecharts Code based on the given question.
 Please generate new one based on the data and question human asks you, import the neccessary libraries and make sure the code is correct.
 
-IMPORTANT: You need to follow the coding style, and the type of the x, y axis.Don't show titles and labels. If the x-axis can be sorted according to certain rules (such as date and time size or value size), please sort by the x-axis, otherwise sort by size.But also need to focus on the column name of the uploaded tables(if exists). Generally, PyEcharts does not accept numpy.int or numpy.float, etc. It only supports built-in data type like int, float, and str.
+IMPORTANT: You need to follow the coding style, and the type of the x, y axis.Title and label are not displayed under any circumstances. If the x-axis can be sorted according to certain rules (such as date and time size or value size), please sort by the x-axis, otherwise sort by size.But also need to focus on the column name of the uploaded tables(if exists). Generally, PyEcharts does not accept numpy.int or numpy.float, etc. It only supports built-in data type like int, float, and str.
 Pay attention to check whether the query statement in the execution code block can correctly query the data.
 
 
@@ -355,7 +355,7 @@ MONGODB_ECHART_TIPS_MESS = '''
 Here are some examples of generating mongodb and pyecharts Code based on the given question.
 Please generate new one based on the data and question human asks you, import the neccessary libraries and make sure the code is correct.
 
-IMPORTANT: You need to follow the coding style, and the type of the x, y axis.Don't show titles and labels. If the x-axis can be sorted according to certain rules (such as date and time size or value size), please sort by the x-axis, otherwise sort by size.But also need to focus on the column name of the uploaded tables(if exists). Generally, PyEcharts does not accept numpy.int or numpy.float, etc. It only supports built-in data type like int, float, and str.
+IMPORTANT: You need to follow the coding style, and the type of the x, y axis.Title and label are not displayed under any circumstances. If the x-axis can be sorted according to certain rules (such as date and time size or value size), please sort by the x-axis, otherwise sort by size.But also need to focus on the column name of the uploaded tables(if exists). Generally, PyEcharts does not accept numpy.int or numpy.float, etc. It only supports built-in data type like int, float, and str.
 Pay attention to check whether the query statement in the execution code block can correctly query the data.
 
 

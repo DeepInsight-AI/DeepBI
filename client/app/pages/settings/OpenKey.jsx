@@ -9,7 +9,7 @@ import routes from "@/services/routes";
 import { axios } from "@/services/axios";
 import Link from "@/components/Link";
 import QuestionCircleOutlinedIcon from "@ant-design/icons/QuestionCircleOutlined";
-import { createWebSocket, closeWebSocket } from "../testdialogue/components/Dialogue/websocket";
+import { websocket, createWebSocket, closeWebSocket } from "../testdialogue/components/Dialogue/websocket";
 import toast from "react-hot-toast";
 const SettingsOpenKey = () => {
   const [form] = Form.useForm();
@@ -57,7 +57,7 @@ const SettingsOpenKey = () => {
   }, [getOpenKey]);
 
   const handleOpenKey = useCallback(
-    async values => {
+    async (values,callback) => {
       setDisabled(true);
       try {
         const updatedAiOptions = {
@@ -77,6 +77,10 @@ const SettingsOpenKey = () => {
           ...optionsWithoutRequired,
         });
         if (response.code === 200) {
+          if (callback) {
+            callback(values);
+            return;
+          }
           toast.success(window.W_L.save_success);
           getOpenKey();
         } else {
@@ -113,6 +117,46 @@ const SettingsOpenKey = () => {
     setAiOption(newAiOption);
     setRequiredFields(aiOptions[newAiOption].required || []);
     form.setFieldsValue(aiOptions[newAiOption]);
+  };
+
+  const handleMessage = () => {
+    try {
+      websocket.onmessage = async event => {
+        let data = JSON.parse(event.data);
+        if (data.receiver === "api") {
+          toast.success(data.data.content);
+          setDisabled(false);
+        }
+      };
+    } catch (error) {
+      setDisabled(false);
+    }
+  };
+  const connectTest = values => {
+    if (!websocket) {
+      createWebSocket();
+      return;
+    }
+    handleMessage();
+
+    setDisabled(true);
+    let sendInfo = {
+      state: 200,
+      receiver: "sender",
+      chat_type: "test",
+      data: {
+        data_type: "apikey",
+        content: values,
+        language_mode: window.W_L.language_mode,
+      },
+    };
+    websocket.send(JSON.stringify(sendInfo));
+  };
+
+  const handleConnectTestClick = () => {
+    form.validateFields().then(values => {
+      handleOpenKey(values, connectTest);
+    });
   };
 
   const renderFormItems = () => {
@@ -159,7 +203,7 @@ const SettingsOpenKey = () => {
                 </Link>
               </div>
               <div>
-                <Button loading={disabled} style={{ marginRight: "10px" }} onClick={() => form.submit()}>
+                <Button loading={disabled} style={{ marginRight: "10px" }} onClick={() => handleConnectTestClick()}>
                   {window.W_L.connect_test}
                 </Button>
                 <Button loading={disabled} htmlType="submit" type="primary">

@@ -224,7 +224,7 @@ class AgentInstanceUtil:
                         for key in field_keys:
                             if key not in ['']:
                                 field.pop(key)
-                self.base_message = message
+                self.base_message = str(message)
 
     def get_agent_mysql_engineer(self):
         """mysql engineer"""
@@ -404,7 +404,7 @@ class AgentInstanceUtil:
                                 "type": "string",
                                 "description": "Annotations for SQL code generated data. Generally, it is the name of "
                                                "the chart or report, and supports Chinese. If a name is specified in the question, "
-                                "the given name is used.",
+                                               "the given name is used.",
                             }
                         },
                         "required": ["mongodb_code_str", "data_name"],
@@ -439,7 +439,6 @@ class AgentInstanceUtil:
             define mongodb operate
         """
         return mongodb_engineer
-
 
     def get_agent_chart_presenter_old(self):
         """chart designer"""

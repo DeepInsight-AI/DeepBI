@@ -59,24 +59,30 @@ const SettingsOpenKey = () => {
     async values => {
       setDisabled(true);
       try {
-        const updatedAiOptions = {
-          ...aiOptions,
-          [aiOption]: {
-            ...aiOptions[aiOption],
-            ...values,
-          },
-        };
-        const optionsWithoutRequired = Object.entries(updatedAiOptions).reduce((acc, [key, value]) => {
-          if (key === 'in_use') {
-            acc[key] = value; // 直接赋值字符串
-          } else {
-            const { required, ...rest } = value; // 解构出'required'字段和剩余的字段
-            acc[key] = rest; // 只保留剩余的字段
-          }
+        // 获取当前表单的值并更新aiOptions状态
+        const currentOptionValues = form.getFieldsValue();
+        setAiOptions(prevOptions => {
+          const updatedOptions = { ...prevOptions };
+          updatedOptions[aiOption] = {
+            ...prevOptions[aiOption],
+            ...currentOptionValues,
+          };
+          return updatedOptions;
+        });
+  
+        // 确保in_use是一个字符串
+        const inUseValue = aiOption;
+  
+        // 移除所有选项中的'required'字段并准备提交的数据
+        const optionsWithoutRequired = Object.entries(aiOptions).reduce((acc, [key, value]) => {
+          const { required, ...rest } = value;
+          acc[key] = rest;
           return acc;
         }, {});
+  
+        // 提交更新后的数据
         const response = await axios.post("/api/ai_token", {
-          in_use: aiOption,
+          in_use: inUseValue,
           ...optionsWithoutRequired,
         });
         if (response.code === 200) {

@@ -37,6 +37,7 @@ class ZhiPuAIClient:
                 messages=zhipu_data["messages"],
                 tools=tools,
                 tool_choice="auto",
+                temperature=ZHIPU_AI_temperature
             )
         else:
             response = client.chat.completions.create(
@@ -72,7 +73,7 @@ class ZhiPuAIClient:
                 else:
                     new_item = item
                 messages.append(new_item)
-        return object_to_dict({"tools": tools, "messages": messages, "temperature": ZHIPU_AI_temperature})
+        return object_to_dict({"tools": tools, "messages": messages})
         pass
 
     @classmethod

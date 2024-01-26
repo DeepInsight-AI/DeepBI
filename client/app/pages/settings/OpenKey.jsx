@@ -39,6 +39,7 @@ const SettingsOpenKey = () => {
         }
       });
       console.log("mergedData-----", mergedData);
+      delete mergedData.in_use;
       setAiOptions(mergedData);
       setRequiredFields(mergedData[inUse].required || []);
       setAiOption(inUse);

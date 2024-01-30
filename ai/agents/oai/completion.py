@@ -234,6 +234,9 @@ class Completion(openai_Completion):
                         use_llm_name = other_llm_name
                         use_model = AGENT_LLM_MODEL[agent_name]['model']
                         use_api_key = llm_setting[AGENT_LLM_MODEL[agent_name]['llm']]['ApiKey']
+                        if "" == use_api_key:
+                            print("agent_llm llm api key empty, use_model:", use_model)
+                            raise Exception("agent_llm llm api key empty use_model:", use_model)
                 print("agent_name", agent_name, 'fact use: llm:', use_llm_name, "url:", use_url, "model", use_model)
                 print("~" * 30)
                 if use_llm_name != "OpenAI":

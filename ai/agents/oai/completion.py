@@ -222,16 +222,20 @@ class Completion(openai_Completion):
                                                                        AGENT_LLM_MODEL[agent_name][
                                                                            'replace_default'] and llm_setting is not None else use_llm_name
                 print('_get_response function +++++++++++++++++++')
-                print("agent_name", agent_name, 'default: llm:', use_llm_name, "url:", use_url, "model", use_model, llm_setting)
+                print("agent_name", agent_name, 'default: llm:', use_llm_name, "url:", use_url, "model", use_model,
+                      llm_setting)
                 if other_llm_name is not None and use_llm_name != other_llm_name:
                     """
                     different llm
                     """
-                    use_llm_name = other_llm_name
-                    use_model = AGENT_LLM_MODEL[agent_name]['model']
-                    use_api_key = llm_setting[AGENT_LLM_MODEL[agent_name]['llm']]['ApiKey']
+                    use_message_count = AGENT_LLM_MODEL[agent_name]['use_message_count']
+                    if 0 == use_message_count or len(config['messages']) < use_message_count:
+                        print("message less", use_message_count, "message count", len(config['messages']))
+                        use_llm_name = other_llm_name
+                        use_model = AGENT_LLM_MODEL[agent_name]['model']
+                        use_api_key = llm_setting[AGENT_LLM_MODEL[agent_name]['llm']]['ApiKey']
                 print("agent_name", agent_name, 'fact use: llm:', use_llm_name, "url:", use_url, "model", use_model)
-                print("~"*30)
+                print("~" * 30)
                 if use_llm_name != "OpenAI":
                     """
                     A different LLM is called here

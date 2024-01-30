@@ -21,150 +21,150 @@ AGENT_LLM_MODEL = {
         "llm": "DeepInsight",
         "model": "gpt-4-1106-preview",
         "replace_default": False,
-        "use_message_count": 0
+        "use_message_count": 1
     },
     "mysql_engineer": {
         "llm": "DeepInsight",
         "model": "gpt-4-1106-preview",
         "replace_default": False,
-        "use_message_count": 0
+        "use_message_count": 1
     },
     "postgresql_engineer": {
         "llm": "DeepInsight",
         "model": "gpt-4-1106-preview",
         "replace_default": False,
-        "use_message_count": 0
+        "use_message_count": 1
     },
     "chart_presenter": {
         "llm": "DeepInsight",
         "model": "gpt-4-1106-preview",
         "replace_default": False,
-        "use_message_count": 0
+        "use_message_count": 1
     },
     "mongodb_engineer": {
         "llm": "DeepInsight",
         "model": "gpt-4-1106-preview",
         "replace_default": False,
-        "use_message_count": 0
+        "use_message_count": 1
     },
     "base_mysql_assistant": {
         "llm": "DeepInsight",
         "model": "gpt-4-1106-preview",
         "replace_default": False,
-        "use_message_count": 0
+        "use_message_count": 1
     },
     "base_assistant": {
         "llm": "DeepInsight",
         "model": "gpt-4-1106-preview",
         "replace_default": False,
-        "use_message_count": 0
+        "use_message_count": 1
     },
     "base_csv_assistant": {
         "llm": "DeepInsight",
         "model": "gpt-4-1106-preview",
         "replace_default": False,
-        "use_message_count": 0
+        "use_message_count": 1
     },
     "base_postgresql_assistant": {
         "llm": "DeepInsight",
         "model": "gpt-4-1106-preview",
         "replace_default": False,
-        "use_message_count": 0
+        "use_message_count": 1
     },
     "database_describer": {
         "llm": "DeepInsight",
         "model": "gpt-4-1106-preview",
         "replace_default": False,
-        "use_message_count": 0
+        "use_message_count": 1
     },
     "Executor": {
         "llm": "DeepInsight",
         "model": "gpt-4-1106-preview",
         "replace_default": False,
-        "use_message_count": 0
+        "use_message_count": 1
     },
     "task_selector": {
         "llm": "DeepInsight",
         "model": "gpt-4-1106-preview",
         "replace_default": False,
-        "use_message_count": 0
+        "use_message_count": 1
     },
     "task_planner": {
         "llm": "DeepInsight",
         "model": "gpt-4-1106-preview",
         "replace_default": False,
-        "use_message_count": 0
+        "use_message_count": 1
     },
     "data_planner": {
         "llm": "DeepInsight",
         "model": "gpt-4-1106-preview",
         "replace_default": False,
-        "use_message_count": 0
+        "use_message_count": 1
     },
     "chart_planner": {
         "llm": "DeepInsight",
         "model": "gpt-4-1106-preview",
         "replace_default": False,
-        "use_message_count": 0
+        "use_message_count": 1
     },
     "Analyst": {
         "llm": "DeepInsight",
         "model": "gpt-4-1106-preview",
         "replace_default": False,
-        "use_message_count": 0
+        "use_message_count": 1
     },
     "python_executor": {
         "llm": "DeepInsight",
         "model": "gpt-4-1106-preview",
         "replace_default": False,
-        "use_message_count": 0
+        "use_message_count": 1
     },
     "csv_echart_assistant": {
         "llm": "DeepInsight",
         "model": "gpt-4-1106-preview",
         "replace_default": False,
-        "use_message_count": 0
+        "use_message_count": 1
     },
     "mysql_echart_assistant": {
         "llm": "DeepInsight",
         "model": "gpt-4-1106-preview",
         "replace_default": False,
-        "use_message_count": 0
+        "use_message_count": 1
     },
     "postgresql_echart_assistant": {
         "llm": "DeepInsight",
         "model": "gpt-4-1106-preview",
         "replace_default": False,
-        "use_message_count": 0
+        "use_message_count": 1
     },
     "starrocks_echart_assistant": {
         "llm": "DeepInsight",
         "model": "gpt-4-1106-preview",
         "replace_default": False,
-        "use_message_count": 0
+        "use_message_count": 1
     },
     "mongodb_echart_assistant": {
         "llm": "DeepInsight",
         "model": "gpt-4-1106-preview",
         "replace_default": False,
-        "use_message_count": 0
+        "use_message_count": 1
     },
     "mysql_matplotlib_assistant": {
         "llm": "DeepInsight",
         "model": "gpt-4-1106-preview",
         "replace_default": False,
-        "use_message_count": 0
+        "use_message_count": 1
     },
     "mongodb_matplotlib_assistant": {
         "llm": "DeepInsight",
         "model": "gpt-4-1106-preview",
         "replace_default": False,
-        "use_message_count": 0
+        "use_message_count": 1
     },
     "data_checker_assistant": {
         "llm": "DeepInsight",
         "model": "gpt-4-1106-preview",
         "replace_default": False,
-        "use_message_count": 0
+        "use_message_count": 1
     }
 }

@@ -186,7 +186,7 @@ class Completion(openai_Completion):
         Try cache first. If not found, call the openai api. If the api call fails, retry after retry_wait_time.
         """
         config = config.copy()
-
+        agent_name = config['agent_name'] if 'agent_name' in config else None
         openai.api_key_path = config.pop("api_key_path", openai.api_key_path)
         key = get_key(config)
         if use_cache:
@@ -206,7 +206,7 @@ class Completion(openai_Completion):
         request_timeout = cls.request_timeout
         max_retry_period = config.pop("max_retry_period", cls.max_retry_period)
         retry_wait_time = config.pop("retry_wait_time", cls.retry_wait_time)
-        agent_name = config.pop("agent_name", None)
+
         while True:
             try:
                 print('_get_response function +++++++++++++++++++, agent_name', agent_name)
@@ -851,6 +851,7 @@ class Completion(openai_Completion):
                         use_cache,
                         raise_on_ratelimit_or_timeout=i < last or raise_on_ratelimit_or_timeout,
                         openai_proxy=openai_proxy,
+                        agent_name=agent_name,
                         **base_config,
                     )
                     # print('response: ', response)
@@ -870,14 +871,14 @@ class Completion(openai_Completion):
                     if i == last:
                         raise
         params = cls._construct_params(context, config, allow_format_str_template=allow_format_str_template)
+        params['agent_name'] = agent_name
         if not use_cache:
             return cls._get_response(
-                params, raise_on_ratelimit_or_timeout=raise_on_ratelimit_or_timeout, use_cache=False
+                params, raise_on_ratelimit_or_timeout=raise_on_ratelimit_or_timeout,  use_cache=False
             )
         seed = cls.seed
         if "seed" in params:
             cls.set_cache(params.pop("seed"))
-        params['agent_name'] = agent_name
         with diskcache.Cache(cls.cache_path) as cls._cache:
             cls.set_cache(seed)
             return cls._get_response(params, raise_on_ratelimit_or_timeout=raise_on_ratelimit_or_timeout)

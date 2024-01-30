@@ -32,6 +32,14 @@
 }
 .copy_btn {
   position: absolute;
+  right: 28px;
+  z-index: 99;
+  color: #cecece;
+  cursor: pointer;
+  font-size: 14px;
+}
+.compress_btn {
+  position: absolute;
   right: 8px;
   z-index: 99;
   color: #cecece;

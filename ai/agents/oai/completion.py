@@ -186,6 +186,7 @@ class Completion(openai_Completion):
         Try cache first. If not found, call the openai api. If the api call fails, retry after retry_wait_time.
         """
         config = config.copy()
+
         openai.api_key_path = config.pop("api_key_path", openai.api_key_path)
         key = get_key(config)
         if use_cache:
@@ -205,9 +206,10 @@ class Completion(openai_Completion):
         request_timeout = cls.request_timeout
         max_retry_period = config.pop("max_retry_period", cls.max_retry_period)
         retry_wait_time = config.pop("retry_wait_time", cls.retry_wait_time)
+        agent_name = config.pop("agent_name", None)
         while True:
             try:
-                print('_get_response function +++++++++++++++++++')
+                print('_get_response function +++++++++++++++++++, agent_name', agent_name)
                 # print("config :", config)
                 # print("config.get('api_base')", config.get('api_base'))
                 if config.get('api_base') is not None:
@@ -749,6 +751,7 @@ class Completion(openai_Completion):
         raise_on_ratelimit_or_timeout: Optional[bool] = True,
         allow_format_str_template: Optional[bool] = False,
         openai_proxy: Optional[str] = None,
+        agent_name: Optional[str] = None,
         **config,
     ):
         """Make a completion for a given context.
@@ -874,6 +877,7 @@ class Completion(openai_Completion):
         seed = cls.seed
         if "seed" in params:
             cls.set_cache(params.pop("seed"))
+        params['agent_name'] = agent_name
         with diskcache.Cache(cls.cache_path) as cls._cache:
             cls.set_cache(seed)
             return cls._get_response(params, raise_on_ratelimit_or_timeout=raise_on_ratelimit_or_timeout)

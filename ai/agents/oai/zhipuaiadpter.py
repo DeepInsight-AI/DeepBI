@@ -7,6 +7,7 @@ from zhipuai import ZhipuAI
 
 # define default model
 ZHIPU_AI_MODEL = "glm-4"
+# define default temperature
 ZHIPU_AI_temperature = 0.5
 
 
@@ -26,23 +27,27 @@ def object_to_dict(obj):
 class ZhiPuAIClient:
 
     @classmethod
-    def run(cls, apiKey, data):
-
+    def run(cls, apiKey, data, model_name=None, temperature=None):
+        if model_name is None:
+            model_name = ZHIPU_AI_MODEL
+        if temperature is None:
+            temperature = ZHIPU_AI_temperature
         zhipu_data = cls.input_to_openai(data)
         client = ZhipuAI(api_key=apiKey)
         if "functions" in data:
             tools = zhipu_data["tools"]
             response = client.chat.completions.create(
-                model=ZHIPU_AI_MODEL,  # 填写需要调用的模型名称
+                model=model_name,
                 messages=zhipu_data["messages"],
                 tools=tools,
                 tool_choice="auto",
-                temperature=ZHIPU_AI_temperature
+                temperature=temperature
             )
         else:
             response = client.chat.completions.create(
-                model=ZHIPU_AI_MODEL,
-                messages=zhipu_data["messages"]
+                model=model_name,
+                messages=zhipu_data["messages"],
+                temperature=temperature
             )
         result = cls.output_to_openai(response)
         return result

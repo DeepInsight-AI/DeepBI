@@ -663,6 +663,7 @@ class ConversableAgent(Agent):
                 response = oai.ChatCompletion.create(
                     context=messages[-1].pop("context", None), use_cache=self.use_cache,
                     messages=self._oai_system_message + messages,
+                    agent_name=self.name,
                     **llm_config
                 )
             else:
@@ -670,6 +671,7 @@ class ConversableAgent(Agent):
                     context=messages[-1].pop("context", None), use_cache=self.use_cache,
                     messages=self._oai_system_message + messages,
                     openai_proxy=self.openai_proxy,
+                    agent_name=self.name,
                     **llm_config
                 )
 
@@ -688,7 +690,9 @@ class ConversableAgent(Agent):
 
         # # TODO: #1143 handle token limit exceeded error
         # response = oai.ChatCompletion.create(
-        #     context=messages[-1].pop("context", None), messages=self._oai_system_message + messages, **llm_config
+        #     context=messages[-1].pop("context", None), messages=self._oai_system_message + messages,
+        #     agent_name=self.name,
+        #     **llm_config
         # )
 
         return True, oai.ChatCompletion.extract_text_or_function_call(response)[0]

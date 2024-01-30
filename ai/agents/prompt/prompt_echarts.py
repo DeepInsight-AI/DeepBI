@@ -1,7 +1,7 @@
 CSV_ECHART_TIPS_MESS = """Here are some examples of generating mysql and pyecharts Code based on the given question.
  Please generate new one based on the data and question human asks you, import the neccessary libraries and make sure the code is correct.
 
-IMPORTANT: You need to follow the coding style, and the type of the x, y axis.Title and label are not displayed under any circumstances. Both dataZoomInside and dataZoomSlider of the x-axis and y-axis need to be displayed. The legend is set to scroll according to type_="scroll" and orient="horizontal". If the x-axis can be sorted according to certain rules (such as date and time size or value size), please sort by the x-axis, otherwise sort by size.But also need to focus on the column name of the uploaded tables(if exists). Generally, PyEcharts does not accept numpy.int or numpy.float, etc. It only supports built-in data type like int, float, and str.
+IMPORTANT: You need to follow the coding style, and the type of the x, y axis.Title and label are not displayed under any circumstances. In either case, the dataZoomInside and dataZoomSlider for the x-axis and y-axis, as well as the toolbox, must be displayed. The legend is set to scroll based on type_="scroll" and orient="horizontal". If the x-axis can be sorted according to certain rules (such as date and time size or value size), please sort by the x-axis, otherwise sort by size.But also need to focus on the column name of the uploaded tables(if exists). Generally, PyEcharts does not accept numpy.int or numpy.float, etc. It only supports built-in data type like int, float, and str.
 Pay attention to check whether the query statement in the execution code block can correctly query the data.
 
 
@@ -70,7 +70,7 @@ Pay attention to check whether the query statement in the execution code block c
         ],
         legend_opts=opts.LegendOpts(
             type_="scroll",  # 设置图例类型为滚动
-            pos_top="30%",   # 设置图例距离顶部的位置
+            pos_top="50%",   # 设置图例距离顶部的位置
             pos_left="center",  # 设置图例居中
             orient="horizontal",  # 设置图例水平显示
             # 下面是图例滚动相关的配置
@@ -78,6 +78,19 @@ Pay attention to check whether the query statement in the execution code block c
             page_icon_size=15,  # 设置翻页按钮的大小
             page_icon_color="#2f4554",  # 设置翻页按钮的颜色
             page_icon_inactive_color="#aaa",  # 设置翻页按钮不激活时的颜色
+        ),
+        toolbox_opts=opts.ToolboxOpts(
+            is_show=True,
+            orient="horizontal",
+            pos_left="80%",
+            feature={
+                "dataZoom": opts.ToolBoxFeatureDataZoomOpts(),
+                "dataView": opts.ToolBoxFeatureDataViewOpts(),
+                "magicType": opts.ToolBoxFeatureMagicTypeOpts(type_=['line', 'bar','stack']),
+                "restore": opts.ToolBoxFeatureRestoreOpts(),
+                "saveAsImage": opts.ToolBoxFeatureSaveAsImageOpts(),
+                pos_top= "25%",
+            },
         ),
     )
     line.set_series_opts(
@@ -158,7 +171,7 @@ Pay attention to check whether the query statement in the execution code block c
         ],
         legend_opts=opts.LegendOpts(
             type_="scroll",  # 设置图例类型为滚动
-            pos_top="30%",   # 设置图例距离顶部的位置
+            pos_top="50%",   # 设置图例距离顶部的位置
             pos_left="center",  # 设置图例居中
             orient="horizontal",  # 设置图例水平显示
             # 下面是图例滚动相关的配置
@@ -166,6 +179,19 @@ Pay attention to check whether the query statement in the execution code block c
             page_icon_size=15,  # 设置翻页按钮的大小
             page_icon_color="#2f4554",  # 设置翻页按钮的颜色
             page_icon_inactive_color="#aaa",  # 设置翻页按钮不激活时的颜色
+        ),
+        toolbox_opts=opts.ToolboxOpts(
+            is_show=True,
+            orient="horizontal",
+            pos_left="80%",
+            feature={
+                "dataZoom": opts.ToolBoxFeatureDataZoomOpts(),
+                "dataView": opts.ToolBoxFeatureDataViewOpts(),
+                "magicType": opts.ToolBoxFeatureMagicTypeOpts(type_=['line', 'bar','stack']),
+                "restore": opts.ToolBoxFeatureRestoreOpts(),
+                "saveAsImage": opts.ToolBoxFeatureSaveAsImageOpts(),
+                pos_top= "25%",
+            },
         ),
     )
     bar.set_series_opts(
@@ -191,7 +217,7 @@ MYSQL_ECHART_TIPS_MESS = '''
 Here are some examples of generating mysql and pyecharts Code based on the given question.
 Please generate new one based on the data and question human asks you, import the neccessary libraries and make sure the code is correct.
 
-IMPORTANT: You need to follow the coding style, and the type of the x, y axis.Title and label are not displayed under any circumstances. Both dataZoomInside and dataZoomSlider of the x-axis and y-axis need to be displayed. The legend is set to scroll according to type_="scroll" and orient="horizontal". If the x-axis can be sorted according to certain rules (such as date and time size or value size), please sort by the x-axis, otherwise sort by size.But also need to focus on the column name of the uploaded tables(if exists). Generally, PyEcharts does not accept numpy.int or numpy.float, etc. It only supports built-in data type like int, float, and str.
+IMPORTANT: You need to follow the coding style, and the type of the x, y axis.Title and label are not displayed under any circumstances. In either case, the dataZoomInside and dataZoomSlider for the x-axis and y-axis, as well as the toolbox, must be displayed. The legend is set to scroll based on type_="scroll" and orient="horizontal". If the x-axis can be sorted according to certain rules (such as date and time size or value size), please sort by the x-axis, otherwise sort by size.But also need to focus on the column name of the uploaded tables(if exists). Generally, PyEcharts does not accept numpy.int or numpy.float, etc. It only supports built-in data type like int, float, and str.
 Pay attention to check whether the query statement in the execution code block can correctly query the data.
 The sql statements that need to be executed in the python code are surrounded by ", for example: query = "SELECT year, sales, profit FROM your_table"
 Pay attention to check whether the sql statement in the code block is correct and available.
@@ -277,7 +303,7 @@ Pay attention to check whether the sql statement in the code block is correct an
         ],
         legend_opts=opts.LegendOpts(
             type_="scroll",  # 设置图例类型为滚动
-            pos_top="30%",   # 设置图例距离顶部的位置
+            pos_top="50%",   # 设置图例距离顶部的位置
             pos_left="center",  # 设置图例居中
             orient="horizontal",  # 设置图例水平显示
             # 下面是图例滚动相关的配置
@@ -285,6 +311,19 @@ Pay attention to check whether the sql statement in the code block is correct an
             page_icon_size=15,  # 设置翻页按钮的大小
             page_icon_color="#2f4554",  # 设置翻页按钮的颜色
             page_icon_inactive_color="#aaa",  # 设置翻页按钮不激活时的颜色
+        ),
+        toolbox_opts=opts.ToolboxOpts(
+            is_show=True,
+            orient="horizontal",
+            pos_left="80%",
+            feature={
+                "dataZoom": opts.ToolBoxFeatureDataZoomOpts(),
+                "dataView": opts.ToolBoxFeatureDataViewOpts(),
+                "magicType": opts.ToolBoxFeatureMagicTypeOpts(type_=['line', 'bar','stack']),
+                "restore": opts.ToolBoxFeatureRestoreOpts(),
+                "saveAsImage": opts.ToolBoxFeatureSaveAsImageOpts(),
+                pos_top= "25%",
+            },
         ),
     )
 
@@ -374,7 +413,7 @@ Pay attention to check whether the sql statement in the code block is correct an
         ],
         legend_opts=opts.LegendOpts(
             type_="scroll",  # 设置图例类型为滚动
-            pos_top="30%",   # 设置图例距离顶部的位置
+            pos_top="50%",   # 设置图例距离顶部的位置
             pos_left="center",  # 设置图例居中
             orient="horizontal",  # 设置图例水平显示
             # 下面是图例滚动相关的配置
@@ -382,6 +421,19 @@ Pay attention to check whether the sql statement in the code block is correct an
             page_icon_size=15,  # 设置翻页按钮的大小
             page_icon_color="#2f4554",  # 设置翻页按钮的颜色
             page_icon_inactive_color="#aaa",  # 设置翻页按钮不激活时的颜色
+        ),
+        toolbox_opts=opts.ToolboxOpts(
+            is_show=True,
+            orient="horizontal",
+            pos_left="80%",
+            feature={
+                "dataZoom": opts.ToolBoxFeatureDataZoomOpts(),
+                "dataView": opts.ToolBoxFeatureDataViewOpts(),
+                "magicType": opts.ToolBoxFeatureMagicTypeOpts(type_=['line', 'bar','stack']),
+                "restore": opts.ToolBoxFeatureRestoreOpts(),
+                "saveAsImage": opts.ToolBoxFeatureSaveAsImageOpts(),
+                pos_top= "25%",
+            },
         ),
     )
     bar.set_series_opts(
@@ -409,7 +461,7 @@ POSTGRESQL_ECHART_TIPS_MESS = '''
 Here are some examples of generating postgresql and pyecharts Code based on the given question.
 Please generate new one based on the data and question human asks you, import the neccessary libraries and make sure the code is correct.
 
-IMPORTANT: You need to follow the coding style, and the type of the x, y axis.Title and label are not displayed under any circumstances. Both dataZoomInside and dataZoomSlider of the x-axis and y-axis need to be displayed. The legend is set to scroll according to type_="scroll" and orient="horizontal". If the x-axis can be sorted according to certain rules (such as date and time size or value size), please sort by the x-axis, otherwise sort by size.But also need to focus on the column name of the uploaded tables(if exists). Generally, PyEcharts does not accept numpy.int or numpy.float, etc. It only supports built-in data type like int, float, and str.
+IMPORTANT: You need to follow the coding style, and the type of the x, y axis.Title and label are not displayed under any circumstances. In either case, the dataZoomInside and dataZoomSlider for the x-axis and y-axis, as well as the toolbox, must be displayed. The legend is set to scroll based on type_="scroll" and orient="horizontal". If the x-axis can be sorted according to certain rules (such as date and time size or value size), please sort by the x-axis, otherwise sort by size.But also need to focus on the column name of the uploaded tables(if exists). Generally, PyEcharts does not accept numpy.int or numpy.float, etc. It only supports built-in data type like int, float, and str.
 Pay attention to check whether the query statement in the execution code block can correctly query the data.
 
 
@@ -493,7 +545,7 @@ Pay attention to check whether the query statement in the execution code block c
         ],
         legend_opts=opts.LegendOpts(
             type_="scroll",  # 设置图例类型为滚动
-            pos_top="30%",   # 设置图例距离顶部的位置
+            pos_top="50%",   # 设置图例距离顶部的位置
             pos_left="center",  # 设置图例居中
             orient="horizontal",  # 设置图例水平显示
             # 下面是图例滚动相关的配置
@@ -501,6 +553,19 @@ Pay attention to check whether the query statement in the execution code block c
             page_icon_size=15,  # 设置翻页按钮的大小
             page_icon_color="#2f4554",  # 设置翻页按钮的颜色
             page_icon_inactive_color="#aaa",  # 设置翻页按钮不激活时的颜色
+        ),
+        toolbox_opts=opts.ToolboxOpts(
+            is_show=True,
+            orient="horizontal",
+            pos_left="80%",
+            feature={
+                "dataZoom": opts.ToolBoxFeatureDataZoomOpts(),
+                "dataView": opts.ToolBoxFeatureDataViewOpts(),
+                "magicType": opts.ToolBoxFeatureMagicTypeOpts(type_=['line', 'bar','stack']),
+                "restore": opts.ToolBoxFeatureRestoreOpts(),
+                "saveAsImage": opts.ToolBoxFeatureSaveAsImageOpts(),
+                pos_top= "25%",
+            },
         ),
     )
 
@@ -590,7 +655,7 @@ Pay attention to check whether the query statement in the execution code block c
         ],
         legend_opts=opts.LegendOpts(
             type_="scroll",  # 设置图例类型为滚动
-            pos_top="30%",   # 设置图例距离顶部的位置
+            pos_top="50%",   # 设置图例距离顶部的位置
             pos_left="center",  # 设置图例居中
             orient="horizontal",  # 设置图例水平显示
             # 下面是图例滚动相关的配置
@@ -598,6 +663,19 @@ Pay attention to check whether the query statement in the execution code block c
             page_icon_size=15,  # 设置翻页按钮的大小
             page_icon_color="#2f4554",  # 设置翻页按钮的颜色
             page_icon_inactive_color="#aaa",  # 设置翻页按钮不激活时的颜色
+        ),
+        toolbox_opts=opts.ToolboxOpts(
+            is_show=True,
+            orient="horizontal",
+            pos_left="80%",
+            feature={
+                "dataZoom": opts.ToolBoxFeatureDataZoomOpts(),
+                "dataView": opts.ToolBoxFeatureDataViewOpts(),
+                "magicType": opts.ToolBoxFeatureMagicTypeOpts(type_=['line', 'bar','stack']),
+                "restore": opts.ToolBoxFeatureRestoreOpts(),
+                "saveAsImage": opts.ToolBoxFeatureSaveAsImageOpts(),
+                pos_top= "25%",
+            },
         ),
     )
     bar.set_series_opts(
@@ -625,7 +703,7 @@ MONGODB_ECHART_TIPS_MESS = '''
 Here are some examples of generating mongodb and pyecharts Code based on the given question.Please beautify the generated chart to make it clear and readable.
 Please generate new one based on the data and question human asks you, import the neccessary libraries and make sure the code is correct.
 
-IMPORTANT: You need to follow the coding style, and the type of the x, y axis.Title and label are not displayed under any circumstances. Both dataZoomInside and dataZoomSlider of the x-axis and y-axis need to be displayed. The legend is set to scroll according to type_="scroll" and orient="horizontal". If the x-axis can be sorted according to certain rules (such as date and time size or value size), please sort by the x-axis, otherwise sort by size.But also need to focus on the column name of the uploaded tables(if exists). Generally, PyEcharts does not accept numpy.int or numpy.float, etc. It only supports built-in data type like int, float, and str.
+IMPORTANT: You need to follow the coding style, and the type of the x, y axis.Title and label are not displayed under any circumstances. In either case, the dataZoomInside and dataZoomSlider for the x-axis and y-axis, as well as the toolbox, must be displayed. The legend is set to scroll based on type_="scroll" and orient="horizontal". If the x-axis can be sorted according to certain rules (such as date and time size or value size), please sort by the x-axis, otherwise sort by size.But also need to focus on the column name of the uploaded tables(if exists). Generally, PyEcharts does not accept numpy.int or numpy.float, etc. It only supports built-in data type like int, float, and str.
 Pay attention to check whether the query statement in the execution code block can correctly query the data.
 
 
@@ -701,7 +779,7 @@ Pay attention to check whether the query statement in the execution code block c
         ],
         legend_opts=opts.LegendOpts(
             type_="scroll",  # 设置图例类型为滚动
-            pos_top="30%",   # 设置图例距离顶部的位置
+            pos_top="50%",   # 设置图例距离顶部的位置
             pos_left="center",  # 设置图例居中
             orient="horizontal",  # 设置图例水平显示
             # 下面是图例滚动相关的配置
@@ -709,6 +787,19 @@ Pay attention to check whether the query statement in the execution code block c
             page_icon_size=15,  # 设置翻页按钮的大小
             page_icon_color="#2f4554",  # 设置翻页按钮的颜色
             page_icon_inactive_color="#aaa",  # 设置翻页按钮不激活时的颜色
+        ),
+        toolbox_opts=opts.ToolboxOpts(
+            is_show=True,
+            orient="horizontal",
+            pos_left="80%",
+            feature={
+                "dataZoom": opts.ToolBoxFeatureDataZoomOpts(),
+                "dataView": opts.ToolBoxFeatureDataViewOpts(),
+                "magicType": opts.ToolBoxFeatureMagicTypeOpts(type_=['line', 'bar','stack']),
+                "restore": opts.ToolBoxFeatureRestoreOpts(),
+                "saveAsImage": opts.ToolBoxFeatureSaveAsImageOpts(),
+                pos_top= "25%",
+            },
         ),
     )
     bar.set_series_opts(

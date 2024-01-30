@@ -9,6 +9,7 @@ from flaml import tune, BlendSearch
 from flaml.tune.space import is_constant
 from flaml.automl.logger import logger_formatter
 from .openai_utils import get_key
+from ..agent_llm import AGENT_LLM_MODEL
 import requests
 
 try:
@@ -209,10 +210,29 @@ class Completion(openai_Completion):
 
         while True:
             try:
-                print('_get_response function +++++++++++++++++++, agent_name', agent_name)
+
                 # print("config :", config)
                 # print("config.get('api_base')", config.get('api_base'))
-                if config.get('api_base') is not None:
+                use_llm_name = config.get("api_type")  # default llm
+                use_url = config['api_base']
+                use_model = config['model']
+                use_api_key = config['api_key']
+                llm_config = config.get("llm_config")  # all llm config
+                other_llm_name = AGENT_LLM_MODEL[agent_name]['llm'] if agent_name in AGENT_LLM_MODEL and \
+                                                                       AGENT_LLM_MODEL[agent_name][
+                                                                           'replace_default'] and llm_config is not None else use_llm_name
+                print('_get_response function +++++++++++++++++++')
+                print("agent_name", agent_name, 'default: llm:', use_llm_name, "url:", use_url, "model", use_model, llm_config)
+                if other_llm_name is not None and use_llm_name != other_llm_name:
+                    """
+                    different llm
+                    """
+                    use_llm_name = other_llm_name
+                    use_model = AGENT_LLM_MODEL[agent_name]['model']
+                    use_api_key = llm_config[AGENT_LLM_MODEL[agent_name]['llm']]['ApiKey']
+                print("agent_name", agent_name, 'fact use: llm:', use_llm_name, "url:", use_url, "model", use_model)
+                print("~"*30)
+                if use_llm_name != "OpenAI":
                     """
                     A different LLM is called here
                     """
@@ -225,19 +245,22 @@ class Completion(openai_Completion):
                         data = {
                             "messages": config['messages']
                         }
+
+                    # get different api key
+                    # get different api model
+
                     # Here the judgment calls a different LLM
-                    if "DeepInsight" == config.get("api_type"):
+                    if "DeepInsight" == use_llm_name:
                         """
                         The DeepInsight webserver is called here
                         """
                         headers = {
-                            "token": config['api_key'],
+                            "token": use_api_key,
                             "ai_name": "openai",
-                            "module": config['model']
+                            "module": use_model
                         }
-                        url = config['api_base']
-                        print('create_url : ', url)
-                        res = requests.post(url, json=data, headers=headers)
+                        print('create_url : ', use_url)
+                        res = requests.post(use_url, json=data, headers=headers)
                         print("res :", res)
                         print('res.text +++++++++ : ', res.text)
 
@@ -245,12 +268,12 @@ class Completion(openai_Completion):
                         if res.status_code != 200:
                             res.raise_for_status()
                         response = res.json()
-                    elif "ZhiPuAI" == config.get("api_type"):
+                    elif "ZhiPuAI" == use_llm_name:
                         """
                         The ZhipuAI is called here
                         """
                         from .zhipuaiadpter import ZhiPuAIClient
-                        response = ZhiPuAIClient.run(config['api_key'], data)
+                        response = ZhiPuAIClient.run(use_api_key, data, use_model)
                 else:
                     """
                     By default, openai is invoked
@@ -874,7 +897,7 @@ class Completion(openai_Completion):
         params['agent_name'] = agent_name
         if not use_cache:
             return cls._get_response(
-                params, raise_on_ratelimit_or_timeout=raise_on_ratelimit_or_timeout,  use_cache=False
+                params, raise_on_ratelimit_or_timeout=raise_on_ratelimit_or_timeout, use_cache=False
             )
         seed = cls.seed
         if "seed" in params:

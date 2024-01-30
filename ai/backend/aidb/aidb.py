@@ -246,7 +246,7 @@ class AIDB:
         token_path = CONFIG.up_file_path + '.token_' + str(self.uid) + '.json'
         if os.path.exists(token_path):
             try:
-                ApiKey, HttpProxyHost, HttpProxyPort, ApiHost, ApiType = self.load_api_key(token_path)
+                ApiKey, HttpProxyHost, HttpProxyPort, ApiHost, ApiType, LlmConfig = self.load_api_key(token_path)
                 if ApiKey is None or len(ApiKey) == 0:
                     await self.put_message(500, CONFIG.talker_log, CONFIG.type_log_data, self.error_miss_key)
                     return False
@@ -295,7 +295,7 @@ class AIDB:
         print('token_path : ', token_path)
         if os.path.exists(token_path):
             try:
-                ApiKey, HttpProxyHost, HttpProxyPort, ApiHost, ApiType = self.load_api_key(token_path)
+                ApiKey, HttpProxyHost, HttpProxyPort, ApiHost, ApiType, LlmConfig = self.load_api_key(token_path)
                 if ApiKey is None or len(ApiKey) == 0:
                     return await self.put_message(200, CONFIG.talker_api, CONFIG.type_test, LanguageInfo.no_api_key)
 
@@ -370,8 +370,10 @@ class AIDB:
             HttpProxyPort = data['HttpProxyPort']
             print('HttpProxyPort : ', HttpProxyPort)
             ApiType = "openai"
-
-        return ApiKey, HttpProxyHost, HttpProxyPort, ApiHost, ApiType
+        # all llm config
+        del data['in_use']
+        LlmConfig = data
+        return ApiKey, HttpProxyHost, HttpProxyPort, ApiHost, ApiType, LlmConfig
 
     def generate_error_message(self, http_err, error_message=' API ERROR '):
         # print(f'HTTP error occurred: {http_err}')

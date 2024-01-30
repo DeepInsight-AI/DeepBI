@@ -16,6 +16,15 @@
   margin: 8px 0;
   background: transparent;
 }
+.log_terminal_modal {
+  color: #fff;
+}
+.log_terminal_modal .ant-modal-content {
+  background: transparent;
+}
+.log_terminal_modal .ant-modal-body {
+  padding: 0;
+}
 .log_terminal_content {
   background-color: #000;
   border-radius: 13px;

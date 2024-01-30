@@ -75,6 +75,7 @@ const LogWorkflow = props => {
         footer={null}
         closable={false}
         width="80%"
+        className="log_terminal_modal"
       >
         <div className="log_terminal_content_div">
         <Tooltip title={window.W_L.copy}>
@@ -88,7 +89,7 @@ const LogWorkflow = props => {
             {/* {window.W_L.copy} */}
           </Button>
         </Tooltip>
-        <div className="log_terminal_content" style={{height:"auto",maxHeight:"370px"}}>
+        <div className="log_terminal_content" style={{height:"auto",maxHeight:"470px"}}>
         {sourceList &&
             sourceList.length > 0 &&
             sourceList.map((item, index) => {

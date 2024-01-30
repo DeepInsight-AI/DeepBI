@@ -40,36 +40,32 @@ Pay attention to check whether the query statement in the execution code block c
                 id_="dataZoomX",
                 type_="slider",
                 xAxisIndex=[0],  # 控制 x 轴
-                filterMode="empty",  # 设置数据过滤模式为 'empty'
-                start: 20,
-                end: 80,
+                filter_mode="empty",  # 设置数据过滤模式为 'empty'
+                orient:"horizontal",
             ),
             opts.DataZoomOpts(
                 # 设置 y 轴 dataZoom
                 id_="dataZoomY",
                 type_="slider",
                 yAxisIndex=[0],  # 控制 y 轴
-                filterMode="empty",  # 设置数据过滤模式为 'empty'
-                start: 20,
-                end: 80,
+                filter_mode="empty",  # 设置数据过滤模式为 'empty'
+                orient:"vertical",
             ),
             opts.DataZoomOpts(
                 # 设置 x 轴 dataZoom
                 id_="dataZoomX",
                 type_="inside",
                 xAxisIndex=[0],  # 控制 x 轴
-                filterMode="empty",  # 设置数据过滤模式为 'empty'
-                start: 20,
-                end: 80,
+                filter_mode="empty",  # 设置数据过滤模式为 'empty'
+                orient:"horizontal",
             ),
             opts.DataZoomOpts(
                 # 设置 y 轴 dataZoom
                 id_="dataZoomY",
                 type_="inside",
                 yAxisIndex=[0],  # 控制 y 轴
-                filterMode="empty",  # 设置数据过滤模式为 'empty'
-                start: 20,
-                end: 80,
+                filter_mode="empty",  # 设置数据过滤模式为 'empty'  
+                orient:"vertical",              
             ),
         ],
         legend_opts=opts.LegendOpts(
@@ -132,36 +128,32 @@ Pay attention to check whether the query statement in the execution code block c
                 id_="dataZoomX",
                 type_="slider",
                 xAxisIndex=[0],  # 控制 x 轴
-                filterMode="empty",  # 设置数据过滤模式为 'empty'
-                start: 20,
-                end: 80,
+                filter_mode="empty",  # 设置数据过滤模式为 'empty'
+                orient:"horizontal",
             ),
             opts.DataZoomOpts(
                 # 设置 y 轴 dataZoom
                 id_="dataZoomY",
                 type_="slider",
                 yAxisIndex=[0],  # 控制 y 轴
-                filterMode="empty",  # 设置数据过滤模式为 'empty'
-                start: 20,
-                end: 80,
+                filter_mode="empty",  # 设置数据过滤模式为 'empty'
+                orient:"vertical",
             ),
             opts.DataZoomOpts(
                 # 设置 x 轴 dataZoom
                 id_="dataZoomX",
                 type_="inside",
                 xAxisIndex=[0],  # 控制 x 轴
-                filterMode="empty",  # 设置数据过滤模式为 'empty'
-                start: 20,
-                end: 80,
+                filter_mode="empty",  # 设置数据过滤模式为 'empty'
+                orient:"horizontal",
             ),
             opts.DataZoomOpts(
                 # 设置 y 轴 dataZoom
                 id_="dataZoomY",
                 type_="inside",
                 yAxisIndex=[0],  # 控制 y 轴
-                filterMode="empty",  # 设置数据过滤模式为 'empty'
-                start: 20,
-                end: 80,
+                filter_mode="empty",  # 设置数据过滤模式为 'empty'  
+                orient:"vertical",              
             ),
         ],
         legend_opts=opts.LegendOpts(
@@ -255,36 +247,32 @@ Pay attention to check whether the sql statement in the code block is correct an
                 id_="dataZoomX",
                 type_="slider",
                 xAxisIndex=[0],  # 控制 x 轴
-                filterMode="empty",  # 设置数据过滤模式为 'empty'
-                start: 20,
-                end: 80,
+                filter_mode="empty",  # 设置数据过滤模式为 'empty'
+                orient:"horizontal",
             ),
             opts.DataZoomOpts(
                 # 设置 y 轴 dataZoom
                 id_="dataZoomY",
                 type_="slider",
                 yAxisIndex=[0],  # 控制 y 轴
-                filterMode="empty",  # 设置数据过滤模式为 'empty'
-                start: 20,
-                end: 80,
+                filter_mode="empty",  # 设置数据过滤模式为 'empty'
+                orient:"vertical",
             ),
             opts.DataZoomOpts(
                 # 设置 x 轴 dataZoom
                 id_="dataZoomX",
                 type_="inside",
                 xAxisIndex=[0],  # 控制 x 轴
-                filterMode="empty",  # 设置数据过滤模式为 'empty'
-                start: 20,
-                end: 80,
+                filter_mode="empty",  # 设置数据过滤模式为 'empty'
+                orient:"horizontal",
             ),
             opts.DataZoomOpts(
                 # 设置 y 轴 dataZoom
                 id_="dataZoomY",
                 type_="inside",
                 yAxisIndex=[0],  # 控制 y 轴
-                filterMode="empty",  # 设置数据过滤模式为 'empty'
-                start: 20,
-                end: 80,
+                filter_mode="empty",  # 设置数据过滤模式为 'empty'  
+                orient:"vertical",              
             ),
         ],
         legend_opts=opts.LegendOpts(
@@ -356,36 +344,32 @@ Pay attention to check whether the sql statement in the code block is correct an
                 id_="dataZoomX",
                 type_="slider",
                 xAxisIndex=[0],  # 控制 x 轴
-                filterMode="empty",  # 设置数据过滤模式为 'empty'
-                start: 20,
-                end: 80,
+                filter_mode="empty",  # 设置数据过滤模式为 'empty'
+                orient:"horizontal",
             ),
             opts.DataZoomOpts(
                 # 设置 y 轴 dataZoom
                 id_="dataZoomY",
                 type_="slider",
                 yAxisIndex=[0],  # 控制 y 轴
-                filterMode="empty",  # 设置数据过滤模式为 'empty'
-                start: 20,
-                end: 80,
+                filter_mode="empty",  # 设置数据过滤模式为 'empty'
+                orient:"vertical",
             ),
             opts.DataZoomOpts(
                 # 设置 x 轴 dataZoom
                 id_="dataZoomX",
                 type_="inside",
                 xAxisIndex=[0],  # 控制 x 轴
-                filterMode="empty",  # 设置数据过滤模式为 'empty'
-                start: 20,
-                end: 80,
+                filter_mode="empty",  # 设置数据过滤模式为 'empty'
+                orient:"horizontal",
             ),
             opts.DataZoomOpts(
                 # 设置 y 轴 dataZoom
                 id_="dataZoomY",
                 type_="inside",
                 yAxisIndex=[0],  # 控制 y 轴
-                filterMode="empty",  # 设置数据过滤模式为 'empty'
-                start: 20,
-                end: 80,
+                filter_mode="empty",  # 设置数据过滤模式为 'empty'  
+                orient:"vertical",              
             ),
         ],
         legend_opts=opts.LegendOpts(
@@ -479,36 +463,32 @@ Pay attention to check whether the query statement in the execution code block c
                 id_="dataZoomX",
                 type_="slider",
                 xAxisIndex=[0],  # 控制 x 轴
-                filterMode="empty",  # 设置数据过滤模式为 'empty'
-                start: 20,
-                end: 80,
+                filter_mode="empty",  # 设置数据过滤模式为 'empty'
+                orient:"horizontal",
             ),
             opts.DataZoomOpts(
                 # 设置 y 轴 dataZoom
                 id_="dataZoomY",
                 type_="slider",
                 yAxisIndex=[0],  # 控制 y 轴
-                filterMode="empty",  # 设置数据过滤模式为 'empty'
-                start: 20,
-                end: 80,
+                filter_mode="empty",  # 设置数据过滤模式为 'empty'
+                orient:"vertical",
             ),
             opts.DataZoomOpts(
                 # 设置 x 轴 dataZoom
                 id_="dataZoomX",
                 type_="inside",
                 xAxisIndex=[0],  # 控制 x 轴
-                filterMode="empty",  # 设置数据过滤模式为 'empty'
-                start: 20,
-                end: 80,
+                filter_mode="empty",  # 设置数据过滤模式为 'empty'
+                orient:"horizontal",
             ),
             opts.DataZoomOpts(
                 # 设置 y 轴 dataZoom
                 id_="dataZoomY",
                 type_="inside",
                 yAxisIndex=[0],  # 控制 y 轴
-                filterMode="empty",  # 设置数据过滤模式为 'empty'
-                start: 20,
-                end: 80,
+                filter_mode="empty",  # 设置数据过滤模式为 'empty'  
+                orient:"vertical",              
             ),
         ],
         legend_opts=opts.LegendOpts(
@@ -580,36 +560,32 @@ Pay attention to check whether the query statement in the execution code block c
                 id_="dataZoomX",
                 type_="slider",
                 xAxisIndex=[0],  # 控制 x 轴
-                filterMode="empty",  # 设置数据过滤模式为 'empty'
-                start: 20,
-                end: 80,
+                filter_mode="empty",  # 设置数据过滤模式为 'empty'
+                orient:"horizontal",
             ),
             opts.DataZoomOpts(
                 # 设置 y 轴 dataZoom
                 id_="dataZoomY",
                 type_="slider",
                 yAxisIndex=[0],  # 控制 y 轴
-                filterMode="empty",  # 设置数据过滤模式为 'empty'
-                start: 20,
-                end: 80,
+                filter_mode="empty",  # 设置数据过滤模式为 'empty'
+                orient:"vertical",
             ),
             opts.DataZoomOpts(
                 # 设置 x 轴 dataZoom
                 id_="dataZoomX",
                 type_="inside",
                 xAxisIndex=[0],  # 控制 x 轴
-                filterMode="empty",  # 设置数据过滤模式为 'empty'
-                start: 20,
-                end: 80,
+                filter_mode="empty",  # 设置数据过滤模式为 'empty'
+                orient:"horizontal",
             ),
             opts.DataZoomOpts(
                 # 设置 y 轴 dataZoom
                 id_="dataZoomY",
                 type_="inside",
                 yAxisIndex=[0],  # 控制 y 轴
-                filterMode="empty",  # 设置数据过滤模式为 'empty'
-                start: 20,
-                end: 80,
+                filter_mode="empty",  # 设置数据过滤模式为 'empty'  
+                orient:"vertical",              
             ),
         ],
         legend_opts=opts.LegendOpts(
@@ -695,36 +671,32 @@ Pay attention to check whether the query statement in the execution code block c
                 id_="dataZoomX",
                 type_="slider",
                 xAxisIndex=[0],  # 控制 x 轴
-                filterMode="empty",  # 设置数据过滤模式为 'empty'
-                start: 20,
-                end: 80,
+                filter_mode="empty",  # 设置数据过滤模式为 'empty'
+                orient:"horizontal",
             ),
             opts.DataZoomOpts(
                 # 设置 y 轴 dataZoom
                 id_="dataZoomY",
                 type_="slider",
                 yAxisIndex=[0],  # 控制 y 轴
-                filterMode="empty",  # 设置数据过滤模式为 'empty'
-                start: 20,
-                end: 80,
+                filter_mode="empty",  # 设置数据过滤模式为 'empty'
+                orient:"vertical",
             ),
             opts.DataZoomOpts(
                 # 设置 x 轴 dataZoom
                 id_="dataZoomX",
                 type_="inside",
                 xAxisIndex=[0],  # 控制 x 轴
-                filterMode="empty",  # 设置数据过滤模式为 'empty'
-                start: 20,
-                end: 80,
+                filter_mode="empty",  # 设置数据过滤模式为 'empty'
+                orient:"horizontal",
             ),
             opts.DataZoomOpts(
                 # 设置 y 轴 dataZoom
                 id_="dataZoomY",
                 type_="inside",
                 yAxisIndex=[0],  # 控制 y 轴
-                filterMode="empty",  # 设置数据过滤模式为 'empty'
-                start: 20,
-                end: 80,
+                filter_mode="empty",  # 设置数据过滤模式为 'empty'  
+                orient:"vertical",              
             ),
         ],
         legend_opts=opts.LegendOpts(

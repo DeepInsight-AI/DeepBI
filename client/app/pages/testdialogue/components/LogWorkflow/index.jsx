@@ -66,23 +66,35 @@ const LogWorkflow = props => {
   const compress = () => {
     setIsModalVisible(true);
   };
-  
+
   const showModel = () => {
     return (
       <Modal
-        title="Log"
         visible={isModalVisible}
         onCancel={() => setIsModalVisible(false)}
         footer={null}
         closable={false}
         width="80%"
       >
-        <div className="log_terminal_content" ref={logTerminal}>
+        <div className="log_terminal_content_div">
+        <Tooltip title={window.W_L.copy}>
+          <Button
+            icon={<CopyOutlinedIcon />}
+            style={{ position: "absolute", color: "#9d9d9d" }}
+            type="text"
+            size="small"
+            className="copy_btn"
+            onClick={copy}>
+            {/* {window.W_L.copy} */}
+          </Button>
+        </Tooltip>
+        <div className="log_terminal_content" style={{height:"auto",maxHeight:"370px"}}>
         {sourceList &&
             sourceList.length > 0 &&
             sourceList.map((item, index) => {
               return <div key={index} className="log-item" dangerouslySetInnerHTML={{ __html: item }}></div>;
             })}
+        </div>
         </div>
       </Modal>
     );

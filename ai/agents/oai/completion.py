@@ -217,19 +217,19 @@ class Completion(openai_Completion):
                 use_url = config['api_base']
                 use_model = config['model']
                 use_api_key = config['api_key']
-                llm_config = config.get("llm_config")  # all llm config
+                llm_setting = config.get("llm_setting")  # all llm config
                 other_llm_name = AGENT_LLM_MODEL[agent_name]['llm'] if agent_name in AGENT_LLM_MODEL and \
                                                                        AGENT_LLM_MODEL[agent_name][
-                                                                           'replace_default'] and llm_config is not None else use_llm_name
+                                                                           'replace_default'] and llm_setting is not None else use_llm_name
                 print('_get_response function +++++++++++++++++++')
-                print("agent_name", agent_name, 'default: llm:', use_llm_name, "url:", use_url, "model", use_model, llm_config)
+                print("agent_name", agent_name, 'default: llm:', use_llm_name, "url:", use_url, "model", use_model, llm_setting)
                 if other_llm_name is not None and use_llm_name != other_llm_name:
                     """
                     different llm
                     """
                     use_llm_name = other_llm_name
                     use_model = AGENT_LLM_MODEL[agent_name]['model']
-                    use_api_key = llm_config[AGENT_LLM_MODEL[agent_name]['llm']]['ApiKey']
+                    use_api_key = llm_setting[AGENT_LLM_MODEL[agent_name]['llm']]['ApiKey']
                 print("agent_name", agent_name, 'fact use: llm:', use_llm_name, "url:", use_url, "model", use_model)
                 print("~"*30)
                 if use_llm_name != "OpenAI":

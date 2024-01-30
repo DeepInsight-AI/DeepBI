@@ -1168,12 +1168,18 @@ class BIProxyAgent(Agent):
 
             chart_code_str = chart_code_str.replace("\n", "")
             str_obj = ast.literal_eval(chart_code_str) 
-
-             # 添加匹配是否包含 "x" 和 "y" 的逻辑
-            if 'x' not in str_obj['columnMapping'].values() and 'y' not in str_obj['columnMapping'].values():
-                return "Failed to generate chart. Please make sure x-axis and y-axis information is provided. Retry"
-
             json_str = json.dumps(str_obj)
+
+            if not isinstance(str_obj, list) or not str_obj:
+                return "Failed to generate chart. Please make sure valid chart configuration is provided. Retry."
+
+            for config in str_obj:
+                if 'columnMapping' in config and isinstance(config['columnMapping'], dict) and config['columnMapping']:
+                    for variable, axis in config['columnMapping'].items():
+                        if axis not in ["x", "y"] or not variable.strip():
+                            return "Failed to generate chart. Please make sure valid chart configuration is provided. Try again with the original chart type."
+                else:
+                    return "Failed to generate chart. Please make sure valid chart configuration is provided. Try again with the original chart type."
 
             if str_obj[0].get("globalSeriesType") == 'table':
                 result_message = {

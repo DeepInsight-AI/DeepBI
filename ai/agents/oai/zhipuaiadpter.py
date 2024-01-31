@@ -8,7 +8,7 @@ from zhipuai import ZhipuAI
 # define default model
 ZHIPU_AI_MODEL = "glm-4"
 # define default temperature
-ZHIPU_AI_temperature = 0.5
+ZHIPU_AI_temperature = 0.95
 
 
 def object_to_dict(obj):

@@ -221,7 +221,9 @@ class Completion(openai_Completion):
                 other_llm_name = AGENT_LLM_MODEL[agent_name]['llm'] if agent_name in AGENT_LLM_MODEL and \
                                                                        AGENT_LLM_MODEL[agent_name][
                                                                            'replace_default'] and llm_setting is not None else use_llm_name
-                print('_get_response function +++++++++++++++++++')
+                print('_get_response function +++++++++++++++++++ other llm name', other_llm_name)
+                if "DeepInsight" != use_llm_name and "OpenAI" != use_llm_name:
+                    use_model = None
                 print("agent_name", agent_name, 'default: llm:', use_llm_name, "url:", use_url, "model", use_model,
                       llm_setting)
                 if other_llm_name is not None and use_llm_name != other_llm_name:
@@ -237,7 +239,8 @@ class Completion(openai_Completion):
                         if "" == use_api_key:
                             print("agent_llm llm api key empty, use_model:", use_model)
                             raise Exception("agent_llm llm api key empty use_model:", use_model)
-                print("agent_name", agent_name, 'fact use: llm:', use_llm_name, "url:", use_url, "model", use_model)
+
+                print("agent_name", agent_name, 'fact use: llm:', use_llm_name, "url:", use_url, "pre use model", use_model)
                 print("~" * 30)
                 if use_llm_name != "OpenAI":
                     """
@@ -252,10 +255,6 @@ class Completion(openai_Completion):
                         data = {
                             "messages": config['messages']
                         }
-
-                    # get different api key
-                    # get different api model
-
                     # Here the judgment calls a different LLM
                     if "DeepInsight" == use_llm_name:
                         """
@@ -281,6 +280,8 @@ class Completion(openai_Completion):
                         """
                         from .zhipuaiadpter import ZhiPuAIClient
                         response = ZhiPuAIClient.run(use_api_key, data, use_model)
+                    else:
+                        raise Exception("No model:", use_llm_name)
                 else:
                     """
                     By default, openai is invoked

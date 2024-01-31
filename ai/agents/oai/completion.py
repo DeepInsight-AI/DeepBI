@@ -296,7 +296,12 @@ class Completion(openai_Completion):
                     else:
                         response = openai_completion.create(request_timeout=request_timeout, **config)
                 print("response: ", response)
-
+                # write cost
+                cost_str = agent_name + " " + use_llm_name + " " + str(use_model) + " cost:" + str(response['usage'])
+                with open("cost.txt", "a") as file:
+                    # 写入内容到文件末尾
+                    file.write(cost_str + "\n")
+                #
             except (
                 ServiceUnavailableError,
                 APIConnectionError,

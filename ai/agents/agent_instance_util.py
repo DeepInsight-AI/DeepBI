@@ -218,13 +218,14 @@ class AgentInstanceUtil:
 
                 self.is_rag = True
 
-                for table in message['table_desc']:
-                    for field in table['field_desc']:
-                        field_keys = list(field.keys())
-                        for key in field_keys:
-                            if key not in ['']:
-                                field.pop(key)
-                self.base_message = str(message)
+                # for table in message['table_desc']:
+                #     for field in table['field_desc']:
+                #         field_keys = list(field.keys())
+                #         for key in field_keys:
+                #             if key not in ['']:
+                #                 field.pop(key)
+                # self.base_message = str(message)
+                self.base_message = ''
 
     def get_agent_mysql_engineer(self):
         """mysql engineer"""

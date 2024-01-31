@@ -11,6 +11,8 @@ from .task_selector_agent import TaskSelectorAgent
 from .check_agent import CheckAgent
 from .report_questioner import Questioner
 from .chart_presenter_agent import ChartPresenterAgent
+from .table_selector_agent import TableSelectorAgent
+
 
 __all__ = [
     "Agent",
@@ -24,5 +26,6 @@ __all__ = [
     "HumanProxyAgent",
     "TaskPlannerAgent",
     "TaskSelectorAgent",
-    "CheckAgent"
+    "CheckAgent",
+    "TableSelectorAgent"
 ]

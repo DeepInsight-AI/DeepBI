@@ -123,6 +123,8 @@ class AnalysisMysql(Analysis):
             if q_data_type == CONFIG.type_comment:
                 await self.check_data_base(q_str)
             elif q_data_type == CONFIG.type_comment_first:
+                self.db_info_json = q_str
+
                 if json_str.get('data').get('language_mode'):
                     q_language_mode = json_str['data']['language_mode']
                     if q_language_mode == CONFIG.language_chinese or q_language_mode == CONFIG.language_english or q_language_mode == CONFIG.language_japanese:
@@ -146,6 +148,8 @@ class AnalysisMysql(Analysis):
 
                 await self.get_data_desc(q_str)
             elif q_data_type == CONFIG.type_comment_second:
+                self.db_info_json = q_str
+
                 if json_str.get('data').get('language_mode'):
                     q_language_mode = json_str['data']['language_mode']
                     if q_language_mode == CONFIG.language_chinese or q_language_mode == CONFIG.language_english or q_language_mode == CONFIG.language_japanese:
@@ -184,21 +188,8 @@ class AnalysisMysql(Analysis):
             for i in range(max_retry_times):
                 try:
                     if self.agent_instance_util.is_rag:
-                        pass
-                        base_mysql_assistant = self.get_agent_retrieve_base_mysql_assistant_rag()
-                        docs_path = CONFIG.up_file_path + '.rag_' + str(self.user_name) + '_' + str(
-                            self.agent_instance_util.db_id) + '.json'
-                        python_executor = self.get_agent_retrieve_python_executor(docs_path=docs_path)
-
-                        await python_executor.initiate_chat(
-                            base_mysql_assistant,
-                            problem=self.agent_instance_util.base_message + '\n' + self.question_ask + '\n' + str(
-                                qustion_message),
-                        )
-
-                        answer_message = python_executor.chat_messages[base_mysql_assistant]
-                        print("answer_message: ", answer_message)
-
+                        # answer_message = await self.task_base_rag(qustion_message)
+                        answer_message = await self.task_base_rag2(qustion_message)
                     else:
                         base_mysql_assistant = self.get_agent_base_mysql_assistant()
                         python_executor = self.agent_instance_util.get_agent_python_executor()
@@ -377,3 +368,109 @@ class AnalysisMysql(Analysis):
             traceback.print_exc()
             logger.error("from user:[{}".format(self.user_name) + "] , " + "error: " + str(e))
         return self.agent_instance_util.data_analysis_error
+
+    async def task_base_rag(self, qustion_message):
+        """ Task type: mysql data analysis"""
+
+        select_table_assistant = self.get_agent_select_table_assistant(db_info_json=self.db_info_json)
+        planner_user = self.agent_instance_util.get_agent_planner_user()
+
+        await planner_user.initiate_chat(
+            select_table_assistant,
+            message=qustion_message,
+        )
+        select_table_message = planner_user.last_message()["content"]
+
+        match = re.search(
+            r"\[.*\]", select_table_message.strip(), re.MULTILINE | re.IGNORECASE | re.DOTALL
+        )
+        json_str = ""
+        if match:
+            json_str = match.group()
+        print("json_str : ", json_str)
+        select_table_list = json.loads(json_str)
+        print("select_table_list : ", select_table_list)
+
+        delete_table_names = []
+        for table_str in select_table_list:
+            table_name = table_str.get("table_name")
+            delete_table_names.append(table_name)
+
+        print("delete_table_names : ", delete_table_names)
+
+        table_comment = {'table_desc': []}
+
+        for table in self.db_info_json['table_desc']:
+            # print('table : ', table)
+            if table['table_name'] in delete_table_names:
+                table_comment['table_desc'].append(table)
+
+        print('table_comment : ', table_comment)
+
+        base_mysql_assistant = self.get_agent_retrieve_base_mysql_assistant_rag()
+        docs_path = CONFIG.up_file_path + '.rag_' + str(self.user_name) + '_' + str(
+            self.agent_instance_util.db_id) + '.json'
+        python_executor = self.get_agent_retrieve_python_executor(docs_path=docs_path)
+
+        await python_executor.initiate_chat(
+            base_mysql_assistant,
+            problem='this is table info: ' + '\n' + str(table_comment) + '\n' + self.question_ask + '\n' + str(
+                qustion_message),
+        )
+
+        answer_message = python_executor.chat_messages[base_mysql_assistant]
+        print("answer_message: ", answer_message)
+
+        return answer_message
+
+    async def task_base_rag2(self, qustion_message):
+        """ Task type: mysql data analysis"""
+
+        select_table_assistant = self.get_agent_select_table_assistant(db_info_json=self.db_info_json)
+        planner_user = self.agent_instance_util.get_agent_planner_user()
+
+        await planner_user.initiate_chat(
+            select_table_assistant,
+            message=qustion_message,
+        )
+        select_table_message = planner_user.last_message()["content"]
+
+        match = re.search(
+            r"\[.*\]", select_table_message.strip(), re.MULTILINE | re.IGNORECASE | re.DOTALL
+        )
+        json_str = ""
+        if match:
+            json_str = match.group()
+        print("json_str : ", json_str)
+        select_table_list = json.loads(json_str)
+        print("select_table_list : ", select_table_list)
+
+        delete_table_names = []
+        for table_str in select_table_list:
+            table_name = table_str.get("table_name")
+            delete_table_names.append(table_name)
+
+        print("delete_table_names : ", delete_table_names)
+
+        table_comment = {'table_desc': []}
+
+        for table in self.db_info_json['table_desc']:
+            # print('table : ', table)
+            if table['table_name'] in delete_table_names:
+                table_comment['table_desc'].append(table)
+
+        print('table_comment : ', table_comment)
+
+        base_mysql_assistant = self.get_agent_base_mysql_assistant()
+        python_executor = self.agent_instance_util.get_agent_python_executor()
+
+        await python_executor.initiate_chat(
+            base_mysql_assistant,
+            message='this is table info: ' + '\n' + str(table_comment) + '\n' + self.question_ask + '\n' + str(
+                qustion_message),
+        )
+
+        answer_message = python_executor.chat_messages[base_mysql_assistant]
+        print("answer_message: ", answer_message)
+
+        return answer_message

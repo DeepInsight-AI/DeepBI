@@ -1,4 +1,3 @@
-from ai.backend.base_config import CONFIG
 import traceback
 from ai.backend.util.write_log import logger
 from ai.backend.base_config import CONFIG
@@ -12,6 +11,7 @@ from ai.backend.util import base_util
 import asyncio
 from requests.exceptions import HTTPError
 from ai.backend.language_info import LanguageInfo
+from ai.agents.agentchat import TaskSelectorAgent, TableSelectorAgent
 
 
 class AIDB:
@@ -24,6 +24,7 @@ class AIDB:
         self.websocket = chatClass.ws
         self.uid = chatClass.uid
         self.log_list = []
+        self.db_info_json = None
 
     def set_language_mode(self, language_mode):
         self.language_mode = language_mode
@@ -55,21 +56,30 @@ class AIDB:
             # qustion_message = "Please explain this data to me."
 
             # if self.language_mode == CONFIG.language_chinese:
-                # qustion_message = "请为我解释一下这些数据"
+            # qustion_message = "请为我解释一下这些数据"
 
             qustion_message = LanguageInfo.qustion_message
 
             if self.agent_instance_util.is_rag:
-                docs_path = CONFIG.up_file_path + '.rag_' + str(self.user_name) + '_' + str(
-                    self.agent_instance_util.db_id) + '.json'
-                print('docs_path : ', docs_path)
-                planner_user = self.agent_instance_util.get_agent_retrieve_planner_user(docs_path=docs_path)
+                # docs_path = CONFIG.up_file_path + '.rag_' + str(self.user_name) + '_' + str(
+                #     self.agent_instance_util.db_id) + '.json'
+                # print('docs_path : ', docs_path)
+                # planner_user = self.agent_instance_util.get_agent_retrieve_planner_user(docs_path=docs_path)
+                # database_describer = self.agent_instance_util.get_agent_database_describer()
+                # await planner_user.initiate_chat(
+                #     database_describer,
+                #     # message=content + '\n' + " This is my question: " + '\n' + str(qustion_message),
+                #     problem=self.agent_instance_util.base_message + '\n' + self.question_ask + '\n' + str(
+                #         qustion_message),
+                # )
+
+                planner_user = self.agent_instance_util.get_agent_planner_user()
                 database_describer = self.agent_instance_util.get_agent_database_describer()
                 await planner_user.initiate_chat(
                     database_describer,
                     # message=content + '\n' + " This is my question: " + '\n' + str(qustion_message),
-                    problem=self.agent_instance_util.base_message + '\n' + self.question_ask + '\n' + str(
-                        qustion_message),
+                    # message=self.agent_instance_util.base_message + '\n' + self.question_ask + '\n' + str(qustion_message),
+                    message=self.question_ask + '\n' + str(qustion_message),
                 )
 
                 answer_message = planner_user.last_message()["content"]
@@ -482,3 +492,45 @@ class AIDB:
         else:
             error_message = error_message + ' ' + str(status_code) + ' ' + str(http_err.response.text)
         return error_message
+
+    def get_agent_select_table_assistant(self, db_info_json):
+        """select_table_assistant"""
+
+        table_names = []
+        table_message = {}
+
+        for table in db_info_json['table_desc']:
+            table_names.append(table['table_name'])
+            table_message[table['table_name']] = table['table_comment']
+
+        print('table_names : ', table_names)
+        print('table_message : ', table_message)
+
+        table_select = f"Read the conversation above. Then select the name of the table involved in the question from {table_names}. Only the name of the table is returned.It can be one table or multiple tables"
+
+        select_analysis_assistant = TableSelectorAgent(
+            name="select_table_assistant",
+            system_message="""You are a helpful AI assistant.
+                        Divide the questions raised by users into corresponding task types.
+                        Different tasks have different processing methods.
+                        The output should be formatted as a JSON instance that conforms to the JSON schema below, the JSON is a list of dict,
+         [
+         {“table_name”: “report_1”},
+         {},
+         {},
+         ].
+         Reply "TERMINATE" in the end when everything is done.
+
+                        Task types are generally divided into the following categories:
+
+                         """ + str(table_message) + '\n' + str(table_select),
+            human_input_mode="NEVER",
+            user_name=self.user_name,
+            websocket=self.websocket,
+            llm_config={
+                "config_list": self.agent_instance_util.config_list_gpt4_turbo,
+                "request_timeout": CONFIG.request_timeout,
+            },
+            openai_proxy=self.agent_instance_util.openai_proxy,
+        )
+        return select_analysis_assistant

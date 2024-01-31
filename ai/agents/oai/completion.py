@@ -224,7 +224,8 @@ class Completion(openai_Completion):
                                                                        AGENT_LLM_MODEL[agent_name][
                                                                            'replace_default'] and llm_setting is not None else use_llm_name
                 print("~" * 30, '_get_response ------------------------')
-                print(agent_name in AGENT_LLM_MODEL, AGENT_LLM_MODEL[agent_name]['replace_default'])
+                if agent_name in AGENT_LLM_MODEL:
+                    print(agent_name in AGENT_LLM_MODEL, AGENT_LLM_MODEL[agent_name]['replace_default'])
                 if "DeepInsight" != use_llm_name and "OpenAI" != use_llm_name:
                     use_model = None
                 print("==agent_name==", agent_name, 'default: llm:', use_llm_name, "url:", use_url, "model", use_model, "other LLM", other_llm_name)

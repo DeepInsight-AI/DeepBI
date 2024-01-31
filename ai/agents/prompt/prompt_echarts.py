@@ -70,7 +70,7 @@ Pay attention to check whether the query statement in the execution code block c
         ],
         legend_opts=opts.LegendOpts(
             type_="scroll",  # 设置图例类型为滚动
-            pos_top="25%",   # 设置图例距离顶部的位置
+            pos_top="1%",   # 设置图例距离顶部的位置
             orient="horizontal",  # 设置图例水平显示
             # 下面是图例滚动相关的配置
             page_size=5,  # 设置每页显示的图例项个数
@@ -170,7 +170,7 @@ Pay attention to check whether the query statement in the execution code block c
         ],
         legend_opts=opts.LegendOpts(
             type_="scroll",  # 设置图例类型为滚动
-            pos_top="25%",   # 设置图例距离顶部的位置
+            pos_top="1%",   # 设置图例距离顶部的位置
             orient="horizontal",  # 设置图例水平显示
             # 下面是图例滚动相关的配置
             page_size=5,  # 设置每页显示的图例项个数
@@ -301,7 +301,7 @@ Pay attention to check whether the sql statement in the code block is correct an
         ],
         legend_opts=opts.LegendOpts(
             type_="scroll",  # 设置图例类型为滚动
-            pos_top="25%",   # 设置图例距离顶部的位置
+            pos_top="1%",   # 设置图例距离顶部的位置
             orient="horizontal",  # 设置图例水平显示
             # 下面是图例滚动相关的配置
             page_size=5,  # 设置每页显示的图例项个数
@@ -410,7 +410,7 @@ Pay attention to check whether the sql statement in the code block is correct an
         ],
         legend_opts=opts.LegendOpts(
             type_="scroll",  # 设置图例类型为滚动
-            pos_top="25%",   # 设置图例距离顶部的位置
+            pos_top="1%",   # 设置图例距离顶部的位置
             orient="horizontal",  # 设置图例水平显示
             # 下面是图例滚动相关的配置
             page_size=5,  # 设置每页显示的图例项个数
@@ -541,7 +541,7 @@ Pay attention to check whether the query statement in the execution code block c
         ],
         legend_opts=opts.LegendOpts(
             type_="scroll",  # 设置图例类型为滚动
-            pos_top="25%",   # 设置图例距离顶部的位置
+            pos_top="1%",   # 设置图例距离顶部的位置
             orient="horizontal",  # 设置图例水平显示
             # 下面是图例滚动相关的配置
             page_size=5,  # 设置每页显示的图例项个数
@@ -650,7 +650,7 @@ Pay attention to check whether the query statement in the execution code block c
         ],
         legend_opts=opts.LegendOpts(
             type_="scroll",  # 设置图例类型为滚动
-            pos_top="25%",   # 设置图例距离顶部的位置
+            pos_top="1%",   # 设置图例距离顶部的位置
             orient="horizontal",  # 设置图例水平显示
             # 下面是图例滚动相关的配置
             page_size=5,  # 设置每页显示的图例项个数
@@ -773,7 +773,7 @@ Pay attention to check whether the query statement in the execution code block c
         ],
         legend_opts=opts.LegendOpts(
             type_="scroll",  # 设置图例类型为滚动
-            pos_top="25%",   # 设置图例距离顶部的位置
+            pos_top="1%",   # 设置图例距离顶部的位置
             orient="horizontal",  # 设置图例水平显示
             # 下面是图例滚动相关的配置
             page_size=5,  # 设置每页显示的图例项个数

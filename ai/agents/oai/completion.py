@@ -218,21 +218,22 @@ class Completion(openai_Completion):
                 use_model = config['model']
                 use_api_key = config['api_key']
                 llm_setting = config.get("llm_setting")  # all llm config
+                print("~" * 30)
+                print("setting", llm_setting)
                 other_llm_name = AGENT_LLM_MODEL[agent_name]['llm'] if agent_name in AGENT_LLM_MODEL and \
                                                                        AGENT_LLM_MODEL[agent_name][
                                                                            'replace_default'] and llm_setting is not None else use_llm_name
-                print('_get_response function +++++++++++++++++++ other llm name', other_llm_name)
+                print("~" * 30, '_get_response ------------------------')
                 if "DeepInsight" != use_llm_name and "OpenAI" != use_llm_name:
                     use_model = None
-                print("agent_name", agent_name, 'default: llm:', use_llm_name, "url:", use_url, "model", use_model,
-                      llm_setting)
+                print("==agent_name==", agent_name, 'default: llm:', use_llm_name, "url:", use_url, "model", use_model)
                 if other_llm_name is not None and use_llm_name != other_llm_name:
                     """
                     different llm
                     """
                     use_message_count = AGENT_LLM_MODEL[agent_name]['use_message_count']
                     if 0 == use_message_count or len(config['messages']) < use_message_count:
-                        print("message less", use_message_count, "message count", len(config['messages']))
+                        print("～~Change LLM~～ message less", use_message_count, "message count", len(config['messages']))
                         use_llm_name = other_llm_name
                         use_model = AGENT_LLM_MODEL[agent_name]['model']
                         use_api_key = llm_setting[AGENT_LLM_MODEL[agent_name]['llm']]['ApiKey']

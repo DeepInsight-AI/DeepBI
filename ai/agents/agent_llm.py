@@ -62,9 +62,9 @@ AGENT_LLM_MODEL = {
         "use_message_count": 1
     },
     "base_csv_assistant": {
-        "llm": "DeepInsight",
-        "model": "gpt-4-1106-preview",
-        "replace_default": False,
+        "llm": "ZhiPuAI",
+        "model": "glm-4",
+        "replace_default": True,
         "use_message_count": 1
     },
     "base_postgresql_assistant": {
@@ -167,6 +167,18 @@ AGENT_LLM_MODEL = {
         "llm": "DeepInsight",
         "model": "gpt-4-1106-preview",
         "replace_default": False,
+        "use_message_count": 1
+    },
+    "select_analysis_assistant": {
+        "llm": "ZhiPuAI",
+        "model": "glm-4",
+        "replace_default": True,
+        "use_message_count": 1
+    },
+    "Admin": {
+        "llm": "ZhiPuAI",
+        "model": "glm-4",
+        "replace_default": True,
         "use_message_count": 1
     }
 }

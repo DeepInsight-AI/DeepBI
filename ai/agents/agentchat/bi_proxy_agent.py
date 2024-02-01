@@ -1167,19 +1167,34 @@ class BIProxyAgent(Agent):
             # print("chart_code_str : ", chart_code_str)
 
             chart_code_str = chart_code_str.replace("\n", "")
-            str_obj = ast.literal_eval(chart_code_str) 
+            str_obj = ast.literal_eval(chart_code_str)
             json_str = json.dumps(str_obj)
 
             if not isinstance(str_obj, list) or not str_obj:
                 return "Failed to generate chart. Please make sure valid chart configuration is provided. Retry."
 
+            ###################
+            axis_x_num = 0
+            axis_y_num = 0
+
             for config in str_obj:
                 if 'columnMapping' in config and isinstance(config['columnMapping'], dict) and config['columnMapping']:
                     for variable, axis in config['columnMapping'].items():
-                        if axis not in ["x", "y"] or not variable.strip():
-                            return "Failed to generate chart. Please make sure valid chart configuration is provided. Try again with the original chart type."
+                        print('axis :', axis)
+                        if axis in ["x"]:
+                            axis_x_num = axis_x_num + 1
+                        elif axis in ["y"]:
+                            axis_y_num = axis_y_num + 1
                 else:
                     return "Failed to generate chart. Please make sure valid chart configuration is provided. Try again with the original chart type."
+
+            if not axis_x_num == 1:
+                error_mess = "There should be one and only one X-axis in the chart."
+                return error_mess + '\n' + "Failed to generate chart. Please make sure valid chart configuration is provided. Try again with the original chart type."
+            elif not axis_y_num > 0:
+                error_mess = "There should be at least one Y-axis in the chart."
+                return error_mess + '\n' + "Failed to generate chart. Please make sure valid chart configuration is provided. Try again with the original chart type."
+            ###################
 
             if str_obj[0].get("globalSeriesType") == 'table':
                 result_message = {
@@ -1470,7 +1485,7 @@ class BIProxyAgent(Agent):
             json_str = json.dumps(str_obj)
 
             chart_code_str = chart_code_str.replace(r"\n", "\\n")
-            
+
 
             result_message = {
                 'state': 200,

@@ -277,17 +277,19 @@ class AgentInstanceUtil:
                      There are currently several types of charts that can be used, including line, column, area, pie, scanner, bubble, heatmap, box, and table.
                      For example, selecting a set of data to display in a column chart format and specifying the x and y axis data.
                      Usually, there can only be one set of x-axis data, while there can be multiple sets of y-axis data.
-                     Hand over your code to the Executor for execution.
-                     There can only be x-axis and y-axis mappings in columnMapping
-                     In columnMapping, some or all data can be mapped.
+
+                     Please check the SQL statement in context. If a gourp by is included in the SQL statement, the chart must use fields that are not designated as x-axis or y-axis as gourp by values.
                      There can only be one mapping on the x-axis, such as {"mon": "x"}.
                      There can be one or more mappings on the y-axis, such as {"prao": "y", "prbo": "y"}.
+                     gourp by can only have one mapping, such as
+                         {"fix":"series"}
+
                      The output should be formatted as a JSON instance that conforms to the JSON schema below, the JSON is a list of dict,
                       [
-                          {"globalSeriesType":"box","columnMapping":{"mon":"x","prao":"y","prbo":"y","prco":"y"}}
+                         {"globalSeriesType":"box","columnMapping":{"mon":"x","prao":"y","prbo":"y","prco":"y","fix":"series"}}
                       ].
 
-                      If there is no suitable chart, or if the user requests a table, use the table to display, and the returned results are as follows:
+                     If there is no suitable chart, or if the user requests a table, use the table to display, and the returned results are as follows:
                       [
                          {"globalSeriesType": "table", "columnMapping": ""}
                       ]

@@ -23,11 +23,12 @@ class Config():
 
         self.language_chinese = 'CN'
         self.language_english = 'EN'
+        self.language_japanese = 'JP'
         self.default_language_mode = self.language_chinese
 
         self.if_hide_sensitive = False
 
-        self.python_base_dependency = """python installed dependency environment: pymysql, pandas, mysql-connector-python, pyecharts, sklearn, psycopg2, sqlalchemy"""
+        self.python_base_dependency = """python installed dependency environment: pymysql, pandas, mysql-connector-python, pyecharts, sklearn, psycopg2, sqlalchemy，pymongo"""
 
         self.max_token_num = 6000
 
@@ -51,6 +52,9 @@ class Config():
 
         self.local_base_mysql_info = """
         """
+
+        self.local_base_mongodb_info = """
+                """
 
         self.online_base_mysql_info = """
         """

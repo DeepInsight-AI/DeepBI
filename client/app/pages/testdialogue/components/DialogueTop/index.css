@@ -13,6 +13,9 @@
     background: #fff;
     z-index: 2;
 }
+.report-top{
+    padding: 0 30px;
+}
 .dialogue-top-flex{
     display: flex;
     align-items: center;

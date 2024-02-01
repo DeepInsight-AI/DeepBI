@@ -251,7 +251,7 @@ class AIDB:
                     await self.put_message(500, CONFIG.talker_log, CONFIG.type_log_data, self.error_miss_key)
                     return False
 
-                self.agent_instance_util.set_api_key(ApiKey, ApiHost)
+                self.agent_instance_util.set_api_key(ApiKey, ApiHost, in_use)
 
                 if HttpProxyHost is not None and len(str(HttpProxyHost)) > 0 and HttpProxyPort is not None and len(
                     str(HttpProxyPort)) > 0:
@@ -361,7 +361,7 @@ class AIDB:
                 ApiHost = CONFIG.ApiHost
             elif in_use == 'Azure':
                 ApiKey = data[in_use]['ApiKey']
-                print('DeepBIApiKey : ', ApiKey)
+                print('DeepBIAzureApiKey : ', ApiKey)
                 # ApiHost = "https://apiserver.deep-thought.io/proxy"
                 ApiHost = data[in_use]['ApiHost']
         else:

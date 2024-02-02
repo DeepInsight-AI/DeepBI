@@ -362,6 +362,9 @@ class AIDB:
             elif "ZhiPuAI" == in_use:
                 ApiKey = data[in_use]['ApiKey']
                 ApiHost = data[in_use]['ApiHost']
+            elif "AWSClaude" == in_use:
+                ApiKey = data[in_use]['ApiKey']
+                ApiHost = data[in_use]['ApiHost']
         else:
             ApiKey = data['OpenaiApiKey']
             print('OpenaiApiKey : ', ApiKey)

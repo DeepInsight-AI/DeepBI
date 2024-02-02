@@ -229,6 +229,8 @@ class Completion(openai_Completion):
                     print(agent_name in AGENT_LLM_MODEL, AGENT_LLM_MODEL[agent_name]['replace_default'])
                 if "DeepInsight" != use_llm_name and "OpenAI" != use_llm_name:
                     use_model = None
+                use_api_secret = llm_setting[use_llm_name]['ApkSecret'] if "ApkSecret" in llm_setting[use_llm_name] else None
+
                 print("==agent_name==", agent_name, 'default: llm:', use_llm_name, "url:", use_url, "model", use_model, "other LLM", other_llm_name)
                 if other_llm_name is not None and use_llm_name != other_llm_name:
                     """
@@ -288,7 +290,7 @@ class Completion(openai_Completion):
                         from .zhipuaiadpter import ZhiPuAIClient
                         response = ZhiPuAIClient.run(use_api_key, data, use_model)
                     elif "AWSClaude" == use_llm_name:
-                        from claudeadpter import AWSClaudeClient
+                        from .claudeadpter import AWSClaudeClient
                         api_data = {
                             'ApiKey': use_api_key,
                             'ApkSecret': use_api_secret

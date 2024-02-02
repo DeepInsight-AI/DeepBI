@@ -1,7 +1,7 @@
 CSV_ECHART_TIPS_MESS = """Here are some examples of generating mysql and pyecharts Code based on the given question.
  Please generate new one based on the data and question human asks you, import the neccessary libraries and make sure the code is correct.
 
-IMPORTANT: You need to follow the coding style, and the type of the x, y axis.Title and label are not displayed under any circumstances. In either case, the datazoom and scroll legend must be displayed. The five function buttons of the toolbox must be vertically located on the left side of the line chart and bar chart. The scrolling legend must be positioned horizontally above the chart.  If the x-axis can be sorted according to certain rules (such as date and time size or value size), please sort by the x-axis, otherwise sort by size.But also need to focus on the column name of the uploaded tables(if exists). Generally, PyEcharts does not accept numpy.int or numpy.float, etc. It only supports built-in data type like int, float, and str.
+IMPORTANT: You need to follow the coding style, and the type of the x, y axis.Title and label are not displayed under any circumstances. In either case, the datazoom and scroll legend must be displayed. The datazoom of the x-axis must be left=1, horizontal located below the x-axis, and the datazoom of the y-axis must be right=1, vertical located on the far right side of the container.  The toolbox is only shown in line charts and bar charts. The five function buttons must be located on the left side of the line chart and bar chart according to pop_left=1, pop_top=15%, and vertical. Scroll legends for line and bar charts must be placed above the chart with pop_top=1 and horizontal. The scrolling legends of other charts must be placed vertically on the right side of the chart according to pop_right=1, pop_top=15%, and avoidLabelOverlap should be turned on as much as possible. If the x-axis can be sorted according to certain rules (such as date and time size or value size), please sort by the x-axis, otherwise sort by size.But also need to focus on the column name of the uploaded tables(if exists). Generally, PyEcharts does not accept numpy.int or numpy.float, etc. It only supports built-in data type like int, float, and str.
 Pay attention to check whether the query statement in the execution code block can correctly query the data.
 
 
@@ -40,32 +40,24 @@ Pay attention to check whether the query statement in the execution code block c
                 id_="dataZoomX",
                 type_="slider",
                 xAxisIndex=[0],  # 控制 x 轴
-                filter_mode="empty",  # 设置数据过滤模式为 'empty'
-                orient:"horizontal",
             ),
             opts.DataZoomOpts(
                 # 设置 y 轴 dataZoom
                 id_="dataZoomY",
                 type_="slider",
                 yAxisIndex=[0],  # 控制 y 轴
-                filter_mode="empty",  # 设置数据过滤模式为 'empty'
-                orient:"vertical",
             ),
             opts.DataZoomOpts(
                 # 设置 x 轴 dataZoom
                 id_="dataZoomX",
                 type_="inside",
                 xAxisIndex=[0],  # 控制 x 轴
-                filter_mode="empty",  # 设置数据过滤模式为 'empty'
-                orient:"horizontal",
             ),
             opts.DataZoomOpts(
                 # 设置 y 轴 dataZoom
                 id_="dataZoomY",
                 type_="inside",
                 yAxisIndex=[0],  # 控制 y 轴
-                filter_mode="empty",  # 设置数据过滤模式为 'empty'
-                orient:"vertical",
             ),
         ],
         legend_opts=opts.LegendOpts(
@@ -84,7 +76,6 @@ Pay attention to check whether the query statement in the execution code block c
     )
     line.set_series_opts(
         areastyle_opts=opts.AreaStyleOpts(opacity=0.5),
-        label_opts=opts.LabelOpts(is_show=false),
     )
     ret_json = line.dump_options()
     echart_code = json.loads(ret_json)
@@ -130,32 +121,24 @@ Pay attention to check whether the query statement in the execution code block c
                 id_="dataZoomX",
                 type_="slider",
                 xAxisIndex=[0],  # 控制 x 轴
-                filter_mode="empty",  # 设置数据过滤模式为 'empty'
-                orient:"horizontal",
             ),
             opts.DataZoomOpts(
                 # 设置 y 轴 dataZoom
                 id_="dataZoomY",
                 type_="slider",
                 yAxisIndex=[0],  # 控制 y 轴
-                filter_mode="empty",  # 设置数据过滤模式为 'empty'
-                orient:"vertical",
             ),
             opts.DataZoomOpts(
                 # 设置 x 轴 dataZoom
                 id_="dataZoomX",
                 type_="inside",
                 xAxisIndex=[0],  # 控制 x 轴
-                filter_mode="empty",  # 设置数据过滤模式为 'empty'
-                orient:"horizontal",
             ),
             opts.DataZoomOpts(
                 # 设置 y 轴 dataZoom
                 id_="dataZoomY",
                 type_="inside",
                 yAxisIndex=[0],  # 控制 y 轴
-                filter_mode="empty",  # 设置数据过滤模式为 'empty'
-                orient:"vertical",
             ),
         ],
         legend_opts=opts.LegendOpts(
@@ -171,9 +154,6 @@ Pay attention to check whether the query statement in the execution code block c
                 "saveAsImage": opts.ToolBoxFeatureSaveAsImageOpts(),
             },
         ),
-    )
-    bar.set_series_opts(
-        label_opts=opts.LabelOpts(is_show=false),
     )
     # Render the chart
     ret_json = bar.dump_options()
@@ -195,7 +175,7 @@ MYSQL_ECHART_TIPS_MESS = '''
 Here are some examples of generating mysql and pyecharts Code based on the given question.
 Please generate new one based on the data and question human asks you, import the neccessary libraries and make sure the code is correct.
 
-IMPORTANT: You need to follow the coding style, and the type of the x, y axis.Title and label are not displayed under any circumstances. In either case, the datazoom and scroll legend must be displayed. The five function buttons of the toolbox must be vertically located on the left side of the line chart and bar chart. The scrolling legend must be positioned horizontally above the chart.  If the x-axis can be sorted according to certain rules (such as date and time size or value size), please sort by the x-axis, otherwise sort by size.But also need to focus on the column name of the uploaded tables(if exists). Generally, PyEcharts does not accept numpy.int or numpy.float, etc. It only supports built-in data type like int, float, and str.
+IMPORTANT: You need to follow the coding style, and the type of the x, y axis.Title and label are not displayed under any circumstances. In either case, the datazoom and scroll legend must be displayed. The datazoom of the x-axis must be left=1, horizontal located below the x-axis, and the datazoom of the y-axis must be right=1, vertical located on the far right side of the container.  The toolbox is only shown in line charts and bar charts. The five function buttons must be located on the left side of the line chart and bar chart according to pop_left=1, pop_top=15%, and vertical. Scroll legends for line and bar charts must be placed above the chart with pop_top=1 and horizontal. The scrolling legends of other charts must be placed vertically on the right side of the chart according to pop_right=1, pop_top=15%, and avoidLabelOverlap should be turned on as much as possible. If the x-axis can be sorted according to certain rules (such as date and time size or value size), please sort by the x-axis, otherwise sort by size.But also need to focus on the column name of the uploaded tables(if exists). Generally, PyEcharts does not accept numpy.int or numpy.float, etc. It only supports built-in data type like int, float, and str.
 Pay attention to check whether the query statement in the execution code block can correctly query the data.
 The sql statements that need to be executed in the python code are surrounded by ", for example: query = "SELECT year, sales, profit FROM your_table"
 Pay attention to check whether the sql statement in the code block is correct and available.
@@ -251,32 +231,24 @@ Pay attention to check whether the sql statement in the code block is correct an
                 id_="dataZoomX",
                 type_="slider",
                 xAxisIndex=[0],  # 控制 x 轴
-                filter_mode="empty",  # 设置数据过滤模式为 'empty'
-                orient:"horizontal",
             ),
             opts.DataZoomOpts(
                 # 设置 y 轴 dataZoom
                 id_="dataZoomY",
                 type_="slider",
                 yAxisIndex=[0],  # 控制 y 轴
-                filter_mode="empty",  # 设置数据过滤模式为 'empty'
-                orient:"vertical",
             ),
             opts.DataZoomOpts(
                 # 设置 x 轴 dataZoom
                 id_="dataZoomX",
                 type_="inside",
                 xAxisIndex=[0],  # 控制 x 轴
-                filter_mode="empty",  # 设置数据过滤模式为 'empty'
-                orient:"horizontal",
             ),
             opts.DataZoomOpts(
                 # 设置 y 轴 dataZoom
                 id_="dataZoomY",
                 type_="inside",
                 yAxisIndex=[0],  # 控制 y 轴
-                filter_mode="empty",  # 设置数据过滤模式为 'empty'
-                orient:"vertical",
             ),
         ],
         legend_opts=opts.LegendOpts(
@@ -296,7 +268,6 @@ Pay attention to check whether the sql statement in the code block is correct an
 
     line.set_series_opts(
         areastyle_opts=opts.AreaStyleOpts(opacity=0.5),
-        label_opts=opts.LabelOpts(is_show=false),
     )
 
     ret_json = line.dump_options()
@@ -350,32 +321,24 @@ Pay attention to check whether the sql statement in the code block is correct an
                 id_="dataZoomX",
                 type_="slider",
                 xAxisIndex=[0],  # 控制 x 轴
-                filter_mode="empty",  # 设置数据过滤模式为 'empty'
-                orient:"horizontal",
             ),
             opts.DataZoomOpts(
                 # 设置 y 轴 dataZoom
                 id_="dataZoomY",
                 type_="slider",
                 yAxisIndex=[0],  # 控制 y 轴
-                filter_mode="empty",  # 设置数据过滤模式为 'empty'
-                orient:"vertical",
             ),
             opts.DataZoomOpts(
                 # 设置 x 轴 dataZoom
                 id_="dataZoomX",
                 type_="inside",
                 xAxisIndex=[0],  # 控制 x 轴
-                filter_mode="empty",  # 设置数据过滤模式为 'empty'
-                orient:"horizontal",
             ),
             opts.DataZoomOpts(
                 # 设置 y 轴 dataZoom
                 id_="dataZoomY",
                 type_="inside",
                 yAxisIndex=[0],  # 控制 y 轴
-                filter_mode="empty",  # 设置数据过滤模式为 'empty'
-                orient:"vertical",
             ),
         ],
         legend_opts=opts.LegendOpts(
@@ -391,9 +354,6 @@ Pay attention to check whether the sql statement in the code block is correct an
                 "saveAsImage": opts.ToolBoxFeatureSaveAsImageOpts(),
             },
         ),
-    )
-    bar.set_series_opts(
-        label_opts=opts.LabelOpts(is_show=false),
     )
 
     ret_json = bar.dump_options()
@@ -417,7 +377,7 @@ POSTGRESQL_ECHART_TIPS_MESS = '''
 Here are some examples of generating postgresql and pyecharts Code based on the given question.
 Please generate new one based on the data and question human asks you, import the neccessary libraries and make sure the code is correct.
 
-IMPORTANT: You need to follow the coding style, and the type of the x, y axis.Title and label are not displayed under any circumstances. In either case, the datazoom and scroll legend must be displayed. The five function buttons of the toolbox must be vertically located on the left side of the line chart and bar chart. The scrolling legend must be positioned horizontally above the chart.  If the x-axis can be sorted according to certain rules (such as date and time size or value size), please sort by the x-axis, otherwise sort by size.But also need to focus on the column name of the uploaded tables(if exists). Generally, PyEcharts does not accept numpy.int or numpy.float, etc. It only supports built-in data type like int, float, and str.
+IMPORTANT: You need to follow the coding style, and the type of the x, y axis.Title and label are not displayed under any circumstances. In either case, the datazoom and scroll legend must be displayed. The datazoom of the x-axis must be left=1, horizontal located below the x-axis, and the datazoom of the y-axis must be right=1, vertical located on the far right side of the container.  The toolbox is only shown in line charts and bar charts. The five function buttons must be located on the left side of the line chart and bar chart according to pop_left=1, pop_top=15%, and vertical. Scroll legends for line and bar charts must be placed above the chart with pop_top=1 and horizontal. The scrolling legends of other charts must be placed vertically on the right side of the chart according to pop_right=1, pop_top=15%, and avoidLabelOverlap should be turned on as much as possible. If the x-axis can be sorted according to certain rules (such as date and time size or value size), please sort by the x-axis, otherwise sort by size.But also need to focus on the column name of the uploaded tables(if exists). Generally, PyEcharts does not accept numpy.int or numpy.float, etc. It only supports built-in data type like int, float, and str.
 Pay attention to check whether the query statement in the execution code block can correctly query the data.
 
 
@@ -471,32 +431,24 @@ Pay attention to check whether the query statement in the execution code block c
                 id_="dataZoomX",
                 type_="slider",
                 xAxisIndex=[0],  # 控制 x 轴
-                filter_mode="empty",  # 设置数据过滤模式为 'empty'
-                orient:"horizontal",
             ),
             opts.DataZoomOpts(
                 # 设置 y 轴 dataZoom
                 id_="dataZoomY",
                 type_="slider",
                 yAxisIndex=[0],  # 控制 y 轴
-                filter_mode="empty",  # 设置数据过滤模式为 'empty'
-                orient:"vertical",
             ),
             opts.DataZoomOpts(
                 # 设置 x 轴 dataZoom
                 id_="dataZoomX",
                 type_="inside",
                 xAxisIndex=[0],  # 控制 x 轴
-                filter_mode="empty",  # 设置数据过滤模式为 'empty'
-                orient:"horizontal",
             ),
             opts.DataZoomOpts(
                 # 设置 y 轴 dataZoom
                 id_="dataZoomY",
                 type_="inside",
                 yAxisIndex=[0],  # 控制 y 轴
-                filter_mode="empty",  # 设置数据过滤模式为 'empty'
-                orient:"vertical",
             ),
         ],
         legend_opts=opts.LegendOpts(
@@ -516,7 +468,6 @@ Pay attention to check whether the query statement in the execution code block c
 
     line.set_series_opts(
         areastyle_opts=opts.AreaStyleOpts(opacity=0.5),
-        label_opts=opts.LabelOpts(is_show=false),
     )
 
     ret_json = line.dump_options()
@@ -570,32 +521,24 @@ Pay attention to check whether the query statement in the execution code block c
                 id_="dataZoomX",
                 type_="slider",
                 xAxisIndex=[0],  # 控制 x 轴
-                filter_mode="empty",  # 设置数据过滤模式为 'empty'
-                orient:"horizontal",
             ),
             opts.DataZoomOpts(
                 # 设置 y 轴 dataZoom
                 id_="dataZoomY",
                 type_="slider",
                 yAxisIndex=[0],  # 控制 y 轴
-                filter_mode="empty",  # 设置数据过滤模式为 'empty'
-                orient:"vertical",
             ),
             opts.DataZoomOpts(
                 # 设置 x 轴 dataZoom
                 id_="dataZoomX",
                 type_="inside",
                 xAxisIndex=[0],  # 控制 x 轴
-                filter_mode="empty",  # 设置数据过滤模式为 'empty'
-                orient:"horizontal",
             ),
             opts.DataZoomOpts(
                 # 设置 y 轴 dataZoom
                 id_="dataZoomY",
                 type_="inside",
                 yAxisIndex=[0],  # 控制 y 轴
-                filter_mode="empty",  # 设置数据过滤模式为 'empty'
-                orient:"vertical",
             ),
         ],
         legend_opts=opts.LegendOpts(
@@ -611,9 +554,6 @@ Pay attention to check whether the query statement in the execution code block c
                 "saveAsImage": opts.ToolBoxFeatureSaveAsImageOpts(),
             },
         ),
-    )
-    bar.set_series_opts(
-        label_opts=opts.LabelOpts(is_show=false),
     )
 
     ret_json = bar.dump_options()
@@ -637,7 +577,7 @@ MONGODB_ECHART_TIPS_MESS = '''
 Here are some examples of generating mongodb and pyecharts Code based on the given question.Please beautify the generated chart to make it clear and readable.
 Please generate new one based on the data and question human asks you, import the neccessary libraries and make sure the code is correct.
 
-IMPORTANT: You need to follow the coding style, and the type of the x, y axis.Title and label are not displayed under any circumstances. In either case, the datazoom and scroll legend must be displayed. The five function buttons of the toolbox must be vertically located on the left side of the line chart and bar chart. The scrolling legend must be positioned horizontally above the chart.  If the x-axis can be sorted according to certain rules (such as date and time size or value size), please sort by the x-axis, otherwise sort by size.But also need to focus on the column name of the uploaded tables(if exists). Generally, PyEcharts does not accept numpy.int or numpy.float, etc. It only supports built-in data type like int, float, and str.
+IMPORTANT: You need to follow the coding style, and the type of the x, y axis.Title and label are not displayed under any circumstances. In either case, the datazoom and scroll legend must be displayed. The datazoom of the x-axis must be left=1, horizontal located below the x-axis, and the datazoom of the y-axis must be right=1, vertical located on the far right side of the container.  The toolbox is only shown in line charts and bar charts. The five function buttons must be located on the left side of the line chart and bar chart according to pop_left=1, pop_top=15%, and vertical. Scroll legends for line and bar charts must be placed above the chart with pop_top=1 and horizontal. The scrolling legends of other charts must be placed vertically on the right side of the chart according to pop_right=1, pop_top=15%, and avoidLabelOverlap should be turned on as much as possible. If the x-axis can be sorted according to certain rules (such as date and time size or value size), please sort by the x-axis, otherwise sort by size.But also need to focus on the column name of the uploaded tables(if exists). Generally, PyEcharts does not accept numpy.int or numpy.float, etc. It only supports built-in data type like int, float, and str.
 Pay attention to check whether the query statement in the execution code block can correctly query the data.
 
 
@@ -683,32 +623,24 @@ Pay attention to check whether the query statement in the execution code block c
                 id_="dataZoomX",
                 type_="slider",
                 xAxisIndex=[0],  # 控制 x 轴
-                filter_mode="empty",  # 设置数据过滤模式为 'empty'
-                orient:"horizontal",
             ),
             opts.DataZoomOpts(
                 # 设置 y 轴 dataZoom
                 id_="dataZoomY",
                 type_="slider",
                 yAxisIndex=[0],  # 控制 y 轴
-                filter_mode="empty",  # 设置数据过滤模式为 'empty'
-                orient:"vertical",
             ),
             opts.DataZoomOpts(
                 # 设置 x 轴 dataZoom
                 id_="dataZoomX",
                 type_="inside",
                 xAxisIndex=[0],  # 控制 x 轴
-                filter_mode="empty",  # 设置数据过滤模式为 'empty'
-                orient:"horizontal",
             ),
             opts.DataZoomOpts(
                 # 设置 y 轴 dataZoom
                 id_="dataZoomY",
                 type_="inside",
                 yAxisIndex=[0],  # 控制 y 轴
-                filter_mode="empty",  # 设置数据过滤模式为 'empty'
-                orient:"vertical",
             ),
         ],
         legend_opts=opts.LegendOpts(
@@ -724,9 +656,6 @@ Pay attention to check whether the query statement in the execution code block c
                 "saveAsImage": opts.ToolBoxFeatureSaveAsImageOpts(),
             },
         ),
-    )
-    bar.set_series_opts(
-        label_opts=opts.LabelOpts(is_show=false),
     )
 
     ret_json = bar.dump_options()

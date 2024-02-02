@@ -12,6 +12,7 @@ config  .aws/config
 
 import json
 import time
+
 try:
     import tiktoken
     import boto3
@@ -87,7 +88,7 @@ class AWSClaudeClient:
                         "content": completion,
                     },
                     "index": 0,
-                    "finish_reason":  Claude_stop_reason_map[data.get("stop_reason")] if 'stop_reason' in data else None
+                    "finish_reason": Claude_stop_reason_map[data.get("stop_reason")] if 'stop_reason' in data else None
                     if data.get("stop_reason")
                     else None,
                 }
@@ -113,4 +114,3 @@ class AWSClaudeClient:
         encoding = tiktoken.get_encoding(encoding_name)
         num_tokens = len(encoding.encode(string))
         return num_tokens
-

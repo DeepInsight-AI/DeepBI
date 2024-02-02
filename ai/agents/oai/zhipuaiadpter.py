@@ -3,6 +3,7 @@
 info:  Define ZhiPuAI
 """
 import json
+
 # import base
 try:
     from zhipuai import ZhipuAI
@@ -93,7 +94,8 @@ class ZhiPuAIClient:
 
     @classmethod
     def parse_function_call(cls, model_response):
-        if "tool_calls" in model_response['choices'][0]['message'] and model_response['choices'][0]['message']['tool_calls'] is not None:
+        if "tool_calls" in model_response['choices'][0]['message'] and model_response['choices'][0]['message'][
+            'tool_calls'] is not None:
             tool_call = model_response['choices'][0]['message'].pop("tool_calls")
             args = tool_call[0]['function']['arguments']
             open_ai_choices = {

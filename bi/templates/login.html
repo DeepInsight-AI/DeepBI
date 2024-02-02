@@ -1,65 +1,232 @@
-{% extends "layouts/signed_out.html" %}
+<!DOCTYPE html>
 
-{% block title %}{{ lang['W_L']['login'] }}{% endblock %}
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>DeepBI网页应用鉴权</title>
+    <script src="/static/jquery.js"></script>
+    <!-- 引入 JSSDK -->
+    <!-- JS 文件版本在升级功能时地址会变化，如有需要（比如使用新增的 API），请重新引用「网页应用开发指南」中的JSSDK链接，确保你当前使用的JSSDK版本是最新的。-->
+    <script
+      type="text/javascript"
+      src="https://lf1-cdn-tos.bytegoofy.com/goofy/lark/op/h5-js-sdk-1.5.16.js"
+    ></script>
+    <!-- 在页面上添加VConsole方便调试-->
+    <script src="https://unpkg.com/vconsole/dist/vconsole.min.js"></script>
+    <script>
+      var vConsole = new window.VConsole();
+    </script>
+  </head>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+    }
 
-{% block content %}
-<div class="fixed-width-page">
-  <div class="bg-white tiled">
-    {% with messages = get_flashed_messages() %}
-      {% if messages %}
-        {% for message in messages %}
-          <div class="alert alert-danger" role="alert" data-test="ErrorMessage">{{ message }}</div>
-        {% endfor %}
-      {% endif %}
-    {% endwith %}
+    body {
+      background-color: #ebf1fd;
+    }
 
-    {% if show_google_openid %}
-      <a href="{{ google_auth_url }}" class="login-button btn btn-default btn-block">
-        <img src="/static/images/google_logo.svg">
-        {{ lang['W_L']['login'] }}
-      </a>
-    {% endif %}
+    .header {
+      display: flex;
+      flex-direction: column;
+      background-color: white;
+    }
 
-    {% if show_saml_login %}
-      <a href="{{ url_for('saml_auth.sp_initiated', org_slug=org_slug, next=next) }}" class="login-button btn btn-default btn-block">SAML认证</a>
-    {% endif %}
+    .header .time-message {
+      display: flex;
+      height: 44px;
+      align-items: center;
+      padding: 0 33.5px;
+      justify-content: space-between;
+    }
 
-    {% if show_remote_user_login %}
-      <a href="{{ url_for('remote_user_auth.login', org_slug=org_slug, next=next) }}" class="login-button btn btn-default btn-block">远程用户登录</a>
-    {% endif %}
+    .header .title {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 44px;
+    }
 
-    {% if show_ldap_login %}
-      <a href="{{ url_for('ldap_auth.login', org_slug=org_slug, next=next) }}" class="login-button btn btn-default btn-block">LDAP/SSO认证</a>
-    {% endif %}
+    .header .title span {
+      font-weight: 500;
+      font-size: 17px;
+    }
 
-    {% if show_password_login %}
-    {% if show_google_openid or show_saml_login or show_remote_user_login or show_ldap_login %}
-      <hr>
-    {% endif %}
+    .img {
+      width: 120px;
+      height: 239px;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      display: flex;
+      align-items: center;
+      flex-direction: column;
+    }
 
-    <form role="form" method="post" name="login">
-      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
-      <div class="form-group">
-        <label for="inputEmail">{{ username_prompt or lang['W_L']['email'] }}</label>
-        <input type="text" class="form-control" id="inputEmail" name="email" value="{{email}}" data-test="Email">
+    .img_div {
+      border-radius: 50%;
+      overflow: hidden;
+      width: 88px;
+      height: 88px;
+      border: 3px white solid;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .text_hello {
+      font-size: 26px;
+      font-weight: 600;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+    }
+
+    .text_hello_name {
+      font-size: 20px;
+      color: #3370ff;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, 50%);
+      text-align: center;
+    }
+
+    .text_hello_welcome {
+      position: absolute;
+      bottom: 0;
+      size: 20px;
+      font-weight: 500;
+      text-align: center;
+      white-space: nowrap;
+    }
+
+    .icon {
+      position: absolute;
+      bottom: 44px;
+      left: 50%;
+      transform: translate(-50%, 0);
+    }
+  </style>
+  <body>
+    <div>
+      <div class="img">
+        <!-- 头像 -->
+        <div id="img_div" class="img_div"></div>
+        <span class="text_hello">Hello</span>
+        <!-- 名称 -->
+        <div id="hello_text_name" class="text_hello_name"></div>
+        <!-- 欢迎语 -->
+        <div id="hello_text_welcome" class="text_hello_welcome"></div>
       </div>
-      <div class="form-group">
-        <label for="inputPassword">{{ lang['W_L']['login_password'] }}</label>
-        <input type="password" class="form-control" id="inputPassword" name="password" data-test="Password">
-      </div>
-      <div class="form-group">
-        <input type="checkbox" id="inputRemember" name="remember" checked>
-        <label for="inputRemember">{{ lang['W_L']['remember_login'] }}</label>
-      </div>
+      <!-- 飞书icon -->
+      <!-- <div class="icon"><img src="../public/svg/icon.svg" /></div> -->
+    </div>
+    <script>
+      let lang = window.navigator.language;
 
-      <button type="submit" class="btn btn-primary btn-block m-t-25">{{ lang['W_L']['submit'] }}</button>
-    </form>
-    {% if not hide_forgot_password %}
-      <div class="m-t-25">
-        <a href="{{ url_for("bi.forgot_password", org_slug=org_slug) }}">{{ lang['W_L']['forget_password'] }}</a>
-      </div>
-    {% endif %}
-    {% endif %}
-  </div>
-</div>
-{% endblock %}
+      $("document").ready(apiAuth());
+
+      function apiAuth() {
+        console.log("start apiAuth");
+        if (!window.h5sdk) {
+          console.log("invalid h5sdk");
+          alert("please open in feishu");
+          return;
+        }
+
+        // 调用config接口的当前网页url
+        const url = encodeURIComponent(location.href.split("#")[0]);
+        console.log("接入方前端将需要鉴权的url发给接入方服务端,url为:", url);
+        // 向接入方服务端发起请求，获取鉴权参数（appId、timestamp、nonceStr、signature）
+        fetch(`/get_config_parameters?url=${url}`)
+          .then(response =>
+            response.json().then(res => {
+              console.log(
+                "接入方服务端返回给接入方前端的结果(前端调用config接口的所需参数):",
+                res
+              );
+              // 通过error接口处理API验证失败后的回调
+              window.h5sdk.error(err => {
+                throw ("h5sdk error:", JSON.stringify(err));
+              });
+              // 调用config接口进行鉴权
+              window.h5sdk.config({
+                appId: res.appid,
+                timestamp: res.timestamp,
+                nonceStr: res.noncestr,
+                signature: res.signature,
+                jsApiList: [],
+                //鉴权成功回调
+                onSuccess: res => {
+                  console.log(`config success: ${JSON.stringify(res)}`);
+                },
+                //鉴权失败回调
+                onFail: err => {
+                  throw `config failed: ${JSON.stringify(err)}`;
+                }
+              });
+              // 完成鉴权后，便可在 window.h5sdk.ready 里调用 JSAPI
+              window.h5sdk.ready(() => {
+                // window.h5sdk.ready回调函数在环境准备就绪时触发
+                // 调用 getUserInfo API 获取已登录用户的基本信息，详细文档参见https://open.feishu.cn/document/uYjL24iN/ucjMx4yNyEjL3ITM
+                tt.getUserInfo({
+                  // getUserInfo API 调用成功回调
+                  success(res) {
+                    console.log(`getUserInfo success: ${JSON.stringify(res)}`);
+                    // 单独定义的函数showUser，用于将用户信息展示在前端页面上
+                    showUser(res.userInfo);
+                  },
+                  // getUserInfo API 调用失败回调
+                  fail(err) {
+                    console.log(`getUserInfo failed:`, JSON.stringify(err));
+                  }
+                });
+                // 调用 showToast API 弹出全局提示框，详细文档参见https://open.feishu.cn/document/uAjLw4CM/uYjL24iN/block/api/showtoast
+                tt.showToast({
+                  title: "鉴权成功",
+                  icon: "success",
+                  duration: 3000,
+                  success(res) {
+                    console.log("showToast 调用成功", res.errMsg);
+                  },
+                  fail(res) {
+                    console.log("showToast 调用失败", res.errMsg);
+                  },
+                  complete(res) {
+                    console.log("showToast 调用结束", res.errMsg);
+                  }
+                });
+              });
+            })
+          )
+          .catch(function(e) {
+            console.error(e);
+          });
+      }
+
+      function showUser(res) {
+        // 展示用户信息
+        // 头像
+        $("#img_div").html(
+          `<img src="${res.avatarUrl}" width="100%" height=""100%/>`
+        );
+        // 名称
+        $("#hello_text_name").text(
+          lang === "zh_CN" || lang === "zh-CN"
+            ? `${res.nickName}`
+            : `${res.i18nName.en_us}`
+        );
+        // 欢迎语
+        $("#hello_text_welcome").text(
+          lang === "zh_CN" || lang === "zh-CN"
+            ? "欢迎使用飞书"
+            : "welcome to Feishu"
+        );
+      }
+    </script>
+  </body>
+</html>

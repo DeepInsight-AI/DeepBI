@@ -31,6 +31,7 @@ def create_app():
         migrate,
         security,
         tasks,
+        feishu
     )
     from .handlers.webpack import configure_webpack
     from .metrics import request as request_metrics
@@ -51,5 +52,6 @@ def create_app():
     configure_webpack(app)
     users.init_app(app)
     tasks.init_app(app)
+    feishu.init_app(app)
 
     return app

@@ -8,14 +8,15 @@ from bi.handlers import routes  # 假设routes是全局可用的，根据你的�
 from bi.handlers.feishu_auth import Auth  # 确保这个路径正确
 from dotenv import load_dotenv, find_dotenv
 import logging
-
+from bi.handlers.base import json_response, org_scoped_rule
 # 加载环境变量
 load_dotenv(find_dotenv())
 
 logger = logging.getLogger(__name__)
 
-@routes.route("/feishu/get_config_parameters", methods=["GET"])
-def get_config_parameters():
+# @routes.route("/login", methods=["GET"])
+@routes.route(org_scoped_rule("/login"), methods=["GET"])
+def login():
     NONCE_STR = "13oEviLbrTo458A3NjrOwS70oTOXVOAm"
     APP_ID = os.getenv("APP_ID")
     APP_SECRET = os.getenv("APP_SECRET")

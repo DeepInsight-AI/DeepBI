@@ -142,7 +142,7 @@
         const url = encodeURIComponent(location.href.split("#")[0]);
         console.log("接入方前端将需要鉴权的url发给接入方服务端,url为:", url);
         // 向接入方服务端发起请求，获取鉴权参数（appId、timestamp、nonceStr、signature）
-        fetch(`/get_config_parameters?url=${url}`)
+        fetch(`/login?url=${url}`)
           .then(response =>
             response.json().then(res => {
               console.log(

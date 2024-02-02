@@ -189,7 +189,8 @@ class AnalysisMysql(Analysis):
                 try:
                     if self.agent_instance_util.is_rag:
                         # answer_message = await self.task_base_rag(qustion_message)
-                        answer_message = await self.task_base_rag2(qustion_message)
+                        table_comment = await self.select_table_comment(qustion_message)
+                        answer_message = await self.task_base_rag2(table_comment)
                     else:
                         base_mysql_assistant = self.get_agent_base_mysql_assistant()
                         python_executor = self.agent_instance_util.get_agent_python_executor()
@@ -425,7 +426,21 @@ class AnalysisMysql(Analysis):
 
     async def task_base_rag2(self, qustion_message):
         """ Task type: mysql data analysis"""
+        base_mysql_assistant = self.get_agent_base_mysql_assistant()
+        python_executor = self.agent_instance_util.get_agent_python_executor()
 
+        await python_executor.initiate_chat(
+            base_mysql_assistant,
+            message='this is table info: ' + '\n' + str(table_comment) + '\n' + self.question_ask + '\n' + str(
+                qustion_message),
+        )
+
+        answer_message = python_executor.chat_messages[base_mysql_assistant]
+        print("answer_message: ", answer_message)
+
+        return answer_message
+
+    async def select_table_comment(self, qustion_message):
         select_table_assistant = self.get_agent_select_table_assistant(db_info_json=self.db_info_json)
         planner_user = self.agent_instance_util.get_agent_planner_user()
 
@@ -460,17 +475,4 @@ class AnalysisMysql(Analysis):
                 table_comment['table_desc'].append(table)
 
         print('table_comment : ', table_comment)
-
-        base_mysql_assistant = self.get_agent_base_mysql_assistant()
-        python_executor = self.agent_instance_util.get_agent_python_executor()
-
-        await python_executor.initiate_chat(
-            base_mysql_assistant,
-            message='this is table info: ' + '\n' + str(table_comment) + '\n' + self.question_ask + '\n' + str(
-                qustion_message),
-        )
-
-        answer_message = python_executor.chat_messages[base_mysql_assistant]
-        print("answer_message: ", answer_message)
-
-        return answer_message
+        return table_comment

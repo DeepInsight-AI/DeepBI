@@ -10,7 +10,7 @@ class Config():
 
         # self.database_model = 'test'
         self.database_model = 'online'
-        self.request_timeout = 55
+        self.request_timeout = 120
         self.max_retry_period = 90
         self.max_retry_times = 3
         self.up_file_path = base_util.get_upload_path()

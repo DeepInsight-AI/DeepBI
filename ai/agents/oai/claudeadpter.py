@@ -78,8 +78,8 @@ class ClaudeClient:
                         "content": completion,
                     },
                     "index": 0,
-                    "finish_reason": stop_reason_map[claude_response.get("stop_reason")]
-                    if claude_response.get("stop_reason")
+                    "finish_reason":  [data.get("stop_reason")]
+                    if data.get("stop_reason")
                     else None,
                 }
             ],

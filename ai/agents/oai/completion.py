@@ -287,7 +287,7 @@ class Completion(openai_Completion):
                         """
                         from .zhipuaiadpter import ZhiPuAIClient
                         response = ZhiPuAIClient.run(use_api_key, data, use_model)
-                    elif "" == use_llm_name:
+                    elif "AWSClaude" == use_llm_name:
                         from claudeadpter import AWSClaudeClient
                         api_data = {
                             'ApiKey': use_api_key,

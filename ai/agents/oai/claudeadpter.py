@@ -84,7 +84,7 @@ class AWSClaudeClient:
                         "content": completion,
                     },
                     "index": 0,
-                    "finish_reason":  Claude_stop_reason_map[data.get("stop_reason")]
+                    "finish_reason":  Claude_stop_reason_map[data.get("stop_reason")] if 'stop_reason' in data else None
                     if data.get("stop_reason")
                     else None,
                 }

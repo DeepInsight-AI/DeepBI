@@ -15,5 +15,12 @@
             "required": [
                 "ApiKey"
             ]
+        },
+        "AWSClaude": {
+            "ApiKey": "",
+            "ApkSecret": "",
+            "required": [
+                "ApiKey", "ApkSecret"
+            ]
         }
 }

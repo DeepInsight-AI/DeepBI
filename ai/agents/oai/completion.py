@@ -219,7 +219,8 @@ class Completion(openai_Completion):
                 use_api_key = config['api_key']
                 llm_setting = config.get("llm_setting")  # all llm config
                 print("~" * 30)
-                print("setting", llm_setting)
+                # print("setting", llm_setting)
+                # use other llm or use default llm
                 other_llm_name = AGENT_LLM_MODEL[agent_name]['llm'] if agent_name in AGENT_LLM_MODEL and \
                                                                        AGENT_LLM_MODEL[agent_name][
                                                                            'replace_default'] and llm_setting is not None else use_llm_name
@@ -237,8 +238,9 @@ class Completion(openai_Completion):
                     if 0 == use_message_count or len(config['messages']) <= use_message_count:
                         print("～~Change LLM model~～ message less", use_message_count, "message count", len(config['messages']))
                         use_llm_name = other_llm_name
-                        use_model = AGENT_LLM_MODEL[agent_name]['model']
+                        use_model = AGENT_LLM_MODEL[agent_name]['model'] if 'model' in AGENT_LLM_MODEL[agent_name] else None
                         use_api_key = llm_setting[AGENT_LLM_MODEL[agent_name]['llm']]['ApiKey']
+                        use_api_secret = llm_setting[AGENT_LLM_MODEL[agent_name]['llm']]['ApkSecret'] if "ApkSecret" in llm_setting[AGENT_LLM_MODEL[agent_name]['llm']] else None
                         if "" == use_api_key:
                             print("agent_llm llm api key empty, use_model:", use_model)
                             raise Exception("agent_llm llm api key empty use_model:", use_model)
@@ -285,6 +287,13 @@ class Completion(openai_Completion):
                         """
                         from .zhipuaiadpter import ZhiPuAIClient
                         response = ZhiPuAIClient.run(use_api_key, data, use_model)
+                    elif "" == use_llm_name:
+                        from claudeadpter import AWSClaudeClient
+                        api_data = {
+                            'ApiKey': use_api_key,
+                            'ApkSecret': use_api_secret
+                        }
+                        response = AWSClaudeClient.run(api_data, data, use_model)
                     else:
                         raise Exception("No model:", use_llm_name)
                 else:

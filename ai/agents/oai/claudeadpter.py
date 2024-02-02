@@ -30,17 +30,25 @@ Claude_stop_reason_map = {
 }
 
 
-class ClaudeClient:
+class AWSClaudeClient:
 
     @classmethod
     def run(cls, apiKey, data, model_name=None, temperature=None):
+        if "ApiKey" not in apiKey or "ApkSecret" not in apiKey:
+            raise Exception("agent_llm llm api key empty use_model: ", model_name, " need apikey and ApkSecret")
+
         if model_name is None:
             model_name = Claude_AI_MODEL
         if temperature is None:
             temperature = Claude_AI_temperature
 
         prompt = cls.input_to_openai(data['messages'])
-        brt = boto3.client(service_name='bedrock-runtime')
+        client_obj = boto3.client(
+            service_name='bedrock-runtime',
+            region_name="us-east-1",
+            aws_access_key_id=apiKey['ApiKey'],
+            aws_secret_access_key=apiKey['ApkSecret']
+        )
         body = json.dumps({
             "prompt": prompt,
             "temperature": temperature,
@@ -50,11 +58,9 @@ class ClaudeClient:
         modelId = model_name
         accept = 'application/json'
         contentType = 'application/json'
-        response = brt.invoke_model(body=body, modelId=modelId, accept=accept, contentType=contentType)
+        response = client_obj.invoke_model(body=body, modelId=modelId, accept=accept, contentType=contentType)
         response_body = json.loads(response.get('body').read())
-
-        # text
-        print(response_body)
+        return cls.output_to_openai(response_body)
         pass
 
     @classmethod
@@ -65,7 +71,7 @@ class ClaudeClient:
             "id": f"chatcmpl-{str(time.time())}",
             "object": "chat.completion.chunk",
             "created": int(time.time()),
-            "model": "gpt-3.5-turbo-0613",
+            "model": Claude_AI_MODEL,
             "usage": {
                 "prompt_tokens": 0,
                 "completion_tokens": completion_tokens,
@@ -78,7 +84,7 @@ class ClaudeClient:
                         "content": completion,
                     },
                     "index": 0,
-                    "finish_reason":  [data.get("stop_reason")]
+                    "finish_reason":  Claude_stop_reason_map[data.get("stop_reason")]
                     if data.get("stop_reason")
                     else None,
                 }

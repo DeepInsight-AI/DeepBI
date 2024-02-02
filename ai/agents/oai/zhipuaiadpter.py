@@ -4,8 +4,10 @@ info:  Define ZhiPuAI
 """
 import json
 # import base
-from zhipuai import ZhipuAI
-
+try:
+    from zhipuai import ZhipuAI
+except:
+    raise Exception("Error, need: pip install zhipuai")
 # define default model
 ZHIPU_AI_MODEL = "glm-4"
 # define default temperature

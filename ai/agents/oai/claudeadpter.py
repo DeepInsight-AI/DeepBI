@@ -9,11 +9,14 @@ pip install tiktoken
 config  .aws/config
         .aws/credentials
 """
-import boto3
-import json
-import tiktoken
-import time
 
+import json
+import time
+try:
+    import tiktoken
+    import boto3
+except:
+    raise Exception("Error, need: pip install boto3 tiktoken")
 # define default model
 Claude_AI_MODEL = 'anthropic.claude-v2:1'
 # define default temperature

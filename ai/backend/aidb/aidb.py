@@ -534,3 +534,40 @@ class AIDB:
             openai_proxy=self.agent_instance_util.openai_proxy,
         )
         return select_analysis_assistant
+
+    async def select_table_comment(self, qustion_message):
+        select_table_assistant = self.get_agent_select_table_assistant(db_info_json=self.db_info_json)
+        planner_user = self.agent_instance_util.get_agent_planner_user()
+
+        await planner_user.initiate_chat(
+            select_table_assistant,
+            message=qustion_message,
+        )
+        select_table_message = planner_user.last_message()["content"]
+
+        match = re.search(
+            r"\[.*\]", select_table_message.strip(), re.MULTILINE | re.IGNORECASE | re.DOTALL
+        )
+        json_str = ""
+        if match:
+            json_str = match.group()
+        print("json_str : ", json_str)
+        select_table_list = json.loads(json_str)
+        print("select_table_list : ", select_table_list)
+
+        delete_table_names = []
+        for table_str in select_table_list:
+            table_name = table_str.get("table_name")
+            delete_table_names.append(table_name)
+
+        print("delete_table_names : ", delete_table_names)
+
+        table_comment = {'table_desc': []}
+
+        for table in self.db_info_json['table_desc']:
+            # print('table : ', table)
+            if table['table_name'] in delete_table_names:
+                table_comment['table_desc'].append(table)
+
+        print('table_comment : ', table_comment)
+        return table_comment

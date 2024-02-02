@@ -24,7 +24,7 @@ class Bi(Flask):
 
 def create_app():
     from . import (
-        authentication,
+        # authentication,
         handlers,
         limiter,
         mail,
@@ -46,7 +46,7 @@ def create_app():
     db.init_app(app)
     migrate.init_app(app, db)
     mail.init_app(app)
-    authentication.init_app(app)
+    # authentication.init_app(app)
     limiter.init_app(app)
     handlers.init_app(app)
     configure_webpack(app)

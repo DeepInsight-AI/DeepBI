@@ -1,7 +1,7 @@
 CSV_ECHART_TIPS_MESS = """Here are some examples of generating mysql and pyecharts Code based on the given question.
  Please generate new one based on the data and question human asks you, import the neccessary libraries and make sure the code is correct.
 
-IMPORTANT: You need to follow the coding style, and the type of the x, y axis.Don't show titles and labels. If the x-axis can be sorted according to certain rules (such as date and time size or value size), please sort by the x-axis, otherwise sort by size.But also need to focus on the column name of the uploaded tables(if exists). Generally, PyEcharts does not accept numpy.int or numpy.float, etc. It only supports built-in data type like int, float, and str.
+IMPORTANT: You need to follow the coding style, and the type of the x, y axis.Title and label are not displayed under any circumstances. In either case, the datazoom and scroll legend must be displayed. The datazoom of the x-axis must be left=1, horizontal located below the x-axis, and the datazoom of the y-axis must be right=1, vertical located on the far right side of the container.  The toolbox is only shown in line charts and bar charts. The five function buttons must be located on the left side of the line chart and bar chart according to pop_left=1, pop_top=15%, and vertical. Scroll legends for line and bar charts must be placed above the chart with pop_top=1 and horizontal. The scrolling legends of other charts must be placed vertically on the right side of the chart according to pop_right=1, pop_top=15%, and avoidLabelOverlap should be turned on as much as possible. If the x-axis can be sorted according to certain rules (such as date and time size or value size), please sort by the x-axis, otherwise sort by size.But also need to focus on the column name of the uploaded tables(if exists). Generally, PyEcharts does not accept numpy.int or numpy.float, etc. It only supports built-in data type like int, float, and str.
 Pay attention to check whether the query statement in the execution code block can correctly query the data.
 
 
@@ -33,11 +33,49 @@ Pay attention to check whether the query statement in the execution code block c
             type_="value",
             name="price",
         ),
-        title_opts=opts.TitleOpts(title="Sales and Profit over Time",is_show=False),
+        title_opts=opts.TitleOpts(title="Sales and Profit over Time",is_show=false),
+        datazoom_opts=[
+            opts.DataZoomOpts(
+                # 设置 x 轴 dataZoom
+                id_="dataZoomX",
+                type_="slider",
+                xAxisIndex=[0],  # 控制 x 轴
+            ),
+            opts.DataZoomOpts(
+                # 设置 y 轴 dataZoom
+                id_="dataZoomY",
+                type_="slider",
+                yAxisIndex=[0],  # 控制 y 轴
+            ),
+            opts.DataZoomOpts(
+                # 设置 x 轴 dataZoom
+                id_="dataZoomX",
+                type_="inside",
+                xAxisIndex=[0],  # 控制 x 轴
+            ),
+            opts.DataZoomOpts(
+                # 设置 y 轴 dataZoom
+                id_="dataZoomY",
+                type_="inside",
+                yAxisIndex=[0],  # 控制 y 轴
+            ),
+        ],
+        legend_opts=opts.LegendOpts(
+            type_="scroll",  # 设置图例类型为滚动
+        ),
+        toolbox_opts=opts.ToolboxOpts(
+            is_show=true,
+            feature={
+                "dataZoom": opts.ToolBoxFeatureDataZoomOpts(),
+                "dataView": opts.ToolBoxFeatureDataViewOpts(),
+                "magicType": opts.ToolBoxFeatureMagicTypeOpts(type_=['line', 'bar','stack']),
+                "restore": opts.ToolBoxFeatureRestoreOpts(),
+                "saveAsImage": opts.ToolBoxFeatureSaveAsImageOpts(),
+            },
+        ),
     )
     line.set_series_opts(
         areastyle_opts=opts.AreaStyleOpts(opacity=0.5),
-        label_opts=opts.LabelOpts(is_show=False),
     )
     ret_json = line.dump_options()
     echart_code = json.loads(ret_json)
@@ -76,10 +114,46 @@ Pay attention to check whether the query statement in the execution code block c
             type_="value",
             name="Sales",
         ),
-        title_opts=opts.TitleOpts(title="Sales over Years",is_show=False),
-    )
-    bar.set_series_opts(
-        label_opts=opts.LabelOpts(is_show=False),
+        title_opts=opts.TitleOpts(title="Sales over Years",is_show=false),
+        datazoom_opts=[
+            opts.DataZoomOpts(
+                # 设置 x 轴 dataZoom
+                id_="dataZoomX",
+                type_="slider",
+                xAxisIndex=[0],  # 控制 x 轴
+            ),
+            opts.DataZoomOpts(
+                # 设置 y 轴 dataZoom
+                id_="dataZoomY",
+                type_="slider",
+                yAxisIndex=[0],  # 控制 y 轴
+            ),
+            opts.DataZoomOpts(
+                # 设置 x 轴 dataZoom
+                id_="dataZoomX",
+                type_="inside",
+                xAxisIndex=[0],  # 控制 x 轴
+            ),
+            opts.DataZoomOpts(
+                # 设置 y 轴 dataZoom
+                id_="dataZoomY",
+                type_="inside",
+                yAxisIndex=[0],  # 控制 y 轴
+            ),
+        ],
+        legend_opts=opts.LegendOpts(
+            type_="scroll",  # 设置图例类型为滚动
+        ),
+        toolbox_opts=opts.ToolboxOpts(
+            is_show=true,
+            feature={
+                "dataZoom": opts.ToolBoxFeatureDataZoomOpts(),
+                "dataView": opts.ToolBoxFeatureDataViewOpts(),
+                "magicType": opts.ToolBoxFeatureMagicTypeOpts(type_=['line', 'bar','stack']),
+                "restore": opts.ToolBoxFeatureRestoreOpts(),
+                "saveAsImage": opts.ToolBoxFeatureSaveAsImageOpts(),
+            },
+        ),
     )
     # Render the chart
     ret_json = bar.dump_options()
@@ -101,7 +175,7 @@ MYSQL_ECHART_TIPS_MESS = '''
 Here are some examples of generating mysql and pyecharts Code based on the given question.
 Please generate new one based on the data and question human asks you, import the neccessary libraries and make sure the code is correct.
 
-IMPORTANT: You need to follow the coding style, and the type of the x, y axis.Don't show titles and labels. If the x-axis can be sorted according to certain rules (such as date and time size or value size), please sort by the x-axis, otherwise sort by size.But also need to focus on the column name of the uploaded tables(if exists). Generally, PyEcharts does not accept numpy.int or numpy.float, etc. It only supports built-in data type like int, float, and str.
+IMPORTANT: You need to follow the coding style, and the type of the x, y axis.Title and label are not displayed under any circumstances. In either case, the datazoom and scroll legend must be displayed. The datazoom of the x-axis must be left=1, horizontal located below the x-axis, and the datazoom of the y-axis must be right=1, vertical located on the far right side of the container.  The toolbox is only shown in line charts and bar charts. The five function buttons must be located on the left side of the line chart and bar chart according to pop_left=1, pop_top=15%, and vertical. Scroll legends for line and bar charts must be placed above the chart with pop_top=1 and horizontal. The scrolling legends of other charts must be placed vertically on the right side of the chart according to pop_right=1, pop_top=15%, and avoidLabelOverlap should be turned on as much as possible. If the x-axis can be sorted according to certain rules (such as date and time size or value size), please sort by the x-axis, otherwise sort by size.But also need to focus on the column name of the uploaded tables(if exists). Generally, PyEcharts does not accept numpy.int or numpy.float, etc. It only supports built-in data type like int, float, and str.
 Pay attention to check whether the query statement in the execution code block can correctly query the data.
 The sql statements that need to be executed in the python code are surrounded by ", for example: query = "SELECT year, sales, profit FROM your_table"
 Pay attention to check whether the sql statement in the code block is correct and available.
@@ -142,20 +216,58 @@ Pay attention to check whether the sql statement in the code block is correct an
         xaxis_opts=opts.AxisOpts(
             type_="category",
             name="Month",
-            boundary_gap=False
+            boundary_gap=false
         ),
         yaxis_opts=opts.AxisOpts(
             type_="value",
             name="Amount",
-            axistick_opts=opts.AxisTickOpts(is_show=True),
-            splitline_opts=opts.SplitLineOpts(is_show=True),
+            axistick_opts=opts.AxisTickOpts(is_show=true),
+            splitline_opts=opts.SplitLineOpts(is_show=true),
         ),
-        title_opts=opts.TitleOpts(title="Sales and Profit over Time",is_show=False),
+        title_opts=opts.TitleOpts(title="Sales and Profit over Time",is_show=false),
+        datazoom_opts=[
+            opts.DataZoomOpts(
+                # 设置 x 轴 dataZoom
+                id_="dataZoomX",
+                type_="slider",
+                xAxisIndex=[0],  # 控制 x 轴
+            ),
+            opts.DataZoomOpts(
+                # 设置 y 轴 dataZoom
+                id_="dataZoomY",
+                type_="slider",
+                yAxisIndex=[0],  # 控制 y 轴
+            ),
+            opts.DataZoomOpts(
+                # 设置 x 轴 dataZoom
+                id_="dataZoomX",
+                type_="inside",
+                xAxisIndex=[0],  # 控制 x 轴
+            ),
+            opts.DataZoomOpts(
+                # 设置 y 轴 dataZoom
+                id_="dataZoomY",
+                type_="inside",
+                yAxisIndex=[0],  # 控制 y 轴
+            ),
+        ],
+        legend_opts=opts.LegendOpts(
+            type_="scroll",  # 设置图例类型为滚动
+        ),
+        toolbox_opts=opts.ToolboxOpts(
+            is_show=true,
+            feature={
+                "dataZoom": opts.ToolBoxFeatureDataZoomOpts(),
+                "dataView": opts.ToolBoxFeatureDataViewOpts(),
+                "magicType": opts.ToolBoxFeatureMagicTypeOpts(type_=['line', 'bar','stack']),
+                "restore": opts.ToolBoxFeatureRestoreOpts(),
+                "saveAsImage": opts.ToolBoxFeatureSaveAsImageOpts(),
+            },
+        ),
     )
 
     line.set_series_opts(
         areastyle_opts=opts.AreaStyleOpts(opacity=0.5),
-        label_opts=opts.LabelOpts(is_show=False),
     )
 
     ret_json = line.dump_options()
@@ -202,10 +314,46 @@ Pay attention to check whether the sql statement in the code block is correct an
             type_="value",
             name="Sales",
         ),
-        title_opts=opts.TitleOpts(title="Sales over Years",False),
-    )
-    bar.set_series_opts(
-        label_opts=opts.LabelOpts(is_show=False),
+        title_opts=opts.TitleOpts(title="Sales over Years",false),
+        datazoom_opts=[
+            opts.DataZoomOpts(
+                # 设置 x 轴 dataZoom
+                id_="dataZoomX",
+                type_="slider",
+                xAxisIndex=[0],  # 控制 x 轴
+            ),
+            opts.DataZoomOpts(
+                # 设置 y 轴 dataZoom
+                id_="dataZoomY",
+                type_="slider",
+                yAxisIndex=[0],  # 控制 y 轴
+            ),
+            opts.DataZoomOpts(
+                # 设置 x 轴 dataZoom
+                id_="dataZoomX",
+                type_="inside",
+                xAxisIndex=[0],  # 控制 x 轴
+            ),
+            opts.DataZoomOpts(
+                # 设置 y 轴 dataZoom
+                id_="dataZoomY",
+                type_="inside",
+                yAxisIndex=[0],  # 控制 y 轴
+            ),
+        ],
+        legend_opts=opts.LegendOpts(
+            type_="scroll",  # 设置图例类型为滚动
+        ),
+        toolbox_opts=opts.ToolboxOpts(
+            is_show=true,
+            feature={
+                "dataZoom": opts.ToolBoxFeatureDataZoomOpts(),
+                "dataView": opts.ToolBoxFeatureDataViewOpts(),
+                "magicType": opts.ToolBoxFeatureMagicTypeOpts(type_=['line', 'bar','stack']),
+                "restore": opts.ToolBoxFeatureRestoreOpts(),
+                "saveAsImage": opts.ToolBoxFeatureSaveAsImageOpts(),
+            },
+        ),
     )
 
     ret_json = bar.dump_options()
@@ -229,7 +377,7 @@ POSTGRESQL_ECHART_TIPS_MESS = '''
 Here are some examples of generating postgresql and pyecharts Code based on the given question.
 Please generate new one based on the data and question human asks you, import the neccessary libraries and make sure the code is correct.
 
-IMPORTANT: You need to follow the coding style, and the type of the x, y axis.Don't show titles and labels. If the x-axis can be sorted according to certain rules (such as date and time size or value size), please sort by the x-axis, otherwise sort by size.But also need to focus on the column name of the uploaded tables(if exists). Generally, PyEcharts does not accept numpy.int or numpy.float, etc. It only supports built-in data type like int, float, and str.
+IMPORTANT: You need to follow the coding style, and the type of the x, y axis.Title and label are not displayed under any circumstances. In either case, the datazoom and scroll legend must be displayed. The datazoom of the x-axis must be left=1, horizontal located below the x-axis, and the datazoom of the y-axis must be right=1, vertical located on the far right side of the container.  The toolbox is only shown in line charts and bar charts. The five function buttons must be located on the left side of the line chart and bar chart according to pop_left=1, pop_top=15%, and vertical. Scroll legends for line and bar charts must be placed above the chart with pop_top=1 and horizontal. The scrolling legends of other charts must be placed vertically on the right side of the chart according to pop_right=1, pop_top=15%, and avoidLabelOverlap should be turned on as much as possible. If the x-axis can be sorted according to certain rules (such as date and time size or value size), please sort by the x-axis, otherwise sort by size.But also need to focus on the column name of the uploaded tables(if exists). Generally, PyEcharts does not accept numpy.int or numpy.float, etc. It only supports built-in data type like int, float, and str.
 Pay attention to check whether the query statement in the execution code block can correctly query the data.
 
 
@@ -268,20 +416,58 @@ Pay attention to check whether the query statement in the execution code block c
         xaxis_opts=opts.AxisOpts(
             type_="category",
             name="Year",
-            boundary_gap=False
+            boundary_gap=false
         ),
         yaxis_opts=opts.AxisOpts(
             type_="value",
             name="Amount",
-            axistick_opts=opts.AxisTickOpts(is_show=True),
-            splitline_opts=opts.SplitLineOpts(is_show=True),
+            axistick_opts=opts.AxisTickOpts(is_show=true),
+            splitline_opts=opts.SplitLineOpts(is_show=true),
         ),
-        title_opts=opts.TitleOpts(title="Sales and Profit over Time",is_show=False),
+        title_opts=opts.TitleOpts(title="Sales and Profit over Time",is_show=false),
+        datazoom_opts=[
+            opts.DataZoomOpts(
+                # 设置 x 轴 dataZoom
+                id_="dataZoomX",
+                type_="slider",
+                xAxisIndex=[0],  # 控制 x 轴
+            ),
+            opts.DataZoomOpts(
+                # 设置 y 轴 dataZoom
+                id_="dataZoomY",
+                type_="slider",
+                yAxisIndex=[0],  # 控制 y 轴
+            ),
+            opts.DataZoomOpts(
+                # 设置 x 轴 dataZoom
+                id_="dataZoomX",
+                type_="inside",
+                xAxisIndex=[0],  # 控制 x 轴
+            ),
+            opts.DataZoomOpts(
+                # 设置 y 轴 dataZoom
+                id_="dataZoomY",
+                type_="inside",
+                yAxisIndex=[0],  # 控制 y 轴
+            ),
+        ],
+        legend_opts=opts.LegendOpts(
+            type_="scroll",  # 设置图例类型为滚动
+        ),
+        toolbox_opts=opts.ToolboxOpts(
+            is_show=true,
+            feature={
+                "dataZoom": opts.ToolBoxFeatureDataZoomOpts(),
+                "dataView": opts.ToolBoxFeatureDataViewOpts(),
+                "magicType": opts.ToolBoxFeatureMagicTypeOpts(type_=['line', 'bar','stack']),
+                "restore": opts.ToolBoxFeatureRestoreOpts(),
+                "saveAsImage": opts.ToolBoxFeatureSaveAsImageOpts(),
+            },
+        ),
     )
 
     line.set_series_opts(
         areastyle_opts=opts.AreaStyleOpts(opacity=0.5),
-        label_opts=opts.LabelOpts(is_show=False),
     )
 
     ret_json = line.dump_options()
@@ -328,10 +514,46 @@ Pay attention to check whether the query statement in the execution code block c
             type_="value",
             name="Sales",
         ),
-        title_opts=opts.TitleOpts(title="Sales over Years",is_show=False),
-    )
-    bar.set_series_opts(
-        label_opts=opts.LabelOpts(is_show=False),
+        title_opts=opts.TitleOpts(title="Sales over Years",is_show=false),
+        datazoom_opts=[
+            opts.DataZoomOpts(
+                # 设置 x 轴 dataZoom
+                id_="dataZoomX",
+                type_="slider",
+                xAxisIndex=[0],  # 控制 x 轴
+            ),
+            opts.DataZoomOpts(
+                # 设置 y 轴 dataZoom
+                id_="dataZoomY",
+                type_="slider",
+                yAxisIndex=[0],  # 控制 y 轴
+            ),
+            opts.DataZoomOpts(
+                # 设置 x 轴 dataZoom
+                id_="dataZoomX",
+                type_="inside",
+                xAxisIndex=[0],  # 控制 x 轴
+            ),
+            opts.DataZoomOpts(
+                # 设置 y 轴 dataZoom
+                id_="dataZoomY",
+                type_="inside",
+                yAxisIndex=[0],  # 控制 y 轴
+            ),
+        ],
+        legend_opts=opts.LegendOpts(
+            type_="scroll",  # 设置图例类型为滚动
+        ),
+        toolbox_opts=opts.ToolboxOpts(
+            is_show=true,
+            feature={
+                "dataZoom": opts.ToolBoxFeatureDataZoomOpts(),
+                "dataView": opts.ToolBoxFeatureDataViewOpts(),
+                "magicType": opts.ToolBoxFeatureMagicTypeOpts(type_=['line', 'bar','stack']),
+                "restore": opts.ToolBoxFeatureRestoreOpts(),
+                "saveAsImage": opts.ToolBoxFeatureSaveAsImageOpts(),
+            },
+        ),
     )
 
     ret_json = bar.dump_options()
@@ -352,10 +574,10 @@ Pay attention to check whether the query statement in the execution code block c
 '''
 
 MONGODB_ECHART_TIPS_MESS = '''
-Here are some examples of generating mongodb and pyecharts Code based on the given question.
+Here are some examples of generating mongodb and pyecharts Code based on the given question.Please beautify the generated chart to make it clear and readable.
 Please generate new one based on the data and question human asks you, import the neccessary libraries and make sure the code is correct.
 
-IMPORTANT: You need to follow the coding style, and the type of the x, y axis.Don't show titles and labels. If the x-axis can be sorted according to certain rules (such as date and time size or value size), please sort by the x-axis, otherwise sort by size.But also need to focus on the column name of the uploaded tables(if exists). Generally, PyEcharts does not accept numpy.int or numpy.float, etc. It only supports built-in data type like int, float, and str.
+IMPORTANT: You need to follow the coding style, and the type of the x, y axis.Title and label are not displayed under any circumstances. In either case, the datazoom and scroll legend must be displayed. The datazoom of the x-axis must be left=1, horizontal located below the x-axis, and the datazoom of the y-axis must be right=1, vertical located on the far right side of the container.  The toolbox is only shown in line charts and bar charts. The five function buttons must be located on the left side of the line chart and bar chart according to pop_left=1, pop_top=15%, and vertical. Scroll legends for line and bar charts must be placed above the chart with pop_top=1 and horizontal. The scrolling legends of other charts must be placed vertically on the right side of the chart according to pop_right=1, pop_top=15%, and avoidLabelOverlap should be turned on as much as possible. If the x-axis can be sorted according to certain rules (such as date and time size or value size), please sort by the x-axis, otherwise sort by size.But also need to focus on the column name of the uploaded tables(if exists). Generally, PyEcharts does not accept numpy.int or numpy.float, etc. It only supports built-in data type like int, float, and str.
 Pay attention to check whether the query statement in the execution code block can correctly query the data.
 
 
@@ -394,10 +616,46 @@ Pay attention to check whether the query statement in the execution code block c
             type_="value",
             name="Sales",
         ),
-        title_opts=opts.TitleOpts(title="Sales over Years",is_show=False),
-    )
-    bar.set_series_opts(
-        label_opts=opts.LabelOpts(is_show=False),
+        title_opts=opts.TitleOpts(title="Sales over Years",is_show=false),
+        datazoom_opts=[
+            opts.DataZoomOpts(
+                # 设置 x 轴 dataZoom
+                id_="dataZoomX",
+                type_="slider",
+                xAxisIndex=[0],  # 控制 x 轴
+            ),
+            opts.DataZoomOpts(
+                # 设置 y 轴 dataZoom
+                id_="dataZoomY",
+                type_="slider",
+                yAxisIndex=[0],  # 控制 y 轴
+            ),
+            opts.DataZoomOpts(
+                # 设置 x 轴 dataZoom
+                id_="dataZoomX",
+                type_="inside",
+                xAxisIndex=[0],  # 控制 x 轴
+            ),
+            opts.DataZoomOpts(
+                # 设置 y 轴 dataZoom
+                id_="dataZoomY",
+                type_="inside",
+                yAxisIndex=[0],  # 控制 y 轴
+            ),
+        ],
+        legend_opts=opts.LegendOpts(
+            type_="scroll",  # 设置图例类型为滚动
+        ),
+        toolbox_opts=opts.ToolboxOpts(
+            is_show=true,
+            feature={
+                "dataZoom": opts.ToolBoxFeatureDataZoomOpts(),
+                "dataView": opts.ToolBoxFeatureDataViewOpts(),
+                "magicType": opts.ToolBoxFeatureMagicTypeOpts(type_=['line', 'bar','stack']),
+                "restore": opts.ToolBoxFeatureRestoreOpts(),
+                "saveAsImage": opts.ToolBoxFeatureSaveAsImageOpts(),
+            },
+        ),
     )
 
     ret_json = bar.dump_options()

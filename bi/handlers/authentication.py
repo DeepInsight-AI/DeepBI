@@ -1,5 +1,5 @@
 import logging
-from flask import abort, flash, redirect, render_template, request, url_for
+from flask import abort, flash, redirect, render_template, request, url_for,session
 import hashlib
 import base64
 import json
@@ -24,6 +24,7 @@ from bi.handlers.language import get_config_language
 logger = logging.getLogger(__name__)
 lang = get_config_language()
 
+USER_INFO_KEY = "UserInfo"
 
 def encrypt(text, key):
     key_hash = hashlib.sha256(key.encode()).digest()
@@ -267,59 +268,115 @@ def verification_email(org_slug=None):
             "message": "Please check your email inbox in order to verify your email address."
         }
     )
+    
+# 业务逻辑类
+class Biz(object):
+    @staticmethod
+    def home_handler():
+        # 主页加载流程
+        return Biz._show_user_info()
+
+    @staticmethod
+    def login_handler():
+        # 需要走免登流程
+        return render_template("login.html", user_info={"name": "unknown"}, login_info="needLogin")
+
+    # @staticmethod
+    # def login_failed_handler(err_info):
+        # 出错后的页面加载流程
+        # return Biz._show_err_info(err_info)
+
+    # Session in Flask has a concept very similar to that of a cookie, 
+    # i.e. data containing identifier to recognize the computer on the network, 
+    # except the fact that session data is stored in a server.
+    @staticmethod
+    def _show_user_info():
+        # 直接展示session中存储的用户信息
+        return render_template("login.html", user_info=session[USER_INFO_KEY], login_info="alreadyLogin")
+
+    # @staticmethod
+    # def _show_err_info(err_info):
+        ## 将错误信息展示在页面上
+        # return render_template("err_info.html", err_info=err_info)
 
 
 @routes.route(org_scoped_rule("/login"), methods=["GET", "POST"])
 @limiter.limit(settings.THROTTLE_LOGIN_PATTERN)
-def login(org_slug=None):
-    # We intentionally use == as otherwise it won't actually use the proxy. So weird :O
-    # noinspection PyComparisonWithNone
-    if current_org == None and not settings.MULTI_ORG:
-        return redirect("/setup")
-    elif current_org == None:
-        return redirect("/")
+# new源
+def login():
+    # APP_ID = os.getenv("APP_ID")
+    # APP_SECRET = os.getenv("APP_SECRET")
+    # FEISHU_HOST = os.getenv("FEISHU_HOST")
+    # auth = Auth(FEISHU_HOST, APP_ID, APP_SECRET)
+    print("zxctest=====================")
+    # 打开本网页应用会执行的第一个函数
 
-    index_url = url_for("bi.index", org_slug=org_slug)
-    unsafe_next_path = request.args.get("next", index_url)
-    next_path = get_next_path(unsafe_next_path)
-    if current_user.is_authenticated:
-        return redirect(next_path)
+    # 如果session当中没有存储user info，则走免登业务流程Biz.login_handler()
+    if USER_INFO_KEY not in session:
+        logging.info("need to get user information")
+        return Biz.login_handler()
+    else:
+        # 如果session中已经有user info，则直接走主页加载流程Biz.home_handler()
+        logging.info("already have user information")
+        return Biz.home_handler()
 
-    if request.method == "POST" and current_org.get_setting("auth_password_login_enabled"):
-        try:
-            org = current_org._get_current_object()
-            user = models.User.get_by_email_and_org(request.form["email"], org)
-            if (
-                user
-                and not user.is_disabled
-                and user.verify_password(request.form["password"])
-            ):
-                remember = "remember" in request.form
-                login_user(user, remember=remember)
-                return redirect(next_path)
 
-            else:
-                flash(lang['W_L']['email_or_password_error'])
-        except NoResultFound:
-            flash(lang['W_L']['email_or_password_error'])
-    elif request.method == "POST" and not current_org.get_setting("auth_password_login_enabled"):
-        flash(lang['W_L']['org_password_error'])
 
-    google_auth_url = get_google_auth_url(next_path)
 
-    return render_template(
-        "login.html",
-        org_slug=org_slug,
-        next=next_path,
-        email=request.form.get("email", ""),
-        show_google_openid=settings.GOOGLE_OAUTH_ENABLED,
-        google_auth_url=google_auth_url,
-        show_password_login=current_org.get_setting("auth_password_login_enabled"),
-        show_saml_login=current_org.get_setting("auth_saml_enabled"),
-        show_remote_user_login=settings.REMOTE_USER_LOGIN_ENABLED,
-        show_ldap_login=settings.LDAP_LOGIN_ENABLED,
-        lang=lang,
-    )
+
+# old源
+# def login(org_slug=None):
+#     # We intentionally use == as otherwise it won't actually use the proxy. So weird :O
+#     # noinspection PyComparisonWithNone
+#     if current_org == None and not settings.MULTI_ORG:
+#         return redirect("/setup")
+#     elif current_org == None:
+#         return redirect("/")
+
+#     index_url = url_for("bi.index", org_slug=org_slug)
+#     unsafe_next_path = request.args.get("next", index_url)
+#     next_path = get_next_path(unsafe_next_path)
+#     if current_user.is_authenticated:
+#         return redirect(next_path)
+
+#     if request.method == "POST" and current_org.get_setting("auth_password_login_enabled"):
+#         try:
+#             org = current_org._get_current_object()
+#             user = models.User.get_by_email_and_org(request.form["email"], org)
+#             if (
+#                 user
+#                 and not user.is_disabled
+#                 and user.verify_password(request.form["password"])
+#             ):
+#                 remember = "remember" in request.form
+#                 login_user(user, remember=remember)
+#                 return redirect(next_path)
+
+#             else:
+#                 flash(lang['W_L']['email_or_password_error'])
+#         except NoResultFound:
+#             flash(lang['W_L']['email_or_password_error'])
+#     elif request.method == "POST" and not current_org.get_setting("auth_password_login_enabled"):
+#         flash(lang['W_L']['org_password_error'])
+
+#     google_auth_url = get_google_auth_url(next_path)
+
+#     return render_template(
+#         "login.html",
+#         org_slug=org_slug,
+#         next=next_path,
+#         email=request.form.get("email", ""),
+#         show_google_openid=settings.GOOGLE_OAUTH_ENABLED,
+#         google_auth_url=google_auth_url,
+#         show_password_login=current_org.get_setting("auth_password_login_enabled"),
+#         show_saml_login=current_org.get_setting("auth_saml_enabled"),
+#         show_remote_user_login=settings.REMOTE_USER_LOGIN_ENABLED,
+#         show_ldap_login=settings.LDAP_LOGIN_ENABLED,
+#         lang=lang,
+#     )
+
+
+
 
 @routes.route(org_scoped_rule("/pretty_dashboard/<page>"))
 def test(page):

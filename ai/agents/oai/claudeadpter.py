@@ -114,3 +114,8 @@ class AWSClaudeClient:
         encoding = tiktoken.get_encoding(encoding_name)
         num_tokens = len(encoding.encode(string))
         return num_tokens
+
+    @classmethod
+    def input_to_openai_function_call(cls, data):
+        start_string = "You may call them like this. Only invoke one function at a time and wait for the results before invoking another function:"
+        pass

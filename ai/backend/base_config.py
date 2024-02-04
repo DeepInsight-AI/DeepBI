@@ -45,26 +45,19 @@ class Config():
         self.type_log_data = 'log_data'
         self.type_test = 'test'
 
-        self.local_base_mysql_info = """
-        """
+        self.local_base_mysql_info = """ """
 
-        self.local_base_mongodb_info = """
-                """
+        self.local_base_mongodb_info = """ """
 
-        self.online_base_mysql_info = """
-        """
+        self.online_base_mysql_info = """ """
 
-        self.local_base_postgresql_info = """
-        """
+        self.local_base_postgresql_info = """ """
 
-        self.local_base_csv_info = """
-        """
+        self.local_base_csv_info = """ """
 
-        self.local_base_xls_info = """
-        """
+        self.local_base_xls_info = """ """
 
-        self.default_base_message = """
-                """
+        self.default_base_message = """ """
 
 
 CONFIG = Config()

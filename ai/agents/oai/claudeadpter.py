@@ -103,7 +103,7 @@ class AWSClaudeClient:
                 },
                 "choices": [
                     {
-                        "delta": {
+                        "message": {
                             "role": "assistant",
                             "content": completion,
                         },

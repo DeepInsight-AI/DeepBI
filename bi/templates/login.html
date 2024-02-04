@@ -197,7 +197,7 @@
                       if (errno === 103) {
                         // 客户端版本过低，不支持requestAccess，需要改为调用requestAuthCode
                         console.log("客户端版本过低，不支持requestAccess，需要改为调用requestAuthCode");
-                        callRequestAuthCode();
+                        callRequestAuthCode(res1.appid);
                       } else {
                         console.log(`requestAccess failed, err:`, JSON.stringify(error));
                         // 用户拒绝授权或者授权失败
@@ -206,13 +206,26 @@
                   });
                 } else {
                   // JSSDK版本过低，不支持requestAccess，需要改为调用requestAuthCode
-                  callRequestAuthCode();
+                  callRequestAuthCode(res1.appid);
                 }
 
-                function callRequestAuthCode() {
+                
+
+                
+              });
+            })
+          )
+          .catch(function(e) {
+            // 从服务端获取app_id失败后的处理
+            console.error(e);
+          });
+      }
+
+
+      function callRequestAuthCode(appid) {
                   window.tt.requestAuthCode({
                     // 网页应用 App ID
-                    appId: res1.appid,
+                    appId: appid,
                     success: res => {
                       // 用户免登录后返回预授权码
                       const { code } = res;
@@ -226,8 +239,8 @@
                   });
                 }
 
-                // 发送code到服务端
-                function sendCodeToServer(code) {
+      // 发送code到服务端
+      function sendCodeToServer(code) {
                   fetch(`/callback?code=${code}`)
                     .then(response2 =>
                       response2.json().then(res2 => {
@@ -240,14 +253,7 @@
                       console.error(e, "getUserInfo error");
                     });
                 }
-              });
-            })
-          )
-          .catch(function(e) {
-            // 从服务端获取app_id失败后的处理
-            console.error(e);
-          });
-      }
+
 
       function showUser(res) {
         // 展示用户信息

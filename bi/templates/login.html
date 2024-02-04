@@ -139,15 +139,15 @@
       </div>
   </div>
     <script>
-      const login_info = '{{ login_info }}';
-    console.log("login info: ", login_info);
-    if (login_info == "alreadyLogin") {
-        const user_info = JSON.parse('{{ user_info | tojson | safe }}');
-        console.log("user: ", user_info.name);
-        $('document').ready(showUser(user_info))
-    } else {
-        $('document').ready(apiAuth())
-    }
+    //   const login_info = '{{ login_info }}';
+    // console.log("login info: ", login_info);
+    // if (login_info == "alreadyLogin") {
+    //     const user_info = JSON.parse('{{ user_info | tojson | safe }}');
+    //     console.log("user: ", user_info.name);
+    //     $('document').ready(showUser(user_info))
+    // } else {
+    //     $('document').ready(apiAuth())
+    // }
 
 
 
@@ -161,7 +161,6 @@ function apiAuth() {
         alert('please open in feishu')
         return
     }
-    return
     // 通过服务端的Route: get_appid获取app_id
     // 服务端Route: get_appid的具体内容请参阅服务端模块server.py的get_appid()函数
     // 为了安全，app_id不应对外泄露，尤其不应在前端明文书写，因此此处从服务端获取

@@ -126,7 +126,7 @@ class AIDB:
                             "table_name": table_name,
                             "table_comment": table_comment
                         }
-                        table_content.append(tb_desc)
+                        # table_content.append(tb_desc)
 
             print("The number of tables to be processed this time： ", len(table_content))
             if len(table_content) > 0:

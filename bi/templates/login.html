@@ -3,7 +3,7 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <title>DeepBI网页应用鉴权123</title>
+    <title>DeepBI飞书网页应用鉴权</title>
     <script src="/static/jquery.js"></script>
     <!-- 引入 JSSDK -->
     <!-- JS 文件版本在升级功能时地址会变化，如有需要（比如使用新增的 API），请重新引用「网页应用开发指南」中的JSSDK链接，确保你当前使用的JSSDK版本是最新的。-->
@@ -161,7 +161,7 @@ function apiAuth() {
         alert('please open in feishu')
         return
     }
-
+    return
     // 通过服务端的Route: get_appid获取app_id
     // 服务端Route: get_appid的具体内容请参阅服务端模块server.py的get_appid()函数
     // 为了安全，app_id不应对外泄露，尤其不应在前端明文书写，因此此处从服务端获取

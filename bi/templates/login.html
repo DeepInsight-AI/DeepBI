@@ -283,11 +283,20 @@
       // 登录完成
       function loginSuccess() {
         console.log("login success");
-        fetch(`/login_success`)
-          .then(response =>
-            response.json().then(res => {
-              console.log("login success: ", res);
-            })
+        // fetch(`/login_success`)
+        //   .then(response =>
+        //     response.json().then(res => {
+        //       console.log("login success: ", res);
+        //     })
+        //   )
+        //   .catch(function(e) {
+        //     console.error(e);
+        //   });
+        // 请求post登录成功 login
+        fetch(`/login`, {
+          method: "POST",
+        })
+          .then(response =>{}
           )
           .catch(function(e) {
             console.error(e);

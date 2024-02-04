@@ -328,26 +328,42 @@ def get_appid():
 
 
 # # 登录完成
-@routes.route(org_scoped_rule("/login_success"), methods=["GET"])
-def login_success():
-    # 登录完成后逻辑处理
-    return jsonify({"msg": "login success-------------------"})
+# @routes.route(org_scoped_rule("/login_success"), methods=["GET"])
+# def login_success():
+#     # 登录完成后逻辑处理
+#     return jsonify({"msg": "login success-------------------"})
 
 
 @routes.route(org_scoped_rule("/login"), methods=["GET", "POST"])
 @limiter.limit(settings.THROTTLE_LOGIN_PATTERN)
-def login():
+def login(org_slug=None):
     print("zxctest=====================")
     # 打开本网页应用会执行的第一个函数
     # return Biz.login_handler()
     # # 如果session当中没有存储user info，则走免登业务流程Biz.login_handler()
-    if USER_INFO_KEY not in session:
-        logging.info("need to get user information")
-        return Biz.log
-    else:
-        # 如果session中已经有user info，则直接走主页加载流程Biz.home_handler()
-        logging.info("already have user information")
-        return Biz.home_handler()
+    index_url = url_for("bi.index", org_slug=org_slug)
+    unsafe_next_path = request.args.get("next", index_url)
+    next_path = get_next_path(unsafe_next_path)
+    # if USER_INFO_KEY not in session:
+    #     logging.info("need to get user information")
+    #     return Biz.login_handler()
+    # else:
+    #     # 如果session中已经有user info，则直接走主页加载流程Biz.home_handler()
+    #     logging.info("already have user information")
+    #     return Biz.home_handler()
+    # 判断是get请求还是post请求
+    if request.method == "GET":
+        print("GET---GET")
+        if USER_INFO_KEY not in session:
+            logging.info("need to get user information")
+            return Biz.login_handler()
+        else:
+            # 如果session中已经有user info，则直接走主页加载流程Biz.home_handler()
+            logging.info("already have user information")
+            return Biz.home_handler()
+    elif request.method == "POST":
+        print("POST+++POST"+ next_path)
+        return redirect(next_path)
 
 
 

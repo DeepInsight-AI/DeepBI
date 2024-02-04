@@ -26,7 +26,6 @@ logger = logging.getLogger(__name__)
 lang = get_config_language()
 
 USER_INFO_KEY = "UserInfo"
-auth = ""
 
 def encrypt(text, key):
     key_hash = hashlib.sha256(key.encode()).digest()
@@ -304,7 +303,10 @@ class Biz(object):
 @routes.route(org_scoped_rule("/callback"), methods=["GET"])
 def callback():
     # 获取 user info
-
+    APP_ID = os.getenv("APP_ID")
+    APP_SECRET = os.getenv("APP_SECRET")
+    FEISHU_HOST = os.getenv("FEISHU_HOST")
+    auth = Auth(FEISHU_HOST, APP_ID, APP_SECRET)
     # 拿到前端传来的临时授权码 Code
     code = request.args.get("code")
     # 先获取 user_access_token
@@ -336,10 +338,6 @@ def login_success():
 @routes.route(org_scoped_rule("/login"), methods=["GET", "POST"])
 @limiter.limit(settings.THROTTLE_LOGIN_PATTERN)
 def login():
-    APP_ID = os.getenv("APP_ID")
-    APP_SECRET = os.getenv("APP_SECRET")
-    FEISHU_HOST = os.getenv("FEISHU_HOST")
-    auth = Auth(FEISHU_HOST, APP_ID, APP_SECRET)
     print("zxctest=====================")
     # 打开本网页应用会执行的第一个函数
     # return Biz.login_handler()

@@ -87,7 +87,6 @@ class AnalysisMysql(Analysis):
                 else:
                     self.agent_instance_util.set_base_message(q_str)
 
-
                 await self.put_message(200, receiver=CONFIG.talker_bi, data_type=CONFIG.type_comment_second,
                                        content='')
             elif q_data_type == 'mysql_code' or q_data_type == 'chart_code' or q_data_type == 'delete_chart' or q_data_type == 'ask_data':
@@ -299,3 +298,4 @@ class AnalysisMysql(Analysis):
             traceback.print_exc()
             logger.error("from user:[{}".format(self.user_name) + "] , " + "error: " + str(e))
         return self.agent_instance_util.data_analysis_error
+

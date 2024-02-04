@@ -301,7 +301,7 @@ class Biz(object):
     # def _show_err_info(err_info):
         ## 将错误信息展示在页面上
         # return render_template("err_info.html", err_info=err_info)
-@app.route(org_scoped_rule("/callback"), methods=["GET"])
+@routes.route(org_scoped_rule("/callback"), methods=["GET"])
 def callback():
     # 获取 user info
 
@@ -326,7 +326,7 @@ def get_appid():
 
 
 # # 登录完成
-@app.route(org_scoped_rule("/login_success"), methods=["GET"])
+@routes.route(org_scoped_rule("/login_success"), methods=["GET"])
 def login_success():
     # 登录完成后，展示主页
     print("login_success+++++++++++++++++++++") 

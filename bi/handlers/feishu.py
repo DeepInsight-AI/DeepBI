@@ -72,14 +72,14 @@ class Biz(object):
         # return render_template("err_info.html", err_info=err_info)
 
 # 出错时走错误页面加载流程Biz.login_failed_handler(err_info)
-@app.errorhandler(Exception)
-def auth_error_handler(ex):
-    return Biz.login_failed_handler(ex)
+# @app.errorhandler(Exception)
+# def auth_error_handler(ex):
+#     return Biz.login_failed_handler(ex)
 
 
 # 默认的主页路径
-# @app.route("/login", methods=["GET"])
-@routes.route(org_scoped_rule("/login"), methods=["GET"])
+@app.route("/login", methods=["GET"])
+# @routes.route(org_scoped_rule("/login"), methods=["GET"])
 # @limiter.limit(settings.THROTTLE_LOGIN_PATTERN)
 def login(org_slug=None):
     # APP_ID = os.getenv("APP_ID")

@@ -218,13 +218,13 @@ class Completion(openai_Completion):
                 use_model = config['model']
                 use_api_key = config['api_key']
                 llm_setting = config.get("llm_setting")  # all llm config
-                print("~" * 30)
+                # print("~" * 30)
                 # print("setting", llm_setting)
                 # use other llm or use default llm
                 other_llm_name = AGENT_LLM_MODEL[agent_name]['llm'] if agent_name in AGENT_LLM_MODEL and \
                                                                        AGENT_LLM_MODEL[agent_name][
                                                                            'replace_default'] and llm_setting is not None else use_llm_name
-                print("~" * 30, '_get_response ------------------------')
+                print("~" * 30, 'agent llm config ------------------------')
                 if agent_name in AGENT_LLM_MODEL:
                     print(agent_name in AGENT_LLM_MODEL, AGENT_LLM_MODEL[agent_name]['replace_default'])
                 if "DeepInsight" != use_llm_name and "OpenAI" != use_llm_name:
@@ -250,7 +250,7 @@ class Completion(openai_Completion):
                         print("~~The llm model is not replaced because the number of messages is insufficient.~~")
 
                 print("agent_name", agent_name, 'fact use: llm:', use_llm_name, "url:", use_url, "pre use model", use_model)
-                print("~" * 30)
+                print("~" * 30,"begin call llm", "*" * 30)
                 if use_llm_name != "OpenAI":
                     """
                     A different LLM is called here
@@ -276,8 +276,8 @@ class Completion(openai_Completion):
                         }
                         print('create_url : ', use_url)
                         res = requests.post(use_url, json=data, headers=headers)
-                        print("res :", res)
-                        print('res.text +++++++++ : ', res.text)
+                        # print("res :", res)
+                        # print('res.text +++++++++ : ', res.text)
 
                         # check response status_code
                         if res.status_code != 200:
@@ -306,7 +306,9 @@ class Completion(openai_Completion):
                         response = openai_completion.create(**config)
                     else:
                         response = openai_completion.create(request_timeout=request_timeout, **config)
-                print("response: ", response)
+                print("*" * 30, "call end, response as follow: ", "*" * 30)
+                print(response)
+                print("*" * 30, "response end", "*" * 30)
                 # write cost
                 cost_str = agent_name + " " + use_llm_name + " " + str(use_model) + " cost:" + str(response['usage'])
                 with open("cost.txt", "a") as file:

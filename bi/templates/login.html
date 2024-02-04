@@ -258,6 +258,7 @@
 
 
       function showUser(res) {
+        console.log("showUser: ", res);
         // 展示用户信息
         // 头像
         $("#img_div").html(
@@ -281,6 +282,7 @@
 
       // 登录完成
       function loginSuccess() {
+        console.log("login success");
         fetch(`/login_success`)
           .then(response =>
             response.json().then(res => {

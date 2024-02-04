@@ -330,8 +330,7 @@ def get_appid():
 # # 登录完成
 @routes.route(org_scoped_rule("/login_success"), methods=["GET"])
 def login_success():
-    # 登录完成后，展示主页
-    print("login_success+++++++++++++++++++++") 
+    # 登录完成后逻辑处理
     return jsonify({"msg": "login success-------------------"})
 
 
@@ -344,7 +343,7 @@ def login():
     # # 如果session当中没有存储user info，则走免登业务流程Biz.login_handler()
     if USER_INFO_KEY not in session:
         logging.info("need to get user information")
-        return Biz.login_handler()
+        return Biz.log
     else:
         # 如果session中已经有user info，则直接走主页加载流程Biz.home_handler()
         logging.info("already have user information")

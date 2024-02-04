@@ -278,6 +278,7 @@ class Biz(object):
 
     @staticmethod
     def login_handler():
+        print("zxctest123=====================")
         # 需要走免登流程
         return render_template("login.html", user_info={"name": "unknown"}, login_info="needLogin")
 
@@ -299,10 +300,17 @@ class Biz(object):
         ## 将错误信息展示在页面上
         # return render_template("err_info.html", err_info=err_info)
 
+@routes.route(org_scoped_rule("/get_appid"), methods=["GET"])
+def get_appid():
+    # 获取 appid
+    return jsonify(
+        {
+            "appid": os.getenv("APP_ID")
+        }
+    )
 
 @routes.route(org_scoped_rule("/login"), methods=["GET", "POST"])
 @limiter.limit(settings.THROTTLE_LOGIN_PATTERN)
-# new源
 def login():
     # APP_ID = os.getenv("APP_ID")
     # APP_SECRET = os.getenv("APP_SECRET")
@@ -310,15 +318,15 @@ def login():
     # auth = Auth(FEISHU_HOST, APP_ID, APP_SECRET)
     print("zxctest=====================")
     # 打开本网页应用会执行的第一个函数
-
-    # 如果session当中没有存储user info，则走免登业务流程Biz.login_handler()
-    if USER_INFO_KEY not in session:
-        logging.info("need to get user information")
-        return Biz.login_handler()
-    else:
-        # 如果session中已经有user info，则直接走主页加载流程Biz.home_handler()
-        logging.info("already have user information")
-        return Biz.home_handler()
+    return Biz.login_handler()
+    # # 如果session当中没有存储user info，则走免登业务流程Biz.login_handler()
+    # if USER_INFO_KEY not in session:
+    #     logging.info("need to get user information")
+    #     return Biz.login_handler()
+    # else:
+    #     # 如果session中已经有user info，则直接走主页加载流程Biz.home_handler()
+    #     logging.info("already have user information")
+    #     return Biz.home_handler()
 
 
 

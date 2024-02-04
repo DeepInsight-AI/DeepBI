@@ -78,8 +78,8 @@ class AIDB:
                 await planner_user.initiate_chat(
                     database_describer,
                     # message=content + '\n' + " This is my question: " + '\n' + str(qustion_message),
-                    # message=self.agent_instance_util.base_message + '\n' + self.question_ask + '\n' + str(qustion_message),
-                    message=self.question_ask + '\n' + str(qustion_message),
+                    message=self.agent_instance_util.base_message + '\n' + self.question_ask + '\n' + str(qustion_message),
+                    # message=self.question_ask + '\n' + str(qustion_message),
                 )
 
                 answer_message = planner_user.last_message()["content"]

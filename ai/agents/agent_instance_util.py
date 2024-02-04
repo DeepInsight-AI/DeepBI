@@ -64,6 +64,9 @@ class AgentInstanceUtil:
         self.db_id = db_id
         self.is_rag = False
 
+        self.uid = self.user_name.split('_')[0]
+        self.rag_doc = CONFIG.up_file_path + '.rag_' + str(self.uid) + '_db' + str(self.db_id) + '.json'
+
     def set_api_key(self, api_key, api_host=None, in_use=CONFIG.apikey_openai):
         self.api_key = api_key
 
@@ -212,8 +215,8 @@ class AgentInstanceUtil:
                 content = '所选表格' + str(num_tokens) + ' , 超过了最大长度:' + str(CONFIG.max_token_num) + ' , 请重新选择'
                 print(content)
             else:
-                with open(CONFIG.up_file_path + '.rag_' + str(self.user_name) + '_' + str(databases_id) + '.json',
-                          'w') as output_file:
+                print('self.rag_doc : ', self.rag_doc)
+                with open(self.rag_doc, 'w') as output_file:
                     output_file.write(str(message))
 
                 self.is_rag = True
@@ -225,7 +228,15 @@ class AgentInstanceUtil:
                 #             if key not in ['']:
                 #                 field.pop(key)
                 # self.base_message = str(message)
-                self.base_message = ''
+
+                table_comments = {'table_desc': [], 'databases_desc': ''}
+
+                table_comments['table_desc'] = [
+                    {'table_name': table['table_name'], 'table_comment': table['table_comment']} for table
+                    in message['table_desc']]
+
+                self.base_message = str(table_comments)
+                print('self.base_message : ', self.base_message)
 
     def get_agent_mysql_engineer(self):
         """mysql engineer"""

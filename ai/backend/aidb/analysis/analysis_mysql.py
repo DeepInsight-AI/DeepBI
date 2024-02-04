@@ -376,17 +376,18 @@ class AnalysisMysql(Analysis):
             message='this is table info: ' + '\n' + str(table_comment) + '\n' + self.question_ask + '\n' + str(
                 qustion_message),
         )
-
+        ############################################
         # base_mysql_assistant = self.get_agent_retrieve_base_mysql_assistant_rag()
         # docs_path = CONFIG.up_file_path + '.rag_' + str(self.user_name) + '_' + str(
         #     self.agent_instance_util.db_id) + '.json'
-        # python_executor = self.get_agent_retrieve_python_executor(docs_path=docs_path)
+        # python_executor = self.get_agent_retrieve_python_executor(docs_path=self.agent_instance_util.rag_doc)
         #
         # await python_executor.initiate_chat(
         #     base_mysql_assistant,
         #     problem='this is table info: ' + '\n' + str(table_comment) + '\n' + self.question_ask + '\n' + str(
         #         qustion_message),
         # )
+        ############################################
 
         answer_message = python_executor.chat_messages[base_mysql_assistant]
         print("answer_message: ", answer_message)
@@ -405,7 +406,8 @@ class AnalysisMysql(Analysis):
         )
 
         # base_mysql_assistant = self.get_agent_retrieve_base_mysql_assistant_rag()
-        # docs_path = CONFIG.up_file_path + '.rag_' + str(self.user_name) + '_' + str(
+
+                  # docs_path = CONFIG.up_file_path + '.rag_' + str(self.user_name) + '_' + str(
         #     self.agent_instance_util.db_id) + '.json'
         # python_executor = self.get_agent_retrieve_python_executor(docs_path=docs_path)
         #

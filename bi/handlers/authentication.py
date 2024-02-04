@@ -20,11 +20,13 @@ from bi.handlers import routes
 from bi.handlers.base import json_response, org_scoped_rule
 from sqlalchemy.orm.exc import NoResultFound
 from bi.handlers.language import get_config_language
+from bi.handlers.feishu_auth import Auth
 
 logger = logging.getLogger(__name__)
 lang = get_config_language()
 
 USER_INFO_KEY = "UserInfo"
+auth = ""
 
 def encrypt(text, key):
     key_hash = hashlib.sha256(key.encode()).digest()
@@ -299,6 +301,19 @@ class Biz(object):
     # def _show_err_info(err_info):
         ## 将错误信息展示在页面上
         # return render_template("err_info.html", err_info=err_info)
+@app.route(org_scoped_rule("/callback"), methods=["GET"])
+def callback():
+    # 获取 user info
+
+    # 拿到前端传来的临时授权码 Code
+    code = request.args.get("code")
+    # 先获取 user_access_token
+    auth.authorize_user_access_token(code)
+    # 再获取 user info
+    user_info = auth.get_user_info()
+    # 将 user info 存入 session
+    session[USER_INFO_KEY] = user_info
+    return jsonify(user_info)
 
 @routes.route(org_scoped_rule("/get_appid"), methods=["GET"])
 def get_appid():
@@ -309,24 +324,33 @@ def get_appid():
         }
     )
 
+
+# # 登录完成
+@app.route(org_scoped_rule("/login_success"), methods=["GET"])
+def login_success():
+    # 登录完成后，展示主页
+    print("login_success+++++++++++++++++++++") 
+    return jsonify({"msg": "login success-------------------"})
+
+
 @routes.route(org_scoped_rule("/login"), methods=["GET", "POST"])
 @limiter.limit(settings.THROTTLE_LOGIN_PATTERN)
 def login():
-    # APP_ID = os.getenv("APP_ID")
-    # APP_SECRET = os.getenv("APP_SECRET")
-    # FEISHU_HOST = os.getenv("FEISHU_HOST")
-    # auth = Auth(FEISHU_HOST, APP_ID, APP_SECRET)
+    APP_ID = os.getenv("APP_ID")
+    APP_SECRET = os.getenv("APP_SECRET")
+    FEISHU_HOST = os.getenv("FEISHU_HOST")
+    auth = Auth(FEISHU_HOST, APP_ID, APP_SECRET)
     print("zxctest=====================")
     # 打开本网页应用会执行的第一个函数
-    return Biz.login_handler()
+    # return Biz.login_handler()
     # # 如果session当中没有存储user info，则走免登业务流程Biz.login_handler()
-    # if USER_INFO_KEY not in session:
-    #     logging.info("need to get user information")
-    #     return Biz.login_handler()
-    # else:
-    #     # 如果session中已经有user info，则直接走主页加载流程Biz.home_handler()
-    #     logging.info("already have user information")
-    #     return Biz.home_handler()
+    if USER_INFO_KEY not in session:
+        logging.info("need to get user information")
+        return Biz.login_handler()
+    else:
+        # 如果session中已经有user info，则直接走主页加载流程Biz.home_handler()
+        logging.info("already have user information")
+        return Biz.home_handler()
 
 
 

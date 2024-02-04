@@ -138,6 +138,13 @@
           </div>
       </div>
   </div>
-
+  <script>
+    function test() {
+      fetch(`/get_appid`).then(response1 => response1.json().then(res1 => {
+        console.log("get appid succeed: ", res1.appid);
+    }));
+    }
+    setTimeout(test, 3000);
+  </script>
   </body>
 </html>

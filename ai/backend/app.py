@@ -4,7 +4,7 @@ from ai.backend.chat_task import ChatClass
 from ai.backend.aidb.autopilot.autopilot_mysql_api import AutopilotMysql
 from concurrent.futures import ThreadPoolExecutor
 import threading
-
+import os
 app = Flask(__name__)
 executor = ThreadPoolExecutor()
 
@@ -26,6 +26,15 @@ def get_request():
 
 
 @app.route('/api/autopilot1', methods=['POST'])
+@app.route("/get_appid", methods=["GET"])
+def get_appid():
+    # 获取 appid
+    # 为了安全，app_id不应对外泄露，尤其不应在前端明文书写，因此此处从服务端传递过去
+    return jsonify(
+        {
+            "appid": os.getenv("APP_ID")
+        }
+    )
 @run_async
 async def post_request():
     print(request.data)

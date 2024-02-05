@@ -94,6 +94,8 @@ class AWSClaudeClient:
             return cls.return_to_open_function_call(data, completion_tokens)
         else:
             """ just process as message """
+            # replace code
+            completion = cls.replace_code(completion)
             return {
                 "id": f"chatcmpl-{str(time.time())}",
                 "object": "chat.completion.chunk",
@@ -250,3 +252,9 @@ class AWSClaudeClient:
             ]
         }
         pass
+
+    @classmethod
+    def replace_code(cls, response_str):
+        response_str = response_str.replace("\n<code>\n", "\n```python\n")
+        response_str = response_str.replace("\n</code>\n", "\n```\n")
+        return response_str

@@ -240,8 +240,6 @@ class AWSClaudeClient:
                     args_obj[arg_name] = arg_value
 
             return {
-                "choices": [
-                    {
                         "role": "assistant",
                         "content": None,
                         "function_call": {
@@ -252,8 +250,7 @@ class AWSClaudeClient:
                         "finish_reason": "function_call",
                         "logprobs": None
                     }
-                ]
-            }
+
         pass
 
     @classmethod

@@ -48,6 +48,20 @@ class AIDB:
         database_describer = self.agent_instance_util.get_agent_database_describer()
 
         try:
+            table_message = str(self.agent_instance_util.base_message)
+            if base_util.is_json(table_message):
+                str_obj = json.loads(table_message)
+            else:
+                str_obj = ast.literal_eval(table_message)
+
+            table_comments = {'table_desc': [], 'databases_desc': ''}
+            for table in str_obj['table_desc']:
+                if len(table['table_comment']) > 0:
+                    table_comments['table_desc'].append(
+                        {'table_name': table['table_name'], 'table_comment': table['table_comment']})
+                else:
+                    table_comments['table_desc'].append(table)
+
             qustion_message = "Please explain this data to me."
 
             if self.language_mode == CONFIG.language_chinese:
@@ -55,9 +69,8 @@ class AIDB:
 
             await planner_user.initiate_chat(
                 database_describer,
-                # message=content + '\n' + " This is my question: " + '\n' + str(qustion_message),
-                message=self.agent_instance_util.base_message + '\n' + self.question_ask + '\n' + str(
-                    qustion_message),
+                # message=self.agent_instance_util.base_message + '\n' + self.question_ask + '\n' + str(qustion_message),
+                message=str(table_comments) + '\n' + self.question_ask + '\n' + str(qustion_message),
             )
             answer_message = planner_user.last_message()["content"]
             # print("answer_message: ", answer_message)
@@ -205,6 +218,10 @@ class AIDB:
                     logger.error("from user:[{}".format(self.user_name) + "] , " + "error: " + str(e))
                     await self.put_message(500, CONFIG.talker_log, CONFIG.type_comment, self.error_message_timeout)
                     return
+            else:
+                percentage_integer = 100
+                await self.put_message(200, CONFIG.talker_log, CONFIG.type_data_check,
+                                       content=percentage_integer)
 
             if q_str.get('table_desc'):
                 for tb in q_str.get('table_desc'):

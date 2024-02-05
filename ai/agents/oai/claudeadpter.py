@@ -13,6 +13,7 @@ config  .aws/config
 import json
 import time
 import xml.etree.ElementTree as E_T
+
 try:
     import tiktoken
     import boto3
@@ -91,22 +92,22 @@ class AWSClaudeClient:
             """
             have function call
             """
-            choise = cls.return_to_open_function_call(data, completion_tokens)
+            choices = cls.return_to_open_function_call(data, completion_tokens)
         else:
             """ just process as message """
             # replace code
             completion = cls.replace_code_to_python(completion)
-            choise = {
-                        "message": {
-                            "role": "assistant",
-                            "content": completion,
-                        },
-                        "index": 0,
-                        "finish_reason": Claude_stop_reason_map[
-                            data.get("stop_reason")] if 'stop_reason' in data else None
-                        if data.get("stop_reason")
-                        else None,
-                    }
+            choices = {
+                "index": 0,
+                "message": {
+                    "role": "assistant",
+                    "content": completion,
+                },
+                "finish_reason": Claude_stop_reason_map[
+                    data.get("stop_reason")] if 'stop_reason' in data else None
+                if data.get("stop_reason")
+                else None,
+            }
 
         return {
             "id": f"chatcmpl-{str(time.time())}",
@@ -118,7 +119,7 @@ class AWSClaudeClient:
                 "completion_tokens": completion_tokens,
                 "total_tokens": completion_tokens,
             },
-            "choices": [choise],
+            "choices": [choices],
         }
         pass
 
@@ -240,17 +241,18 @@ class AWSClaudeClient:
                     args_obj[arg_name] = arg_value
 
             return {
+                    "index": 0,
+                    "message": {
                         "role": "assistant",
                         "content": None,
                         "function_call": {
                             "name": tool_name,
                             "arguments": json.dumps(args_obj)
                         },
-                        "index": 0,
-                        "finish_reason": "function_call",
-                        "logprobs": None
+                        "logprobs": None,
+                        "finish_reason": "function_call"
                     }
-
+                }
         pass
 
     @classmethod
@@ -262,5 +264,5 @@ class AWSClaudeClient:
     @classmethod
     def replace_python_to_code(cls, response_str):
         response_str = response_str.replace("\n```python\n", "\n<code>\n")
-        response_str = response_str.replace( "\n```\n", "\n</code>\n")
+        response_str = response_str.replace("\n```\n", "\n</code>\n")
         return response_str

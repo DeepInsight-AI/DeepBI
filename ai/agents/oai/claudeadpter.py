@@ -91,23 +91,12 @@ class AWSClaudeClient:
             """
             have function call
             """
-            return cls.return_to_open_function_call(data, completion_tokens)
+            choise = cls.return_to_open_function_call(data, completion_tokens)
         else:
             """ just process as message """
             # replace code
             completion = cls.replace_code_to_python(completion)
-            return {
-                "id": f"chatcmpl-{str(time.time())}",
-                "object": "chat.completion.chunk",
-                "created": int(time.time()),
-                "model": Claude_AI_MODEL,
-                "usage": {
-                    "prompt_tokens": 0,
-                    "completion_tokens": completion_tokens,
-                    "total_tokens": completion_tokens,
-                },
-                "choices": [
-                    {
+            choise = {
                         "message": {
                             "role": "assistant",
                             "content": completion,
@@ -118,8 +107,19 @@ class AWSClaudeClient:
                         if data.get("stop_reason")
                         else None,
                     }
-                ],
-            }
+
+        return {
+            "id": f"chatcmpl-{str(time.time())}",
+            "object": "chat.completion.chunk",
+            "created": int(time.time()),
+            "model": Claude_AI_MODEL,
+            "usage": {
+                "prompt_tokens": 0,
+                "completion_tokens": completion_tokens,
+                "total_tokens": completion_tokens,
+            },
+            "choices": [choise],
+        }
         pass
 
     @classmethod

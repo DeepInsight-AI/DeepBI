@@ -27,6 +27,7 @@ Claude_role_map = {
     "system": "Human",
     "user": "Human",
     "assistant": "Assistant",
+    "function": "Assistant",
 }
 
 Claude_stop_reason_map = {

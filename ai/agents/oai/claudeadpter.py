@@ -214,8 +214,8 @@ class AWSClaudeClient:
         """
         trans Claude2 to openai function call return
         """
-        root = E_T.fromstring(data['completion'])
-        function_xml_str = root.strip() + "</invoke>\n</function_calls>"
+        xml_string = data['completion']
+        function_xml_str = xml_string.strip() + "</invoke>\n</function_calls>"
         function_xml_str = function_xml_str.replace("<function_calls>", "<function_calls>\n<invoke>")
         root = E_T.fromstring(function_xml_str)
         invokes = root.findall("invoke")

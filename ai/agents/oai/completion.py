@@ -250,7 +250,7 @@ class Completion(openai_Completion):
                         print("~~The llm model is not replaced because the number of messages is insufficient.~~")
 
                 print("agent_name", agent_name, 'fact use: llm:', use_llm_name, "url:", use_url, "pre use model", use_model)
-                print("~" * 30,"begin call llm", "*" * 30)
+                print("~" * 30, "begin call llm", "*" * 30)
                 if use_llm_name != "OpenAI":
                     """
                     A different LLM is called here

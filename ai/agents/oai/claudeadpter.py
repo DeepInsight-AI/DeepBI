@@ -76,6 +76,9 @@ class AWSClaudeClient:
         contentType = 'application/json'
         response = client_obj.invoke_model(body=body, modelId=modelId, accept=accept, contentType=contentType)
         response_body = json.loads(response.get('body').read())
+        print("-------------origin---response-------------")
+        print(response_body)
+        print("-------------origin---response--end-----------")
         return cls.output_to_openai(response_body)
         pass
 

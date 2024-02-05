@@ -95,7 +95,7 @@ class AWSClaudeClient:
         else:
             """ just process as message """
             # replace code
-            completion = cls.replace_code(completion)
+            completion = cls.replace_code_to_python(completion)
             return {
                 "id": f"chatcmpl-{str(time.time())}",
                 "object": "chat.completion.chunk",
@@ -130,6 +130,8 @@ class AWSClaudeClient:
             content = message["content"]
             if content is None and 'function_call' in message and message['function_call'] is not None:
                 content = cls.function_call_to_xml(message['function_call'])
+            else:
+                content = cls.replace_python_to_code(content)
             transformed_role = Claude_role_map[role]
             prompt += f"\n\n{transformed_role.capitalize()}: {content}"
         prompt += "\n\nAssistant: "
@@ -254,7 +256,13 @@ class AWSClaudeClient:
         pass
 
     @classmethod
-    def replace_code(cls, response_str):
+    def replace_code_to_python(cls, response_str):
         response_str = response_str.replace("\n<code>\n", "\n```python\n")
         response_str = response_str.replace("\n</code>\n", "\n```\n")
+        return response_str
+
+    @classmethod
+    def replace_python_to_code(cls, response_str):
+        response_str = response_str.replace("\n```python\n", "\n<code>\n")
+        response_str = response_str.replace( "\n```\n", "\n</code>\n")
         return response_str

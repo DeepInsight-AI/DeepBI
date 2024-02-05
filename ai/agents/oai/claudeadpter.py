@@ -161,7 +161,7 @@ class AWSClaudeClient:
                 return_str = return_str + "<parameters>\n"
                 parameter_obj = item['parameters']
                 if "type" in parameter_obj:
-                    return_str = return_str + "<parameter>\n <name>name" + parameter_obj['type'] + "</name>\n"
+                    return_str = return_str + "<parameter>\n <name>" + parameter_obj['type'] + "</name>\n"
                     return_str = return_str + " <type>" + parameter_obj['type'] + "</type>\n"
                     if "properties" in parameter_obj:
                         return_str = return_str + " <parameters>\n"
@@ -215,44 +215,45 @@ class AWSClaudeClient:
         trans Claude2 to openai function call return
         """
         root = E_T.fromstring(data['completion'])
+        function_xml_str = root.strip() + "</invoke>\n</function_calls>"
+        function_xml_str = function_xml_str.replace("<function_calls>", "<function_calls>\n<invoke>")
+        root = E_T.fromstring(function_xml_str)
         invokes = root.findall("invoke")
+        function_call = {}
         if len(invokes) < 1:
             raise Exception("Get Claude2 function call error")
         else:
-            function_call = {}
             tool_name = invokes[0].find("tool_name").text
             function_call['name'] = tool_name
             args = invokes[0].find("parameters")
             args_obj = {}
             for item in args:
-                arg_name = item.tag
-                arg_value = item.text
-                args_obj[arg_name] = arg_value
+                if "object" == item.tag:
+                    args_son = item.findall("./")
+                    for son_item in args_son:
+                        arg_name = son_item.tag
+                        arg_value = son_item.text
+                        args_obj[arg_name] = arg_value
+                else:
+                    arg_name = item.tag
+                    arg_value = item.text
+                    args_obj[arg_name] = arg_value
 
-        return {
-            "id": f"chatcmpl-{str(time.time())}",
-            "object": "chat.completion.chunk",
-            "created": int(time.time()),
-            "model": Claude_AI_MODEL,
-            "usage": {
-                "prompt_tokens": 0,
-                "completion_tokens": completion_tokens,
-                "total_tokens": completion_tokens,
-            },
-            "choices": [
-                {
-                    "role": "assistant",
-                    "content": None,
-                    "function_call": {
-                        "name": tool_name,
-                        "arguments": json.dumps(args_obj)
-                    },
-                    "index": 0,
-                    "finish_reason": "function_call",
-                    "logprobs": None
-                }
-            ]
-        }
+            return {
+                "choices": [
+                    {
+                        "role": "assistant",
+                        "content": None,
+                        "function_call": {
+                            "name": tool_name,
+                            "arguments": json.dumps(args_obj)
+                        },
+                        "index": 0,
+                        "finish_reason": "function_call",
+                        "logprobs": None
+                    }
+                ]
+            }
         pass
 
     @classmethod

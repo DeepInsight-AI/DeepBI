@@ -328,7 +328,7 @@ def get_appid():
     )
 
 @routes.route(org_scoped_rule("/login"), methods=["GET","POST"])
-# @limiter.limit(settings.THROTTLE_LOGIN_PATTERN)
+@limiter.limit(settings.THROTTLE_LOGIN_PATTERN)
 def login(org_slug=None):
     index_url = url_for("bi.index", org_slug=org_slug)
     unsafe_next_path = request.args.get("next", index_url)
@@ -353,7 +353,7 @@ def login(org_slug=None):
         user_platform = data.get("platform")
         print("user_platform: ", user_platform)
         user_email = session[USER_INFO_KEY]["open_id"] + "@" + user_platform
-        user_email = user_email.replace("_", "-")
+        user_email = user_email.replace("_", "--")
         user_name = session[USER_INFO_KEY]["name"]
         password = session[USER_INFO_KEY]["open_id"]
         print("user_email: ", user_email)
@@ -375,9 +375,10 @@ def login(org_slug=None):
                     email=user_email,
                     is_invitation_pending=True,
                     group_ids=[current_org.default_group.id],
-                    hash_password=password,
+                    # hash_password=password,
                 )
                 print("创建user++++: ", user)
+                user.hash_password(password)
                 try:
                     models.db.session.add(user)
                     models.db.session.commit()

@@ -13,12 +13,16 @@ config  .aws/config
 import json
 import time
 import xml.etree.ElementTree as E_T
+import re
 
 try:
     import tiktoken
     import boto3
 except:
     raise Exception("Error, need: pip install boto3 tiktoken")
+
+# check function_call Strict mode or not
+STRICT_MODE_CHECK_FUNCTION = False
 # define default model
 Claude_AI_MODEL = 'anthropic.claude-v2:1'
 # define default temperature
@@ -88,8 +92,13 @@ class AWSClaudeClient:
     def output_to_openai(cls, data):
         completion = data['completion']
         completion_tokens = cls.num_tokens_from_string(completion)
+        # check function call
+        if STRICT_MODE_CHECK_FUNCTION:
+            function_call_flag = completion.strip().startswith("<function_calls>")
+        else:
+            function_call_flag = all(substring in completion for substring in ("<function_calls>", "<invoke>", "<tool_name>", "</invoke>"))
         # return openai result
-        if completion.strip().startswith("<function_calls>"):
+        if function_call_flag:
             """
             have function call
             """
@@ -217,12 +226,9 @@ class AWSClaudeClient:
         trans Claude2 to openai function call return
         """
         xml_string = data['completion']
-        if "</invoke>" not in xml_string:
-            function_xml_str = xml_string.strip() + "</invoke>\n</function_calls>"
-        else:
-            function_xml_str = xml_string.strip() + "</function_calls>"
-        if "<invoke>" not in xml_string:
-            function_xml_str = function_xml_str.replace("<function_calls>", "<function_calls>\n<invoke>")
+        match = re.search(r'<invoke>(.*?)</invoke>', xml_string, re.DOTALL)
+        result = match.group(1)
+        function_xml_str = "<function_calls>\n<invoke>\n" + result.strip() + "</invoke>\n</function_calls>"
         root = E_T.fromstring(function_xml_str)
         invokes = root.findall("invoke")
         function_call = {}

@@ -21,6 +21,7 @@ from bi.handlers.base import json_response, org_scoped_rule
 from sqlalchemy.orm.exc import NoResultFound
 from bi.handlers.language import get_config_language
 from bi.handlers.feishu_auth import Auth
+from sqlalchemy.exc import IntegrityError
 
 logger = logging.getLogger(__name__)
 lang = get_config_language()
@@ -367,15 +368,32 @@ def login(org_slug=None):
             user = models.User.get_by_email_and_org_first(user_email, org)
             print("user: ", user)
             if user is None:
-                print("user is None")
+                # print("user is None")
                 user = models.User(
-                    email=user_email,
+                    org=current_org,
                     name=user_name,
-                    org=org
+                    email=user_email,
+                    is_invitation_pending=True,
+                    group_ids=[current_org.default_group.id],
+                    hash_password=password,
                 )
-                user.hash_password(password)
-                models.db.session.add(user)
-                models.db.session.commit()
+
+                try:
+                    models.db.session.add(user)
+                    models.db.session.commit()
+                except IntegrityError as e:
+                    if "email" in str(e):
+                        abort(400, message="电子邮箱已占用。")
+                    abort(500)
+                
+                # user = models.User(
+                #     email=user_email,
+                #     name=user_name,
+                #     org=org
+                # )
+                # user.hash_password(password)
+                # models.db.session.add(user)
+                # models.db.session.commit()
             print("have user")
             login_user(user)
             print("login_user")

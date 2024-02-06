@@ -10,10 +10,12 @@ from ai.agents.agentchat import (UserProxyAgent, GroupChat, AssistantAgent, Grou
                                  PythonProxyAgent, BIProxyAgent, TaskPlannerAgent, TaskSelectorAgent, CheckAgent,
                                  ChartPresenterAgent)
 from ai.backend.base_config import CONFIG
+from ai.agents.agentchat.contrib import RetrieveAssistantAgent, RetrievePythonProxyAgent, RetrieveUserProxyAgent
 
 max_retry_times = CONFIG.max_retry_times
 language_chinese = CONFIG.language_chinese
-language_english = CONFIG.language_chinese
+language_english = CONFIG.language_english
+language_japanese = CONFIG.language_japanese
 default_language_mode = CONFIG.default_language_mode
 local_base_postgresql_info = CONFIG.local_base_postgresql_info
 local_base_xls_info = CONFIG.local_base_xls_info
@@ -60,42 +62,15 @@ class AgentInstanceUtil:
 
         self.openai_proxy = None
         self.db_id = db_id
+        self.is_rag = False
 
-    def set_api_key(self, api_key, api_host=None):
+        self.uid = self.user_name.split('_')[0]
+        self.rag_doc = CONFIG.up_file_path + '.rag_' + str(self.uid) + '_db' + str(self.db_id) + '.json'
+
+    def set_api_key(self, api_key, api_host=None, in_use=CONFIG.apikey_openai):
         self.api_key = api_key
-        if api_host is not None:
-            # api_base = "https://api.openai.com/"
-            print('api_host: ', api_host)
 
-            self.config_list_gpt4 = [
-                {
-                    'model': 'gpt-4',
-                    'api_key': api_key,
-                    'api_base': api_host,
-                    'api_type': 'openai',
-                },
-            ]
-
-            self.config_list_gpt4_turbo = [
-                {
-                    'model': 'gpt-4-1106-preview',
-                    'api_key': self.api_key,
-                    'api_base': api_host,
-
-                },
-            ]
-
-            self.config_list_gpt35_turbo = [
-                {
-                    'model': 'gpt-3.5-turbo-1106',
-                    'api_key': self.api_key,
-                    'api_base': api_host,
-                },
-            ]
-
-
-
-        else:
+        if in_use == CONFIG.apikey_openai:
             self.config_list_gpt4 = [
                 {
                     'model': 'gpt-4',
@@ -107,6 +82,7 @@ class AgentInstanceUtil:
                 {
                     'model': 'gpt-4-1106-preview',
                     'api_key': self.api_key,
+
                 },
             ]
 
@@ -116,6 +92,79 @@ class AgentInstanceUtil:
                     'api_key': self.api_key,
                 },
             ]
+
+            if api_host is not None:
+                # api_base = "https://api.openai.com/"
+                print('api_host: ', api_host)
+                self.config_list_gpt4[0]['api_base'] = api_host
+                self.config_list_gpt4_turbo[0]['api_base'] = api_host
+                self.config_list_gpt35_turbo[0]['api_base'] = api_host
+
+        elif in_use == CONFIG.apikey_deepinsight:
+            self.config_list_gpt4 = [
+                {
+                    'model': 'gpt-4',
+                    'api_key': api_key,
+                },
+            ]
+
+            self.config_list_gpt4_turbo = [
+                {
+                    'model': 'gpt-4-1106-preview',
+                    'api_key': self.api_key,
+
+                },
+            ]
+
+            self.config_list_gpt35_turbo = [
+                {
+                    'model': 'gpt-3.5-turbo-1106',
+                    'api_key': self.api_key,
+                },
+            ]
+
+            if api_host is not None:
+                print('api_host: ', api_host)
+                self.config_list_gpt4[0]['api_base'] = api_host
+                self.config_list_gpt4_turbo[0]['api_base'] = api_host
+                self.config_list_gpt35_turbo[0]['api_base'] = api_host
+
+        elif in_use == CONFIG.apikey_azure:
+            self.config_list_gpt4 = [
+                {
+                    'model': 'gpt-4',
+                    'api_key': api_key,
+                    'api_type': 'azure',
+                    'model': 'gpt-4',
+                    'api_version': "2023-07-01-preview",
+                },
+            ]
+
+            self.config_list_gpt4_turbo = [
+                {
+                    'model': 'gpt-4-1106-preview',
+                    'api_key': self.api_key,
+                    'api_type': 'azure',
+                    'model': 'gpt-4',
+                    'api_version': "2023-07-01-preview",
+                },
+            ]
+
+            self.config_list_gpt35_turbo = [
+                {
+                    'model': 'gpt-3.5-turbo-1106',
+                    'api_key': self.api_key,
+                    'api_type': 'azure',
+                    'model': 'gpt-4',
+                    'api_version': "2023-07-01-preview",
+                },
+            ]
+
+            if api_host is not None:
+                print('api_host: ', api_host)
+                self.config_list_gpt4[0]['api_base'] = api_host
+                self.config_list_gpt4_turbo[0]['api_base'] = api_host
+                self.config_list_gpt35_turbo[0]['api_base'] = api_host
 
         self.gpt4_turbo_config = {
             "seed": 42,  # change the seed for different trials
@@ -138,7 +187,7 @@ class AgentInstanceUtil:
             "request_timeout": request_timeout,
         }
 
-    def set_base_message(self, message):
+    def set_base_message(self, message, databases_id=-1):
         print('run function set_base_message ... ')
         for table in message['table_desc']:
             for field in table['field_desc']:
@@ -147,8 +196,47 @@ class AgentInstanceUtil:
                     if key not in ['name', 'comment']:
                         field.pop(key)
 
-        self.base_message = str(message)
-        print('base_message : ', message)
+        mess = [
+            {
+                "role": "system",
+                "content": str(message),
+            }
+        ]
+
+        num_tokens = num_tokens_from_messages(mess, model='gpt-4')
+        print('num_tokens: ', num_tokens)
+        print('databases_id ：', databases_id)
+
+        if num_tokens < CONFIG.max_token_num:
+            self.base_message = str(message)
+            # print('base_message : ', message)
+        else:
+            if databases_id == -1:
+                content = '所选表格' + str(num_tokens) + ' , 超过了最大长度:' + str(CONFIG.max_token_num) + ' , 请重新选择'
+                print(content)
+            else:
+                print('self.rag_doc : ', self.rag_doc)
+                with open(self.rag_doc, 'w') as output_file:
+                    output_file.write(str(message))
+
+                self.is_rag = True
+
+                # for table in message['table_desc']:
+                #     for field in table['field_desc']:
+                #         field_keys = list(field.keys())
+                #         for key in field_keys:
+                #             if key not in ['']:
+                #                 field.pop(key)
+                # self.base_message = str(message)
+
+                table_comments = {'table_desc': [], 'databases_desc': ''}
+
+                table_comments['table_desc'] = [
+                    {'table_name': table['table_name'], 'table_comment': table['table_comment']} for table
+                    in message['table_desc']]
+
+                self.base_message = str(table_comments)
+                print('self.base_message : ', self.base_message)
 
     def get_agent_mysql_engineer(self):
         """mysql engineer"""
@@ -330,7 +418,7 @@ class AgentInstanceUtil:
                                 "type": "string",
                                 "description": "Annotations for SQL code generated data. Generally, it is the name of "
                                                "the chart or report, and supports Chinese. If a name is specified in the question, "
-                                "the given name is used.",
+                                               "the given name is used.",
                             }
                         },
                         "required": ["mongodb_code_str", "data_name"],
@@ -365,7 +453,6 @@ class AgentInstanceUtil:
             define mongodb operate
         """
         return mongodb_engineer
-
 
     def get_agent_chart_presenter_old(self):
         """chart designer"""
@@ -672,6 +759,17 @@ class AgentInstanceUtil:
         )
         return database_describer
 
+    def get_agent_retrieve_database_describer(self):
+        database_describer = RetrieveAssistantAgent(
+            name="retrieve_database_describer",
+            system_message="""data_describer.You are a data describer, describing in one sentence your understanding of the data selected by the user. For example, the data selected by the user includes X tables, and what data is in each table.""",
+            llm_config=self.gpt4_turbo_config,
+            user_name=self.user_name,
+            websocket=self.websocket,
+            openai_proxy=self.openai_proxy,
+        )
+        return database_describer
+
     def get_agent_bi_proxy(self):
         """ BI proxy """
         bi_proxy = BIProxyAgent(
@@ -707,6 +805,23 @@ class AgentInstanceUtil:
             report_file_name=report_file_name,
         )
         return planner_user
+
+    def get_agent_retrieve_planner_user(self, is_log_out=True, report_file_name=None, docs_path=None):
+        """Disposable conversation initiator, no reply"""
+        retrieve_planner_user = RetrieveUserProxyAgent(
+            name="retrieve_planner_user",
+            max_consecutive_auto_reply=0,  # terminate without auto-reply
+            human_input_mode="NEVER",
+            websocket=self.websocket,
+            is_log_out=is_log_out,
+            openai_proxy=self.openai_proxy,
+            report_file_name=report_file_name,
+            retrieve_config={
+                "task": "qa",
+                "docs_path": docs_path,
+            },
+        )
+        return retrieve_planner_user
 
     def get_agent_api_check(self):
         """Disposable conversation initiator, no reply"""
@@ -1221,6 +1336,12 @@ class AgentInstanceUtil:
             self.question_ask = ' 以下是我的问题，请用中文回答: '
             self.quesion_answer_language = '用中文回答问题.'
             self.data_analysis_error = '分析数据失败，请检查相关数据是否充分'
+
+        elif self.language_mode == language_japanese:
+            self.error_message_timeout = "申し訳ありませんが、今回のAI-GPTインターフェース呼び出しがタイムアウトしました。もう一度お試しください。"
+            self.question_ask = ' これが私の質問です。: '
+            self.quesion_answer_language = '日本語で質問に答える。'
+            self.data_analysis_error = 'データの分析に失敗しました。関連データが十分かどうかを確認してください。'
 
     def set_base_csv_info(self, db_info):
         csv_content = []

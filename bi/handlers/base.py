@@ -145,3 +145,4 @@ def order_results(results, default_order, allowed_orders, fallback=True):
     # The query may already have an ORDER BY statement attached
     # so we clear it here and apply the selected order
     return sort_query(results.order_by(None), selected_order)
+

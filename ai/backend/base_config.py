@@ -10,7 +10,7 @@ class Config():
 
         # self.database_model = 'test'
         self.database_model = 'online'
-        self.request_timeout = 90
+        self.request_timeout = 120
         self.max_retry_period = 90
         self.max_retry_times = 3
         self.up_file_path = base_util.get_upload_path()
@@ -23,6 +23,7 @@ class Config():
 
         self.language_chinese = 'CN'
         self.language_english = 'EN'
+        self.language_japanese = 'JP'
         self.default_language_mode = self.language_chinese
 
         self.if_hide_sensitive = False
@@ -46,6 +47,12 @@ class Config():
         self.type_test = 'test'
 
         self.local_base_mysql_info = """ """
+        self.apikey_openai = 'OpenAI'
+        self.apikey_deepinsight = 'DeepInsight'
+        self.apikey_azure = 'Azure'
+
+        self.local_base_mysql_info = """
+        """
 
         self.local_base_mongodb_info = """ """
 

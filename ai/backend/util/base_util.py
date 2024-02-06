@@ -1,9 +1,10 @@
 import json
 import os
-from dotenv import load_dotenv
+# from dotenv import load_dotenv
 from pathlib import Path
 
 # from bi.settings import DATA_SOURCE_FILE_DIR as docker_data_source_file_dir
+
 docker_data_source_file_dir = "./user_upload_files"
 
 host_secret = 'tNGoVq0KpQ4LKr5WMIZM'

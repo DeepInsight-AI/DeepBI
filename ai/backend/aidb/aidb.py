@@ -1,4 +1,3 @@
-from ai.backend.base_config import CONFIG
 import traceback
 from ai.backend.util.write_log import logger
 from ai.backend.base_config import CONFIG
@@ -12,6 +11,7 @@ from ai.backend.util import base_util
 import asyncio
 from requests.exceptions import HTTPError
 from ai.backend.language_info import LanguageInfo
+from ai.agents.agentchat import TaskSelectorAgent, TableSelectorAgent
 
 
 class AIDB:
@@ -24,23 +24,30 @@ class AIDB:
         self.websocket = chatClass.ws
         self.uid = chatClass.uid
         self.log_list = []
+        self.db_info_json = None
 
     def set_language_mode(self, language_mode):
         self.language_mode = language_mode
 
-        if self.language_mode == CONFIG.language_english:
-            self.error_message_timeout = 'Sorry, this AI-GPT interface call timed out, please try again.'
-            self.question_ask = ' This is my question，Answer user questions in English: '
-            self.error_miss_data = 'Missing database annotation'
-            self.error_miss_key = 'The ApiKey setting is incorrect, please modify it!'
-            self.error_no_report_question = 'Sorry, this conversation only deals with report generation issues. Please ask this question in the data analysis conversation.'
+        # if self.language_mode == CONFIG.language_english:
+        #     self.error_message_timeout = 'Sorry, this AI-GPT interface call timed out, please try again.'
+        #     self.question_ask = ' This is my question，Answer user questions in English: '
+        #     self.error_miss_data = 'Missing database annotation'
+        #     self.error_miss_key = 'The ApiKey setting is incorrect, please modify it!'
+        #     self.error_no_report_question = 'Sorry, this conversation only deals with report generation issues. Please ask this question in the data analysis conversation.'
 
-        elif self.language_mode == CONFIG.language_chinese:
-            self.error_message_timeout = "十分抱歉，本次AI-GPT接口调用超时，请再次重试"
-            self.question_ask = ' 以下是我的问题，请用中文回答: '
-            self.error_miss_data = '缺少数据库注释'
-            self.error_miss_key = "ApiKey设置有误,请修改!"
-            self.error_no_report_question = "非常抱歉，本对话只处理报表生成类问题，这个问题请您到数据分析对话中提问"
+        # elif self.language_mode == CONFIG.language_chinese:
+        #     self.error_message_timeout = "十分抱歉，本次AI-GPT接口调用超时，请再次重试"
+        #     self.question_ask = ' 以下是我的问题，请用中文回答: '
+        #     self.error_miss_data = '缺少数据库注释'
+        #     self.error_miss_key = "ApiKey设置有误,请修改!"
+        #     self.error_no_report_question = "非常抱歉，本对话只处理报表生成类问题，这个问题请您到数据分析对话中提问"
+
+        self.error_message_timeout = LanguageInfo.error_message_timeout
+        self.question_ask = LanguageInfo.question_ask
+        self.error_miss_data = LanguageInfo.error_miss_data
+        self.error_miss_key = LanguageInfo.error_miss_key
+        self.error_no_report_question = LanguageInfo.error_no_report_question
 
     async def get_data_desc(self, q_str):
         """Get data description"""
@@ -88,7 +95,7 @@ class AIDB:
         return await self.put_message(200, receiver=CONFIG.talker_bi, data_type=CONFIG.type_comment_first,
                                       content=answer_message)
 
-    async def check_data_base(self, q_str):
+    async def check_data_base(self, q_str, databases_id=-1):
         """Check whether the comments meet the requirements. Those that have passed will not be tested again."""
 
         message = [
@@ -211,7 +218,7 @@ class AIDB:
                                                    content=percentage_integer)
                             num = num + 1
                         except Exception as e:
-                            pass
+                            traceback.print_exc()
 
                 except Exception as e:
                     traceback.print_exc()
@@ -235,12 +242,67 @@ class AIDB:
             print(" 最终 q_str : ", q_str)
             await self.put_message(200, CONFIG.talker_bi, CONFIG.type_comment, q_str)
         else:
-            if self.language_mode == CONFIG.language_chinese:
-                content = '所选表格' + str(num_tokens) + ' , 超过了最大长度:' + str(CONFIG.max_token_num) + ' , 请重新选择'
+            databases_id = 0
+
+            if databases_id == -1:
+                if self.language_mode == CONFIG.language_chinese:
+                    content = '所选表格' + str(num_tokens) + ' , 超过了最大长度:' + str(CONFIG.max_token_num) + ' , 请重新选择'
+                else:
+                    content = 'The selected table length ' + str(num_tokens) + ' ,  exceeds the maximum length: ' + str(
+                        CONFIG.max_token_num) + ' , please select again'
+                return await self.put_message(500, CONFIG.talker_log, CONFIG.type_data_check, content)
             else:
-                content = 'The selected table length ' + str(num_tokens) + ' ,  exceeds the maximum length: ' + str(
-                    CONFIG.max_token_num) + ' , please select again'
-            return await self.put_message(500, CONFIG.talker_log, CONFIG.type_data_check, content)
+                table_content = []
+                if q_str.get('table_desc'):
+                    for tb in q_str.get('table_desc'):
+
+                        table_name = tb.get('table_name')
+                        table_comment = tb.get('table_comment')
+                        if table_comment == '':
+                            table_comment = tb.get('table_name')
+
+                        fd_desc = []
+                        if tb.get('field_desc'):
+                            for fd in tb.get('field_desc'):
+                                fd_comment = fd.get('comment')
+                                if fd_comment == '':
+                                    fd_comment = fd.get('name')
+                                if fd.get('is_pass') and fd.get('is_pass') == 1:
+                                    continue
+                                else:
+                                    fd_desc.append({
+                                        "name": fd.get('name'),
+                                        "comment": fd_comment
+                                    })
+
+                        if len(fd_desc) > 0:
+                            tb_desc = {
+                                "table_name": table_name,
+                                "table_comment": table_comment,
+                                "field_desc": fd_desc
+                            }
+                            table_content.append(tb_desc)
+                        elif tb.get('is_pass') and fd.get('is_pass') == 1:
+                            continue
+                        else:
+                            tb_desc = {
+                                "table_name": table_name,
+                                "table_comment": table_comment
+                            }
+                            table_content.append(tb_desc)
+
+                print("The number of tables to be processed this time： ", len(table_content))
+                if q_str.get('table_desc'):
+                    for tb in q_str.get('table_desc'):
+                        if not tb.get('is_pass'):
+                            tb['is_pass'] = 1
+                        if tb.get('field_desc'):
+                            for fd in tb.get('field_desc'):
+                                if not fd.get('is_pass'):
+                                    fd['is_pass'] = 1
+
+                print(" 最终 q_str : ", q_str)
+                await self.put_message(200, CONFIG.talker_bi, CONFIG.type_comment, q_str)
 
     async def put_message(self, state=200, receiver='log', data_type=None, content=None):
         mess = {'state': state, 'data': {'data_type': data_type, 'content': content}, 'receiver': receiver}
@@ -263,12 +325,12 @@ class AIDB:
         token_path = CONFIG.up_file_path + '.token_' + str(self.uid) + '.json'
         if os.path.exists(token_path):
             try:
-                ApiKey, HttpProxyHost, HttpProxyPort, ApiHost = self.load_api_key(token_path)
+                ApiKey, HttpProxyHost, HttpProxyPort, ApiHost, in_use = self.load_api_key(token_path)
                 if ApiKey is None or len(ApiKey) == 0:
                     await self.put_message(500, CONFIG.talker_log, CONFIG.type_log_data, self.error_miss_key)
                     return False
 
-                self.agent_instance_util.set_api_key(ApiKey, ApiHost)
+                self.agent_instance_util.set_api_key(ApiKey, ApiHost, in_use)
 
                 if HttpProxyHost is not None and len(str(HttpProxyHost)) > 0 and HttpProxyPort is not None and len(
                     str(HttpProxyPort)) > 0:
@@ -312,11 +374,11 @@ class AIDB:
         print('token_path : ', token_path)
         if os.path.exists(token_path):
             try:
-                ApiKey, HttpProxyHost, HttpProxyPort, ApiHost = self.load_api_key(token_path)
+                ApiKey, HttpProxyHost, HttpProxyPort, ApiHost, in_use = self.load_api_key(token_path)
                 if ApiKey is None or len(ApiKey) == 0:
                     return await self.put_message(200, CONFIG.talker_api, CONFIG.type_test, LanguageInfo.no_api_key)
 
-                self.agent_instance_util.set_api_key(ApiKey, ApiHost)
+                self.agent_instance_util.set_api_key(ApiKey, ApiHost, in_use)
 
                 if HttpProxyHost is not None and len(str(HttpProxyHost)) > 0 and HttpProxyPort is not None and len(
                     str(HttpProxyPort)) > 0:
@@ -354,6 +416,7 @@ class AIDB:
         HttpProxyHost = None
         HttpProxyPort = None
         ApiHost = None
+        in_use = None
 
         with open(token_path, 'r') as file:
             data = json.load(file)
@@ -370,12 +433,16 @@ class AIDB:
                 openaiApiHost = data[in_use]['ApiHost']
                 if openaiApiHost is not None and len(str(openaiApiHost)) > 0:
                     ApiHost = openaiApiHost
-
             elif in_use == 'DeepInsight':
                 ApiKey = data[in_use]['ApiKey']
                 print('DeepBIApiKey : ', ApiKey)
                 # ApiHost = "https://apiserver.deep-thought.io/proxy"
                 ApiHost = CONFIG.ApiHost
+            elif in_use == 'Azure':
+                ApiKey = data[in_use]['ApiKey']
+                print('DeepBIAzureApiKey : ', ApiKey)
+                # ApiHost = "https://apiserver.deep-thought.io/proxy"
+                ApiHost = data[in_use]['ApiHost']
         else:
             ApiKey = data['OpenaiApiKey']
             print('OpenaiApiKey : ', ApiKey)
@@ -384,7 +451,7 @@ class AIDB:
             HttpProxyPort = data['HttpProxyPort']
             print('HttpProxyPort : ', HttpProxyPort)
 
-        return ApiKey, HttpProxyHost, HttpProxyPort, ApiHost
+        return ApiKey, HttpProxyHost, HttpProxyPort, ApiHost, in_use
 
     def generate_error_message(self, http_err, error_message=' API ERROR '):
         # print(f'HTTP error occurred: {http_err}')
@@ -409,3 +476,82 @@ class AIDB:
         else:
             error_message = error_message + ' ' + str(status_code) + ' ' + str(http_err.response.text)
         return error_message
+
+    def get_agent_select_table_assistant(self, db_info_json):
+        """select_table_assistant"""
+
+        table_names = []
+        table_message = {}
+
+        for table in db_info_json['table_desc']:
+            table_names.append(table['table_name'])
+            table_message[table['table_name']] = table['table_comment']
+
+        print('table_names : ', table_names)
+        print('table_message : ', table_message)
+
+        table_select = f"Read the conversation above. Then select the name of the table involved in the question from {table_names}. Only the name of the table is returned.It can be one table or multiple tables"
+
+        select_analysis_assistant = TableSelectorAgent(
+            name="select_table_assistant",
+            system_message="""You are a helpful AI assistant.
+                        Divide the questions raised by users into corresponding task types.
+                        Different tasks have different processing methods.
+                        The output should be formatted as a JSON instance that conforms to the JSON schema below, the JSON is a list of dict,
+         [
+         {“table_name”: “report_1”},
+         {},
+         {},
+         ].
+         Reply "TERMINATE" in the end when everything is done.
+
+                        Task types are generally divided into the following categories:
+
+                         """ + str(table_message) + '\n' + str(table_select),
+            human_input_mode="NEVER",
+            user_name=self.user_name,
+            websocket=self.websocket,
+            llm_config={
+                "config_list": self.agent_instance_util.config_list_gpt4_turbo,
+                "request_timeout": CONFIG.request_timeout,
+            },
+            openai_proxy=self.agent_instance_util.openai_proxy,
+        )
+        return select_analysis_assistant
+
+    async def select_table_comment(self, qustion_message):
+        select_table_assistant = self.get_agent_select_table_assistant(db_info_json=self.db_info_json)
+        planner_user = self.agent_instance_util.get_agent_planner_user()
+
+        await planner_user.initiate_chat(
+            select_table_assistant,
+            message=qustion_message,
+        )
+        select_table_message = planner_user.last_message()["content"]
+
+        match = re.search(
+            r"\[.*\]", select_table_message.strip(), re.MULTILINE | re.IGNORECASE | re.DOTALL
+        )
+        json_str = ""
+        if match:
+            json_str = match.group()
+        print("json_str : ", json_str)
+        select_table_list = json.loads(json_str)
+        print("select_table_list : ", select_table_list)
+
+        delete_table_names = []
+        for table_str in select_table_list:
+            table_name = table_str.get("table_name")
+            delete_table_names.append(table_name)
+
+        print("delete_table_names : ", delete_table_names)
+
+        table_comment = {'table_desc': []}
+
+        for table in self.db_info_json['table_desc']:
+            # print('table : ', table)
+            if table['table_name'] in delete_table_names:
+                table_comment['table_desc'].append(table)
+
+        print('table_comment : ', table_comment)
+        return table_comment

@@ -36,7 +36,6 @@ class AnalysisMysql(Analysis):
                 # print("agent_instance_util.base_message :", self.agent_instance_util.base_message)
                 if self.agent_instance_util.base_message is not None:
                     await self.start_chatgroup(q_str)
-
                 else:
                     await self.put_message(500, receiver=CONFIG.talker_user, data_type=CONFIG.type_answer,
                                            content=self.error_miss_data)
@@ -44,9 +43,11 @@ class AnalysisMysql(Analysis):
             if q_data_type == CONFIG.type_comment:
                 await self.check_data_base(q_str)
             elif q_data_type == CONFIG.type_comment_first:
+                self.db_info_json = q_str
+
                 if json_str.get('data').get('language_mode'):
                     q_language_mode = json_str['data']['language_mode']
-                    if q_language_mode == CONFIG.language_chinese or q_language_mode == CONFIG.language_english:
+                    if q_language_mode == CONFIG.language_chinese or q_language_mode == CONFIG.language_english or q_language_mode == CONFIG.language_japanese:
                         self.set_language_mode(q_language_mode)
                         self.agent_instance_util.set_language_mode(q_language_mode)
 
@@ -58,8 +59,8 @@ class AnalysisMysql(Analysis):
                     if if_suss:
                         self.agent_instance_util.base_mysql_info = ' When connecting to the database, be sure to bring the port. This is mysql database info :' + '\n' + str(
                             db_info)
-                        self.agent_instance_util.set_base_message(q_str)
                         self.agent_instance_util.db_id = db_id
+                        self.agent_instance_util.set_base_message(q_str, databases_id=db_id)
 
 
                 else:
@@ -67,9 +68,11 @@ class AnalysisMysql(Analysis):
 
                 await self.get_data_desc(q_str)
             elif q_data_type == CONFIG.type_comment_second:
+                self.db_info_json = q_str
+
                 if json_str.get('data').get('language_mode'):
                     q_language_mode = json_str['data']['language_mode']
-                    if q_language_mode == CONFIG.language_chinese or q_language_mode == CONFIG.language_english:
+                    if q_language_mode == CONFIG.language_chinese or q_language_mode == CONFIG.language_english or q_language_mode == CONFIG.language_japanese:
                         self.set_language_mode(q_language_mode)
                         self.agent_instance_util.set_language_mode(q_language_mode)
 
@@ -82,7 +85,7 @@ class AnalysisMysql(Analysis):
                     if if_suss:
                         self.agent_instance_util.base_mysql_info = '  When connecting to the database, be sure to bring the port. This is mysql database info :' + '\n' + str(
                             db_info)
-                        self.agent_instance_util.set_base_message(q_str)
+                        self.agent_instance_util.set_base_message(q_str, databases_id=db_id)
                         self.agent_instance_util.db_id = db_id
                 else:
                     self.agent_instance_util.set_base_message(q_str)
@@ -104,17 +107,21 @@ class AnalysisMysql(Analysis):
             error_times = 0
             for i in range(max_retry_times):
                 try:
-                    base_mysql_assistant = self.get_agent_base_mysql_assistant()
-                    python_executor = self.agent_instance_util.get_agent_python_executor()
+                    if self.agent_instance_util.is_rag:
+                        table_comment = await self.select_table_comment(qustion_message)
+                        answer_message = await self.task_base_rag(qustion_message, table_comment)
+                    else:
+                        base_mysql_assistant = self.get_agent_base_mysql_assistant()
+                        python_executor = self.agent_instance_util.get_agent_python_executor()
 
-                    await python_executor.initiate_chat(
-                        base_mysql_assistant,
-                        message=self.agent_instance_util.base_message + '\n' + self.question_ask + '\n' + str(
-                            qustion_message),
-                    )
+                        await python_executor.initiate_chat(
+                            base_mysql_assistant,
+                            message=self.agent_instance_util.base_message + '\n' + self.question_ask + '\n' + str(
+                                qustion_message),
+                        )
 
-                    answer_message = python_executor.chat_messages[base_mysql_assistant]
-                    print("answer_message: ", answer_message)
+                        answer_message = python_executor.chat_messages[base_mysql_assistant]
+                        print("answer_message: ", answer_message)
 
                     for i in range(len(answer_message)):
                         answer_mess = answer_message[len(answer_message) - 1 - i]
@@ -137,36 +144,6 @@ class AnalysisMysql(Analysis):
 
         return self.agent_instance_util.data_analysis_error
 
-    def get_agent_base_mysql_assistant(self):
-        """ Basic Agent, processing mysql data source """
-        base_mysql_assistant = AssistantAgent(
-            name="base_mysql_assistant",
-            system_message="""You are a helpful AI assistant.
-                  Solve tasks using your coding and language skills.
-                  In the following cases, suggest python code (in a python coding block) for the user to execute.
-                      1. When you need to collect info, use the code to output the info you need, for example, browse or search the web, download/read a file, print the content of a webpage or a file, get the current date/time, check the operating system. After sufficient info is printed and the task is ready to be solved based on your language skill, you can solve the task by yourself.
-                      2. When you need to perform some task with code, use the code to perform the task and output the result. Finish the task smartly.
-                  Solve the task step by step if you need to. If a plan is not provided, explain your plan first. Be clear which step uses code, and which step uses your language skill.
-                  When using code, you must indicate the script type in the code block. The user cannot provide any other feedback or perform any other action beyond executing the code you suggest. The user can't modify your code. So do not suggest incomplete code which requires users to modify. Don't use a code block if it's not intended to be executed by the user.
-                  If you want the user to save the code in a file before executing it, put # filename: <filename> inside the code block as the first line. Don't include multiple code blocks in one response. Do not ask users to copy and paste the result. Instead, use 'print' function for the output when relevant. Check the execution result returned by the user.
-                  If the result indicates there is an error, fix the error and output the code again. Suggest the full code instead of partial code or code changes. If the error can't be fixed or if the task is not solved even after the code is executed successfully, analyze the problem, revisit your assumption, collect additional info you need, and think of a different approach to try.
-                  When you find an answer, verify the answer carefully. Include verifiable evidence in your response if possible.
-                  In any case (even if I ask you to output an html file), please output the results directly and do not save them to a file.
-                  Reply "TERMINATE" in the end when everything is done.
-                  When you find an answer,  You are a report analysis, you have the knowledge and skills to turn raw data into information and insight, which can be used to make business decisions.include your analysis in your reply.
-                  Be careful to avoid using mysql special keywords in mysql code.
-                  """ + '\n' + self.agent_instance_util.base_mysql_info + '\n' + CONFIG.python_base_dependency + '\n' + self.agent_instance_util.quesion_answer_language,
-            human_input_mode="NEVER",
-            user_name=self.user_name,
-            websocket=self.websocket,
-            llm_config={
-                "config_list": self.agent_instance_util.config_list_gpt4_turbo,
-                "request_timeout": CONFIG.request_timeout,
-            },
-            openai_proxy=self.agent_instance_util.openai_proxy,
-        )
-        return base_mysql_assistant
-
     async def task_generate_echart(self, qustion_message):
         try:
             base_content = []
@@ -177,17 +154,21 @@ class AnalysisMysql(Analysis):
             use_cache = True
             for i in range(max_retry_times):
                 try:
-                    mysql_echart_assistant = self.agent_instance_util.get_agent_mysql_echart_assistant(
-                        use_cache=use_cache)
-                    python_executor = self.agent_instance_util.get_agent_python_executor()
+                    if self.agent_instance_util.is_rag:
+                        table_comment = await self.select_table_comment(qustion_message)
+                        answer_message = await self.task_generate_echart_rag(qustion_message, table_comment, use_cache)
+                    else:
+                        mysql_echart_assistant = self.agent_instance_util.get_agent_mysql_echart_assistant(
+                            use_cache=use_cache)
+                        python_executor = self.agent_instance_util.get_agent_python_executor()
 
-                    await python_executor.initiate_chat(
-                        mysql_echart_assistant,
-                        message=self.agent_instance_util.base_message + '\n' + self.question_ask + '\n' + str(
-                            qustion_message),
-                    )
+                        await python_executor.initiate_chat(
+                            mysql_echart_assistant,
+                            message=self.agent_instance_util.base_message + '\n' + self.question_ask + '\n' + str(
+                                qustion_message),
+                        )
 
-                    answer_message = mysql_echart_assistant.chat_messages[python_executor]
+                        answer_message = mysql_echart_assistant.chat_messages[python_executor]
 
                     for answer_mess in answer_message:
                         # print("answer_mess :", answer_mess)
@@ -276,6 +257,11 @@ class AnalysisMysql(Analysis):
                             question_supplement = " 请用中文，简单介绍一下已生成图表中的数据内容."
                         else:
                             question_supplement = " 请用中文，从上诉对话中分析总结出问题的答案."
+                    elif self.language_mode == CONFIG.language_japanese:
+                        if is_chart:
+                            question_supplement = " 生成されたグラフのデータ内容について、簡単に日本語で説明してください。"
+                        else:
+                            question_supplement = " 上記の対話から問題の答えを分析し、日本語で要約してください。"
 
                     await planner_user.initiate_chat(
                         analyst,
@@ -299,3 +285,58 @@ class AnalysisMysql(Analysis):
             logger.error("from user:[{}".format(self.user_name) + "] , " + "error: " + str(e))
         return self.agent_instance_util.data_analysis_error
 
+    async def task_base_rag(self, qustion_message, table_comment):
+        """ Task type: mysql data analysis"""
+        base_mysql_assistant = self.get_agent_base_mysql_assistant()
+        python_executor = self.agent_instance_util.get_agent_python_executor()
+
+        await python_executor.initiate_chat(
+            base_mysql_assistant,
+            message='this is table info: ' + '\n' + str(table_comment) + '\n' + self.question_ask + '\n' + str(
+                qustion_message),
+        )
+        ############################################
+        # base_mysql_assistant = self.get_agent_retrieve_base_mysql_assistant_rag()
+        # docs_path = CONFIG.up_file_path + '.rag_' + str(self.user_name) + '_' + str(
+        #     self.agent_instance_util.db_id) + '.json'
+        # python_executor = self.get_agent_retrieve_python_executor(docs_path=self.agent_instance_util.rag_doc)
+        #
+        # await python_executor.initiate_chat(
+        #     base_mysql_assistant,
+        #     problem='this is table info: ' + '\n' + str(table_comment) + '\n' + self.question_ask + '\n' + str(
+        #         qustion_message),
+        # )
+        ############################################
+
+        answer_message = python_executor.chat_messages[base_mysql_assistant]
+        print("answer_message: ", answer_message)
+
+        return answer_message
+
+    async def task_generate_echart_rag(self, qustion_message, table_comment, use_cache):
+        mysql_echart_assistant = self.agent_instance_util.get_agent_mysql_echart_assistant(
+            use_cache=use_cache)
+        python_executor = self.agent_instance_util.get_agent_python_executor()
+
+        await python_executor.initiate_chat(
+            mysql_echart_assistant,
+            message='this is table info: ' + '\n' + str(table_comment) + '\n' + self.question_ask + '\n' + str(
+                qustion_message),
+        )
+
+        # base_mysql_assistant = self.get_agent_retrieve_base_mysql_assistant_rag()
+
+                  # docs_path = CONFIG.up_file_path + '.rag_' + str(self.user_name) + '_' + str(
+        #     self.agent_instance_util.db_id) + '.json'
+        # python_executor = self.get_agent_retrieve_python_executor(docs_path=docs_path)
+        #
+        # await python_executor.initiate_chat(
+        #     base_mysql_assistant,
+        #     problem='this is table info: ' + '\n' + str(table_comment) + '\n' + self.question_ask + '\n' + str(
+        #         qustion_message),
+        # )
+
+        answer_message = mysql_echart_assistant.chat_messages[python_executor]
+        print("answer_message: ", answer_message)
+
+        return answer_message

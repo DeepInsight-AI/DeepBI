@@ -37,7 +37,7 @@ class ReportPostgresql(Report):
             elif q_data_type == 'mysql_comment_first':
                 if json_str.get('data').get('language_mode'):
                     q_language_mode = json_str['data']['language_mode']
-                    if q_language_mode == CONFIG.language_chinese or q_language_mode == CONFIG.language_english:
+                    if q_language_mode == CONFIG.language_chinese or q_language_mode == CONFIG.language_english or q_language_mode == CONFIG.language_japanese:
                         self.set_language_mode(q_language_mode)
                         self.agent_instance_util.set_language_mode(q_language_mode)
 
@@ -60,7 +60,7 @@ class ReportPostgresql(Report):
             elif q_data_type == 'mysql_comment_second':
                 if json_str.get('data').get('language_mode'):
                     q_language_mode = json_str['data']['language_mode']
-                    if q_language_mode == CONFIG.language_chinese or q_language_mode == CONFIG.language_english:
+                    if q_language_mode == CONFIG.language_chinese or q_language_mode == CONFIG.language_english or q_language_mode == CONFIG.language_japanese:
                         self.set_language_mode(q_language_mode)
                         self.agent_instance_util.set_language_mode(q_language_mode)
 
@@ -156,6 +156,8 @@ class ReportPostgresql(Report):
 
                             if self.language_mode == CONFIG.language_chinese:
                                 que_str = " 以下是我的问题，请用中文回答: " + '\n' + " 简单介绍一下已生成图表中的数据内容 "
+                            elif self.language_mode == CONFIG.language_japanese:
+                                que_str = " 以下が私の質問です。日本語で回答してください：" + '\n' + " 生成されたグラフのデータ内容を簡単に説明してください。"
                             else:
                                 que_str = " The following is my question, please answer it in English: " + '\n' + " Briefly introduce the data content in the generated chart. "
 

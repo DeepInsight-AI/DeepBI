@@ -796,6 +796,7 @@ window.W_L = {
   'submit_fail':'Submission failed',
   'download':'Download',
   'please_enter_api_key':'Please enter the API key',
+  'please_enter_api_host':'Please enter the API host',
   'confirm_delete':'Confirm Delete',
   'confirm_delete_tip':'Are you sure you want to delete this item?',
   'please_complete_report_name_and_report_desc':'Please report a complete name and report description and let the Agent perform automatic data analysis for you.',

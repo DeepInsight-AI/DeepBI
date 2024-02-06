@@ -326,7 +326,7 @@ def get_appid():
         }
     )
 
-@routes.route(org_scoped_rule("/login"), methods=["GET"])
+@routes.route(org_scoped_rule("/login"), methods=["GET","POST"])
 @limiter.limit(settings.THROTTLE_LOGIN_PATTERN)
 def login(org_slug=None):
     print("zxctest=====================")
@@ -349,15 +349,21 @@ def login(org_slug=None):
         # 获取接口传递的平台信息 拼接成用户邮箱
         data = request.get_json()
         user_platform = rdata.get("platform")
+        print("user_platform: ", user_platform)
         user_email = session[USER_INFO_KEY]["open_id"] + "@" + user_platform
         user_name = session[USER_INFO_KEY]["name"]
         password = session[USER_INFO_KEY]["open_id"]
+        print("user_email: ", user_email)
+        print("user_name: ", user_name)
+        print("password: ", password)
         if current_user.is_authenticated:
+            print("current_user.is_authenticated")
             return redirect(next_path)
         try:
             org = current_org._get_current_object()
             user = models.User.get_by_email_and_org(session[USER_INFO_KEY]["email"], org)
             if user is None:
+                print("user is None")
                 user = models.User(
                     email=user_email,
                     name=user_name,
@@ -366,7 +372,9 @@ def login(org_slug=None):
                 user.hash_password(password)
                 models.db.session.add(user)
                 models.db.session.commit()
+            print("have user")
             login_user(user)
+            print("login_user")
             return redirect(next_path)
         except Exception as e:
             logger.error(f"Error creating user: {e}")

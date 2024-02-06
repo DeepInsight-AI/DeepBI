@@ -353,7 +353,7 @@ def login(org_slug=None):
         user_platform = data.get("platform")
         print("user_platform: ", user_platform)
         user_email = session[USER_INFO_KEY]["open_id"] + "@" + user_platform
-        # user_email = user_email.replace("_", "")
+        user_email = user_email.replace("_", "-")
         user_name = session[USER_INFO_KEY]["name"]
         password = session[USER_INFO_KEY]["open_id"]
         print("user_email: ", user_email)

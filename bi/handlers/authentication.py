@@ -363,7 +363,7 @@ def login(org_slug=None):
         try:
             org = current_org._get_current_object()
             print("org: ", org)
-            user = models.User.get_by_email_and_org_first(session[USER_INFO_KEY]["email"], org)
+            user = models.User.get_by_email_and_org(user_email, org)
             print("user: ", user)
             if user is None:
                 print("user is None")

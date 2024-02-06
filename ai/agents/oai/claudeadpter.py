@@ -96,7 +96,8 @@ class AWSClaudeClient:
         if STRICT_MODE_CHECK_FUNCTION:
             function_call_flag = completion.strip().startswith("<function_calls>")
         else:
-            function_call_flag = all(substring in completion for substring in ("<function_calls>", "<invoke>", "<tool_name>", "</invoke>"))
+            function_call_flag = completion.strip().startswith("<function_calls>") or\
+                                 all(substring in completion for substring in ("<function_calls>", "<invoke>", "<tool_name>", "</invoke>"))
         # return openai result
         if function_call_flag:
             """
@@ -199,11 +200,11 @@ class AWSClaudeClient:
         return_str = """In this environment you have access to a set of tools you can use to answer the user's question.
                         Your answer must be english.You may call them like this.
                         Only invoke one function at a time and wait for the results before invoking another function:\n
-                        <function_calls>\n"""
+                        <function_calls>\n<invoke>\n"""
         return_str = return_str + "<tool_name>$TOOL_NAME</tool_name>\n"
         return_str = return_str + "<parameters>\n"
         return_str = return_str + "<$PARAMETER_NAME>$PARAMETER_VALUE</$PARAMETER_NAME>\n ... \n"
-        return_str = return_str + "</parameters>\n"
+        return_str = return_str + "</parameters>\n</invoke>\n"
         return_str = return_str + "</function_calls>\n"
         return return_str
         pass

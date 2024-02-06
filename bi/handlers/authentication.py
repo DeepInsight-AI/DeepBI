@@ -326,44 +326,53 @@ def get_appid():
         }
     )
 
-
-# # 登录完成
-# @routes.route(org_scoped_rule("/login_success"), methods=["GET"])
-# def login_success():
-#     # 登录完成后逻辑处理
-#     return jsonify({"msg": "login success-------------------"})
-
-
-@routes.route(org_scoped_rule("/login"), methods=["GET", "POST"])
+@routes.route(org_scoped_rule("/login"), methods=["GET"])
 @limiter.limit(settings.THROTTLE_LOGIN_PATTERN)
 def login(org_slug=None):
     print("zxctest=====================")
     # 打开本网页应用会执行的第一个函数
-    # return Biz.login_handler()
-    # # 如果session当中没有存储user info，则走免登业务流程Biz.login_handler()
-    index_url = url_for("bi.index", org_slug=org_slug)
-    unsafe_next_path = request.args.get("next", index_url)
-    next_path = get_next_path(unsafe_next_path)
-    # if USER_INFO_KEY not in session:
-    #     logging.info("need to get user information")
-    #     return Biz.login_handler()
-    # else:
-    #     # 如果session中已经有user info，则直接走主页加载流程Biz.home_handler()
-    #     logging.info("already have user information")
-    #     return Biz.home_handler()
-    # 判断是get请求还是post请求
+
     if request.method == "GET":
         print("GET---GET")
         if USER_INFO_KEY not in session:
             logging.info("need to get user information")
             return Biz.login_handler()
         else:
-            # 如果session中已经有user info，则直接走主页加载流程Biz.home_handler()
+            # 如果session中已经有user info，则查询出来email的用户信息 
             logging.info("already have user information")
             return Biz.home_handler()
     elif request.method == "POST":
+        index_url = url_for("bi.index", org_slug=org_slug)
+        unsafe_next_path = request.args.get("next", index_url)
+        next_path = get_next_path(unsafe_next_path)
         print("POST+++POST"+ next_path)
-        return redirect(next_path)
+        # 获取接口传递的平台信息 拼接成用户邮箱
+        data = request.get_json()
+        user_platform = rdata.get("platform")
+        user_email = session[USER_INFO_KEY]["open_id"] + "@" + user_platform
+        user_name = session[USER_INFO_KEY]["name"]
+        password = session[USER_INFO_KEY]["open_id"]
+        if current_user.is_authenticated:
+            return redirect(next_path)
+        try:
+            org = current_org._get_current_object()
+            user = models.User.get_by_email_and_org(session[USER_INFO_KEY]["email"], org)
+            if user is None:
+                user = models.User(
+                    email=user_email,
+                    name=user_name,
+                    org=org
+                )
+                user.hash_password(password)
+                models.db.session.add(user)
+                models.db.session.commit()
+            login_user(user)
+            return redirect(next_path)
+        except Exception as e:
+            logger.error(f"Error creating user: {e}")
+            abort(500, description="Error creating user")
+            # 登录用户
+            
 
 
 

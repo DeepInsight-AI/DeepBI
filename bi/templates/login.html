@@ -125,6 +125,8 @@
       </div>
     </div>
     <script>
+      let lang = window.navigator.language;
+      console.log(lang);
       const login_info = "{{ login_info }}";
       console.log("login info: ", login_info);
       if (login_info == "alreadyLogin") {
@@ -135,8 +137,7 @@
         $("document").ready(apiAuth());
       }
 
-      let lang = window.navigator.language;
-      console.log(lang);
+      
 
       function apiAuth() {
         if (!window.h5sdk) {
@@ -287,18 +288,13 @@
       // 登录完成
       function loginSuccess() {
         console.log("login success");
-        // fetch(`/login_success`)
-        //   .then(response =>
-        //     response.json().then(res => {
-        //       console.log("login success: ", res);
-        //     })
-        //   )
-        //   .catch(function(e) {
-        //     console.error(e);
-        //   });
         // 请求post登录成功 login
         fetch(`/login`, {
           method: "POST",
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          data: JSON.stringify({ platform: "feishu.cn" }),
         })
           .then(response =>{}
           )

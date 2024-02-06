@@ -362,7 +362,9 @@ def login(org_slug=None):
             return redirect(next_path)
         try:
             org = current_org._get_current_object()
+            print("org: ", org)
             user = models.User.get_by_email_and_org(session[USER_INFO_KEY]["email"], org)
+            print("user: ", user)
             if user is None:
                 print("user is None")
                 user = models.User(

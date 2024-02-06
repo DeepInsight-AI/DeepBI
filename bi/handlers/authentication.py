@@ -396,10 +396,11 @@ def login(org_slug=None):
                 # models.db.session.commit()
             # else:
             user = models.User.get_by_email_and_org_first(user_email, org)
+            print("二次查询user: ", user)
             print("have user")
             login_user(user)
             print("login_user")
-            return redirect(next_path)
+            return redirect(next_path)  
             # print("have user")
             # login_user(user)
             # print("login_user")

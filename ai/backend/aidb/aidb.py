@@ -388,10 +388,10 @@ class AIDB:
                 # ApiHost = "https://apiserver.deep-thought.io/proxy"
                 ApiHost = CONFIG.ApiHost
             elif in_use == 'Azure':
-                ApiKey = data[in_use]['ApiKey']
+                ApiKey = data[in_use]['AzureApiKey']
                 print('DeepBIAzureApiKey : ', ApiKey)
                 # ApiHost = "https://apiserver.deep-thought.io/proxy"
-                ApiHost = data[in_use]['ApiHost']
+                ApiHost = data[in_use]['AzureHost']
         else:
             ApiKey = data['OpenaiApiKey']
             print('OpenaiApiKey : ', ApiKey)

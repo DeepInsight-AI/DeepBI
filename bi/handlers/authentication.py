@@ -348,7 +348,7 @@ def login(org_slug=None):
         print("POST+++POST"+ next_path)
         # 获取接口传递的平台信息 拼接成用户邮箱
         data = request.get_json()
-        user_platform = rdata.get("platform")
+        user_platform = data.get("platform")
         print("user_platform: ", user_platform)
         user_email = session[USER_INFO_KEY]["open_id"] + "@" + user_platform
         user_name = session[USER_INFO_KEY]["name"]

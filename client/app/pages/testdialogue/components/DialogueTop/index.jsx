@@ -30,7 +30,7 @@ const DialogueTop = (props) => {
    <>
    {
     Charttable&&CharttableItem&& CharttableItem.label&&
-     <div className="dialogue-top"> 
+    <div className={chat_type==="report"?"dialogue-top report-top":"dialogue-top"}>
     <div className="dialogue-top-flex">
          <div>{chat_type==="chat"?window.W_L.data_analysis:chat_type==="report"?window.W_L.query_builder:chat_type==="autopilot"?window.W_L.auto_pilot:""}</div>
      </div>

@@ -28,19 +28,25 @@ class AIDB:
     def set_language_mode(self, language_mode):
         self.language_mode = language_mode
 
-        if self.language_mode == CONFIG.language_english:
-            self.error_message_timeout = 'Sorry, this AI-GPT interface call timed out, please try again.'
-            self.question_ask = ' This is my question，Answer user questions in English: '
-            self.error_miss_data = 'Missing database annotation'
-            self.error_miss_key = 'The ApiKey setting is incorrect, please modify it!'
-            self.error_no_report_question = 'Sorry, this conversation only deals with report generation issues. Please ask this question in the data analysis conversation.'
+        # if self.language_mode == CONFIG.language_english:
+        #     self.error_message_timeout = 'Sorry, this AI-GPT interface call timed out, please try again.'
+        #     self.question_ask = ' This is my question，Answer user questions in English: '
+        #     self.error_miss_data = 'Missing database annotation'
+        #     self.error_miss_key = 'The ApiKey setting is incorrect, please modify it!'
+        #     self.error_no_report_question = 'Sorry, this conversation only deals with report generation issues. Please ask this question in the data analysis conversation.'
 
-        elif self.language_mode == CONFIG.language_chinese:
-            self.error_message_timeout = "十分抱歉，本次AI-GPT接口调用超时，请再次重试"
-            self.question_ask = ' 以下是我的问题，请用中文回答: '
-            self.error_miss_data = '缺少数据库注释'
-            self.error_miss_key = "ApiKey设置有误,请修改!"
-            self.error_no_report_question = "非常抱歉，本对话只处理报表生成类问题，这个问题请您到数据分析对话中提问"
+        # elif self.language_mode == CONFIG.language_chinese:
+        #     self.error_message_timeout = "十分抱歉，本次AI-GPT接口调用超时，请再次重试"
+        #     self.question_ask = ' 以下是我的问题，请用中文回答: '
+        #     self.error_miss_data = '缺少数据库注释'
+        #     self.error_miss_key = "ApiKey设置有误,请修改!"
+        #     self.error_no_report_question = "非常抱歉，本对话只处理报表生成类问题，这个问题请您到数据分析对话中提问"
+
+        self.error_message_timeout = LanguageInfo.error_message_timeout
+        self.question_ask = LanguageInfo.question_ask
+        self.error_miss_data = LanguageInfo.error_miss_data
+        self.error_miss_key = LanguageInfo.error_miss_key
+        self.error_no_report_question = LanguageInfo.error_no_report_question
 
     async def get_data_desc(self, q_str):
         """Get data description"""
@@ -48,6 +54,7 @@ class AIDB:
         database_describer = self.agent_instance_util.get_agent_database_describer()
 
         try:
+            # qustion_message = "Please explain this data to me."
             table_message = str(self.agent_instance_util.base_message)
             if base_util.is_json(table_message):
                 str_obj = json.loads(table_message)
@@ -62,10 +69,12 @@ class AIDB:
                 else:
                     table_comments['table_desc'].append(table)
 
-            qustion_message = "Please explain this data to me."
+            # qustion_message = "Please explain this data to me."
 
-            if self.language_mode == CONFIG.language_chinese:
-                qustion_message = "请为我解释一下这些数据"
+            # if self.language_mode == CONFIG.language_chinese:
+                # qustion_message = "请为我解释一下这些数据"
+
+            qustion_message = LanguageInfo.qustion_message
 
             await planner_user.initiate_chat(
                 database_describer,
@@ -237,6 +246,8 @@ class AIDB:
         else:
             if self.language_mode == CONFIG.language_chinese:
                 content = '所选表格' + str(num_tokens) + ' , 超过了最大长度:' + str(CONFIG.max_token_num) + ' , 请重新选择'
+            elif self.language_mode == CONFIG.language_japanese:
+                content = '選択したテーブルの長さ' + str(num_tokens) + ' , 最大長を超えています:' + str(CONFIG.max_token_num) + ' , もう一度選択してください'
             else:
                 content = 'The selected table length ' + str(num_tokens) + ' ,  exceeds the maximum length: ' + str(
                     CONFIG.max_token_num) + ' , please select again'
@@ -263,12 +274,12 @@ class AIDB:
         token_path = CONFIG.up_file_path + '.token_' + str(self.uid) + '.json'
         if os.path.exists(token_path):
             try:
-                ApiKey, HttpProxyHost, HttpProxyPort, ApiHost = self.load_api_key(token_path)
+                ApiKey, HttpProxyHost, HttpProxyPort, ApiHost, in_use = self.load_api_key(token_path)
                 if ApiKey is None or len(ApiKey) == 0:
                     await self.put_message(500, CONFIG.talker_log, CONFIG.type_log_data, self.error_miss_key)
                     return False
 
-                self.agent_instance_util.set_api_key(ApiKey, ApiHost)
+                self.agent_instance_util.set_api_key(ApiKey, ApiHost, in_use)
 
                 if HttpProxyHost is not None and len(str(HttpProxyHost)) > 0 and HttpProxyPort is not None and len(
                     str(HttpProxyPort)) > 0:
@@ -312,11 +323,11 @@ class AIDB:
         print('token_path : ', token_path)
         if os.path.exists(token_path):
             try:
-                ApiKey, HttpProxyHost, HttpProxyPort, ApiHost = self.load_api_key(token_path)
+                ApiKey, HttpProxyHost, HttpProxyPort, ApiHost, in_use = self.load_api_key(token_path)
                 if ApiKey is None or len(ApiKey) == 0:
                     return await self.put_message(200, CONFIG.talker_api, CONFIG.type_test, LanguageInfo.no_api_key)
 
-                self.agent_instance_util.set_api_key(ApiKey, ApiHost)
+                self.agent_instance_util.set_api_key(ApiKey, ApiHost, in_use)
 
                 if HttpProxyHost is not None and len(str(HttpProxyHost)) > 0 and HttpProxyPort is not None and len(
                     str(HttpProxyPort)) > 0:
@@ -354,6 +365,7 @@ class AIDB:
         HttpProxyHost = None
         HttpProxyPort = None
         ApiHost = None
+        in_use = None
 
         with open(token_path, 'r') as file:
             data = json.load(file)
@@ -370,12 +382,16 @@ class AIDB:
                 openaiApiHost = data[in_use]['ApiHost']
                 if openaiApiHost is not None and len(str(openaiApiHost)) > 0:
                     ApiHost = openaiApiHost
-
             elif in_use == 'DeepInsight':
                 ApiKey = data[in_use]['ApiKey']
                 print('DeepBIApiKey : ', ApiKey)
                 # ApiHost = "https://apiserver.deep-thought.io/proxy"
                 ApiHost = CONFIG.ApiHost
+            elif in_use == 'Azure':
+                ApiKey = data[in_use]['ApiKey']
+                print('DeepBIAzureApiKey : ', ApiKey)
+                # ApiHost = "https://apiserver.deep-thought.io/proxy"
+                ApiHost = data[in_use]['ApiHost']
         else:
             ApiKey = data['OpenaiApiKey']
             print('OpenaiApiKey : ', ApiKey)
@@ -384,7 +400,7 @@ class AIDB:
             HttpProxyPort = data['HttpProxyPort']
             print('HttpProxyPort : ', HttpProxyPort)
 
-        return ApiKey, HttpProxyHost, HttpProxyPort, ApiHost
+        return ApiKey, HttpProxyHost, HttpProxyPort, ApiHost, in_use
 
     def generate_error_message(self, http_err, error_message=' API ERROR '):
         # print(f'HTTP error occurred: {http_err}')

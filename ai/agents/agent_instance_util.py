@@ -13,7 +13,8 @@ from ai.backend.base_config import CONFIG
 
 max_retry_times = CONFIG.max_retry_times
 language_chinese = CONFIG.language_chinese
-language_english = CONFIG.language_chinese
+language_english = CONFIG.language_english
+language_japanese = CONFIG.language_japanese
 default_language_mode = CONFIG.default_language_mode
 local_base_postgresql_info = CONFIG.local_base_postgresql_info
 local_base_xls_info = CONFIG.local_base_xls_info
@@ -61,41 +62,10 @@ class AgentInstanceUtil:
         self.openai_proxy = None
         self.db_id = db_id
 
-    def set_api_key(self, api_key, api_host=None):
+    def set_api_key(self, api_key, api_host=None, in_use=CONFIG.apikey_openai):
         self.api_key = api_key
-        if api_host is not None:
-            # api_base = "https://api.openai.com/"
-            print('api_host: ', api_host)
 
-            self.config_list_gpt4 = [
-                {
-                    'model': 'gpt-4',
-                    'api_key': api_key,
-                    'api_base': api_host,
-                    'api_type': 'openai',
-                },
-            ]
-
-            self.config_list_gpt4_turbo = [
-                {
-                    'model': 'gpt-4-1106-preview',
-                    'api_key': self.api_key,
-                    'api_base': api_host,
-
-                },
-            ]
-
-            self.config_list_gpt35_turbo = [
-                {
-                    'model': 'gpt-3.5-turbo-1106',
-                    'api_key': self.api_key,
-                    'api_base': api_host,
-                },
-            ]
-
-
-
-        else:
+        if in_use == CONFIG.apikey_openai:
             self.config_list_gpt4 = [
                 {
                     'model': 'gpt-4',
@@ -107,6 +77,7 @@ class AgentInstanceUtil:
                 {
                     'model': 'gpt-4-1106-preview',
                     'api_key': self.api_key,
+
                 },
             ]
 
@@ -116,6 +87,79 @@ class AgentInstanceUtil:
                     'api_key': self.api_key,
                 },
             ]
+
+            if api_host is not None:
+                # api_base = "https://api.openai.com/"
+                print('api_host: ', api_host)
+                self.config_list_gpt4[0]['api_base'] = api_host
+                self.config_list_gpt4_turbo[0]['api_base'] = api_host
+                self.config_list_gpt35_turbo[0]['api_base'] = api_host
+
+        elif in_use == CONFIG.apikey_deepinsight:
+            self.config_list_gpt4 = [
+                {
+                    'model': 'gpt-4',
+                    'api_key': api_key,
+                },
+            ]
+
+            self.config_list_gpt4_turbo = [
+                {
+                    'model': 'gpt-4-1106-preview',
+                    'api_key': self.api_key,
+
+                },
+            ]
+
+            self.config_list_gpt35_turbo = [
+                {
+                    'model': 'gpt-3.5-turbo-1106',
+                    'api_key': self.api_key,
+                },
+            ]
+
+            if api_host is not None:
+                print('api_host: ', api_host)
+                self.config_list_gpt4[0]['api_base'] = api_host
+                self.config_list_gpt4_turbo[0]['api_base'] = api_host
+                self.config_list_gpt35_turbo[0]['api_base'] = api_host
+
+        elif in_use == CONFIG.apikey_azure:
+            self.config_list_gpt4 = [
+                {
+                    'model': 'gpt-4',
+                    'api_key': api_key,
+                    'api_type': 'azure',
+                    'model': 'gpt-4',
+                    'api_version': "2023-07-01-preview",
+                },
+            ]
+
+            self.config_list_gpt4_turbo = [
+                {
+                    'model': 'gpt-4-1106-preview',
+                    'api_key': self.api_key,
+                    'api_type': 'azure',
+                    'model': 'gpt-4',
+                    'api_version': "2023-07-01-preview",
+                },
+            ]
+
+            self.config_list_gpt35_turbo = [
+                {
+                    'model': 'gpt-3.5-turbo-1106',
+                    'api_key': self.api_key,
+                    'api_type': 'azure',
+                    'model': 'gpt-4',
+                    'api_version': "2023-07-01-preview",
+                },
+            ]
+
+            if api_host is not None:
+                print('api_host: ', api_host)
+                self.config_list_gpt4[0]['api_base'] = api_host
+                self.config_list_gpt4_turbo[0]['api_base'] = api_host
+                self.config_list_gpt35_turbo[0]['api_base'] = api_host
 
         self.gpt4_turbo_config = {
             "seed": 42,  # change the seed for different trials
@@ -1221,6 +1265,12 @@ class AgentInstanceUtil:
             self.question_ask = ' 以下是我的问题，请用中文回答: '
             self.quesion_answer_language = '用中文回答问题.'
             self.data_analysis_error = '分析数据失败，请检查相关数据是否充分'
+        
+        elif self.language_mode == language_japanese:
+            self.error_message_timeout = "申し訳ありませんが、今回のAI-GPTインターフェース呼び出しがタイムアウトしました。もう一度お試しください。"
+            self.question_ask = ' これが私の質問です。: '
+            self.quesion_answer_language = '日本語で質問に答える。'
+            self.data_analysis_error = 'データの分析に失敗しました。関連データが十分かどうかを確認してください。'
 
     def set_base_csv_info(self, db_info):
         csv_content = []

@@ -368,7 +368,7 @@ def login(org_slug=None):
             user = models.User.get_by_email_and_org_first(user_email, org)
             print("user: ", user)
             if user is None:
-                # print("user is None")
+                print("user is None++++开始创建用户======")
                 user = models.User(
                     org=current_org,
                     name=user_name,
@@ -377,9 +377,12 @@ def login(org_slug=None):
                     group_ids=[current_org.default_group.id],
                     hash_password=password,
                 )
-
+                print("创建user++++: ", user)
                 try:
                     models.db.session.add(user)
+                    print("add user+++++")
+                    login_user(user)
+                    print("login_user")
                     models.db.session.commit()
                 except IntegrityError as e:
                     if "email" in str(e):
@@ -394,10 +397,15 @@ def login(org_slug=None):
                 # user.hash_password(password)
                 # models.db.session.add(user)
                 # models.db.session.commit()
-            print("have user")
-            login_user(user)
-            print("login_user")
+            else:
+                print("have user")
+                login_user(user)
+                print("login_user")
             return redirect(next_path)
+            # print("have user")
+            # login_user(user)
+            # print("login_user")
+            # return redirect(next_path)
         except Exception as e:
             logger.error(f"Error creating user: {e}")
             abort(500, description="Error creating user")

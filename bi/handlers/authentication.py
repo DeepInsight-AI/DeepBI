@@ -353,7 +353,7 @@ def login(org_slug=None):
         user_platform = data.get("platform")
         print("user_platform: ", user_platform)
         user_email = session[USER_INFO_KEY]["open_id"] + "@" + user_platform
-        user_email = user_email.replace("_", "")
+        # user_email = user_email.replace("_", "")
         user_name = session[USER_INFO_KEY]["name"]
         password = session[USER_INFO_KEY]["open_id"]
         print("user_email: ", user_email)
@@ -380,9 +380,6 @@ def login(org_slug=None):
                 print("创建user++++: ", user)
                 try:
                     models.db.session.add(user)
-                    print("add user+++++")
-                    login_user(user)
-                    print("login_user")
                     models.db.session.commit()
                 except IntegrityError as e:
                     if "email" in str(e):
@@ -397,10 +394,11 @@ def login(org_slug=None):
                 # user.hash_password(password)
                 # models.db.session.add(user)
                 # models.db.session.commit()
-            else:
-                print("have user")
-                login_user(user)
-                print("login_user")
+            # else:
+            user = models.User.get_by_email_and_org_first(user_email, org)
+            print("have user")
+            login_user(user)
+            print("login_user")
             return redirect(next_path)
             # print("have user")
             # login_user(user)

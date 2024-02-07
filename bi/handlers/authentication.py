@@ -371,8 +371,7 @@ def login(org_slug=None):
                     name=user_email,
                     email=user_email,
                     is_invitation_pending=True,
-                    group_ids=[1],
-                    # hash_password=password,
+                    group_ids=[1,2],
                 )
                 # print("current_org.default_group.id:",current_org.default_group.id)
                 print("创建user++++: ", user)
@@ -403,12 +402,10 @@ def login(org_slug=None):
             print("have user")
             login_user(user, remember=True)
             print("login_user----",next_path)
-            return redirect(next_path)  
+            return jsonify({
+                "next": next_path
+            })
             # return redirect(url_for("bi.index", org_slug=org_slug))
-            # print("have user")
-            # login_user(user)
-            # print("login_user")
-            # return redirect(next_path)
         except Exception as e:
             logger.error(f"Error creating user: {e}")
             abort(500, description="Error creating user")

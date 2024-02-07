@@ -341,8 +341,6 @@
 
       // 登录完成
       function loginSuccess() {
-        console.log("login success");
-        // 请求post登录成功 login
         fetch(`/login`, {
           method: "POST",
           headers: {
@@ -350,7 +348,12 @@
           },
           body: JSON.stringify({ platform: "feishu.cn" }),
         })
-          .then(response =>{}
+          .then(response =>
+            response.json().then(res => {
+              console.log("login success: ", res);
+              // 登录成功后跳转到首页
+              window.location.href = res.next;
+            })
           )
           .catch(function(e) {
             console.error(e);

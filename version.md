@@ -1,4 +1,12 @@
 # Version
+### 1.2.3
+- fix some bug,such as Echarts 、json suport、 html output、sql query
+- support Azure API key
+- Added region scaling and scroll legend features
+- Added the ubuntu start and stop script
+
+
+
 ### 1.2.2
 - Add mongodb database support.
 - Fix the report generation path bug.

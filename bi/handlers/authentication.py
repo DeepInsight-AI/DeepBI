@@ -280,8 +280,6 @@ class Biz(object):
 
     @staticmethod
     def login_handler():
-        print("zxctest123=====================")
-        # 需要走免登流程
         return render_template("login.html", user_info={"name": "unknown"}, login_info="needLogin")
 
     # @staticmethod
@@ -289,18 +287,10 @@ class Biz(object):
         # 出错后的页面加载流程
         # return Biz._show_err_info(err_info)
 
-    # Session in Flask has a concept very similar to that of a cookie, 
-    # i.e. data containing identifier to recognize the computer on the network, 
-    # except the fact that session data is stored in a server.
     @staticmethod
     def _show_user_info():
-        # 直接展示session中存储的用户信息
         return render_template("login.html", user_info=session[USER_INFO_KEY], login_info="alreadyLogin")
 
-    # @staticmethod
-    # def _show_err_info(err_info):
-        ## 将错误信息展示在页面上
-        # return render_template("err_info.html", err_info=err_info)
 @routes.route(org_scoped_rule("/callback"), methods=["GET"])
 def callback():
     # 获取 user info

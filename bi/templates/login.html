@@ -298,7 +298,7 @@
       let $btnContainer = $(".progress-button");
       let $btn = $(".progress-button button");
       const login_info = "{{ login_info }}";
-      $(document).ready(function () {
+      document.addEventListener('DOMContentLoaded', function() {
         if (login_info == "alreadyLogin") {
           console.log("alreadyLogin")
           const user_info = JSON.parse("{{ user_info | tojson | safe }}");

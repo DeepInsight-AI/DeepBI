@@ -310,7 +310,7 @@
           document
             .getElementById("authButton")
             .addEventListener("click", function () {
-              console.log("needlogin",btn)
+              console.log("needlogin",$btn)
               if ($btn.prop('disabled')) return; // 如果按钮已禁用，则不执行任何操作
               $btnContainer.addClass("loading").removeClass("error").removeClass("success");
               $btn.prop('disabled', true); // 禁用按钮

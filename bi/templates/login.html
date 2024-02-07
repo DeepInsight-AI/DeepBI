@@ -122,6 +122,8 @@
         <div id="hello_text_name" class="hello_text_name"></div>
         <!-- 欢迎语 -->
         <div id="hello_text_welcome" class="hello_text_welcome"></div>
+        <!-- 授权按钮 -->
+        <button id="authButton">授权登录</button>
       </div>
     </div>
     <script>
@@ -129,14 +131,28 @@
       console.log(lang);
       const login_info = "{{ login_info }}";
       console.log("login info: ", login_info);
-      if (login_info == "alreadyLogin") {
-        const user_info = JSON.parse('{{ user_info | tojson | safe }}');
-        console.log("user: ", user_info.name);
-        $("document").ready(showUser(user_info));
-      } else {
-        $("document").ready(apiAuth());
-      }
+      // if (login_info == "alreadyLogin") {
+      //   const user_info = JSON.parse('{{ user_info | tojson | safe }}');
+      //   console.log("user: ", user_info.name);
+      //   $("document").ready(showUser(user_info));
+      // } else {
+      //   $("document").ready(apiAuth());
+      // }
 
+
+      document.addEventListener('DOMContentLoaded', function() {
+  // 检查登录状态，如果已登录则直接显示用户信息
+  if (login_info == "alreadyLogin") {
+    const user_info = JSON.parse('{{ user_info | tojson | safe }}');
+    console.log("user: ", user_info.name);
+    $(document).ready(showUser(user_info));
+  } else {
+    // 绑定点击事件到授权按钮
+    document.getElementById('authButton').addEventListener('click', function() {
+      apiAuth();
+    });
+  }
+});
       
 
       function apiAuth() {

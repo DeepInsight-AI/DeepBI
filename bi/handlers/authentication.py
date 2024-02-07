@@ -377,6 +377,7 @@ def login(org_slug=None):
                     group_ids=[current_org.default_group.id],
                     # hash_password=password,
                 )
+                print("current_org.default_group.id:",current_org.default_group.id)
                 print("创建user++++: ", user)
                 try:
                     models.db.session.add(user)
@@ -385,6 +386,7 @@ def login(org_slug=None):
                     # 用户创建成功后，设置密码
                     user.hash_password(password)
                     models.db.session.commit()
+                    
                 except IntegrityError as e:
                     if "email" in str(e):
                         abort(400, message="电子邮箱已占用。")
@@ -403,7 +405,7 @@ def login(org_slug=None):
             print("二次查询user: ", user)
             print("have user")
             login_user(user, remember=True)
-            print("login_user")
+            print("login_user----",next_path)
             return redirect(next_path)  
             # return redirect(url_for("bi.index", org_slug=org_slug))
             # print("have user")

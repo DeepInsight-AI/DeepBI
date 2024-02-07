@@ -481,6 +481,8 @@ def test(page):
 
 @routes.route(org_scoped_rule("/logout"))
 def logout(org_slug=None):
+     # 清除session中的用户信息
+    session.pop(USER_INFO_KEY, None)
     logout_user()
     return redirect(get_login_url(next=None))
 

@@ -46,7 +46,7 @@ class AnalysisMysql(Analysis):
             elif q_data_type == CONFIG.type_comment_first:
                 if json_str.get('data').get('language_mode'):
                     q_language_mode = json_str['data']['language_mode']
-                    if q_language_mode == CONFIG.language_chinese or q_language_mode == CONFIG.language_english:
+                    if q_language_mode == CONFIG.language_chinese or q_language_mode == CONFIG.language_english or q_language_mode == CONFIG.language_japanese:
                         self.set_language_mode(q_language_mode)
                         self.agent_instance_util.set_language_mode(q_language_mode)
 
@@ -69,7 +69,7 @@ class AnalysisMysql(Analysis):
             elif q_data_type == CONFIG.type_comment_second:
                 if json_str.get('data').get('language_mode'):
                     q_language_mode = json_str['data']['language_mode']
-                    if q_language_mode == CONFIG.language_chinese or q_language_mode == CONFIG.language_english:
+                    if q_language_mode == CONFIG.language_chinese or q_language_mode == CONFIG.language_english or q_language_mode == CONFIG.language_japanese:
                         self.set_language_mode(q_language_mode)
                         self.agent_instance_util.set_language_mode(q_language_mode)
 
@@ -86,7 +86,6 @@ class AnalysisMysql(Analysis):
                         self.agent_instance_util.db_id = db_id
                 else:
                     self.agent_instance_util.set_base_message(q_str)
-
 
                 await self.put_message(200, receiver=CONFIG.talker_bi, data_type=CONFIG.type_comment_second,
                                        content='')
@@ -152,6 +151,7 @@ class AnalysisMysql(Analysis):
                   If you want the user to save the code in a file before executing it, put # filename: <filename> inside the code block as the first line. Don't include multiple code blocks in one response. Do not ask users to copy and paste the result. Instead, use 'print' function for the output when relevant. Check the execution result returned by the user.
                   If the result indicates there is an error, fix the error and output the code again. Suggest the full code instead of partial code or code changes. If the error can't be fixed or if the task is not solved even after the code is executed successfully, analyze the problem, revisit your assumption, collect additional info you need, and think of a different approach to try.
                   When you find an answer, verify the answer carefully. Include verifiable evidence in your response if possible.
+                  In any case (even if I ask you to output an html file), please output the results directly and do not save them to a file.
                   Reply "TERMINATE" in the end when everything is done.
                   When you find an answer,  You are a report analysis, you have the knowledge and skills to turn raw data into information and insight, which can be used to make business decisions.include your analysis in your reply.
                   Be careful to avoid using mysql special keywords in mysql code.
@@ -276,6 +276,11 @@ class AnalysisMysql(Analysis):
                             question_supplement = " 请用中文，简单介绍一下已生成图表中的数据内容."
                         else:
                             question_supplement = " 请用中文，从上诉对话中分析总结出问题的答案."
+                    elif self.language_mode == CONFIG.language_japanese:
+                        if is_chart:
+                            question_supplement = " 生成されたグラフのデータ内容について、簡単に日本語で説明してください。"
+                        else:
+                            question_supplement = " 上記の対話から問題の答えを分析し、日本語で要約してください。"
 
                     await planner_user.initiate_chat(
                         analyst,
@@ -298,3 +303,4 @@ class AnalysisMysql(Analysis):
             traceback.print_exc()
             logger.error("from user:[{}".format(self.user_name) + "] , " + "error: " + str(e))
         return self.agent_instance_util.data_analysis_error
+

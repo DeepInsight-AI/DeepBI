@@ -43,7 +43,7 @@ class AnalysisStarrocks(Analysis):
             elif q_data_type == CONFIG.type_comment_first:
                 if json_str.get('data').get('language_mode'):
                     q_language_mode = json_str['data']['language_mode']
-                    if q_language_mode == CONFIG.language_chinese or q_language_mode == CONFIG.language_english:
+                    if q_language_mode == CONFIG.language_chinese or q_language_mode == CONFIG.language_english or q_language_mode == CONFIG.language_japanese:
                         self.set_language_mode(q_language_mode)
                         self.agent_instance_util.set_language_mode(q_language_mode)
 
@@ -68,7 +68,7 @@ class AnalysisStarrocks(Analysis):
             elif q_data_type == 'mysql_comment_second':
                 if json_str.get('data').get('language_mode'):
                     q_language_mode = json_str['data']['language_mode']
-                    if q_language_mode == CONFIG.language_chinese or q_language_mode == CONFIG.language_english:
+                    if q_language_mode == CONFIG.language_chinese or q_language_mode == CONFIG.language_english or q_language_mode == CONFIG.language_japanese:
                         self.set_language_mode(q_language_mode)
                         self.agent_instance_util.set_language_mode(q_language_mode)
 
@@ -272,6 +272,11 @@ class AnalysisStarrocks(Analysis):
                             question_supplement = " 请用中文，简单介绍一下已生成图表中的数据内容."
                         else:
                             question_supplement = " 请用中文，从上诉对话中分析总结出问题的答案."
+                    elif self.language_mode == CONFIG.language_japanese:
+                        if is_chart:
+                            question_supplement = " 生成されたグラフのデータ内容について、簡単に日本語で説明してください。"
+                        else:
+                            question_supplement = " 上記の対話から問題の答えを分析し、日本語で要約してください。"
 
                     await planner_user.initiate_chat(
                         analyst,

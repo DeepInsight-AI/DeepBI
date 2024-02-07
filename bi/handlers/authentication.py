@@ -349,8 +349,8 @@ def login(org_slug=None):
         print("POST+++POST"+ next_path)
         logger.info(f"POST request, next_path: {next_path}")
         # 获取接口传递的平台信息 拼接成用户邮箱
-        data = request.get_json()
-        user_platform = data.get("platform")
+        # data = request.get_json()
+        user_platform = request.form["platform"]
         print("user_platform: ", user_platform)
         user_email = session[USER_INFO_KEY]["open_id"] + "@" + user_platform
         password = session[USER_INFO_KEY]["open_id"]
@@ -402,9 +402,7 @@ def login(org_slug=None):
             print("have user")
             login_user(user, remember=True)
             print("login_user----",next_path)
-            return jsonify({
-                "next": next_path
-            })
+            return redirect(next_path)  
             # return redirect(url_for("bi.index", org_slug=org_slug))
         except Exception as e:
             logger.error(f"Error creating user: {e}")

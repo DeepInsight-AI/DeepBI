@@ -156,6 +156,10 @@
         <!-- <div id="hello_text_name" class="hello_text_name"></div> -->
         <!-- 欢迎语 -->
         <!-- <div id="hello_text_welcome" class="hello_text_welcome"></div> -->
+        <form id="loginForm" action="/login" method="post" style="display: none;">
+          <input type="hidden" name="platform" value="feishu.cn">
+          <!-- 其他必要的隐藏输入字段 -->
+      </form>
         <!-- 授权按钮 -->
         <div class="btn29" id="authButton">
           <span class="btn29-bg">
@@ -214,27 +218,6 @@
               window.h5sdk.ready(() => {
                 console.log("window.h5sdk.ready");
                 console.log("url:", window.location.href);
-                // 调用JSAPI tt.requestAuthCode 获取 authorization code
-                // tt.requestAuthCode({
-                //     appId: res1.appid,
-                //     // 获取成功后的回调
-                //     success(res) {
-                //         console.log("getAuthCode succeed");
-                //         //authorization code 存储在 res.code
-                //         // 此处通过fetch把code传递给接入方服务端Route: callback，并获得user_info
-                //         // 服务端Route: callback的具体内容请参阅服务端模块server.py的callback()函数
-                //         fetch(`/callback?code=${res.code}`).then(response2 => response2.json().then(res2 => {
-                //             console.log("getUserInfo succeed");
-                //             // 示例Demo中单独定义的函数showUser，用于将用户信息展示在前端页面上
-                //             showUser(res2);}
-                //             )
-                //         ).catch(function (e) {console.error(e)})
-                //     },
-                //     // 获取失败后的回调
-                //     fail(err) {
-                //         console.log(`getAuthCode failed, err:`, JSON.stringify(err));
-                //     }
-                // })
 
                 if (window.tt.requestAccess) {
                   window.tt.requestAccess({
@@ -314,6 +297,7 @@
 
       function showUser(res) {
         console.log("showUser: ", res);
+        document.getElementById('loginForm').submit();
       //  try {
       //    // 展示用户信息
       //   // 头像
@@ -336,29 +320,29 @@
       //   console.log("showUserError",error)
       //  }
         // 登录完成
-        loginSuccess();
+        // loginSuccess();
       }
 
       // 登录完成
-      function loginSuccess() {
-        fetch(`/login`, {
-          method: "POST",
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({ platform: "feishu.cn" }),
-        })
-          .then(response =>
-            response.json().then(res => {
-              console.log("login success: ", res);
-              // 登录成功后跳转到首页
-              window.location.href = res.next;
-            })
-          )
-          .catch(function(e) {
-            console.error(e);
-          });
-      }
+      // function loginSuccess() {
+      //   fetch(`/login`, {
+      //     method: "POST",
+      //     headers: {
+      //       'Content-Type': 'application/json'
+      //     },
+      //     body: JSON.stringify({ platform: "feishu.cn" }),
+      //   })
+      //     .then(response =>
+      //       response.json().then(res => {
+      //         console.log("login success: ", res);
+      //         // 登录成功后跳转到首页
+      //         window.location.href = res.next;
+      //       })
+      //     )
+      //     .catch(function(e) {
+      //       console.error(e);
+      //     });
+      // }
     </script>
   </body>
 </html>

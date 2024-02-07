@@ -1,361 +1,65 @@
-<!DOCTYPE html>
+{% extends "layouts/signed_out.html" %}
 
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <title>DeepBI飞书网页应用鉴权</title>
-    <script src="/static/jquery.js"></script>
-    <!-- 引入 JSSDK -->
-    <!-- JS 文件版本在升级功能时地址会变化，如有需要（比如使用新增的 API），请重新引用「网页应用开发指南」中的JSSDK链接，确保你当前使用的JSSDK版本是最新的。-->
-    <script
-      type="text/javascript"
-      src="https://lf1-cdn-tos.bytegoofy.com/goofy/lark/op/h5-js-sdk-1.5.16.js"
-    ></script>
-    <!-- 在页面上添加VConsole方便调试-->
-    <script src="https://unpkg.com/vconsole/dist/vconsole.min.js"></script>
-    <script>
-      var vConsole = new window.VConsole();
-    </script>
-  </head>
-  <style>
-    * {
-      margin: 0;
-      padding: 0;
-    }
+{% block title %}{{ lang['W_L']['login'] }}{% endblock %}
 
-    body {
-      background-color: #ebf1fd;
-    }
+{% block content %}
+<div class="fixed-width-page">
+  <div class="bg-white tiled">
+    {% with messages = get_flashed_messages() %}
+      {% if messages %}
+        {% for message in messages %}
+          <div class="alert alert-danger" role="alert" data-test="ErrorMessage">{{ message }}</div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
 
-    .header {
-      display: flex;
-      flex-direction: column;
-      background-color: white;
-    }
+    {% if show_google_openid %}
+      <a href="{{ google_auth_url }}" class="login-button btn btn-default btn-block">
+        <img src="/static/images/google_logo.svg">
+        {{ lang['W_L']['login'] }}
+      </a>
+    {% endif %}
 
-    .header .time-message {
-      display: flex;
-      height: 44px;
-      align-items: center;
-      padding: 0 33.5px;
-      justify-content: space-between;
-    }
+    {% if show_saml_login %}
+      <a href="{{ url_for('saml_auth.sp_initiated', org_slug=org_slug, next=next) }}" class="login-button btn btn-default btn-block">SAML认证</a>
+    {% endif %}
 
-    .header .title {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      height: 44px;
-    }
+    {% if show_remote_user_login %}
+      <a href="{{ url_for('remote_user_auth.login', org_slug=org_slug, next=next) }}" class="login-button btn btn-default btn-block">远程用户登录</a>
+    {% endif %}
 
-    .header .title span {
-      font-weight: 500;
-      font-size: 17px;
-    }
+    {% if show_ldap_login %}
+      <a href="{{ url_for('ldap_auth.login', org_slug=org_slug, next=next) }}" class="login-button btn btn-default btn-block">LDAP/SSO认证</a>
+    {% endif %}
 
-    .img {
-      width: 120px;
-      height: 239px;
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      display: flex;
-      align-items: center;
-      flex-direction: column;
-    }
+    {% if show_password_login %}
+    {% if show_google_openid or show_saml_login or show_remote_user_login or show_ldap_login %}
+      <hr>
+    {% endif %}
 
-    .img_div {
-      border-radius: 50%;
-      overflow: hidden;
-      width: 88px;
-      height: 88px;
-      border: 3px white solid;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-    }
-
-    .text_hello {
-      font-size: 26px;
-      font-weight: 600;
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-    }
-
-    .text_hello_name {
-      font-size: 20px;
-      color: #3370ff;
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, 50%);
-      text-align: center;
-    }
-
-    .text_hello_welcome {
-      position: absolute;
-      bottom: 0;
-      size: 20px;
-      font-weight: 500;
-      text-align: center;
-      white-space: nowrap;
-    }
-
-    .icon {
-      position: absolute;
-      bottom: 44px;
-      left: 50%;
-      transform: translate(-50%, 0);
-    }
-    .btn29{
-  width:100px;
-  height:42px;
-  line-height:42px;
-  position:relative;
-  cursor:pointer;
-  margin-top: 20px;
-}
-.btn29-bg{
-  width:30px;
-  height:30px;
-  display:block;
-  border-radius:15px;
-  position:absolute;
-  left:0;
-  bottom:0;
-  background-color:#97E138;
-  transition:0.24s;
-}
-.btn29-span-text{
-  width:100%;
-  text-align:center;
-  display:block;
-  font-size:16px;
-  font-weight:700;
-  color:#056C00;
-  position:absolute;
-}
-.btn29:hover .btn29-bg{
-  width:100%;
-  height:42px;
-  border-radius:21px;
-}
-
-  </style>
-  <body>
-    <div>
-      <div class="img">
-        <!-- 头像 -->
-        <div id="img_div" class="img_div"></div>
-
-        <!-- <span class="hello_text">Hello</span> -->
-        <!-- 名称 -->
-        <!-- <div id="hello_text_name" class="hello_text_name"></div> -->
-        <!-- 欢迎语 -->
-        <!-- <div id="hello_text_welcome" class="hello_text_welcome"></div> -->
-        <!-- 授权按钮 -->
-        <div class="btn29" id="authButton">
-          <span class="btn29-bg">
-          </span>
-          <span class="btn29-span-text">授权登录</span>
-          </div>
+    <form role="form" method="post" name="login">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+      <div class="form-group">
+        <label for="inputEmail">{{ username_prompt or lang['W_L']['email'] }}</label>
+        <input type="text" class="form-control" id="inputEmail" name="email" value="{{email}}" data-test="Email">
       </div>
-    </div>
-    <script>
-      let lang = window.navigator.language;
-      console.log(lang);
-      const login_info = "{{ login_info }}";
-      console.log("login info: ", login_info);
-      // if (login_info == "alreadyLogin") {
-      //   const user_info = JSON.parse('{{ user_info | tojson | safe }}');
-      //   console.log("user: ", user_info.name);
-      //   $("document").ready(showUser(user_info));
-      // } else {
-      //   $("document").ready(apiAuth());
-      // }
+      <div class="form-group">
+        <label for="inputPassword">{{ lang['W_L']['login_password'] }}</label>
+        <input type="password" class="form-control" id="inputPassword" name="password" data-test="Password">
+      </div>
+      <div class="form-group">
+        <input type="checkbox" id="inputRemember" name="remember" checked>
+        <label for="inputRemember">{{ lang['W_L']['remember_login'] }}</label>
+      </div>
 
-
-      document.addEventListener('DOMContentLoaded', function() {
-  // 检查登录状态，如果已登录则直接显示用户信息
-  if (login_info == "alreadyLogin") {
-    const user_info = JSON.parse('{{ user_info | tojson | safe }}');
-    console.log("user: ", user_info.name);
-    $(document).ready(showUser(user_info));
-  } else {
-    // 绑定点击事件到授权按钮
-    document.getElementById('authButton').addEventListener('click', function() {
-      apiAuth();
-    });
-  }
-});
-      
-
-      function apiAuth() {
-        if (!window.h5sdk) {
-          console.log("invalid h5sdk");
-          alert("please open in feishu");
-          return;
-        }
-        // 通过服务端的Route: get_appid获取app_id
-        // 服务端Route: get_appid的具体内容请参阅服务端模块server.py的get_appid()函数
-        // 为了安全，app_id不应对外泄露，尤其不应在前端明文书写，因此此处从服务端获取
-        fetch(`/get_appid`)
-          .then(response1 =>
-            response1.json().then(res1 => {
-              console.log("get appid succeed: ", res1.appid);
-              // 通过error接口处理API验证失败后的回调
-              window.h5sdk.error(err => {
-                throw ("h5sdk error:", JSON.stringify(err));
-              });
-              // 通过ready接口确认环境准备就绪后才能调用API
-              window.h5sdk.ready(() => {
-                console.log("window.h5sdk.ready");
-                console.log("url:", window.location.href);
-                // 调用JSAPI tt.requestAuthCode 获取 authorization code
-                // tt.requestAuthCode({
-                //     appId: res1.appid,
-                //     // 获取成功后的回调
-                //     success(res) {
-                //         console.log("getAuthCode succeed");
-                //         //authorization code 存储在 res.code
-                //         // 此处通过fetch把code传递给接入方服务端Route: callback，并获得user_info
-                //         // 服务端Route: callback的具体内容请参阅服务端模块server.py的callback()函数
-                //         fetch(`/callback?code=${res.code}`).then(response2 => response2.json().then(res2 => {
-                //             console.log("getUserInfo succeed");
-                //             // 示例Demo中单独定义的函数showUser，用于将用户信息展示在前端页面上
-                //             showUser(res2);}
-                //             )
-                //         ).catch(function (e) {console.error(e)})
-                //     },
-                //     // 获取失败后的回调
-                //     fail(err) {
-                //         console.log(`getAuthCode failed, err:`, JSON.stringify(err));
-                //     }
-                // })
-
-                if (window.tt.requestAccess) {
-                  window.tt.requestAccess({
-                    // 网页应用 App ID
-                    appID: res1.appid,
-                    scopeList: [],
-                    success: res => {
-                      // 用户授权后返回预授权码
-                      const { code } = res;
-                      sendCodeToServer(code);
-                    },
-                    fail: error => {
-                      // 需要额外根据errno判断是否为 客户端不支持requestAccess导致的失败
-                      const { errno, errString } = error;
-                      if (errno === 103) {
-                        // 客户端版本过低，不支持requestAccess，需要改为调用requestAuthCode
-                        console.log("客户端版本过低，不支持requestAccess，需要改为调用requestAuthCode");
-                        callRequestAuthCode(res1.appid);
-                      } else {
-                        console.log(`requestAccess failed, err:`, JSON.stringify(error));
-                        // 用户拒绝授权或者授权失败
-                      }
-                    }
-                  });
-                } else {
-                  // JSSDK版本过低，不支持requestAccess，需要改为调用requestAuthCode
-                  callRequestAuthCode(res1.appid);
-                }
-
-                
-
-                
-              });
-            })
-          )
-          .catch(function(e) {
-            // 从服务端获取app_id失败后的处理
-            console.error(e);
-          });
-      }
-
-
-      function callRequestAuthCode(appid) {
-        console.log("callRequestAuthCode",appid)
-                  window.tt.requestAuthCode({
-                    // 网页应用 App ID
-                    appId: appid,
-                    success: res => {
-                      // 用户免登录后返回预授权码
-                      const { code } = res;
-                      sendCodeToServer(code);
-                    },
-                    fail: error => {
-                      // 免登失败，返回相应的errno和errString
-                      const { errno, errString } = error;
-                      console.log(`requestAuthCode failed, err22:`, JSON.stringify(error));
-                    }
-                  });
-                }
-
-      // 发送code到服务端
-      function sendCodeToServer(code) {
-        console.log(code,"code")
-                  fetch(`/callback?code=${code}`)
-                    .then(response2 =>
-                      response2.json().then(res2 => {
-                        console.log("getUserInfo succeed");
-                        // 示例Demo中单独定义的函数showUser，用于将用户信息展示在前端页面上
-                        showUser(res2);
-                      })
-                    )
-                    .catch(function(e) {
-                      console.error(e, "getUserInfo error");
-                    });
-                }
-
-
-      function showUser(res) {
-        console.log("showUser: ", res);
-      //  try {
-      //    // 展示用户信息
-      //   // 头像
-      //   $("#img_div").html(
-      //     `<img src="${res.avatar_url}" width="100%" height=""100%/>`
-      //   );
-      //   // 名称
-      //   $("#hello_text_name").text(
-      //     lang === "zh_CN" || lang === "zh-CN"
-      //       ? `${res.name}`
-      //       : `${res.en_name}`
-      //   );
-      //   // 欢迎语
-      //   $("#hello_text_welcome").text(
-      //     lang === "zh_CN" || lang === "zh-CN"
-      //       ? "欢迎使用飞书"
-      //       : "welcome to Feishu"
-      //   );
-      //  } catch (error) {
-      //   console.log("showUserError",error)
-      //  }
-        // 登录完成
-        loginSuccess();
-      }
-
-      // 登录完成
-      function loginSuccess() {
-        console.log("login success");
-        // 请求post登录成功 login
-        fetch(`/login`, {
-          method: "POST",
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({ platform: "feishu.cn" }),
-        })
-          .then(response =>{}
-          )
-          .catch(function(e) {
-            console.error(e);
-          });
-      }
-    </script>
-  </body>
-</html>
+      <button type="submit" class="btn btn-primary btn-block m-t-25">{{ lang['W_L']['submit'] }}</button>
+    </form>
+    {% if not hide_forgot_password %}
+      <div class="m-t-25">
+        <a href="{{ url_for("bi.forgot_password", org_slug=org_slug) }}">{{ lang['W_L']['forget_password'] }}</a>
+      </div>
+    {% endif %}
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

@@ -353,7 +353,7 @@ def login(org_slug=None):
         user_platform = data.get("platform")
         print("user_platform: ", user_platform)
         user_email = session[USER_INFO_KEY]["open_id"] + "@" + user_platform
-        user_email = user_email.replace("_", "---")
+        user_email = user_email.replace("_", "__")
         user_name = session[USER_INFO_KEY]["name"]
         password = session[USER_INFO_KEY]["open_id"]
         print("user_email: ", user_email)
@@ -402,10 +402,10 @@ def login(org_slug=None):
             user = models.User.get_by_email_and_org_first(user_email, org)
             print("二次查询user: ", user)
             print("have user")
-            login_user(user)
+            login_user(user, remember=True)
             print("login_user")
-            # return redirect(next_path)  
-            return redirect(url_for("bi.index", org_slug=org_slug))
+            return redirect(next_path)  
+            # return redirect(url_for("bi.index", org_slug=org_slug))
             # print("have user")
             # login_user(user)
             # print("login_user")

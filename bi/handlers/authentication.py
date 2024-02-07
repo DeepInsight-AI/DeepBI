@@ -333,9 +333,6 @@ def login(org_slug=None):
     index_url = url_for("bi.index", org_slug=org_slug)
     unsafe_next_path = request.args.get("next", index_url)
     next_path = get_next_path(unsafe_next_path)
-    print("zxctest=====================")
-    # 打开本网页应用会执行的第一个函数
-
     if request.method == "GET":
         print("GET---GET")
         if USER_INFO_KEY not in session:
@@ -346,26 +343,22 @@ def login(org_slug=None):
             logging.info("already have user information")
             return Biz.home_handler()
     elif request.method == "POST":
-        print("POST+++POST"+ next_path)
-        logger.info(f"POST request, next_path: {next_path}")
+        # print("POST+++POST"+ next_path)
+        # logger.info(f"POST request, next_path: {next_path}")
         # 获取接口传递的平台信息 拼接成用户邮箱
-        # data = request.get_json()
         user_platform = request.form["platform"]
         print("user_platform: ", user_platform)
         user_email = session[USER_INFO_KEY]["open_id"] + "@" + user_platform
         password = session[USER_INFO_KEY]["open_id"]
-        print("user_email: ", user_email)
-        print("password: ", password)
+        # print("user_email: ", user_email)
+        # print("password: ", password)
         # if current_user.is_authenticated:
             # print("current_user.is_authenticated")
             # return redirect(next_path)
         try:
             org = current_org._get_current_object()
-            print("org: ", org)
             user = models.User.get_by_email_and_org_first(user_email, org)
-            print("user: ", user)
             if user is None:
-                print("user is None++++开始创建用户======")
                 user = models.User(
                     org=current_org,
                     name=user_email,
@@ -373,7 +366,6 @@ def login(org_slug=None):
                     is_invitation_pending=True,
                     group_ids=[1,2],
                 )
-                # print("current_org.default_group.id:",current_org.default_group.id)
                 print("创建user++++: ", user)
                 try:
                     models.db.session.add(user)
@@ -387,18 +379,6 @@ def login(org_slug=None):
                     if "email" in str(e):
                         abort(400, message="电子邮箱已占用。")
                     abort(500)
-                
-                # user = models.User(
-                #     email=user_email,
-                #     name=user_name,
-                #     org=org
-                # )
-                # user.hash_password(password)
-                # models.db.session.add(user)
-                # models.db.session.commit()
-            # else:
-            user = models.User.get_by_email_and_org(user_email, org)
-            print("二次查询user: ", user)
             print("have user")
             login_user(user, remember=True)
             print("login_user----",next_path)

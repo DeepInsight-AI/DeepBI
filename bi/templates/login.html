@@ -295,7 +295,7 @@
     </div>
     <script>
       let lang = window.navigator.language;
-      // $(".progress-button");
+      console.log("lang: ", lang);
       let $btnContainer = document.querySelector(".progress-button");
       let $btn = $btnContainer.querySelector("button");
       const login_info = "{{ login_info }}";
@@ -312,9 +312,10 @@
             .getElementById("authButton")
             .addEventListener("click", function () {
               console.log("needlogin",$btn)
-              if ($btn.prop('disabled')) return; // 如果按钮已禁用，则不执行任何操作
-              $btnContainer.addClass("loading").removeClass("error").removeClass("success");
-              $btn.disabled = true;
+              if ($btn.disabled) return; // 如果按钮已禁用，则不执行任何操作
+              $btnContainer.classList.add("loading");
+              $btnContainer.classList.remove("error", "success");
+              $btn.disabled = true; // 禁用按钮
               apiAuth();
             });
         }

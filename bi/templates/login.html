@@ -177,92 +177,6 @@
 	-webkit-transition: opacity 0.3s 0.1s;
 	transition: opacity 0.3s 0.1s;
 }
-
-/* Common style of SVGs */
-.progress-button svg {
-	position: absolute;
-	top: 0;
-	left: 50%;
-	-webkit-transform: translateX(-50%);
-	transform: translateX(-50%);
-	pointer-events: none;
-}
-
-.progress-button svg path {
-	opacity: 0;
-	fill: none;
-}
-
-.progress-button svg.progress-circle path {
-	stroke: #1ECD97;
-	stroke-width: 5;
-}
-
-.progress-button svg.checkmark path,
-.progress-button svg.cross path {
-	stroke: #fff;
-	stroke-linecap: round;
-	stroke-width: 4;
-	-webkit-transition: opacity 0.1s;
-	transition: opacity 0.1s;
-}
-
-/* Loading, success and error effects */
-.loading.progress-button button {
-	width: 70px; /* make a circle */
-	border-width: 5px;
-	border-color: #ddd;
-	background-color: transparent;
-	color: #fff;
-}
-
-.loading.progress-button span {
-	-webkit-transition: opacity 0.15s;
-	transition: opacity 0.15s;
-}
-
-.loading.progress-button span,
-.success.progress-button span,
-.error.progress-button span {
-	opacity: 0; /* keep it hidden in all states */
-}
-
-.success.progress-button button,
-.error.progress-button button {
-	-webkit-transition: background-color 0.3s, width 0.3s, border-width 0.3s;
-	transition: background-color 0.3s, width 0.3s, border-width 0.3s;
-}
-
-.success.progress-button button {
-	border-color: #1ECD97;
-	background-color: #1ECD97;
-}
-
-.error.progress-button button {
-	border-color: #FB797E;
-	background-color: #FB797E;
-}
-
-.loading.progress-button svg.progress-circle path,
-.success.progress-button svg.checkmark path,
-.error.progress-button svg.cross path {
-	opacity: 1;
-	-webkit-transition: stroke-dashoffset 0.3s;
-	transition: stroke-dashoffset 0.3s;
-}
-
-/* Optional elastic effect for the width of the button */
-.elastic.progress-button button {
-	-webkit-transition: background-color 0.3s, color 0.3s, width 0.3s cubic-bezier(0.25, 0.25, 0.4, 1), border-width 0.3s, border-color 0.3s;
-	-webkit-transition: background-color 0.3s, color 0.3s, width 0.3s cubic-bezier(0.25, 0.25, 0.4, 1.6), border-width 0.3s, border-color 0.3s;
-	transition: background-color 0.3s, color 0.3s, width 0.3s cubic-bezier(0.25, 0.25, 0.4, 1.6), border-width 0.3s, border-color 0.3s;
-}
-
-.loading.elastic.progress-button button {
-	-webkit-transition: background-color 0.3s, color 0.3s, width 0.3s cubic-bezier(0.6, 0, 0.75, 0.75), border-width 0.3s, border-color 0.3s;
-	-webkit-transition: background-color 0.3s, color 0.3s, width 0.3s cubic-bezier(0.6, -0.6, 0.75, 0.75), border-width 0.3s, border-color 0.3s;
-	transition: background-color 0.3s, color 0.3s, width 0.3s cubic-bezier(0.6, -0.6, 0.75, 0.75), border-width 0.3s, border-color 0.3s;
-}
     </style>
   </head>
   <body>
@@ -285,9 +199,6 @@
       </div>
       <div class="progress-button">
         <button  id="authButton"><span>授权登录</span></button>
-        <svg class="progress-circle" width="70" height="70"><path d="m35,2.5c17.955803,0 32.5,14.544199 32.5,32.5c0,17.955803 -14.544197,32.5 -32.5,32.5c-17.955803,0 -32.5,-14.544197 -32.5,-32.5c0,-17.955801 14.544197,-32.5 32.5,-32.5z"/></svg>
-        <svg class="checkmark" width="70" height="70"><path d="m31.5,46.5l15.3,-23.2"/><path d="m31.5,46.5l-8.5,-7.1"/></svg>
-        <svg class="cross" width="70" height="70"><path d="m35,35l-9.3,-9.3"/><path d="m35,35l9.3,9.3"/><path d="m35,35l-9.3,9.3"/><path d="m35,35l9.3,-9.3"/></svg>
       </div>
       <form id="loginForm" action="/login" method="post" style="display: none">
         <input type="hidden" name="platform" value="feishu.cn" />
@@ -313,8 +224,8 @@
             .addEventListener("click", function () {
               console.log("needlogin",$btn)
               if ($btn.disabled) return; // 如果按钮已禁用，则不执行任何操作
-              $btnContainer.classList.add("loading");
-              $btnContainer.classList.remove("error", "success");
+              // $btnContainer.classList.add("loading");
+              // $btnContainer.classList.remove("error", "success");
               $btn.disabled = true; // 禁用按钮
               apiAuth();
             });
@@ -426,18 +337,12 @@
 
       function showUser(res) {
         console.log("showUser: ", res);
-        document.getElementById('loginForm').submit();
-        $btnContainer.removeClass("loading").addClass("success");
-        $btn.prop('disabled', false); // 重新启用按钮
-      // Optionally reset the button after a success state to allow new actions
-        setTimeout(() => $btnContainer.removeClass("success"), 2000);
+        // document.getElementById('loginForm').submit();
+        handleError();
       }
 
       function handleError() {
-    $btnContainer.removeClass("loading").addClass("error");
-    $btn.prop('disabled', false); // 重新启用按钮
-    // Remove the error class after a few seconds to allow user to try again
-    setTimeout(() => $btnContainer.removeClass("error"), 3000);
+    $btn.prop('disabled', false);
   }
       });
     </script>

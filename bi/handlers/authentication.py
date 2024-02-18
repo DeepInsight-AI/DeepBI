@@ -320,6 +320,8 @@ def get_appid():
 @routes.route(org_scoped_rule("/login"), methods=["GET","POST"])
 # @limiter.limit(settings.THROTTLE_LOGIN_PATTERN)
 def login(org_slug=None):
+    session.pop(USER_INFO_KEY, None)
+    return
     index_url = url_for("bi.index", org_slug=org_slug)
     unsafe_next_path = request.args.get("next", index_url)
     next_path = get_next_path(unsafe_next_path)

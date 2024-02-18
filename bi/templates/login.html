@@ -215,7 +215,7 @@
           console.log("alreadyLogin")
           const user_info = JSON.parse('{{ user_info | tojson | safe }}');
           console.log("user: ", user_info.name);
-          $(document).ready(showUser(user_info));
+          showUser(user_info);
         } else {
           console.log("needlogin")
           // 绑定点击事件到授权按钮

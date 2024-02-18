@@ -347,28 +347,30 @@ def login(org_slug=None):
             # return redirect(next_path)
         try:
             # 查询models.Organization中有没有name为user_platform的组织
-            org = models.Organization.get_by_name(user_platform)
-            print("查询租户：", org)
-            if org is None:
-                print("未查询到租户：", user_platform)
-                # 如果没有则创建一个新的组织
-                org = models.Organization(
-                    name=user_platform,
-                    slug=user_platform,
-                    settings={},
-                )
-                print("创建租户：", org)
-                models.db.session.add(org)
-                models.db.session.commit()
-            # org = current_org._get_current_object()
+            # org = models.Organization.get_by_name(user_platform)
+            # print("查询租户：", org)
+            # if org is None:
+            #     print("未查询到租户：", user_platform)
+            #     # 如果没有则创建一个新的组织
+            #     org = models.Organization(
+            #         name=user_platform,
+            #         slug=user_platform,
+            #         settings={},
+            #     )
+            #     print("创建租户：", org)
+            #     models.db.session.add(org)
+            #     models.db.session.commit()
+            org = current_org._get_current_object()
+            print("org===",org)
+            print("current_org===",current_org)
             user = models.User.get_by_email_and_org_first(user_email, org)
             if user is None:
                 user = models.User(
-                    org=org,
+                    org=current_org,
                     name=user_email,
                     email=user_email,
                     is_invitation_pending=False,
-                    group_ids=[3],
+                    group_ids=[1,2],
                 )
                 print("创建user++++: ", user)
                 try:

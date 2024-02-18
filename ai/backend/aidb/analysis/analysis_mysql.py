@@ -111,7 +111,7 @@ class AnalysisMysql(Analysis):
                         table_comment = await self.select_table_comment(qustion_message)
                         answer_message = await self.task_base_rag(qustion_message, table_comment)
                     else:
-                        base_mysql_assistant = self.get_agent_base_mysql_assistant()
+                        base_mysql_assistant = self.agent_instance_util.get_agent_base_mysql_assistant()
                         python_executor = self.agent_instance_util.get_agent_python_executor()
 
                         await python_executor.initiate_chat(
@@ -287,7 +287,7 @@ class AnalysisMysql(Analysis):
 
     async def task_base_rag(self, qustion_message, table_comment):
         """ Task type: mysql data analysis"""
-        base_mysql_assistant = self.get_agent_base_mysql_assistant()
+        base_mysql_assistant = self.agent_instance_util.get_agent_base_mysql_assistant()
         python_executor = self.agent_instance_util.get_agent_python_executor()
 
         await python_executor.initiate_chat(

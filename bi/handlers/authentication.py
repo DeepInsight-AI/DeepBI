@@ -338,7 +338,7 @@ def login(org_slug=None):
         # 获取接口传递的平台信息 拼接成用户邮箱
         user_platform = request.form["platform"]
         print("user_platform: ", user_platform)
-        user_email = session[USER_INFO_KEY]["open_id"] + "@" + user_platform
+        user_email = session[USER_INFO_KEY]["open_id"] + "@" + user_platform + ".cn"
         password = session[USER_INFO_KEY]["open_id"]
         # print("user_email: ", user_email)
         # print("password: ", password)
@@ -352,7 +352,7 @@ def login(org_slug=None):
                 # 如果没有则创建一个新的组织
                 org = models.Organization(
                     name=user_platform,
-                    slug="default",
+                    slug=user_platform,
                     settings={},
                 )
                 models.db.session.add(org)

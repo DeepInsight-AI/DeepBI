@@ -324,7 +324,6 @@ def login(org_slug=None):
     unsafe_next_path = request.args.get("next", index_url)
     next_path = get_next_path(unsafe_next_path)
     if request.method == "GET":
-        session.pop(USER_INFO_KEY, None)
         print("GET---GET")
         if USER_INFO_KEY not in session:
             logging.info("need to get user information")

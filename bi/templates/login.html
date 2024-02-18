@@ -302,7 +302,7 @@
       document.addEventListener('DOMContentLoaded', function() {
         if (login_info == "alreadyLogin") {
           console.log("alreadyLogin")
-          const user_info = JSON.parse("{{ user_info | tojson | safe }}");
+          const user_info = JSON.parse('{{ user_info | tojson | safe }}');
           console.log("user: ", user_info.name);
           $(document).ready(showUser(user_info));
         } else {

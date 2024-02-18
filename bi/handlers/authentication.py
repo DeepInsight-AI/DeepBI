@@ -347,21 +347,21 @@ def login(org_slug=None):
             # return redirect(next_path)
         try:
             # 查询models.Organization中有没有name为user_platform的组织
-            org = models.Organization.get_by_name(user_platform)
-            if org is None:
-                # 如果没有则创建一个新的组织
-                org = models.Organization(
-                    name=user_platform,
-                    slug=user_platform,
-                    settings={},
-                )
-                models.db.session.add(org)
-                models.db.session.commit()
-            # org = current_org._get_current_object()
+            # org = models.Organization.get_by_name(user_platform)
+            # if org is None:
+            #     # 如果没有则创建一个新的组织
+            #     org = models.Organization(
+            #         name=user_platform,
+            #         slug=user_platform,
+            #         settings={},
+            #     )
+            #     models.db.session.add(org)
+            #     models.db.session.commit()
+            org = current_org._get_current_object()
             user = models.User.get_by_email_and_org_first(user_email, org)
             if user is None:
                 user = models.User(
-                    org=org,
+                    org=current_org,
                     name=user_email,
                     email=user_email,
                     is_invitation_pending=False,

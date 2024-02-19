@@ -162,7 +162,8 @@ const SelectSource = forwardRef(({ confirmLoading, Charttable, chat_type, onChan
       }
 
       setSchemaList(optionsList);
-      changeSourceAll();
+      console.log("optionsList", optionsList);
+      // changeSourceAll();
     } catch (error) {
       console.error("error", error);
     }

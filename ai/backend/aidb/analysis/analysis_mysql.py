@@ -292,7 +292,7 @@ class AnalysisMysql(Analysis):
 
         await python_executor.initiate_chat(
             base_mysql_assistant,
-            message='this is table info: ' + '\n' + str(table_comment) + '\n' + self.question_ask + '\n' + str(
+            message='this is databases info: ' + '\n' + str(table_comment) + '\n' + self.question_ask + '\n' + str(
                 qustion_message),
         )
         ############################################

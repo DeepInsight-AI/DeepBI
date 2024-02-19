@@ -546,7 +546,7 @@ class AIDB:
 
         print("delete_table_names : ", delete_table_names)
 
-        table_comment = {'table_desc': []}
+        table_comment = {'table_desc': [], 'databases_desc': ''}
 
         for table in self.db_info_json['table_desc']:
             # print('table : ', table)

@@ -508,7 +508,7 @@ class AgentInstanceUtil:
 
     def get_agent_base_mysql_assistant(self):
         """ Basic Agent, processing mysql data source """
-        base_mysql_assistant = TaskSelectorAgent(
+        base_mysql_assistant = AssistantAgent(
             name="base_mysql_assistant",
             system_message="""You are a helpful AI assistant.
                 Solve tasks using your coding and language skills.

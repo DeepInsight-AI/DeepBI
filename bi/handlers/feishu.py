@@ -5,7 +5,7 @@
 # import requests
 # from flask import request, jsonify,redirect,render_template,session,Blueprint,url_for
 # from bi.handlers import routes  # 假设routes是全局可用的，根据你的项目结构导入
-# from bi.handlers.feishu_auth import Auth  # 确保这个路径正确
+# from bi.handlers.feishu_auth import Auth
 # from dotenv import load_dotenv, find_dotenv
 # import logging
 # from bi.handlers.base import json_response, org_scoped_rule
@@ -98,33 +98,33 @@
 #         logging.info("already have user information")
 #         return Biz.home_handler()
 
-# # @app.route("/callback", methods=["GET"])
-# # def callback():
-# #     # 获取 user info
+# @app.route("/callback", methods=["GET"])
+# def callback():
+#     # 获取 user info
 
-# #     # 拿到前端传来的临时授权码 Code
-# #     code = request.args.get("code")
-# #     # 先获取 user_access_token
-# #     auth.authorize_user_access_token(code)
-# #     # 再获取 user info
-# #     user_info = auth.get_user_info()
-# #     # 将 user info 存入 session
-# #     session[USER_INFO_KEY] = user_info
-# #     return jsonify(user_info)
+#     # 拿到前端传来的临时授权码 Code
+#     code = request.args.get("code")
+#     # 先获取 user_access_token
+#     auth.authorize_user_access_token(code)
+#     # 再获取 user info
+#     user_info = auth.get_user_info()
+#     # 将 user info 存入 session
+#     session[USER_INFO_KEY] = user_info
+#     return jsonify(user_info)
 
-# # @app.route("/get_appid", methods=["GET"])
-# # def get_appid():
-# #     # 获取 appid
-# #     # 为了安全，app_id不应对外泄露，尤其不应在前端明文书写，因此此处从服务端传递过去
-# #     return jsonify(
-# #         {
-# #             "appid": os.getenv("APP_ID")
-# #         }
-# #     )
+# @app.route("/get_appid", methods=["GET"])
+# def get_appid():
+#     # 获取 appid
+#     # 为了安全，app_id不应对外泄露，尤其不应在前端明文书写，因此此处从服务端传递过去
+#     return jsonify(
+#         {
+#             "appid": os.getenv("APP_ID")
+#         }
+#     )
 
-# # # 登录完成
-# # @app.route("/login_success", methods=["GET"])
-# # def login_success():
-# #     # 登录完成后，展示主页
-# #     print("login_success+++++++++++++++++++++") 
-# #     return jsonify({"msg": "login success-------------------"})
+# # 登录完成
+# @app.route("/login_success", methods=["GET"])
+# def login_success():
+#     # 登录完成后，展示主页
+#     print("login_success+++++++++++++++++++++") 
+#     return jsonify({"msg": "login success-------------------"})

@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>DeepBI登录授权页面</title>
+    <script src="/static/jquery.js"></script>
+    <!-- 引入 JSSDK -->
+    <!-- JS 文件版本在升级功能时地址会变化，如有需要（比如使用新增的 API），请重新引用「网页应用开发指南」中的JSSDK链接，确保你当前使用的JSSDK版本是最新的。-->
+    <script
+      type="text/javascript"
+      src="https://lf1-cdn-tos.bytegoofy.com/goofy/lark/op/h5-js-sdk-1.5.16.js"
+    ></script>
+    <!-- 在页面上添加VConsole方便调试-->
+    <script src="https://unpkg.com/vconsole/dist/vconsole.min.js"></script>
+    <script>
+      var vConsole = new window.VConsole();
+    </script>
+    <style>
+      body {
+        background-color: #ebf1fd;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        margin: 0;
+      }
+
+      .box {
+        width: 100%;
+        height: 100%;
+        position: relative;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+      }
+
+      .round-box {
+        width: 100%;
+        height: 100%;
+        border-radius: 10px;
+        position: absolute;
+        overflow: hidden;
+      }
+
+      .round:first-child {
+        width: 100px;
+        height: 100px;
+        border-radius: 50%;
+        border: 24px solid #2e33c9;
+        box-sizing: border-box;
+        position: absolute;
+        top: -24px;
+        left: -38px;
+        animation: move-y 3.5s linear infinite;
+      }
+
+      .round:last-child {
+        width: 100px;
+        height: 100px;
+        border-radius: 50%;
+        background: linear-gradient(180deg, #ae00b1 0%, #e7ce1b 100%);
+        box-sizing: border-box;
+        position: absolute;
+        bottom: -38px;
+        right: -28px;
+        animation: move-y 5s ease-in-out infinite;
+      }
+
+      .bg-filter {
+        width: 100%;
+        height: 100%;
+        background: rgba(255, 255, 255, 0.05);
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+        backdrop-filter: blur(4px);
+        border-radius: 10px;
+        box-sizing: border-box;
+        position: absolute;
+      }
+
+      @keyframes move-y {
+        0% {
+          transform: translateY(0);
+        }
+        50% {
+          transform: translateY(-16px);
+        }
+        100% {
+          transform: translateY(0);
+        }
+      }
+
+      .img_div {
+        border-radius: 50%;
+        /* overflow: hidden; */
+        width: 158px;
+        height: 158px;
+        /* border: 3px white solid; */
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-bottom: 50px;
+        position: relative;
+        z-index: 1; /* Ensure the avatar is above the animated background */
+      }
+      .img_div img {
+        border-radius: 50%;
+      }
+
+      .spinner-container {
+        position: absolute;
+        width: 250px;
+        height: 250px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        animation: spin 2s linear infinite;
+        z-index: 0; /* Below the avatar */
+      }
+
+      @keyframes spin {
+        0% {
+          transform: rotate(0deg);
+        }
+        100% {
+          transform: rotate(360deg);
+        }
+      }
+
+      .spinner {
+        /* border: 2px solid white; Light grey */
+        border-top: 2px solid #c5c2c2; /* Blue */
+        border-radius: 50%;
+        width: 165px;
+        height: 165px;
+      }
+      /* Button container */
+.progress-button {
+	position: relative;
+	display: inline-block;
+	text-align: center;
+	width: 45%;
+	min-width: 250px;
+	margin: 10px;
+}
+
+/* Button style */
+.progress-button button {
+	display: block;
+	margin: 0 auto;
+	padding: 0;
+	width: 250px;
+	height: 70px;
+	border: 2px solid #1ECD97;
+	border-radius: 40px;
+	background: transparent;
+	color: #1ECD97;
+	letter-spacing: 1px;
+	font-size: 18px;
+	font-family: 'Montserrat', sans-serif;
+	-webkit-tap-highlight-color: transparent;
+	-webkit-transition: background-color 0.3s, color 0.3s, width 0.3s, border-width 0.3s, border-color 0.3s;
+	transition: background-color 0.3s, color 0.3s, width 0.3s, border-width 0.3s, border-color 0.3s;
+}
+
+.progress-button button:hover {
+	background-color: #1ECD97;
+	color: #fff;
+}
+
+.progress-button button:focus {
+	outline: none;
+}
+
+/* Text (transition for when returning to initial state) */
+.progress-button button span {
+	-webkit-transition: opacity 0.3s 0.1s;
+	transition: opacity 0.3s 0.1s;
+}
+
+/* Common style of SVGs */
+.progress-button svg {
+	position: absolute;
+	top: 0;
+	left: 50%;
+	-webkit-transform: translateX(-50%);
+	transform: translateX(-50%);
+	pointer-events: none;
+}
+
+.progress-button svg path {
+	opacity: 0;
+	fill: none;
+}
+
+.progress-button svg.progress-circle path {
+	stroke: #1ECD97;
+	stroke-width: 5;
+}
+
+.progress-button svg.checkmark path,
+.progress-button svg.cross path {
+	stroke: #fff;
+	stroke-linecap: round;
+	stroke-width: 4;
+	-webkit-transition: opacity 0.1s;
+	transition: opacity 0.1s;
+}
+
+/* Loading, success and error effects */
+.loading.progress-button button {
+	width: 70px; /* make a circle */
+	border-width: 5px;
+	border-color: #ddd;
+	background-color: transparent;
+	color: #fff;
+}
+
+.loading.progress-button span {
+	-webkit-transition: opacity 0.15s;
+	transition: opacity 0.15s;
+}
+
+.loading.progress-button span,
+.success.progress-button span,
+.error.progress-button span {
+	opacity: 0; /* keep it hidden in all states */
+}
+
+.success.progress-button button,
+.error.progress-button button {
+	-webkit-transition: background-color 0.3s, width 0.3s, border-width 0.3s;
+	transition: background-color 0.3s, width 0.3s, border-width 0.3s;
+}
+
+.success.progress-button button {
+	border-color: #1ECD97;
+	background-color: #1ECD97;
+}
+
+.error.progress-button button {
+	border-color: #FB797E;
+	background-color: #FB797E;
+}
+
+.loading.progress-button svg.progress-circle path,
+.success.progress-button svg.checkmark path,
+.error.progress-button svg.cross path {
+	opacity: 1;
+	-webkit-transition: stroke-dashoffset 0.3s;
+	transition: stroke-dashoffset 0.3s;
+}
+
+/* Optional elastic effect for the width of the button */
+.elastic.progress-button button {
+	-webkit-transition: background-color 0.3s, color 0.3s, width 0.3s cubic-bezier(0.25, 0.25, 0.4, 1), border-width 0.3s, border-color 0.3s;
+	-webkit-transition: background-color 0.3s, color 0.3s, width 0.3s cubic-bezier(0.25, 0.25, 0.4, 1.6), border-width 0.3s, border-color 0.3s;
+	transition: background-color 0.3s, color 0.3s, width 0.3s cubic-bezier(0.25, 0.25, 0.4, 1.6), border-width 0.3s, border-color 0.3s;
+}
+
+.loading.elastic.progress-button button {
+	-webkit-transition: background-color 0.3s, color 0.3s, width 0.3s cubic-bezier(0.6, 0, 0.75, 0.75), border-width 0.3s, border-color 0.3s;
+	-webkit-transition: background-color 0.3s, color 0.3s, width 0.3s cubic-bezier(0.6, -0.6, 0.75, 0.75), border-width 0.3s, border-color 0.3s;
+	transition: background-color 0.3s, color 0.3s, width 0.3s cubic-bezier(0.6, -0.6, 0.75, 0.75), border-width 0.3s, border-color 0.3s;
+}
+    </style>
+  </head>
+  <body>
+    <div class="box">
+      <div class="round-box">
+        <div class="round"></div>
+        <div class="round"></div>
+      </div>
+      <div class="bg-filter"></div>
+      <div class="img_div">
+        <img
+          src="https://www.deep-insight.co/favicon.ico"
+          alt="DeepBI"
+          width="100%"
+          height="100%"
+        />
+        <div class="spinner-container" style="display: none">
+          <div class="spinner"></div>
+        </div>
+      </div>
+      <div class="progress-button">
+        <button  id="authButton"><span>授权登录</span></button>
+        <svg class="progress-circle" width="70" height="70"><path d="m35,2.5c17.955803,0 32.5,14.544199 32.5,32.5c0,17.955803 -14.544197,32.5 -32.5,32.5c-17.955803,0 -32.5,-14.544197 -32.5,-32.5c0,-17.955801 14.544197,-32.5 32.5,-32.5z"/></svg>
+        <svg class="checkmark" width="70" height="70"><path d="m31.5,46.5l15.3,-23.2"/><path d="m31.5,46.5l-8.5,-7.1"/></svg>
+        <svg class="cross" width="70" height="70"><path d="m35,35l-9.3,-9.3"/><path d="m35,35l9.3,9.3"/><path d="m35,35l-9.3,9.3"/><path d="m35,35l9.3,-9.3"/></svg>
+      </div>
+      <form id="loginForm" action="/login" method="post" style="display: none">
+        <input type="hidden" name="platform" value="feishu.cn" />
+      </form>
+    </div>
+    <script>
+      let lang = window.navigator.language;
+      let $btnContainer = $(".progress-button");
+      let $btn = $(".progress-button button");
+      const login_info = "{{ login_info }}";
+      document.addEventListener('DOMContentLoaded', function() {
+        if (login_info == "alreadyLogin") {
+          console.log("alreadyLogin")
+          const user_info = JSON.parse("{{ user_info | tojson | safe }}");
+          console.log("user: ", user_info.name);
+          $(document).ready(showUser(user_info));
+        } else {
+          console.log("needlogin")
+          // 绑定点击事件到授权按钮
+          document
+            .getElementById("authButton")
+            .addEventListener("click", function () {
+              console.log("needlogin",btn)
+              if ($btn.prop('disabled')) return; // 如果按钮已禁用，则不执行任何操作
+              $btnContainer.addClass("loading").removeClass("error").removeClass("success");
+              $btn.prop('disabled', true); // 禁用按钮
+              apiAuth();
+            });
+        }
+        function apiAuth() {
+        if (!window.h5sdk) {
+          console.log("invalid h5sdk");
+          alert("please open in feishu");
+          handleError();
+          return;
+        }
+        // 通过服务端的Route: get_appid获取app_id
+        // 服务端Route: get_appid的具体内容请参阅服务端模块server.py的get_appid()函数
+        // 为了安全，app_id不应对外泄露，尤其不应在前端明文书写，因此此处从服务端获取
+        fetch(`/get_appid`)
+          .then(response1 =>
+            response1.json().then(res1 => {
+              console.log("get appid succeed: ", res1.appid);
+              // 通过error接口处理API验证失败后的回调
+              window.h5sdk.error(err => {
+                handleError();
+                throw ("h5sdk error:", JSON.stringify(err));
+                
+              });
+              // 通过ready接口确认环境准备就绪后才能调用API
+              window.h5sdk.ready(() => {
+                console.log("window.h5sdk.ready");
+                console.log("url:", window.location.href);
+
+                if (window.tt.requestAccess) {
+                  window.tt.requestAccess({
+                    // 网页应用 App ID
+                    appID: res1.appid,
+                    scopeList: [],
+                    success: res => {
+                      // 用户授权后返回预授权码
+                      const { code } = res;
+                      sendCodeToServer(code);
+                    },
+                    fail: error => {
+                      // 需要额外根据errno判断是否为 客户端不支持requestAccess导致的失败
+                      const { errno, errString } = error;
+                      if (errno === 103) {
+                        // 客户端版本过低，不支持requestAccess，需要改为调用requestAuthCode
+                        console.log("客户端版本过低，不支持requestAccess，需要改为调用requestAuthCode");
+                        callRequestAuthCode(res1.appid);
+                      } else {
+                        console.log(`requestAccess failed, err:`, JSON.stringify(error));
+                        // 用户拒绝授权或者授权失败
+                        handleError();
+                      }
+                    }
+                  });
+                } else {
+                  // JSSDK版本过低，不支持requestAccess，需要改为调用requestAuthCode
+                  callRequestAuthCode(res1.appid);
+                }
+
+                
+
+                
+              });
+            })
+          )
+          .catch(function(e) {
+            // 从服务端获取app_id失败后的处理
+            console.error(e);
+            handleError();
+          });
+      }
+
+
+      function callRequestAuthCode(appid) {
+        console.log("callRequestAuthCode",appid)
+                  window.tt.requestAuthCode({
+                    // 网页应用 App ID
+                    appId: appid,
+                    success: res => {
+                      // 用户免登录后返回预授权码
+                      const { code } = res;
+                      sendCodeToServer(code);
+                    },
+                    fail: error => {
+                      // 免登失败，返回相应的errno和errString
+                      const { errno, errString } = error;
+                      console.log(`requestAuthCode failed, err22:`, JSON.stringify(error));
+                      handleError();
+                    }
+                  });
+                }
+
+      // 发送code到服务端
+      function sendCodeToServer(code) {
+        console.log(code,"code")
+                  fetch(`/callback?code=${code}`)
+                    .then(response2 =>
+                      response2.json().then(res2 => {
+                        console.log("getUserInfo succeed");
+                        // 示例Demo中单独定义的函数showUser，用于将用户信息展示在前端页面上
+                        showUser(res2);
+                      })
+                    )
+                    .catch(function(e) {
+                      console.error(e, "getUserInfo error");
+                      handleError();
+                    });
+                }
+
+
+      function showUser(res) {
+        console.log("showUser: ", res);
+        document.getElementById('loginForm').submit();
+        $btnContainer.removeClass("loading").addClass("success");
+        $btn.prop('disabled', false); // 重新启用按钮
+      // Optionally reset the button after a success state to allow new actions
+        setTimeout(() => $btnContainer.removeClass("success"), 2000);
+      }
+
+      function handleError() {
+    $btnContainer.removeClass("loading").addClass("error");
+    $btn.prop('disabled', false); // 重新启用按钮
+    // Remove the error class after a few seconds to allow user to try again
+    setTimeout(() => $btnContainer.removeClass("error"), 3000);
+  }
+      });
+    </script>
+  </body>
+</html>

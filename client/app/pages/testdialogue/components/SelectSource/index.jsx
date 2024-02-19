@@ -162,6 +162,7 @@ const SelectSource = forwardRef(({ confirmLoading, Charttable, chat_type, onChan
       }
 
       setSchemaList(optionsList);
+      changeSourceAll();
     } catch (error) {
       console.error("error", error);
     }
@@ -253,61 +254,61 @@ const SelectSource = forwardRef(({ confirmLoading, Charttable, chat_type, onChan
     });
     setSchemaListData(newSchemaListDataList);
   };
-  const changeSource = (e, item) => {
-    setSchemaList([...SchemaList.map(i => (i.name === item.name ? { ...i, checked: e.target.checked } : i))]);
-    if (e.target.checked) {
-      setSelectSchema([...selectSchema, { ...item, checked: true }]);
-      getTableColumns(item);
-    } else {
-      setSelectSchema(selectSchema.filter(i => i.name !== item.name));
-      setSchemaListData(SchemaListData.filter(i => i.table_name !== item.name));
-      setTableSelectedRowKeys(tableSelectedRowKeys.filter(i => i.table_name !== item.name));
-      if (selectSchema.length < 1) {
-        setSchemaListDataItem({});
-      }
-    }
-    setSelectSchema(newSelectSchema => {
-      if (newSelectSchema.length === SchemaList.length) {
-        setIndeterminate(false);
-        setCheckAll(true);
-      } else if (newSelectSchema.length > 0) {
-        setIndeterminate(true);
-        setCheckAll(false);
-      } else {
-        setIndeterminate(false);
-        setCheckAll(false);
-      }
-      return newSelectSchema;
-    });
-  };
-  const changeSourceAll = (e, type = null) => {
-    if (!type) return;
+  // const changeSource = (e, item) => {
+  //   setSchemaList([...SchemaList.map(i => (i.name === item.name ? { ...i, checked: e.target.checked } : i))]);
+  //   if (e.target.checked) {
+  //     setSelectSchema([...selectSchema, { ...item, checked: true }]);
+  //     getTableColumns(item);
+  //   } else {
+  //     setSelectSchema(selectSchema.filter(i => i.name !== item.name));
+  //     setSchemaListData(SchemaListData.filter(i => i.table_name !== item.name));
+  //     setTableSelectedRowKeys(tableSelectedRowKeys.filter(i => i.table_name !== item.name));
+  //     if (selectSchema.length < 1) {
+  //       setSchemaListDataItem({});
+  //     }
+  //   }
+  //   setSelectSchema(newSelectSchema => {
+  //     if (newSelectSchema.length === SchemaList.length) {
+  //       setIndeterminate(false);
+  //       setCheckAll(true);
+  //     } else if (newSelectSchema.length > 0) {
+  //       setIndeterminate(true);
+  //       setCheckAll(false);
+  //     } else {
+  //       setIndeterminate(false);
+  //       setCheckAll(false);
+  //     }
+  //     return newSelectSchema;
+  //   });
+  // };
+  const changeSourceAll = () => {
+    // if (!type) return;
     setSelectLoading(true);
     setIndeterminate(false);
-    setCheckAll(e.target.checked);
+    // setCheckAll(e.target.checked);
     const newSchemaList = [];
     const newSchemaListData = [];
     SchemaList.forEach(item => {
-      newSchemaList.push({ ...item, checked: e.target.checked });
+      newSchemaList.push({ ...item, checked: true });
       // Only get table columns for items that were not already checked
-      if (!item.checked && e.target.checked) {
+      if (!item.checked) {
         newSchemaListData.push(getTableColumns(item, "all"));
       }
     });
     setSchemaList(newSchemaList);
-    setSelectSchema(e.target.checked ? newSchemaList : []);
-    if (e.target.checked) {
+    setSelectSchema(newSchemaList);
+    // if (e.target.checked) {
       Promise.all(newSchemaListData).then(res => {
         setSelectLoading(false);
       });
-    } else {
-      setSelectSchema([]);
-      setSchemaListDataItem({});
-      setSchemaListData([]);
-      setSelectedRowKeys([]);
-      setTableSelectedRowKeys([]);
-      setSelectLoading(false);
-    }
+    // } else {
+    //   setSelectSchema([]);
+    //   setSchemaListDataItem({});
+    //   setSchemaListData([]);
+    //   setSelectedRowKeys([]);
+    //   setTableSelectedRowKeys([]);
+    //   setSelectLoading(false);
+    // }
   };
   const clickSchemaItem = item => {
     if (loadingTableColumns) {
@@ -322,43 +323,43 @@ const SelectSource = forwardRef(({ confirmLoading, Charttable, chat_type, onChan
     }
   };
 
-  const rowSelection = {
-    selectedRowKeys,
-    onChange: (selectedRowKeys, selectedRows) => {
-      setSelectedRowKeys(selectedRowKeys);
-      const newSchemaListData = { ...SchemaListDataItem };
-      newSchemaListData.field_desc = newSchemaListData.field_desc.map(item => {
-        item.in_use = selectedRowKeys.includes(item.name) ? 1 : 0;
-        return item;
-      });
-      setSchemaListDataItem(newSchemaListData);
-      const newSchemaListDataList = SchemaListData.map(item => {
-        if (item.table_name === newSchemaListData.table_name) {
-          item.field_desc = newSchemaListData.field_desc;
-        }
-        return item;
-      });
-      setSchemaListData(newSchemaListDataList);
-      const existingTableSelectedRowKeys = tableSelectedRowKeys.find(
-        table => table.table_name === newSchemaListData.table_name
-      );
-      if (existingTableSelectedRowKeys) {
-        setTableSelectedRowKeys(
-          tableSelectedRowKeys.map(table => {
-            if (table.table_name === newSchemaListData.table_name) {
-              table.selectedRowKeys = selectedRowKeys;
-            }
-            return table;
-          })
-        );
-      } else {
-        setTableSelectedRowKeys(prevData => [
-          ...prevData,
-          { table_name: newSchemaListData.table_name, selectedRowKeys: selectedRowKeys },
-        ]);
-      }
-    },
-  };
+  // const rowSelection = {
+  //   selectedRowKeys,
+  //   onChange: (selectedRowKeys, selectedRows) => {
+  //     setSelectedRowKeys(selectedRowKeys);
+  //     const newSchemaListData = { ...SchemaListDataItem };
+  //     newSchemaListData.field_desc = newSchemaListData.field_desc.map(item => {
+  //       item.in_use = selectedRowKeys.includes(item.name) ? 1 : 0;
+  //       return item;
+  //     });
+  //     setSchemaListDataItem(newSchemaListData);
+  //     const newSchemaListDataList = SchemaListData.map(item => {
+  //       if (item.table_name === newSchemaListData.table_name) {
+  //         item.field_desc = newSchemaListData.field_desc;
+  //       }
+  //       return item;
+  //     });
+  //     setSchemaListData(newSchemaListDataList);
+  //     const existingTableSelectedRowKeys = tableSelectedRowKeys.find(
+  //       table => table.table_name === newSchemaListData.table_name
+  //     );
+  //     if (existingTableSelectedRowKeys) {
+  //       setTableSelectedRowKeys(
+  //         tableSelectedRowKeys.map(table => {
+  //           if (table.table_name === newSchemaListData.table_name) {
+  //             table.selectedRowKeys = selectedRowKeys;
+  //           }
+  //           return table;
+  //         })
+  //       );
+  //     } else {
+  //       setTableSelectedRowKeys(prevData => [
+  //         ...prevData,
+  //         { table_name: newSchemaListData.table_name, selectedRowKeys: selectedRowKeys },
+  //       ]);
+  //     }
+  //   },
+  // };
 
   const submit = async (data = []) => {
     setSubmitting(true);
@@ -491,7 +492,7 @@ const SelectSource = forwardRef(({ confirmLoading, Charttable, chat_type, onChan
                     </Select>
                     <div className="select-main">
                       <ul className={!SchemaListIsShow ? "flex-center" : ""}>
-                        {SchemaListIsShow && (
+                        {/* {SchemaListIsShow && (
                           <div className="flex-end">
                             <span>{window.W_L.select_all}</span>
                             <Checkbox
@@ -500,7 +501,7 @@ const SelectSource = forwardRef(({ confirmLoading, Charttable, chat_type, onChan
                               onChange={e => changeSourceAll(e, "all")}
                             />
                           </div>
-                        )}
+                        )} */}
                         {SchemaListIsShow ? (
                           SchemaList.map((item, index) => (
                             <li key={index}>
@@ -511,7 +512,7 @@ const SelectSource = forwardRef(({ confirmLoading, Charttable, chat_type, onChan
                                   {item.label}
                                 </span>
                               </Tooltip>
-                              <Checkbox checked={item.checked} onChange={e => changeSource(e, item)} />
+                              {/* <Checkbox checked={item.checked} onChange={e => changeSource(e, item)} /> */}
                             </li>
                           ))
                         ) : (
@@ -544,10 +545,10 @@ const SelectSource = forwardRef(({ confirmLoading, Charttable, chat_type, onChan
                     style={{ width: "400px", overflowY: "scroll", height: tableIsShow ? "235px" : "276px" }}>
                     {tableIsShow ? (
                       <Table
-                        rowSelection={{
-                          type: "checkbox",
-                          ...rowSelection,
-                        }}
+                        // rowSelection={{
+                        //   type: "checkbox",
+                        //   ...rowSelection,
+                        // }}
                         dataSource={SchemaListDataItem.field_desc}
                         columns={columns}
                         size="small"

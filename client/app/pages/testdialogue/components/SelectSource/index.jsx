@@ -142,6 +142,7 @@ const SelectSource = forwardRef(({ confirmLoading, Charttable, chat_type, onChan
   };
   const schemaList = async (val, type) => {
     try {
+      setSelectLoading(true);
       let optionsList;
       const getOptionsList = (data, type) => {
         return data.map((item, index) => ({
@@ -161,11 +162,12 @@ const SelectSource = forwardRef(({ confirmLoading, Charttable, chat_type, onChan
         optionsList = getOptionsList(schemaList, type);
       }
 
-      setSchemaList(optionsList);
+      // setSchemaList(optionsList);
       console.log("optionsList", optionsList);
-      // changeSourceAll();
+      changeSourceAll(optionsList);
     } catch (error) {
       console.error("error", error);
+      setSelectLoading(false);
     }
   };
 
@@ -282,14 +284,19 @@ const SelectSource = forwardRef(({ confirmLoading, Charttable, chat_type, onChan
   //     return newSelectSchema;
   //   });
   // };
-  const changeSourceAll = () => {
+  const changeSourceAll = (optionsList) => {
+    if (optionsList.length === 0) {
+      setSelectLoading(false);
+      return;
+    }
+    // setSchemaList(optionsList);
     // if (!type) return;
     setSelectLoading(true);
     setIndeterminate(false);
     // setCheckAll(e.target.checked);
     const newSchemaList = [];
     const newSchemaListData = [];
-    SchemaList.forEach(item => {
+    optionsList.forEach(item => {
       newSchemaList.push({ ...item, checked: true });
       // Only get table columns for items that were not already checked
       if (!item.checked) {

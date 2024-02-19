@@ -164,14 +164,14 @@ const SelectSource = forwardRef(({ confirmLoading, Charttable, chat_type, onChan
 
       // setSchemaList(optionsList);
       console.log("optionsList", optionsList);
-      changeSourceAll(optionsList);
+      changeSourceAll(val,optionsList);
     } catch (error) {
       console.error("error", error);
       // setSelectLoading(false);
     }
   };
 
-  const getTableColumns = async (item, type = null) => {
+  const getTableColumns = async (item, type = null,val=null) => {
     setLoadingTableColumns(true);
     const table_desc_obj = {
       table_name: "",
@@ -179,7 +179,7 @@ const SelectSource = forwardRef(({ confirmLoading, Charttable, chat_type, onChan
       field_desc: [],
     };
     const res = await axios.get(
-      `/api/data_table/columns/${source_id}/${source_item.type === "csv" ? item.file_name : item.name}`
+      `/api/data_table/columns/${val??source_id}/${source_item.type === "csv" ? item.file_name : item.name}`
     );
     if (Object.keys(res).length !== 0) {
       table_desc_obj.table_name = res.table_name;
@@ -284,7 +284,7 @@ const SelectSource = forwardRef(({ confirmLoading, Charttable, chat_type, onChan
   //     return newSelectSchema;
   //   });
   // };
-  const changeSourceAll = (optionsList) => {
+  const changeSourceAll = (val,optionsList) => {
     if (optionsList.length === 0) {
       // setSelectLoading(false);
       return;
@@ -300,7 +300,7 @@ const SelectSource = forwardRef(({ confirmLoading, Charttable, chat_type, onChan
       // newSchemaList.push({ ...item, checked: true });
       // Only get table columns for items that were not already checked
       // if (!item.checked) {
-        newSchemaListData.push(getTableColumns(item, "all"));
+        newSchemaListData.push(getTableColumns(item, "all",val));
       // }
     });
     setSchemaList(optionsList);

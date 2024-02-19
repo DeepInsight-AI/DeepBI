@@ -142,7 +142,7 @@ const SelectSource = forwardRef(({ confirmLoading, Charttable, chat_type, onChan
   };
   const schemaList = async (val, type) => {
     try {
-      setSelectLoading(true);
+      // setSelectLoading(true);
       let optionsList;
       const getOptionsList = (data, type) => {
         return data.map((item, index) => ({
@@ -150,7 +150,7 @@ const SelectSource = forwardRef(({ confirmLoading, Charttable, chat_type, onChan
           label: type === "csv" ? item.source_name : item.name,
           value: index,
           name: type === "csv" ? item.file_name : item.name,
-          checked: false,
+          checked: true,
         }));
       };
 
@@ -167,7 +167,7 @@ const SelectSource = forwardRef(({ confirmLoading, Charttable, chat_type, onChan
       changeSourceAll(optionsList);
     } catch (error) {
       console.error("error", error);
-      setSelectLoading(false);
+      // setSelectLoading(false);
     }
   };
 
@@ -286,7 +286,7 @@ const SelectSource = forwardRef(({ confirmLoading, Charttable, chat_type, onChan
   // };
   const changeSourceAll = (optionsList) => {
     if (optionsList.length === 0) {
-      setSelectLoading(false);
+      // setSelectLoading(false);
       return;
     }
     // setSchemaList(optionsList);
@@ -294,17 +294,17 @@ const SelectSource = forwardRef(({ confirmLoading, Charttable, chat_type, onChan
     setSelectLoading(true);
     setIndeterminate(false);
     // setCheckAll(e.target.checked);
-    const newSchemaList = [];
+    // const newSchemaList = [];
     const newSchemaListData = [];
     optionsList.forEach(item => {
-      newSchemaList.push({ ...item, checked: true });
+      // newSchemaList.push({ ...item, checked: true });
       // Only get table columns for items that were not already checked
-      if (!item.checked) {
+      // if (!item.checked) {
         newSchemaListData.push(getTableColumns(item, "all"));
-      }
+      // }
     });
-    setSchemaList(newSchemaList);
-    setSelectSchema(newSchemaList);
+    setSchemaList(optionsList);
+    setSelectSchema(optionsList);
     // if (e.target.checked) {
       Promise.all(newSchemaListData).then(res => {
         setSelectLoading(false);

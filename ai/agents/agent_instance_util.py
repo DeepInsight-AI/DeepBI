@@ -760,6 +760,7 @@ class AgentInstanceUtil:
         return database_describer
 
     def get_agent_retrieve_database_describer(self):
+        pass
         # database_describer = RetrieveAssistantAgent(
         #     name="retrieve_database_describer",
         #     system_message="""data_describer.You are a data describer, describing in one sentence your understanding of the data selected by the user. For example, the data selected by the user includes X tables, and what data is in each table.""",

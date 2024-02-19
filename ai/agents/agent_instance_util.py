@@ -10,7 +10,7 @@ from ai.agents.agentchat import (UserProxyAgent, GroupChat, AssistantAgent, Grou
                                  PythonProxyAgent, BIProxyAgent, TaskPlannerAgent, TaskSelectorAgent, CheckAgent,
                                  ChartPresenterAgent)
 from ai.backend.base_config import CONFIG
-from ai.agents.agentchat.contrib import RetrieveAssistantAgent, RetrievePythonProxyAgent, RetrieveUserProxyAgent
+# from ai.agents.agentchat.contrib import RetrieveAssistantAgent, RetrievePythonProxyAgent, RetrieveUserProxyAgent
 
 max_retry_times = CONFIG.max_retry_times
 language_chinese = CONFIG.language_chinese
@@ -760,15 +760,15 @@ class AgentInstanceUtil:
         return database_describer
 
     def get_agent_retrieve_database_describer(self):
-        database_describer = RetrieveAssistantAgent(
-            name="retrieve_database_describer",
-            system_message="""data_describer.You are a data describer, describing in one sentence your understanding of the data selected by the user. For example, the data selected by the user includes X tables, and what data is in each table.""",
-            llm_config=self.gpt4_turbo_config,
-            user_name=self.user_name,
-            websocket=self.websocket,
-            openai_proxy=self.openai_proxy,
-        )
-        return database_describer
+        # database_describer = RetrieveAssistantAgent(
+        #     name="retrieve_database_describer",
+        #     system_message="""data_describer.You are a data describer, describing in one sentence your understanding of the data selected by the user. For example, the data selected by the user includes X tables, and what data is in each table.""",
+        #     llm_config=self.gpt4_turbo_config,
+        #     user_name=self.user_name,
+        #     websocket=self.websocket,
+        #     openai_proxy=self.openai_proxy,
+        # )
+        # return database_describer
 
     def get_agent_bi_proxy(self):
         """ BI proxy """
@@ -808,20 +808,20 @@ class AgentInstanceUtil:
 
     def get_agent_retrieve_planner_user(self, is_log_out=True, report_file_name=None, docs_path=None):
         """Disposable conversation initiator, no reply"""
-        retrieve_planner_user = RetrieveUserProxyAgent(
-            name="retrieve_planner_user",
-            max_consecutive_auto_reply=0,  # terminate without auto-reply
-            human_input_mode="NEVER",
-            websocket=self.websocket,
-            is_log_out=is_log_out,
-            openai_proxy=self.openai_proxy,
-            report_file_name=report_file_name,
-            retrieve_config={
-                "task": "qa",
-                "docs_path": docs_path,
-            },
-        )
-        return retrieve_planner_user
+        # retrieve_planner_user = RetrieveUserProxyAgent(
+        #     name="retrieve_planner_user",
+        #     max_consecutive_auto_reply=0,  # terminate without auto-reply
+        #     human_input_mode="NEVER",
+        #     websocket=self.websocket,
+        #     is_log_out=is_log_out,
+        #     openai_proxy=self.openai_proxy,
+        #     report_file_name=report_file_name,
+        #     retrieve_config={
+        #         "task": "qa",
+        #         "docs_path": docs_path,
+        #     },
+        # )
+        # return retrieve_planner_user
 
     def get_agent_api_check(self):
         """Disposable conversation initiator, no reply"""

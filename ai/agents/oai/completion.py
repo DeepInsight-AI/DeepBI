@@ -228,14 +228,16 @@ class Completion(openai_Completion):
                     print(agent_name in AGENT_LLM_MODEL, AGENT_LLM_MODEL[agent_name]['replace_default'])
                 if "DeepInsight" != use_llm_name and "OpenAI" != use_llm_name:
                     use_model = None
-                print("==agent_name==", agent_name, 'default: llm:', use_llm_name, "url:", use_url, "model", use_model, "other LLM", other_llm_name)
+                print("==agent_name==", agent_name, 'default: llm:', use_llm_name, "url:", use_url, "model", use_model,
+                      "other LLM", other_llm_name)
                 if other_llm_name is not None and use_llm_name != other_llm_name:
                     """
                     different llm
                     """
                     use_message_count = AGENT_LLM_MODEL[agent_name]['use_message_count']
                     if 0 == use_message_count or len(config['messages']) <= use_message_count:
-                        print("～~Change LLM model~～ message less", use_message_count, "message count", len(config['messages']))
+                        print("～~Change LLM model~～ message less", use_message_count, "message count",
+                              len(config['messages']))
                         use_llm_name = other_llm_name
                         use_model = AGENT_LLM_MODEL[agent_name]['model']
                         use_api_key = llm_setting[AGENT_LLM_MODEL[agent_name]['llm']]['ApiKey']
@@ -244,8 +246,19 @@ class Completion(openai_Completion):
                             raise Exception("agent_llm llm api key empty use_model:", use_model)
                     else:
                         print("~~The llm model is not replaced because the number of messages is insufficient.~~")
+                elif use_llm_name == other_llm_name:
+                    """
+                    same llm, diff model
+                    """
+                    use_message_count = AGENT_LLM_MODEL[agent_name]['use_message_count']
+                    if (agent_name in AGENT_LLM_MODEL and
+                        AGENT_LLM_MODEL[agent_name]['replace_default'] and
+                        (0 == use_message_count or len(config['messages']) <= use_message_count)):
+                        "use diff model"
+                        use_model = AGENT_LLM_MODEL[agent_name]['model']
 
-                print("agent_name", agent_name, 'fact use: llm:', use_llm_name, "url:", use_url, "pre use model", use_model)
+                print("agent_name", agent_name, 'fact use: llm:', use_llm_name, "url:", use_url, "pre use model",
+                      use_model)
                 print("~" * 30)
                 if use_llm_name != "OpenAI":
                     """

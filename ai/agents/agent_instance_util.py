@@ -62,14 +62,18 @@ class AgentInstanceUtil:
         self.openai_proxy = None
         self.db_id = db_id
 
-    def set_api_key(self, api_key, api_host=None, in_use=CONFIG.apikey_openai):
+    def set_api_key(self, api_key, ApiType="openai", api_host=None, LlmSetting=None):
         self.api_key = api_key
-
-        if in_use == CONFIG.apikey_openai:
+        if api_host is not None:
+            # api_base = "https://api.openai.com/"
+            print('api_host: ', api_host)
             self.config_list_gpt4 = [
                 {
                     'model': 'gpt-4',
                     'api_key': api_key,
+                    'api_base': api_host,
+                    'api_type': ApiType,
+                    'llm_setting': LlmSetting
                 },
             ]
 
@@ -77,7 +81,9 @@ class AgentInstanceUtil:
                 {
                     'model': 'gpt-4-1106-preview',
                     'api_key': self.api_key,
-
+                    'api_base': api_host,
+                    'api_type': ApiType,
+                    'llm_setting': LlmSetting
                 },
             ]
 
@@ -85,21 +91,18 @@ class AgentInstanceUtil:
                 {
                     'model': 'gpt-3.5-turbo-1106',
                     'api_key': self.api_key,
+                    'api_base': api_host,
+                    'api_type': ApiType,
+                    'llm_setting': LlmSetting
                 },
             ]
-
-            if api_host is not None:
-                # api_base = "https://api.openai.com/"
-                print('api_host: ', api_host)
-                self.config_list_gpt4[0]['api_base'] = api_host
-                self.config_list_gpt4_turbo[0]['api_base'] = api_host
-                self.config_list_gpt35_turbo[0]['api_base'] = api_host
-
-        elif in_use == CONFIG.apikey_deepinsight:
+        else:
             self.config_list_gpt4 = [
                 {
                     'model': 'gpt-4',
                     'api_key': api_key,
+                    'api_type': ApiType,
+                    'llm_setting': LlmSetting
                 },
             ]
 
@@ -107,7 +110,8 @@ class AgentInstanceUtil:
                 {
                     'model': 'gpt-4-1106-preview',
                     'api_key': self.api_key,
-
+                    'api_type': ApiType,
+                    'llm_setting': LlmSetting
                 },
             ]
 
@@ -115,51 +119,10 @@ class AgentInstanceUtil:
                 {
                     'model': 'gpt-3.5-turbo-1106',
                     'api_key': self.api_key,
+                    'api_type': ApiType,
+                    'llm_setting': LlmSetting
                 },
             ]
-
-            if api_host is not None:
-                print('api_host: ', api_host)
-                self.config_list_gpt4[0]['api_base'] = api_host
-                self.config_list_gpt4_turbo[0]['api_base'] = api_host
-                self.config_list_gpt35_turbo[0]['api_base'] = api_host
-
-        elif in_use == CONFIG.apikey_azure:
-            self.config_list_gpt4 = [
-                {
-                    'model': 'gpt-4',
-                    'api_key': api_key,
-                    'api_type': 'azure',
-                    'model': 'gpt-4',
-                    'api_version': "2023-07-01-preview",
-                },
-            ]
-
-            self.config_list_gpt4_turbo = [
-                {
-                    'model': 'gpt-4-1106-preview',
-                    'api_key': self.api_key,
-                    'api_type': 'azure',
-                    'model': 'gpt-4',
-                    'api_version': "2023-07-01-preview",
-                },
-            ]
-
-            self.config_list_gpt35_turbo = [
-                {
-                    'model': 'gpt-3.5-turbo-1106',
-                    'api_key': self.api_key,
-                    'api_type': 'azure',
-                    'model': 'gpt-4',
-                    'api_version': "2023-07-01-preview",
-                },
-            ]
-
-            if api_host is not None:
-                print('api_host: ', api_host)
-                self.config_list_gpt4[0]['api_base'] = api_host
-                self.config_list_gpt4_turbo[0]['api_base'] = api_host
-                self.config_list_gpt35_turbo[0]['api_base'] = api_host
 
         self.gpt4_turbo_config = {
             "seed": 42,  # change the seed for different trials
@@ -374,7 +337,7 @@ class AgentInstanceUtil:
                                 "type": "string",
                                 "description": "Annotations for SQL code generated data. Generally, it is the name of "
                                                "the chart or report, and supports Chinese. If a name is specified in the question, "
-                                "the given name is used.",
+                                               "the given name is used.",
                             }
                         },
                         "required": ["mongodb_code_str", "data_name"],
@@ -409,7 +372,6 @@ class AgentInstanceUtil:
             define mongodb operate
         """
         return mongodb_engineer
-
 
     def get_agent_chart_presenter_old(self):
         """chart designer"""

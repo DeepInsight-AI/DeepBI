@@ -11,7 +11,7 @@ import toast from "react-hot-toast";
 import MenuMask from "../MenuMask/index.jsx";
 import "./index.less";
 import moment from "moment";
-import AutoPilot from "../AutoPilot/AutoPilot.jsx";
+// import AutoPilot from "../AutoPilot/AutoPilot.jsx";
 
 const Dialogue = (props) => {
   const {chat_type,sendUrl,uuid} =props
@@ -518,7 +518,20 @@ const openSocket = useCallback(() => {
   }, [state.messages]);
 
   useEffect(() => {
+    // 将 closeSetMessage 函数封装以便在 beforeunload 事件中使用
+    const handleBeforeUnload = () => {
+      console.log("beforeunload")
+      closeSetMessage();
+    };
+  
+    // 添加 beforeunload 事件监听
+    window.addEventListener('beforeunload', handleBeforeUnload);
+  
+    // 返回一个清理函数，在组件卸载时执行
     return () => {
+      // 移除 beforeunload 事件监听
+      window.removeEventListener('beforeunload', handleBeforeUnload);
+      // 同时，当组件卸载时保存对话记录
       closeSetMessage();
     };
   }, []);

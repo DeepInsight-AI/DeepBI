@@ -246,7 +246,7 @@ class Completion(openai_Completion):
                             raise Exception("agent_llm llm api key empty use_model:", use_model)
                     else:
                         print("~~The llm model is not replaced because the number of messages is insufficient.~~")
-                elif use_llm_name == other_llm_name:
+                elif use_llm_name == other_llm_name and agent_name in AGENT_LLM_MODEL:
                     """
                     same llm, diff model
                     """

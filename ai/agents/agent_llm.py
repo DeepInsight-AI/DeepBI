@@ -19,6 +19,12 @@
         Determine the model apikey Settings and make them correct
 """
 AGENT_LLM_MODEL = {
+    "api_check": {
+        "llm": "DeepInsight",
+        "model": "gpt-4-1106-preview",
+        "replace_default": False,
+        "use_message_count": 1
+    },
     "planner_user": {
         "llm": "DeepInsight",
         "model": "gpt-4-1106-preview",

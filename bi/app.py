@@ -20,10 +20,6 @@ class Bi(Flask):
         self.wsgi_app = ProxyFix(self.wsgi_app, x_for=settings.PROXIES_COUNT, x_host=1)
         # Configure Bi using our settings
         self.config.from_object("bi.settings")
-        self.config.update(
-            SESSION_COOKIE_SAMESITE='None',
-            SESSION_COOKIE_SECURE=True
-        )
 
 
 def create_app():

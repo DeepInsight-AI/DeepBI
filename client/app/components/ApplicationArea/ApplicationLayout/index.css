@@ -35,11 +35,11 @@ body #application-root .application-layout-content {
   overflow-y: auto;
   flex: 1 1 auto;
 }
-@media (max-width: 767px) {
+/* @media (max-width: 767px) {
   body #application-root .application-layout-content {
-    /* margin-top: 49px; */
+    margin-top: 49px;
   }
-}
+} */
 body.fixed-layout #application-root .application-layout-content {
   padding-bottom: 0;
 }

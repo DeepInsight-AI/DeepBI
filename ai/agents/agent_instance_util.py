@@ -1061,6 +1061,7 @@ class AgentInstanceUtil:
                                           When you find an answer,  You are a report analysis, you have the knowledge and skills to turn raw data into information and insight, which can be used to make business decisions.include your analysis in your reply.
                                           Be careful to avoid using mysql special keywords in mysql code.
                                           One SQL query result is limited to 20 items.
+                                          Don't generate html files.
                                           """ + '\n' + self.base_mysql_info + '\n' + python_base_dependency + '\n' + MYSQL_ECHART_TIPS_MESS,
             human_input_mode="NEVER",
             user_name=self.user_name,

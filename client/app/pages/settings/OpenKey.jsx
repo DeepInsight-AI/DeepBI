@@ -103,7 +103,7 @@ const SettingsOpenKey = () => {
   const handleRadioChange = e => {
     const newAiOption = e.target.value;
     const currentOptionValues = form.getFieldsValue();
-    
+
     // 更新当前AI选项的值
     setAiOptions(prevOptions => ({
       ...prevOptions,
@@ -112,7 +112,7 @@ const SettingsOpenKey = () => {
         ...currentOptionValues,
       },
     }));
-  
+
     // 切换到新的AI选项
     setAiOption(newAiOption);
     setRequiredFields(aiOptions[newAiOption].required || []);

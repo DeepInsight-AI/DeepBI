@@ -558,8 +558,8 @@ window.W_L=  {
     'invite_user':'邀请用户',
     'active_time':'激活时间',
     'unpublished':"未发布",
-  
-  
+
+
     'connection_failed':'服务器连接失败',
     'connection_success_tip':'服务器连接成功',
     'connection_failed_tip':'服务器连接失败,正为您重新连接',
@@ -584,29 +584,29 @@ window.W_L=  {
     'data_analysis':'辅助数据分析',
     'report_generation':'报表生成',
     'report_list':'报表列表',
-    
+
     'dashboard':'仪表盘',
     'offline':'离线',
     'online':'在线',
     'pending':'待定',
     'temporary_dashboard':'临时仪表盘',
     'history_dialogue':'历史对话',
-    
+
     'reset_dialogue':'重置对话',
     'reset_dialogue_confirm':'确定新建对话而重置当前对话吗?',
     'new_dialogue':'新对话',
     'chat_start':'请选择您的数据源和表以开始数据分析，或者',
     'report_start':'请选择您的数据源和表以开始报表生成，或者',
     'AutoPilot_start':'请选择您的数据源和表以开始自动数据分析，或者',
-  
-  
+
+
     'sheet_description':'请填写数据表描述',
     'field_description':'请填写字段描述',
-  
+
     'source_tooltip':'选择您的数据源并完成相应的表格和字段描述，DeepBI 使您能够将人类语言转化为可使用的操作，并帮助您完成现实世界的任务，例如与数据相关的任务。',
     'source_first_tooltip':'请完善表格和字段注释，使Agent更好的帮助您完成任务。',
     'source_second_tooltip':'以上注释没有通过大模型检测，请修改后再次提交',
-  
+
     'fail':'不通过',
     'pass':'通过',
     'detection':'检测',
@@ -621,7 +621,7 @@ window.W_L=  {
     'formatting':'格式化',
     'border':'边界',
     'exterior':'外观',
-  
+
     'left_align':"左对齐",
     'center':"居中",
     'right_align':'右对齐',
@@ -804,7 +804,7 @@ window.W_L=  {
     'please_enter_api_key':'请输入API Key！',
     'confirm_delete':'确认删除',
     'confirm_delete_tip':'你确定要删除这个项目吗？',
-  
+
     'please_complete_report_name_and_report_desc':'请完善报告名称和报告描述，让Agent为您进行自动数据分析',
     'report_name_and_report_desc_tip':'报告名称将作为生成report的标题；报告描述将为Agent提供自动数据分析的大方向，为您的report圈定分析范围；点击提交，将创建一个report任务',
     'report_name_tip':'报告名称将作为生成report的标题',

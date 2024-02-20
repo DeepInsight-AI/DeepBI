@@ -714,10 +714,16 @@ class PythonProxyAgent(Agent):
             exitcode2str = "execution succeeded" if exitcode == 0 else "execution failed"
 
             length = 10000
+            length1 = 10001
             if not str(logs).__contains__('echart_name'):
                 if len(logs) > length:
                     print(' ++++++++++ Length exceeds 10000 characters limit, cropped  +++++++++++++++++')
                     logs = logs[:length]
+            else:
+                if len(logs) > length1:
+                    print(' ++++++++++ Length exceeds 10001 characters limit, cropped  +++++++++++++++++')
+                    logs = "The echarts code is too long, please simplify the code or data (for example, only keep two decimal places), and ensure that the echarts code length does not exceed 10001"
+
 
             return True, f"exitcode: {exitcode} ({exitcode2str})\nCode output: {logs}"
 

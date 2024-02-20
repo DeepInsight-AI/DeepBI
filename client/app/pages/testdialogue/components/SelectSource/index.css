@@ -98,8 +98,6 @@
   text-overflow: ellipsis;
   white-space: nowrap;
   cursor: pointer;
-  display: flex;
-  flex: 1;
 }
 .submit-btn {
   position: absolute;
@@ -132,6 +130,13 @@
   text-overflow: ellipsis;
   white-space: nowrap;
   text-align: center;
+}
+.table-columns .field-name {
+  display: block;
+  max-width: 150px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 .flex-center {
   display: flex;

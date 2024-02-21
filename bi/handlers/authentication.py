@@ -21,6 +21,8 @@ from bi.handlers.base import json_response, org_scoped_rule
 from sqlalchemy.orm.exc import NoResultFound
 from bi.handlers.language import get_config_language
 from flask_cors import cross_origin
+from sqlalchemy.exc import IntegrityError
+
 
 logger = logging.getLogger(__name__)
 lang = get_config_language()
@@ -274,54 +276,93 @@ def verification_email(org_slug=None):
 @cross_origin(origins="http://service1.192.168.2.123.xip.io")
 @limiter.limit(settings.THROTTLE_LOGIN_PATTERN)
 def login(org_slug=None):
-    # We intentionally use == as otherwise it won't actually use the proxy. So weird :O
-    # noinspection PyComparisonWithNone
-    if current_org == None and not settings.MULTI_ORG:
-        return redirect("/setup")
-    elif current_org == None:
-        return redirect("/")
-
-    index_url = url_for("bi.index", org_slug=org_slug)
-    unsafe_next_path = request.args.get("next", index_url)
-    next_path = get_next_path(unsafe_next_path)
-    if current_user.is_authenticated:
-        return redirect(next_path)
-
-    if request.method == "POST" and current_org.get_setting("auth_password_login_enabled"):
+    if request.method == "POST":
+        user_email = request.form["email"]
+        password = request.form["password"]
+        print("user_email: ", user_email)
+        print("password: ", password)
         try:
             org = current_org._get_current_object()
-            user = models.User.get_by_email_and_org(request.form["email"], org)
-            if (
-                user
-                and not user.is_disabled
-                and user.verify_password(request.form["password"])
-            ):
-                remember = "remember" in request.form
-                login_user(user, remember=remember)
-                return redirect(next_path)
+            print("org===",org)
+            print("current_org===",current_org)
+            user = models.User.get_by_email_and_org_first(user_email, org)
+            if user is None:
+                user = models.User(
+                    org=org,
+                    name=user_email,
+                    email=user_email,
+                    is_invitation_pending=False,
+                    group_ids=[1,2],
+                )
+                print("创建user++++: ", user)
+                try:
+                    models.db.session.add(user)
+                    models.db.session.commit()
 
-            else:
-                flash(lang['W_L']['email_or_password_error'])
-        except NoResultFound:
-            flash(lang['W_L']['email_or_password_error'])
-    elif request.method == "POST" and not current_org.get_setting("auth_password_login_enabled"):
-        flash(lang['W_L']['org_password_error'])
+                    # 用户创建成功后，设置密码
+                    user.hash_password(password)
+                    models.db.session.commit()
+                    
+                except IntegrityError as e:
+                    if "email" in str(e):
+                        abort(400, message="电子邮箱已占用。")
+                    abort(500)
+            print("have user")
+            login_user(user, remember=True)
+            abort(200)
+        except Exception as e:
+            logger.error(f"Error creating user: {e}")
+            abort(500, description="Error creating user")
+            # 登录用户
+    # old code =====
+    # We intentionally use == as otherwise it won't actually use the proxy. So weird :O
+    # noinspection PyComparisonWithNone
+    # if current_org == None and not settings.MULTI_ORG:
+    #     return redirect("/setup")
+    # elif current_org == None:
+    #     return redirect("/")
 
-    google_auth_url = get_google_auth_url(next_path)
+    # index_url = url_for("bi.index", org_slug=org_slug)
+    # unsafe_next_path = request.args.get("next", index_url)
+    # next_path = get_next_path(unsafe_next_path)
+    # if current_user.is_authenticated:
+    #     return redirect(next_path)
 
-    return render_template(
-        "login.html",
-        org_slug=org_slug,
-        next=next_path,
-        email=request.form.get("email", ""),
-        show_google_openid=settings.GOOGLE_OAUTH_ENABLED,
-        google_auth_url=google_auth_url,
-        show_password_login=current_org.get_setting("auth_password_login_enabled"),
-        show_saml_login=current_org.get_setting("auth_saml_enabled"),
-        show_remote_user_login=settings.REMOTE_USER_LOGIN_ENABLED,
-        show_ldap_login=settings.LDAP_LOGIN_ENABLED,
-        lang=lang,
-    )
+    # if request.method == "POST" and current_org.get_setting("auth_password_login_enabled"):
+    #     try:
+    #         org = current_org._get_current_object()
+    #         user = models.User.get_by_email_and_org(request.form["email"], org)
+    #         if (
+    #             user
+    #             and not user.is_disabled
+    #             and user.verify_password(request.form["password"])
+    #         ):
+    #             remember = "remember" in request.form
+    #             login_user(user, remember=remember)
+    #             return redirect(next_path)
+
+    #         else:
+    #             flash(lang['W_L']['email_or_password_error'])
+    #     except NoResultFound:
+    #         flash(lang['W_L']['email_or_password_error'])
+    # elif request.method == "POST" and not current_org.get_setting("auth_password_login_enabled"):
+    #     flash(lang['W_L']['org_password_error'])
+
+    # google_auth_url = get_google_auth_url(next_path)
+
+    # return render_template(
+    #     "login.html",
+    #     org_slug=org_slug,
+    #     next=next_path,
+    #     email=request.form.get("email", ""),
+    #     show_google_openid=settings.GOOGLE_OAUTH_ENABLED,
+    #     google_auth_url=google_auth_url,
+    #     show_password_login=current_org.get_setting("auth_password_login_enabled"),
+    #     show_saml_login=current_org.get_setting("auth_saml_enabled"),
+    #     show_remote_user_login=settings.REMOTE_USER_LOGIN_ENABLED,
+    #     show_ldap_login=settings.LDAP_LOGIN_ENABLED,
+    #     lang=lang,
+    # )
 
 @routes.route(org_scoped_rule("/pretty_dashboard/<page>"))
 def test(page):

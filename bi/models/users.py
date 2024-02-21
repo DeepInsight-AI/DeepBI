@@ -207,6 +207,10 @@ class User(
         return cls.get_by_org(org).filter(cls.email == email).one()
 
     @classmethod
+    def get_by_email_and_org_first(cls, email, org):
+        return cls.get_by_org(org).filter(cls.email == email).one_or_none()
+    
+    @classmethod
     def get_by_api_key_and_org(cls, api_key, org):
         return cls.get_by_org(org).filter(cls.api_key == api_key).one()
 

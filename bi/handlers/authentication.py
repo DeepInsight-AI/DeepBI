@@ -287,17 +287,17 @@ def login(org_slug=None):
         org = current_org._get_current_object()
         if user_email is not None:
             user = models.User.get_by_email_and_org_first(user_email, org)
-            if user is None:
-                user = models.User(
-                org=org,
-                name=user_email,
-                email=user_email,
-                is_invitation_pending=False,
-                password_hash = pwd_context.encrypt(user_email),
-                group_ids=[1,2],
-            )
-                models.db.session.add(user)
-                models.db.session.commit()
+            # if user is None:
+            #     user = models.User(
+            #     org=org,
+            #     name=user_email,
+            #     email=user_email,
+            #     is_invitation_pending=False,
+            #     password_hash = pwd_context.encrypt(user_email),
+            #     group_ids=[1,2],
+            # )
+            #     models.db.session.add(user)
+            #     models.db.session.commit()
             login_user(user, remember=True)
             return redirect("/")
 
@@ -333,8 +333,8 @@ def login(org_slug=None):
                     if "email" in str(e):
                         abort(400, message="电子邮箱已占用。")
                     abort(500)
-            print("have user")
-            login_user(user, remember=True)
+            # print("have user")
+            # login_user(user, remember=True)
             return json_response({"message": "登录成功", "user_id": user.id})
         except Exception as e:
             logger.error(f"Error creating user: {e}")
@@ -376,19 +376,9 @@ def login(org_slug=None):
 
     # google_auth_url = get_google_auth_url(next_path)
 
-    # return render_template(
-    #     "login.html",
-    #     org_slug=org_slug,
-    #     next=next_path,
-    #     email=request.form.get("email", ""),
-    #     show_google_openid=settings.GOOGLE_OAUTH_ENABLED,
-    #     google_auth_url=google_auth_url,
-    #     show_password_login=current_org.get_setting("auth_password_login_enabled"),
-    #     show_saml_login=current_org.get_setting("auth_saml_enabled"),
-    #     show_remote_user_login=settings.REMOTE_USER_LOGIN_ENABLED,
-    #     show_ldap_login=settings.LDAP_LOGIN_ENABLED,
-    #     lang=lang,
-    # )
+    return render_template(
+        "login.html"
+    )
 
 @routes.route(org_scoped_rule("/pretty_dashboard/<page>"))
 def test(page):

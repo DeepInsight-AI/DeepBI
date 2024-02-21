@@ -276,10 +276,10 @@ def verification_email(org_slug=None):
 @cross_origin(origins="http://service1.192.168.2.123.xip.io")
 @limiter.limit(settings.THROTTLE_LOGIN_PATTERN)
 def login(org_slug=None):
-    if current_org == None and not settings.MULTI_ORG:
-        return redirect("/setup")
-    elif current_org == None:
-        return redirect("/")
+    # if current_org == None and not settings.MULTI_ORG:
+        # return redirect("/setup")
+    # elif current_org == None:
+        # return redirect("/")
     if current_user.is_authenticated:
         return redirect("/")
     if request.method == "GET":
@@ -304,12 +304,8 @@ def login(org_slug=None):
     elif request.method == "POST":
         user_email = request.form["email"]
         password = request.form["password"]
-        print("user_email: ", user_email)
-        print("password: ", password)
         try:
             org = current_org._get_current_object()
-            print("org===",org)
-            print("current_org===",current_org)
             user = models.User.get_by_email_and_org_first(user_email, org)
             if user is None:
                 user = models.User(
@@ -324,18 +320,15 @@ def login(org_slug=None):
                 try:
                     models.db.session.add(user)
                     models.db.session.commit()
-
-                    # 用户创建成功后，设置密码
-                    # user.hash_password(password)
-                    # models.db.session.commit()
-                    
                 except IntegrityError as e:
                     if "email" in str(e):
                         abort(400, message="电子邮箱已占用。")
                     abort(500)
-            # print("have user")
+            else:
+                if not user.verify_password(password):
+                    abort(400, message="密码错误。")
             # login_user(user, remember=True)
-            return json_response({"message": "登录成功", "user_id": user.id})
+            return json_response({"message": "登录成功"})
         except Exception as e:
             logger.error(f"Error creating user: {e}")
             abort(500, description="Error creating user")

@@ -21,8 +21,8 @@
 AGENT_LLM_MODEL = {
     "chat_manager": {
         "llm": "DeepInsight",
-        "model": "gpt-3.5-turbo-1106",
-        "replace_default": True,
+        "model": "gpt-4-1106-preview",
+        "replace_default": False,
         "use_message_count": 0
     },
     "api_check": {
@@ -74,9 +74,9 @@ AGENT_LLM_MODEL = {
         "use_message_count": 1
     },
     "base_csv_assistant": {
-        "llm": "ZhiPuAI",
-        "model": "glm-4",
-        "replace_default": True,
+        "llm": "DeepInsight",
+        "model": "gpt-4-1106-preview",
+        "replace_default": False,
         "use_message_count": 1
     },
     "base_postgresql_assistant": {
@@ -182,15 +182,15 @@ AGENT_LLM_MODEL = {
         "use_message_count": 1
     },
     "select_analysis_assistant": {
-        "llm": "ZhiPuAI",
-        "model": "glm-4",
-        "replace_default": True,
+        "llm": "DeepInsight",
+        "model": "gpt-4-1106-preview",
+        "replace_default": False,
         "use_message_count": 1
     },
     "Admin": {
-        "llm": "ZhiPuAI",
-        "model": "glm-4",
-        "replace_default": True,
+        "llm": "DeepInsight",
+        "model": "gpt-4-1106-preview",
+        "replace_default": False,
         "use_message_count": 1
     }
 }

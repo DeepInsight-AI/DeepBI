@@ -309,7 +309,7 @@ def login(org_slug=None):
                     abort(500)
             print("have user")
             login_user(user, remember=True)
-            abort(200)
+            return json_response({"message": "登录成功", "user_id": user.id})
         except Exception as e:
             logger.error(f"Error creating user: {e}")
             abort(500, description="Error creating user")

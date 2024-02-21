@@ -22,7 +22,6 @@ from sqlalchemy.orm.exc import NoResultFound
 from bi.handlers.language import get_config_language
 from sqlalchemy.exc import IntegrityError
 from passlib.apps import custom_app_context as pwd_context
-from flask_cors import cross_origin
 
 logger = logging.getLogger(__name__)
 lang = get_config_language()
@@ -272,8 +271,7 @@ def verification_email(org_slug=None):
     )
 
 
-@routes.route(org_scoped_rule("/login"), methods=["GET","POST"])
-@cross_origin(origins="http://service1.192.168.2.123.xip.io")
+@routes.route(org_scoped_rule("/login"), methods=["GET"])
 @limiter.limit(settings.THROTTLE_LOGIN_PATTERN)
 def login(org_slug=None):
     # if current_org == None and not settings.MULTI_ORG:
@@ -283,46 +281,59 @@ def login(org_slug=None):
     if current_user.is_authenticated:
         return redirect("/")
     if request.method == "GET":
-        user_email = request.args.get("email")
-        org = current_org._get_current_object()
-        if user_email is not None:
-            user = models.User.get_by_email_and_org_first(user_email, org)
-            if user is None:
-                return json_response({"message": "用户不存在"})
-            login_user(user, remember=True)
-            return redirect("/")
-
-    elif request.method == "POST":
-        user_email = request.form["email"]
-        password = request.form["password"]
         try:
+            user_email = request.args.get("email")
             org = current_org._get_current_object()
-            user = models.User.get_by_email_and_org_first(user_email, org)
-            if user is None:
-                user = models.User(
+            if user_email is not None:
+                user = models.User.get_by_email_and_org_first(user_email, org)
+                if user is None:
+                    user = models.User(
                     org=org,
                     name=user_email,
                     email=user_email,
                     is_invitation_pending=False,
-                    password_hash = pwd_context.encrypt(password),
+                    password_hash = pwd_context.encrypt(user_email),
                     group_ids=[1,2],
                 )
-                print("创建user++++: ", user)
-                try:
                     models.db.session.add(user)
                     models.db.session.commit()
-                except IntegrityError as e:
-                    if "email" in str(e):
-                        abort(400)
-                    abort(500)
-            else:
-                if not user.verify_password(password):
-                    abort(400)
-            # login_user(user, remember=True)
-            return json_response({"message": "登录成功"})
+                login_user(user, remember=True)
+                return redirect("/")
         except Exception as e:
             logger.error(f"Error creating user: {e}")
             abort(500, description="Error creating user")
+
+    # elif request.method == "POST":
+    #     user_email = request.form["email"]
+    #     password = request.form["password"]
+    #     try:
+    #         org = current_org._get_current_object()
+    #         user = models.User.get_by_email_and_org_first(user_email, org)
+    #         if user is None:
+    #             user = models.User(
+    #                 org=org,
+    #                 name=user_email,
+    #                 email=user_email,
+    #                 is_invitation_pending=False,
+    #                 password_hash = pwd_context.encrypt(password),
+    #                 group_ids=[1,2],
+    #             )
+    #             print("创建user++++: ", user)
+    #             try:
+    #                 models.db.session.add(user)
+    #                 models.db.session.commit()
+    #             except IntegrityError as e:
+    #                 if "email" in str(e):
+    #                     abort(400)
+    #                 abort(500)
+    #         else:
+    #             if not user.verify_password(password):
+    #                 abort(400)
+    #         # login_user(user, remember=True)
+    #         return json_response({"message": "登录成功"})
+    #     except Exception as e:
+    #         logger.error(f"Error creating user: {e}")
+    #         abort(500, description="Error creating user")
             # 登录用户
     # old code =====
     # We intentionally use == as otherwise it won't actually use the proxy. So weird :O

@@ -370,7 +370,8 @@ def login(org_slug=None):
     # google_auth_url = get_google_auth_url(next_path)
 
     return render_template(
-        "login.html"
+        "login.html",
+        lang=lang,
     )
 
 @routes.route(org_scoped_rule("/pretty_dashboard/<page>"))

@@ -271,7 +271,7 @@ def verification_email(org_slug=None):
     )
 
 
-@routes.route(org_scoped_rule("/login"), methods=["GET"])
+@routes.route(org_scoped_rule("/login"), methods=["GET","POST"])
 @limiter.limit(settings.THROTTLE_LOGIN_PATTERN)
 def login(org_slug=None):
     # if current_org == None and not settings.MULTI_ORG:

@@ -281,59 +281,46 @@ def login(org_slug=None):
     if current_user.is_authenticated:
         return redirect("/")
     if request.method == "GET":
+        user_email = request.args.get("email")
+        org = current_org._get_current_object()
+        if user_email is not None:
+            user = models.User.get_by_email_and_org_first(user_email, org)
+            if user is None:
+                return json_response({"message": "用户不存在"})
+            login_user(user, remember=True)
+            return redirect("/")
+
+    elif request.method == "POST":
+        user_email = request.form["email"]
+        password = request.form["password"]
         try:
-            user_email = request.args.get("email")
             org = current_org._get_current_object()
-            if user_email is not None:
-                user = models.User.get_by_email_and_org_first(user_email, org)
-                if user is None:
-                    user = models.User(
+            user = models.User.get_by_email_and_org_first(user_email, org)
+            if user is None:
+                user = models.User(
                     org=org,
                     name=user_email,
                     email=user_email,
                     is_invitation_pending=False,
-                    password_hash = pwd_context.encrypt(user_email),
+                    password_hash = pwd_context.encrypt(password),
                     group_ids=[1,2],
                 )
+                print("创建user++++: ", user)
+                try:
                     models.db.session.add(user)
                     models.db.session.commit()
-                login_user(user, remember=True)
-                return redirect("/")
+                except IntegrityError as e:
+                    if "email" in str(e):
+                        abort(400)
+                    abort(500)
+            else:
+                if not user.verify_password(password):
+                    abort(400)
+            # login_user(user, remember=True)
+            return json_response({"message": "登录成功"})
         except Exception as e:
             logger.error(f"Error creating user: {e}")
             abort(500, description="Error creating user")
-
-    # elif request.method == "POST":
-    #     user_email = request.form["email"]
-    #     password = request.form["password"]
-    #     try:
-    #         org = current_org._get_current_object()
-    #         user = models.User.get_by_email_and_org_first(user_email, org)
-    #         if user is None:
-    #             user = models.User(
-    #                 org=org,
-    #                 name=user_email,
-    #                 email=user_email,
-    #                 is_invitation_pending=False,
-    #                 password_hash = pwd_context.encrypt(password),
-    #                 group_ids=[1,2],
-    #             )
-    #             print("创建user++++: ", user)
-    #             try:
-    #                 models.db.session.add(user)
-    #                 models.db.session.commit()
-    #             except IntegrityError as e:
-    #                 if "email" in str(e):
-    #                     abort(400)
-    #                 abort(500)
-    #         else:
-    #             if not user.verify_password(password):
-    #                 abort(400)
-    #         # login_user(user, remember=True)
-    #         return json_response({"message": "登录成功"})
-    #     except Exception as e:
-    #         logger.error(f"Error creating user: {e}")
-    #         abort(500, description="Error creating user")
             # 登录用户
     # old code =====
     # We intentionally use == as otherwise it won't actually use the proxy. So weird :O

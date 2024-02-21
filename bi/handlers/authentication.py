@@ -276,6 +276,16 @@ def verification_email(org_slug=None):
 @cross_origin(origins="http://service1.192.168.2.123.xip.io")
 @limiter.limit(settings.THROTTLE_LOGIN_PATTERN)
 def login(org_slug=None):
+    if current_org == None and not settings.MULTI_ORG:
+        return redirect("/setup")
+    elif current_org == None:
+        return redirect("/")
+
+    index_url = url_for("bi.index", org_slug=org_slug)
+    unsafe_next_path = request.args.get("next", index_url)
+    next_path = get_next_path(unsafe_next_path)
+    if current_user.is_authenticated:
+        return redirect(next_path)
     if request.method == "POST":
         user_email = request.form["email"]
         password = request.form["password"]

@@ -322,11 +322,11 @@ def login(org_slug=None):
                     models.db.session.commit()
                 except IntegrityError as e:
                     if "email" in str(e):
-                        abort(400, message="电子邮箱已占用。")
+                        abort(400)
                     abort(500)
             else:
                 if not user.verify_password(password):
-                    abort(400, message="密码错误。")
+                    abort(400)
             # login_user(user, remember=True)
             return json_response({"message": "登录成功"})
         except Exception as e:

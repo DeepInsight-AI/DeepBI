@@ -19,6 +19,12 @@
         Determine the model apikey Settings and make them correct
 """
 AGENT_LLM_MODEL = {
+    "chat_manager": {
+        "llm": "DeepInsight",
+        "model": "gpt-3.5-turbo-1106",
+        "replace_default": True,
+        "use_message_count": 0
+    },
     "api_check": {
         "llm": "DeepInsight",
         "model": "gpt-4-1106-preview",

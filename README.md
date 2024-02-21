@@ -48,6 +48,9 @@ The database connections supported by DeepBI are:
 - MySQL
 - PostgreSQL
 - csv/Excel Import
+- Doris
+- StarRocks
+- MongoDB
 
 
 ## 📦 Windows exe installation

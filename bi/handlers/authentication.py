@@ -358,21 +358,21 @@ def login(org_slug=None):
     # elif request.method == "POST" and not current_org.get_setting("auth_password_login_enabled"):
     #     flash(lang['W_L']['org_password_error'])
 
-    # google_auth_url = get_google_auth_url(next_path)
+    google_auth_url = get_google_auth_url(next_path)
 
-    # return render_template(
-    #     "login.html",
-    #     org_slug=org_slug,
-    #     next=next_path,
-    #     email=request.form.get("email", ""),
-    #     show_google_openid=settings.GOOGLE_OAUTH_ENABLED,
-    #     google_auth_url=google_auth_url,
-    #     show_password_login=current_org.get_setting("auth_password_login_enabled"),
-    #     show_saml_login=current_org.get_setting("auth_saml_enabled"),
-    #     show_remote_user_login=settings.REMOTE_USER_LOGIN_ENABLED,
-    #     show_ldap_login=settings.LDAP_LOGIN_ENABLED,
-    #     lang=lang,
-    # )
+    return render_template(
+        "login.html",
+        org_slug=org_slug,
+        next=next_path,
+        email=request.form.get("email", ""),
+        show_google_openid=settings.GOOGLE_OAUTH_ENABLED,
+        google_auth_url=google_auth_url,
+        show_password_login=current_org.get_setting("auth_password_login_enabled"),
+        show_saml_login=current_org.get_setting("auth_saml_enabled"),
+        show_remote_user_login=settings.REMOTE_USER_LOGIN_ENABLED,
+        show_ldap_login=settings.LDAP_LOGIN_ENABLED,
+        lang=lang,
+    )
 
 @routes.route(org_scoped_rule("/pretty_dashboard/<page>"))
 def test(page):

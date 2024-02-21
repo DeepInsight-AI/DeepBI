@@ -20,6 +20,7 @@ from bi.handlers import routes
 from bi.handlers.base import json_response, org_scoped_rule
 from sqlalchemy.orm.exc import NoResultFound
 from bi.handlers.language import get_config_language
+from flask_cors import cross_origin
 
 logger = logging.getLogger(__name__)
 lang = get_config_language()
@@ -270,6 +271,7 @@ def verification_email(org_slug=None):
 
 
 @routes.route(org_scoped_rule("/login"), methods=["GET", "POST"])
+@cross_origin(origins="http://service1.192.168.2.123.xip.io")
 @limiter.limit(settings.THROTTLE_LOGIN_PATTERN)
 def login(org_slug=None):
     # We intentionally use == as otherwise it won't actually use the proxy. So weird :O

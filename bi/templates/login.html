@@ -1,4 +1,4 @@
-{% extends "layouts/signed_out.html" %}
+<!-- {% extends "layouts/signed_out.html" %} -->
 
 <!-- {% block title %}{{ lang['W_L']['login'] }}{% endblock %}
 
@@ -65,6 +65,12 @@
 {% endblock %} -->
 
 
+
+{% set hide_page_header = true %}
+
+{% extends "layouts/signed_out.html" %}
+
+{% block title %}Error :-({% endblock %}
 
 {% block content %}
 <div class="fixed-width-page">

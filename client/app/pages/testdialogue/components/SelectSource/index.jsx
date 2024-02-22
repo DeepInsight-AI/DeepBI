@@ -101,6 +101,7 @@ const SelectSource = forwardRef(({ confirmLoading, Charttable, chat_type, onChan
     const selectedItem = options.find(item => item.value === value);
     const type = selectedItem ? selectedItem.type : null;
     onChange(type, value, selectedItem);
+    console.log("selectedItem", selectedItem);
     setSourceItem(selectedItem);
     setSource_id(value);
     schemaList(value, type);

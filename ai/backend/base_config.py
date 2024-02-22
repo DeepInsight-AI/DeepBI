@@ -68,4 +68,4 @@ class Config():
 
 
 CONFIG = Config()
-agents_functions=['task_generate_echart', 'task_generate_report', 'task_base']
+agents_functions = ['task_generate_echart', 'task_generate_report', 'task_base']

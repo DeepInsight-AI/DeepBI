@@ -163,12 +163,7 @@ const SelectSource = forwardRef(({ confirmLoading, Charttable, chat_type, onChan
       }
 
       // setSchemaList(optionsList);
-      console.log("optionsList", optionsList);
-      try {
         changeSourceAll(val,optionsList,type);
-      } catch (error) {
-        console.log("error", error);
-      }
     } catch (error) {
       console.error("error", error);
       // setSelectLoading(false);
@@ -187,8 +182,6 @@ const SelectSource = forwardRef(({ confirmLoading, Charttable, chat_type, onChan
     const res = await axios.get(
       `/api/data_table/columns/${val??source_id}/${source_type === "csv" ? item.file_name : item.name}`
     );
-    console.log("res", res);
-    console.log("source_type", source_type);
     if (Object.keys(res).length !== 0) {
       table_desc_obj.table_name = res.table_name;
       table_desc_obj.table_comment = res.table_desc || "";

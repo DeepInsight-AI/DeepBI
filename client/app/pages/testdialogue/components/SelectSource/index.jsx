@@ -101,7 +101,6 @@ const SelectSource = forwardRef(({ confirmLoading, Charttable, chat_type, onChan
     const selectedItem = options.find(item => item.value === value);
     const type = selectedItem ? selectedItem.type : null;
     onChange(type, value, selectedItem);
-    console.log("selectedItem", selectedItem);
     setSourceItem(selectedItem);
     setSource_id(value);
     schemaList(value, type);
@@ -166,7 +165,7 @@ const SelectSource = forwardRef(({ confirmLoading, Charttable, chat_type, onChan
       // setSchemaList(optionsList);
       console.log("optionsList", optionsList);
       try {
-        changeSourceAll(val,optionsList);
+        changeSourceAll(val,optionsList,type);
       } catch (error) {
         console.log("error", error);
       }
@@ -176,29 +175,31 @@ const SelectSource = forwardRef(({ confirmLoading, Charttable, chat_type, onChan
     }
   };
 
-  const getTableColumns = async (item, type = null,val=null) => {
+  const getTableColumns = async (item, type = null,val=null,sourceType=null) => {
     setLoadingTableColumns(true);
+    // 判断有没有type 有的话就用type 没有就用source_item.type
+    const source_type = sourceType ? sourceType : source_item.type;
     const table_desc_obj = {
       table_name: "",
       table_comment: "",
       field_desc: [],
     };
     const res = await axios.get(
-      `/api/data_table/columns/${val??source_id}/${source_item.type === "csv" ? item.file_name : item.name}`
+      `/api/data_table/columns/${val??source_id}/${source_type === "csv" ? item.file_name : item.name}`
     );
     console.log("res", res);
-    console.log("source_item.type", source_item.type);
+    console.log("source_type", source_type);
     if (Object.keys(res).length !== 0) {
       table_desc_obj.table_name = res.table_name;
       table_desc_obj.table_comment = res.table_desc || "";
       table_desc_obj.field_desc = res.table_columns_info.field_desc;
     } else {
-      table_desc_obj.table_name = source_item.type === "csv" ? item.file_name : item.name;
-      table_desc_obj.table_comment = source_item.type === "csv" ? item.source_name : "";
-      if (source_item.type !== "csv") {
+      table_desc_obj.table_name = source_type === "csv" ? item.file_name : item.name;
+      table_desc_obj.table_comment = source_type === "csv" ? item.source_name : "";
+      if (source_type !== "csv") {
         item.columns.forEach((i, index) => {
           const field_desc_obj = {
-            name: source_item.type === "pg" ? i.name : i,
+            name: source_type === "pg" ? i.name : i,
             comment: item.comment[index] || "",
             in_use: 1,
           };
@@ -291,7 +292,7 @@ const SelectSource = forwardRef(({ confirmLoading, Charttable, chat_type, onChan
   //     return newSelectSchema;
   //   });
   // };
-  const changeSourceAll = (val,optionsList) => {
+  const changeSourceAll = (val,optionsList,type) => {
     if (optionsList.length === 0) {
       // setSelectLoading(false);
       return;
@@ -307,7 +308,7 @@ const SelectSource = forwardRef(({ confirmLoading, Charttable, chat_type, onChan
       // newSchemaList.push({ ...item, checked: true });
       // Only get table columns for items that were not already checked
       // if (!item.checked) {
-        newSchemaListData.push(getTableColumns(item, "all",val));
+        newSchemaListData.push(getTableColumns(item, "all",val,type));
       // }
     });
     setSchemaList(optionsList);

@@ -218,8 +218,8 @@ class Completion(openai_Completion):
                 use_model = config['model']
                 use_api_key = config['api_key']
                 llm_setting = config.get("llm_setting")  # all llm config
-                print("~" * 30)
-                print("setting", llm_setting)
+                # print("~" * 30)
+                # print("setting", llm_setting)
                 other_llm_name = AGENT_LLM_MODEL[agent_name]['llm'] if agent_name in AGENT_LLM_MODEL and \
                                                                        AGENT_LLM_MODEL[agent_name][
                                                                            'replace_default'] and llm_setting is not None else use_llm_name

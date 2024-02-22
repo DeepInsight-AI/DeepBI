@@ -161,6 +161,6 @@ class TaskSelectorAgent(ConversableAgent):
                         # return reply
                         return suggest_function
 
-                
+
         # return messages
         return self._default_auto_reply

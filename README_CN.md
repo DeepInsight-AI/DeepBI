@@ -54,6 +54,9 @@ DeepBI 支持的数据库连接有:
 - MySQL
 - PostgreSQL
 - csv/Excel导入
+- Doris
+- Starrocks
+- MongoDB
 
 ## 📦 Windows exe 安装文件安装
 - 下载最新版本的 ```window_install_exe_CN.zip``` 安装包. <a href="https://github.com/DeepInsight-AI/DeepBI/releases">点击这里去下载</a>，目前测试支持 Win10 Win11

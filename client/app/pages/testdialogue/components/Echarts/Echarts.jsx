@@ -16,15 +16,14 @@ const EChartsChart = memo(({ content }) => {
 
     if (chartRef.current) {
       chartInstance = echarts.init(chartRef.current); // del 'wonderland'
-      // if ('color' in chartJson) delete chartJson['color'];
-      // if ('series' in chartJson) {
-      //   for (let i = 0; i < chartJson['series'].length; ++i) {
-      //     if ('lineStyle' in chartJson['series'][i]) {
-      //       delete chartJson['series'][i]['lineStyle'];
-      //     }
-      //   }
-      // }
-      console.log('chartJson: ', chartJson);
+      if ('color' in chartJson) delete chartJson['color'];
+      if ('series' in chartJson) {
+        for (let i = 0; i < chartJson['series'].length; ++i) {
+          if ('lineStyle' in chartJson['series'][i]) {
+            delete chartJson['series'][i]['lineStyle'];
+          }
+        }
+      }
       chartInstance.setOption(chartJson);
     }
     window.addEventListener('resize', handleResize);

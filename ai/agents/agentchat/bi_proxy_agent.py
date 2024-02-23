@@ -1490,6 +1490,9 @@ class BIProxyAgent(Agent):
             else:
                 str_obj = ast.literal_eval(chart_code_str)
 
+            if isinstance(str_obj, list):
+                return "Chart ：" + name + " configuration should not be a list."
+
             json_str = json.dumps(str_obj)
 
             result_message = {

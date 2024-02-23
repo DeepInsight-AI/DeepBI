@@ -24,7 +24,6 @@ const EChartsChart = memo(({ content }) => {
           }
         }
       }
-      console.log('chartJson: ', chartJson);
       chartInstance.setOption(chartJson);
     }
     window.addEventListener('resize', handleResize);

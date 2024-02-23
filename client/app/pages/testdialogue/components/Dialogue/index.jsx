@@ -467,7 +467,6 @@ const handleSocketMessage = useCallback(() => {
         }));
       }else if(data.receiver === 'python'){
           if(data.data.data_type === 'echart_code'){
-            console.log(data.data.content,"echart_code")
             setState(prevState => ({
               messages: prevState.messages.map((message, i) =>
                 i === prevState.messages.length - 1 && message.sender === "bot"
@@ -521,7 +520,6 @@ const openSocket = useCallback(() => {
   useEffect(() => {
     // 将 closeSetMessage 函数封装以便在 beforeunload 事件中使用
     const handleBeforeUnload = () => {
-      console.log("beforeunload")
       closeSetMessage();
     };
   

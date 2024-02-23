@@ -306,7 +306,7 @@ def callback():
     # 再获取 user info
     user_info = auth.get_user_info()
     # 将 user info 存入 session
-    # session[USER_INFO_KEY] = user_info
+    session[USER_INFO_KEY] = user_info
     return jsonify(user_info)
 
 @routes.route(org_scoped_rule("/get_appid"), methods=["GET"])
@@ -341,6 +341,9 @@ def login(org_slug=None):
         print("user_platform: ", user_platform)
         user_email = session[USER_INFO_KEY]["open_id"] + "@" + user_platform + ".cn"
         password = session[USER_INFO_KEY]["open_id"]
+        tenant_key = session[USER_INFO_KEY]["tenant_key"] | None
+        if tenant_key is None:
+            abort(400, message="租户信息获取失败。")
         # print("user_email: ", user_email)
         # print("password: ", password)
         # if current_user.is_authenticated:
@@ -348,10 +351,10 @@ def login(org_slug=None):
             # return redirect(next_path)
         try:
             # 查询models.Organization中有没有name为user_platform的组织
-            org = models.Organization.get_by_name(user_platform)
+            org = models.Organization.get_by_name(tenant_key)
             print("查询租户：", org)
             if org is None:
-                print("未查询到租户：", user_platform)
+                print("未查询到租户：", tenant_key)
                 # 如果没有则创建一个新的组织
                 org = models.Organization(
                     name=user_platform,
@@ -361,7 +364,22 @@ def login(org_slug=None):
                 print("创建租户：", org)
                 models.db.session.add(org)
                 models.db.session.commit()
-            org = current_org._get_current_object()
+            # 查询models.Group中有没有name为user_platform的组
+            admin_group = models.User.find_by_name(user_platform + "_admin")
+            print("查询租户组：", admin_group)
+            if admin_group is None:
+                print("未查询到租户组：", 1)
+                # 如果没有则创建一个新的组
+                admin_group = models.Group(
+                    name=user_platform + "_admin",
+                    org=org,
+                    permissions=list(set(models.Group.DEFAULT_PERMISSIONS + ["admin", "super_admin"])),
+                    type=models.Group.BUILTIN_GROUP,
+                )
+                print("创建租户组：", admin_group)
+                models.db.session.add(admin_group)
+                models.db.session.commit()
+            # org = current_org._get_current_object()
             print("org===",org)
             print("current_org===",current_org)
             user = models.User.get_by_email_and_org_first(user_email, org)

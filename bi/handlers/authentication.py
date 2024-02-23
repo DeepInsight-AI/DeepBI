@@ -22,6 +22,7 @@ from sqlalchemy.orm.exc import NoResultFound
 from bi.handlers.language import get_config_language
 from bi.handlers.feishu_auth import Auth
 from sqlalchemy.exc import IntegrityError
+from passlib.apps import custom_app_context as pwd_context
 
 logger = logging.getLogger(__name__)
 lang = get_config_language()
@@ -305,7 +306,7 @@ def callback():
     # 再获取 user info
     user_info = auth.get_user_info()
     # 将 user info 存入 session
-    session[USER_INFO_KEY] = user_info
+    # session[USER_INFO_KEY] = user_info
     return jsonify(user_info)
 
 @routes.route(org_scoped_rule("/get_appid"), methods=["GET"])
@@ -347,19 +348,19 @@ def login(org_slug=None):
             # return redirect(next_path)
         try:
             # 查询models.Organization中有没有name为user_platform的组织
-            # org = models.Organization.get_by_name(user_platform)
-            # print("查询租户：", org)
-            # if org is None:
-            #     print("未查询到租户：", user_platform)
-            #     # 如果没有则创建一个新的组织
-            #     org = models.Organization(
-            #         name=user_platform,
-            #         slug=user_platform,
-            #         settings={},
-            #     )
-            #     print("创建租户：", org)
-            #     models.db.session.add(org)
-            #     models.db.session.commit()
+            org = models.Organization.get_by_name(user_platform)
+            print("查询租户：", org)
+            if org is None:
+                print("未查询到租户：", user_platform)
+                # 如果没有则创建一个新的组织
+                org = models.Organization(
+                    name=user_platform,
+                    slug=user_platform,
+                    settings={},
+                )
+                print("创建租户：", org)
+                models.db.session.add(org)
+                models.db.session.commit()
             org = current_org._get_current_object()
             print("org===",org)
             print("current_org===",current_org)
@@ -370,15 +371,12 @@ def login(org_slug=None):
                     name=user_email,
                     email=user_email,
                     is_invitation_pending=False,
+                    password_hash=pwd_context.encrypt(password),
                     group_ids=[1,2],
                 )
                 print("创建user++++: ", user)
                 try:
                     models.db.session.add(user)
-                    models.db.session.commit()
-
-                    # 用户创建成功后，设置密码
-                    user.hash_password(password)
                     models.db.session.commit()
                     
                 except IntegrityError as e:

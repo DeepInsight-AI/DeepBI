@@ -800,7 +800,8 @@ window.W_L=  {
     'submit_success_tip':'你可在历史分析中查看',
     'submit_fail':'提交失败',
     'download':'下载',
-    'please_enter_api_key':'请输入API Key！',
+    'please_enter_api_key':'请输入Api Key',
+    'please_enter_api_host':'请输入Api Host',
     'confirm_delete':'确认删除',
     'confirm_delete_tip':'你确定要删除这个项目吗？',
   

@@ -520,7 +520,6 @@ const openSocket = useCallback(() => {
   useEffect(() => {
     // 将 closeSetMessage 函数封装以便在 beforeunload 事件中使用
     const handleBeforeUnload = () => {
-      console.log("beforeunload")
       closeSetMessage();
     };
   

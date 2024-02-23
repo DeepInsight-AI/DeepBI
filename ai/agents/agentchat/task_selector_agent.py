@@ -3,8 +3,9 @@ from typing import Callable, Dict, List, Optional, Union
 from ai.backend.util.write_log import logger
 from .conversable_agent import ConversableAgent
 from .agent import Agent
-from ai.backend.base_config import agents_functions
+from ai.backend.base_config import CONFIG
 import re
+
 
 class TaskSelectorAgent(ConversableAgent):
     """(In preview) A class for generic conversable agents which can be configured as assistant or user proxy.
@@ -144,23 +145,32 @@ class TaskSelectorAgent(ConversableAgent):
                     # {"qustion_message":"\nWhat is the most common house layout in the dataset?"}
                     # **********************************************
                     print('messages[-1][content] :', messages[-1]['content'])
-                    
+
                     # suggest_function = {'role': 'assistant', 'content': None, 'function_call': {'name': 'task_base',
                     #                                                          'arguments': '{"qustion_message":"\\nWhat is the most common house layout in the dataset?"}'}}
                     # Check if reply is in agents_functions
-                    if reply in agents_functions:
-                        suggest_function = {'role': 'assistant', 'content': None, 'function_call': {'name': reply,
-                                                                                                    'arguments': '{"qustion_message":"' + str(
-                                                                                                        messages[-1][
-                                                                                                            'content']) + '"}'}}
+                    is_func = False
+                    for func in CONFIG.agents_functions:
+                        if len(str(reply)) > 0 and func in str(reply):
+                            is_func = True
+                            suggest_function = {'role': 'assistant', 'content': None, 'function_call': {'name': func,
+                                                                                                        'arguments': '{"qustion_message":"' + str(
+                                                                                                            messages[
+                                                                                                                -1][
+                                                                                                                'content']) + '"}'}}
+                            print('reply : ', reply)
+                            # return reply
+                            return suggest_function
 
-                        # {"qustion_message": " """ + str(messages[-1]['content']) + """"}
-
+                    if not is_func:
+                        suggest_function = {'role': 'assistant', 'content': None,
+                                            'function_call': {'name': CONFIG.default_agents_functions,
+                                                              'arguments': '{"qustion_message":"' + str(
+                                                                  messages[-1][
+                                                                      'content']) + '"}'}}
                         print('reply : ', reply)
-
                         # return reply
                         return suggest_function
 
-                
         # return messages
         return self._default_auto_reply

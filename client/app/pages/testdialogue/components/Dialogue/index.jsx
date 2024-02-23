@@ -453,18 +453,18 @@ const handleSocketMessage = useCallback(() => {
           }
         }
       } else if (data.receiver === 'log') {
-        if(!data.data.content) return
-        if(data.data.data_type === 'data_check'){
-          setPercent(data.data.content)
-          return
-        }
-        setState(prevState => ({
-          messages: prevState.messages.map((message, i) =>
-            i === prevState.messages.length - 1 && message.sender === "bot"
-            ? { ...message, logData: [...(message.logData || []), data.data.content] }
-              : message
-          )
-        }));
+        // if(!data.data.content) return
+        // if(data.data.data_type === 'data_check'){
+        //   setPercent(data.data.content)
+        //   return
+        // }
+        // setState(prevState => ({
+        //   messages: prevState.messages.map((message, i) =>
+        //     i === prevState.messages.length - 1 && message.sender === "bot"
+        //     ? { ...message, logData: [...(message.logData || []), data.data.content] }
+        //       : message
+        //   )
+        // }));
       }else if(data.receiver === 'python'){
           if(data.data.data_type === 'echart_code'){
             setState(prevState => ({

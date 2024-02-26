@@ -364,22 +364,37 @@ def login(org_slug=None):
                 print("创建租户：", org)
                 models.db.session.add(org)
                 models.db.session.commit()
-            # 查询models.Group中有没有name为user_platform的组
-            admin_group = models.User.find_by_name(user_platform + "_admin")
+            # 查询Group中有没有name为user_platform的组
+            group_names =list(set(models.Group.DEFAULT_PERMISSIONS + ["admin", "super_admin"]))
+            admin_group = models.Group.find_by_name(org,group_names)
+            print("group_names：", group_names)
             print("查询租户组：", admin_group)
-            if admin_group is None:
+            # if admin_group is None:
+            #     print("未查询到租户组：", 1)
+            #     # 如果没有则创建一个新的组
+            #     admin_group = models.Group(
+            #         name=user_platform + "_admin",
+            #         org=org,
+            #         permissions=group_names,
+            #         type=models.Group.BUILTIN_GROUP,
+            #     )
+            #     print("创建租户组：", admin_group)
+            #     models.db.session.add(admin_group)
+            #     models.db.session.commit()
+            if not admin_group:
                 print("未查询到租户组：", 1)
-                # 如果没有则创建一个新的组
                 admin_group = models.Group(
                     name=user_platform + "_admin",
                     org=org,
-                    permissions=list(set(models.Group.DEFAULT_PERMISSIONS + ["admin", "super_admin"])),
+                    permissions=group_names,
                     type=models.Group.BUILTIN_GROUP,
                 )
                 print("创建租户组：", admin_group)
                 models.db.session.add(admin_group)
                 models.db.session.commit()
             # org = current_org._get_current_object()
+            print("admin_group===",admin_group)
+            print("admin_group.id===",admin_group.id)
             print("org===",org)
             print("current_org===",current_org)
             user = models.User.get_by_email_and_org_first(user_email, org)
@@ -390,7 +405,7 @@ def login(org_slug=None):
                     email=user_email,
                     is_invitation_pending=False,
                     password_hash=pwd_context.encrypt(password),
-                    group_ids=[1,2],
+                    group_ids=[admin_group.id],
                 )
                 print("创建user++++: ", user)
                 try:

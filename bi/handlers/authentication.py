@@ -339,11 +339,12 @@ def login(org_slug=None):
         # 获取接口传递的平台信息 拼接成用户邮箱
         user_platform = request.form["platform"]
         print("user_platform: ", user_platform)
-        user_email = session[USER_INFO_KEY]["open_id"] + "@" + user_platform + ".cn"
-        password = session[USER_INFO_KEY]["open_id"]
-        tenant_key = session[USER_INFO_KEY].get("tenant_key", None)
-        if tenant_key is None:
-            abort(400, message="租户信息获取失败。")
+        open_id = session[USER_INFO_KEY]["open_id"]
+        user_email = open_id + "@" + user_platform + ".cn"
+        # password = open_id
+        # tenant_key = session[USER_INFO_KEY].get("tenant_key", None)
+        # if tenant_key is None:
+            # abort(400, message="租户信息获取失败。")
         # print("user_email: ", user_email)
         # print("password: ", password)
         # if current_user.is_authenticated:
@@ -351,10 +352,10 @@ def login(org_slug=None):
             # return redirect(next_path)
         try:
             # 查询models.Organization中有没有name为user_platform的组织
-            org = models.Organization.get_by_name(tenant_key)
+            org = models.Organization.get_by_name(open_id)
             print("查询租户：", org)
             if org is None:
-                print("未查询到租户：", tenant_key)
+                print("未查询到租户：", open_id)
                 # 如果没有则创建一个新的组织
                 org = models.Organization(
                     name=user_platform,
@@ -404,7 +405,7 @@ def login(org_slug=None):
                     name=user_email,
                     email=user_email,
                     is_invitation_pending=False,
-                    password_hash=pwd_context.encrypt(password),
+                    password_hash=pwd_context.encrypt(open_id),
                     group_ids=[admin_group.id],
                 )
                 print("创建user++++: ", user)

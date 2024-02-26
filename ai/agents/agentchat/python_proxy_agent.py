@@ -726,8 +726,10 @@ class PythonProxyAgent(Agent):
 
         # no code blocks are found, push last_n_messages back and return.
         code_execution_config["last_n_messages"] = last_n_messages
-
-        return False, None
+        logs_none="No code has been provided to me, please plan again for me"
+        exitcode2str = "execution failed"
+        return False, f"exitcode:{exitcode}({exitcode2str})\nCode output: {logs_none}"
+        # return False, None
 
     async def generate_function_call_reply(
         self,

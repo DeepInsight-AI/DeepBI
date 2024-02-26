@@ -7,11 +7,14 @@ from pathlib import Path
 
 docker_data_source_file_dir = "./user_upload_files"
 
-host_secret = 'tNGoVq0KpQ4LKr5WMIZM'
-db_secret = 'aCyBIffJv2OSW5dOvREL'
-user_secret = 'kdgtPvEnzGKjE44d38M3'
-passwd_secret = 'D3uGSjdaHbFL1ZprkIJD'
-
+# host_secret = 'tNGoVq0KpQ4LKr5WMIZM'
+# db_secret = 'aCyBIffJv2OSW5dOvREL'
+# user_secret = 'kdgtPvEnzGKjE44d38M3'
+# passwd_secret = 'D3uGSjdaHbFL1ZprkIJD'
+host_secret = '****host_secret_****'
+db_secret = '*****db_secret_*****'
+user_secret = '****user_secret_****'
+passwd_secret = '****passwd_secret****'
 
 def is_json(myjson):
     try:

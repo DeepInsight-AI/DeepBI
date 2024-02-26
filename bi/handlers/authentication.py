@@ -306,7 +306,7 @@ def callback():
     # 再获取 user info
     user_info = auth.get_user_info()
     # 将 user info 存入 session
-    session[USER_INFO_KEY] = user_info
+    # session[USER_INFO_KEY] = user_info
     return jsonify(user_info)
 
 @routes.route(org_scoped_rule("/get_appid"), methods=["GET"])
@@ -332,14 +332,17 @@ def login(org_slug=None):
         else:
             # 如果session中已经有user info，则查询出来email的用户信息 
             logging.info("already have user information")
-            return Biz.home_handler()
+            # return Biz.home_handler()
+            return Biz.login_handler()
     elif request.method == "POST":
+        time.sleep(10)
         # print("POST+++POST"+ next_path)
         # logger.info(f"POST request, next_path: {next_path}")
         # 获取接口传递的平台信息 拼接成用户邮箱
         user_platform = request.form["platform"]
         print("user_platform: ", user_platform)
-        open_id = session[USER_INFO_KEY]["open_id"]
+        # open_id = session[USER_INFO_KEY]["open_id"]
+        open_id = "deepbitest"
         user_email = open_id + "@" + user_platform + ".cn"
         # password = open_id
         # tenant_key = session[USER_INFO_KEY].get("tenant_key", None)
@@ -352,14 +355,14 @@ def login(org_slug=None):
             # return redirect(next_path)
         try:
             # 查询models.Organization中有没有name为user_platform的组织
-            org = models.Organization.get_by_name(open_id)
+            org = models.Organization.get_by_slug(open_id)
             print("查询租户：", org)
             if org is None:
                 print("未查询到租户：", open_id)
                 # 如果没有则创建一个新的组织
                 org = models.Organization(
                     name=user_platform,
-                    slug=user_platform,
+                    slug=open_id,
                     settings={},
                 )
                 print("创建租户：", org)
@@ -397,7 +400,6 @@ def login(org_slug=None):
             print("admin_group===",admin_group)
             print("admin_group.id===",admin_group.id)
             print("org===",org)
-            print("current_org===",current_org)
             user = models.User.get_by_email_and_org_first(user_email, org)
             if user is None:
                 user = models.User(

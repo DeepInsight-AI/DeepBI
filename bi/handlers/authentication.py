@@ -341,7 +341,7 @@ def login(org_slug=None):
         print("user_platform: ", user_platform)
         user_email = session[USER_INFO_KEY]["open_id"] + "@" + user_platform + ".cn"
         password = session[USER_INFO_KEY]["open_id"]
-        tenant_key = session[USER_INFO_KEY]["tenant_key"] | None
+        tenant_key = session[USER_INFO_KEY].get("tenant_key", None)
         if tenant_key is None:
             abort(400, message="租户信息获取失败。")
         # print("user_email: ", user_email)

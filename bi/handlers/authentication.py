@@ -306,7 +306,7 @@ def callback():
     # 再获取 user info
     user_info = auth.get_user_info()
     # 将 user info 存入 session
-    # session[USER_INFO_KEY] = user_info
+    session[USER_INFO_KEY] = user_info
     return jsonify(user_info)
 
 @routes.route(org_scoped_rule("/get_appid"), methods=["GET"])
@@ -332,8 +332,7 @@ def login(org_slug=None):
         else:
             # 如果session中已经有user info，则查询出来email的用户信息 
             logging.info("already have user information")
-            # return Biz.home_handler()
-            return Biz.login_handler()
+            return Biz.home_handler()
     elif request.method == "POST":
         time.sleep(10)
         # print("POST+++POST"+ next_path)
@@ -341,8 +340,8 @@ def login(org_slug=None):
         # 获取接口传递的平台信息 拼接成用户邮箱
         user_platform = request.form["platform"]
         print("user_platform: ", user_platform)
-        # open_id = session[USER_INFO_KEY]["open_id"]
-        open_id = "deepbitest"
+        open_id = session[USER_INFO_KEY]["open_id"]
+        # open_id = "deepbitest"
         user_email = open_id + "@" + user_platform + ".cn"
         # password = open_id
         # tenant_key = session[USER_INFO_KEY].get("tenant_key", None)

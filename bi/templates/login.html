@@ -225,7 +225,7 @@
           console.log("alreadyLogin")
           const user_info = JSON.parse('{{ user_info | tojson | safe }}');
           console.log("user: ", user_info.name);
-          // showUser(user_info);
+          showUser(user_info);
           // 为logoutButton绑定点击事件 调用退出登录接口
           document
             .getElementById("logoutButton")

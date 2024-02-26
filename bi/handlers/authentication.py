@@ -334,7 +334,6 @@ def login(org_slug=None):
             logging.info("already have user information")
             return Biz.home_handler()
     elif request.method == "POST":
-        time.sleep(10)
         # print("POST+++POST"+ next_path)
         # logger.info(f"POST request, next_path: {next_path}")
         # 获取接口传递的平台信息 拼接成用户邮箱

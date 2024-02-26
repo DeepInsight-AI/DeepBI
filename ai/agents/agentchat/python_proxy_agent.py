@@ -713,23 +713,22 @@ class PythonProxyAgent(Agent):
             length = 10000
             length1 = 30000
             if not str(logs).__contains__('echart_name'):
+                if len(logs)==0:
+                    logs_none = "No code has been provided to me, please plan again for me"
+                    exitcode2str = "execution failed"
+                    return False, f"exitcode:{exitcode}({exitcode2str})\nCode output: {logs_none}"
                 if len(logs) > length:
                     print(' ++++++++++ Length exceeds 10000 characters limit, cropped  +++++++++++++++++')
                     logs = logs[:length]
             else:
                 if len(logs) > length1:
-                    print(' ++++++++++ Length exceeds 30000 characters limit, cropped  +++++++++++++++++')
-                    logs = "The echarts code is too long, please simplify the code or data (for example, only keep two decimal places), and ensure that the echarts code length does not exceed 10001"
-
-
+                    print(' ++++++++++ Length exceeds 10001 characters limit, cropped  +++++++++++++++++')
+                    logs = "The echarts code is too long, please simplify the code or data (for example, only keep two decimal places), and ensure that the echarts code length does not exceed 30000"
             return True, f"exitcode: {exitcode} ({exitcode2str})\nCode output: {logs}"
 
         # no code blocks are found, push last_n_messages back and return.
         code_execution_config["last_n_messages"] = last_n_messages
-        logs_none="No code has been provided to me, please plan again for me"
-        exitcode2str = "execution failed"
-        return False, f"exitcode:{exitcode}({exitcode2str})\nCode output: {logs_none}"
-        # return False, None
+        return False,None
 
     async def generate_function_call_reply(
         self,

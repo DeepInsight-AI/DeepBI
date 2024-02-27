@@ -344,23 +344,56 @@ def login(org_slug=None):
             return redirect(next_path)
         try:
             # 查询组织
-            # org = models.Organization.get_by_slug(open_id)
-            # print("查询租户：", org)
-            # if org is None:
-            #     print("未查询到租户：", open_id)
-            #     # 如果没有则创建一个新的组织
-            #     org = models.Organization(
-            #         name=user_platform,
-            #         slug=open_id,
-            #         settings={},
-            #     )
+            org = models.Organization.get_by_slug(open_id)
+            print("查询租户：", org)
+            if org is None:
+                print("未查询到租户：", open_id)
+                # 如果没有则创建一个新的组织
+                org = models.Organization(
+                    name=user_platform,
+                    slug=open_id,
+                    settings={},
+                )
                 
-            #     models.db.session.add(org)
-            #     models.db.session.commit()
-            #     print("创建租户：", org)
-            # # 查询角色
+                models.db.session.add(org)
+                models.db.session.commit()
+                print("创建租户：", org)
+            # 查询角色
             # permissions = list(set(models.Group.DEFAULT_PERMISSIONS + ["admin", "super_admin"]))
-            # group_names = [open_id + "_admin"]
+            admin_names = ['admin']
+            default_group = ['default']
+            # 查询角色
+            admin_group = models.Group.find_by_name(org,admin_names)
+            if not admin_group:
+                print("未查询到admin角色：", admin_names)
+                admin_group = models.Group(
+                name="admin",
+                permissions=["admin", "super_admin"],
+                org=org,
+                type=models.Group.BUILTIN_GROUP,
+                )
+                
+                models.db.session.add(admin_group)
+                models.db.session.commit()
+                print("创建角色admin：", admin_group)
+            else:
+                admin_group = admin_group[0]
+            # 查询角色
+            default_group = models.Group.find_by_name(org,default_group)
+            if not default_group:
+                print("未查询到default角色：", default_group)
+                default_group = models.Group(
+                name="default",
+                permissions=models.Group.DEFAULT_PERMISSIONS,
+                org=org,
+                type=models.Group.BUILTIN_GROUP,
+                )
+                
+                models.db.session.add(default_group)
+                models.db.session.commit()
+                print("创建角色default：", default_group)
+            else:
+                default_group = default_group[0]
             # admin_group = models.Group.find_by_name(org,group_names)
             # print("permissions：", permissions)
             # print("group_names：", group_names)
@@ -377,13 +410,14 @@ def login(org_slug=None):
             #     models.db.session.add(admin_group)
             #     models.db.session.commit()
             #     print("创建角色：", admin_group)
-            
+            # # org = current_org._get_current_object()
             # else:
-                # admin_group = admin_group[0]
-            # print("admin_group===",admin_group)
-            # print("admin_group.id===",admin_group.id)
-            # print("org===",org)
-            org = current_org._get_current_object()
+            #     admin_group = admin_group[0]
+            print("admin_group===",admin_group)
+            print("admin_group.id===",admin_group.id)
+            print("default_group===",default_group)
+            print("default_group.id===",default_group.id)
+            print("org===",org)
             user = models.User.get_by_email_and_org_first(user_email, org)
             if user is None:
                 user = models.User(
@@ -392,7 +426,7 @@ def login(org_slug=None):
                     email=user_email,
                     is_invitation_pending=False,
                     password_hash=pwd_context.encrypt(open_id),
-                    group_ids=[1,2],
+                    group_ids=[admin_group.id, default_group.id],
                 )
                 print("创建user++++: ", user)
                 try:

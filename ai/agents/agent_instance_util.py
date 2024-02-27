@@ -6,6 +6,7 @@ import traceback
 from ai.backend.util.token_util import num_tokens_from_messages
 from ai.agents.prompt import CSV_ECHART_TIPS_MESS, \
     MYSQL_ECHART_TIPS_MESS, MYSQL_MATPLOTLIB_TIPS_MESS, POSTGRESQL_ECHART_TIPS_MESS, MONGODB_ECHART_TIPS_MESS
+from ai.agents.prompt.prompt_sql import MYSQL_SQL_TIPS_MESS
 from ai.agents.agentchat import (UserProxyAgent, GroupChat, AssistantAgent, GroupChatManager,
                                  PythonProxyAgent, BIProxyAgent, TaskPlannerAgent, TaskSelectorAgent, CheckAgent,
                                  ChartPresenterAgent)
@@ -523,7 +524,7 @@ class AgentInstanceUtil:
                 Reply "TERMINATE" in the end when everything is done.
                 When you find an answer,  You are a report analysis, you have the knowledge and skills to turn raw data into information and insight, which can be used to make business decisions.include your analysis in your reply.
                 Be careful to avoid using mysql special keywords in mysql code.
-                """ + '\n' + self.base_mysql_info + '\n' + python_base_dependency + '\n' + self.quesion_answer_language,
+                """ + '\n' + self.base_mysql_info + '\n' + python_base_dependency + '\n' + self.quesion_answer_language + MYSQL_SQL_TIPS_MESS,
             human_input_mode="NEVER",
             user_name=self.user_name,
             websocket=self.websocket,

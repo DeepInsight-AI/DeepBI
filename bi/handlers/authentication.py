@@ -334,25 +334,15 @@ def login(org_slug=None):
             logging.info("already have user information")
             return Biz.home_handler()
     elif request.method == "POST":
-        # print("POST+++POST"+ next_path)
-        # logger.info(f"POST request, next_path: {next_path}")
-        # 获取接口传递的平台信息 拼接成用户邮箱
         user_platform = request.form["platform"]
         print("user_platform: ", user_platform)
         open_id = session[USER_INFO_KEY]["open_id"]
-        # open_id = "deepbitest"
         user_email = open_id + "@" + user_platform + ".cn"
-        # password = open_id
-        # tenant_key = session[USER_INFO_KEY].get("tenant_key", None)
-        # if tenant_key is None:
-            # abort(400, message="租户信息获取失败。")
-        # print("user_email: ", user_email)
-        # print("password: ", password)
-        # if current_user.is_authenticated:
-            # print("current_user.is_authenticated")
-            # return redirect(next_path)
+        if current_user.is_authenticated:
+            print("current_user.is_authenticated")
+            return redirect(next_path)
         try:
-            # 查询models.Organization中有没有name为user_platform的组织
+            # 查询组织
             org = models.Organization.get_by_slug(open_id)
             print("查询租户：", org)
             if org is None:
@@ -367,15 +357,15 @@ def login(org_slug=None):
                 models.db.session.add(org)
                 models.db.session.commit()
                 print("创建租户：", org)
-            # 查询Group中有没有name为user_platform的组
+            # 查询角色
             permissions = list(set(models.Group.DEFAULT_PERMISSIONS + ["admin", "super_admin"]))
             group_names = [open_id + "_admin"]
             admin_group = models.Group.find_by_name(org,group_names)
             print("permissions：", permissions)
             print("group_names：", group_names)
-            print("查询租户组：", admin_group)
+            print("查询角色：", admin_group)
             if not admin_group:
-                print("未查询到租户组：", group_names)
+                print("未查询到角色：", group_names)
                 admin_group = models.Group(
                     name=open_id + "_admin",
                     org=org,
@@ -385,7 +375,7 @@ def login(org_slug=None):
                 
                 models.db.session.add(admin_group)
                 models.db.session.commit()
-                print("创建租户组：", admin_group)
+                print("创建角色：", admin_group)
             # org = current_org._get_current_object()
             else:
                 admin_group = admin_group[0]
@@ -406,20 +396,19 @@ def login(org_slug=None):
                 try:
                     models.db.session.add(user)
                     models.db.session.commit()
-                    
                 except IntegrityError as e:
-                    if "email" in str(e):
-                        abort(400, message="电子邮箱已占用。")
                     abort(500)
-            print("have user")
+            else:
+                print("have user", user)
+            print("开始登录...")
             login_user(user, remember=True)
+            print("current_user.is_authenticated===",current_user.is_authenticated)
             print("login_user----",next_path)
             return redirect(next_path)  
             # return redirect(url_for("bi.index", org_slug=org_slug))
         except Exception as e:
             logger.error(f"Error creating user: {e}")
             abort(500, description="Error creating user")
-            # 登录用户
             
 
 

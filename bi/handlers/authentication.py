@@ -326,13 +326,14 @@ def login(org_slug=None):
     next_path = get_next_path(unsafe_next_path)
     if request.method == "GET":
         print("GET---GET")
-        if USER_INFO_KEY not in session:
+        print("登录状态：", current_user.is_authenticated)
+        if current_user.is_authenticated:
+            print("已登录")
+            return redirect(next_path)
+        else:
+            print("未登录")
             logging.info("need to get user information")
             return Biz.login_handler()
-        else:
-            # 如果session中已经有user info，则查询出来email的用户信息 
-            logging.info("already have user information")
-            return Biz.home_handler()
     elif request.method == "POST":
         user_platform = request.form["platform"]
         print("user_platform: ", user_platform)

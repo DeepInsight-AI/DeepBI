@@ -1,9 +1,10 @@
 MYSQL_SQL_TIPS_MESS= '''
+If it involves two tables or multi-table joint query of more than two tables
 Here are some examples of generating mysql Code based on the given question.
+Please give the SQL code directly in your answer, no other characters
 
 Q: How do I generate MySQL code to calculate the total number of coins inserted into '娱乐机' machines on February 17, 2024?
 A: To calculate the total number of coins inserted into '娱乐机' machines on February 17, 2024, you can use the following MySQL query:
-
 SELECT
     SUM(ge.CoinsNum)
 FROM

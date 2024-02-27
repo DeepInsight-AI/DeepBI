@@ -363,9 +363,10 @@ def login(org_slug=None):
                     slug=open_id,
                     settings={},
                 )
-                print("创建租户：", org)
+                
                 models.db.session.add(org)
                 models.db.session.commit()
+                print("创建租户：", org)
             # 查询Group中有没有name为user_platform的组
             group_names =list(set(models.Group.DEFAULT_PERMISSIONS + ["admin", "super_admin"]))
             admin_group = models.Group.find_by_name(org,group_names)
@@ -386,14 +387,15 @@ def login(org_slug=None):
             if not admin_group:
                 print("未查询到租户组：", 1)
                 admin_group = models.Group(
-                    name=user_platform + "_admin",
+                    name=open_id + "_admin",
                     org=org,
                     permissions=group_names,
                     type=models.Group.BUILTIN_GROUP,
                 )
-                print("创建租户组：", admin_group)
+                
                 models.db.session.add(admin_group)
                 models.db.session.commit()
+                print("创建租户组：", admin_group)
             # org = current_org._get_current_object()
             print("admin_group===",admin_group)
             print("admin_group.id===",admin_group.id)

@@ -714,9 +714,9 @@ class PythonProxyAgent(Agent):
             length1 = 30000
             if not str(logs).__contains__('echart_name'):
                 if len(logs)==0:
-                    logs_none = "No code has been provided to me, please plan again for me"
-                    exitcode2str = "execution failed"
-                    return False, f"exitcode:{exitcode}({exitcode2str})\nCode output: {logs_none}"
+                    logs_none = "No code provided to me, please help me check the reason. If it matches the logic, continue. If there are any problems, please help me rewrite and execute the code again"
+                    exitcode2str_failed = "execution failed"
+                    return False, f"exitcode:{exitcode}({exitcode2str_failed})\nCode output: {logs_none}"
                 if len(logs) > length:
                     print(' ++++++++++ Length exceeds 10000 characters limit, cropped  +++++++++++++++++')
                     logs = logs[:length]

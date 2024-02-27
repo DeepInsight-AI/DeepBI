@@ -361,7 +361,7 @@ def login(org_slug=None):
             # 查询角色
             # permissions = list(set(models.Group.DEFAULT_PERMISSIONS + ["admin", "super_admin"]))
             admin_names = ['admin']
-            default_group = ['default']
+            default_names = ['default']
             # 查询角色
             admin_group = models.Group.find_by_name(org,admin_names)
             if not admin_group:
@@ -379,9 +379,9 @@ def login(org_slug=None):
             else:
                 admin_group = admin_group[0]
             # 查询角色
-            default_group = models.Group.find_by_name(org,default_group)
+            default_group = models.Group.find_by_name(org,default_names)
             if not default_group:
-                print("未查询到default角色：", default_group)
+                print("未查询到default角色：", default_names)
                 default_group = models.Group(
                 name="default",
                 permissions=models.Group.DEFAULT_PERMISSIONS,

@@ -338,6 +338,12 @@ def create_org(org_name, org_slug, email, password):
     db.session.add_all([default_org, admin_group, default_group])
     db.session.commit()
 
+    print("新的租户：", default_org)
+    print("admin_group===",admin_group)
+    print("admin_group.id===",admin_group.id)
+    print("default_group===",default_group)
+    print("default_group.id===",default_group.id)
+
     user = User(
         org=default_org,
         name=email,
@@ -348,7 +354,7 @@ def create_org(org_name, org_slug, email, password):
 
     db.session.add(user)
     db.session.commit()
-
+    print("新的user++++: ", user)
     return default_org, user
 
 @routes.route(org_scoped_rule("/login"), methods=["GET","POST"])
@@ -388,49 +394,7 @@ def login(org_slug=None):
                     print("未查询到租户：", open_id)
                     default_org, user = create_org(user_platform, open_id, user_email, open_id)
                     g.org = default_org
-                    # 如果没有则创建一个新的组织
-                    # org = models.Organization(
-                        # name=user_platform,
-                #         slug=open_id,
-                #         settings={},
-                #     )
-                    
-                # admin_group = models.Group(
-                #         name="admin",
-                #         permissions=["admin", "super_admin"],
-                #         org=org,
-                #         type=models.Group.BUILTIN_GROUP,
-                # )
-                # default_group = models.Group(
-                #         name="default",
-                #         permissions=models.Group.DEFAULT_PERMISSIONS,
-                #         org=org,
-                #         type=models.Group.BUILTIN_GROUP,
-                # )
-
-                # models.db.session.add_all([org, admin_group, default_group])
-                # models.db.session.commit()
-                # print("创建租户：", org)
-                # print("admin_group===",admin_group)
-                # print("admin_group.id===",admin_group.id)
-                # print("default_group===",default_group)
-                # print("default_group.id===",default_group.id)
-
-                # user = models.User(
-                #         org=org,
-                #     name=user_email,
-                #     email=user_email,
-                #     is_invitation_pending=False,
-                #     password_hash=pwd_context.encrypt(open_id),
-                #     group_ids=[admin_group.id, default_group.id],
-                # )
-                # print("创建user++++: ", user)
-                # try:
-                #     models.db.session.add(user)
-                #     models.db.session.commit()
-                # except IntegrityError as e:
-                #     abort(500)
-            print("开始登录...")
+            print("login...")
             login_user(user, remember=True)
             print("current_user.is_authenticated===",current_user.is_authenticated)
             print("login_user----",next_path)
@@ -438,150 +402,6 @@ def login(org_slug=None):
         except Exception as e:
             logger.error(f"Error creating user: {e}")
             abort(500, description="Error creating user")
-                
-            # 查询角色
-            # permissions = list(set(models.Group.DEFAULT_PERMISSIONS + ["admin", "super_admin"]))
-            # admin_names = ['admin']
-            # default_names = ['default']
-            # 查询角色
-            # admin_group = models.Group.find_by_name(org,admin_names)
-            # if not admin_group:
-            #     print("未查询到admin角色：", admin_names)
-            #     admin_group = models.Group(
-            #     name="admin",
-            #     permissions=["admin", "super_admin"],
-            #     org=org,
-            #     type=models.Group.BUILTIN_GROUP,
-            #     )
-                
-            #     models.db.session.add(admin_group)
-            #     models.db.session.commit()
-            #     print("创建角色admin：", admin_group)
-            # else:
-            #     admin_group = admin_group[0]
-            # # 查询角色
-            # default_group = models.Group.find_by_name(org,default_names)
-            # if not default_group:
-            #     print("未查询到default角色：", default_names)
-            #     default_group = models.Group(
-            #     name="default",
-            #     permissions=models.Group.DEFAULT_PERMISSIONS,
-            #     org=org,
-            #     type=models.Group.BUILTIN_GROUP,
-            #     )
-                
-            #     models.db.session.add(default_group)
-            #     models.db.session.commit()
-            #     print("创建角色default：", default_group)
-            # else:
-            #     default_group = default_group[0]
-            # admin_group = models.Group.find_by_name(org,group_names)
-            # print("permissions：", permissions)
-            # print("group_names：", group_names)
-            # print("查询角色：", admin_group)
-            # if not admin_group:
-            #     print("未查询到角色：", group_names)
-            #     admin_group = models.Group(
-            #         name=open_id + "_admin",
-            #         org=org,
-            #         permissions=permissions,
-            #         type=models.Group.BUILTIN_GROUP,
-            #     )
-                
-            #     models.db.session.add(admin_group)
-            #     models.db.session.commit()
-            #     print("创建角色：", admin_group)
-            # # org = current_org._get_current_object()
-            # else:
-            #     admin_group = admin_group[0]
-        #     print("admin_group===",admin_group)
-        #     print("admin_group.id===",admin_group.id)
-        #     print("default_group===",default_group)
-        #     print("default_group.id===",default_group.id)
-        #     print("org===",org)
-        #     user = models.User.get_by_email_and_org_first(user_email, org)
-        #     if user is None:
-        #         user = models.User(
-        #             org=org,
-        #             name=user_email,
-        #             email=user_email,
-        #             is_invitation_pending=False,
-        #             password_hash=pwd_context.encrypt(open_id),
-        #             group_ids=[admin_group.id, default_group.id],
-        #         )
-        #         print("创建user++++: ", user)
-        #         try:
-        #             models.db.session.add(user)
-        #             models.db.session.commit()
-        #         except IntegrityError as e:
-        #             abort(500)
-        #     else:
-        #         print("have user", user)
-        #     print("开始登录...")
-        #     login_user(user, remember=True)
-        #     print("current_user.is_authenticated===",current_user.is_authenticated)
-        #     print("login_user----",next_path)
-        #     return redirect(next_path)  
-        #     # return redirect(url_for("bi.index", org_slug=org_slug))
-        # except Exception as e:
-        #     logger.error(f"Error creating user: {e}")
-        #     abort(500, description="Error creating user")
-            
-
-
-
-
-
-# old源
-# def login(org_slug=None):
-#     # We intentionally use == as otherwise it won't actually use the proxy. So weird :O
-#     # noinspection PyComparisonWithNone
-#     if current_org == None and not settings.MULTI_ORG:
-#         return redirect("/setup")
-#     elif current_org == None:
-#         return redirect("/")
-
-#     index_url = url_for("bi.index", org_slug=org_slug)
-#     unsafe_next_path = request.args.get("next", index_url)
-#     next_path = get_next_path(unsafe_next_path)
-#     if current_user.is_authenticated:
-#         return redirect(next_path)
-
-#     if request.method == "POST" and current_org.get_setting("auth_password_login_enabled"):
-#         try:
-#             org = current_org._get_current_object()
-#             user = models.User.get_by_email_and_org(request.form["email"], org)
-#             if (
-#                 user
-#                 and not user.is_disabled
-#                 and user.verify_password(request.form["password"])
-#             ):
-#                 remember = "remember" in request.form
-#                 login_user(user, remember=remember)
-#                 return redirect(next_path)
-
-#             else:
-#                 flash(lang['W_L']['email_or_password_error'])
-#         except NoResultFound:
-#             flash(lang['W_L']['email_or_password_error'])
-#     elif request.method == "POST" and not current_org.get_setting("auth_password_login_enabled"):
-#         flash(lang['W_L']['org_password_error'])
-
-#     google_auth_url = get_google_auth_url(next_path)
-
-#     return render_template(
-#         "login.html",
-#         org_slug=org_slug,
-#         next=next_path,
-#         email=request.form.get("email", ""),
-#         show_google_openid=settings.GOOGLE_OAUTH_ENABLED,
-#         google_auth_url=google_auth_url,
-#         show_password_login=current_org.get_setting("auth_password_login_enabled"),
-#         show_saml_login=current_org.get_setting("auth_saml_enabled"),
-#         show_remote_user_login=settings.REMOTE_USER_LOGIN_ENABLED,
-#         show_ldap_login=settings.LDAP_LOGIN_ENABLED,
-#         lang=lang,
-#     )
 
 
 

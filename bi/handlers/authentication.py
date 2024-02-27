@@ -387,6 +387,8 @@ def login(org_slug=None):
                 models.db.session.commit()
                 print("创建租户组：", admin_group)
             # org = current_org._get_current_object()
+            else:
+                admin_group = admin_group[0]
             print("admin_group===",admin_group)
             print("admin_group.id===",admin_group.id)
             print("org===",org)

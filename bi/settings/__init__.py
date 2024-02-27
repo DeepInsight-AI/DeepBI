@@ -173,7 +173,7 @@ REFERRER_POLICY = os.environ.get(
 # for more information.
 FEATURE_POLICY = os.environ.get("DEEPBI_REFERRER_POLICY", "")
 
-MULTI_ORG = parse_boolean(os.environ.get("DEEPBI_MULTI_ORG", "false"))
+MULTI_ORG = parse_boolean(os.environ.get("DEEPBI_MULTI_ORG", "true"))
 
 GOOGLE_CLIENT_ID = os.environ.get("DEEPBI_GOOGLE_CLIENT_ID", "")
 GOOGLE_CLIENT_SECRET = os.environ.get("DEEPBI_GOOGLE_CLIENT_SECRET", "")

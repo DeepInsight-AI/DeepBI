@@ -399,6 +399,7 @@ def login(org_slug=None):
             login_user(user, remember=True)
             print("current_user.is_authenticated===",current_user.is_authenticated)
             print("login_user----",next_path)
+            print("Session:", session)
             return redirect(next_path)
         except Exception as e:
             logger.error(f"Error creating user: {e}")

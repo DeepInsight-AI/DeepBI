@@ -1,5 +1,5 @@
 import logging
-from flask import abort, flash, redirect, render_template, request, url_for,session,jsonify
+from flask import g,abort, flash, redirect, render_template, request, url_for,session,jsonify
 import hashlib
 import base64
 import json
@@ -23,6 +23,8 @@ from bi.handlers.language import get_config_language
 from bi.handlers.feishu_auth import Auth
 from sqlalchemy.exc import IntegrityError
 from passlib.apps import custom_app_context as pwd_context
+from bi.models import Group, Organization, User, db, DataSourceFile
+
 
 logger = logging.getLogger(__name__)
 lang = get_config_language()
@@ -318,6 +320,37 @@ def get_appid():
         }
     )
 
+def create_org(org_name, org_slug, email, password):
+    default_org = Organization(name=org_name, slug=org_slug, settings={})
+    admin_group = Group(
+        name="admin",
+        permissions=["admin", "super_admin"],
+        org=default_org,
+        type=Group.BUILTIN_GROUP,
+    )
+    default_group = Group(
+        name="default",
+        permissions=Group.DEFAULT_PERMISSIONS,
+        org=default_org,
+        type=Group.BUILTIN_GROUP,
+    )
+
+    db.session.add_all([default_org, admin_group, default_group])
+    db.session.commit()
+
+    user = User(
+        org=default_org,
+        name=email,
+        email=email,
+        group_ids=[admin_group.id, default_group.id],
+    )
+    user.hash_password(password)
+
+    db.session.add(user)
+    db.session.commit()
+
+    return default_org, user
+
 @routes.route(org_scoped_rule("/login"), methods=["GET","POST"])
 # @limiter.limit(settings.THROTTLE_LOGIN_PATTERN)
 def login(org_slug=None):
@@ -342,6 +375,7 @@ def login(org_slug=None):
         if current_user.is_authenticated:
             print("current_user.is_authenticated")
             return redirect(next_path)
+       
         try:
             user = models.User.query.filter(models.User.email == user_email).first()
             if user is not None:
@@ -352,48 +386,50 @@ def login(org_slug=None):
                 print("查询租户：", org)
                 if org is None:
                     print("未查询到租户：", open_id)
+                    default_org, user = create_org(user_platform, open_id, user_email, open_id)
+                    g.org = default_org
                     # 如果没有则创建一个新的组织
-                    org = models.Organization(
-                        name=user_platform,
-                        slug=open_id,
-                        settings={},
-                    )
+                    # org = models.Organization(
+                        # name=user_platform,
+                #         slug=open_id,
+                #         settings={},
+                #     )
                     
-                admin_group = models.Group(
-                        name="admin",
-                        permissions=["admin", "super_admin"],
-                        org=org,
-                        type=models.Group.BUILTIN_GROUP,
-                )
-                default_group = models.Group(
-                        name="default",
-                        permissions=models.Group.DEFAULT_PERMISSIONS,
-                        org=org,
-                        type=models.Group.BUILTIN_GROUP,
-                )
+                # admin_group = models.Group(
+                #         name="admin",
+                #         permissions=["admin", "super_admin"],
+                #         org=org,
+                #         type=models.Group.BUILTIN_GROUP,
+                # )
+                # default_group = models.Group(
+                #         name="default",
+                #         permissions=models.Group.DEFAULT_PERMISSIONS,
+                #         org=org,
+                #         type=models.Group.BUILTIN_GROUP,
+                # )
 
-                models.db.session.add_all([org, admin_group, default_group])
-                models.db.session.commit()
-                print("创建租户：", org)
-                print("admin_group===",admin_group)
-                print("admin_group.id===",admin_group.id)
-                print("default_group===",default_group)
-                print("default_group.id===",default_group.id)
+                # models.db.session.add_all([org, admin_group, default_group])
+                # models.db.session.commit()
+                # print("创建租户：", org)
+                # print("admin_group===",admin_group)
+                # print("admin_group.id===",admin_group.id)
+                # print("default_group===",default_group)
+                # print("default_group.id===",default_group.id)
 
-                user = models.User(
-                        org=org,
-                    name=user_email,
-                    email=user_email,
-                    is_invitation_pending=False,
-                    password_hash=pwd_context.encrypt(open_id),
-                    group_ids=[admin_group.id, default_group.id],
-                )
-                print("创建user++++: ", user)
-                try:
-                    models.db.session.add(user)
-                    models.db.session.commit()
-                except IntegrityError as e:
-                    abort(500)
+                # user = models.User(
+                #         org=org,
+                #     name=user_email,
+                #     email=user_email,
+                #     is_invitation_pending=False,
+                #     password_hash=pwd_context.encrypt(open_id),
+                #     group_ids=[admin_group.id, default_group.id],
+                # )
+                # print("创建user++++: ", user)
+                # try:
+                #     models.db.session.add(user)
+                #     models.db.session.commit()
+                # except IntegrityError as e:
+                #     abort(500)
             print("开始登录...")
             login_user(user, remember=True)
             print("current_user.is_authenticated===",current_user.is_authenticated)

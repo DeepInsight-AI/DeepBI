@@ -321,15 +321,16 @@ def get_appid():
     )
 
 def create_org(org_name, org_slug, email, password):
-    default_org = Organization(name=org_name, slug=org_slug, settings={})
+    # default_org = Organization(name=org_name, slug=org_slug, settings={})
+    default_org = current_org._get_current_object()
     admin_group = Group(
-        name="admin",
+        name="admin1",
         permissions=["admin", "super_admin"],
         org=default_org,
         type=Group.BUILTIN_GROUP,
     )
     default_group = Group(
-        name="default",
+        name="default1",
         permissions=Group.DEFAULT_PERMISSIONS,
         org=default_org,
         type=Group.BUILTIN_GROUP,
@@ -392,8 +393,8 @@ def login(org_slug=None):
                 print("查询租户：", org)
                 if org is None:
                     print("未查询到租户：", open_id)
-                    default_org, user = create_org(user_platform, open_id, user_email, open_id)
-                    g.org = default_org
+                    org, user = create_org(user_platform, open_id, user_email, open_id)
+                g.org = org
             print("login...")
             login_user(user, remember=True)
             print("current_user.is_authenticated===",current_user.is_authenticated)

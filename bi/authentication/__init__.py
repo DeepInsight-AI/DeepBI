@@ -5,7 +5,7 @@ import time
 from datetime import timedelta
 from urllib.parse import urlsplit, urlunsplit
 
-from flask import jsonify, redirect, request, url_for, session
+from flask import jsonify, redirect, request, url_for, session,g
 from flask_login import LoginManager, login_user, logout_user, user_logged_in
 from bi import models, settings
 from bi.authentication import jwt_auth
@@ -21,6 +21,14 @@ logger = logging.getLogger("authentication")
 
 def get_login_url(external=False, next="/"):
     print("current_org222222",current_org)
+    if "UserInfo" in session:
+        open_id = session["UserInfo"]["open_id"]
+        org = models.Organization.get_by_slug(open_id)
+        g.org = org
+    else:
+        org = models.Organization.get_by_slug("default")
+        g.org = org 
+    print("current_org3333333",current_org)
     if settings.MULTI_ORG and current_org == None:
         login_url = "/"
     elif settings.MULTI_ORG:

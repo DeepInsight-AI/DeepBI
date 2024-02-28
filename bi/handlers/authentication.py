@@ -359,12 +359,14 @@ def create_user(org_name, org_slug, email, password):
     print("新的user++++: ", user)
     return default_org, user
 
-@routes.route(org_scoped_rule("/<org_slug>/login"), methods=["GET","POST"])
+@routes.route(org_scoped_rule("/login"), methods=["GET","POST"])
 # @limiter.limit(settings.THROTTLE_LOGIN_PATTERN)
 def login(org_slug=None):
     index_url = url_for("bi.index", org_slug=org_slug)
     unsafe_next_path = request.args.get("next", index_url)
     next_path = get_next_path(unsafe_next_path)
+    print("org_slug: ", org_slug)
+    print("next_path: ", next_path)
     if request.method == "GET":
         print("GET---GET")
         print("登录状态：", current_user.is_authenticated)

@@ -400,9 +400,12 @@ def login(org_slug=None):
             print("login...")
             login_user(user, remember=True)
             print("current_user.is_authenticated===",current_user.is_authenticated)
+            index_url = url_for("bi.index", org_slug=current_org.slug)
+            print("index_url===",index_url)
             print("login_user----",next_path)
             print("Session:", session)
-            return redirect(next_path)
+            
+            return redirect(index_url)
         except Exception as e:
             logger.error(f"Error creating user: {e}")
             abort(500, description="Error creating user")

@@ -362,9 +362,11 @@ def create_user(org_name, org_slug, email, password):
 @routes.route(org_scoped_rule("/login"), methods=["GET","POST"])
 # @limiter.limit(settings.THROTTLE_LOGIN_PATTERN)
 def login(org_slug=None):
+    # index_url = url_for("bi.index", org_slug=org_slug)
+    # unsafe_next_path = request.args.get("next", index_url)
+    # next_path = get_next_path(unsafe_next_path)
     index_url = url_for("bi.index", org_slug=org_slug)
-    unsafe_next_path = request.args.get("next", index_url)
-    next_path = get_next_path(unsafe_next_path)
+    next_path = request.args.get('next', index_url)
     print("org_slug: ", org_slug)
     print("next_path: ", next_path)
     if request.method == "GET":
@@ -372,7 +374,7 @@ def login(org_slug=None):
         print("登录状态：", current_user.is_authenticated)
         if current_user.is_authenticated:
             print("已登录")
-            return redirect("/")
+            return redirect(next_path)
         else:
             print("未登录")
             logging.info("need to get user information")
@@ -520,7 +522,7 @@ def config(org_slug=None):
     )
 
 
-@routes.route(org_scoped_rule("/api/session"), methods=["GET"])
+@routes.route('/api/session', methods=['GET'])
 @login_required
 def sessions(org_slug=None):
     if current_user.is_api_user():

@@ -9,7 +9,8 @@ from flask_limiter import Limiter
 from flask_limiter.util import get_ipaddr
 from flask_migrate import Migrate
 from statsd import StatsClient
-
+from flask import Flask, safe_join
+from werkzeug.routing import BaseConverter, ValidationError
 from . import settings
 from .app import create_app  # noqa
 from .query_runner import import_query_runners
@@ -50,3 +51,16 @@ limiter = Limiter(key_func=get_ipaddr, storage_uri=settings.LIMITER_STORAGE)
 
 import_query_runners(settings.QUERY_RUNNERS)
 import_destinations(settings.DESTINATIONS)
+
+class SlugConverter(BaseConverter):
+    def to_python(self, value):
+        # This is ay workaround for when we enable multi-org and some files are being called by the index rule:
+        for path in settings.STATIC_ASSETS_PATH:
+            full_path = safe_join(path, value)
+            if os.path.isfile(full_path):
+                raise ValidationError()
+
+        return value
+
+    def to_url(self, value):
+        return value

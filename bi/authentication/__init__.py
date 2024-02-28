@@ -28,7 +28,6 @@ def get_login_url(external=False, next="/"):
         open_id = session["UserInfo"]["open_id"]
         org = models.Organization.get_by_slug(open_id)
         print("new_org",org)
-        # 判断org不为None
         if org:
             g.org = org
     print("current_org3333333", current_org)
@@ -47,6 +46,8 @@ def get_login_url(external=False, next="/"):
         # )
     elif settings.MULTI_ORG:
         print("走2------")
+        print("current_org.slug",current_org.slug)
+        print("next",next)
         login_url = url_for(
             "bi.login", org_slug=current_org.slug, next=next, _external=external
         )

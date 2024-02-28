@@ -28,8 +28,10 @@ def get_login_url(external=False, next="/"):
         open_id = session["UserInfo"]["open_id"]
         org = models.Organization.get_by_slug(open_id)
         print("new_org",org)
-        g.org = org
-    print("current_org3333333",current_org)
+        # 判断org不为None
+        if org:
+            g.org = org
+    print("current_org3333333", )
     if settings.MULTI_ORG and current_org == None:
         login_url = "/"
         # login_url = url_for(

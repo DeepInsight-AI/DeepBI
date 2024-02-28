@@ -20,8 +20,8 @@ logger = logging.getLogger("authentication")
 
 
 def get_login_url(external=False, next="/"):
-    session.pop("UserInfo", None)
-    logout_user()
+    # session.pop("UserInfo", None)
+    # logout_user()
     print("current_org222222",current_org)
     if "UserInfo" in session:
         print("session",session["UserInfo"])
@@ -35,10 +35,10 @@ def get_login_url(external=False, next="/"):
         g.org = org 
     print("current_org3333333",current_org)
     if settings.MULTI_ORG and current_org == None:
-        # login_url = "/"
-        login_url = url_for(
-            "bi.login", org_slug="default", next=next, _external=external
-        )
+        login_url = "/"
+        # login_url = url_for(
+            # "bi.login", org_slug="default", next=next, _external=external
+        # )
     elif settings.MULTI_ORG:
         login_url = url_for(
             "bi.login", org_slug=current_org.slug, next=next, _external=external

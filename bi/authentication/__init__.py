@@ -20,6 +20,8 @@ logger = logging.getLogger("authentication")
 
 
 def get_login_url(external=False, next="/"):
+    session.pop("UserInfo", None)
+    logout_user()
     print("current_org222222",current_org)
     if "UserInfo" in session:
         print("session",session["UserInfo"])

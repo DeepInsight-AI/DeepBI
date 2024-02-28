@@ -221,11 +221,8 @@
       let $btn = $btnContainer.querySelector("button");
       const login_info = "{{ login_info }}";
       document.addEventListener('DOMContentLoaded', function() {
-        if (login_info == "alreadyLogin") {
-          console.log("alreadyLogin")
-          // showUser(user_info);
-          // 为logoutButton绑定点击事件 调用退出登录接口
-          document
+                  // 为logoutButton绑定点击事件 调用退出登录接口
+                  document
             .getElementById("logoutButton")
             .addEventListener("click", function () {
               console.log("logoutButton")
@@ -242,6 +239,10 @@
                   console.error(e, "logout error");
                 });
             });
+        if (login_info == "alreadyLogin") {
+          console.log("alreadyLogin")
+          // showUser(user_info);
+
         } else {
           console.log("needlogin")
           // 绑定点击事件到授权按钮

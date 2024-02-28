@@ -119,7 +119,7 @@ line
 echo "安装虚拟环境扩展 virtual vevn"
 sudo pip install virtualenv
 echo "创建虚拟环境 venv"
-sudo virtualenv venv -p python3
+sudo virtualenv venv -p python3.8
 echo "激活虚拟环境 venv"
 source venv/bin/activate
 line
@@ -143,7 +143,7 @@ else
 fi
 line
 if [ -f .env ]; then
-    rm .env
+    sudo rm .env
 fi
 # get local ip
 ip_addresses=$(ifconfig | grep -Eo 'inet (addr:)?([0-9]*\.){3}[0-9]*' | grep -Eo '([0-9]*\.){3}[0-9]*')

@@ -31,17 +31,20 @@ def get_login_url(external=False, next="/"):
         # 判断org不为None
         if org:
             g.org = org
-    print("current_org3333333", )
+    print("current_org3333333", current_org.slug)
     if settings.MULTI_ORG and current_org == None:
+        print("走1------")
         login_url = "/"
         # login_url = url_for(
             # "bi.login", org_slug="default", next=next, _external=external
         # )
     elif settings.MULTI_ORG:
+        print("走2------")
         login_url = url_for(
             "bi.login", org_slug=current_org.slug, next=next, _external=external
         )
     else:
+        print("走3------")
         login_url = url_for("bi.login", next=next, _external=external)
 
     return login_url

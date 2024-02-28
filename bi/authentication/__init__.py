@@ -253,14 +253,14 @@ def redirect_to_login():
     next = request.url
     parts = list(urlsplit(next))
     print("parts",parts)
-    if "UserInfo" in session:
-        print("session",session["UserInfo"])
-        open_id = session["UserInfo"]["open_id"]
-        parts = list(urlsplit(next))
-        print("parts",parts)
-        if "default" in parts[2]:
-            parts[2] = parts[2].replace("default",open_id)
-            next = urlunsplit(parts)
+    # if "UserInfo" in session:
+    #     print("session",session["UserInfo"])
+    #     open_id = session["UserInfo"]["open_id"]
+    #     parts = list(urlsplit(next))
+    #     print("parts",parts)
+    #     if "default" in parts[2]:
+    #         parts[2] = parts[2].replace("default",open_id)
+    #         next = urlunsplit(parts)
     print("redirect_login+++++++",next)
     login_url = get_login_url(next=next, external=False)
 

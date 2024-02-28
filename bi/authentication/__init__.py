@@ -269,7 +269,6 @@ def init_app(app):
 
     user_logged_in.connect(log_user_logged_in)
     login_manager.request_loader(request_loader)
-    print("current_org11111111",current_org)
     
 
 

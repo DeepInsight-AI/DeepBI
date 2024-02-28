@@ -372,7 +372,7 @@ def login(org_slug=None):
         print("登录状态：", current_user.is_authenticated)
         if current_user.is_authenticated:
             print("已登录")
-            return redirect(index_url)
+            return redirect("/")
         else:
             print("未登录")
             logging.info("need to get user information")

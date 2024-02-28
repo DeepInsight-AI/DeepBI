@@ -295,7 +295,7 @@ class Biz(object):
         return render_template("login.html", user_info=session[USER_INFO_KEY], login_info="alreadyLogin")
 
 @routes.route(org_scoped_rule("/callback"), methods=["GET"])
-def callback():
+def callback(org_slug=None):
     # 获取 user info
     APP_ID = os.getenv("APP_ID")
     APP_SECRET = os.getenv("APP_SECRET")

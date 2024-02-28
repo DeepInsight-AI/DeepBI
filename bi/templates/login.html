@@ -346,7 +346,7 @@
       // 发送code到服务端
       function sendCodeToServer(code) {
         console.log(code,"code")
-                  fetch(`/callback?code=${code}`)
+                  fetch(`/default/callback?code=${code}`)
                     .then(response2 =>
                       response2.json().then(res2 => {
                         console.log("getUserInfo succeed");

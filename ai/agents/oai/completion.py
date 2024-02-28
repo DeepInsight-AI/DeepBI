@@ -280,7 +280,7 @@ class Completion(openai_Completion):
                         """
                         headers = {
                             "token": use_api_key,
-                            "ai_name": "openai",
+                            "ainame": "openai",
                             "module": use_model
                         }
                         print('create_url : ', use_url)

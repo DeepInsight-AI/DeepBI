@@ -116,13 +116,14 @@ sudo apt-get install -y python3-pip \
     libpq-dev g++ unixodbc-dev xmlsec1 libssl-dev default-libmysqlclient-dev freetds-dev \
     libsasl2-dev unzip libsasl2-modules-gssapi-mit libmysqlclient-dev
 line
-echo "安装虚拟环境扩展 virtual vevn"
-#sudo pip install virtualenv
-echo "创建虚拟环境 venv"
-#sudo virtualenv venv -p python3
-echo "激活虚拟环境 venv"
-#source venv/bin/activate
 source activate py38
+echo "安装虚拟环境扩展 virtual vevn"
+pip install virtualenv
+echo "创建虚拟环境 venv"
+virtualenv venv -p python3
+echo "激活虚拟环境 venv"
+source venv/bin/activate
+
 
 line
 echo "设置国内源 pip config"
@@ -227,8 +228,8 @@ sed -i "s|192.168.5.165:8339|$ip:$socket_port|g" ./client/dist/vendors~app.js
 sed -i "s|192.168.5.165:8339|$ip:$socket_port|g" ./client/dist/app.js
 line
 echo "激活环境"
-#source venv/bin/activate
-source activate py38
+source venv/bin/activate
+#source activate py38
 
 line
 python_version=$(python3 -c 'import sys; print(".".join(map(str, sys.version_info[:3])))')

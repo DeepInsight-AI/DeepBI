@@ -266,7 +266,7 @@
         // 通过服务端的Route: get_appid获取app_id
         // 服务端Route: get_appid的具体内容请参阅服务端模块server.py的get_appid()函数
         // 为了安全，app_id不应对外泄露，尤其不应在前端明文书写，因此此处从服务端获取
-        fetch(`/get_appid`)
+        fetch(`/default/get_appid`)
           .then(response1 =>
             response1.json().then(res1 => {
               console.log("get appid succeed: ", res1.appid);

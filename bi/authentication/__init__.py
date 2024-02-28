@@ -261,8 +261,8 @@ def redirect_to_login():
         if "default" in parts[2]:
             parts[2] = parts[2].replace("default",open_id)
             next = urlunsplit(parts)
-    print("redirect_login+++++++",request.url)
-    login_url = get_login_url(next=request.url, external=False)
+    print("redirect_login+++++++",next)
+    login_url = get_login_url(next=next, external=False)
 
     return redirect(login_url)
 

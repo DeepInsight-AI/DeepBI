@@ -119,7 +119,7 @@ line
 echo "安装虚拟环境扩展 virtual vevn"
 sudo pip install virtualenv
 echo "创建虚拟环境 venv"
-virtualenv venv -p python3
+sudo virtualenv venv -p python3
 echo "激活虚拟环境 venv"
 source venv/bin/activate
 line

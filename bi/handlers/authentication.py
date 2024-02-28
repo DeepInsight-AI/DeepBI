@@ -322,7 +322,7 @@ def get_appid(org_slug=None):
 
 def create_user(org_name, org_slug, email, password):
     default_org = Organization(name=org_name, slug=org_slug, settings={})
-    g.org = default_org
+    
     # default_org = current_org._get_current_object()
     admin_group = Group(
         name="admin1",
@@ -356,7 +356,9 @@ def create_user(org_name, org_slug, email, password):
 
     db.session.add(user)
     db.session.commit()
+    g.org = default_org
     print("新的user++++: ", user)
+    print(current_org,"g.org = default_org")
     return default_org, user
 
 @routes.route(org_scoped_rule("/login"), methods=["GET","POST"])

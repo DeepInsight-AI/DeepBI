@@ -248,7 +248,7 @@ def redirect_to_login():
         )
         response.status_code = 404
         return response
-
+    print("redirect_to_login+++++++",request.url)
     login_url = get_login_url(next=request.url, external=False)
 
     return redirect(login_url)

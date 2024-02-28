@@ -251,6 +251,8 @@ def redirect_to_login():
     print("redirect_to_login+++++++",request.url)
     # 
     next = request.url
+    parts = list(urlsplit(next))
+    print("parts",parts)
     if "UserInfo" in session:
         print("session",session["UserInfo"])
         open_id = session["UserInfo"]["open_id"]

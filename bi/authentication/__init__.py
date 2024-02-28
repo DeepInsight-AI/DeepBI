@@ -255,6 +255,7 @@ def redirect_to_login():
         print("session",session["UserInfo"])
         open_id = session["UserInfo"]["open_id"]
         parts = list(urlsplit(next))
+        print("parts",parts)
         if "default" in parts[2]:
             next = next.replace("default",open_id)
     print("redirect_login+++++++",request.url)

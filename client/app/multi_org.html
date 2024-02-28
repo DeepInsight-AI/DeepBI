@@ -2,15 +2,32 @@
 <html lang="en">
   <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="Content-Security-Policy" content="frame-src *">
     <meta charset="UTF-8" />
-    <base href="{{base_href}}" />
+    <base href="<%= htmlWebpackPlugin.options.baseHref %>" />
     <title><%= htmlWebpackPlugin.options.title %></title>
-    <script src="<%= htmlWebpackPlugin.options.language %>" async></script>
-    <script src="/static/unsupportedRedirect.js" async></script>
-
-    <link rel="icon" type="image/png" sizes="32x32" href="/static/images/favicon-32x32.png" />
-    <link rel="icon" type="image/png" sizes="96x96" href="/static/images/favicon-96x96.png" />
-    <link rel="icon" type="image/png" sizes="16x16" href="/static/images/favicon-16x16.png" />
+    <script src="<%= htmlWebpackPlugin.options.cdn_domain %><%= htmlWebpackPlugin.options.staticPath %><%= htmlWebpackPlugin.options.web_language_js %>" ></script>
+    <script src="<%= htmlWebpackPlugin.options.cdn_domain %><%= htmlWebpackPlugin.options.staticPath %>unsupportedRedirect.js" async></script>
+    <script src="<%= htmlWebpackPlugin.options.cdn_domain %><%= htmlWebpackPlugin.options.staticPath %>cdn.plot.ly_plotly-locale-zh-cn-latest.js" async></script>
+    <script src="<%= htmlWebpackPlugin.options.cdn_domain %><%= htmlWebpackPlugin.options.staticPath %>echarts-main.js"></script>
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="32x32"
+      href="<%= htmlWebpackPlugin.options.cdn_domain %><%= htmlWebpackPlugin.options.staticPath %>images/favicon-32x32.png"
+    />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="96x96"
+      href="<%= htmlWebpackPlugin.options.cdn_domain %><%= htmlWebpackPlugin.options.staticPath %>images/favicon-96x96.png"
+    />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="16x16"
+      href="<%= htmlWebpackPlugin.options.cdn_domain %><%= htmlWebpackPlugin.options.staticPath %>images/favicon-16x16.png"
+    />
   </head>
 
   <body>
@@ -18,18 +35,7 @@
       <div id="application-root"></div>
       <div class="loading-indicator">
         <div id="css-logo">
-          <div id="circle">
-            <div></div>
-          </div>
-          <div id="point">
-            <div></div>
-          </div>
-          <div id="bars">
-            <div class="bar"></div>
-            <div class="bar"></div>
-            <div class="bar"></div>
-            <div class="bar"></div>
-          </div>
+          <img src="<%= htmlWebpackPlugin.options.cdn_domain %><%= htmlWebpackPlugin.options.staticPath %>images/loading.png" style="border: 0px;">
         </div>
         <div id="shadow"></div>
       </div>

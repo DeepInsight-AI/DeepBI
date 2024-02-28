@@ -20,6 +20,7 @@ logger = logging.getLogger("authentication")
 
 
 def get_login_url(external=False, next="/"):
+    print("current_org222222",current_org)
     if settings.MULTI_ORG and current_org == None:
         login_url = "/"
     elif settings.MULTI_ORG:
@@ -228,7 +229,7 @@ def redirect_to_login():
     return redirect(login_url)
 
 
-def logout_and_redirect_to_index():
+def logout_and_redirect_to_index(): 
     logout_user()
 
     if settings.MULTI_ORG and current_org == None:
@@ -268,6 +269,8 @@ def init_app(app):
 
     user_logged_in.connect(log_user_logged_in)
     login_manager.request_loader(request_loader)
+    print("current_org11111111",current_org)
+    
 
 
 def create_and_login_user(org, name, email, picture=None):

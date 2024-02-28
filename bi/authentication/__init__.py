@@ -29,10 +29,6 @@ def get_login_url(external=False, next="/"):
         org = models.Organization.get_by_slug(open_id)
         print("new_org",org)
         g.org = org
-    else:
-        org = models.Organization.get_by_slug("default")
-        print("default_org",org)
-        g.org = org 
     print("current_org3333333",current_org)
     if settings.MULTI_ORG and current_org == None:
         login_url = "/"

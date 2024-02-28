@@ -17,24 +17,24 @@ else
     exit 1
 fi
 # check python
-if command -v python3 &>/dev/null; then
-    python_version=$(python3 -c 'import sys; print(".".join(map(str, sys.version_info[:3])))')
-    if [ "$(echo "$python_version 3.8" | awk '{print ($1 >= $2)}')" -eq 1 ]; then
-        echo "python 版本检查完毕"
-    else
-        echo "需要安装python  3.8+"
-    fi
-else
-    echo "需要安装 python3.8+"
-    # shellcheck disable=SC2162
-    read -p "即将自动安装 python3.8 ？(Y/N): " confirm
-    if [[ $confirm == "Y" || $confirm == "y" ]]; then
-        sudo apt update
-        sudo apt install python3.8
-    else
-        exit 1
-    fi
-fi
+#if command -v python3 &>/dev/null; then
+#    python_version=$(python3 -c 'import sys; print(".".join(map(str, sys.version_info[:3])))')
+#    if [ "$(echo "$python_version 3.8" | awk '{print ($1 >= $2)}')" -eq 1 ]; then
+#        echo "python 版本检查完毕"
+#    else
+#        echo "需要安装python  3.8+"
+#    fi
+#else
+#    echo "需要安装 python3.8+"
+#    # shellcheck disable=SC2162
+#    read -p "即将自动安装 python3.8 ？(Y/N): " confirm
+#    if [[ $confirm == "Y" || $confirm == "y" ]]; then
+#        sudo apt update
+#        sudo apt install python3.8
+#    else
+#        exit 1
+#    fi
+#fi
 line
 # check redis and install
 # shellcheck disable=SC1009
@@ -117,11 +117,13 @@ sudo apt-get install -y python3-pip \
     libsasl2-dev unzip libsasl2-modules-gssapi-mit libmysqlclient-dev
 line
 echo "安装虚拟环境扩展 virtual vevn"
-sudo pip install virtualenv
+#sudo pip install virtualenv
 echo "创建虚拟环境 venv"
-sudo virtualenv venv -p python3.8
+#sudo virtualenv venv -p python3
 echo "激活虚拟环境 venv"
-source venv/bin/activate
+#source venv/bin/activate
+source activate py38
+
 line
 echo "设置国内源 pip config"
 sudo pip config set global.index-url https://pypi.tuna.tsinghua.edu.cn/simple

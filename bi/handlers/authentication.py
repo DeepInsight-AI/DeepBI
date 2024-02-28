@@ -312,7 +312,7 @@ def callback():
     return jsonify(user_info)
 
 @routes.route(org_scoped_rule("/get_appid"), methods=["GET"])
-def get_appid():
+def get_appid(org_slug=None):
     # 获取 appid
     return jsonify(
         {

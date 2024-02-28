@@ -31,7 +31,7 @@ def get_login_url(external=False, next="/"):
         # 判断org不为None
         if org:
             g.org = org
-    print("current_org3333333", current_org.slug)
+    print("current_org3333333", current_org)
     if settings.MULTI_ORG and current_org == None:
         print("走1------")
         login_url = "/"

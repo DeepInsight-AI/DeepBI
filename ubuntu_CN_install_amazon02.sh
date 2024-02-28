@@ -214,7 +214,7 @@ env_content=$(echo "$env_content" | sed "s/SEC_KEY/$sec_key/g")
 # set user upload dir
 
 # save .env file
-echo "$env_content" > .env
+sudo echo "$env_content" > .env
 root=$(pwd)
 echo "DATA_SOURCE_FILE_DIR=$root/user_upload_files" >> .env
 line
@@ -227,7 +227,8 @@ sed -i "s|192.168.5.165:8339|$ip:$socket_port|g" ./client/dist/vendors~app.js
 sed -i "s|192.168.5.165:8339|$ip:$socket_port|g" ./client/dist/app.js
 line
 echo "激活环境"
-source venv/bin/activate
+#source venv/bin/activate
+source activate py38
 
 line
 python_version=$(python3 -c 'import sys; print(".".join(map(str, sys.version_info[:3])))')

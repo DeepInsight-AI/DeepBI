@@ -93,7 +93,7 @@ function registerDialogueListRoute() {
   routes.register(
     "Dialogue.List",
     routeWithUserSession({
-      path: "/",
+      path: "/ou_95491c7ac5bf861ab5b719124545f0cc",
       title: window.W_L.dialogue,
       render: (pageProps) => <DialogueList {...pageProps} currentPage="testdialogue" chatType="chat" />,
     })

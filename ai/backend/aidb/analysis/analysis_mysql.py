@@ -289,9 +289,9 @@ class AnalysisMysql(Analysis):
 
     async def task_base_rag(self, qustion_message, table_comment):
         """ Task type: mysql data analysis"""
-        if os.path.exists(self.agent_instance_util.rag_doc):
+        if os.path.exists(self.agent_instance_util.get_rag_doc()):
             base_mysql_assistant = self.get_agent_retrieve_base_mysql_assistant()
-            python_executor = self.get_agent_retrieve_python_executor(docs_path=self.agent_instance_util.rag_doc)
+            python_executor = self.get_agent_retrieve_python_executor(docs_path=self.agent_instance_util.get_rag_doc())
 
             await python_executor.initiate_chat(
                 base_mysql_assistant,
@@ -314,9 +314,9 @@ class AnalysisMysql(Analysis):
         return answer_message
 
     async def task_generate_echart_rag(self, qustion_message, table_comment, use_cache):
-        if os.path.exists(self.agent_instance_util.rag_doc):
+        if os.path.exists(self.agent_instance_util.get_rag_doc()):
             mysql_echart_assistant = self.get_agent_retrieve_mysql_echart_assistant()
-            python_executor = self.get_agent_retrieve_python_executor(docs_path=self.agent_instance_util.rag_doc)
+            python_executor = self.get_agent_retrieve_python_executor(docs_path=self.agent_instance_util.get_rag_doc())
 
             await python_executor.initiate_chat(
                 mysql_echart_assistant,

@@ -66,7 +66,12 @@ class AgentInstanceUtil:
         self.is_rag = False
 
         self.uid = self.user_name.split('_')[0]
-        self.rag_doc = CONFIG.up_file_path + '.rag_' + str(self.uid) + '_db' + str(self.db_id) + '.json'
+
+
+    def get_rag_doc(self):
+        rag_doc = CONFIG.up_file_path + '.rag_' + str(self.uid) + '_db' + str(self.db_id) + '.json'
+        return rag_doc
+
 
     def set_api_key(self, api_key, api_host=None, in_use=CONFIG.apikey_openai):
         self.api_key = api_key
@@ -216,9 +221,9 @@ class AgentInstanceUtil:
                 content = '所选表格' + str(num_tokens) + ' , 超过了最大长度:' + str(CONFIG.max_token_num) + ' , 请重新选择'
                 print(content)
             else:
-                print('self.rag_doc : ', self.rag_doc)
-                if not os.path.exists(self.rag_doc):
-                    with open(self.rag_doc, 'w') as output_file:
+                if not os.path.exists(self.get_rag_doc()):
+                    print('RAG文档不存在 +++++++++++++++++++++++++++++ ')
+                    with open(self.get_rag_doc(), 'w') as output_file:
                         output_file.write(str(message))
 
                 self.is_rag = True

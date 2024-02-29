@@ -67,7 +67,7 @@ const listColumns = [
       content: window.W_L.confirm_delete_tip,
       onOk: async () => {
         try {
-          const res = await axios.delete(`/api/auto_pilot/delete/${id}`);
+          const res = await axios.delete(`api/auto_pilot/delete/${id}`);
           if(res.code === 200){
             toast.success(window.W_L.delete_success);
             getAutoPilotList();
@@ -87,7 +87,7 @@ const listColumns = [
   };
   const  getAutoPilotList = async () => {
     setIsLoading(true);
-    const res = await axios.get("/api/auto_pilot");
+    const res = await axios.get("api/auto_pilot");
     if(res.code === 200){
       res.data.sort(function(a,b){
         return Date.parse(b.created_at) - Date.parse(a.created_at);

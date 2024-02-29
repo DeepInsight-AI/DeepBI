@@ -25,7 +25,7 @@ const ExcelUpload = () => {
 
     const formData = new FormData()
     formData.append('file', info.file)
-    axios.post("/api/upload",formData).then((res) => {
+    axios.post("api/upload",formData).then((res) => {
         info.onSuccess()
         setDisabled(false)
         getExcelList();

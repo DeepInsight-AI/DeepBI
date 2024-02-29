@@ -42,7 +42,7 @@ class Jobs extends React.Component {
 
   refresh = () => {
     axios
-      .get("/api/admin/queries/rq_status")
+      .get("api/admin/queries/rq_status")
       .then(data => this.processQueues(data))
       .catch(error => this.handleError(error));
 

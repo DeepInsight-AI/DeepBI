@@ -296,7 +296,7 @@ const handleSuccess =async (tableId,table,isSendTableDateType=null) => {
         }
       }
       // console.log("columns_obj",columns_obj)
-       await axios.post(`/api/data_table/columns/${tableId}/${item.table_name}`,columns_obj);
+       await axios.post(`api/data_table/columns/${tableId}/${item.table_name}`,columns_obj);
     });
 
     Promise.all(promises).then(() => {
@@ -570,7 +570,7 @@ const openSocket = useCallback(() => {
         setLoadingState(true);
         let promisesList = [];
         const promises = CharttableD_date.current.tableName.map(async (item) => {
-          const res = await axios.get(`/api/data_table/columns/${Charttable_id.current}/${item.name}`);
+          const res = await axios.get(`api/data_table/columns/${Charttable_id.current}/${item.name}`);
           promisesList.push({
             table_name: res.table_name,
             table_comment: res.table_desc,

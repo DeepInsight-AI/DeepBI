@@ -26,7 +26,7 @@ const StepModal = React.forwardRef((props, ref) => {
     setVisible(true);
   };
   const getDashboardsPrettifyList = async () => {
-    await axios.get("/api/pretty_dashboard");
+    await axios.get("api/pretty_dashboard");
 };
   React.useImperativeHandle(ref, () => ({
     openModal,
@@ -46,7 +46,7 @@ const StepModal = React.forwardRef((props, ref) => {
       const chartType = globalSeriesType(widget);
       if (chartType) {
         const res = await axios.get(
-          `/api/queries/${widget.visualization.query.id}/results/${widget.visualization.query.latest_query_data_id}.json`
+          `api/queries/${widget.visualization.query.id}/results/${widget.visualization.query.latest_query_data_id}.json`
         );
         return {
           id: widget.visualization.query.id,
@@ -65,7 +65,7 @@ const StepModal = React.forwardRef((props, ref) => {
 
   const getDashboardDetail = () => {
     return axios
-      .get(`/api/dashboards/${dashboardId}`)
+      .get(`api/dashboards/${dashboardId}`)
       .then(async res => {
         if (res.widgets && res.widgets.length > 0) {
           const queryResult = await getQueryResult(res.widgets);
@@ -95,7 +95,7 @@ const StepModal = React.forwardRef((props, ref) => {
       ...detail,
       template_id: selectedTemplate,
     }
-    const res = await axios.post("/api/pretty_dashboard", data);
+    const res = await axios.post("api/pretty_dashboard", data);
     return res;
   };
 

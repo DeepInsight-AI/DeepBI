@@ -145,7 +145,7 @@ const OutdatedQueriesPage = itemsList(
       doRequest(request, context) {
         return (
           axios
-            .get("/api/admin/queries/outdated")
+            .get("api/admin/queries/outdated")
             // eslint-disable-next-line camelcase
             .then(({ queries, updated_at }) => {
               context.setCustomParams({ lastUpdatedAt: parseFloat(updated_at) });

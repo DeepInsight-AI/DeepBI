@@ -12,7 +12,7 @@ function AutopilotView(props) {
     const [autoPilot, setAutoPilot] = useState({});
     const [loading, setLoading] = useState(true);
     const getAutoPilot = async (id) => {
-        const res = await axios.get(`/api/auto_pilot/${id}`);
+        const res = await axios.get(`api/auto_pilot/${id}`);
         if(res.code === 200){
             setAutoPilot(res.data);
         }else{

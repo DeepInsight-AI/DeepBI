@@ -21,7 +21,7 @@ const SettingsOpenKey = () => {
 
   const getOpenKey = useCallback(async () => {
     setDisabled(true);
-    const { data } = await axios.get(`/api/ai_token`);
+    const { data } = await axios.get(`api/ai_token`);
     if (!data.in_use) {
       form.setFieldsValue(data);
     } else {
@@ -62,7 +62,7 @@ const SettingsOpenKey = () => {
       },
     };
     axios
-      .post("/api/ai_token", data)
+      .post("api/ai_token", data)
       .then(res => {
         if (res.code === 200) {
           if (callback) {

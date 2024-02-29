@@ -25,7 +25,7 @@ const autoPilot =async (databases_id,db_comment) => {
         report_desc,
         db_comment
     }
-   await axios.post("/api/auto_pilot",data).then((res)=>{
+   await axios.post("api/auto_pilot",data).then((res)=>{
         setBtn_disabled(false);
         if(res.code===200){
         setBtn_isShow(false);
@@ -49,7 +49,7 @@ const CreateAutoPilot = () => {
             setBtn_disabled(true);
               let promisesList = [];
               const promises = Chart_Dialogue[0].table_name.tableName.map(async (item) => {
-                const res = await axios.get(`/api/data_table/columns/${Chart_Dialogue[0].Charttable_id}/${item.name}`);
+                const res = await axios.get(`api/data_table/columns/${Chart_Dialogue[0].Charttable_id}/${item.name}`);
                 promisesList.push({
                   table_name: res.table_name,
                   table_comment: res.table_desc,

@@ -377,7 +377,8 @@ def login(org_slug=None):
         print("登录状态：", current_user.is_authenticated)
         if current_user.is_authenticated:
             print("已登录")
-            return redirect(next_path)
+            index_url = url_for("bi.index", org_slug=current_org.slug)
+            return redirect(index_url)
         else:
             print("未登录")
             logging.info("need to get user information")
@@ -389,7 +390,8 @@ def login(org_slug=None):
         user_email = open_id + "@" + user_platform + ".cn"
         if current_user.is_authenticated:
             print("current_user.is_authenticated")
-            return redirect(next_path)
+            index_url = url_for("bi.index", org_slug=current_org.slug)
+            return redirect(index_url)
        
         try:
             user = models.User.query.filter(models.User.email == user_email).first()

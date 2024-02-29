@@ -290,7 +290,7 @@ class AnalysisMysql(Analysis):
     async def task_base_rag(self, qustion_message, table_comment):
         """ Task type: mysql data analysis"""
         if os.path.exists(self.agent_instance_util.rag_doc):
-            base_mysql_assistant = self.get_agent_retrieve_base_mysql_assistant_rag()
+            base_mysql_assistant = self.get_agent_retrieve_base_mysql_assistant()
             python_executor = self.get_agent_retrieve_python_executor(docs_path=self.agent_instance_util.rag_doc)
 
             await python_executor.initiate_chat(
@@ -377,7 +377,7 @@ class AnalysisMysql(Analysis):
             default_auto_reply="TERMINATE",
             # outgoing=self.outgoing,
             # incoming=self.incoming,
-            db_id=self.db_id,
+            db_id=self.agent_instance_util.db_id,
             report_file_name=report_file_name,
             retrieve_config={
                 "task": "qa",

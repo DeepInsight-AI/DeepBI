@@ -217,7 +217,7 @@ class AgentInstanceUtil:
                 print(content)
             else:
                 print('self.rag_doc : ', self.rag_doc)
-                if not os.path.exists(self.agent_instance_util.rag_doc):
+                if not os.path.exists(self.rag_doc):
                     with open(self.rag_doc, 'w') as output_file:
                         output_file.write(str(message))
 

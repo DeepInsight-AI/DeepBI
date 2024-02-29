@@ -18,7 +18,7 @@ function EmptyState({ title, message, refreshButton }) {
     <div className="query-results-empty-state">
       <div className="empty-state-content">
         <div>
-          <img src="static/images/illustrations/no-query-results.svg" alt={window.W_L.find_nothing} />
+          <img src="/static/images/illustrations/no-query-results.svg" alt={window.W_L.find_nothing} />
         </div>
         <h3>{title}</h3>
         <div className="m-b-20">{message}</div>

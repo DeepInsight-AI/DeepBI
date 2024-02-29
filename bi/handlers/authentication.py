@@ -362,8 +362,24 @@ def create_user(org_name, org_slug, email, password):
     print(current_org,"g.org = default_org")
     return default_org, user
 
+# 只做路径映射，不做业务逻辑
+@routes.route("/entrance", methods=["GET"])
+@limiter.limit(settings.THROTTLE_LOGIN_PATTERN)
+def entrance():
+    org_slug = "default"
+    if current_user.is_authenticated:
+        org_slug = current_org.slug
+    
+    login_url = url_for(
+                "bi.login", org_slug=org_slug, next=None, _external=False
+            )
+    print("login_url: ", login_url)
+    return redirect(login_url)
+    
+ 
+
 @routes.route(org_scoped_rule("/login"), methods=["GET","POST"])
-# @limiter.limit(settings.THROTTLE_LOGIN_PATTERN)
+@limiter.limit(settings.THROTTLE_LOGIN_PATTERN)
 def login(org_slug=None):
     # index_url = url_for("bi.index", org_slug=org_slug)
     # unsafe_next_path = request.args.get("next", index_url)

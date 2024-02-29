@@ -66,7 +66,7 @@ const SelectSource = forwardRef(({ confirmLoading, Charttable, chat_type, onChan
   useEffect(() => {
     const getMySql = async () => {
       try {
-        const res = await axios.get("/api/data_sources");
+        const res = await axios.get("api/data_sources");
         const options = res.map(d => ({
           ...d,
           value: d.id,
@@ -128,7 +128,7 @@ const SelectSource = forwardRef(({ confirmLoading, Charttable, chat_type, onChan
           reject([]);
         }
         try {
-          const res = await axios.get(`/api/data_sources/${val}/schema`);
+          const res = await axios.get(`api/data_sources/${val}/schema`);
           if (res.schema) {
             clearInterval(timer);
             resolve(res.schema);

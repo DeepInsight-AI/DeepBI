@@ -17,6 +17,8 @@ import ast
 from ai.backend.util.write_log import logger
 from ai.backend.util.token_util import num_tokens_from_messages
 import traceback
+from ai.backend.util import base_util
+
 
 try:
     from termcolor import colored
@@ -1173,29 +1175,6 @@ class BIProxyAgent(Agent):
             if not isinstance(str_obj, list) or not str_obj:
                 return "Failed to generate chart. Please make sure valid chart configuration is provided. Retry."
 
-            ###################
-            axis_x_num = 0
-            axis_y_num = 0
-
-            for config in str_obj:
-                if 'columnMapping' in config and isinstance(config['columnMapping'], dict) and config['columnMapping']:
-                    for variable, axis in config['columnMapping'].items():
-                        print('axis :', axis)
-                        if axis in ["x"]:
-                            axis_x_num = axis_x_num + 1
-                        elif axis in ["y"]:
-                            axis_y_num = axis_y_num + 1
-                else:
-                    return "Failed to generate chart. Please make sure valid chart configuration is provided. Try again with the original chart type."
-
-            if not axis_x_num == 1:
-                error_mess = "There should be one and only one X-axis in the chart."
-                return error_mess + '\n' + "Failed to generate chart. Please make sure valid chart configuration is provided. Try again with the original chart type."
-            elif not axis_y_num > 0:
-                error_mess = "There should be at least one Y-axis in the chart."
-                return error_mess + '\n' + "Failed to generate chart. Please make sure valid chart configuration is provided. Try again with the original chart type."
-            ###################
-
             if str_obj[0].get("globalSeriesType") == 'table':
                 result_message = {
                     'state': 200,
@@ -1208,6 +1187,31 @@ class BIProxyAgent(Agent):
 
                 }
             else:
+
+                ###################
+                axis_x_num = 0
+                axis_y_num = 0
+
+                for config in str_obj:
+                    if 'columnMapping' in config and isinstance(config['columnMapping'], dict) and config[
+                        'columnMapping']:
+                        for variable, axis in config['columnMapping'].items():
+                            print('axis :', axis)
+                            if axis in ["x"]:
+                                axis_x_num = axis_x_num + 1
+                            elif axis in ["y"]:
+                                axis_y_num = axis_y_num + 1
+                    else:
+                        return "Failed to generate chart. Please make sure valid chart configuration is provided. Try again with the original chart type."
+
+                if not axis_x_num == 1:
+                    error_mess = "There should be one and only one X-axis in the chart."
+                    return error_mess + '\n' + "Failed to generate chart. Please make sure valid chart configuration is provided. Try again with the original chart type."
+                elif not axis_y_num > 0:
+                    error_mess = "There should be at least one Y-axis in the chart."
+                    return error_mess + '\n' + "Failed to generate chart. Please make sure valid chart configuration is provided. Try again with the original chart type."
+                ###################
+
                 result_message = {
                     'state': 200,
                     'receiver': 'bi',
@@ -1481,11 +1485,15 @@ class BIProxyAgent(Agent):
             current_timestamp = int(time.time())
             # print(current_timestamp)
 
-            str_obj = ast.literal_eval(chart_code_str)
+            if base_util.is_json(chart_code_str):
+                str_obj = json.loads(chart_code_str)
+            else:
+                str_obj = ast.literal_eval(chart_code_str)
+
+            if isinstance(str_obj, list):
+                return "Chart ：" + name + " configuration should not be a list."
+
             json_str = json.dumps(str_obj)
-
-            chart_code_str = chart_code_str.replace(r"\n", "\\n")
-
 
             result_message = {
                 'state': 200,

@@ -10,7 +10,7 @@ from ai.agents.agentchat import (UserProxyAgent, GroupChat, AssistantAgent, Grou
                                  PythonProxyAgent, BIProxyAgent, TaskPlannerAgent, TaskSelectorAgent, CheckAgent,
                                  ChartPresenterAgent)
 from ai.backend.base_config import CONFIG
-from ai.agents.agentchat.contrib import RetrieveAssistantAgent, RetrievePythonProxyAgent, RetrieveUserProxyAgent
+# from ai.agents.agentchat.contrib import RetrieveAssistantAgent, RetrievePythonProxyAgent, RetrieveUserProxyAgent
 
 max_retry_times = CONFIG.max_retry_times
 language_chinese = CONFIG.language_chinese
@@ -508,7 +508,7 @@ class AgentInstanceUtil:
 
     def get_agent_base_mysql_assistant(self):
         """ Basic Agent, processing mysql data source """
-        base_mysql_assistant = TaskSelectorAgent(
+        base_mysql_assistant = AssistantAgent(
             name="base_mysql_assistant",
             system_message="""You are a helpful AI assistant.
                 Solve tasks using your coding and language skills.
@@ -518,7 +518,7 @@ class AgentInstanceUtil:
                 Solve the task step by step if you need to. If a plan is not provided, explain your plan first. Be clear which step uses code, and which step uses your language skill.
                 When using code, you must indicate the script type in the code block. The user cannot provide any other feedback or perform any other action beyond executing the code you suggest. The user can't modify your code. So do not suggest incomplete code which requires users to modify. Don't use a code block if it's not intended to be executed by the user.
                 If you want the user to save the code in a file before executing it, put # filename: <filename> inside the code block as the first line. Don't include multiple code blocks in one response. Do not ask users to copy and paste the result. Instead, use 'print' function for the output when relevant. Check the execution result returned by the user.
-                If the result indicates there is an error, fix the error and output the code again. Suggest the full code instead of partial code or code changes. If the error can't be fixed or if the task is not solved even after the code is executed successfully, analyze the problem, revisit your assumption, collect additional info you need, and think of a different approach to try.
+                Do not merely substitute the statistical characteristics of the overall data with those derived from sample data. In any case, even if the sample data is insufficient, do not fabricate data for the sake of visualization. Instead, you should reassess whether there is a flaw in the execution logic and attempt again, or plainly acknowledge the limitation.If the result indicates there is an error, fix the error and output the code again. Suggest the full code instead of partial code or code changes. If the error can't be fixed or if the task is not solved even after the code is executed successfully, analyze the problem, revisit your assumption, collect additional info you need, and think of a different approach to try.
                 When you find an answer, verify the answer carefully. Include verifiable evidence in your response if possible.
                 Reply "TERMINATE" in the end when everything is done.
                 When you find an answer,  You are a report analysis, you have the knowledge and skills to turn raw data into information and insight, which can be used to make business decisions.include your analysis in your reply.
@@ -760,15 +760,16 @@ class AgentInstanceUtil:
         return database_describer
 
     def get_agent_retrieve_database_describer(self):
-        database_describer = RetrieveAssistantAgent(
-            name="retrieve_database_describer",
-            system_message="""data_describer.You are a data describer, describing in one sentence your understanding of the data selected by the user. For example, the data selected by the user includes X tables, and what data is in each table.""",
-            llm_config=self.gpt4_turbo_config,
-            user_name=self.user_name,
-            websocket=self.websocket,
-            openai_proxy=self.openai_proxy,
-        )
-        return database_describer
+        pass
+        # database_describer = RetrieveAssistantAgent(
+        #     name="retrieve_database_describer",
+        #     system_message="""data_describer.You are a data describer, describing in one sentence your understanding of the data selected by the user. For example, the data selected by the user includes X tables, and what data is in each table.""",
+        #     llm_config=self.gpt4_turbo_config,
+        #     user_name=self.user_name,
+        #     websocket=self.websocket,
+        #     openai_proxy=self.openai_proxy,
+        # )
+        # return database_describer
 
     def get_agent_bi_proxy(self):
         """ BI proxy """
@@ -808,20 +809,20 @@ class AgentInstanceUtil:
 
     def get_agent_retrieve_planner_user(self, is_log_out=True, report_file_name=None, docs_path=None):
         """Disposable conversation initiator, no reply"""
-        retrieve_planner_user = RetrieveUserProxyAgent(
-            name="retrieve_planner_user",
-            max_consecutive_auto_reply=0,  # terminate without auto-reply
-            human_input_mode="NEVER",
-            websocket=self.websocket,
-            is_log_out=is_log_out,
-            openai_proxy=self.openai_proxy,
-            report_file_name=report_file_name,
-            retrieve_config={
-                "task": "qa",
-                "docs_path": docs_path,
-            },
-        )
-        return retrieve_planner_user
+        # retrieve_planner_user = RetrieveUserProxyAgent(
+        #     name="retrieve_planner_user",
+        #     max_consecutive_auto_reply=0,  # terminate without auto-reply
+        #     human_input_mode="NEVER",
+        #     websocket=self.websocket,
+        #     is_log_out=is_log_out,
+        #     openai_proxy=self.openai_proxy,
+        #     report_file_name=report_file_name,
+        #     retrieve_config={
+        #         "task": "qa",
+        #         "docs_path": docs_path,
+        #     },
+        # )
+        # return retrieve_planner_user
 
     def get_agent_api_check(self):
         """Disposable conversation initiator, no reply"""
@@ -1054,12 +1055,13 @@ class AgentInstanceUtil:
                                           When using code, you must indicate the script type in the code block. The user cannot provide any other feedback or perform any other action beyond executing the code you suggest. The user can't modify your code. So do not suggest incomplete code which requires users to modify. Don't use a code block if it's not intended to be executed by the user.
                                           If you want the user to save the code in a file before executing it, put # filename: <filename> inside the code block as the first line. Don't include multiple code blocks in one response. Do not ask users to copy and paste the result. Instead, use 'print' function for the output when relevant. Check the execution result returned by the user.
                                           If you need to use %Y-%M to query the date or timestamp, please use %Y-%M. You cannot use %%Y-%%M.(For example you should use SELECT * FROM your_table WHERE DATE_FORMAT(your_date_column, '%Y-%M') = '2024-February'; instead of SELECT * FROM your_table WHERE DATE_FORMAT(your_date_column, '%%Y-%%M') = '2024-%%M';)
-                                          If the result indicates there is an error, fix the error and output the code again. Suggest the full code instead of partial code or code changes. If the error can't be fixed or if the task is not solved even after the code is executed successfully, analyze the problem, revisit your assumption, collect additional info you need, and think of a different approach to try.
+                                          Do not merely substitute the statistical characteristics of the overall data with those derived from sample data. In any case, even if the sample data is insufficient, do not fabricate data for the sake of visualization. Instead, you should reassess whether there is a flaw in the execution logic and attempt again, or plainly acknowledge the limitation.If the result indicates there is an error, fix the error and output the code again. Suggest the full code instead of partial code or code changes. If the error can't be fixed or if the task is not solved even after the code is executed successfully, analyze the problem, revisit your assumption, collect additional info you need, and think of a different approach to try.
                                           When you find an answer, verify the answer carefully. Include verifiable evidence in your response if possible.
                                           Reply "TERMINATE" in the end when everything is done.
                                           When you find an answer,  You are a report analysis, you have the knowledge and skills to turn raw data into information and insight, which can be used to make business decisions.include your analysis in your reply.
                                           Be careful to avoid using mysql special keywords in mysql code.
                                           One SQL query result is limited to 20 items.
+                                          Don't generate html files.
                                           """ + '\n' + self.base_mysql_info + '\n' + python_base_dependency + '\n' + MYSQL_ECHART_TIPS_MESS,
             human_input_mode="NEVER",
             user_name=self.user_name,

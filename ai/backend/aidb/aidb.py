@@ -51,56 +51,36 @@ class AIDB:
 
     async def get_data_desc(self, q_str):
         """Get data description"""
+        planner_user = self.agent_instance_util.get_agent_planner_user()
+        database_describer = self.agent_instance_util.get_agent_database_describer()
 
         try:
-            # qustion_message = "Please explain this data to me."
-
-            # if self.language_mode == CONFIG.language_chinese:
-            # qustion_message = "请为我解释一下这些数据"
-
-            qustion_message = LanguageInfo.qustion_message
-
-            if self.agent_instance_util.is_rag:
-                # docs_path = CONFIG.up_file_path + '.rag_' + str(self.user_name) + '_' + str(
-                #     self.agent_instance_util.db_id) + '.json'
-                # print('docs_path : ', docs_path)
-                # planner_user = self.agent_instance_util.get_agent_retrieve_planner_user(docs_path=docs_path)
-                # database_describer = self.agent_instance_util.get_agent_database_describer()
-                # await planner_user.initiate_chat(
-                #     database_describer,
-                #     # message=content + '\n' + " This is my question: " + '\n' + str(qustion_message),
-                #     problem=self.agent_instance_util.base_message + '\n' + self.question_ask + '\n' + str(
-                #         qustion_message),
-                # )
-
-                planner_user = self.agent_instance_util.get_agent_planner_user()
-                database_describer = self.agent_instance_util.get_agent_database_describer()
-                await planner_user.initiate_chat(
-                    database_describer,
-                    # message=content + '\n' + " This is my question: " + '\n' + str(qustion_message),
-                    message=self.agent_instance_util.base_message + '\n' + self.question_ask + '\n' + str(qustion_message),
-                    # message=self.question_ask + '\n' + str(qustion_message),
-                )
-
-                answer_message = planner_user.last_message()["content"]
-
+            table_message = str(self.agent_instance_util.base_message)
+            if base_util.is_json(table_message):
+                str_obj = json.loads(table_message)
             else:
-                planner_user = self.agent_instance_util.get_agent_planner_user()
-                database_describer = self.agent_instance_util.get_agent_database_describer()
-                await planner_user.initiate_chat(
-                    database_describer,
-                    # message=content + '\n' + " This is my question: " + '\n' + str(qustion_message),
-                    message=self.agent_instance_util.base_message + '\n' + self.question_ask + '\n' + str(
-                        qustion_message),
-                )
+                str_obj = ast.literal_eval(table_message)
 
-                answer_message = planner_user.last_message()["content"]
-                # print("answer_message: ", answer_message)
+            table_comments = {'table_desc': [], 'databases_desc': ''}
+            for table in str_obj['table_desc']:
+                if len(table['table_comment']) > 0:
+                    table_comments['table_desc'].append(
+                        {'table_name': table['table_name'], 'table_comment': table['table_comment']})
+                else:
+                    table_comments['table_desc'].append(table)
 
+            qustion_message = "Please explain this data to me."
 
+            if self.language_mode == CONFIG.language_chinese:
+                qustion_message = "请为我解释一下这些数据"
 
-
-
+            await planner_user.initiate_chat(
+                database_describer,
+                # message=self.agent_instance_util.base_message + '\n' + self.question_ask + '\n' + str(qustion_message),
+                message=str(table_comments) + '\n' + self.question_ask + '\n' + str(qustion_message),
+            )
+            answer_message = planner_user.last_message()["content"]
+            # print("answer_message: ", answer_message)
         except HTTPError as http_err:
             traceback.print_exc()
             error_message = self.generate_error_message(http_err)
@@ -166,7 +146,7 @@ class AIDB:
                             "table_name": table_name,
                             "table_comment": table_comment
                         }
-                        table_content.append(tb_desc)
+                        # table_content.append(tb_desc)
 
             print("The number of tables to be processed this time： ", len(table_content))
             if len(table_content) > 0:
@@ -245,6 +225,10 @@ class AIDB:
                     logger.error("from user:[{}".format(self.user_name) + "] , " + "error: " + str(e))
                     await self.put_message(500, CONFIG.talker_log, CONFIG.type_comment, self.error_message_timeout)
                     return
+            else:
+                percentage_integer = 100
+                await self.put_message(200, CONFIG.talker_log, CONFIG.type_data_check,
+                                       content=percentage_integer)
 
             if q_str.get('table_desc'):
                 for tb in q_str.get('table_desc'):
@@ -455,10 +439,10 @@ class AIDB:
                 # ApiHost = "https://apiserver.deep-thought.io/proxy"
                 ApiHost = CONFIG.ApiHost
             elif in_use == 'Azure':
-                ApiKey = data[in_use]['ApiKey']
+                ApiKey = data[in_use]['AzureApiKey']
                 print('DeepBIAzureApiKey : ', ApiKey)
                 # ApiHost = "https://apiserver.deep-thought.io/proxy"
-                ApiHost = data[in_use]['ApiHost']
+                ApiHost = data[in_use]['AzureHost']
         else:
             ApiKey = data['OpenaiApiKey']
             print('OpenaiApiKey : ', ApiKey)
@@ -562,7 +546,7 @@ class AIDB:
 
         print("delete_table_names : ", delete_table_names)
 
-        table_comment = {'table_desc': []}
+        table_comment = {'table_desc': [], 'databases_desc': ''}
 
         for table in self.db_info_json['table_desc']:
             # print('table : ', table)

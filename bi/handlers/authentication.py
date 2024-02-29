@@ -362,7 +362,7 @@ def create_user(org_name, org_slug, email, password):
     print(current_org,"g.org = default_org")
     return default_org, user
 
-@routes.route("/login", methods=["GET","POST"])
+@routes.route(org_scoped_rule("/login"), methods=["GET","POST"])
 # @limiter.limit(settings.THROTTLE_LOGIN_PATTERN)
 def login(org_slug=None):
     # index_url = url_for("bi.index", org_slug=org_slug)

@@ -35,7 +35,7 @@ def get_login_url(external=False, next="/"):
         print("走1------")
         if current_org == None:
             login_url = url_for(
-                "bi.login", org_slug=None, next=next, _external=external
+                "bi.login", org_slug="default", next=next, _external=external
             )
         else:
             login_url = url_for(

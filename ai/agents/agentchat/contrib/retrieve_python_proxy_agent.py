@@ -85,7 +85,7 @@ Context is: {input_context}
 class RetrievePythonProxyAgent(PythonProxyAgent):
     def __init__(
         self,
-        name="RetrieveChatAgent",  # default set to RetrieveChatAgent
+        name="RetrievePythonProxyAgent",  # default set to RetrieveChatAgent
         human_input_mode: Optional[str] = "ALWAYS",
         is_termination_msg: Optional[Callable[[Dict], bool]] = None,
         retrieve_config: Optional[Dict] = None,  # config for the retrieve agent

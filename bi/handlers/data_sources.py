@@ -155,11 +155,13 @@ class DataSourceListResource(BaseResource):
 
         schema = get_configuration_schema_for_query_runner_type(req["type"])
         if schema is None:
-            abort(400)
+            print("schema is None")
+            abort(401)
 
         config = ConfigurationContainer(filter_none(req["options"]), schema)
         if not config.is_valid():
-            abort(400)
+            print("config is not valid")
+            abort(402)
 
         try:
             datasource = models.DataSource.create_with_group(
@@ -170,13 +172,13 @@ class DataSourceListResource(BaseResource):
         except IntegrityError as e:
             if req["name"] in str(e):
                 abort(
-                    400,
+                    405,
                     message="同名数据源 {} 已经存在。".format(
                         req["name"]
                     ),
                 )
-
-            abort(400)
+            print("IntegrityError", e)
+            abort(406)
 
         self.record_event(
             {

@@ -258,12 +258,6 @@
             });
         }
         function apiAuth() {
-        if (!window.h5sdk) {
-          console.log("invalid h5sdk");
-          alert("please open in feishu");
-          handleError();
-          return;
-        }
         // 通过服务端的Route: get_appid获取app_id
         // 服务端Route: get_appid的具体内容请参阅服务端模块server.py的get_appid()函数
         // 为了安全，app_id不应对外泄露，尤其不应在前端明文书写，因此此处从服务端获取
@@ -272,49 +266,7 @@
             response1.json().then(res1 => {
               console.log("get appid succeed: ", res1.appid);
               // 通过error接口处理API验证失败后的回调
-              window.h5sdk.error(err => {
-                handleError();
-                throw ("h5sdk error:", JSON.stringify(err));
-                
-              });
-              // 通过ready接口确认环境准备就绪后才能调用API
-              window.h5sdk.ready(() => {
-                console.log("window.h5sdk.ready");
-                console.log("url:", window.location.href);
-
-                if (window.tt.requestAccess) {
-                  window.tt.requestAccess({
-                    // 网页应用 App ID
-                    appID: res1.appid,
-                    scopeList: [],
-                    success: res => {
-                      // 用户授权后返回预授权码
-                      const { code } = res;
-                      sendCodeToServer(code);
-                    },
-                    fail: error => {
-                      // 需要额外根据errno判断是否为 客户端不支持requestAccess导致的失败
-                      const { errno, errString } = error;
-                      if (errno === 103) {
-                        // 客户端版本过低，不支持requestAccess，需要改为调用requestAuthCode
-                        console.log("客户端版本过低，不支持requestAccess，需要改为调用requestAuthCode");
-                        callRequestAuthCode(res1.appid);
-                      } else {
-                        console.log(`requestAccess failed, err:`, JSON.stringify(error));
-                        // 用户拒绝授权或者授权失败
-                        handleError();
-                      }
-                    }
-                  });
-                } else {
-                  // JSSDK版本过低，不支持requestAccess，需要改为调用requestAuthCode
-                  callRequestAuthCode(res1.appid);
-                }
-
-                
-
-                
-              });
+              sendCodeToServer(res1.appid);
             })
           )
           .catch(function(e) {

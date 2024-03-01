@@ -296,18 +296,18 @@ class Biz(object):
 
 @routes.route("/callback", methods=["GET"])
 def callback(org_slug=None):
-    # 获取 user info
-    APP_ID = os.getenv("APP_ID")
-    APP_SECRET = os.getenv("APP_SECRET")
-    FEISHU_HOST = os.getenv("FEISHU_HOST")
-    auth = Auth(FEISHU_HOST, APP_ID, APP_SECRET)
-    # 拿到前端传来的临时授权码 Code
-    code = request.args.get("code")
-    # 先获取 user_access_token
-    auth.authorize_user_access_token(code)
-    # 再获取 user info
-    user_info = auth.get_user_info()
-    # user_info= {'avatar_big': 'https://s1-imfile.feishucdn.com/static-resource/v1/v3_007l_8197dcbe-1c0f-4604-812d-fcfe82cd823g~?image_size=640x640&cut_type=&quality=&format=image&sticker_format=.webp', 'avatar_middle': 'https://s1-imfile.feishucdn.com/static-resource/v1/v3_007l_8197dcbe-1c0f-4604-812d-fcfe82cd823g~?image_size=240x240&cut_type=&quality=&format=image&sticker_format=.webp', 'avatar_thumb': 'https://s3-imfile.feishucdn.com/static-resource/v1/v3_007l_8197dcbe-1c0f-4604-812d-fcfe82cd823g~?image_size=72x72&cut_type=&quality=&format=image&sticker_format=.webp', 'avatar_url': 'https://s3-imfile.feishucdn.com/static-resource/v1/v3_007l_8197dcbe-1c0f-4604-812d-fcfe82cd823g~?image_size=72x72&cut_type=&quality=&format=image&sticker_format=.webp', 'en_name': '朱想成', 'name': '朱想成', 'open_id': 'ou_95491c7ac5bf861ab5b719124545f0cc', 'tenant_key': '16de067e9887175e', 'union_id': 'on_d84acd8326c33683750e82f2f7393938'}
+    # # 获取 user info
+    # APP_ID = os.getenv("APP_ID")
+    # APP_SECRET = os.getenv("APP_SECRET")
+    # FEISHU_HOST = os.getenv("FEISHU_HOST")
+    # auth = Auth(FEISHU_HOST, APP_ID, APP_SECRET)
+    # # 拿到前端传来的临时授权码 Code
+    # code = request.args.get("code")
+    # # 先获取 user_access_token
+    # auth.authorize_user_access_token(code)
+    # # 再获取 user info
+    # user_info = auth.get_user_info()
+    user_info= {'avatar_big': 'https://s1-imfile.feishucdn.com/static-resource/v1/v3_007l_8197dcbe-1c0f-4604-812d-fcfe82cd823g~?image_size=640x640&cut_type=&quality=&format=image&sticker_format=.webp', 'avatar_middle': 'https://s1-imfile.feishucdn.com/static-resource/v1/v3_007l_8197dcbe-1c0f-4604-812d-fcfe82cd823g~?image_size=240x240&cut_type=&quality=&format=image&sticker_format=.webp', 'avatar_thumb': 'https://s3-imfile.feishucdn.com/static-resource/v1/v3_007l_8197dcbe-1c0f-4604-812d-fcfe82cd823g~?image_size=72x72&cut_type=&quality=&format=image&sticker_format=.webp', 'avatar_url': 'https://s3-imfile.feishucdn.com/static-resource/v1/v3_007l_8197dcbe-1c0f-4604-812d-fcfe82cd823g~?image_size=72x72&cut_type=&quality=&format=image&sticker_format=.webp', 'en_name': '朱想成', 'name': '朱想成', 'open_id': 'ou_95491c7ac5bf861ab5b719124545f0c1', 'tenant_key': '16de067e9887175e', 'union_id': 'on_d84acd8326c33683750e82f2f7393938'}
     # 将 user info 存入 session
     session[USER_INFO_KEY] = user_info
     return jsonify(user_info)

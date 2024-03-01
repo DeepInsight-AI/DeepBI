@@ -245,11 +245,11 @@ const GroupDataSourcesPage = wrapSettingsTab(
   )
 );
 
-routes.register(
-  "Groups.DataSources",
-  routeWithUserSession({
-    path: "/groups/:groupId/data_sources",
-    title: window.W_L.group_datasource,
-    render: pageProps => <GroupDataSourcesPage {...pageProps} currentPage="datasources" />,
-  })
-);
+// routes.register(
+//   "Groups.DataSources",
+//   routeWithUserSession({
+//     path: "/groups/:groupId/data_sources",
+//     title: window.W_L.group_datasource,
+//     render: pageProps => <GroupDataSourcesPage {...pageProps} currentPage="datasources" />,
+//   })
+// );

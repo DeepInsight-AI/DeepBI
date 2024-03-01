@@ -21,10 +21,6 @@ import "./data-sources/EditDataSource";
 import "./destinations/DestinationsList";
 import "./destinations/EditDestination";
 
-import "./groups/GroupsList";
-import "./groups/GroupDataSources";
-import "./groups/GroupMembers";
-
 import "./queries-list/QueriesList";
 import "./queries/QuerySource";
 import "./queries/QueryView";
@@ -34,8 +30,6 @@ import "./query-snippets/QuerySnippetsList";
 
 import "./settings/OrganizationSettings";
 
-import "./users/UsersList";
-import "./users/UserProfile";
 
 import "./upload/ExcelUpload";
 

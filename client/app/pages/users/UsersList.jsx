@@ -287,35 +287,35 @@ const UsersListPage = wrapSettingsTab(
   )
 );
 
-routes.register(
-  "Users.New",
-  routeWithUserSession({
-    path: "/users/new",
-    title: window.W_L.account,
-    render: pageProps => <UsersListPage {...pageProps} currentPage="active" isNewUserPage />,
-  })
-);
-routes.register(
-  "Users.List",
-  routeWithUserSession({
-    path: "/users",
-    title: window.W_L.enable_user,
-    render: pageProps => <UsersListPage {...pageProps} currentPage="active" />,
-  })
-);
-routes.register(
-  "Users.Pending",
-  routeWithUserSession({
-    path: "/users/pending",
-    title: window.W_L.invite_user,
-    render: pageProps => <UsersListPage {...pageProps} currentPage="pending" />,
-  })
-);
-routes.register(
-  "Users.Disabled",
-  routeWithUserSession({
-    path: "/users/disabled",
-    title: window.W_L.disable_user,
-    render: pageProps => <UsersListPage {...pageProps} currentPage="disabled" />,
-  })
-);
+// routes.register(
+//   "Users.New",
+//   routeWithUserSession({
+//     path: "/users/new",
+//     title: window.W_L.account,
+//     render: pageProps => <UsersListPage {...pageProps} currentPage="active" isNewUserPage />,
+//   })
+// );
+// routes.register(
+//   "Users.List",
+//   routeWithUserSession({
+//     path: "/users",
+//     title: window.W_L.enable_user,
+//     render: pageProps => <UsersListPage {...pageProps} currentPage="active" />,
+//   })
+// );
+// routes.register(
+//   "Users.Pending",
+//   routeWithUserSession({
+//     path: "/users/pending",
+//     title: window.W_L.invite_user,
+//     render: pageProps => <UsersListPage {...pageProps} currentPage="pending" />,
+//   })
+// );
+// routes.register(
+//   "Users.Disabled",
+//   routeWithUserSession({
+//     path: "/users/disabled",
+//     title: window.W_L.disable_user,
+//     render: pageProps => <UsersListPage {...pageProps} currentPage="disabled" />,
+//   })
+// );

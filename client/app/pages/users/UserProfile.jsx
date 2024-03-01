@@ -68,29 +68,29 @@ UserProfile.defaultProps = {
   onError: () => {},
 };
 
-const UserProfilePage = wrapSettingsTab(
-  "Users.Account",
-  {
-    title: window.W_L.personal_setting,
-    path: "users/me",
-    order: 7,
-  },
-  UserProfile
-);
+// const UserProfilePage = wrapSettingsTab(
+//   "Users.Account",
+//   {
+//     title: window.W_L.personal_setting,
+//     path: "users/me",
+//     order: 7,
+//   },
+//   UserProfile
+// );
 
-routes.register(
-  "Users.Account",
-  routeWithUserSession({
-    path: "/users/me",
-    title: window.W_L.personal_setting,
-    render: pageProps => <UserProfilePage {...pageProps} />,
-  })
-);
-routes.register(
-  "Users.ViewOrEdit",
-  routeWithUserSession({
-    path: "/users/:userId",
-    title: window.W_L.account,
-    render: pageProps => <UserProfilePage {...pageProps} />,
-  })
-);
+// routes.register(
+//   "Users.Account",
+//   routeWithUserSession({
+//     path: "/users/me",
+//     title: window.W_L.personal_setting,
+//     render: pageProps => <UserProfilePage {...pageProps} />,
+//   })
+// );
+// routes.register(
+//   "Users.ViewOrEdit",
+//   routeWithUserSession({
+//     path: "/users/:userId",
+//     title: window.W_L.account,
+//     render: pageProps => <UserProfilePage {...pageProps} />,
+//   })
+// );

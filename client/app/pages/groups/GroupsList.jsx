@@ -151,11 +151,11 @@ const GroupsListPage = wrapSettingsTab(
   )
 );
 
-routes.register(
-  "Groups.List",
-  routeWithUserSession({
-    path: "/groups",
-    title: window.W_L.role,
-    render: pageProps => <GroupsListPage {...pageProps} currentPage="groups" />,
-  })
-);
+// routes.register(
+//   "Groups.List",
+//   routeWithUserSession({
+//     path: "/groups",
+//     title: window.W_L.role,
+//     render: pageProps => <GroupsListPage {...pageProps} currentPage="groups" />,
+//   })
+// );

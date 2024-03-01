@@ -208,11 +208,11 @@ const GroupMembersPage = wrapSettingsTab(
   )
 );
 
-routes.register(
-  "Groups.Members",
-  routeWithUserSession({
-    path: "/groups/:groupId",
-    title: window.W_L.members,
-    render: pageProps => <GroupMembersPage {...pageProps} currentPage="users" />,
-  })
-);
+// routes.register(
+//   "Groups.Members",
+//   routeWithUserSession({
+//     path: "/groups/:groupId",
+//     title: window.W_L.members,
+//     render: pageProps => <GroupMembersPage {...pageProps} currentPage="users" />,
+//   })
+// );

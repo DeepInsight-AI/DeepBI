@@ -56,11 +56,11 @@ const OrganizationSettingsPage = wrapSettingsTab(
   OrganizationSettings
 );
 
-routes.register(
-  "Settings.Organization",
-  routeWithUserSession({
-    path: "/settings/general",
-    title: window.W_L.sys_setting,
-    render: pageProps => <OrganizationSettingsPage {...pageProps} />,
-  })
-);
+// routes.register(
+//   "Settings.Organization",
+//   routeWithUserSession({
+//     path: "/settings/general",
+//     title: window.W_L.sys_setting,
+//     render: pageProps => <OrganizationSettingsPage {...pageProps} />,
+//   })
+// );

@@ -405,7 +405,7 @@ def login(org_slug=None):
 
 
 
-@routes.route("/pretty_dashboard/<page>")
+@routes.route(org_scoped_rule("/pretty_dashboard/<page>"))
 def test(page):
     return render_template(str(page) + ".html")
 

@@ -28,9 +28,6 @@ import "./queries/VisualizationEmbed";
 
 import "./query-snippets/QuerySnippetsList";
 
-import "./settings/OrganizationSettings";
-
-
 import "./upload/ExcelUpload";
 
 import "./settings/OpenKey";

@@ -82,11 +82,11 @@ class SystemStatus extends React.Component {
   }
 }
 
-routes.register(
-  "Admin.SystemStatus",
-  routeWithUserSession({
-    path: "/admin/status",
-    title: window.W_L.out_date_query,
-    render: pageProps => <SystemStatus {...pageProps} />,
-  })
-);
+// routes.register(
+//   "Admin.SystemStatus",
+//   routeWithUserSession({
+//     path: "/admin/status",
+//     title: window.W_L.out_date_query,
+//     render: pageProps => <SystemStatus {...pageProps} />,
+//   })
+// );

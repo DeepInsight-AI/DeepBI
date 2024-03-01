@@ -248,14 +248,14 @@ export default function DesktopNavbar() {
               </div>
             </span>
           }>
-          <Menu.Item key="profile">
+          {/* <Menu.Item key="profile">
             <Link href="users/me">{window.W_L.personal_setting}</Link>
           </Menu.Item>
           {currentUser.hasPermission("super_admin") && (
             <Menu.Item key="status">
               <Link href="admin/status">{window.W_L.sys_status}</Link>
             </Menu.Item>
-          )}
+          )} */}
           <Menu.Divider />
           <Menu.Item key="logout">
             <PlainButton data-test="LogOutButton" onClick={() => Auth.logout()}>

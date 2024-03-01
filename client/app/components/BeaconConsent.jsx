@@ -67,7 +67,7 @@ function BeaconConsent() {
           <div className="m-t-15">
             <Text type="secondary">
               {window.W_L.set_info_in}{" "}
-              <Link href="settings/general">{window.W_L.sys_setting}</Link> {window.W_L.sys_setting_add}。
+              {/* <Link href="settings/general">{window.W_L.sys_setting}</Link> {window.W_L.sys_setting_add}。 */}
             </Text>
           </div>
         </Card>

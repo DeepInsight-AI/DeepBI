@@ -45,16 +45,16 @@ OrganizationSettings.defaultProps = {
   onError: () => {},
 };
 
-const OrganizationSettingsPage = wrapSettingsTab(
-  "Settings.Organization",
-  {
-    permission: "admin",
-    title: window.W_L.sys_setting,
-    path: "settings/general",
-    order: 6,
-  },
-  OrganizationSettings
-);
+// const OrganizationSettingsPage = wrapSettingsTab(
+//   "Settings.Organization",
+//   {
+//     permission: "admin",
+//     title: window.W_L.sys_setting,
+//     path: "settings/general",
+//     order: 6,
+//   },
+//   OrganizationSettings
+// );
 
 // routes.register(
 //   "Settings.Organization",

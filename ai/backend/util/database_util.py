@@ -101,7 +101,7 @@ class Main:
         # url = "http://127.0.0.1:4999/data_source_info/" + db + "/" + from_se
 
         if CONFIG.web_server_ip is not None:
-            url = "http://" + CONFIG.web_server_ip + "/ou_95491c7ac5bf861ab5b719124545f0c1/"  + "/data_source_info/" + db + "/" + from_se
+            url = "http://" + CONFIG.web_server_ip + "/ou_95491c7ac5bf861ab5b719124545f0c1"  + "/data_source_info/" + db + "/" + from_se
             print(url)
         else:
             return False, ' error: Not found CONFIG.web_server_ip '
@@ -130,7 +130,7 @@ class Main:
         # url = "http://127.0.0.1:4999/data_source_info/" + db + "/" + from_se
 
         if CONFIG.web_server_ip is not None:
-            url = "http://" + CONFIG.web_server_ip + "/ou_95491c7ac5bf861ab5b719124545f0c1/" + "/data_source_info/" + db + "/" + from_se
+            url = "http://" + CONFIG.web_server_ip + "/ou_95491c7ac5bf861ab5b719124545f0c1" + "/data_source_info/" + db + "/" + from_se
 
         else:
             print('error: Not found CONFIG.web_server_ip ')

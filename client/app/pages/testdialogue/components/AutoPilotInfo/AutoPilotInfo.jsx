@@ -9,6 +9,7 @@ import { dialogueStorage } from "../Dialogue/method/dialogueStorage";
 import InfoCircleOutlinedIcon from "@ant-design/icons/InfoCircleOutlined";
 import toast from "react-hot-toast";
 import "./index.css";
+import { get } from "lodash";
 
 const { TextArea } = Input;
 const AutoPilotInfo =({databases_type})=>{
@@ -30,7 +31,8 @@ const autoPilot =async (databases_id,db_comment) => {
         if(res.code===200){
         setBtn_isShow(false);
         toast.success(window.W_L.submit_success+" "+window.W_L.submit_success_tip);
-        routes.navigate("Dialogue.List.autopilot_list");
+        // routes.navigate("Dialogue.List.autopilot_list");
+        getAutoPilotList();
         }else{
         toast.error(res.data);
         }
@@ -39,6 +41,11 @@ const autoPilot =async (databases_id,db_comment) => {
         toast.error(window.W_L.submit_fail);
     })
 };
+
+const getAutoPilotList = async () => {
+    await axios.get("api/auto_pilot");
+};
+
 const CreateAutoPilot = () => {
     if (!report_name || !report_desc) {
         return;

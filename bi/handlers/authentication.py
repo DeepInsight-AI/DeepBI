@@ -294,25 +294,25 @@ class Biz(object):
     def _show_user_info():
         return render_template("login.html", user_info=session[USER_INFO_KEY], login_info="alreadyLogin")
 
-@routes.route(org_scoped_rule("/callback"), methods=["GET"])
+@routes.route("/callback", methods=["GET"])
 def callback(org_slug=None):
     # 获取 user info
-    # APP_ID = os.getenv("APP_ID")
-    # APP_SECRET = os.getenv("APP_SECRET")
-    # FEISHU_HOST = os.getenv("FEISHU_HOST")
-    # auth = Auth(FEISHU_HOST, APP_ID, APP_SECRET)
-    # # 拿到前端传来的临时授权码 Code
-    # code = request.args.get("code")
-    # # 先获取 user_access_token
-    # auth.authorize_user_access_token(code)
-    # # 再获取 user info
-    # user_info = auth.get_user_info()
-    user_info= {'avatar_big': 'https://s1-imfile.feishucdn.com/static-resource/v1/v3_007l_8197dcbe-1c0f-4604-812d-fcfe82cd823g~?image_size=640x640&cut_type=&quality=&format=image&sticker_format=.webp', 'avatar_middle': 'https://s1-imfile.feishucdn.com/static-resource/v1/v3_007l_8197dcbe-1c0f-4604-812d-fcfe82cd823g~?image_size=240x240&cut_type=&quality=&format=image&sticker_format=.webp', 'avatar_thumb': 'https://s3-imfile.feishucdn.com/static-resource/v1/v3_007l_8197dcbe-1c0f-4604-812d-fcfe82cd823g~?image_size=72x72&cut_type=&quality=&format=image&sticker_format=.webp', 'avatar_url': 'https://s3-imfile.feishucdn.com/static-resource/v1/v3_007l_8197dcbe-1c0f-4604-812d-fcfe82cd823g~?image_size=72x72&cut_type=&quality=&format=image&sticker_format=.webp', 'en_name': '朱想成', 'name': '朱想成', 'open_id': 'ou_95491c7ac5bf861ab5b719124545f0cc', 'tenant_key': '16de067e9887175e', 'union_id': 'on_d84acd8326c33683750e82f2f7393938'}
+    APP_ID = os.getenv("APP_ID")
+    APP_SECRET = os.getenv("APP_SECRET")
+    FEISHU_HOST = os.getenv("FEISHU_HOST")
+    auth = Auth(FEISHU_HOST, APP_ID, APP_SECRET)
+    # 拿到前端传来的临时授权码 Code
+    code = request.args.get("code")
+    # 先获取 user_access_token
+    auth.authorize_user_access_token(code)
+    # 再获取 user info
+    user_info = auth.get_user_info()
+    # user_info= {'avatar_big': 'https://s1-imfile.feishucdn.com/static-resource/v1/v3_007l_8197dcbe-1c0f-4604-812d-fcfe82cd823g~?image_size=640x640&cut_type=&quality=&format=image&sticker_format=.webp', 'avatar_middle': 'https://s1-imfile.feishucdn.com/static-resource/v1/v3_007l_8197dcbe-1c0f-4604-812d-fcfe82cd823g~?image_size=240x240&cut_type=&quality=&format=image&sticker_format=.webp', 'avatar_thumb': 'https://s3-imfile.feishucdn.com/static-resource/v1/v3_007l_8197dcbe-1c0f-4604-812d-fcfe82cd823g~?image_size=72x72&cut_type=&quality=&format=image&sticker_format=.webp', 'avatar_url': 'https://s3-imfile.feishucdn.com/static-resource/v1/v3_007l_8197dcbe-1c0f-4604-812d-fcfe82cd823g~?image_size=72x72&cut_type=&quality=&format=image&sticker_format=.webp', 'en_name': '朱想成', 'name': '朱想成', 'open_id': 'ou_95491c7ac5bf861ab5b719124545f0cc', 'tenant_key': '16de067e9887175e', 'union_id': 'on_d84acd8326c33683750e82f2f7393938'}
     # 将 user info 存入 session
     session[USER_INFO_KEY] = user_info
     return jsonify(user_info)
 
-@routes.route(org_scoped_rule("/get_appid"), methods=["GET"])
+@routes.route("/get_appid", methods=["GET"])
 def get_appid(org_slug=None):
     # 获取 appid
     return jsonify(
@@ -363,79 +363,80 @@ def create_user(org_name, org_slug, email, password):
     return default_org, user
 
 # 只做路径映射，不做业务逻辑
-@routes.route("/entrance", methods=["GET"])
+@routes.route("/entrance", methods=["GET","POST"])
 @limiter.limit(settings.THROTTLE_LOGIN_PATTERN)
 def entrance():
-    org_slug = "default"
-    if current_user.is_authenticated:
-        org_slug = current_org.slug
-    
-    login_url = url_for(
-                "bi.login", org_slug=org_slug, next=None, _external=False
+    if "UserInfo" in session:
+        print("session",session["UserInfo"])
+        org_slug = session["UserInfo"]["open_id"]
+        user_platform = request.form.get('platform', None) if request.method == "POST" else None
+        login_url = url_for(
+                "bi.login", org_slug=org_slug, next=None, _external=False, user_platform=user_platform
             )
-    print("login_url: ", login_url)
-    return redirect(login_url)
+        print("login_url: ", login_url)
+        return redirect(login_url)
+    else:
+        return render_template("entrance.html", user_info={"name": "unknown"}, login_info="needLogin")
     
  
 
 @routes.route(org_scoped_rule("/login"), methods=["GET","POST"])
 @limiter.limit(settings.THROTTLE_LOGIN_PATTERN)
 def login(org_slug=None):
-    # index_url = url_for("bi.index", org_slug=org_slug)
-    # unsafe_next_path = request.args.get("next", index_url)
-    # next_path = get_next_path(unsafe_next_path)
+    org_slug = request.args.get('org_slug', default="default")
+    user_platform = request.args.get('user_platform', default=None)
     if current_user.is_authenticated:
         org_slug = current_org.slug
-    else:
-        org_slug = "default"
     index_url = url_for("bi.index", org_slug=org_slug)
-    next_path = request.args.get('next', index_url)
     print("org_slug: ", org_slug)
-    print("next_path: ", next_path)
-    if request.method == "GET":
-        print("GET---GET")
-        print("登录状态：", current_user.is_authenticated)
-        if current_user.is_authenticated:
+    if current_user.is_authenticated:
             print("已登录")
             index_url = url_for("bi.index", org_slug=current_org.slug)
             return redirect(index_url)
+    # if request.method == "GET":
+    #     print("GET---GET")
+    #     print("登录状态：", current_user.is_authenticated)
+    #     if current_user.is_authenticated:
+    #         print("已登录")
+    #         index_url = url_for("bi.index", org_slug=current_org.slug)
+    #         return redirect(index_url)
+    #     else:
+    #         print("未登录")
+    #         logging.info("need to get user information")
+    #         return Biz.login_handler()
+    # elif request.method == "POST":
+    # user_platform = request.form["platform"]
+    print("user_platform: ", user_platform)
+    open_id = session[USER_INFO_KEY]["open_id"]
+    user_email = open_id + "@" + user_platform + ".cn"
+    if current_user.is_authenticated:
+        print("current_user.is_authenticated")
+        index_url = url_for("bi.index", org_slug=current_org.slug)
+        return redirect(index_url)
+    
+    try:
+        user = models.User.query.filter(models.User.email == user_email).first()
+        if user is not None:
+            print("User [%s] is already exists." % user_email)
         else:
-            print("未登录")
-            logging.info("need to get user information")
-            return Biz.login_handler()
-    elif request.method == "POST":
-        user_platform = request.form["platform"]
-        print("user_platform: ", user_platform)
-        open_id = session[USER_INFO_KEY]["open_id"]
-        user_email = open_id + "@" + user_platform + ".cn"
-        if current_user.is_authenticated:
-            print("current_user.is_authenticated")
-            index_url = url_for("bi.index", org_slug=current_org.slug)
-            return redirect(index_url)
-       
-        try:
-            user = models.User.query.filter(models.User.email == user_email).first()
-            if user is not None:
-                print("User [%s] is already exists." % user_email)
-            else:
-                # 查询组织
-                org = models.Organization.get_by_slug(open_id)
-                print("查询租户：", org)
-                if org is None:
-                    print("未查询到租户：", open_id)
-                    org, user = create_user(user_platform, open_id, user_email, open_id)
-            print("login...")
-            login_user(user, remember=True)
-            print("current_user.is_authenticated===",current_user.is_authenticated)
-            index_url = url_for("bi.index", org_slug=current_org.slug)
-            print("index_url===",index_url)
-            print("login_user----",next_path)
-            print("Session:", session)
-            
-            return redirect(index_url)
-        except Exception as e:
-            logger.error(f"Error creating user: {e}")
-            abort(500, description="Error creating user")
+            # 查询组织
+            org = models.Organization.get_by_slug(open_id)
+            print("查询租户：", org)
+            if org is None:
+                print("未查询到租户：", open_id)
+                org, user = create_user(user_platform, open_id, user_email, open_id)
+        print("login...")
+        login_user(user, remember=True)
+        print("current_user.is_authenticated===",current_user.is_authenticated)
+        index_url = url_for("bi.index", org_slug=current_org.slug)
+        print("index_url===",index_url)
+        print("login_user----",next_path)
+        print("Session:", session)
+        
+        return redirect(index_url)
+    except Exception as e:
+        logger.error(f"Error creating user: {e}")
+        abort(500, description="Error creating user")
 
 
 

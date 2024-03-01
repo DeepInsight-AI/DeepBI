@@ -28,7 +28,7 @@ const StepModal =React.forwardRef((props, ref)  => {
     openModal
   }));
   const getDashboardList = (async () => {
-    const res = await axios.get(`/api/dashboards?order&page=1&page_size=50`);
+    const res = await axios.get(`api/dashboards?order&page=1&page_size=50`);
     if(res.results.length>0){
       setSelectedContent(res.results[0].id);
       setSelectedDashboard(res.results);
@@ -45,7 +45,7 @@ const StepModal =React.forwardRef((props, ref)  => {
   
   const getQueryResult = async (widgets) => {
     const promises = widgets.map(async (widget) => {
-      const res = await axios.get(`/api/queries/${widget.visualization.query.id}/results/${widget.visualization.query.latest_query_data_id}.json`);
+      const res = await axios.get(`api/queries/${widget.visualization.query.id}/results/${widget.visualization.query.latest_query_data_id}.json`);
       return {
         id: widget.id,
         chart_name: widget.visualization.query.name,
@@ -58,7 +58,7 @@ const StepModal =React.forwardRef((props, ref)  => {
   }
   
   const getDashboardDetail = () => {
-    return axios.get(`/api/dashboards/${selectedContent}`)
+    return axios.get(`api/dashboards/${selectedContent}`)
       .then(async res => {
         if(res.widgets && res.widgets.length > 0){
           const queryResult = await getQueryResult(res.widgets);

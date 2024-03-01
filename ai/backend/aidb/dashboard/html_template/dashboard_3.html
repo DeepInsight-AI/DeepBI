@@ -205,7 +205,7 @@
     DashboardData = eval('(' + DashboardData + ')');
     var dashboard_id = document.getElementById('dashboardId').innerHTML;
     $.ajax({
-      url: '/api/dashboards/' + dashboard_id,
+      url: 'api/dashboards/' + dashboard_id,
       type: 'get',
       dataType: 'json',
       success: function (res) {
@@ -233,7 +233,7 @@
   for (var i = 0; i < query_result.length; i++) {
     (function(i) {
     $.ajax({
-      url: '/api/queries/' + query_result[i].id + '/results/' + query_result[i].latest_query_data_id + '.json',
+      url: 'api/queries/' + query_result[i].id + '/results/' + query_result[i].latest_query_data_id + '.json',
       type: 'get',
       dataType: 'json',
       success: function (res) {

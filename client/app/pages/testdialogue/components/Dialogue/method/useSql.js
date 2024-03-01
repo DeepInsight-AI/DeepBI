@@ -18,7 +18,7 @@ useEffect(() => {
 
 const findQueryResult = useCallback(async (response,type,name,task_id) => {
   try {
-    const res = await axios.get(`/api/query_results/${response.job.query_result_id}`);
+    const res = await axios.get(`api/query_results/${response.job.query_result_id}`);
     // console.log(res, 'gettable_data_success');
     if(res.query_result.data.rows.length===0){
       sendSocketMessage(500,'bi','mysql_code',"sql没有查询到数据",task_id)
@@ -47,7 +47,7 @@ const findJob = useCallback(async (response,type,name,task_id,max=50) => {
       return
     }
     try {
-      const res = await axios.get(`/api/jobs/${response.job.id}`);
+      const res = await axios.get(`api/jobs/${response.job.id}`);
       if (res.job.query_result_id&& !isCalled) {
         // console.log(res, 'getquery_result_id');
         isCalled = true;
@@ -78,7 +78,7 @@ const executeSql = useCallback(async (response,task_id) => {
   };
 
   try {
-    const res = await axios.post(`/api/queries/${response.id}/results`, data);
+    const res = await axios.post(`api/queries/${response.id}/results`, data);
     // console.log(res, 'executeSql_success');
     await findJob(res,"execute",null,task_id);
   } catch (err) {
@@ -101,7 +101,7 @@ const executeSql = useCallback(async (response,task_id) => {
       tags: []
     };
     try {
-      const res = await axios.post('/api/queries', data);
+      const res = await axios.post('api/queries', data);
       // console.log(res, 'saveSql_success');
       setState(prevState => ({ ...prevState, sqlId: res.id }));
       await executeSql(res,task_id);
@@ -122,7 +122,7 @@ const executeSql = useCallback(async (response,task_id) => {
       query,
     }
     try {
-      const res = await axios.post(`/api/query_results`,data);
+      const res = await axios.post(`api/query_results`,data);
       await findJob(res,"test",name,task_id);
       // console.log(res, 'testAndVerifySql_success');
     } catch (err) {

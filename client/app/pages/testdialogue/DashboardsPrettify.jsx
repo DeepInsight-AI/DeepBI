@@ -66,6 +66,7 @@ function DashboardsPrettify() {
     const handleClickHtml = async (item) => {
         if(item.is_generate === 2 && item.html_name){
             const html_name = item.html_name.split(".")[0];
+            console.log(window.location,"window.location")
             const url = window.location.protocol + "//" + window.location.host + "/pretty_dashboard/" + html_name;
             window.open(url);
         }else{

@@ -177,6 +177,8 @@ class DataSourceListResource(BaseResource):
                         req["name"]
                     ),
                 )
+            print("self.current_org", self.current_org)
+            print("current_org", self.current_org.id)
             print("IntegrityError", e)
             abort(406)
 

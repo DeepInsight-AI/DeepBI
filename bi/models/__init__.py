@@ -155,6 +155,8 @@ class DataSource(BelongsToOrgMixin, db.Model):
     @classmethod
     def create_with_group(cls, *args, **kwargs):
         data_source = cls(*args, **kwargs)
+        print(data_source,"data_source")
+        print(data_source.org.default_group,"data_source.org.default_group")
         data_source_group = DataSourceGroup(
             data_source=data_source, group=data_source.org.default_group
         )

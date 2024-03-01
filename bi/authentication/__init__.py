@@ -20,29 +20,19 @@ logger = logging.getLogger("authentication")
 
 
 def get_login_url(external=False, next="/"):
-    # session.pop("UserInfo", None)
-    # logout_user()
-    print("current_org222222",current_org)
     if "UserInfo" in session:
         print("session",session["UserInfo"])
         open_id = session["UserInfo"]["open_id"]
         org = models.Organization.get_by_slug(open_id)
-        print("new_org",org)
         if org:
             g.org = org
-    print("current_org3333333", current_org)
     if settings.MULTI_ORG and current_org == None:
-        print("走1------")
         login_url = "/entrance"
     elif settings.MULTI_ORG:
-        print("走2------")
-        print("current_org.slug",current_org.slug)
-        print("next",next)
         login_url = url_for(
             "bi.login", org_slug=current_org.slug, next=next, _external=external
         )
     else:
-        print("走3------")
         login_url = url_for("bi.login", next=next, _external=external)
 
     return login_url

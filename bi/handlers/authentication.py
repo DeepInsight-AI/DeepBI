@@ -177,7 +177,7 @@ def render_token_login_page(template, org_slug, token, invite):
 
 
 @routes.route(org_scoped_rule("/data_source_info/<data_id>/<secret>"), methods=["GET"])  # add new api
-def data_source_info(data_id, secret):
+def data_source_info(data_id, secret, org_slug=None):
     if data_id is None or secret is None:
         print("need data_id")
         abort(404)

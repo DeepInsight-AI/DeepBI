@@ -448,7 +448,7 @@ const SelectSource = forwardRef(({ confirmLoading, Charttable, chat_type, onChan
               : chat_type === "autopilot"
               ? window.W_L.AutoPilot_start
               : window.W_L.report_start}
-            <Link href="/data_sources">{window.W_L.add_datasource}</Link>
+            <Link href="data_sources">{window.W_L.add_datasource}</Link>
           </span>
         </div>
         <div className="select-content">

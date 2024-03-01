@@ -28,7 +28,7 @@ class Resize extends React.Component {
           <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="tabler-icon tabler-icon-arrow-bar-left"><path d="M4 12l10 0"></path><path d="M4 12l4 4"></path><path d="M4 12l4 -4"></path><path d="M20 4l0 16"></path></svg>
         } */}
         {/* </div> */}
-        <Link className="resize-btn" href="/data_sources" target="_blank">
+        <Link className="resize-btn" href="data_sources" target="_blank">
         <i class="zmdi zmdi-settings"></i>
         </Link>
         </div>

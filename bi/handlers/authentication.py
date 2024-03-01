@@ -393,27 +393,12 @@ def login(org_slug=None):
             print("已登录")
             index_url = url_for("bi.index", org_slug=current_org.slug)
             return redirect(index_url)
-    # if request.method == "GET":
-    #     print("GET---GET")
-    #     print("登录状态：", current_user.is_authenticated)
-    #     if current_user.is_authenticated:
-    #         print("已登录")
-    #         index_url = url_for("bi.index", org_slug=current_org.slug)
-    #         return redirect(index_url)
-    #     else:
-    #         print("未登录")
-    #         logging.info("need to get user information")
-    #         return Biz.login_handler()
-    # elif request.method == "POST":
-    # user_platform = request.form["platform"]
+    if USER_INFO_KEY not in session:
+        print("session中没有用户信息")
+        return redirect(url_for("bi.entrance"))
     print("user_platform: ", user_platform)
     open_id = session[USER_INFO_KEY]["open_id"]
     user_email = open_id + "@" + user_platform + ".cn"
-    if current_user.is_authenticated:
-        print("current_user.is_authenticated")
-        index_url = url_for("bi.index", org_slug=current_org.slug)
-        return redirect(index_url)
-    
     try:
         user = models.User.query.filter(models.User.email == user_email).first()
         if user is not None:
@@ -427,10 +412,8 @@ def login(org_slug=None):
                 org, user = create_user(user_platform, open_id, user_email, open_id)
         print("login...")
         login_user(user, remember=True)
-        print("current_user.is_authenticated===",current_user.is_authenticated)
         index_url = url_for("bi.index", org_slug=current_org.slug)
         print("index_url===",index_url)
-        print("login_user----",next_path)
         print("Session:", session)
         
         return redirect(index_url)

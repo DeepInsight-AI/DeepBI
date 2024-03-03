@@ -81,6 +81,21 @@ async def ask_question1():
     # await ragproxyagent.initiate_chat(assistant, problem="100-3=?")
 
 
+"""
+wget https://www.sqlite.org/2023/sqlite-autoconf-3360000.tar.gz
+   tar xvf sqlite-autoconf-3360000.tar.gz
+   cd sqlite-autoconf-3360000
+ ./configure
+   make
+   sudo make install
+ sqlite3 --version
+
+
+ pip install -i https://pypi.tuna.tsinghua.edu.cn/simple pypdf==4.0.0
+pip install -i https://pypi.tuna.tsinghua.edu.cn/simple psycopg2-binary
+
+"""
+
 if __name__ == '__main__':
     print(str(time.strftime('%Y-%m-%d %H:%M:%S', time.localtime())))
     # asyncio.get_event_loop().run_until_complete(ask_question())

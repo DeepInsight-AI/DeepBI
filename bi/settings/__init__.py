@@ -345,6 +345,7 @@ default_query_runners = [
     "bi.query_runner.mysql",
     "bi.query_runner.pg",
     "bi.query_runner.mongodb",
+    "bi.query_runner.mssql",
 ]
 
 enabled_query_runners = array_from_string(

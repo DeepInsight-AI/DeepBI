@@ -10,7 +10,7 @@ class Config():
 
         # self.database_model = 'test'
         self.database_model = 'online'
-        self.request_timeout = 55
+        self.request_timeout = 90
         self.max_retry_period = 90
         self.max_retry_times = 3
         self.up_file_path = base_util.get_upload_path()
@@ -30,7 +30,7 @@ class Config():
 
         self.python_base_dependency = """python installed dependency environment: pymysql, pandas, mysql-connector-python, pyecharts, sklearn, psycopg2, sqlalchemy，pymongo"""
 
-        self.max_token_num = 6000
+        self.max_token_num = 7500
 
         self.talker_bi = 'bi'
         self.talker_user = 'user'
@@ -46,6 +46,7 @@ class Config():
         self.type_log_data = 'log_data'
         self.type_test = 'test'
 
+        self.local_base_mysql_info = """ """
         self.apikey_openai = 'OpenAI'
         self.apikey_deepinsight = 'DeepInsight'
         self.apikey_azure = 'Azure'
@@ -53,23 +54,18 @@ class Config():
         self.local_base_mysql_info = """
         """
 
-        self.local_base_mongodb_info = """
-                """
+        self.local_base_mongodb_info = """ """
 
-        self.online_base_mysql_info = """
-        """
+        self.online_base_mysql_info = """ """
 
-        self.local_base_postgresql_info = """
-        """
+        self.local_base_postgresql_info = """ """
 
-        self.local_base_csv_info = """
-        """
+        self.local_base_csv_info = """ """
 
-        self.local_base_xls_info = """
-        """
+        self.local_base_xls_info = """ """
 
-        self.default_base_message = """
-                """
+        self.default_base_message = """ """
 
 
 CONFIG = Config()
+agents_functions=['task_generate_echart', 'task_generate_report', 'task_base']

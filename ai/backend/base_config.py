@@ -56,6 +56,8 @@ class Config():
 
         self.local_base_mongodb_info = """ """
 
+        self.local_base_mssql_info = """ """
+
         self.online_base_mysql_info = """ """
 
         self.local_base_postgresql_info = """ """

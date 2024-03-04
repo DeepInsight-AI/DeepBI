@@ -6,10 +6,10 @@ from ai.backend.util.write_log import logger
 from ai.agents import AgentInstanceUtil
 from ai.backend.memory import ChatMemoryManager
 from ai.backend.base_config import CONFIG
-from ai.backend.aidb.report import ReportMysql, ReportPostgresql, ReportStarrocks, ReportMongoDB
-from ai.backend.aidb.analysis import AnalysisMysql, AnalysisCsv, AnalysisPostgresql, AnalysisStarrocks, AnalysisMongoDB
+from ai.backend.aidb.report import ReportMysql, ReportPostgresql, ReportStarrocks, ReportMongoDB,ReportSqlserver
+from ai.backend.aidb.analysis import AnalysisMysql, AnalysisCsv, AnalysisPostgresql, AnalysisStarrocks, AnalysisMongoDB,AnalysisSqlserver
 from ai.backend.aidb import AIDB
-from ai.backend.aidb.autopilot import AutopilotMysql, AutopilotMongoDB
+from ai.backend.aidb.autopilot import AutopilotMysql, AutopilotMongoDB,AutopilotSqlserver
 
 message_pool: ChatMemoryManager = ChatMemoryManager(name="message_pool")
 
@@ -51,14 +51,18 @@ class ChatClass:
         self.analysisPostgresql = AnalysisPostgresql(self)
         self.analysisStarrocks = AnalysisStarrocks(self)
         self.analysisMongoDB = AnalysisMongoDB(self)
+        self.analysisSqlserver = AnalysisSqlserver(self)
 
         self.reportMysql = ReportMysql(self)
         self.reportPostgresql = ReportPostgresql(self)
         self.reportStarrocks = ReportStarrocks(self)
         self.reportMongoDB = ReportMongoDB(self)
+        self.reportSqlserver = ReportSqlserver(self)
 
         self.autopilotMysql = AutopilotMysql(self)
         self.autopilotMongoDB = AutopilotMongoDB(self)
+        self.autopilotSqlserver = AutopilotSqlserver(self)
+        
 
     async def get_message(self):
         """ Receive messages and put them into the [pending] message queue """
@@ -135,6 +139,10 @@ class ChatClass:
                     elif q_database == 'mongodb':
                         print(" q_database ==  mongodb ")
                         await self.analysisMongoDB.deal_question(json_str, message)
+                    elif q_database == 'sqlserver':
+                        print(" q_database ==  sqlserver ")
+                        await self.analysisSqlserver.deal_question(json_str, message)
+                        
 
                 elif q_chat_type == 'report':
                     if q_database == 'mysql':
@@ -145,6 +153,9 @@ class ChatClass:
                         await self.reportStarrocks.deal_report(json_str, message)
                     elif q_database == 'mongodb':
                         await self.reportMongoDB.deal_report(json_str, message)
+                    elif q_database == 'sqlserver':
+                        await self.reportSqlserver.deal_report(json_str, message)
+                        
                 elif q_chat_type == 'autopilot':
                     if q_database == 'mysql':
                         await self.autopilotMysql.deal_question(json_str, message)
@@ -152,6 +163,9 @@ class ChatClass:
                         await self.autopilotMysql.deal_question(json_str, message)
                     elif q_database == 'mongodb':
                         await self.autopilotMongoDB.deal_question(json_str, message)
+                    elif q_database == 'sqlserver':
+                        await self.autopilotSqlserver.deal_question(json_str, message)
+                        
 
             else:
                 result['state'] = 500

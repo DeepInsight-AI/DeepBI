@@ -207,9 +207,9 @@
       <div class="progress-button">
         <button  id="authButton"><span>授权登录</span></button>
       </div>
-      <p id="logoutButton">
-       <span>退出登录</span>
-      </p>
+      <!-- <p id="logoutButton"> -->
+       <!-- <span>退出登录</span> -->
+      <!-- </p> -->
       <form id="loginForm" action="/entrance" method="post" style="display: none">
         <input type="hidden" name="platform" value="feishu" />
       </form>
@@ -221,24 +221,24 @@
       let $btn = $btnContainer.querySelector("button");
       const login_info = "{{ login_info }}";
       document.addEventListener('DOMContentLoaded', function() {
-                  // 为logoutButton绑定点击事件 调用退出登录接口
-                  document
-            .getElementById("logoutButton")
-            .addEventListener("click", function () {
-              console.log("logoutButton")
-              fetch(`/logout`)
-                .then(response =>
-                  response.json().then(res => {
-                    console.log("logout succeed");
-                    // 示例Demo中单独定义的函数showUser，用于将用户信息展示在前端页面上
-                    // showUser(res);
-                    location.reload();
-                  })
-                )
-                .catch(function(e) {
-                  console.error(e, "logout error");
-                });
-            });
+            //       // 为logoutButton绑定点击事件 调用退出登录接口
+            //       document
+            // .getElementById("logoutButton")
+            // .addEventListener("click", function () {
+            //   console.log("logoutButton")
+            //   fetch(`/logout`)
+            //     .then(response =>
+            //       response.json().then(res => {
+            //         console.log("logout succeed");
+            //         // 示例Demo中单独定义的函数showUser，用于将用户信息展示在前端页面上
+            //         // showUser(res);
+            //         location.reload();
+            //       })
+            //     )
+            //     .catch(function(e) {
+            //       console.error(e, "logout error");
+            //     });
+            // });
         if (login_info == "alreadyLogin") {
           console.log("alreadyLogin")
           // showUser(user_info);

@@ -168,8 +168,6 @@ class AnalysisMysql(Analysis):
         return base_mysql_assistant
 
     async def task_generate_echart(self, qustion_message):
-        """ test echart code"""
-        return await self.test_echrts_code()
         try:
             base_content = []
             base_mess = []
@@ -305,59 +303,3 @@ class AnalysisMysql(Analysis):
             traceback.print_exc()
             logger.error("from user:[{}".format(self.user_name) + "] , " + "error: " + str(e))
         return self.agent_instance_util.data_analysis_error
-    
-    async def test_echrts_code(self):
-        base_content = []
-        base_mess = []
-        report_demand_list = []
-        json_str = ""
-        error_times = 0
-        use_cache = True
-        match = [{"echart_name": "不同广告投放时段的销售额和ROI表现", "echart_code": "{\n    \"animation\": true,\n    \"animationThreshold\": 2000,\n    \"animationDuration\": 1000,\n    \"animationEasing\": \"cubicOut\",\n    \"animationDelay\": 0,\n    \"animationDurationUpdate\": 300,\n    \"animationEasingUpdate\": \"cubicOut\",\n    \"animationDelayUpdate\": 0,\n    \"aria\": {\n        \"enabled\": false\n    },\n    \"color\": [\n        \"#5470c6\",\n        \"#91cc75\",\n        \"#fac858\",\n        \"#ee6666\",\n        \"#73c0de\",\n        \"#3ba272\",\n        \"#fc8452\",\n        \"#9a60b4\",\n        \"#ea7ccc\"\n    ],\n    \"series\": [\n        {\n            \"type\": \"bar\",\n            \"name\": \"\\u9500\\u552e\\u989d\",\n            \"xAxisIndex\": 0,\n            \"yAxisIndex\": 0,\n            \"legendHoverLink\": true,\n            \"data\": [\n                860.3,\n                235.92\n            ],\n            \"realtimeSort\": false,\n            \"showBackground\": false,\n            \"stackStrategy\": \"samesign\",\n            \"cursor\": \"pointer\",\n            \"barMinHeight\": 0,\n            \"barCategoryGap\": \"20%\",\n            \"barGap\": \"30%\",\n            \"large\": false,\n            \"largeThreshold\": 400,\n            \"seriesLayoutBy\": \"column\",\n            \"datasetIndex\": 0,\n            \"clip\": true,\n            \"zlevel\": 0,\n            \"z\": 2,\n            \"label\": {\n                \"show\": true,\n                \"margin\": 8\n            }\n        },\n        {\n            \"type\": \"line\",\n            \"name\": \"ROI\",\n            \"connectNulls\": false,\n            \"xAxisIndex\": 1,\n            \"yAxisIndex\": 1,\n            \"symbolSize\": 4,\n            \"showSymbol\": true,\n            \"smooth\": false,\n            \"clip\": true,\n            \"step\": false,\n            \"data\": [\n                [\n                    \"2024-01-19\",\n                    1.86\n                ],\n                [\n                    \"2024-02-25\",\n                    3.91\n                ]\n            ],\n            \"hoverAnimation\": true,\n            \"label\": {\n                \"show\": true,\n                \"margin\": 8\n            },\n            \"logBase\": 10,\n            \"seriesLayoutBy\": \"column\",\n            \"lineStyle\": {\n                \"show\": true,\n                \"width\": 1,\n                \"opacity\": 1,\n                \"curveness\": 0,\n                \"type\": \"solid\"\n            },\n            \"areaStyle\": {\n                \"opacity\": 0\n            },\n            \"zlevel\": 0,\n            \"z\": 0\n        }\n    ],\n    \"legend\": [\n        {\n            \"data\": [\n                \"\\u9500\\u552e\\u989d\"\n            ],\n            \"selected\": {},\n            \"show\": true,\n            \"top\": \"5%\",\n            \"padding\": 5,\n            \"itemGap\": 10,\n            \"itemWidth\": 25,\n            \"itemHeight\": 14,\n            \"backgroundColor\": \"transparent\",\n            \"borderColor\": \"#ccc\",\n            \"borderWidth\": 1,\n            \"borderRadius\": 0,\n            \"pageButtonItemGap\": 5,\n            \"pageButtonPosition\": \"end\",\n            \"pageFormatter\": \"{current}/{total}\",\n            \"pageIconColor\": \"#2f4554\",\n            \"pageIconInactiveColor\": \"#aaa\",\n            \"pageIconSize\": 15,\n            \"animationDurationUpdate\": 800,\n            \"selector\": false,\n            \"selectorPosition\": \"auto\",\n            \"selectorItemGap\": 7,\n            \"selectorButtonGap\": 10\n        },\n        {\n            \"data\": [\n                \"ROI\"\n            ],\n            \"selected\": {}\n        }\n    ],\n    \"tooltip\": {\n        \"show\": true,\n        \"trigger\": \"item\",\n        \"triggerOn\": \"mousemove|click\",\n        \"axisPointer\": {\n            \"type\": \"line\"\n        },\n        \"showContent\": true,\n        \"alwaysShowContent\": false,\n        \"showDelay\": 0,\n        \"hideDelay\": 100,\n        \"enterable\": false,\n        \"confine\": false,\n        \"appendToBody\": false,\n        \"transitionDuration\": 0.4,\n        \"textStyle\": {\n            \"fontSize\": 14\n        },\n        \"borderWidth\": 0,\n        \"padding\": 5,\n        \"order\": \"seriesAsc\"\n    },\n    \"xAxis\": [\n        {\n            \"show\": true,\n            \"scale\": false,\n            \"nameLocation\": \"end\",\n            \"nameGap\": 15,\n            \"gridIndex\": 0,\n            \"inverse\": false,\n            \"offset\": 0,\n            \"splitNumber\": 5,\n            \"minInterval\": 0,\n            \"splitLine\": {\n                \"show\": true,\n                \"lineStyle\": {\n                    \"show\": true,\n                    \"width\": 1,\n                    \"opacity\": 1,\n                    \"curveness\": 0,\n                    \"type\": \"solid\"\n                }\n            },\n            \"data\": [\n                \"2024-01-19\",\n                \"2024-02-25\"\n            ]\n        },\n        {\n            \"show\": true,\n            \"scale\": false,\n            \"nameLocation\": \"end\",\n            \"nameGap\": 15,\n            \"gridIndex\": 1,\n            \"inverse\": false,\n            \"offset\": 0,\n            \"splitNumber\": 5,\n            \"minInterval\": 0,\n            \"splitLine\": {\n                \"show\": true,\n                \"lineStyle\": {\n                    \"show\": true,\n                    \"width\": 1,\n                    \"opacity\": 1,\n                    \"curveness\": 0,\n                    \"type\": \"solid\"\n                }\n            },\n            \"data\": [\n                \"2024-01-19\",\n                \"2024-02-25\"\n            ]\n        }\n    ],\n    \"yAxis\": [\n        {\n            \"type\": \"value\",\n            \"name\": \"\\u9500\\u552e\\u989d\",\n            \"show\": true,\n            \"scale\": false,\n            \"nameLocation\": \"end\",\n            \"nameGap\": 15,\n            \"gridIndex\": 0,\n            \"inverse\": false,\n            \"position\": \"left\",\n            \"offset\": 0,\n            \"splitNumber\": 5,\n            \"minInterval\": 0,\n            \"splitLine\": {\n                \"show\": true,\n                \"lineStyle\": {\n                    \"show\": true,\n                    \"width\": 1,\n                    \"opacity\": 1,\n                    \"curveness\": 0,\n                    \"type\": \"solid\"\n                }\n            }\n        },\n        {\n            \"type\": \"value\",\n            \"name\": \"ROI\",\n            \"show\": true,\n            \"scale\": false,\n            \"nameLocation\": \"end\",\n            \"nameGap\": 15,\n            \"gridIndex\": 0,\n            \"axisLine\": {\n                \"show\": true,\n                \"onZero\": true,\n                \"onZeroAxisIndex\": 0,\n                \"lineStyle\": {\n                    \"show\": true,\n                    \"width\": 1,\n                    \"opacity\": 1,\n                    \"curveness\": 0,\n                    \"type\": \"solid\",\n                    \"color\": \"red\"\n                }\n            },\n            \"axisLabel\": {\n                \"show\": true,\n                \"margin\": 8,\n                \"formatter\": \"{value}\"\n            },\n            \"inverse\": false,\n            \"position\": \"right\",\n            \"offset\": 0,\n            \"splitNumber\": 5,\n            \"minInterval\": 0,\n            \"splitLine\": {\n                \"show\": true,\n                \"lineStyle\": {\n                    \"show\": true,\n                    \"width\": 1,\n                    \"opacity\": 1,\n                    \"curveness\": 0,\n                    \"type\": \"solid\"\n                }\n            }\n        },\n        {\n            \"show\": true,\n            \"scale\": false,\n            \"nameLocation\": \"end\",\n            \"nameGap\": 15,\n            \"gridIndex\": 1,\n            \"inverse\": false,\n            \"offset\": 0,\n            \"splitNumber\": 5,\n            \"minInterval\": 0,\n            \"splitLine\": {\n                \"show\": true,\n                \"lineStyle\": {\n                    \"show\": true,\n                    \"width\": 1,\n                    \"opacity\": 1,\n                    \"curveness\": 0,\n                    \"type\": \"solid\"\n                }\n            }\n        }\n    ],\n    \"title\": [\n        {\n            \"show\": true,\n            \"target\": \"blank\",\n            \"subtarget\": \"blank\",\n            \"padding\": 5,\n            \"itemGap\": 10,\n            \"textAlign\": \"auto\",\n            \"textVerticalAlign\": \"auto\",\n            \"triggerEvent\": false\n        },\n        {\n            \"show\": true,\n            \"target\": \"blank\",\n            \"subtarget\": \"blank\",\n            \"padding\": 5,\n            \"itemGap\": 10,\n            \"textAlign\": \"auto\",\n            \"textVerticalAlign\": \"auto\",\n            \"triggerEvent\": false\n        }\n    ],\n    \"dataZoom\": [\n        {\n            \"show\": true,\n            \"type\": \"slider\",\n            \"showDetail\": true,\n            \"showDataShadow\": true,\n            \"realtime\": true,\n            \"start\": 0,\n            \"end\": 100,\n            \"orient\": \"horizontal\",\n            \"xAxisIndex\": [\n                0\n            ],\n            \"zoomLock\": false,\n            \"bottom\": \"below\",\n            \"filterMode\": \"filter\"\n        }\n    ],\n    \"grid\": [\n        {\n            \"show\": false,\n            \"zlevel\": 0,\n            \"z\": 2,\n            \"left\": \"5%\",\n            \"right\": \"20%\",\n            \"containLabel\": false,\n            \"backgroundColor\": \"transparent\",\n            \"borderColor\": \"#ccc\",\n            \"borderWidth\": 1,\n            \"shadowOffsetX\": 0,\n            \"shadowOffsetY\": 0\n        },\n        {\n            \"show\": false,\n            \"zlevel\": 0,\n            \"z\": 2,\n            \"left\": \"5%\",\n            \"right\": \"20%\",\n            \"containLabel\": false,\n            \"backgroundColor\": \"transparent\",\n            \"borderColor\": \"#ccc\",\n            \"borderWidth\": 1,\n            \"shadowOffsetX\": 0,\n            \"shadowOffsetY\": 0\n        }\n    ]\n}"}]
-
-        if match:
-            json_str = match
-            print("json_str : ", json_str)
-            # report_demand_list = json.loads(json_str)
-
-            chart_code_str = str(json_str).replace("\n", "")
-            if len(chart_code_str) > 0:
-                print("chart_code_str: ", chart_code_str)
-                if base_util.is_json(chart_code_str):
-                    report_demand_list = json.loads(chart_code_str)
-
-                    print("report_demand_list: ", report_demand_list)
-
-                    for jstr in report_demand_list:
-                        if str(jstr).__contains__('echart_name') and str(jstr).__contains__(
-                            'echart_code'):
-                            base_content.append(jstr)
-                else:
-                    # String instantiated as object
-                    report_demand_list = ast.literal_eval(chart_code_str)
-                    print("report_demand_list: ", report_demand_list)
-                    for jstr in report_demand_list:
-                        if str(jstr).__contains__('echart_name') and str(jstr).__contains__(
-                            'echart_code'):
-                            base_content.append(jstr)
-        logger.info(
-                "from user:[{}".format(self.user_name) + "] , " + "，report_demand_list" + str(report_demand_list))
-
-        bi_proxy = self.agent_instance_util.get_agent_bi_proxy()
-
-        for img_str in base_content:
-            echart_name = img_str.get('echart_name')
-            echart_code = img_str.get('echart_code')
-
-            if len(echart_code) > 0 and str(echart_code).__contains__('x'):
-                is_chart = True
-                print("echart_name : ", echart_name)
-                # 格式化echart_code
-                # if base_util.is_json(str(echart_code)):
-                #     json_obj = json.loads(str(echart_code))
-                #     echart_code = json.dumps(json_obj)
-
-                re_str = await bi_proxy.run_echart_code(str(echart_code), echart_name)
-                # base_mess.append(re_str)
-
-        return "test_echrts_code"

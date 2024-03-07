@@ -201,7 +201,7 @@ git clone http://github.com/DeepInsight-AI/DeepBI.git
 ## 配置DeepBI
 - 下载代码```git clone git@github.com:DeepInsight-AI/DeepBI.git```
 - 运行命令到对应文件夹 ```cd DeepBI ```
-- 修改权限 ```sudo chmod+x ./Install.sh```
+- 修改权限 ```sudo chmod +x ./Install.sh```
 - 运行命令```sudo ./Install_cn.sh ``` 开始安装，安装结束后会有一个网址提示，直接浏览器访问即可
 - 从版本1.1 如果更新代码，直接拉取 新的代码```git pull```,然后重启docker即可 <br>
     停止命令  ```sudo docker-compose stop```<br>

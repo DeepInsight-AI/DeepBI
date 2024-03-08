@@ -38,6 +38,7 @@ def format_decimal(value):
         return value
     return value
 
+
 class PythonProxyAgent(Agent):
     """(In preview) A class for generic conversable agents which can be configured as assistant or user proxy.
 
@@ -77,7 +78,7 @@ class PythonProxyAgent(Agent):
         db_id: Optional = None,
         is_log_out: Optional[bool] = True,
         report_file_name: Optional[str] = None,
-        ):
+    ):
         """
         Args:
             name (str): name of the agent.
@@ -732,7 +733,7 @@ class PythonProxyAgent(Agent):
 
 
             else:
-                json_data=str(logs)
+                json_data = str(logs)
                 logs = json.loads(json_data)
                 for entry in logs:
                     if 'echart_name' in entry and 'echart_code' in entry:
@@ -784,7 +785,7 @@ class PythonProxyAgent(Agent):
                         'xAxis_data': xAxis_data
                     }
                     echarts_data.append(echart_dict)
-                return True,f"exitcode: {exitcode} ({exitcode2str})\nCode output: 图像已生成,请直接分析图表数据：{echarts_data}"
+                return True, f"exitcode: {exitcode} ({exitcode2str})\nCode output: 图像已生成,请直接分析图表数据：{echarts_data}"
 
         code_execution_config["last_n_messages"] = last_n_messages
 
@@ -931,7 +932,8 @@ class PythonProxyAgent(Agent):
             if self._match_trigger(reply_func_tuple["trigger"], sender):
                 if asyncio.coroutines.iscoroutinefunction(reply_func):
                     # print("messages : ", messages)
-                    final, reply = await reply_func(self, messages=messages,sender=sender,config=reply_func_tuple["config"])
+                    final, reply = await reply_func(self, messages=messages, sender=sender,
+                                                    config=reply_func_tuple["config"])
                 else:
                     final, reply = reply_func(self, messages=messages, sender=sender, config=reply_func_tuple["config"])
                 if final:

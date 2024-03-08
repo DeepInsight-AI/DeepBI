@@ -356,7 +356,7 @@ class AnalysisMysql(Analysis):
                 When you find an answer, verify the answer carefully. Include verifiable evidence in your response if possible.
                 Reply "TERMINATE" in the end when everything is done.
                 When you find an answer,  You are a report analysis, you have the knowledge and skills to turn raw data into information and insight, which can be used to make business decisions.include your analysis in your reply.
-                Be careful to avoid using mysql special keywords in mysql code.
+                Be careful to avoid using mysql special keywords in mysql code.If creating a database connection using pymysql, please note that the cursorclass parameter in pymysql.connect should be set to the default value of None.
                 """ + '\n' + self.agent_instance_util.base_mysql_info + '\n' + CONFIG.python_base_dependency + '\n' + self.agent_instance_util.quesion_answer_language,
             human_input_mode="NEVER",
             user_name=self.user_name,

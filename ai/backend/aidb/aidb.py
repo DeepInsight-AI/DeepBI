@@ -540,9 +540,15 @@ class AIDB:
         print("select_table_list : ", select_table_list)
 
         delete_table_names = []
+        # for table_str in select_table_list:
+        #     table_name = table_str.get("table_name")
+        #     delete_table_names.append(table_name)
         for table_str in select_table_list:
-            table_name = table_str.get("table_name")
-            delete_table_names.append(table_name)
+            keyname = next(iter(table_str))
+            if table_str[keyname] == "":
+                delete_table_names.append(keyname)
+            else:
+                delete_table_names.append(table_str[keyname])
 
         print("delete_table_names : ", delete_table_names)
 

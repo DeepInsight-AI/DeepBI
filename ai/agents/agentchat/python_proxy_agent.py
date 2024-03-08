@@ -28,6 +28,9 @@ except ImportError:
 
     def colored(x, *args, **kwargs):
         return x
+
+
+# 函数，用于精确到小数点后两位
 def format_decimal(value):
     if isinstance(value, float):
         return round(value, 2)
@@ -74,7 +77,7 @@ class PythonProxyAgent(Agent):
         db_id: Optional = None,
         is_log_out: Optional[bool] = True,
         report_file_name: Optional[str] = None,
-    ):
+        ):
         """
         Args:
             name (str): name of the agent.
@@ -156,6 +159,7 @@ class PythonProxyAgent(Agent):
         self.is_log_out = is_log_out
         self.report_file_name = report_file_name
         delay_messages = self.delay_messages
+
     def register_reply(
         self,
         trigger: Union[Type[Agent], str, Agent, Callable[[Agent], bool], List],
@@ -719,7 +723,6 @@ class PythonProxyAgent(Agent):
             exitcode, logs = self.execute_code_blocks(code_blocks)
             code_execution_config["last_n_messages"] = last_n_messages
             exitcode2str = "execution succeeded" if exitcode == 0 else "execution failed"
-
             length = 10000
             if not str(logs).__contains__('echart_name'):
                 if len(logs) > length:
@@ -729,7 +732,7 @@ class PythonProxyAgent(Agent):
 
 
             else:
-                json_data = str(logs)
+                json_data=str(logs)
                 logs = json.loads(json_data)
                 for entry in logs:
                     if 'echart_name' in entry and 'echart_code' in entry:
@@ -781,7 +784,7 @@ class PythonProxyAgent(Agent):
                         'xAxis_data': xAxis_data
                     }
                     echarts_data.append(echart_dict)
-                return True, f"exitcode: {exitcode} ({exitcode2str})\nCode output: 图像已生成,请直接分析图表数据：{echarts_data}"
+                return True,f"exitcode: {exitcode} ({exitcode2str})\nCode output: 图像已生成,请直接分析图表数据：{echarts_data}"
 
         code_execution_config["last_n_messages"] = last_n_messages
 
@@ -928,8 +931,7 @@ class PythonProxyAgent(Agent):
             if self._match_trigger(reply_func_tuple["trigger"], sender):
                 if asyncio.coroutines.iscoroutinefunction(reply_func):
                     # print("messages : ", messages)
-                    final, reply = await reply_func(self, messages=messages, sender=sender,
-                                                    config=reply_func_tuple["config"])
+                    final, reply = await reply_func(self, messages=messages,sender=sender,config=reply_func_tuple["config"])
                 else:
                     final, reply = reply_func(self, messages=messages, sender=sender, config=reply_func_tuple["config"])
                 if final:

@@ -30,6 +30,15 @@ except ImportError:
         return x
 
 
+# 函数，用于精确到小数点后两位
+def format_decimal(value):
+    if isinstance(value, float):
+        return round(value, 2)
+    elif isinstance(value, int):
+        return value
+    return value
+
+
 class PythonProxyAgent(Agent):
     """(In preview) A class for generic conversable agents which can be configured as assistant or user proxy.
 
@@ -151,6 +160,7 @@ class PythonProxyAgent(Agent):
         self.is_log_out = is_log_out
         self.report_file_name = report_file_name
         delay_messages = self.delay_messages
+
     def register_reply(
         self,
         trigger: Union[Type[Agent], str, Agent, Callable[[Agent], bool], List],
@@ -714,80 +724,72 @@ class PythonProxyAgent(Agent):
             exitcode, logs = self.execute_code_blocks(code_blocks)
             code_execution_config["last_n_messages"] = last_n_messages
             exitcode2str = "execution succeeded" if exitcode == 0 else "execution failed"
-
             length = 10000
             if not str(logs).__contains__('echart_name'):
-                if len(logs)==0:
-                    logs="No code has been written for me, please return to write for me"
-                    exitcode2str="execution failed"
-                    return False,f"exitcode: {exitcode} ({exitcode2str})\nCode output: {logs}"
                 if len(logs) > length:
                     print(' ++++++++++ Length exceeds 10000 characters limit, cropped  +++++++++++++++++')
                     logs = logs[:length]
-            else:
-                if True:
-                    json_data = str(logs)
-                    try:
-                        logs = json.loads(json_data)
-                    except json.decoder.JSONDecodeError as e:
-                        return False, "Json code error, please return and rewrite"
-                    for entry in logs:
-                        if 'echart_name' in entry and 'echart_code' in entry:
-                            # 如果满足条件，则打印并添加到base_content
-                            print(f"Processing entry with echart_name: {entry['echart_name']}")
-                            base_content.append(entry)
-                    for echart in base_content:
-                        for serie in echart['echart_code']['series']:
-                            serie['data'] = [format_decimal(item) for item in serie['data']]
-                    for echart in base_content:
-                        echart = json.dumps(echart, indent=2)
-                    agent_instance_util = AgentInstanceUtil(user_name=str(self.user_name),
-                                                            delay_messages=self.delay_messages,
-                                                            outgoing=self.outgoing,
-                                                            incoming=self.incoming,
-                                                            websocket=self.websocket
-                                                            )
-                    bi_proxy = agent_instance_util.get_agent_bi_proxy()
-                    is_chart = False
-                    # Call the interface to generate pictures
-                    for img_str in base_content:
-                        echart_name = img_str.get('echart_name')
-                        echart_code = img_str.get('echart_code')
-
-                        if len(echart_code) > 0 and str(echart_code).__contains__('x'):
-                            is_chart = True
-                            print("echart_name : ", echart_name)
-                            # 格式化echart_code
-                            # if base_util.is_json(str(echart_code)):
-                            #     json_obj = json.loads(str(echart_code))
-                            #     echart_code = json.dumps(json_obj)
-                            re_str = await bi_proxy.run_echart_code(str(echart_code), echart_name)
-                    # 初始化一个空列表来保存每个echart的信息
-                    echarts_data = []
-                    # 遍历echarts_code列表，提取数据并构造字典
-                    for echart in base_content:
-                        echart_name = echart['echart_name']
-                        series_data = []
-                        for serie in echart['echart_code']['series']:
-                            seri_info = {
-                                'type': serie['type'],
-                                'name': serie['name'],
-                                'data': serie['data']
-                            }
-                            series_data.append(seri_info)
-                        xAxis_data = echart['echart_code']['xAxis'][0]['data']
-                        echart_dict = {
-                            'echart_name': echart_name,
-                            'series': series_data,
-                            'xAxis_data': xAxis_data
-                        }
-                        echarts_data.append(echart_dict)
-                    return True, f"exitcode: {exitcode} ({exitcode2str})\nCode output: 图像已生成,请直接分析图表数据：{echarts_data}"
                 return True, f"exitcode: {exitcode} ({exitcode2str})\nCode output: {logs}"
-            # no code blocks are found, push last_n_messages back and return.
-            code_execution_config["last_n_messages"] = last_n_messages
 
-            return False, None
+
+            else:
+                json_data = str(logs)
+                logs = json.loads(json_data)
+                for entry in logs:
+                    if 'echart_name' in entry and 'echart_code' in entry:
+                        # 如果满足条件，则打印并添加到base_content
+                        base_content.append(entry)
+                for echart in base_content:
+                    for serie in echart['echart_code']['series']:
+                        serie['data'] = [format_decimal(item) for item in serie['data']]
+                for echart in base_content:
+                    echart = json.dumps(echart, indent=2)
+                agent_instance_util = AgentInstanceUtil(user_name=str(self.user_name),
+                                                        delay_messages=self.delay_messages,
+                                                        outgoing=self.outgoing,
+                                                        incoming=self.incoming,
+                                                        websocket=self.websocket
+                                                        )
+                bi_proxy = agent_instance_util.get_agent_bi_proxy()
+                is_chart = False
+                # Call the interface to generate pictures
+                for img_str in base_content:
+                    echart_name = img_str.get('echart_name')
+                    echart_code = img_str.get('echart_code')
+
+                    if len(echart_code) > 0 and str(echart_code).__contains__('x'):
+                        is_chart = True
+                        print("echart_name : ", echart_name)
+                        # 格式化echart_code
+                        # if base_util.is_json(str(echart_code)):
+                        #     json_obj = json.loads(str(echart_code))
+                        #     echart_code = json.dumps(json_obj)
+                        re_str = await bi_proxy.run_echart_code(str(echart_code), echart_name)
+                # 初始化一个空列表来保存每个echart的信息
+                echarts_data = []
+                # 遍历echarts_code列表，提取数据并构造字典
+                for echart in base_content:
+                    echart_name = echart['echart_name']
+                    series_data = []
+                    for serie in echart['echart_code']['series']:
+                        seri_info = {
+                            'type': serie['type'],
+                            'name': serie['name'],
+                            'data': serie['data']
+                        }
+                        series_data.append(seri_info)
+                    xAxis_data = echart['echart_code']['xAxis'][0]['data']
+                    echart_dict = {
+                        'echart_name': echart_name,
+                        'series': series_data,
+                        'xAxis_data': xAxis_data
+                    }
+                    echarts_data.append(echart_dict)
+                return True, f"exitcode: {exitcode} ({exitcode2str})\nCode output: 图像已生成,请直接分析图表数据：{echarts_data}"
+
+        code_execution_config["last_n_messages"] = last_n_messages
+
+        return False, None
 
     async def generate_function_call_reply(
         self,

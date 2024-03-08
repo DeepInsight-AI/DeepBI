@@ -5,6 +5,9 @@ import json
 from typing import Any, Callable, Dict, List, Optional, Tuple, Type, Union
 from ai.agents import oai
 from .agent import Agent
+import ast
+import re
+from ai.backend.util import base_util
 from ai.agents.code_utils import (
     DEFAULT_MODEL,
     UNKNOWN,
@@ -66,7 +69,6 @@ class PythonProxyAgent(Agent):
         db_id: Optional = None,
         is_log_out: Optional[bool] = True,
         report_file_name: Optional[str] = None,
-
     ):
         """
         Args:
@@ -112,6 +114,7 @@ class PythonProxyAgent(Agent):
         """
         super().__init__(name)
         # a dictionary of conversations, default value is list
+        self.delay_messages = None
         self._oai_messages = defaultdict(list)
         self._oai_system_message = [{"content": system_message, "role": "system"}]
         self._is_termination_msg = (
@@ -147,7 +150,7 @@ class PythonProxyAgent(Agent):
         self.db_id = db_id
         self.is_log_out = is_log_out
         self.report_file_name = report_file_name
-
+        delay_messages = self.delay_messages
     def register_reply(
         self,
         trigger: Union[Type[Agent], str, Agent, Callable[[Agent], bool], List],
@@ -661,15 +664,16 @@ class PythonProxyAgent(Agent):
 
         return True, oai.ChatCompletion.extract_text_or_function_call(response)[0]
 
-    def generate_code_execution_reply(
+    async def generate_code_execution_reply(
         self,
         messages: Optional[List[Dict]] = None,
         sender: Optional[Agent] = None,
         config: Optional[Any] = None,
+
     ):
         """Generate a reply using code execution.
         """
-
+        from ai.agents.agent_instance_util import AgentInstanceUtil
         code_execution_config = config if config is not None else self._code_execution_config
         # print('self._code_execution_config :', self._code_execution_config)
 
@@ -678,6 +682,7 @@ class PythonProxyAgent(Agent):
         if messages is None:
             messages = self._oai_messages[sender]
         last_n_messages = code_execution_config.pop("last_n_messages", 1)
+        base_content = []
 
         # iterate through the last n messages reversly
         # if code blocks are found, execute the code blocks and return the output
@@ -711,23 +716,78 @@ class PythonProxyAgent(Agent):
             exitcode2str = "execution succeeded" if exitcode == 0 else "execution failed"
 
             length = 10000
-            length1 = 10001
             if not str(logs).__contains__('echart_name'):
+                if len(logs)==0:
+                    logs="No code has been written for me, please return to write for me"
+                    exitcode2str="execution failed"
+                    return False,f"exitcode: {exitcode} ({exitcode2str})\nCode output: {logs}"
                 if len(logs) > length:
                     print(' ++++++++++ Length exceeds 10000 characters limit, cropped  +++++++++++++++++')
                     logs = logs[:length]
             else:
-                if len(logs) > length1:
-                    print(' ++++++++++ Length exceeds 10001 characters limit, cropped  +++++++++++++++++')
-                    logs = "The echarts code is too long, please simplify the code or data (for example, only keep two decimal places), and ensure that the echarts code length does not exceed 10001"
+                if True:
+                    json_data = str(logs)
+                    try:
+                        logs = json.loads(json_data)
+                    except json.decoder.JSONDecodeError as e:
+                        return False, "Json code error, please return and rewrite"
+                    for entry in logs:
+                        if 'echart_name' in entry and 'echart_code' in entry:
+                            # 如果满足条件，则打印并添加到base_content
+                            print(f"Processing entry with echart_name: {entry['echart_name']}")
+                            base_content.append(entry)
+                    for echart in base_content:
+                        for serie in echart['echart_code']['series']:
+                            serie['data'] = [format_decimal(item) for item in serie['data']]
+                    for echart in base_content:
+                        echart = json.dumps(echart, indent=2)
+                    agent_instance_util = AgentInstanceUtil(user_name=str(self.user_name),
+                                                            delay_messages=self.delay_messages,
+                                                            outgoing=self.outgoing,
+                                                            incoming=self.incoming,
+                                                            websocket=self.websocket
+                                                            )
+                    bi_proxy = agent_instance_util.get_agent_bi_proxy()
+                    is_chart = False
+                    # Call the interface to generate pictures
+                    for img_str in base_content:
+                        echart_name = img_str.get('echart_name')
+                        echart_code = img_str.get('echart_code')
 
+                        if len(echart_code) > 0 and str(echart_code).__contains__('x'):
+                            is_chart = True
+                            print("echart_name : ", echart_name)
+                            # 格式化echart_code
+                            # if base_util.is_json(str(echart_code)):
+                            #     json_obj = json.loads(str(echart_code))
+                            #     echart_code = json.dumps(json_obj)
+                            re_str = await bi_proxy.run_echart_code(str(echart_code), echart_name)
+                    # 初始化一个空列表来保存每个echart的信息
+                    echarts_data = []
+                    # 遍历echarts_code列表，提取数据并构造字典
+                    for echart in base_content:
+                        echart_name = echart['echart_name']
+                        series_data = []
+                        for serie in echart['echart_code']['series']:
+                            seri_info = {
+                                'type': serie['type'],
+                                'name': serie['name'],
+                                'data': serie['data']
+                            }
+                            series_data.append(seri_info)
+                        xAxis_data = echart['echart_code']['xAxis'][0]['data']
+                        echart_dict = {
+                            'echart_name': echart_name,
+                            'series': series_data,
+                            'xAxis_data': xAxis_data
+                        }
+                        echarts_data.append(echart_dict)
+                    return True, f"exitcode: {exitcode} ({exitcode2str})\nCode output: 图像已生成,请直接分析图表数据：{echarts_data}"
+                return True, f"exitcode: {exitcode} ({exitcode2str})\nCode output: {logs}"
+            # no code blocks are found, push last_n_messages back and return.
+            code_execution_config["last_n_messages"] = last_n_messages
 
-            return True, f"exitcode: {exitcode} ({exitcode2str})\nCode output: {logs}"
-
-        # no code blocks are found, push last_n_messages back and return.
-        code_execution_config["last_n_messages"] = last_n_messages
-
-        return False, None
+            return False, None
 
     async def generate_function_call_reply(
         self,

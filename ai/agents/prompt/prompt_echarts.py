@@ -231,6 +231,7 @@ Pay attention to check whether the sql statement in the code block is correct an
                 id_="dataZoomX",
                 type_="slider",
                 xAxisIndex=[0],  # 控制 x 轴
+                bottom: "below",
             ),
             opts.DataZoomOpts(
                 # 设置 y 轴 dataZoom
@@ -243,6 +244,7 @@ Pay attention to check whether the sql statement in the code block is correct an
                 id_="dataZoomX",
                 type_="inside",
                 xAxisIndex=[0],  # 控制 x 轴
+                bottom: "below",
             ),
             opts.DataZoomOpts(
                 # 设置 y 轴 dataZoom

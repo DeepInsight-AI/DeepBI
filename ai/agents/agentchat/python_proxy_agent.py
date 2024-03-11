@@ -734,7 +734,10 @@ class PythonProxyAgent(Agent):
 
             else:
                 json_data = str(logs)
-                logs = json.loads(json_data)
+                try:
+                    logs = json.loads(json_data)
+                except Exception as e:
+                    return True,f"exitcode:exitcode failed\nCode output: There is an error in the JSON code causing parsing errors,Please modify the JSON code for me:{traceback.format_exc()}"
                 for entry in logs:
                     if 'echart_name' in entry and 'echart_code' in entry:
                         # 如果满足条件，则打印并添加到base_content
@@ -772,18 +775,30 @@ class PythonProxyAgent(Agent):
                     echart_name = echart['echart_name']
                     series_data = []
                     for serie in echart['echart_code']['series']:
-                        seri_info = {
-                            'type': serie['type'],
-                            'name': serie['name'],
-                            'data': serie['data']
-                        }
+                        try:
+                            seri_info = {
+                                'type': serie['type'],
+                                'name': serie['name'],
+                                'data': serie['data']
+                            }
+                        except Exception as e:
+                            seri_info = {
+                                'type': serie['type'],
+                                'data': serie['data']
+                            }
                         series_data.append(seri_info)
-                    xAxis_data = echart['echart_code']['xAxis'][0]['data']
-                    echart_dict = {
-                        'echart_name': echart_name,
-                        'series': series_data,
-                        'xAxis_data': xAxis_data
-                    }
+                    if "xAxis" in echart["echart_code"]:
+                        xAxis_data = echart['echart_code']['xAxis'][0]['data']
+                        echart_dict = {
+                            'echart_name': echart_name,
+                            'series': series_data,
+                            'xAxis_data': xAxis_data
+                        }
+                    else:
+                        echart_dict = {
+                            'echart_name': echart_name,
+                            'series': series_data,
+                        }
                     echarts_data.append(echart_dict)
                 return True, f"exitcode: {exitcode} ({exitcode2str})\nCode output: 图像已生成,请直接分析图表数据：{echarts_data}"
 

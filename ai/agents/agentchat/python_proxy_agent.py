@@ -28,7 +28,12 @@ except ImportError:
 
     def colored(x, *args, **kwargs):
         return x
-
+def format_decimal(value):
+    if isinstance(value, float):
+        return round(value, 2)
+    elif isinstance(value, int):
+        return value
+    return value
 
 # 函数，用于精确到小数点后两位
 def format_decimal(value):
@@ -744,7 +749,8 @@ class PythonProxyAgent(Agent):
                         base_content.append(entry)
                 for echart in base_content:
                     for serie in echart['echart_code']['series']:
-                        serie['data'] = [format_decimal(item) for item in serie['data']]
+                        for item in serie['data']:
+                            item['value'] = format_decimal(item['value'])
                 for echart in base_content:
                     echart = json.dumps(echart, indent=2)
                 agent_instance_util = AgentInstanceUtil(user_name=str(self.user_name),

@@ -146,6 +146,7 @@ if [ -f .env ]; then
     rm .env
 fi
 # get local ip
+apt install net-tools
 ip_addresses=$(ifconfig | grep -Eo 'inet (addr:)?([0-9]*\.){3}[0-9]*' | grep -Eo '([0-9]*\.){3}[0-9]*')
 # print ip for user to select the ip
 echo "本地ip地址如下:"

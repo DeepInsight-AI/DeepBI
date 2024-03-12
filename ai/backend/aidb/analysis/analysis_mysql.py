@@ -107,13 +107,15 @@ class AnalysisMysql(Analysis):
         """ Task type: mysql data analysis"""
         try:
             error_times = 0
+            use_cache = True
             for i in range(max_retry_times):
                 try:
                     if self.agent_instance_util.is_rag:
                         table_comment = await self.select_table_comment(qustion_message)
-                        answer_message = await self.task_base_rag(qustion_message, table_comment)
+                        answer_message = await self.task_base_rag(qustion_message, table_comment, use_cache)
                     else:
-                        base_mysql_assistant = self.agent_instance_util.get_agent_base_mysql_assistant()
+                        base_mysql_assistant = self.agent_instance_util.get_agent_base_mysql_assistant(
+                            use_cache=use_cache)
                         python_executor = self.agent_instance_util.get_agent_python_executor()
 
                         await python_executor.initiate_chat(
@@ -136,7 +138,7 @@ class AnalysisMysql(Analysis):
                     traceback.print_exc()
                     logger.error("from user:[{}".format(self.user_name) + "] , " + "error: " + str(e))
                     error_times = error_times + 1
-
+                use_cache = False
             if error_times >= max_retry_times:
                 return self.error_message_timeout
 
@@ -220,7 +222,8 @@ class AnalysisMysql(Analysis):
                     traceback.print_exc()
                     logger.error("from user:[{}".format(self.user_name) + "] , " + "error: " + str(e))
                     error_times = error_times + 1
-                    use_cache = False
+
+                use_cache = False
 
             if error_times >= max_retry_times:
                 return self.error_message_timeout
@@ -287,10 +290,10 @@ class AnalysisMysql(Analysis):
             logger.error("from user:[{}".format(self.user_name) + "] , " + "error: " + str(e))
         return self.agent_instance_util.data_analysis_error
 
-    async def task_base_rag(self, qustion_message, table_comment):
+    async def task_base_rag(self, qustion_message, table_comment, use_cache):
         """ Task type: mysql data analysis"""
         if os.path.exists(self.agent_instance_util.get_rag_doc()):
-            base_mysql_assistant = self.get_agent_retrieve_base_mysql_assistant()
+            base_mysql_assistant = self.get_agent_retrieve_base_mysql_assistant(use_cache=use_cache)
             python_executor = self.get_agent_retrieve_python_executor(docs_path=self.agent_instance_util.get_rag_doc())
 
             await python_executor.initiate_chat(
@@ -299,7 +302,7 @@ class AnalysisMysql(Analysis):
                     qustion_message),
             )
         else:
-            base_mysql_assistant = self.agent_instance_util.get_agent_base_mysql_assistant()
+            base_mysql_assistant = self.agent_instance_util.get_agent_base_mysql_assistant(use_cache=use_cache)
             python_executor = self.agent_instance_util.get_agent_python_executor()
 
             await python_executor.initiate_chat(
@@ -315,7 +318,7 @@ class AnalysisMysql(Analysis):
 
     async def task_generate_echart_rag(self, qustion_message, table_comment, use_cache):
         if os.path.exists(self.agent_instance_util.get_rag_doc()):
-            mysql_echart_assistant = self.get_agent_retrieve_mysql_echart_assistant()
+            mysql_echart_assistant = self.get_agent_retrieve_mysql_echart_assistant(use_cache=use_cache)
             python_executor = self.get_agent_retrieve_python_executor(docs_path=self.agent_instance_util.get_rag_doc())
 
             await python_executor.initiate_chat(
@@ -340,7 +343,7 @@ class AnalysisMysql(Analysis):
 
         return answer_message
 
-    def get_agent_retrieve_base_mysql_assistant(self):
+    def get_agent_retrieve_base_mysql_assistant(self, use_cache=True):
         """ Basic Agent, processing mysql data source """
         retrieve_base_mysql_assistant = RetrieveAssistantAgent(
             name="retrieve_base_mysql_assistant",
@@ -363,6 +366,7 @@ class AnalysisMysql(Analysis):
             websocket=self.websocket,
             llm_config=self.agent_instance_util.gpt4_turbo_config,
             openai_proxy=self.agent_instance_util.openai_proxy,
+            use_cache=use_cache,
         )
         return retrieve_base_mysql_assistant
 

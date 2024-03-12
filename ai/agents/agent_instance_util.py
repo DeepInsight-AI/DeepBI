@@ -67,11 +67,9 @@ class AgentInstanceUtil:
 
         self.uid = self.user_name.split('_')[0]
 
-
     def get_rag_doc(self):
         rag_doc = CONFIG.up_file_path + '.rag_' + str(self.uid) + '_db' + str(self.db_id) + '.json'
         return rag_doc
-
 
     def set_api_key(self, api_key, api_host=None, in_use=CONFIG.apikey_openai):
         self.api_key = api_key
@@ -513,7 +511,7 @@ class AgentInstanceUtil:
         )
         return chart_presenter
 
-    def get_agent_base_mysql_assistant(self):
+    def get_agent_base_mysql_assistant(self, use_cache=True):
         """ Basic Agent, processing mysql data source """
         base_mysql_assistant = AssistantAgent(
             name="base_mysql_assistant",
@@ -539,6 +537,7 @@ class AgentInstanceUtil:
                 "request_timeout": request_timeout,
             },
             openai_proxy=self.openai_proxy,
+            use_cache=use_cache,
         )
         return base_mysql_assistant
 

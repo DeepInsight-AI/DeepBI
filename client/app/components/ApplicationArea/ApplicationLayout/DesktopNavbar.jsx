@@ -79,18 +79,18 @@ export default function DesktopNavbar() {
   // const canCreateDashboard = currentUser.hasPermission("create_dashboard");
   // const canCreateAlert = currentUser.hasPermission("list_alerts");
 
-  const [socketType,setSocketType] = useState(0)
-  useEffect(() => {
-      const handleLockReconnectChange = (newLockReconnect) => {
-        setSocketType(newLockReconnect)
-      };
+  // const [socketType,setSocketType] = useState(0)
+  // useEffect(() => {
+  //     const handleLockReconnectChange = (newLockReconnect) => {
+  //       setSocketType(newLockReconnect)
+  //     };
     
-      lockReconnectEvent.on('change', handleLockReconnectChange);
+  //     lockReconnectEvent.on('change', handleLockReconnectChange);
     
-      return () => {
-        lockReconnectEvent.off('change', handleLockReconnectChange);
-      };
-  }, []);
+  //     return () => {
+  //       lockReconnectEvent.off('change', handleLockReconnectChange);
+  //     };
+  // }, []);
   return (
     <nav className="desktop-navbar">
       <NavbarSection className="desktop-navbar-logo">

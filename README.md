@@ -101,6 +101,7 @@ If the download fails to replace the protocol, run the following code
 ```
 git clone http://github.com/DeepInsight-AI/DeepBI.git
  ```
+
 - Just run ```. ubuntu_install.sh``` directly (note that you run . ubuntu_install.sh instead of sh xxx here, because you need to run the python virtual environment)
 - Default port is 8338 and 8339
 - Web access: http://ip:8338
@@ -109,7 +110,7 @@ git clone http://github.com/DeepInsight-AI/DeepBI.git
 
 
 ## Contact Us
-<a><img src="https://github.com/DeepInsight-AI/DeepBI/assets/36986406/f4426c4f-6b00-447b-8163-ffd641b81058" width="40%"/></a>
+<a><img src="https://github.com/DeepInsight-AI/DeepBI/assets/36986406/926f9399-6a15-4363-b460-2219935a7646" width="40%"/></a>
 
 
 

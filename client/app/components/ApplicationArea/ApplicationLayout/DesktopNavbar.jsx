@@ -19,8 +19,6 @@ import QuestionCircleOutlinedIcon from "@ant-design/icons/QuestionCircleOutlined
 import SettingOutlinedIcon from "@ant-design/icons/SettingOutlined";
 import VersionInfo from "./VersionInfo";
 
-import {lockReconnectEvent} from "@/pages/testdialogue/components/Dialogue/websocket.js"
-
 import "./DesktopNavbar.less";
 
 function NavbarSection({ children, ...props }) {
@@ -242,10 +240,10 @@ export default function DesktopNavbar() {
           title={
             <span data-test="ProfileDropdown" className="desktop-navbar-profile-menu-title">
               <img className="profile__image_thumb" src={currentUser.profile_image_url} alt={currentUser.name} />
-              <div className="profile__live__type">
+              {/* <div className="profile__live__type">
                 <span style={{"background":socketType===0?"red":socketType===1?"green":"yellow"}}></span>
                 <div>{socketType===0?window.W_L.offline:socketType===1?window.W_L.online:window.W_L.pending}</div>
-              </div>
+              </div> */}
             </span>
           }>
           <Menu.Item key="profile">

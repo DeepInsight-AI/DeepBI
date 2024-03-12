@@ -91,6 +91,7 @@ Install directly on the ubuntu system, you need to install redis, postgresql pyt
 - Require python version  3.8+
 - Recommend using virtual environments such as pyenv coda
 - postgresql needs to install postgresql-16 version
+
 - Download the DeepBI code by the command :
 ```
 git clone https://github.com/DeepInsight-AI/DeepBI.git
@@ -107,7 +108,7 @@ git clone http://github.com/DeepInsight-AI/DeepBI.git
 
 
 ## Contact Us
-<a><img src="https://github.com/DeepInsight-AI/DeepBI/assets/151519915/1b7d9848-49fb-4f06-bad7-86d751841a6b" width="40%"/></a>
+<a><img src="https://github.com/DeepInsight-AI/DeepBI/assets/36986406/8059ffa1-3abd-461f-b59b-7949973ffa1b" width="40%"/></a>
 
 
 

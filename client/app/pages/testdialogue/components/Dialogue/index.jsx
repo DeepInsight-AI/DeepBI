@@ -43,6 +43,7 @@ const Dialogue = (props) => {
     lockReconnect :false,
     data_type:null,
     newInputMessage:"",
+    testFetchMessage:"",
     logData:[],
   });
   useEffect(() => {
@@ -792,9 +793,13 @@ const openSocket = useCallback(() => {
           }
   
           // 解码并处理接收到的数据
-          const chunk = decoder.decode(value, { stream: true });
+          const chunk = decoder.decode(value);
           console.log('Received chunk:', chunk);
-  
+          setState(prevState => ({
+            ...prevState,
+            testFetchMessage: chunk,
+          }));
+          console.log('new testFetchMessage:', state.testFetchMessage);
           // 假设服务器发送的是JSON字符串，尝试解析并更新状态
           try {
             const data = JSON.parse(chunk);
@@ -824,11 +829,11 @@ const openSocket = useCallback(() => {
   const { saveChart,dashboardsId,publishQuery }=useChartCode(sendSocketMessage,saveDashboardId, props, successSetting,CharttableD_date.current,new_sql,dashboardId,sendDashId);
   const { setDialogueStorageDashboardId, addDashboard, getDashboard,addDialogueStorage,getDialogueStorage,addChatList,getAllStorage,addAutopilotStorage}=dialogueStorage();
 //   const Dialogue = () => {
-    const { messages, inputMessage, newInputMessage } = state;
+    const { messages, inputMessage, newInputMessage,testFetchMessage } = state;
 
     return (
       <div className="dialogue-content">
-        <button onClick={() => fetch_gpt()}>测试链接fetch</button>
+        <button onClick={() => fetch_gpt()}>测试链接fetch+++{testFetchMessage}</button>
         <DialogueTop loadingMask={LoadingMask} Charttable={CharttableDate} CharttableItem={Charttable_item.current} closeDialogue={closeDialogue} chat_type={chat_type}></DialogueTop>
         {/* <OpenKey ref={OpenKeyRef}></OpenKey> */}
        {LoadingState&& <MenuMask/>}

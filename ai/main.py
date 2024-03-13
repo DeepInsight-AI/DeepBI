@@ -1,20 +1,31 @@
-from flask import Flask, request
+from flask import Flask, request, jsonify
 import asyncio
 from ai.backend.chat_task import ChatClass
 from ai.backend.aidb.autopilot.autopilot_mysql_api import AutopilotMysql
 from concurrent.futures import ThreadPoolExecutor
-from flask_cors import CORS,cross_origin
+# from flask_cors import CORS,cross_origin
 app = Flask(__name__)
 # CORS(app)
 
-cors = CORS(app, resources={r"/api/*": {"origins": "*"}})
+# cors = CORS(app, resources={r"/api/*": {"origins": "*"}})
 
-@app.route("/api/chat", methods=["POST"])
-# @cross_origin()
+@app.route("/api/chat", methods=["POST", "OPTIONS"])
 def chat():
-    data = request.get_json()
-    print("data: ", data)
-    return "This is a chat request"
+    # 预检请求的处理
+    if request.method == "OPTIONS":
+        response = app.make_default_options_response()
+    else:
+        # 实际的POST请求处理
+        data = request.get_json()
+        print("data: ", data)
+        response = jsonify(message="This is a chat request")
+    
+    # 添加CORS相关的头部信息
+    response.headers.add("Access-Control-Allow-Origin", "*")
+    response.headers.add("Access-Control-Allow-Methods", "POST, OPTIONS")
+    response.headers.add("Access-Control-Allow-Headers", "Content-Type, Authorization")
+
+    return response
 
 if __name__ == '__main__':
     app.run(port=8339)

@@ -769,7 +769,7 @@ const openSocket = useCallback(() => {
 
     return (
       <div className="dialogue-content">
-        <button onClick={fetch_gpt()}>测试链接fetch</button>
+        <button onClick={() => fetch_gpt()}>测试链接fetch</button>
         <DialogueTop loadingMask={LoadingMask} Charttable={CharttableDate} CharttableItem={Charttable_item.current} closeDialogue={closeDialogue} chat_type={chat_type}></DialogueTop>
         {/* <OpenKey ref={OpenKeyRef}></OpenKey> */}
        {LoadingState&& <MenuMask/>}

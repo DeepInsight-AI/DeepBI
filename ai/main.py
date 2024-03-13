@@ -5,10 +5,12 @@ from ai.backend.aidb.autopilot.autopilot_mysql_api import AutopilotMysql
 from concurrent.futures import ThreadPoolExecutor
 from flask_cors import CORS,cross_origin
 app = Flask(__name__)
-CORS(app)
+# CORS(app)
+
+cors = CORS(app, resources={r"/api/*": {"origins": "*"}})
 
 @app.route("/api/chat", methods=["POST"])
-@cross_origin()
+# @cross_origin()
 def chat():
     data = request.get_json()
     print("data: ", data)

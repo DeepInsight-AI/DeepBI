@@ -5,16 +5,10 @@ from ai.backend.aidb.autopilot.autopilot_mysql_api import AutopilotMysql
 from concurrent.futures import ThreadPoolExecutor
 from flask_cors import CORS,cross_origin
 app = Flask(__name__)
-# 显式定义CORS策略
-cors_config = {
-    "origins": ["http://192.168.2.123:8338"],  # 允许的源
-    "methods": ["POST"],  # 允许的方法
-    "allow_headers": ["Content-Type", "Authorization"]  # 允许的头部信息
-}
-
-CORS(app, resources={r"/api/*": cors_config})
+CORS(app)
 
 @app.route("/api/chat", methods=["POST"])
+@cross_origin()
 def chat():
     data = request.get_json()
     print("data: ", data)

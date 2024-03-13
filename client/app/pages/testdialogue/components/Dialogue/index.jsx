@@ -12,7 +12,7 @@ import MenuMask from "../MenuMask/index.jsx";
 import "./index.less";
 import moment from "moment";
 import { API_CHAT } from './const';
-
+import { currentUser } from "@/services/auth";
 const Dialogue = (props) => {
   const {chat_type,sendUrl,uuid} =props
   const OpenKeyRef = useRef();
@@ -734,12 +734,42 @@ const openSocket = useCallback(() => {
   }, [setState, OpenKeyRef]);
 
   // fetch gpt
+  // const fetch_gpt = async () => {
+  //   const messageData={
+  //     "message": "你好",
+  //     "user_id":currentUser.id,
+  //     "user_name":currentUser.name,
+  //     "chat_id": new Date().getTime()
+  //   }
+  //   try {
+  //     const response = await fetch(API_CHAT, {
+  //       method: 'POST',
+  //       headers: {
+  //         'Content-Type': 'application/json',
+  //       },
+  //       body: JSON.stringify(messageData),
+  //     });
+  
+  //     if (!response.ok) {
+  //       throw new Error('Network response was not ok');
+  //     }
+  
+  //     const data = await response.json();
+  //     console.log('Response data:', data);
+  //   } catch (error) {
+  //     console.error('Error:', error);
+  //   }
+  // };
+
+
   const fetch_gpt = async () => {
-    const messageData={
+    const messageData = {
       "message": "你好",
-        "uuid": "123",
-        "chat_id": new Date().getTime()
-    }
+      "user_id": currentUser.id,
+      "user_name": currentUser.name,
+      "chat_id": new Date().getTime()
+    };
+  
     try {
       const response = await fetch(API_CHAT, {
         method: 'POST',
@@ -749,14 +779,43 @@ const openSocket = useCallback(() => {
         body: JSON.stringify(messageData),
       });
   
-      if (!response.ok) {
-        throw new Error('Network response was not ok');
-      }
+      // 检查浏览器是否支持ReadableStream
+      if (response.body && response.body.getReader) {
+        const reader = response.body.getReader();
+        const decoder = new TextDecoder();
   
-      const data = await response.json();
-      console.log('Response data:', data);
+        // 读取数据
+        reader.read().then(function processText({ done, value }) {
+          if (done) {
+            console.log("Stream complete");
+            return;
+          }
+  
+          // 解码并处理接收到的数据
+          const chunk = decoder.decode(value, { stream: true });
+          console.log('Received chunk:', chunk);
+  
+          // 假设服务器发送的是JSON字符串，尝试解析并更新状态
+          try {
+            const data = JSON.parse(chunk);
+            console.log('Parsed JSON:', data)
+            // 更新状态或UI
+            // setState(prevState => ({
+            //   ...prevState,
+            //   messages: [...prevState.messages, { content: data.message, sender: "bot" }],
+            // }));
+          } catch (error) {
+            console.error('Error parsing JSON:', error);
+          }
+  
+          // 递归调用以读取下一个数据块
+          reader.read().then(processText);
+        });
+      } else {
+        console.log('Streaming not supported');
+      }
     } catch (error) {
-      console.error('Error:', error);
+      console.error('Fetch error:', error);
     }
   };
 

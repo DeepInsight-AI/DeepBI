@@ -1,16 +1,26 @@
-from dotenv import load_dotenv
-
-# 加载 .env 文件中的环境变量
-load_dotenv()
-
+from flask import Flask, request
 import asyncio
-from ai.backend.start_server import WSServer
+from ai.backend.chat_task import ChatClass
+from ai.backend.aidb.autopilot.autopilot_mysql_api import AutopilotMysql
+from concurrent.futures import ThreadPoolExecutor
+
+app = Flask(__name__)
+
+@app.route("/api/chat", methods=["POST"])
+def chat():
+    data = request.get_json()
+    print("data: ", data)
+    return "This is a chat request"
 
 if __name__ == '__main__':
-    server_port = 8339
-    s = WSServer(server_port)
-    # t = threading.Thread(target=s.serve_forever)
-    # t.daemon = True
-    # t.start()
-    s.serve_forever()
-    
+    app.run(port=8339)
+
+
+
+#     import asyncio
+# from ai.backend.start_server import WSServer
+
+# if __name__ == '__main__':
+#     server_port = 8339
+#     s = WSServer(server_port)
+    # s.serve_forever()

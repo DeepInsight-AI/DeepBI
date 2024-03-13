@@ -11,7 +11,7 @@ import toast from "react-hot-toast";
 import MenuMask from "../MenuMask/index.jsx";
 import "./index.less";
 import moment from "moment";
-import AutoPilot from "../AutoPilot/AutoPilot.jsx";
+import { API_CHAT } from './const';
 
 const Dialogue = (props) => {
   const {chat_type,sendUrl,uuid} =props
@@ -732,6 +732,35 @@ const openSocket = useCallback(() => {
   const onOpenKeyClick = useCallback(() => {
     // OpenKeyRef.current.showModal();
   }, [setState, OpenKeyRef]);
+
+  // fetch gpt
+  const fetch_gpt = async () => {
+    const messageData={
+      "message": "你好",
+        "uuid": "123",
+        "chat_id": new Date().getTime()
+    }
+    try {
+      const response = await fetch(API_CHAT, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(messageData),
+      });
+  
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+  
+      const data = await response.json();
+      console.log('Response data:', data);
+    } catch (error) {
+      console.error('Error:', error);
+    }
+  };
+
+
   const { new_sql,testAndVerifySql } = useSql(Charttable_id.current,sendSocketMessage,errorSetting);
   const { saveChart,dashboardsId,publishQuery }=useChartCode(sendSocketMessage,saveDashboardId, props, successSetting,CharttableD_date.current,new_sql,dashboardId,sendDashId);
   const { setDialogueStorageDashboardId, addDashboard, getDashboard,addDialogueStorage,getDialogueStorage,addChatList,getAllStorage,addAutopilotStorage}=dialogueStorage();
@@ -740,6 +769,7 @@ const openSocket = useCallback(() => {
 
     return (
       <div className="dialogue-content">
+        <button onClick={fetch_gpt()}>测试链接fetch</button>
         <DialogueTop loadingMask={LoadingMask} Charttable={CharttableDate} CharttableItem={Charttable_item.current} closeDialogue={closeDialogue} chat_type={chat_type}></DialogueTop>
         {/* <OpenKey ref={OpenKeyRef}></OpenKey> */}
        {LoadingState&& <MenuMask/>}

@@ -18,7 +18,7 @@ from ai.backend.util.write_log import logger
 from ai.agents.code_utils import tell_logger
 from ai.backend.util.base_util import dbinfo_decode
 from ai.backend.util import database_util
-
+import re
 try:
     from termcolor import colored
 except ImportError:
@@ -688,6 +688,16 @@ class PythonProxyAgent(Agent):
             if message["content"] is None:
                 continue
             code_blocks = extract_code(message["content"])
+            # fix mysql generate %%Y %%m %%d code :list
+            patterns_replacements = [
+                (r"%%Y-%%m-%%d %%H", "%Y-%m-%d %H"),
+                (r"%%Y-%%m-%%d", "%Y-%m-%d"),
+                (r"%%Y-%%m", "%Y-%m"),
+                (r"%%H", "%H"),
+                (r"%%Y-%%m-%%d %%H:%%i", "%Y-%m-%d %H:%i"),
+                (r"%%Y-%%m-%%d %%H:%%i:%%s", "%Y-%m-%d %H:%i:%s")]
+            for pattern, replacement in patterns_replacements:
+                code_blocks = [(language, re.sub(pattern, replacement, code)) for language, code in code_blocks]
             if len(code_blocks) == 1 and code_blocks[0][0] == UNKNOWN:
                 continue
 

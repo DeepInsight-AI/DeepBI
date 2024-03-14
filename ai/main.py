@@ -66,11 +66,13 @@ class MockWebSocket:
 def generate_stream(mock_socket, user_name, user_id, message,chat_id):
     try:
         def background_task():
-            # loop = asyncio.new_event_loop()
-            # asyncio.set_event_loop(loop)
-            # loop.run_until_complete(demo1(mock_socket))
-            master = ChatClass(mock_socket, user_name, user_id, message,chat_id)
-            listener_task = asyncio.ensure_future(master.consume())
+            loop = asyncio.new_event_loop()
+            asyncio.set_event_loop(loop)
+            master = ChatClass(mock_socket, user_name, user_id, message, chat_id)
+            loop.run_until_complete(master.consume())
+            loop.close()
+            # master = ChatClass(mock_socket, user_name, user_id, message,chat_id)
+            # listener_task = asyncio.ensure_future(master.consume())
         
         thread = threading.Thread(target=background_task)
         thread.start()

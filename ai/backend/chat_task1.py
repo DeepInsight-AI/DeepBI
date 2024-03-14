@@ -91,12 +91,12 @@ class ChatClass:
     async def consume(self):
         """ Process received messages """
         try:
-            message = await self.incoming.get()
+            # message = await self.incoming.get()
 
             # do something 'consuming' :)
             result = {'state': 200, 'data': {}, 'receiver': ''}
 
-            json_str = json.loads(message)
+            json_str = json.loads(self.message)
             print(json_str)
 
             if json_str.get('sender'):
@@ -125,35 +125,35 @@ class ChatClass:
                 elif q_chat_type == 'chat':
                     if q_database == 'mysql':
                         print(" q_database ==  mysql ")
-                        await self.analysisMysql.deal_question(json_str, message)
+                        await self.analysisMysql.deal_question(json_str, self.message)
                     elif q_database == 'csv':
-                        await self.analysisCsv.deal_question(json_str, message)
+                        await self.analysisCsv.deal_question(json_str, self.message)
                     elif q_database == 'pg':
                         # postgresql
-                        await self.analysisPostgresql.deal_question(json_str, message)
+                        await self.analysisPostgresql.deal_question(json_str, self.message)
                     elif q_database == 'starrocks':
                         print(" q_database ==  starrocks ")
-                        await self.analysisStarrocks.deal_question(json_str, message)
+                        await self.analysisStarrocks.deal_question(json_str, self.message)
                     elif q_database == 'mongodb':
                         print(" q_database ==  mongodb ")
-                        await self.analysisMongoDB.deal_question(json_str, message)
+                        await self.analysisMongoDB.deal_question(json_str, self.message)
 
                 elif q_chat_type == 'report':
                     if q_database == 'mysql':
-                        await self.reportMysql.deal_report(json_str, message)
+                        await self.reportMysql.deal_report(json_str, self.message)
                     elif q_database == 'pg':
-                        await self.reportPostgresql.deal_report(json_str, message)
+                        await self.reportPostgresql.deal_report(json_str, self.message)
                     elif q_database == 'starrocks':
-                        await self.reportStarrocks.deal_report(json_str, message)
+                        await self.reportStarrocks.deal_report(json_str, self.message)
                     elif q_database == 'mongodb':
-                        await self.reportMongoDB.deal_report(json_str, message)
+                        await self.reportMongoDB.deal_report(json_str, self.message)
                 elif q_chat_type == 'autopilot':
                     if q_database == 'mysql':
-                        await self.autopilotMysql.deal_question(json_str, message)
+                        await self.autopilotMysql.deal_question(json_str, self.message)
                     elif q_database == 'starrocks':
-                        await self.autopilotMysql.deal_question(json_str, message)
+                        await self.autopilotMysql.deal_question(json_str, self.message)
                     elif q_database == 'mongodb':
-                        await self.autopilotMongoDB.deal_question(json_str, message)
+                        await self.autopilotMongoDB.deal_question(json_str, self.message)
 
             else:
                 result['state'] = 500

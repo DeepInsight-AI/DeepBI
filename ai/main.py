@@ -64,21 +64,27 @@ class MockWebSocket:
 
 
 def generate_stream(mock_socket, user_name, user_id, message,chat_id):
-    def background_task():
-        # loop = asyncio.new_event_loop()
-        # asyncio.set_event_loop(loop)
-        # loop.run_until_complete(demo1(mock_socket))
-        s = ChatClass(mock_socket, user_name, user_id, message,chat_id)
+    try:
+        def background_task():
+            # loop = asyncio.new_event_loop()
+            # asyncio.set_event_loop(loop)
+            # loop.run_until_complete(demo1(mock_socket))
+            master = ChatClass(mock_socket, user_name, user_id, message,chat_id)
+            listener_task = asyncio.ensure_future(master.consume())
+        
+        thread = threading.Thread(target=background_task)
+        thread.start()
+        
+        while thread.is_alive() or mock_socket.messages:
+            if mock_socket.messages:
+                message = mock_socket.messages.pop(0)
+                yield f"{message}\n\n"
+            else:
+                time.sleep(1)
     
-    thread = threading.Thread(target=background_task)
-    thread.start()
-    
-    while thread.is_alive() or mock_socket.messages:
-        if mock_socket.messages:
-            message = mock_socket.messages.pop(0)
-            yield f"{message}\n\n"
-        else:
-            time.sleep(1)
+    except Exception as e:
+        print("error: ", e)
+        return "error"
     
 @app.route("/api/chat", methods=["POST"])
 @cross_origin()
@@ -88,7 +94,7 @@ def chat():
     user_id = data['user_id']
     user_name = data['user_name']
     message = data['message']
-    chat_id = data['chat_id']
+    chat_id = 1
     print("user_id: ", user_id)
     print("user_name: ", user_name)
     print("message: ", message)
@@ -101,5 +107,5 @@ def chat():
     # return Response(stream(content), mimetype='text/plain')
 
 if __name__ == '__main__':
-    app.run(port=8339)
+    app.run(port=8339, host='0.0.0.0')
 

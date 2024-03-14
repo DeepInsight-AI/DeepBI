@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import { axios } from "@/services/axios";
-import {websocket,createWebSocket,lockReconnect,setLockReconnect,setStopGeneration,stopGeneration} from './websocket.js';
+// import {websocket,createWebSocket,lockReconnect,setLockReconnect,setStopGeneration,stopGeneration} from './websocket.js';
 import { useSql } from './method/useSql.js';
 import { useChartCode } from "./method/useChartCode.js";
 import { dialogueStorage } from "./method/dialogueStorage.js";
@@ -55,7 +55,6 @@ const Dialogue = (props) => {
 }, [state.logData])
   useEffect(() => {
     getDialogueDashboardStorage();
-    openSocket();
   }, []);
   useEffect(() => {
     if(uuid){
@@ -74,22 +73,7 @@ const Dialogue = (props) => {
   }, [CharttableDate]);
 
 
-const sendSocketMessage = useCallback((state, sender, data_type, content,id=0) => {
-    const messgaeInfo = {
-      state,
-      database:sourceTypeRef.current,
-      sender,
-      chat_type,
-      data: {
-        data_type,
-        databases_id:Charttable_id.current || 0,
-        language_mode:window.W_L.language_mode,
-        content,
-      },
-      id
-    }
-    websocket.send(JSON.stringify(messgaeInfo));
-}, [state]);
+
 
 
 const getDialogueDashboardStorage = (type=null) => {
@@ -216,12 +200,12 @@ const updateCharttableDate = () => {
 };
 
 const onSuccess = useCallback((code, value,source_item,result,firstTableData) => {
-  if (!lockReconnect) {
-    toast.error(window.W_L.connection_seems_lost);
-    setConfirmLoading(false);
-    openSocket();
-    return
-  }
+  // if (!lockReconnect) {
+  //   toast.error(window.W_L.connection_seems_lost);
+  //   setConfirmLoading(false);
+  //   openSocket();
+  //   return
+  // }
   Charttable_id.current = source_item.id;
   Charttable_item.current = {
     label: source_item.label,
@@ -311,30 +295,28 @@ const handleSuccess =async (tableId,table,isSendTableDateType=null) => {
 }
 
 };
-const handleSocketMessage = useCallback(() => {
-  if (!lockReconnect) {
-    createWebSocket();
-    return
-  }
-  websocket.onclose = (event) => {
-    setState(prevState => ({
-      ...prevState,
-      messages: prevState.messages.map((message, i) =>
-        i === prevState.messages.length - 1 && message.sender === "bot"&& message.Cardloading
-          ? { ...message, content: window.W_L.connection_seems_lost, Cardloading: false }
-          : message
-      ),
-      // messages: prevState.messages.filter((item,index)=>item.content!==window.W_L.stopping_generation),
-    }));
-    setLoadingMask(false);
-    setSendTableDate(0);
-    setLockReconnect(false);
-    errorSetting();
-  }
-
-  websocket.onmessage = async (event) => {
+const handleSocketMessage = useCallback(async (event) => {
+  // if (!lockReconnect) {
+  //   createWebSocket();
+  //   return
+  // }
+  // websocket.onclose = (event) => {
+  //   setState(prevState => ({
+  //     ...prevState,
+  //     messages: prevState.messages.map((message, i) =>
+  //       i === prevState.messages.length - 1 && message.sender === "bot"&& message.Cardloading
+  //         ? { ...message, content: window.W_L.connection_seems_lost, Cardloading: false }
+  //         : message
+  //     ),
+  //     // messages: prevState.messages.filter((item,index)=>item.content!==window.W_L.stopping_generation),
+  //   }));
+  //   setLoadingMask(false);
+  //   setSendTableDate(0);
+  //   setLockReconnect(false);
+  //   errorSetting();
+  // }
     try {
-      const data = JSON.parse(event.data);
+      const data = event;
 
       if (data.receiver === 'user') {
         setState(prevState => ({
@@ -494,16 +476,15 @@ const handleSocketMessage = useCallback(() => {
     } catch (error) {
       console.log(error, 'socket_error');
     }
-  }
 }, [state, setState,props]);
 
 // websocket
-const openSocket = useCallback(() => {
+// const openSocket = useCallback(() => {
 
-    createWebSocket();
+//     createWebSocket();
 
-    handleSocketMessage()
-  }, []);
+//     handleSocketMessage()
+//   }, []);
   const closeSetMessage=()=>{
     if(chat_type==="chat" || chat_type==="report"){
       let allMessages = messagesRef.current;
@@ -537,7 +518,7 @@ const openSocket = useCallback(() => {
   }, []);
 
   const onChange = useCallback((type,value=0,item) => {
-    openSocket();
+    // openSocket();
     // if (!lockReconnect) {
     //   notification.warning(window.W_L.connection_failed, window.W_L.connection_failed_tip);
     //   openSocket();
@@ -555,7 +536,7 @@ const openSocket = useCallback(() => {
     // // setSourceType(type);
     // sourceTypeRef.current = type
     // schemaList(value,type);
-  }, [setState, handleSocketMessage, openSocket]);
+  }, [setState, handleSocketMessage]);
 
   const saveDashboardId = useCallback((key, value) => {
     if(key==='dashboard_id'){
@@ -567,15 +548,15 @@ const openSocket = useCallback(() => {
   }, []);
 
   const isSendTableDate = useCallback((data_type) => {
-    handleSocketMessage();
-    if (!lockReconnect) {
-      toast.error(window.W_L.connection_failed);
-      // setState(prevState => ({ ...prevState, sendTableDate: 0 }));
-      setSendTableDate(0);
-      setLoadingState(false);
-      openSocket();
-      return;
-    }
+    // handleSocketMessage();
+    // if (!lockReconnect) {
+    //   toast.error(window.W_L.connection_failed);
+    //   // setState(prevState => ({ ...prevState, sendTableDate: 0 }));
+    //   setSendTableDate(0);
+    //   setLoadingState(false);
+    //   openSocket();
+    //   return;
+    // }
     if (CharttableD_date.current && CharttableD_date.current.tableName.length > 0) {
       if (SendTableDate === 0) {
         setState(prevState => ({ ...prevState,data_type }));
@@ -604,11 +585,11 @@ const openSocket = useCallback(() => {
         });
       }
     }
-  }, [state, setState, handleSocketMessage, openSocket, sendSocketMessage]);
+  }, [state, setState, handleSocketMessage, sendSocketMessage]);
 
 
   const handleSendMessage1 = useCallback(async () => {
-    handleSocketMessage();
+    // handleSocketMessage();
 
     const { inputMessage, messages } = state;
     if (inputMessage.trim() === "") {
@@ -632,32 +613,32 @@ const openSocket = useCallback(() => {
 
   const handleSendMessage = useCallback(() => {
     const { inputMessage, messages } = state;
-     if(stopGeneration){
-      return
-    }
-    if (LoadingState) {
-      return
-    }
-    if (!lockReconnect) {
-      toast.error(window.W_L.connection_failed);
-      // setState(prevState => ({ ...prevState, sendTableDate: 0 }));
-      setSendTableDate(0);
-      setLoadingState(false);
-      openSocket();
-      return
-    }
+    //  if(stopGeneration){
+    //   return
+    // }
+    // if (LoadingState) {
+    //   return
+    // }
+    // if (!lockReconnect) {
+    //   toast.error(window.W_L.connection_failed);
+    //   // setState(prevState => ({ ...prevState, sendTableDate: 0 }));
+    //   setSendTableDate(0);
+    //   setLoadingState(false);
+    //   openSocket();
+    //   return
+    // }
     if(!startUse){
       return
     }
     if (CharttableD_date.current && CharttableD_date.current.tableName.length > 0) {
       handleSendMessage1();
     }
-  }, [state, setState, openSocket, handleSendMessage1]);
+  }, [state, setState, handleSendMessage1]);
 
     const errorSetting = useCallback(() => {
-    if(stopGeneration){
-      return
-    }
+    // if(stopGeneration){
+    //   return
+    // }
     toast.error(window.W_L.connection_failed);
     // setState(prevState => ({ ...prevState, Cardloading: false }));
     setLoadingState(false);
@@ -675,9 +656,9 @@ const openSocket = useCallback(() => {
 
 
   const successSetting = useCallback(() => {
-    if(stopGeneration){
-      return
-    }
+    // if(stopGeneration){
+    //   return
+    // }
     toast.success(window.W_L.report_generation_completed);
   }, []);
 
@@ -717,13 +698,12 @@ const openSocket = useCallback(() => {
     }, 100);
   }, []);
   const stopSend = useCallback((type=null) => {
-    websocket&&websocket.close();
+    // websocket&&websocket.close();
     setSendTableDate(type==="edit"?1:0);
     setLoadingState(false);
-    setStopGeneration(true);
+    // setStopGeneration(true);
     scrollToBottom();
-    openSocket();
-  }, [setState, openSocket]);
+  }, [setState]);
   const sendDashId = useCallback((id) => {
     sendUrl(id);
     setDialogueStorageDashboardId(id)
@@ -734,43 +714,48 @@ const openSocket = useCallback(() => {
     // OpenKeyRef.current.showModal();
   }, [setState, OpenKeyRef]);
 
-  // fetch gpt
-  // const fetch_gpt = async () => {
-  //   const messageData={
-  //     "message": "你好",
-  //     "user_id":currentUser.id,
-  //     "user_name":currentUser.name,
-  //     "chat_id": new Date().getTime()
-  //   }
-  //   try {
-  //     const response = await fetch(API_CHAT, {
-  //       method: 'POST',
-  //       headers: {
-  //         'Content-Type': 'application/json',
-  //       },
-  //       body: JSON.stringify(messageData),
-  //     });
-  
-  //     if (!response.ok) {
-  //       throw new Error('Network response was not ok');
-  //     }
-  
-  //     const data = await response.json();
-  //     console.log('Response data:', data);
-  //   } catch (error) {
-  //     console.error('Error:', error);
-  //   }
-  // };
 
+//   const sendSocketMessage = useCallback((state, sender, data_type, content,id=0) => {
+//     const messgaeInfo = {
+//       state,
+//       database:sourceTypeRef.current,
+//       sender,
+//       chat_type,
+//       data: {
+//         data_type,
+//         databases_id:Charttable_id.current || 0,
+//         language_mode:window.W_L.language_mode,
+//         content,
+//       },
+//       id
+//     }
+//     websocket.send(JSON.stringify(messgaeInfo));
+// }, [state]);
 
-  const fetch_gpt = async () => {
+  const sendSocketMessage =  useCallback( async (state, sender, data_type, content,id=0) => {
+    // const messageData = {
+    //   "message": "你好",
+    //   "user_id": currentUser.id,
+    //   "user_name": currentUser.name,
+    //   "chat_id": new Date().getTime()
+    // };
     const messageData = {
-      "message": "你好",
-      "user_id": currentUser.id,
-      "user_name": currentUser.name,
-      "chat_id": new Date().getTime()
-    };
-  
+      user_id: currentUser.id,
+      user_name: currentUser.name,
+      message:{
+        state,
+        database:sourceTypeRef.current,
+        sender,
+        chat_type,
+        data: {
+          data_type,
+          databases_id:Charttable_id.current || 0,
+          language_mode:window.W_L.language_mode,
+          content,
+        },
+        id
+      }
+    }
     try {
       const response = await fetch(API_CHAT, {
         method: 'POST',
@@ -797,13 +782,14 @@ const openSocket = useCallback(() => {
           console.log('Received chunk:', chunk);
           setState(prevState => ({
             ...prevState,
-            testFetchMessage: chunk,
+            testFetchMessage: prevState.testFetchMessage + chunk,
           }));
           console.log('new testFetchMessage:', state.testFetchMessage);
           // 假设服务器发送的是JSON字符串，尝试解析并更新状态
           try {
             const data = JSON.parse(chunk);
             console.log('Parsed JSON:', data)
+            handleSocketMessage(data);
             // 更新状态或UI
             // setState(prevState => ({
             //   ...prevState,
@@ -822,7 +808,7 @@ const openSocket = useCallback(() => {
     } catch (error) {
       console.error('Fetch error:', error);
     }
-  };
+  }, [state]);
 
 
   const { new_sql,testAndVerifySql } = useSql(Charttable_id.current,sendSocketMessage,errorSetting);
@@ -833,7 +819,6 @@ const openSocket = useCallback(() => {
 
     return (
       <div className="dialogue-content">
-        <button onClick={() => fetch_gpt()}>测试链接fetch+++{testFetchMessage}</button>
         <DialogueTop loadingMask={LoadingMask} Charttable={CharttableDate} CharttableItem={Charttable_item.current} closeDialogue={closeDialogue} chat_type={chat_type}></DialogueTop>
         {/* <OpenKey ref={OpenKeyRef}></OpenKey> */}
        {LoadingState&& <MenuMask/>}

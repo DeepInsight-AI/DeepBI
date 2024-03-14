@@ -1,44 +1,104 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, stream_with_context, Response
+from flask_cors import CORS,cross_origin
+from ai.backend.chat_task1 import ChatClass
+import time  # 用于模拟延迟
+import json
 import asyncio
-from ai.backend.chat_task import ChatClass
-from ai.backend.aidb.autopilot.autopilot_mysql_api import AutopilotMysql
-from concurrent.futures import ThreadPoolExecutor
-# from flask_cors import CORS,cross_origin
+import threading
+
+
 app = Flask(__name__)
 # CORS(app)
 
 # cors = CORS(app, resources={r"/api/*": {"origins": "*"}})
 
-@app.route("/api/chat", methods=["POST", "OPTIONS"])
-def chat():
-    if request.method == "OPTIONS":
-        # 手动创建OPTIONS响应
-        response = jsonify()  # 使用jsonify创建一个空的响应体
-        response.status_code = 200  # 设置状态码为200
-    else:
-        # 实际的POST请求处理
-        data = request.get_json()
-        print("data: ", data)
-        response = jsonify(message="This is a chat request")
-    
-    # 为所有响应添加CORS相关的头部信息
-    response.headers["Access-Control-Allow-Origin"] = "http://192.168.2.123:8338"  # 允许特定来源
-    response.headers["Access-Control-Allow-Methods"] = "POST, OPTIONS"  # 允许的方法
-    response.headers["Access-Control-Allow-Headers"] = "Content-Type, Authorization"  # 允许的头部
-    # 如果你的请求需要凭证（如cookies或认证信息），还需要添加以下头部
-    # response.headers["Access-Control-Allow-Credentials"] = "true"
+class MockWebSocket:
+    def __init__(self):
+        self.messages = []
+        pass
 
-    return response
+    async def send(self, message):
+        self.messages.append(message)
+        print("Message to send:", message)       
+
+# async def demo1(mock_socket):
+#     result_message = {
+#                 'state': 200,
+#                 'receiver': 'bi',
+#                 'data': {
+#                     'data_type': 'mysql_code',
+#                     'content': "123123123123",
+#                     'name': "12312312312312"
+#                 },
+#                 'id': "123213"
+#     }
+#     result_message = json.dumps(result_message)
+#     print("result_message111: ", result_message)
+#     mock_socket.send(result_message)
+#     await demo2(mock_socket)
+
+# async def demo2(mock_socket):
+#     await asyncio.sleep(5)
+#     result_message = {
+#                 'state': 200,
+#                 'receiver': 'bi',
+#                 'data': {
+#                     'data_type': 'mysql_code',
+#                     'content': "456456456456",
+#                     'name': "456456456456"
+#                 },
+#                 'id': "456456"
+#     }
+#     result_message = json.dumps(result_message)
+#     print("result_message222: ", result_message)
+#     mock_socket.send(result_message)
+
+# def generate_stream(mock_socket):
+#     while True:
+#         if mock_socket.messages:
+#             message = mock_socket.messages.pop(0)
+#             print("message: ", message)
+#             yield f"{message}\n\n"
+#         else:
+#             time.sleep(1)
+
+
+def generate_stream(mock_socket):
+    def background_task():
+        loop = asyncio.new_event_loop()
+        asyncio.set_event_loop(loop)
+        loop.run_until_complete(demo1(mock_socket))
+    
+    thread = threading.Thread(target=background_task)
+    thread.start()
+    
+    while thread.is_alive() or mock_socket.messages:
+        if mock_socket.messages:
+            message = mock_socket.messages.pop(0)
+            yield f"{message}\n\n"
+        else:
+            time.sleep(1)
+    
+@app.route("/api/chat", methods=["POST"])
+@cross_origin()
+def chat():
+    data = request.get_json()
+    print("data: ", data)
+    user_id = data['user_id']
+    user_name = data['user_name']
+    message = data['message']
+    chat_id = data['chat_id']
+    print("user_id: ", user_id)
+    print("user_name: ", user_name)
+    print("message: ", message)
+    print("chat_id: ", chat_id)
+    mock_socket = MockWebSocket()
+    s = ChatClass(mock_socket, user_name, user_id, message,chat_id)
+    # return Response(stream_with_context(asyncio.run(demo1(mock_socket))), mimetype='text/event-stream')
+    return Response(stream_with_context(generate_stream(mock_socket)), mimetype='text/event-stream')
+    # s = ChatClass(mock_socket, user_name, user_id, message,chat_id)
+    # return Response(stream(content), mimetype='text/plain')
 
 if __name__ == '__main__':
     app.run(port=8339)
 
-
-
-#     import asyncio
-# from ai.backend.start_server import WSServer
-
-# if __name__ == '__main__':
-#     server_port = 8339
-#     s = WSServer(server_port)
-    # s.serve_forever()

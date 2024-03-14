@@ -63,11 +63,12 @@ class MockWebSocket:
 #             time.sleep(1)
 
 
-def generate_stream(mock_socket):
+def generate_stream(mock_socket, user_name, user_id, message,chat_id):
     def background_task():
-        loop = asyncio.new_event_loop()
-        asyncio.set_event_loop(loop)
-        loop.run_until_complete(demo1(mock_socket))
+        # loop = asyncio.new_event_loop()
+        # asyncio.set_event_loop(loop)
+        # loop.run_until_complete(demo1(mock_socket))
+        s = ChatClass(mock_socket, user_name, user_id, message,chat_id)
     
     thread = threading.Thread(target=background_task)
     thread.start()
@@ -93,9 +94,9 @@ def chat():
     print("message: ", message)
     print("chat_id: ", chat_id)
     mock_socket = MockWebSocket()
-    s = ChatClass(mock_socket, user_name, user_id, message,chat_id)
+    
     # return Response(stream_with_context(asyncio.run(demo1(mock_socket))), mimetype='text/event-stream')
-    return Response(stream_with_context(generate_stream(mock_socket)), mimetype='text/event-stream')
+    return Response(stream_with_context(generate_stream(mock_socket, user_name, user_id, message,chat_id)), mimetype='text/event-stream')
     # s = ChatClass(mock_socket, user_name, user_id, message,chat_id)
     # return Response(stream(content), mimetype='text/plain')
 

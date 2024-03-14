@@ -760,6 +760,7 @@ const handleSocketMessage = useCallback(async (event) => {
       const response = await fetch(API_CHAT, {
         method: 'POST',
         headers: {
+          'Access-Control-Allow-Origin': '*',
           'Content-Type': 'application/json',
         },
         body: JSON.stringify(messageData),

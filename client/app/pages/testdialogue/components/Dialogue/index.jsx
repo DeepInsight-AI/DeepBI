@@ -199,7 +199,7 @@ const updateCharttableDate = () => {
   setDialogueDashboardStorage()
 };
 
-const onSuccess = useCallback((code, value,source_item,result,firstTableData) => {
+const onSuccess = useCallback( async (code, value,source_item,result,firstTableData) => {
   // if (!lockReconnect) {
   //   toast.error(window.W_L.connection_seems_lost);
   //   setConfirmLoading(false);
@@ -237,7 +237,7 @@ const onSuccess = useCallback((code, value,source_item,result,firstTableData) =>
     databases_desc: "",
     table_desc: allIsPass
   }
-  sendSocketMessage(code, 'bi', 'mysql_comment', content)
+  await sendSocketMessage(code, 'bi', 'mysql_comment', content)
 }, [setState, sendSocketMessage]);
 const mergeObj= (obj1,obj2)=>{
   let obj3 = JSON.parse(JSON.stringify(obj1));
@@ -367,7 +367,7 @@ const handleSocketMessage = useCallback(async (event) => {
           }
 
         } catch (error) {
-            sendSocketMessage(500,'bi','chart_code',error,data.id)
+          await sendSocketMessage(500,'bi','chart_code',error,data.id)
         }
         } else if (data.data.data_type === 'mysql_comment') {
           setData_type("mysql_comment");
@@ -423,7 +423,7 @@ const handleSocketMessage = useCallback(async (event) => {
           setLoadingMask(false);
           // setLoadingState(false);
           setSendTableDate(1);
-          sendSocketMessage(200, 'user', 'question', state.newInputMessage);
+          await sendSocketMessage(200, 'user', 'question', state.newInputMessage);
         } else if (data.data.data_type === 'delete_chart') {
           setData_type("delete_chart");
           dashboardsId(data.data.content, "delete",data.id);
@@ -571,8 +571,8 @@ const handleSocketMessage = useCallback(async (event) => {
             field_desc:filterColumnsByInUse(res.table_columns_info)
           });
         });
-        Promise.all(promises).then(() => {
-          sendSocketMessage(200, 'bi', data_type, {
+        Promise.all(promises).then(async() => {
+          await sendSocketMessage(200, 'bi', data_type, {
             databases_desc: "",
             table_desc: promisesList
           });
@@ -608,7 +608,7 @@ const handleSocketMessage = useCallback(async (event) => {
       isSendTableDate("mysql_comment_second");
       return
     }
-    sendSocketMessage(200, 'user', 'question', inputMessage);
+    await sendSocketMessage(200, 'user', 'question', inputMessage);
   }, [state, setState, handleSocketMessage, scrollToBottom, sendSocketMessage,isSendTableDate]);
 
   const handleSendMessage = useCallback(() => {

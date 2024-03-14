@@ -14,6 +14,7 @@ import QuestionCircleOutlinedIcon from "@ant-design/icons/QuestionCircleOutlined
 // import { websocket, createWebSocket, closeWebSocket } from "../testdialogue/components/Dialogue/websocket";
 import { API_CHAT } from '../testdialogue/components/Dialogue/const';
 import toast from "react-hot-toast";
+import { currentUser } from "@/services/auth";
 
 const SettingsOpenKey = () => {
   const [form] = Form.useForm();
@@ -107,14 +108,18 @@ const SettingsOpenKey = () => {
   const connectTest = async (values) => {
     setDisabled(true);
     let messageData = {
-      state: 200,
-      receiver: "sender",
-      chat_type: "test",
-      data: {
-        data_type: "apikey",
-        content: values,
-        language_mode: window.W_L.language_mode,
-      },
+      user_id: currentUser.id,
+      user_name: currentUser.name,
+      message:{
+        state: 200,
+        receiver: "sender",
+        chat_type: "test",
+        data: {
+          data_type: "apikey",
+          content: values,
+          language_mode: window.W_L.language_mode,
+        },
+      }
     };
     try {
       const response = await fetch(API_CHAT, {

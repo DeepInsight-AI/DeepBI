@@ -5,6 +5,9 @@ import json
 from typing import Any, Callable, Dict, List, Optional, Tuple, Type, Union
 from ai.agents import oai
 from .agent import Agent
+import ast
+import re
+from ai.backend.util import base_util
 from ai.agents.code_utils import (
     DEFAULT_MODEL,
     UNKNOWN,
@@ -25,7 +28,15 @@ except ImportError:
 
     def colored(x, *args, **kwargs):
         return x
-
+def format_decimal(value):
+    if isinstance(value, float):
+        if(value<0.05):
+            return round(value,6)
+        else:
+            return round(value, 2)
+    elif isinstance(value, int):
+        return value
+    return value
 
 class PythonProxyAgent(Agent):
     """(In preview) A class for generic conversable agents which can be configured as assistant or user proxy.
@@ -66,7 +77,6 @@ class PythonProxyAgent(Agent):
         db_id: Optional = None,
         is_log_out: Optional[bool] = True,
         report_file_name: Optional[str] = None,
-
     ):
         """
         Args:
@@ -112,6 +122,7 @@ class PythonProxyAgent(Agent):
         """
         super().__init__(name)
         # a dictionary of conversations, default value is list
+        self.delay_messages = None
         self._oai_messages = defaultdict(list)
         self._oai_system_message = [{"content": system_message, "role": "system"}]
         self._is_termination_msg = (
@@ -147,6 +158,7 @@ class PythonProxyAgent(Agent):
         self.db_id = db_id
         self.is_log_out = is_log_out
         self.report_file_name = report_file_name
+        delay_messages = self.delay_messages
 
     def register_reply(
         self,
@@ -661,15 +673,16 @@ class PythonProxyAgent(Agent):
 
         return True, oai.ChatCompletion.extract_text_or_function_call(response)[0]
 
-    def generate_code_execution_reply(
+    async def generate_code_execution_reply(
         self,
         messages: Optional[List[Dict]] = None,
         sender: Optional[Agent] = None,
         config: Optional[Any] = None,
+
     ):
         """Generate a reply using code execution.
         """
-
+        from ai.agents.agent_instance_util import AgentInstanceUtil
         code_execution_config = config if config is not None else self._code_execution_config
         # print('self._code_execution_config :', self._code_execution_config)
 
@@ -678,6 +691,7 @@ class PythonProxyAgent(Agent):
         if messages is None:
             messages = self._oai_messages[sender]
         last_n_messages = code_execution_config.pop("last_n_messages", 1)
+        base_content = []
 
         # iterate through the last n messages reversly
         # if code blocks are found, execute the code blocks and return the output
@@ -719,24 +733,99 @@ class PythonProxyAgent(Agent):
             exitcode, logs = self.execute_code_blocks(code_blocks)
             code_execution_config["last_n_messages"] = last_n_messages
             exitcode2str = "execution succeeded" if exitcode == 0 else "execution failed"
-
             length = 10000
-            length1 = 30000
             if not str(logs).__contains__('echart_name'):
-                if len(logs)==0:
-                    logs_none = "No code provided to me, please help me check the reason. If it matches the logic, continue. If there are any problems, please help me rewrite and execute the code again"
-                    exitcode2str_failed = "execution failed"
-                    return False, f"exitcode:{exitcode}({exitcode2str_failed})\nCode output: {logs_none}"
+                if "html" in logs or "HTML" in logs:
+                    return True,f"exitcode:exitcode failed\nCode output:Please do not output html files. The front end cannot display them. Please generate the correct echarts code."
                 if len(logs) > length:
                     print(' ++++++++++ Length exceeds 10000 characters limit, cropped  +++++++++++++++++')
                     logs = logs[:length]
-            else:
-                if len(logs) > length1:
-                    print(' ++++++++++ Length exceeds 10001 characters limit, cropped  +++++++++++++++++')
-                    logs = "The echarts code is too long, please simplify the code or data (for example, only keep two decimal places), and ensure that the echarts code length does not exceed 30000"
-            return True, f"exitcode: {exitcode} ({exitcode2str})\nCode output: {logs}"
+                return True, f"exitcode: {exitcode} ({exitcode2str})\nCode output: {logs}"
 
-        # no code blocks are found, push last_n_messages back and return.
+
+            else:
+                json_data = str(logs)
+                # Pattern to find keys without quotes (lookahead and lookbehind to ensure matching only keys)
+                pattern_keys_without_quotes = r'(?<={|,)\s*(\w+)\s*(?=:)'
+                # Replace keys without quotes with quoted keys
+                fixed_keys = re.sub(pattern_keys_without_quotes, r'"\1"', json_data)
+                json_data = re.sub(r'\b(True|False)\b', lambda m: m.group(1).lower(), fixed_keys)
+                try:
+                    logs = json.loads(json_data)
+                    for entry in logs:
+                        if 'echart_name' in entry and 'echart_code' in entry:
+                            # 如果满足条件，则打印并添加到base_content
+                            base_content.append(entry)
+                    for echart in base_content:
+                        for serie in echart['echart_code']['series']:
+                            for item in serie['data']:
+                                # 确保item是一个字典
+                                if isinstance(item, dict) and 'value' in item:
+                                    item['value'] = format_decimal(item['value'])
+                                else:
+                                    # 如果item不是字典或没有'value'键，你可以选择跳过或者实现其他逻辑
+                                    continue
+                    for echart in base_content:
+                        echart = json.dumps(echart, indent=2)
+                    # 初始化一个空列表来保存每个echart的信息
+                    echarts_data = []
+                    # 遍历echarts_code列表，提取数据并构造字典
+                    for echart in base_content:
+                        echart_name = echart['echart_name']
+                        series_data = []
+                        for serie in echart['echart_code']['series']:
+                            try:
+                                seri_info = {
+                                    'type': serie['type'],
+                                    'name': serie['name'],
+                                    'data': serie['data']
+                                }
+                            except Exception as e:
+                                seri_info = {
+                                    'type': serie['type'],
+                                    'data': serie['data']
+                                }
+                            series_data.append(seri_info)
+                        if "xAxis" in echart["echart_code"]:
+                            xAxis_data = echart['echart_code']['xAxis'][0]['data']
+                            if "%Y-%m" in xAxis_data:
+                                return True,f"exitcode:exitcode failed\nCode output:The SQL code query is incorrect. The query date should be %, not %%. Just for example: SELECT DATE_FORMAT(event_time, '%Y-%m-%d') is correct, but SELECT DATE_FORMAT(event_time, '%%Y -%%m-%%d') is wrong!"
+                            echart_dict = {
+                                'echart_name': echart_name,
+                                'series': series_data,
+                                'xAxis_data': xAxis_data
+                            }
+                        else:
+                            echart_dict = {
+                                'echart_name': echart_name,
+                                'series': series_data,
+                            }
+                        echarts_data.append(echart_dict)
+                    agent_instance_util = AgentInstanceUtil(user_name=str(self.user_name),
+                                                            delay_messages=self.delay_messages,
+                                                            outgoing=self.outgoing,
+                                                            incoming=self.incoming,
+                                                            websocket=self.websocket
+                                                            )
+                    bi_proxy = agent_instance_util.get_agent_bi_proxy()
+                    is_chart = False
+                    # Call the interface to generate pictures
+                    for img_str in base_content:
+                        echart_name = img_str.get('echart_name')
+                        echart_code = img_str.get('echart_code')
+
+                        if len(echart_code) > 0 and str(echart_code).__contains__('x'):
+                            is_chart = True
+                            print("echart_name : ", echart_name)
+                            # 格式化echart_code
+                            # if base_util.is_json(str(echart_code)):
+                            #     json_obj = json.loads(str(echart_code))
+                            #     echart_code = json.dumps(json_obj)
+                            re_str = await bi_proxy.run_echart_code(str(echart_code), echart_name)
+                    return True, f"exitcode: {exitcode} ({exitcode2str})\nCode output: 图像已生成,请直接分析图表数据：{echarts_data}"
+                except Exception as e:
+                    return True,f"exitcode:exitcode failed\nCode output: {json_data},There is an error in the JSON code causing parsing errors,Please modify the JSON code for me:{traceback.format_exc()}\n"
+
         code_execution_config["last_n_messages"] = last_n_messages
         return False,None
 

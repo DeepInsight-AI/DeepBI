@@ -208,25 +208,18 @@ Pay attention to check whether the sql statement in the code block is correct an
     profit = df["profit"].astype(float).tolist()
 
     line = Line()
-    line.add_xaxis(month)
+    line.add_xaxis(year)
     line.add_yaxis("Sales", sales, stack="")
     line.add_yaxis("Profit", profit, stack="")
 
     line.set_global_opts(
-        xaxis_opts=opts.AxisOpts(
-            type_="category",
-            name="Month",
-            boundary_gap=false
-        ),
-        yaxis_opts=opts.AxisOpts(
-            type_="value",
-            name="Amount",
-            axistick_opts=opts.AxisTickOpts(is_show=true),
-            splitline_opts=opts.SplitLineOpts(is_show=true),
-        ),
-        title_opts=opts.TitleOpts(title="Sales and Profit over Time",is_show=false),
+        title_opts=opts.TitleOpts(is_show=False),  # 确保标题不显示
+        xaxis_opts=opts.AxisOpts(type_="category", name="Month", boundary_gap=False),
+        yaxis_opts=opts.AxisOpts(type_="value", name="Amount", axistick_opts=opts.AxisTickOpts(is_show=True), splitline_opts=opts.SplitLineOpts(is_show=True)),
+        legend_opts=opts.LegendOpts(is_show=True, type_="scroll"),  # 显示滚动图例
         datazoom_opts=[
             opts.DataZoomOpts(
+<<<<<<< HEAD
                 # 设置 x 轴 dataZoom
                 id_="dataZoomX",
                 type_="slider",
@@ -251,17 +244,24 @@ Pay attention to check whether the sql statement in the code block is correct an
                 id_="dataZoomY",
                 type_="inside",
                 yAxisIndex=[0],  # 控制 y 轴
+=======
+                is_show=True, id_="dataZoomX", type_="slider",
+                xaxis_index=[0], range_start=0, range_end=100, orient="horizontal",
+                pos_bottom="0px", pos_left="1%", pos_right="1%"
+            ),
+            opts.DataZoomOpts(
+                is_show=True, id_="dataZoomY", type_="slider",
+                yaxis_index=[0], range_start=0, range_end=100, orient="vertical",
+                pos_top="0px", pos_right="1%", pos_bottom="3%"
+>>>>>>> origin/bugfix
             ),
         ],
-        legend_opts=opts.LegendOpts(
-            type_="scroll",  # 设置图例类型为滚动
-        ),
         toolbox_opts=opts.ToolboxOpts(
-            is_show=true,
+            is_show=True,
             feature={
                 "dataZoom": opts.ToolBoxFeatureDataZoomOpts(),
-                "dataView": opts.ToolBoxFeatureDataViewOpts(),
-                "magicType": opts.ToolBoxFeatureMagicTypeOpts(type_=['line', 'bar','stack']),
+                "dataView": opts.ToolBoxFeatureDataViewOpts(is_show=True),
+                "magicType": opts.ToolBoxFeatureMagicTypeOpts(type_=['line', 'bar', 'stack']),
                 "restore": opts.ToolBoxFeatureRestoreOpts(),
                 "saveAsImage": opts.ToolBoxFeatureSaveAsImageOpts(),
             },
@@ -270,8 +270,8 @@ Pay attention to check whether the sql statement in the code block is correct an
 
     line.set_series_opts(
         areastyle_opts=opts.AreaStyleOpts(opacity=0.5),
+        label_opts=opts.LabelOpts(is_show=False)  # 确保标签不显示
     )
-
     ret_json = line.dump_options()
     echart_code = json.loads(ret_json)
 
@@ -287,82 +287,64 @@ Pay attention to check whether the sql statement in the code block is correct an
     from pyecharts import options as opts
     import json
 
+    # 数据库连接配置
     connection = pymysql.connect(
         host='your_host',
         user='your_user',
         password='your_password',
         database='your_database',
-        port="your_port"
+        port=3306  # 确保端口号为整数
     )
 
-    query = "SELECT year, sales FROM your_table  WHERE DATE_FORMAT(`date`, '%Y') = '2018' "
+    # SQL查询语句
+    query = "SELECT YEAR(`date`) AS year, SUM(sales) AS sales FROM your_table GROUP BY year"
 
+    # 执行查询并关闭连接
     df = pd.read_sql(query, con=connection)
-
     connection.close()
 
-    years = [str(_) for _ in df['year'].tolist()]
-    sales = [float(_) for _ in df['sales'].tolist()]
+    # 数据排序
+    df.sort_values('year', inplace=True)
 
+    # 提取年份和销售数据
+    years = [str(year) for year in df['year'].tolist()]
+    sales = [float(sale) for sale in df['sales'].tolist()]
+
+    # 绘制柱状图
     bar = Bar()
     bar.add_xaxis(years)
-    bar.add_yaxis("Sales", sales)
+    bar.add_yaxis("Sales", sales, label_opts=opts.LabelOpts(is_show=False))
     bar.set_global_opts(
-        xaxis_opts=opts.AxisOpts(
-            type_="category",
-            name="Year",
-        ),
-        yaxis_opts=opts.AxisOpts(
-            type_="value",
-            name="Sales",
-        ),
-        title_opts=opts.TitleOpts(title="Sales over Years",false),
+        title_opts=opts.TitleOpts(is_show=False),  # 隐藏标题
+        xaxis_opts=opts.AxisOpts(type_="category", name="Year"),
+        yaxis_opts=opts.AxisOpts(type_="value", name="Sales"),
+        legend_opts=opts.LegendOpts(is_show=True, type_="scroll", pos_top="1%"),
         datazoom_opts=[
             opts.DataZoomOpts(
-                # 设置 x 轴 dataZoom
-                id_="dataZoomX",
-                type_="slider",
-                xAxisIndex=[0],  # 控制 x 轴
+                is_show=True, type_="slider", xaxis_index=[0], pos_left="1%", pos_bottom="0px"
             ),
             opts.DataZoomOpts(
-                # 设置 y 轴 dataZoom
-                id_="dataZoomY",
-                type_="slider",
-                yAxisIndex=[0],  # 控制 y 轴
-            ),
-            opts.DataZoomOpts(
-                # 设置 x 轴 dataZoom
-                id_="dataZoomX",
-                type_="inside",
-                xAxisIndex=[0],  # 控制 x 轴
-            ),
-            opts.DataZoomOpts(
-                # 设置 y 轴 dataZoom
-                id_="dataZoomY",
-                type_="inside",
-                yAxisIndex=[0],  # 控制 y 轴
+                is_show=True, type_="slider", yaxis_index=[0], pos_right="1%", pos_top="0px"
             ),
         ],
-        legend_opts=opts.LegendOpts(
-            type_="scroll",  # 设置图例类型为滚动
-        ),
         toolbox_opts=opts.ToolboxOpts(
-            is_show=true,
+            is_show=True, orient='vertical', pos_left="1%", pos_top="15%",
             feature={
                 "dataZoom": opts.ToolBoxFeatureDataZoomOpts(),
-                "dataView": opts.ToolBoxFeatureDataViewOpts(),
-                "magicType": opts.ToolBoxFeatureMagicTypeOpts(type_=['line', 'bar','stack']),
+                "dataView": opts.ToolBoxFeatureDataViewOpts(is_show=True),
+                "magicType": opts.ToolBoxFeatureMagicTypeOpts(type_=['line', 'bar', 'stack']),
                 "restore": opts.ToolBoxFeatureRestoreOpts(),
                 "saveAsImage": opts.ToolBoxFeatureSaveAsImageOpts(),
             },
         ),
     )
 
+    # 生成并输出图表配置
     ret_json = bar.dump_options()
     echart_code = json.loads(ret_json)
 
-    out_put = [{"echart_name": "Sales over Years", "echart_code": echart_code}]
-    print(out_put)
+    output = [{"echart_name": "Sales over Years", "echart_code": echart_code}]
+    print(output)
     </code>
 
 

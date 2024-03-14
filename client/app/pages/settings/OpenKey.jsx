@@ -11,7 +11,8 @@ import routes from "@/services/routes";
 import { axios } from "@/services/axios";
 import Link from "@/components/Link";
 import QuestionCircleOutlinedIcon from "@ant-design/icons/QuestionCircleOutlined";
-import { websocket, createWebSocket, closeWebSocket } from "../testdialogue/components/Dialogue/websocket";
+// import { websocket, createWebSocket, closeWebSocket } from "../testdialogue/components/Dialogue/websocket";
+import { API_CHAT } from '../testdialogue/components/Dialogue/const';
 import toast from "react-hot-toast";
 
 const SettingsOpenKey = () => {
@@ -37,7 +38,6 @@ const SettingsOpenKey = () => {
         AzureHost: Azure.AzureHost || "",
       });
     }
-    createWebSocket();
     setDisabled(false);
   }, [form]);
 
@@ -70,7 +70,6 @@ const SettingsOpenKey = () => {
             return;
           }
           toast.success(window.W_L.save_success);
-          closeWebSocket();
           getOpenKey();
         } else {
           toast.error(window.W_L.save_failed);
@@ -95,28 +94,19 @@ const SettingsOpenKey = () => {
     }
     handOpenKey(values);
   };
-  const handleMessage = () => {
+  const handleMessage = (data) => {
     try {
-      websocket.onmessage = async event => {
-        let data = JSON.parse(event.data);
         if (data.receiver === "api") {
           toast.success(data.data.content);
           setDisabled(false);
         }
-      };
     } catch (error) {
       setDisabled(false);
     }
   };
-  const connectTest = values => {
-    if (!websocket) {
-      createWebSocket();
-      return;
-    }
-    handleMessage();
-
+  const connectTest = async (values) => {
     setDisabled(true);
-    let sendInfo = {
+    let messageData = {
       state: 200,
       receiver: "sender",
       chat_type: "test",
@@ -126,7 +116,54 @@ const SettingsOpenKey = () => {
         language_mode: window.W_L.language_mode,
       },
     };
-    websocket.send(JSON.stringify(sendInfo));
+    try {
+      const response = await fetch(API_CHAT, {
+        method: 'POST',
+        headers: {
+          'Access-Control-Allow-Origin': '*',
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(messageData),
+      });
+  
+      // 检查浏览器是否支持ReadableStream
+      if (response.body && response.body.getReader) {
+        const reader = response.body.getReader();
+        const decoder = new TextDecoder();
+  
+        // 读取数据
+        reader.read().then(function processText({ done, value }) {
+          if (done) {
+            console.log("Stream complete");
+            return;
+          }
+  
+          // 解码并处理接收到的数据
+          const chunk = decoder.decode(value);
+          console.log('Received chunk:', chunk);
+          // 假设服务器发送的是JSON字符串，尝试解析并更新状态
+          try {
+            const data = JSON.parse(chunk);
+            console.log('Parsed JSON:', data)
+            handleMessage(data);
+            // 更新状态或UI
+            // setState(prevState => ({
+            //   ...prevState,
+            //   messages: [...prevState.messages, { content: data.message, sender: "bot" }],
+            // }));
+          } catch (error) {
+            console.error('Error parsing JSON:', error);
+          }
+  
+          // 递归调用以读取下一个数据块
+          reader.read().then(processText);
+        });
+      } else {
+        console.log('Streaming not supported');
+      }
+    } catch (error) {
+      console.error('Fetch error:', error);
+    }
   };
   const handleConnectTestClick = () => {
     form.validateFields().then(values => {

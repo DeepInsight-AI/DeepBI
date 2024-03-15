@@ -476,6 +476,8 @@ const Dialogue = (props) => {
       // }
     } catch (error) {
       console.log(error, 'socket_error');
+      setLoadingMask(false);
+      setLoadingState(false);
     }
   }, [state, setState, props]);
 
@@ -550,7 +552,9 @@ const Dialogue = (props) => {
 
   const isSendTableDate = useCallback(async (data_type) => {
     let baseMessageContent = {}; // 初始化一个空对象来构建base_message内容
-
+    setState(prevState => ({ ...prevState,data_type }));
+    setLoadingMask(true);
+    setLoadingState(true);
     // 检查是否已经缓存了数据，如果已缓存，则直接使用缓存的数据
     if (cachedTableDesc) {
       baseMessageContent = {
@@ -577,6 +581,8 @@ const Dialogue = (props) => {
         setCachedTableDesc(results); // 缓存请求的结果
       } catch (err) {
         console.log(err, 'first_error');
+        setLoadingMask(false);
+        setLoadingState(false);
       }
     }
 
@@ -850,6 +856,8 @@ const Dialogue = (props) => {
         const processText = async ({ done, value }) => {
           if (done) {
             console.log("Stream complete");
+            setLoadingMask(false);
+            setLoadingState(false);
             return;
           }
 
@@ -883,6 +891,8 @@ const Dialogue = (props) => {
       }
     } catch (error) {
       console.error('Fetch error:', error);
+      setLoadingMask(false);
+      setLoadingState(false);
     }
   }, [state, isSendTableDate]);
 

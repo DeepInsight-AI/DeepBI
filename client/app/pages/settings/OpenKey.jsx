@@ -98,9 +98,15 @@ const SettingsOpenKey = () => {
   const handleMessage = (data) => {
     try {
         if (data.receiver === "api") {
-          toast.success(data.data.content);
+          if (data.state === 200) {
+            toast.success(data.data.content);
+          }else{
+            toast.error(data.data.content);
+          }
+          
           setDisabled(false);
         }
+        
     } catch (error) {
       setDisabled(false);
     }

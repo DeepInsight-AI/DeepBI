@@ -562,9 +562,9 @@ const Dialogue = (props) => {
       const promises = CharttableD_date.current.tableName.map(async (item) => {
         const res = await axios.get(`/api/data_table/columns/${Charttable_id.current}/${item.name}`);
         return {
-          table_name: res.data.table_name,
-          table_comment: res.data.table_desc,
-          field_desc: filterColumnsByInUse(res.data.table_columns_info)
+          table_name: res.table_name,
+          table_comment: res.table_desc,
+          field_desc: filterColumnsByInUse(res.table_columns_info)
         };
       });
 

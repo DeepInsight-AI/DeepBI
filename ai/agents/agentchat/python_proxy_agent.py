@@ -736,15 +736,23 @@ class PythonProxyAgent(Agent):
             else:
                 json_data = str(logs)
                 # Pattern to find keys without quotes (lookahead and lookbehind to ensure matching only keys)
+                echarts_code = json_data.replace("'", '"')
                 pattern_keys_without_quotes = r'(?<={|,)\s*(\w+)\s*(?=:)'
                 # Replace keys without quotes with quoted keys
-                fixed_keys = re.sub(pattern_keys_without_quotes, r'"\1"', json_data)
+                fixed_keys = re.sub(pattern_keys_without_quotes, r'"\1"', echarts_code)
                 json_data = re.sub(r'\b(True|False)\b', lambda m: m.group(1).lower(), fixed_keys)
                 try:
                     logs = json.loads(json_data)
                     for entry in logs:
                         if 'echart_name' in entry and 'echart_code' in entry:
-                            # 如果满足条件，则打印并添加到base_content
+                            # 确保echart_code是一个字典
+                            if isinstance(entry['echart_code'], str):
+                                # 如果echart_code是字符串，尝试将其解析为字典
+                                try:
+                                    entry['echart_code'] = json.loads(entry['echart_code'])
+                                except json.JSONDecodeError:
+                                    # 如果解析失败，跳过当前entry
+                                    continue
                             base_content.append(entry)
                     for echart in base_content:
                         for serie in echart['echart_code']['series']:
@@ -763,6 +771,7 @@ class PythonProxyAgent(Agent):
                     for echart in base_content:
                         echart_name = echart['echart_name']
                         series_data = []
+                        count=0
                         for serie in echart['echart_code']['series']:
                             try:
                                 seri_info = {
@@ -775,9 +784,14 @@ class PythonProxyAgent(Agent):
                                     'type': serie['type'],
                                     'data': serie['data']
                                 }
-                            series_data.append(seri_info)
+                        for data in seri_info['data']:
+                            count+=1
+                            if count<=2000:
+                                series_data.append(seri_info)
+                            else:
+                                break
                         if "xAxis" in echart["echart_code"]:
-                            xAxis_data = echart['echart_code']['xAxis'][0]['data']
+                            xAxis_data = echart['echart_code']['xAxis'][0]['data'][:count]
                             if "%Y-%m" in xAxis_data:
                                 return True,f"exitcode:exitcode failed\nCode output:The SQL code query is incorrect. The query date should be %, not %%. Just for example: SELECT DATE_FORMAT(event_time, '%Y-%m-%d') is correct, but SELECT DATE_FORMAT(event_time, '%%Y -%%m-%%d') is wrong!"
                             echart_dict = {

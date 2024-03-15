@@ -15,19 +15,21 @@ message_pool: ChatMemoryManager = ChatMemoryManager(name="message_pool")
 
 
 class ChatClass:
-    def __init__(self, websocket, path):
+    def __init__(self, websocket, user_name, user_id, message,chat_id):
         self.ws = websocket
         self.incoming = asyncio.Queue()
         self.outgoing = asyncio.Queue()
-        self.path = path
+        # self.path = path
         # Messages that cannot be processed currently are temporarily stored.
         self.delay_messages = {'user': [], 'bi': {'mysql_code': [], 'chart_code': [],
                                                   'delete_chart': [], 'ask_data': []}, 'close': []}
 
         # Generate unique session ID
         session_id = str(id(websocket))
-        self.user_name = path.split('/')[-1] + '_' + session_id
-        self.uid = self.user_name.split('_')[0]
+        self.user_name = user_name + '_' + session_id
+        self.uid = user_id
+        self.chat_id = chat_id
+        self.message = message
 
         print(str(time.strftime("%Y-%m-%d %H:%M:%S",
                                 time.localtime())) + ' ---- ' + " New user connected successfully:{}".format(
@@ -62,7 +64,7 @@ class ChatClass:
 
     async def get_message(self):
         """ Receive messages and put them into the [pending] message queue """
-        msg_in = await self.ws.recv()
+        msg_in = self.message
         await self.incoming.put(msg_in)
         got_mess = str(time.strftime("%Y-%m-%d %H:%M:%S",
                                      time.localtime())) + ' ---- ' + "from user:[{}".format(
@@ -89,12 +91,13 @@ class ChatClass:
     async def consume(self):
         """ Process received messages """
         try:
-            message = await self.incoming.get()
+            # message = await self.incoming.get()
 
             # do something 'consuming' :)
             result = {'state': 200, 'data': {}, 'receiver': ''}
 
-            json_str = json.loads(message)
+            # json_str = json.loads(self.message)
+            json_str = self.message
             print(json_str)
 
             if json_str.get('sender'):
@@ -123,35 +126,35 @@ class ChatClass:
                 elif q_chat_type == 'chat':
                     if q_database == 'mysql':
                         print(" q_database ==  mysql ")
-                        await self.analysisMysql.deal_question(json_str, message)
+                        await self.analysisMysql.deal_question(json_str, self.message)
                     elif q_database == 'csv':
-                        await self.analysisCsv.deal_question(json_str, message)
+                        await self.analysisCsv.deal_question(json_str, self.message)
                     elif q_database == 'pg':
                         # postgresql
-                        await self.analysisPostgresql.deal_question(json_str, message)
+                        await self.analysisPostgresql.deal_question(json_str, self.message)
                     elif q_database == 'starrocks':
                         print(" q_database ==  starrocks ")
-                        await self.analysisStarrocks.deal_question(json_str, message)
+                        await self.analysisStarrocks.deal_question(json_str, self.message)
                     elif q_database == 'mongodb':
                         print(" q_database ==  mongodb ")
-                        await self.analysisMongoDB.deal_question(json_str, message)
+                        await self.analysisMongoDB.deal_question(json_str, self.message)
 
                 elif q_chat_type == 'report':
                     if q_database == 'mysql':
-                        await self.reportMysql.deal_report(json_str, message)
+                        await self.reportMysql.deal_report(json_str, self.message)
                     elif q_database == 'pg':
-                        await self.reportPostgresql.deal_report(json_str, message)
+                        await self.reportPostgresql.deal_report(json_str, self.message)
                     elif q_database == 'starrocks':
-                        await self.reportStarrocks.deal_report(json_str, message)
+                        await self.reportStarrocks.deal_report(json_str, self.message)
                     elif q_database == 'mongodb':
-                        await self.reportMongoDB.deal_report(json_str, message)
+                        await self.reportMongoDB.deal_report(json_str, self.message)
                 elif q_chat_type == 'autopilot':
                     if q_database == 'mysql':
-                        await self.autopilotMysql.deal_question(json_str, message)
+                        await self.autopilotMysql.deal_question(json_str, self.message)
                     elif q_database == 'starrocks':
-                        await self.autopilotMysql.deal_question(json_str, message)
+                        await self.autopilotMysql.deal_question(json_str, self.message)
                     elif q_database == 'mongodb':
-                        await self.autopilotMongoDB.deal_question(json_str, message)
+                        await self.autopilotMongoDB.deal_question(json_str, self.message)
 
             else:
                 result['state'] = 500

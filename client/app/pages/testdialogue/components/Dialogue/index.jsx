@@ -240,6 +240,7 @@ const Dialogue = (props) => {
     }
     await sendSocketMessage(code, 'bi', 'mysql_comment', content)
   }, [setState, sendSocketMessage]);
+
   const mergeObj = (obj1, obj2) => {
     let obj3 = JSON.parse(JSON.stringify(obj1));
     obj2.table_desc.forEach((item, index) => {
@@ -322,9 +323,14 @@ const Dialogue = (props) => {
       if (data.receiver === 'user') {
         setState(prevState => ({
           ...prevState,
+          // messages: prevState.messages.map((message, i) =>
+          //   i === prevState.messages.length - 1 && message.sender === "bot"
+          //     ? { ...message, content: data.data.content, Cardloading: false, time: moment().format('YYYY-MM-DD HH:mm') }
+          //     : message
+          // ),
           messages: prevState.messages.map((message, i) =>
-            i === prevState.messages.length - 1 && message.sender === "bot"
-              ? { ...message, content: data.data.content, Cardloading: false, time: moment().format('YYYY-MM-DD HH:mm') }
+            message.sender === "bot" && message.chat_id === data.chat_id
+              ? { ...message, content: data.data.content, Cardloading: false }
               : message
           ),
         }));
@@ -400,7 +406,7 @@ const Dialogue = (props) => {
             });
           } else {
             setState({
-              messages: [{ content: data.data.content, sender: "bot", Cardloading: false, time: moment().format('YYYY-MM-DD HH:mm') }],
+              messages: [{ content: data.data.content, sender: "bot", Cardloading: false, chat_id: data.chat_id}],
               // loadingMask: false,
               // sendTableDate: 1,
               data_type: "mysql_comment_first"
@@ -444,7 +450,7 @@ const Dialogue = (props) => {
         }
         setState(prevState => ({
           messages: prevState.messages.map((message, i) =>
-            i === prevState.messages.length - 1 && message.sender === "bot"
+            message.sender === "bot" && message.chat_id === data.chat_id
               ? { ...message, logData: [...(message.logData || []), data.data.content] }
               : message
           )
@@ -453,7 +459,7 @@ const Dialogue = (props) => {
         if (data.data.data_type === 'echart_code') {
           setState(prevState => ({
             messages: prevState.messages.map((message, i) =>
-              i === prevState.messages.length - 1 && message.sender === "bot"
+            message.sender === "bot" && message.chat_id === data.chat_id
                 ? { ...message, chart: data.data.content }
                 : message
             ),
@@ -589,7 +595,7 @@ const Dialogue = (props) => {
     return baseMessageContent;
   }, [state, setState, handleSocketMessage, sendSocketMessage]);
 
-
+// 发送对话消息
   const handleSendMessage1 = useCallback(async () => {
     // handleSocketMessage();
 
@@ -597,10 +603,12 @@ const Dialogue = (props) => {
     if (inputMessage.trim() === "") {
       return;
     }
+    const chat_id = moment().valueOf();
+    console("当前对话标识==",chat_id)
     setState(prevState => ({
       ...prevState,
       newInputMessage: inputMessage,
-      messages: [...messages, { content: inputMessage, sender: "user", time: moment().format('YYYY-MM-DD HH:mm') }, { content: "", sender: "bot", Cardloading: true }],
+      messages: [...messages, { content: inputMessage, sender: "user", chat_id }, { content: "", sender: "bot", Cardloading: true ,chat_id }],
       inputMessage: "",
       data_type: "question"
     }));
@@ -611,7 +619,7 @@ const Dialogue = (props) => {
     //   return
     // }
     const baseMessageContent = await isSendTableDate("mysql_comment_first"); 
-    await sendSocketMessage(200, 'user', 'question', inputMessage,0,baseMessageContent);
+    await sendSocketMessage(200, 'user', 'question', inputMessage,0,baseMessageContent,chat_id);
   }, [state, setState, handleSocketMessage, scrollToBottom, sendSocketMessage, isSendTableDate]);
 
   const handleSendMessage = useCallback(() => {
@@ -817,10 +825,11 @@ const Dialogue = (props) => {
   // }, [state]);
 
 
-  const sendSocketMessage = useCallback(async (state, sender, data_type, content, id = 0,base_message=null) => {
+  const sendSocketMessage = useCallback(async (state, sender, data_type, content, id = 0,base_message=null,chat_id = 0) => {
     const messageData = {
       user_id: currentUser.id,
       user_name: currentUser.name,
+      chat_id,
       message: {
         state,
         database: sourceTypeRef.current,

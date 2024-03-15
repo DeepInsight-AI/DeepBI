@@ -4,7 +4,7 @@ from dotenv import load_dotenv
 load_dotenv()
 from flask import Flask, request, jsonify, stream_with_context, Response
 from flask_cors import CORS,cross_origin
-from ai.backend.chat_task1 import ChatClass
+from ai.backend.chat_task import ChatClass
 import time  # 用于模拟延迟
 import json
 import asyncio
@@ -19,9 +19,16 @@ app = Flask(__name__)
 class MockWebSocket:
     def __init__(self):
         self.messages = []
+        self.chat_id = 0
         pass
+    
+    def set_chat_id(self, chat_id):
+        self.chat_id = chat_id
 
     async def send(self, message):
+        message = json.loads(message)
+        message['chat_id'] = self.chat_id
+        message = json.dumps(message)
         message_with_delimiter = message + "---ENDOFMESSAGE---"
         self.messages.append(message_with_delimiter)
         print("Message to send:", message_with_delimiter)  
@@ -108,6 +115,7 @@ def chat():
     print("message: ", message)
     print("chat_id: ", chat_id)
     mock_socket = MockWebSocket()
+    mock_socket.set_chat_id(chat_id)
     
     # return Response(stream_with_context(asyncio.run(demo1(mock_socket))), mimetype='text/event-stream')
     return Response(stream_with_context(generate_stream(mock_socket, user_name, user_id, message,chat_id)), mimetype='text/event-stream')

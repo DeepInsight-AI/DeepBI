@@ -732,30 +732,105 @@ const handleSocketMessage = useCallback(async (event) => {
 //     websocket.send(JSON.stringify(messgaeInfo));
 // }, [state]);
 
-  const sendSocketMessage =  useCallback( async (state, sender, data_type, content,id=0) => {
-    // const messageData = {
-    //   "message": "你好",
-    //   "user_id": currentUser.id,
-    //   "user_name": currentUser.name,
-    //   "chat_id": new Date().getTime()
-    // };
+  // const sendSocketMessage =  useCallback( async (state, sender, data_type, content,id=0) => {
+  //   // const messageData = {
+  //   //   "message": "你好",
+  //   //   "user_id": currentUser.id,
+  //   //   "user_name": currentUser.name,
+  //   //   "chat_id": new Date().getTime()
+  //   // };
+  //   const messageData = {
+  //     user_id: currentUser.id,
+  //     user_name: currentUser.name,
+  //     message:{
+  //       state,
+  //       database:sourceTypeRef.current,
+  //       sender,
+  //       chat_type,
+  //       data: {
+  //         data_type,
+  //         databases_id:Charttable_id.current || 0,
+  //         language_mode:window.W_L.language_mode,
+  //         content,
+  //       },
+  //       id
+  //     }
+  //   }
+  //   try {
+  //     const response = await fetch(API_CHAT, {
+  //       method: 'POST',
+  //       headers: {
+  //         'Access-Control-Allow-Origin': '*',
+  //         'Content-Type': 'application/json',
+  //       },
+  //       body: JSON.stringify(messageData),
+  //     });
+  
+  //     // 检查浏览器是否支持ReadableStream
+  //     if (response.body && response.body.getReader) {
+  //       const reader = response.body.getReader();
+  //       const decoder = new TextDecoder();
+  
+  //       // 读取数据
+  //       reader.read().then(function processText({ done, value }) {
+  //         if (done) {
+  //           console.log("Stream complete");
+  //           return;
+  //         }
+  
+  //         // 解码并处理接收到的数据
+  //         const chunk = decoder.decode(value);
+  //         console.log('Received chunk:', chunk);
+  //         setState(prevState => ({
+  //           ...prevState,
+  //           testFetchMessage: prevState.testFetchMessage + chunk,
+  //         }));
+  //         console.log('new testFetchMessage:', state.testFetchMessage);
+  //         // 假设服务器发送的是JSON字符串，尝试解析并更新状态
+  //         try {
+  //           const data = JSON.parse(chunk);
+  //           console.log('Parsed JSON:', data)
+  //           handleSocketMessage(data);
+  //           // 更新状态或UI
+  //           // setState(prevState => ({
+  //           //   ...prevState,
+  //           //   messages: [...prevState.messages, { content: data.message, sender: "bot" }],
+  //           // }));
+  //         } catch (error) {
+  //           console.error('Error parsing JSON:', error);
+  //         }
+  
+  //         // 递归调用以读取下一个数据块
+  //         reader.read().then(processText);
+  //       });
+  //     } else {
+  //       console.log('Streaming not supported');
+  //     }
+  //   } catch (error) {
+  //     console.error('Fetch error:', error);
+  //   }
+  // }, [state]);
+
+
+  const sendSocketMessage = useCallback(async (state, sender, data_type, content, id = 0) => {
     const messageData = {
       user_id: currentUser.id,
       user_name: currentUser.name,
-      message:{
+      message: {
         state,
-        database:sourceTypeRef.current,
+        database: sourceTypeRef.current,
         sender,
         chat_type,
         data: {
           data_type,
-          databases_id:Charttable_id.current || 0,
-          language_mode:window.W_L.language_mode,
+          databases_id: Charttable_id.current || 0,
+          language_mode: window.W_L.language_mode,
           content,
         },
         id
       }
-    }
+    };
+  
     try {
       const response = await fetch(API_CHAT, {
         method: 'POST',
@@ -766,43 +841,43 @@ const handleSocketMessage = useCallback(async (event) => {
         body: JSON.stringify(messageData),
       });
   
-      // 检查浏览器是否支持ReadableStream
       if (response.body && response.body.getReader) {
         const reader = response.body.getReader();
         const decoder = new TextDecoder();
+        let buffer = '';
   
-        // 读取数据
-        reader.read().then(function processText({ done, value }) {
+        // 递归函数处理流数据
+        const processText = async ({ done, value }) => {
           if (done) {
             console.log("Stream complete");
             return;
           }
   
-          // 解码并处理接收到的数据
-          const chunk = decoder.decode(value);
-          console.log('Received chunk:', chunk);
-          setState(prevState => ({
-            ...prevState,
-            testFetchMessage: prevState.testFetchMessage + chunk,
-          }));
-          console.log('new testFetchMessage:', state.testFetchMessage);
-          // 假设服务器发送的是JSON字符串，尝试解析并更新状态
-          try {
-            const data = JSON.parse(chunk);
-            console.log('Parsed JSON:', data)
-            handleSocketMessage(data);
-            // 更新状态或UI
-            // setState(prevState => ({
-            //   ...prevState,
-            //   messages: [...prevState.messages, { content: data.message, sender: "bot" }],
-            // }));
-          } catch (error) {
-            console.error('Error parsing JSON:', error);
-          }
+          // 累积数据块
+          buffer += decoder.decode(value, { stream: true });
+          // 分割完整消息
+          let parts = buffer.split('---ENDOFMESSAGE---');
+          console.log('Received buffer:', buffer);
+          console.log('Received parts:', parts);
+          buffer = parts.pop(); // 保留未完成的部分
   
-          // 递归调用以读取下一个数据块
+          parts.forEach(part => {
+            try {
+              
+              const data = JSON.parse(part);
+              console.log('Parsed JSON:', data)
+              handleSocketMessage(data); // 处理解析后的消息
+            } catch (error) {
+              console.error('Error parsing JSON:', error);
+            }
+          });
+  
+          // 继续读取下一个数据块
           reader.read().then(processText);
-        });
+        };
+  
+        // 开始读取数据
+        reader.read().then(processText);
       } else {
         console.log('Streaming not supported');
       }
@@ -810,7 +885,6 @@ const handleSocketMessage = useCallback(async (event) => {
       console.error('Fetch error:', error);
     }
   }, [state]);
-
 
   const { new_sql,testAndVerifySql } = useSql(Charttable_id.current,sendSocketMessage,errorSetting);
   const { saveChart,dashboardsId,publishQuery }=useChartCode(sendSocketMessage,saveDashboardId, props, successSetting,CharttableD_date.current,new_sql,dashboardId,sendDashId);

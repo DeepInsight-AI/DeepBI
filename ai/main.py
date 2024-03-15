@@ -1,3 +1,7 @@
+from dotenv import load_dotenv
+
+# 加载 .env 文件中的环境变量
+load_dotenv()
 from flask import Flask, request, jsonify, stream_with_context, Response
 from flask_cors import CORS,cross_origin
 from ai.backend.chat_task1 import ChatClass
@@ -18,8 +22,9 @@ class MockWebSocket:
         pass
 
     async def send(self, message):
-        self.messages.append(message)
-        print("Message to send:", message)       
+        message_with_delimiter = message + "---ENDOFMESSAGE---"
+        self.messages.append(message_with_delimiter)
+        print("Message to send:", message_with_delimiter)  
 
 # async def demo1(mock_socket):
 #     result_message = {
@@ -80,6 +85,7 @@ def generate_stream(mock_socket, user_name, user_id, message,chat_id):
         while thread.is_alive() or mock_socket.messages:
             if mock_socket.messages:
                 message = mock_socket.messages.pop(0)
+                print('send message: ', message)
                 yield f"{message}\n\n"
             else:
                 time.sleep(1)

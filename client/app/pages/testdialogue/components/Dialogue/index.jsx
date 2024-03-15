@@ -604,7 +604,7 @@ const Dialogue = (props) => {
       return;
     }
     const chat_id = moment().valueOf();
-    console("当前对话标识==",chat_id)
+    console.log("当前对话标识==",chat_id)
     setState(prevState => ({
       ...prevState,
       newInputMessage: inputMessage,

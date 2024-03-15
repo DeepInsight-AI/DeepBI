@@ -811,7 +811,7 @@ const Dialogue = (props) => {
   // }, [state]);
 
 
-  const sendSocketMessage = useCallback((state, sender, data_type, content, id = 0,base_message=null) => {
+  const sendSocketMessage = useCallback(async (state, sender, data_type, content, id = 0,base_message=null) => {
     const messageData = {
       user_id: currentUser.id,
       user_name: currentUser.name,

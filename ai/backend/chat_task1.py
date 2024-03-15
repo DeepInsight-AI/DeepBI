@@ -126,18 +126,18 @@ class ChatClass:
                 elif q_chat_type == 'chat':
                     if q_database == 'mysql':
                         print(" q_database ==  mysql ")
-                        await self.analysisMysql.deal_question(json_str, self.message)
+                        await self.analysisMysql.deal_question(json_str, self.message.base_message)
                     elif q_database == 'csv':
-                        await self.analysisCsv.deal_question(json_str, self.message)
+                        await self.analysisCsv.deal_question(json_str, self.message.base_message)
                     elif q_database == 'pg':
                         # postgresql
-                        await self.analysisPostgresql.deal_question(json_str, self.message)
+                        await self.analysisPostgresql.deal_question(json_str, self.message.base_message)
                     elif q_database == 'starrocks':
                         print(" q_database ==  starrocks ")
-                        await self.analysisStarrocks.deal_question(json_str, self.message)
+                        await self.analysisStarrocks.deal_question(json_str, self.message.base_message)
                     elif q_database == 'mongodb':
                         print(" q_database ==  mongodb ")
-                        await self.analysisMongoDB.deal_question(json_str, self.message)
+                        await self.analysisMongoDB.deal_question(json_str, self.message.base_message)
 
                 elif q_chat_type == 'report':
                     if q_database == 'mysql':

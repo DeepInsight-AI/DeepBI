@@ -643,7 +643,7 @@ const Dialogue = (props) => {
   const onUse = useCallback(async () => {
     const data_type = "mysql_comment_first"
     const baseMessageContent = await isSendTableDate(data_type); 
-    await sendSocketMessage(200, 'bi', data_type,"", 0, baseMessageContent);
+    await sendSocketMessage(200, 'bi', data_type,baseMessageContent);
   }, [isSendTableDate]);
 
 

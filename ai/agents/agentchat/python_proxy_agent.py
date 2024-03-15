@@ -770,37 +770,51 @@ class PythonProxyAgent(Agent):
                     # 初始化一个空列表来保存每个echart的信息
                     echarts_data = []
                     # 遍历echarts_code列表，提取数据并构造字典
-                    for echart in base_content:
-                        echart_name = echart['echart_name']
-                        series_data = []
-                        for serie in echart['echart_code']['series']:
-                            try:
-                                seri_info = {
-                                    'type': serie['type'],
-                                    'name': serie['name'],
-                                    'data': serie['data']
-                                }
-                            except Exception as e:
-                                seri_info = {
-                                    'type': serie['type'],
-                                    'data': serie['data']
-                                }
-                            series_data.append(seri_info)
-                        if "xAxis" in echart["echart_code"]:
-                            xAxis_data = echart['echart_code']['xAxis'][0]['data']
-                            if "%Y-%m" in xAxis_data:
-                                return True,f"exitcode:exitcode failed\nCode output:The SQL code query is incorrect. The query date should be %, not %%. Just for example: SELECT DATE_FORMAT(event_time, '%Y-%m-%d') is correct, but SELECT DATE_FORMAT(event_time, '%%Y -%%m-%%d') is wrong!"
-                            echart_dict = {
-                                'echart_name': echart_name,
-                                'series': series_data,
-                                'xAxis_data': xAxis_data
-                            }
-                        else:
-                            echart_dict = {
-                                'echart_name': echart_name,
-                                'series': series_data,
-                            }
-                        echarts_data.append(echart_dict)
+                    # for echart in base_content:
+                    #     echart_name = echart['echart_name']
+                    #     series_data = []
+                    #     for serie in echart['echart_code']['series']:
+                    #         try:
+                    #             seri_info = {
+                    #                 'type': serie['type'],
+                    #                 'name': serie['name'],
+                    #                 'data': serie['data']
+                    #             }
+                    #         except Exception as e:
+                    #             seri_info = {
+                    #                 'type': serie['type'],
+                    #                 'data': serie['data']
+                    #             }
+                    #         series_data.append(seri_info)
+                    #     if "xAxis" in echart["echart_code"]:
+                    #         xAxis_data = echart['echart_code']['xAxis'][0]['data']
+                    #         if "%Y-%m" in xAxis_data:
+                    #             return True,f"exitcode:exitcode failed\nCode output:The SQL code query is incorrect. The query date should be %, not %%. Just for example: SELECT DATE_FORMAT(event_time, '%Y-%m-%d') is correct, but SELECT DATE_FORMAT(event_time, '%%Y -%%m-%%d') is wrong!"
+                    #         echart_dict = {
+                    #             'echart_name': echart_name,
+                    #             'series': series_data,
+                    #             'xAxis_data': xAxis_data
+                    #         }
+                    #     else:
+                    #         echart_dict = {
+                    #             'echart_name': echart_name,
+                    #             'series': series_data,
+                    #         }
+                    json_data_new = json.dumps(logs)
+                    data_new = json.loads(json_data_new)
+                    for entry in data_new:
+                        series = entry['echart_code']['series']
+                        for serie in series:
+                            data_list = serie.get('data', [])
+                            for item in data_list:
+                                if isinstance(item, dict) and 'value' in item:
+                                    item['value'] = format_decimal(item['value'])
+                                if len(echarts_data)<2000:
+                                    echarts_data.append(item)
+                                else:
+                                    break
+                            if len(echarts_data) > 2000:
+                                break
                     agent_instance_util = AgentInstanceUtil(user_name=str(self.user_name),
                                                             delay_messages=self.delay_messages,
                                                             outgoing=self.outgoing,

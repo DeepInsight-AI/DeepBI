@@ -738,6 +738,19 @@ const Dialogue = (props) => {
         message.abortController.abort();
         // 从ref中移除已取消的AbortController实例
         abortControllersRef.current = abortControllersRef.current.filter(ac => ac !== message.abortController);
+        setState(prevState => ({
+          ...prevState,
+          messages: prevState.messages.map((item, index) => {
+            if (item.chat_id === message.chat_id) {
+              return {
+                ...item,
+                Cardloading: false
+              }
+            } else {
+              return item
+            }
+          })
+        }));
       } catch (error) {
         console.error(error, 'cancelRequest_error');
       }

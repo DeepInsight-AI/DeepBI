@@ -95,7 +95,7 @@ const DialogueContent = forwardRef(({
               if (e && e.target) {
                 const newValue = e.target.value;
                 console.log("newValue===",newValue)
-                setInputState(prevState => ({ ...prevState, inputMessage: newValue}));
+                setInputState(newValue);
               }
             }}
             placeholder={window.W_L.send_me_instructions}

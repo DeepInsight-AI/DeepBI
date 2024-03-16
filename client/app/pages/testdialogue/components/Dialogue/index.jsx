@@ -43,15 +43,14 @@ const Dialogue = (props) => {
   const MAX_QUESTIONS = 5; // 假设最大问题数为5
   const abortControllersRef = useRef([]); // 使用ref来跟踪所有的AbortController实例
   let timeoutId = null;
+  const [inputMessage, setInputMessage] = useState("");// 输入的消息
   const [state, setState] = useState({
     messages: [], // 对话记录
     lockReconnect: false,
     data_type: null, // 数据类型
     logData: [], // logData
   });
-  const [inputState, setInputState] = useState({
-    inputMessage: "", // 输入的消息
-  });
+ 
   useEffect(() => {
     if (state.logData) {
       new_logData.current = state.logData;
@@ -609,7 +608,6 @@ const Dialogue = (props) => {
 // 发送对话消息1
   const handleSendMessage1 = useCallback(async () => {
     const { messages } = state;
-    const { inputMessage } = inputState;
     console.log("inputMessage==",inputMessage)
     if (inputMessage.trim() === "") {
       console.log("inputMessage.trim() === ''",inputMessage.trim() === '')
@@ -633,7 +631,7 @@ const Dialogue = (props) => {
       messages: [...messages, { content: inputMessage, sender: "user", chat_id,time:moment().format('YYYY-MM-DD HH:mm') }, { content: "", sender: "bot", Cardloading: true ,chat_id,abortController }],
       data_type: "question"
     }));
-    setInputState(prevState => ({ ...prevState, inputMessage: "" }));
+    setInputMessage("");
     setLoadingState(true);
     scrollToBottom();
     
@@ -957,7 +955,6 @@ const Dialogue = (props) => {
   const { setDialogueStorageDashboardId, addDashboard, getDashboard, addDialogueStorage, getDialogueStorage, addChatList, getAllStorage, addAutopilotStorage } = dialogueStorage();
   //   const Dialogue = () => {
   const { messages } = state;
-  const { inputMessage } = inputState;
 
   return (
     <DialogueContext.Provider value={{ cancelRequest }}>

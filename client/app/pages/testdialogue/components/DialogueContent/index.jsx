@@ -88,7 +88,7 @@ const DialogueContent = forwardRef(({
             <TextArea
             bordered={false}
             style={{ resize: 'none', maxHeight: '100px !important', fontSize: '15px', border: 'none !important' }}
-            value={inputMessage}
+            value={inputMessage.current}
             className="gpt-input"
             onChange={(e) => {
               if (e && e.target) {

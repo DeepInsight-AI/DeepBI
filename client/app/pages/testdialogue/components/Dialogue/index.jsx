@@ -330,7 +330,7 @@ const Dialogue = (props) => {
           // ),
           messages: prevState.messages.map((message, i) =>
             message.sender === "bot" && message.chat_id === data.chat_id
-              ? { ...message, content: data.data.content, Cardloading: false }
+              ? { ...message, content: data.data.content, Cardloading: false,time:moment().format('YYYY-MM-DD HH:mm') }
               : message
           ),
         }));
@@ -406,7 +406,7 @@ const Dialogue = (props) => {
             });
           } else {
             setState({
-              messages: [{ content: data.data.content, sender: "bot", Cardloading: false, chat_id: data.chat_id}],
+              messages: [{ content: data.data.content, sender: "bot", Cardloading: false, chat_id: data.chat_id,time:moment().format('YYYY-MM-DD HH:mm')}],
               // loadingMask: false,
               // sendTableDate: 1,
               data_type: "mysql_comment_first"
@@ -608,7 +608,7 @@ const Dialogue = (props) => {
     setState(prevState => ({
       ...prevState,
       newInputMessage: inputMessage,
-      messages: [...messages, { content: inputMessage, sender: "user", chat_id }, { content: "", sender: "bot", Cardloading: true ,chat_id }],
+      messages: [...messages, { content: inputMessage, sender: "user", chat_id,time:moment().format('YYYY-MM-DD HH:mm') }, { content: "", sender: "bot", Cardloading: true ,chat_id }],
       inputMessage: "",
       data_type: "question"
     }));

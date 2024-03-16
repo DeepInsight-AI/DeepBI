@@ -2,7 +2,6 @@ import React, { useRef, useEffect, useState, useMemo } from "react";
 import { PropTypes } from "prop-types";
 import { currentUser } from "@/services/auth";
 import EChartsChart from "../Echarts/Echarts";
-import AutoPilot from "../AutoPilot/AutoPilot";
 import LogWorkflow from "../LogWorkflow"
 import Copy from "../Copy/Copy.jsx";
 import AutoPilotInfo from "../AutoPilotInfo/AutoPilotInfo.jsx";
@@ -51,9 +50,6 @@ const TypingCard = (props) => {
     return chat_type === "autopilot" ? <AutoPilotInfo databases_type={databases_type}/> : <div className={`Chat ${sender}`}>{source}</div>;
   }, [chat_type, sender, source]);
 
-  const renderAutoPilot = useMemo(() => {
-    return autopilot ? <AutoPilot content={autopilot} /> : null;
-  }, [autopilot]);
   return (
     <div className={`message ${chat_type}`} onMouseLeave={() => setShowComponent(false)}>
       <>

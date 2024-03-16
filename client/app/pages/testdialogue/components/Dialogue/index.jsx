@@ -45,14 +45,13 @@ const Dialogue = (props) => {
   let timeoutId = null;
   const [state, setState] = useState({
     messages: [], // 对话记录
-    inputMessage: "", // 输入的消息
     lockReconnect: false,
     data_type: null, // 数据类型
-    newInputMessage: "",
-    testFetchMessage: "",
     logData: [], // logData
   });
-
+  const [inputState, setInputState] = useState({
+    inputMessage: "", // 输入的消息
+  });
   useEffect(() => {
     if (state.logData) {
       new_logData.current = state.logData;
@@ -609,7 +608,8 @@ const Dialogue = (props) => {
 
 // 发送对话消息1
   const handleSendMessage1 = useCallback(async () => {
-    const { inputMessage, messages } = state;
+    const { messages } = state;
+    const { inputMessage } = inputState;
     if (inputMessage.trim() === "") {
       return;
     }
@@ -628,11 +628,10 @@ const Dialogue = (props) => {
     abortControllersRef.current.push(abortController);
     setState(prevState => ({
       ...prevState,
-      newInputMessage: inputMessage,
       messages: [...messages, { content: inputMessage, sender: "user", chat_id,time:moment().format('YYYY-MM-DD HH:mm') }, { content: "", sender: "bot", Cardloading: true ,chat_id,abortController }],
-      inputMessage: "",
       data_type: "question"
     }));
+    setInputState(prevState => ({ ...prevState, inputMessage: "" }));
     setLoadingState(true);
     scrollToBottom();
     
@@ -955,7 +954,7 @@ const Dialogue = (props) => {
   const { saveChart, dashboardsId, publishQuery } = useChartCode(sendSocketMessage, saveDashboardId, props, successSetting, CharttableD_date.current, new_sql, dashboardId, sendDashId);
   const { setDialogueStorageDashboardId, addDashboard, getDashboard, addDialogueStorage, getDialogueStorage, addChatList, getAllStorage, addAutopilotStorage } = dialogueStorage();
   //   const Dialogue = () => {
-  const { messages, inputMessage, newInputMessage, testFetchMessage } = state;
+  const { messages, inputMessage } = state;
 
   return (
     <DialogueContext.Provider value={{ cancelRequest }}>
@@ -977,8 +976,7 @@ const Dialogue = (props) => {
         loadingState={LoadingState}
         stopSend={stopSend}
         inputMessage={inputMessage}
-        newInputMessage={newInputMessage}
-        setState={setState}
+        setInputState={setInputState}
         handleSendMessage={handleSendMessage}
         chat_type={chat_type}
         retry={retry}

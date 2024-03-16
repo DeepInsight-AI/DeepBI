@@ -1164,7 +1164,7 @@ class HumanProxyAgent(Agent):
             }
 
             send_json_str = json.dumps(result_message)
-            await self.outgoing.put(send_json_str)
+            await self.websocket.send(send_json_str)
 
         except Exception as e:
             # print(e)

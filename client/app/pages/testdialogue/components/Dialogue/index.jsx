@@ -52,13 +52,6 @@ const Dialogue = (props) => {
     logData: [], // logData
   });
   
-  const fn = (value) => {
-    // 设置两次更新，第二次传入一个接收上次更新后 count 的函数，并返回最新的 count
-    setInputMessage(value);
-    setInputMessage((value) => {
-      return value;
-    })
-   } 
 
   useEffect(() => {
     if (state.logData) {
@@ -647,7 +640,7 @@ const Dialogue = (props) => {
     const baseMessageContent = await isSendTableDate("mysql_comment_first"); 
     await sendSocketMessage(200, 'user', 'question', inputMessage,0,baseMessageContent,chat_id,abortController.signal);
     abortControllersRef.current = abortControllersRef.current.filter(ac => ac !== abortController);
-  }, [state, setState, scrollToBottom, sendSocketMessage, isSendTableDate]);
+  }, [state, setState, inputMessage, setInputMessage, scrollToBottom, sendSocketMessage, isSendTableDate]);
 
   // 发送对话消息0
   const handleSendMessage = useCallback(() => {
@@ -985,7 +978,7 @@ const Dialogue = (props) => {
         loadingState={LoadingState}
         stopSend={stopSend}
         inputMessage={inputMessage}
-        setInputMessage={fn}
+        setInputMessage={setInputMessage}
         handleSendMessage={handleSendMessage}
         chat_type={chat_type}
         retry={retry}

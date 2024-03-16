@@ -939,7 +939,7 @@ const Dialogue = (props) => {
   const { messages, inputMessage, newInputMessage, testFetchMessage } = state;
 
   return (
-    <DialogueContext value={{ cancelRequest }}>
+    <DialogueContext.Provider value={{ cancelRequest }}>
     <div className="dialogue-content">
       <DialogueTop loadingMask={LoadingMask} Charttable={CharttableDate} CharttableItem={Charttable_item.current} closeDialogue={closeDialogue} chat_type={chat_type}></DialogueTop>
       {/* <OpenKey ref={OpenKeyRef}></OpenKey> */}
@@ -969,7 +969,7 @@ const Dialogue = (props) => {
         sourceTypeRef={sourceTypeRef}
       />
     </div>
-    </DialogueContext>
+    </DialogueContext.Provider>
   );
 }
 

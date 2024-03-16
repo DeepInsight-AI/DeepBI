@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useContext } from 'react';
 import copy from "@/assets/images/copy.png";
 import toast from "react-hot-toast";
 // import Retry from "@/assets/images/retry.png";

@@ -34,7 +34,7 @@ const TypingCard = (props) => {
   }, [index, message]);
 
   const renderChart = useMemo(() => {
-    return chart ? <EChartsChart content={message.chart} /> : null;
+    return message.chart ? <EChartsChart content={message.chart} /> : null;
   }, [message]);
 
   const renderChatContent = useMemo(() => {
@@ -53,7 +53,7 @@ const TypingCard = (props) => {
   return (
     <div className={`message ${chat_type}`} onMouseLeave={() => setShowComponent(false)}>
       <>
-        <div className={`info${message.sender}-time`}>{chat_type==="autopilot"?"":time}</div>
+        <div className={`info${message.sender}-time`}>{chat_type==="autopilot"?"":message.time}</div>
         <div className={`chat${message.sender}`} onMouseEnter={() => setShowComponent(true)}>
           {
             chat_type!=="autopilot"&&
@@ -71,8 +71,8 @@ const TypingCard = (props) => {
           )}
         </div>
 
-        {showComponent && !Cardloading&&chat_type!=="autopilot" && <Copy index={index} source={source} message={message} />}
-        {Cardloading&&chat_type=="chat" && <Copy index={index} source={source} message={message} />}
+        {showComponent && !message.Cardloading&&chat_type!=="autopilot" && <Copy index={index} source={source} message={message} />}
+        {message.Cardloading && chat_type === "chat" && <Copy index={index} source={source} message={message} />}
       </>
     </div>
   );

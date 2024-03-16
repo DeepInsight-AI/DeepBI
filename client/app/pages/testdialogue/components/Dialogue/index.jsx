@@ -187,6 +187,7 @@ const Dialogue = (props) => {
       addAutopilotStorage(existingDialogueStorage);
     }
   }
+
   // clearStorage
   const closeDialogue = () => {
     closeSetMessage();
@@ -570,9 +571,12 @@ const Dialogue = (props) => {
   // 获取数据库字段信息
   const isSendTableDate = useCallback(async (data_type) => {
     let baseMessageContent = {}; // 初始化一个空对象来构建base_message内容
-    setState(prevState => ({ ...prevState,data_type }));
-    setLoadingMask(true);
-    setLoadingState(true);
+    
+    if(data_type === "mysql_comment_first"){
+      setState(prevState => ({ ...prevState,data_type }));
+      setLoadingMask(true);
+      setLoadingState(true);
+    }
     // 检查是否已经缓存了数据，如果已缓存，则直接使用缓存的数据
     if (cachedTableDesc) {
       baseMessageContent = {
@@ -637,7 +641,7 @@ const Dialogue = (props) => {
     setLoadingState(true);
     scrollToBottom();
     
-    const baseMessageContent = await isSendTableDate("mysql_comment_first"); 
+    const baseMessageContent = await isSendTableDate("mysql_comment_second"); 
     await sendSocketMessage(200, 'user', 'question', inputMessage,0,baseMessageContent,chat_id,abortController.signal);
     abortControllersRef.current = abortControllersRef.current.filter(ac => ac !== abortController);
   }, [state, setState, inputMessage, setInputMessage, scrollToBottom, sendSocketMessage, isSendTableDate]);

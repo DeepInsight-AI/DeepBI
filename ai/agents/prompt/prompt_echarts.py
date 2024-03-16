@@ -219,32 +219,6 @@ Pay attention to check whether the sql statement in the code block is correct an
         legend_opts=opts.LegendOpts(is_show=True, type_="scroll"),  # 显示滚动图例
         datazoom_opts=[
             opts.DataZoomOpts(
-<<<<<<< HEAD
-                # 设置 x 轴 dataZoom
-                id_="dataZoomX",
-                type_="slider",
-                xAxisIndex=[0],  # 控制 x 轴
-                bottom: "below",
-            ),
-            opts.DataZoomOpts(
-                # 设置 y 轴 dataZoom
-                id_="dataZoomY",
-                type_="slider",
-                yAxisIndex=[0],  # 控制 y 轴
-            ),
-            opts.DataZoomOpts(
-                # 设置 x 轴 dataZoom
-                id_="dataZoomX",
-                type_="inside",
-                xAxisIndex=[0],  # 控制 x 轴
-                bottom: "below",
-            ),
-            opts.DataZoomOpts(
-                # 设置 y 轴 dataZoom
-                id_="dataZoomY",
-                type_="inside",
-                yAxisIndex=[0],  # 控制 y 轴
-=======
                 is_show=True, id_="dataZoomX", type_="slider",
                 xaxis_index=[0], range_start=0, range_end=100, orient="horizontal",
                 pos_bottom="0px", pos_left="1%", pos_right="1%"
@@ -253,7 +227,6 @@ Pay attention to check whether the sql statement in the code block is correct an
                 is_show=True, id_="dataZoomY", type_="slider",
                 yaxis_index=[0], range_start=0, range_end=100, orient="vertical",
                 pos_top="0px", pos_right="1%", pos_bottom="3%"
->>>>>>> origin/bugfix
             ),
         ],
         toolbox_opts=opts.ToolboxOpts(

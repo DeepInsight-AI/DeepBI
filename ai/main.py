@@ -109,7 +109,7 @@ def chat():
     user_id = data['user_id']
     user_name = data['user_name']
     message = data['message']
-    chat_id = 1
+    chat_id = data['chat_id']
     print("user_id: ", user_id)
     print("user_name: ", user_name)
     print("message: ", message)

@@ -14,46 +14,51 @@ import moment from "moment";
 import { API_CHAT } from './const';
 import { currentUser } from "@/services/auth";
 const Dialogue = (props) => {
-  const { chat_type, sendUrl, uuid } = props
-  const OpenKeyRef = useRef();
-  const DialogueContentRef = useRef();
-  const new_logData = useRef([]);
-  const messagesRef = useRef();
-  const Charttable_id = useRef(null);
-  const Charttable_item = useRef({});
-  const Dashboard_id = useRef(null);
-  const CharttableD_date = useRef(null);
-  const [dashboardId, setDashboardId] = useState(null);
-  const [CharttableDate, setCharttableDate] = useState(null);
+  const DialogueContext = React.createContext();
+
+  const { chat_type, sendUrl, uuid } = props 
+  const OpenKeyRef = useRef(); // 打开key
+  const DialogueContentRef = useRef(); // 对话内容
+  const new_logData = useRef([]); // 新的logData
+  const messagesRef = useRef(); // 对话记录
+  const Charttable_id = useRef(null); // Charttable_id
+  const Charttable_item = useRef({}); // Charttable_item
+  const Dashboard_id = useRef(null); // Dashboard_id
+  const CharttableD_date = useRef(null); // CharttableD_date
+  const [dashboardId, setDashboardId] = useState(null); // dashboardId
+  const [CharttableDate, setCharttableDate] = useState(null); 
   const [LoadingState, setLoadingState] = useState(false);
-  const [startUse, setStartUse] = useState(false);
-  const [SendTableDate, setSendTableDate] = useState(0);
-  const [LoadingMask, setLoadingMask] = useState(false);
+  const [startUse, setStartUse] = useState(false); // 初始化状态
+  const [SendTableDate, setSendTableDate] = useState(0); // 发送表格状态
+  const [LoadingMask, setLoadingMask] = useState(false); // 加载状态
   const [selectTableName, setSelectTableName] = useState([]);
-  const [selectTableDesc, setSelectTableDesc] = useState({});
-  const selectTableDescRef = useRef();
-  const selectTableNameRef = useRef();
-  const [ConfirmLoading, setConfirmLoading] = useState(false);
-  const sourceTypeRef = useRef("mysql");
-  const [percent, setPercent] = useState(0);
+  const [selectTableDesc, setSelectTableDesc] = useState({}); // 
+  const selectTableDescRef = useRef(); // 保存selectTableDesc
+  const selectTableNameRef = useRef(); // 保存selectTableName
+  const [ConfirmLoading, setConfirmLoading] = useState(false); // 确认加载
+  const sourceTypeRef = useRef("mysql"); // 数据库类型
+  const [percent, setPercent] = useState(0); // 进度条
   const [cachedTableDesc, setCachedTableDesc] = useState(null); // 添加一个状态来缓存数据
+  const MAX_QUESTIONS = 5; // 假设最大问题数为5
+  const abortControllersRef = useRef([]); // 使用ref来跟踪所有的AbortController实例
   let timeoutId = null;
   const [state, setState] = useState({
-    messages: [],
-    inputMessage: "",
+    messages: [], // 对话记录
+    inputMessage: "", // 输入的消息
     lockReconnect: false,
-    data_type: null,
+    data_type: null, // 数据类型
     newInputMessage: "",
     testFetchMessage: "",
-    logData: [],
+    logData: [], // logData
   });
-  useEffect(() => {
-  }, [chat_type])
+
   useEffect(() => {
     if (state.logData) {
       new_logData.current = state.logData;
     }
   }, [state.logData])
+
+  // 取历史对话记录
   useEffect(() => {
     getDialogueDashboardStorage();
   }, []);
@@ -63,6 +68,7 @@ const Dialogue = (props) => {
     }
 
   }, [uuid])
+  
   useEffect(() => {
     selectTableDescRef.current = selectTableDesc;
   }, [selectTableDesc]);
@@ -76,7 +82,7 @@ const Dialogue = (props) => {
 
 
 
-
+  // 获取历史对话记录
   const getDialogueDashboardStorage = (type = null) => {
     // || chat_type=="autopilot"
     if (chat_type === "chat" || chat_type === "report" || chat_type === "autopilot") {
@@ -241,6 +247,7 @@ const Dialogue = (props) => {
     await sendSocketMessage(code, 'bi', 'mysql_comment', content)
   }, [setState, sendSocketMessage]);
 
+  // 表数据合并
   const mergeObj = (obj1, obj2) => {
     let obj3 = JSON.parse(JSON.stringify(obj1));
     obj2.table_desc.forEach((item, index) => {
@@ -267,6 +274,8 @@ const Dialogue = (props) => {
     })
     return obj3
   }
+
+  // 提交成功处理
   const handleSuccess = async (tableId, table, isSendTableDateType = null) => {
     // console.log("table",table);
     // console.log("selectTableDescRef.current",selectTableDescRef.current);
@@ -297,6 +306,8 @@ const Dialogue = (props) => {
     }
 
   };
+
+  // 返回结果处理
   const handleSocketMessage = useCallback(async (event) => {
     // if (!lockReconnect) {
     //   createWebSocket();
@@ -487,13 +498,7 @@ const Dialogue = (props) => {
     }
   }, [state, setState, props]);
 
-  // websocket
-  // const openSocket = useCallback(() => {
-
-  //     createWebSocket();
-
-  //     handleSocketMessage()
-  //   }, []);
+  // 关闭对话框时保存对话记录
   const closeSetMessage = () => {
     if (chat_type === "chat" || chat_type === "report") {
       let allMessages = messagesRef.current;
@@ -504,10 +509,12 @@ const Dialogue = (props) => {
       addChatList(allMessages, chat_type);
     }
   }
+  // 保存对话记录
   useEffect(() => {
     messagesRef.current = state.messages;
   }, [state.messages]);
 
+  // 在组件卸载时保存对话记录
   useEffect(() => {
     // 将 closeSetMessage 函数封装以便在 beforeunload 事件中使用
     const handleBeforeUnload = () => {
@@ -525,6 +532,7 @@ const Dialogue = (props) => {
       closeSetMessage();
     };
   }, []);
+
 
   const onChange = useCallback((type, value = 0, item) => {
     // openSocket();
@@ -547,6 +555,7 @@ const Dialogue = (props) => {
     // schemaList(value,type);
   }, [setState, handleSocketMessage]);
 
+  
   const saveDashboardId = useCallback((key, value) => {
     if (key === 'dashboard_id') {
       Dashboard_id.current = value;
@@ -556,6 +565,8 @@ const Dialogue = (props) => {
     Charttable_id.current = value;
   }, []);
 
+
+  // 获取数据库字段信息
   const isSendTableDate = useCallback(async (data_type) => {
     let baseMessageContent = {}; // 初始化一个空对象来构建base_message内容
     setState(prevState => ({ ...prevState,data_type }));
@@ -595,49 +606,41 @@ const Dialogue = (props) => {
     return baseMessageContent;
   }, [state, setState, handleSocketMessage, sendSocketMessage]);
 
-// 发送对话消息
+// 发送对话消息1
   const handleSendMessage1 = useCallback(async () => {
-    // handleSocketMessage();
-
     const { inputMessage, messages } = state;
     if (inputMessage.trim() === "") {
       return;
     }
+    // 判断问题数是否超过最大问题数
+    const questionCount = messages.filter(message => message.sender === "bot" && message.Cardloading).length;
+    if (questionCount >= MAX_QUESTIONS) {
+      toast.error(window.W_L.too_many_questions);
+      return;
+    }
+    
     const chat_id = moment().valueOf();
     console.log("当前对话标识==",chat_id)
+    // 创建一个新的AbortController实例并保存其引用
+    const abortController = new AbortController();
+    abortControllersRef.current.push(abortController);
     setState(prevState => ({
       ...prevState,
       newInputMessage: inputMessage,
-      messages: [...messages, { content: inputMessage, sender: "user", chat_id,time:moment().format('YYYY-MM-DD HH:mm') }, { content: "", sender: "bot", Cardloading: true ,chat_id }],
+      messages: [...messages, { content: inputMessage, sender: "user", chat_id,time:moment().format('YYYY-MM-DD HH:mm') }, { content: "", sender: "bot", Cardloading: true ,chat_id,abortController }],
       inputMessage: "",
       data_type: "question"
     }));
     setLoadingState(true);
     scrollToBottom();
-    // if (SendTableDate === 0 && messages.length >= 1) {
-    //   isSendTableDate("mysql_comment_second");
-    //   return
-    // }
+    
     const baseMessageContent = await isSendTableDate("mysql_comment_first"); 
-    await sendSocketMessage(200, 'user', 'question', inputMessage,0,baseMessageContent,chat_id);
-  }, [state, setState, handleSocketMessage, scrollToBottom, sendSocketMessage, isSendTableDate]);
+    await sendSocketMessage(200, 'user', 'question', inputMessage,0,baseMessageContent,chat_id,abortController.signal);
+    abortControllersRef.current = abortControllersRef.current.filter(ac => ac !== abortController);
+  }, [state, setState, scrollToBottom, sendSocketMessage, isSendTableDate]);
 
+  // 发送对话消息0
   const handleSendMessage = useCallback(() => {
-    const { inputMessage, messages } = state;
-    //  if(stopGeneration){
-    //   return
-    // }
-    // if (LoadingState) {
-    //   return
-    // }
-    // if (!lockReconnect) {
-    //   toast.error(window.W_L.connection_failed);
-    //   // setState(prevState => ({ ...prevState, sendTableDate: 0 }));
-    //   setSendTableDate(0);
-    //   setLoadingState(false);
-    //   openSocket();
-    //   return
-    // }
     if (!startUse) {
       return
     }
@@ -646,6 +649,7 @@ const Dialogue = (props) => {
     }
   }, [state, setState, handleSendMessage1]);
 
+  // error消息
   const errorSetting = useCallback(() => {
     // if(stopGeneration){
     //   return
@@ -654,20 +658,21 @@ const Dialogue = (props) => {
     // setState(prevState => ({ ...prevState, Cardloading: false }));
     setLoadingState(false);
   }, [setState]);
+
+  // 初始化对话 发送first
   const onUse = useCallback(async () => {
     const data_type = "mysql_comment_first"
     const baseMessageContent = await isSendTableDate(data_type); 
     await sendSocketMessage(200, 'bi', data_type,baseMessageContent);
   }, [isSendTableDate]);
 
-
-
+ // set data_type
   const setData_type = useCallback((value) => {
     setState(prevState => ({ ...prevState, data_type: value }));
   }, [setState]);
 
 
-
+  // 成功消息
   const successSetting = useCallback(() => {
     // if(stopGeneration){
     //   return
@@ -675,16 +680,19 @@ const Dialogue = (props) => {
     toast.success(window.W_L.report_generation_completed);
   }, []);
 
+  // 过滤表中使用字段
   function filterColumnsByInUse(columnsInfo) {
     return columnsInfo.field_desc.filter(column => column.in_use === 1);
   }
 
+  // 过滤表中使用字段
   const filterTableDesc = useCallback((tableDesc) => {
     return tableDesc.filter((item) => {
       return item.field_desc.some((field) => field.is_pass !== 1);
     });
   }, []);
 
+  // 滚动到底部
   const scrollToBottom = useCallback(() => {
     if (chat_type === "viewConversation") return
     if (timeoutId) {
@@ -703,13 +711,13 @@ const Dialogue = (props) => {
     }, 50);
   }, []);
 
-
-
   const ChangeScrollTop = useCallback(() => {
     setTimeout(() => {
       scrollToBottom()
     }, 100);
   }, []);
+
+  // 停止对话
   const stopSend = useCallback((type = null) => {
     // websocket&&websocket.close();
     setSendTableDate(type === "edit" ? 1 : 0);
@@ -717,12 +725,30 @@ const Dialogue = (props) => {
     // setStopGeneration(true);
     scrollToBottom();
   }, [setState]);
+
+  // 添加一个函数来取消特定的对话请求
+  const cancelRequest = useCallback((message) => {
+    console.log(message,"message====")
+    // 找到message与chat_id关联的内容的bot
+    if (message && message.abortController) {
+      message.abortController.abort();
+      // 从ref中移除已取消的AbortController实例
+      abortControllersRef.current = abortControllersRef.current.filter(ac => ac !== message.abortController);
+    }
+  }, []);
+
+
+  // 设置报表
   const sendDashId = useCallback((id) => {
     sendUrl(id);
     setDialogueStorageDashboardId(id)
   }, []);
+
+  // 重试
   const retry = useCallback((index) => {
   }, [setState, sendSocketMessage]);
+
+  // 打开key
   const onOpenKeyClick = useCallback(() => {
     // OpenKeyRef.current.showModal();
   }, [setState, OpenKeyRef]);
@@ -825,7 +851,8 @@ const Dialogue = (props) => {
   // }, [state]);
 
 
-  const sendSocketMessage = useCallback(async (state, sender, data_type, content, id = 0,base_message=null,chat_id = 0) => {
+  // fetch请求 
+  const sendSocketMessage = useCallback(async (state, sender, data_type, content, id = 0,base_message=null,chat_id = 0,signal=null) => {
     const messageData = {
       user_id: currentUser.id,
       user_name: currentUser.name,
@@ -852,6 +879,7 @@ const Dialogue = (props) => {
         headers: {
           'Access-Control-Allow-Origin': '*',
           'Content-Type': 'application/json',
+          'signal':signal
         },
         body: JSON.stringify(messageData),
       });
@@ -865,8 +893,6 @@ const Dialogue = (props) => {
         const processText = async ({ done, value }) => {
           if (done) {
             console.log("Stream complete");
-            setLoadingMask(false);
-            setLoadingState(false);
             return;
           }
 
@@ -912,6 +938,7 @@ const Dialogue = (props) => {
   const { messages, inputMessage, newInputMessage, testFetchMessage } = state;
 
   return (
+    <DialogueContext value={{ cancelRequest }}>
     <div className="dialogue-content">
       <DialogueTop loadingMask={LoadingMask} Charttable={CharttableDate} CharttableItem={Charttable_item.current} closeDialogue={closeDialogue} chat_type={chat_type}></DialogueTop>
       {/* <OpenKey ref={OpenKeyRef}></OpenKey> */}
@@ -941,6 +968,7 @@ const Dialogue = (props) => {
         sourceTypeRef={sourceTypeRef}
       />
     </div>
+    </DialogueContext>
   );
 }
 

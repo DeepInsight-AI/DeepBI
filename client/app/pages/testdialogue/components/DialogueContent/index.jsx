@@ -23,7 +23,6 @@ const DialogueContent = forwardRef(({
   setState, 
   handleSendMessage,
   chat_type,
-  retry,
   onOpenKeyClick,
   onSuccess,
   percent,
@@ -50,7 +49,18 @@ const DialogueContent = forwardRef(({
             }
           {messages.map((message, index) => (
             <div key={index} className="chat-content" style={{margin:chat_type==="report"?'0 30px':'',marginTop:index===0?"30px":""}}>
-                  <TypingCard databases_type={databases_type} chat_type={chat_type} autopilot={message.autopilot} chart={message.chart} logData={message.logData} sender={message.sender} time={message.time} Cardloading={message.Cardloading} source={message.content} index={index} ChangeScrollTop={ChangeScrollTop} retry={retry} />
+                  <TypingCard databases_type={databases_type} chat_type={chat_type} 
+                  // autopilot={message.autopilot}
+                  // chart={message.chart} 
+                  // logData={message.logData} 
+                  // sender={message.sender} 
+                  // time={message.time} 
+                  // Cardloading={message.Cardloading} 
+                  source={message.content} 
+                  message={message}
+                  index={index} 
+                  ChangeScrollTop={ChangeScrollTop} 
+                  />
             </div>
           ))}
         </div>

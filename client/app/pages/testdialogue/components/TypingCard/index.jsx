@@ -9,7 +9,7 @@ import "./index.less";
 import icon_small from "@/assets/images/icon_small.png";
 
 const TypingCard = (props) => {
-  const {databases_type, chat_type,autopilot,chart, source, logData, index, Cardloading, sender, time, ChangeScrollTop,retry } = props;
+  const {databases_type, chat_type, index,message,source, ChangeScrollTop } = props;
   const sourceEl = useRef();
   const [sourceText, setSourceText] = useState("");
   const [showComponent, setShowComponent] = useState(false);
@@ -30,12 +30,12 @@ const TypingCard = (props) => {
   }, [source , ChangeScrollTop]);
 
   const renderLogWorkflow = useMemo(() => {
-    return index === 0 ? null : <LogWorkflow Cardloading={Cardloading} logData={logData} />;
-  }, [index, Cardloading, logData]);
+    return index === 0 ? null : <LogWorkflow Cardloading={message.Cardloading} logData={message.logData} />;
+  }, [index, message]);
 
   const renderChart = useMemo(() => {
-    return chart ? <EChartsChart content={chart} /> : null;
-  }, [chart]);
+    return chart ? <EChartsChart content={message.chart} /> : null;
+  }, [message]);
 
   const renderChatContent = useMemo(() => {
     return (
@@ -47,23 +47,23 @@ const TypingCard = (props) => {
     );
   }, [sourceText]);
   const renderUser = useMemo(() => {
-    return chat_type === "autopilot" ? <AutoPilotInfo databases_type={databases_type}/> : <div className={`Chat ${sender}`}>{source}</div>;
-  }, [chat_type, sender, source]);
+    return chat_type === "autopilot" ? <AutoPilotInfo databases_type={databases_type}/> : <div className={`Chat ${message.sender}`}>{source}</div>;
+  }, [chat_type, message, source]);
 
   return (
     <div className={`message ${chat_type}`} onMouseLeave={() => setShowComponent(false)}>
       <>
-        <div className={`info${sender}-time`}>{chat_type==="autopilot"?"":time}</div>
-        <div className={`chat${sender}`} onMouseEnter={() => setShowComponent(true)}>
+        <div className={`info${message.sender}-time`}>{chat_type==="autopilot"?"":time}</div>
+        <div className={`chat${message.sender}`} onMouseEnter={() => setShowComponent(true)}>
           {
             chat_type!=="autopilot"&&
-            <img src={sender === "user" ? currentUser.profile_image_url : icon_small} alt="" />
+            <img src={message.sender === "user" ? currentUser.profile_image_url : icon_small} alt="" />
           }
-          {sender === "user" ?  
+          {message.sender === "user" ?  
           renderUser
           : 
           (
-            <div className={`Chat ${sender}`}>
+            <div className={`Chat ${message.sender}`}>
               {renderLogWorkflow}
               {renderChart}
               {renderChatContent}
@@ -71,7 +71,8 @@ const TypingCard = (props) => {
           )}
         </div>
 
-        {showComponent && !Cardloading&&chat_type!=="autopilot" && <Copy index={index} source={source} sender={sender} retry={retry} />}
+        {showComponent && !Cardloading&&chat_type!=="autopilot" && <Copy index={index} source={source} message={message} />}
+        {Cardloading&&chat_type=="chat" && <Copy index={index} source={source} message={message} />}
       </>
     </div>
   );

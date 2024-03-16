@@ -2,10 +2,14 @@ import React from "react";
 import copy from "@/assets/images/copy.png";
 import toast from "react-hot-toast";
 // import Retry from "@/assets/images/retry.png";
+import CopyOutlinedIcon from "@ant-design/icons/CopyOutlined";
+import PauseCircleOutlinedIcon from "@ant-design/icons/PauseCircleOutlined";
 import "./index.less";
 
 const Copy = props => {
-  const { sender, source } = props;
+  const { cancelRequest } = useContext(DialogueContext); // 在C中使用useContext
+
+  const { source, message } = props;
   const copyCentent = () => {
     try {
       const input = document.createElement("input");
@@ -27,20 +31,19 @@ const Copy = props => {
   //   retry(index)
   // }
   return (
-    <div className={`copy${sender}`}>
+    <div className={`copy${message.sender}`}>
       <div className="copt-item" onClick={copyCentent}>
         <img src={copy} alt="copy" />
+        <CopyOutlinedIcon className="gpt-btn-item-img"></CopyOutlinedIcon>
         <div className="copy-text">{window.W_L.copy}</div>
       </div>
-      {/* {
-            sender=="bot"?
-            <div className="copt-item" onClick={retryCentent}>
-            <img src={Retry} alt="" />
-            <div className="copy-text">{window.W_L.retry}</div>
+      {
+        message.sender === "bot" && message.Cardloading &&
+        <div className="copt-item" onClick={() => cancelRequest(message)}>
+          <PauseCircleOutlinedIcon className="gpt-btn-item-img"></PauseCircleOutlinedIcon>
+          <div className="copy-text">{window.W_L.stop_generation}</div>
         </div>
-        :
-        null
-        } */}
+      }
     </div>
   );
 };

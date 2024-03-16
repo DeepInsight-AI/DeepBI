@@ -623,7 +623,8 @@ const Dialogue = (props) => {
     const chat_id = moment().valueOf();
     console.log("当前对话标识==",chat_id)
     // 创建一个新的AbortController实例并保存其引用
-    const abortController = new window.AbortController();
+    // const abortController = new window.AbortController();
+    const abortController =undefined;
     abortControllersRef.current.push(abortController);
     setState(prevState => ({
       ...prevState,

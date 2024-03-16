@@ -167,7 +167,7 @@ class AnalysisMysql(Analysis):
                         table_comment = await self.select_table_comment(qustion_message, use_cache)
                         table_desc_length = len(table_comment['table_desc'])
                         if table_desc_length > 0:
-                            answer_message = await self.task_base_rag(qustion_message, table_comment, use_cache)
+                            answer_message = await self.task_generate_echart_rag(qustion_message, table_comment, use_cache)
                         else:
                             use_cache = False
                             continue

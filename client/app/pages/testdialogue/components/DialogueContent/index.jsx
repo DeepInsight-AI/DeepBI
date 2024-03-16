@@ -19,6 +19,7 @@ const DialogueContent = forwardRef(({
   loadingState, 
   stopSend, 
   inputMessage,
+  setInputMessage, 
   handleSendMessage,
   chat_type,
   onOpenKeyClick,
@@ -88,14 +89,13 @@ const DialogueContent = forwardRef(({
             <TextArea
             bordered={false}
             style={{ resize: 'none', maxHeight: '100px !important', fontSize: '15px', border: 'none !important' }}
-            value={inputMessage.current}
+            value={inputMessage}
             className="gpt-input"
             onChange={(e) => {
               if (e && e.target) {
                 const newValue = e.target.value;
                 console.log("newValue===",newValue)
-                // setInputMessage(newValue);
-                inputMessage.current = newValue;
+                setInputMessage(newValue);
               }
             }}
             placeholder={window.W_L.send_me_instructions}

@@ -30,18 +30,22 @@ const Copy = props => {
   // const cancelRequest = (index) => {
   //   // retry(index)
   // }
+  const isBotLoading = message.sender === "bot" && message.Cardloading;
   return (
     <div className={`copy${message.sender}`}>
-      <div className="copt-item" onClick={copyCentent}>
-        <img src={copy} alt="copy" />
-        <CopyOutlinedIcon className="gpt-btn-item-img"></CopyOutlinedIcon>
-        <div className="copy-text">{window.W_L.copy}</div>
-      </div>
       {
-        message.sender === "bot" && message.Cardloading &&
-        <div className="copt-item" onClick={() => cancelRequest(message)}>
-          <PauseCircleOutlinedIcon className="gpt-btn-item-img"></PauseCircleOutlinedIcon>
-          <div className="copy-text">{window.W_L.stop_generation}</div>
+        <div className="copy-item" onClick={isBotLoading ? () => cancelRequest(message) : copyCentent}>
+          {isBotLoading ? (
+            <>
+              <PauseCircleOutlinedIcon className="gpt-btn-item-img"></PauseCircleOutlinedIcon>
+              <div className="copy-text">{window.W_L.stop_generation}</div>
+            </>
+          ) : (
+            <>
+              <CopyOutlinedIcon className="gpt-btn-item-img"></CopyOutlinedIcon>
+              <div className="copy-text">{window.W_L.copy}</div>
+            </>
+          )}
         </div>
       }
     </div>

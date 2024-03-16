@@ -615,8 +615,9 @@ const Dialogue = (props) => {
     }
     // 判断问题数是否超过最大问题数
     const questionCount = messages.filter(message => message.sender === "bot" && message.Cardloading).length;
+    console.log("questionCount==",questionCount)
     if (questionCount >= MAX_QUESTIONS) {
-      toast.error(window.W_L.too_many_questions);
+      toast.error("问题数超过最大问题数");
       return;
     }
     
@@ -732,9 +733,14 @@ const Dialogue = (props) => {
     console.log(message,"message====")
     // 找到message与chat_id关联的内容的bot
     if (message && message.abortController) {
-      message.abortController.abort();
-      // 从ref中移除已取消的AbortController实例
-      abortControllersRef.current = abortControllersRef.current.filter(ac => ac !== message.abortController);
+      console.log(message.abortController,"message.abortController====")
+      try {
+        message.abortController.abort();
+        // 从ref中移除已取消的AbortController实例
+        abortControllersRef.current = abortControllersRef.current.filter(ac => ac !== message.abortController);
+      } catch (error) {
+        console.error(error, 'cancelRequest_error');
+      }
     }
   }, []);
 

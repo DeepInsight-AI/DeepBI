@@ -347,7 +347,7 @@ const Dialogue = (props) => {
           ),
         }));
         setLoadingState(false);
-        scrollToBottom();
+        // scrollToBottom();
       }
 
       if (data.state === 500) {
@@ -476,7 +476,7 @@ const Dialogue = (props) => {
                 : message
             ),
           }));
-          scrollToBottom();
+          // scrollToBottom();
         }
       }
       // else if(data.receiver === 'autopilot') {
@@ -886,9 +886,9 @@ const Dialogue = (props) => {
         headers: {
           'Access-Control-Allow-Origin': '*',
           'Content-Type': 'application/json',
-          'signal':signal
         },
         body: JSON.stringify(messageData),
+        signal
       });
 
       if (response.body && response.body.getReader) {

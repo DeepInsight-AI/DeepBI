@@ -25,9 +25,9 @@ const TypingCard = (props) => {
       setSourceText(source);
     }
     setTimeout(() => {
-      ChangeScrollTop();
+      // ChangeScrollTop();
     }, 0);
-  }, [source , ChangeScrollTop]);
+  }, [source ]);
 
   const renderLogWorkflow = useMemo(() => {
     return index === 0 ? null : <LogWorkflow Cardloading={message.Cardloading} logData={message.logData} />;

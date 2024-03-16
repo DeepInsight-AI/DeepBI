@@ -13,8 +13,9 @@ import "./index.less";
 import moment from "moment";
 import { API_CHAT } from './const';
 import { currentUser } from "@/services/auth";
+import DialogueContext from '../../context/MyContext';
+
 const Dialogue = (props) => {
-  const DialogueContext = React.createContext();
 
   const { chat_type, sendUrl, uuid } = props 
   const OpenKeyRef = useRef(); // 打开key
@@ -622,7 +623,7 @@ const Dialogue = (props) => {
     const chat_id = moment().valueOf();
     console.log("当前对话标识==",chat_id)
     // 创建一个新的AbortController实例并保存其引用
-    const abortController = new AbortController();
+    const abortController = new window.AbortController();
     abortControllersRef.current.push(abortController);
     setState(prevState => ({
       ...prevState,

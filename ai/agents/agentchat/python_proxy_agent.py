@@ -19,7 +19,7 @@ from ai.agents.code_utils import (
 import traceback
 from ai.backend.util.write_log import logger
 from ai.agents.code_utils import tell_logger
-from ai.backend.util.base_util import dbinfo_decode
+from ai.backend.util.base_util import dbinfo_decode, is_json
 from ai.backend.util import database_util
 import re
 try:
@@ -750,8 +750,22 @@ class PythonProxyAgent(Agent):
                 # Replace keys without quotes with quoted keys
                 fixed_keys = re.sub(pattern_keys_without_quotes, r'"\1"', json_data)
                 json_data = re.sub(r'\b(True|False)\b', lambda m: m.group(1).lower(), fixed_keys)
+                json_data = json_data.replace("'", "\"")
                 try:
-                    logs = json.loads(json_data)
+                    # 转json加判断逻辑
+                    # logs = json.loads(json_data)
+                    logs_new=[]
+                    if is_json(json_data):
+                        # 解析 JSON 格式字符串
+                        report_demand_list = json.loads(json_data)
+                    else:
+                        report_demand_list = ast.literal_eval(json_data)
+                    for jstr in report_demand_list:
+                        if isinstance(jstr, dict) and 'echart_name' in jstr and 'echart_code' in jstr:
+                            logs_new.append(jstr)
+                    logs = logs_new
+                    #以上为修改内容
+
                     for entry in logs:
                         if 'echart_name' in entry and 'echart_code' in entry:
                             # 如果满足条件，则打印并添加到base_content

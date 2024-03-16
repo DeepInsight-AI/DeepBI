@@ -954,7 +954,8 @@ const Dialogue = (props) => {
   const { saveChart, dashboardsId, publishQuery } = useChartCode(sendSocketMessage, saveDashboardId, props, successSetting, CharttableD_date.current, new_sql, dashboardId, sendDashId);
   const { setDialogueStorageDashboardId, addDashboard, getDashboard, addDialogueStorage, getDialogueStorage, addChatList, getAllStorage, addAutopilotStorage } = dialogueStorage();
   //   const Dialogue = () => {
-  const { messages, inputMessage } = state;
+  const { messages } = state;
+  const { inputMessage } = inputState;
 
   return (
     <DialogueContext.Provider value={{ cancelRequest }}>

@@ -976,7 +976,7 @@ const Dialogue = (props) => {
         loadingState={LoadingState}
         stopSend={stopSend}
         inputMessage={inputMessage}
-        setInputState={setInputState}
+        setInputMessage={setInputMessage}
         handleSendMessage={handleSendMessage}
         chat_type={chat_type}
         retry={retry}

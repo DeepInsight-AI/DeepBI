@@ -19,7 +19,7 @@ const DialogueContent = forwardRef(({
   loadingState, 
   stopSend, 
   inputMessage,
-  setInputState, 
+  setInputMessage, 
   handleSendMessage,
   chat_type,
   onOpenKeyClick,
@@ -95,7 +95,7 @@ const DialogueContent = forwardRef(({
               if (e && e.target) {
                 const newValue = e.target.value;
                 console.log("newValue===",newValue)
-                setInputState(newValue);
+                setInputMessage(newValue);
               }
             }}
             placeholder={window.W_L.send_me_instructions}

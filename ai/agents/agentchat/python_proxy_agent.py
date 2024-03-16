@@ -22,21 +22,25 @@ from ai.agents.code_utils import tell_logger
 from ai.backend.util.base_util import dbinfo_decode, is_json
 from ai.backend.util import database_util
 import re
+
 try:
     from termcolor import colored
 except ImportError:
 
     def colored(x, *args, **kwargs):
         return x
+
+
 def format_decimal(value):
     if isinstance(value, float):
-        if(value<0.05):
-            return round(value,6)
+        if (value < 0.05):
+            return round(value, 6)
         else:
             return round(value, 2)
     elif isinstance(value, int):
         return value
     return value
+
 
 class PythonProxyAgent(Agent):
     """(In preview) A class for generic conversable agents which can be configured as assistant or user proxy.
@@ -736,7 +740,7 @@ class PythonProxyAgent(Agent):
             length = 10000
             if not str(logs).__contains__('echart_name'):
                 if "html" in logs or "HTML" in logs:
-                    return True,f"exitcode:exitcode failed\nCode output:Please do not output html files. The front end cannot display them. Please generate the correct echarts code."
+                    return True, f"exitcode:exitcode failed\nCode output:Please do not output html files. The front end cannot display them. Please generate the correct echarts code."
                 if len(logs) > length:
                     print(' ++++++++++ Length exceeds 10000 characters limit, cropped  +++++++++++++++++')
                     logs = logs[:length]
@@ -754,7 +758,7 @@ class PythonProxyAgent(Agent):
                 try:
                     # 转json加判断逻辑
                     # logs = json.loads(json_data)
-                    logs_new=[]
+                    logs_new = []
                     if is_json(json_data):
                         # 解析 JSON 格式字符串
                         report_demand_list = json.loads(json_data)
@@ -764,7 +768,7 @@ class PythonProxyAgent(Agent):
                         if isinstance(jstr, dict) and 'echart_name' in jstr and 'echart_code' in jstr:
                             logs_new.append(jstr)
                     logs = logs_new
-                    #以上为修改内容
+                    # 以上为修改内容
 
                     for entry in logs:
                         if 'echart_name' in entry and 'echart_code' in entry:
@@ -823,7 +827,7 @@ class PythonProxyAgent(Agent):
                             for item in data_list:
                                 if isinstance(item, dict) and 'value' in item:
                                     item['value'] = format_decimal(item['value'])
-                                if len(echarts_data)<2000:
+                                if len(echarts_data) < 2000:
                                     echarts_data.append(item)
                                 else:
                                     break
@@ -852,10 +856,10 @@ class PythonProxyAgent(Agent):
                             re_str = await bi_proxy.run_echart_code(str(echart_code), echart_name)
                     return True, f"exitcode: {exitcode} ({exitcode2str})\nCode output: 图像已生成,请直接分析图表数据：{echarts_data}"
                 except Exception as e:
-                    return True,f"exitcode:exitcode failed\nCode output: {json_data},There is an error in the JSON code causing parsing errors,Please modify the JSON code for me:{traceback.format_exc()}\n"
+                    return True, f"exitcode:exitcode failed\nCode output: {json_data},There is an error in the JSON code causing parsing errors,Please modify the JSON code for me:{traceback.format_exc()}\n"
 
         code_execution_config["last_n_messages"] = last_n_messages
-        return False,None
+        return False, None
 
     async def generate_function_call_reply(
         self,

@@ -111,8 +111,13 @@ class AnalysisMysql(Analysis):
             for i in range(max_retry_times):
                 try:
                     if self.agent_instance_util.is_rag:
-                        table_comment = await self.select_table_comment(qustion_message)
-                        answer_message = await self.task_base_rag(qustion_message, table_comment, use_cache)
+                        table_comment = await self.select_table_comment(qustion_message, use_cache)
+                        table_desc_length = len(table_comment['table_desc'])
+                        if table_desc_length > 0:
+                            answer_message = await self.task_base_rag(qustion_message, table_comment, use_cache)
+                        else:
+                            use_cache = False
+                            continue
                     else:
                         base_mysql_assistant = self.agent_instance_util.get_agent_base_mysql_assistant(
                             use_cache=use_cache)
@@ -159,8 +164,13 @@ class AnalysisMysql(Analysis):
             for i in range(max_retry_times):
                 try:
                     if self.agent_instance_util.is_rag:
-                        table_comment = await self.select_table_comment(qustion_message)
-                        answer_message = await self.task_generate_echart_rag(qustion_message, table_comment, use_cache)
+                        table_comment = await self.select_table_comment(qustion_message, use_cache)
+                        table_desc_length = len(table_comment['table_desc'])
+                        if table_desc_length > 0:
+                            answer_message = await self.task_base_rag(qustion_message, table_comment, use_cache)
+                        else:
+                            use_cache = False
+                            continue
                     else:
                         mysql_echart_assistant = self.agent_instance_util.get_agent_mysql_echart_assistant(
                             use_cache=use_cache)
@@ -231,20 +241,20 @@ class AnalysisMysql(Analysis):
             logger.info(
                 "from user:[{}".format(self.user_name) + "] , " + "，report_demand_list" + str(report_demand_list))
 
-            bi_proxy = self.agent_instance_util.get_agent_bi_proxy()
-            is_chart = True
+            # bi_proxy = self.agent_instance_util.get_agent_bi_proxy()
+            is_chart = False
             # Call the interface to generate pictures
-            # for img_str in base_content:
-            #     echart_name = img_str.get('echart_name')
-            #     echart_code = img_str.get('echart_code')
-            #
-            #     if len(echart_code) > 0 and str(echart_code).__contains__('x'):
-            #         is_chart = True
-            #         print("echart_name : ", echart_name)
-            #         # 格式化echart_code
-            #         # if base_util.is_json(str(echart_code)):
-            #         #     json_obj = json.loads(str(echart_code))
-            #         #     echart_code = json.dumps(json_obj)
+            for img_str in base_content:
+                echart_name = img_str.get('echart_name')
+                echart_code = img_str.get('echart_code')
+
+                if len(echart_code) > 0 and str(echart_code).__contains__('x'):
+                    is_chart = True
+                    print("echart_name : ", echart_name)
+                    # 格式化echart_code
+                    # if base_util.is_json(str(echart_code)):
+                    #     json_obj = json.loads(str(echart_code))
+                    #     echart_code = json.dumps(json_obj)
             #
             #         re_str = await bi_proxy.run_echart_code(str(echart_code), echart_name)
             #         base_mess.append(re_str)

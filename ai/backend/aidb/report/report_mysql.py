@@ -108,8 +108,13 @@ class ReportMysql(Report):
             for i in range(max_retry_times):
                 try:
                     if self.agent_instance_util.is_rag:
-                        table_comment = await self.select_table_comment(qustion_message)
-                        answer_message = await self.task_generate_report_rag(qustion_message, table_comment)
+                        table_comment = await self.select_table_comment(qustion_message, use_cache)
+                        table_desc_length = len(table_comment['table_desc'])
+                        if table_desc_length > 0:
+                            answer_message = await self.task_base_rag(qustion_message, table_comment, use_cache)
+                        else:
+                            use_cache = False
+                            continue
                     else:
                         planner_user = self.agent_instance_util.get_agent_planner_user()
                         mysql_engineer = self.agent_instance_util.get_agent_mysql_engineer()

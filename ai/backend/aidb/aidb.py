@@ -11,7 +11,9 @@ from ai.backend.util import base_util
 import asyncio
 from requests.exceptions import HTTPError
 from ai.backend.language_info import LanguageInfo
-from ai.agents.agentchat import TaskSelectorAgent, TableSelectorAgent
+from ai.agents.agentchat import TableSelectorAgent
+
+max_retry_times = CONFIG.max_retry_times
 
 
 class AIDB:
@@ -477,7 +479,7 @@ class AIDB:
             error_message = error_message + ' ' + str(status_code) + ' ' + str(http_err.response.text)
         return error_message
 
-    def get_agent_select_table_assistant(self, db_info_json):
+    def get_agent_select_table_assistant(self, db_info_json, use_cache=True):
         """select_table_assistant"""
 
         table_names = []
@@ -519,8 +521,11 @@ class AIDB:
         )
         return select_analysis_assistant
 
-    async def select_table_comment(self, qustion_message):
-        select_table_assistant = self.get_agent_select_table_assistant(db_info_json=self.db_info_json)
+    async def select_table_comment(self, qustion_message, use_cache):
+
+
+        select_table_assistant = self.get_agent_select_table_assistant(db_info_json=self.db_info_json,
+                                                                       use_cache=use_cache)
         planner_user = self.agent_instance_util.get_agent_planner_user()
 
         await planner_user.initiate_chat(
@@ -539,24 +544,24 @@ class AIDB:
         select_table_list = json.loads(json_str)
         print("select_table_list : ", select_table_list)
 
-        delete_table_names = []
+        selece_table_names = []
         # for table_str in select_table_list:
         #     table_name = table_str.get("table_name")
         #     delete_table_names.append(table_name)
         for table_str in select_table_list:
             keyname = next(iter(table_str))
             if table_str[keyname] == "":
-                delete_table_names.append(keyname)
+                selece_table_names.append(keyname)
             else:
-                delete_table_names.append(table_str[keyname])
+                selece_table_names.append(table_str[keyname])
 
-        print("delete_table_names : ", delete_table_names)
+        print("selece_table_names : ", selece_table_names)
 
         table_comment = {'table_desc': [], 'databases_desc': ''}
 
         for table in self.db_info_json['table_desc']:
             # print('table : ', table)
-            if table['table_name'] in delete_table_names:
+            if table['table_name'] in selece_table_names:
                 table_comment['table_desc'].append(table)
 
         print('table_comment : ', table_comment)

@@ -43,7 +43,9 @@ const Dialogue = (props) => {
   const MAX_QUESTIONS = 5; // 假设最大问题数为5
   const abortControllersRef = useRef([]); // 使用ref来跟踪所有的AbortController实例
   let timeoutId = null;
-  const [inputMessage, setInputMessage] = useState("");// 输入的消息
+  // const [inputMessage, setInputMessage] = useState("");// 输入的消息
+  const inputMessage = useRef("");
+
   const [state, setState] = useState({
     messages: [], // 对话记录
     lockReconnect: false,
@@ -608,9 +610,9 @@ const Dialogue = (props) => {
 // 发送对话消息1
   const handleSendMessage1 = useCallback(async () => {
     const { messages } = state;
-    console.log("inputMessage==",inputMessage)
-    if (inputMessage.trim() === "") {
-      console.log("inputMessage.trim() === ''",inputMessage.trim() === '')
+    console.log("inputMessage==",inputMessage.current)
+    if (inputMessage.current.trim() === "") {
+      console.log("inputMessage.trim() === ''",inputMessage.current.trim() === '')
       return;
     }
     // 判断问题数是否超过最大问题数
@@ -628,15 +630,16 @@ const Dialogue = (props) => {
     abortControllersRef.current.push(abortController);
     setState(prevState => ({
       ...prevState,
-      messages: [...messages, { content: inputMessage, sender: "user", chat_id,time:moment().format('YYYY-MM-DD HH:mm') }, { content: "", sender: "bot", Cardloading: true ,chat_id,abortController }],
+      messages: [...messages, { content: inputMessage.current, sender: "user", chat_id,time:moment().format('YYYY-MM-DD HH:mm') }, { content: "", sender: "bot", Cardloading: true ,chat_id,abortController }],
       data_type: "question"
     }));
-    setInputMessage("");
+    // setInputMessage("");
+    inputMessage.current = "";
     setLoadingState(true);
     scrollToBottom();
     
     const baseMessageContent = await isSendTableDate("mysql_comment_first"); 
-    await sendSocketMessage(200, 'user', 'question', inputMessage,0,baseMessageContent,chat_id,abortController.signal);
+    await sendSocketMessage(200, 'user', 'question', inputMessage.current,0,baseMessageContent,chat_id,abortController.signal);
     abortControllersRef.current = abortControllersRef.current.filter(ac => ac !== abortController);
   }, [state, setState, scrollToBottom, sendSocketMessage, isSendTableDate]);
 
@@ -976,7 +979,6 @@ const Dialogue = (props) => {
         loadingState={LoadingState}
         stopSend={stopSend}
         inputMessage={inputMessage}
-        setInputMessage={setInputMessage}
         handleSendMessage={handleSendMessage}
         chat_type={chat_type}
         retry={retry}

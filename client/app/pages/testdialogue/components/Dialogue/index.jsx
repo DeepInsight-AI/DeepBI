@@ -13,7 +13,7 @@ import "./index.less";
 import moment from "moment";
 import { API_CHAT } from './const';
 import { currentUser } from "@/services/auth";
-// import DialogueContext from '../../context/MyContext';
+import DialogueContext from '../../context/DialogueContext.js';
 
 const Dialogue = (props) => {
 
@@ -623,8 +623,7 @@ const Dialogue = (props) => {
     const chat_id = moment().valueOf();
     console.log("当前对话标识==",chat_id)
     // 创建一个新的AbortController实例并保存其引用
-    // const abortController = new window.AbortController();
-    const abortController =undefined;
+    const abortController = new window.AbortController();
     abortControllersRef.current.push(abortController);
     setState(prevState => ({
       ...prevState,
@@ -940,7 +939,7 @@ const Dialogue = (props) => {
   const { messages, inputMessage, newInputMessage, testFetchMessage } = state;
 
   return (
-    // <DialogueContext value={{ cancelRequest }}>
+    <DialogueContext value={{ cancelRequest }}>
     <div className="dialogue-content">
       <DialogueTop loadingMask={LoadingMask} Charttable={CharttableDate} CharttableItem={Charttable_item.current} closeDialogue={closeDialogue} chat_type={chat_type}></DialogueTop>
       {/* <OpenKey ref={OpenKeyRef}></OpenKey> */}
@@ -970,7 +969,7 @@ const Dialogue = (props) => {
         sourceTypeRef={sourceTypeRef}
       />
     </div>
-    // </DialogueContext>
+    </DialogueContext>
   );
 }
 

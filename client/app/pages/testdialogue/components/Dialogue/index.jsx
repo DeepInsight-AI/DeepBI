@@ -610,7 +610,9 @@ const Dialogue = (props) => {
   const handleSendMessage1 = useCallback(async () => {
     const { messages } = state;
     const { inputMessage } = inputState;
+    console.log("inputMessage==",inputMessage)
     if (inputMessage.trim() === "") {
+      console.log("inputMessage.trim() === ''",inputMessage.trim() === '')
       return;
     }
     // 判断问题数是否超过最大问题数

@@ -94,6 +94,7 @@ const DialogueContent = forwardRef(({
             onChange={(e) => {
               if (e && e.target) {
                 const newValue = e.target.value;
+                console.log("newValue===",newValue)
                 setInputState(prevState => ({ ...prevState, inputMessage: newValue}));
               }
             }}

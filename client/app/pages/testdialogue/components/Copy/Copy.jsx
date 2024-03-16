@@ -5,9 +5,9 @@ import toast from "react-hot-toast";
 import CopyOutlinedIcon from "@ant-design/icons/CopyOutlined";
 import PauseCircleOutlinedIcon from "@ant-design/icons/PauseCircleOutlined";
 import "./index.less";
-import DialogueContext from '../../context/MyContext';
+// import DialogueContext from '../../context/MyContext';
 const Copy = props => {
-  const { cancelRequest } = useContext(DialogueContext); // 在C中使用useContext
+  // const { cancelRequest } = useContext(DialogueContext); // 在C中使用useContext
 
   const { source, message } = props;
   const copyCentent = () => {
@@ -27,9 +27,9 @@ const Copy = props => {
       toast.error(window.W_L.copy_failed);
     }
   };
-  // const retryCentent = () => {
-  //   retry(index)
-  // }
+  const cancelRequest = (index) => {
+    // retry(index)
+  }
   return (
     <div className={`copy${message.sender}`}>
       <div className="copt-item" onClick={copyCentent}>

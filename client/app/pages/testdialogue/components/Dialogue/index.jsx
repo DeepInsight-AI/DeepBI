@@ -13,7 +13,7 @@ import "./index.less";
 import moment from "moment";
 import { API_CHAT } from './const';
 import { currentUser } from "@/services/auth";
-import DialogueContext from '../../context/MyContext';
+// import DialogueContext from '../../context/MyContext';
 
 const Dialogue = (props) => {
 
@@ -940,7 +940,7 @@ const Dialogue = (props) => {
   const { messages, inputMessage, newInputMessage, testFetchMessage } = state;
 
   return (
-    <DialogueContext value={{ cancelRequest }}>
+    // <DialogueContext value={{ cancelRequest }}>
     <div className="dialogue-content">
       <DialogueTop loadingMask={LoadingMask} Charttable={CharttableDate} CharttableItem={Charttable_item.current} closeDialogue={closeDialogue} chat_type={chat_type}></DialogueTop>
       {/* <OpenKey ref={OpenKeyRef}></OpenKey> */}
@@ -970,7 +970,7 @@ const Dialogue = (props) => {
         sourceTypeRef={sourceTypeRef}
       />
     </div>
-    </DialogueContext>
+    {/* </DialogueContext> */}
   );
 }
 

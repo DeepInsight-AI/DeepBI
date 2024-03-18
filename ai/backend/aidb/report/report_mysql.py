@@ -35,8 +35,7 @@ class ReportMysql(Report):
                     if if_suss:
                         self.agent_instance_util.base_mysql_info = '  When connecting to the database, be sure to bring the port. This is database info :' + '\n' + str(
                             db_info)
-                        # self.agent_instance_util.base_message = str(q_str)
-                        self.agent_instance_util.set_base_message(q_str)
+                        self.agent_instance_util.set_base_message(database_str)
                 if self.agent_instance_util.base_message is not None:
                     await self.start_chatgroup(q_str)
                 else:

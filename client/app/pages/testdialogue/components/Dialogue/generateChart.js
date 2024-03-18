@@ -11,7 +11,7 @@ export function generateChart(
   if (window.location.protocol === 'https:') {
     wsProtocol = 'wss';
   }
-  const wsUrl = `${wsProtocol}://${process.env.SOCKET}${currentUser.id}_${currentUser.name}`;
+  const wsUrl = `${wsProtocol}://${process.env.SOCKET}/${currentUser.id}_${currentUser.name}`;
   console.log("Connecting to backend @ ", wsUrl);
 
   const ws = new WebSocket(wsUrl);

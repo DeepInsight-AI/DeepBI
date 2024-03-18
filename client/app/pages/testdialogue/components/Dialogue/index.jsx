@@ -166,6 +166,7 @@ const Dialogue = (props) => {
         }
       }
     }
+    scrollToBottom();
   };
   // setStorage
   const setDialogueDashboardStorage = () => {
@@ -386,7 +387,7 @@ const Dialogue = (props) => {
         ),
       }));
       setLoadingState(false);
-      scrollToBottom();
+      scrollToBottom(true);
     }
 
     if (data.state === 500) {
@@ -755,8 +756,8 @@ const Dialogue = (props) => {
   }, []);
 
   // 滚动到底部
-  const scrollToBottom = useCallback(() => {
-    if (chat_type === "viewConversation" || chat_type === "chat") return
+  const scrollToBottom = useCallback((isHas = false) => {
+    if (chat_type === "viewConversation" || isHas) return
     if (timeoutId) {
       clearTimeout(timeoutId);
     }
@@ -927,7 +928,7 @@ const Dialogue = (props) => {
   // fetch请求 
   const sendSocketMessage = useCallback(async (state, sender, data_type, content, id = 0, base_message = null, chat_id = 0, signal = null) => {
 
-    if (chat_type === "report" && data_type !== "mysql_comment_first") {
+    if (chat_type === "report" && data_type !== "mysql_comment_first" && data_type !== "mysql_comment") {
       const messgaeInfo = {
         state,
         database: sourceTypeRef.current,
@@ -963,7 +964,7 @@ const Dialogue = (props) => {
           setLoadingMask(false);
           setSendTableDate(0);
           setConfirmLoading(false);
-          errorSetting();
+          // errorSetting();
         }
       );
 
@@ -1046,7 +1047,7 @@ const Dialogue = (props) => {
       setLoadingMask(false);
       setLoadingState(false);
       setConfirmLoading(false);
-      toast.error(window.W_L.ERROR_MESSAGE);
+      // toast.error(window.W_L.ERROR_MESSAGE);
     }
   }, [state, isSendTableDate]);
 

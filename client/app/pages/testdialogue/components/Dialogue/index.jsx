@@ -313,6 +313,7 @@ const Dialogue = (props) => {
 
   // 返回结果处理
   const handleSocketMessage = useCallback(async (event) => {
+    console.log("调用handleSocketMessage======")
     //   if(chat_type === "report"){
     //   websocket.onclose = (event) => {
     //     setState(prevState => ({
@@ -351,7 +352,7 @@ const Dialogue = (props) => {
       const data = event;
 
       // 调用输出消息
-      outPutMessage(data);
+      await outPutMessage(data);
 
 
     } catch (error) {
@@ -364,6 +365,7 @@ const Dialogue = (props) => {
 
   // 返回处理
   const outPutMessage = async (data) => {
+    console.log("调用outPutMessage======")
     if (data.receiver === 'user') {
       setState(prevState => ({
         ...prevState,
@@ -402,12 +404,14 @@ const Dialogue = (props) => {
 
     if (data.receiver === 'bi') {
       if (data.data.data_type === 'mysql_code') {
+        print("开始执行sql" , data.data.content)
         setData_type("mysql_code");
         testAndVerifySql(data.data.content, data.data.name, data.id);
       } else if (data.data.data_type === 'ask_data') {
         setData_type("ask_data");
         dashboardsId("", "ask_data", data.id);
       } else if (data.data.data_type === 'chart_code') {
+        print("开始执行chart_code" , data.data.content)
         setData_type("chart_code")
         try {
           if (Dashboard_id.current) {
@@ -946,6 +950,7 @@ const Dialogue = (props) => {
         },
         id
       }
+      print("messgaeInfo", messgaeInfo)
       generateChart(
         wsRef,
         messgaeInfo,

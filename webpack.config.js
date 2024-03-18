@@ -97,6 +97,7 @@ const config = {
     new webpack.DefinePlugin({
       "process.env": {
         SOCKET: JSON.stringify(process.env.REACT_APP_SOCKET_URL),
+        SSE_URL: JSON.stringify(process.env.REACT_APP_SSE_URL),
         CDN_DOMAIN: JSON.stringify(process.env.CDN_DOMAIN),
       }
     }),

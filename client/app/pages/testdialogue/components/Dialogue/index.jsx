@@ -15,6 +15,7 @@ import { API_CHAT } from './const';
 import { currentUser } from "@/services/auth";
 import DialogueContext from '../../context/DialogueContext.js';
 import { generateChart } from './generateChart';
+import { set } from "lodash";
 const Dialogue = (props) => {
 
   const { chat_type, sendUrl, uuid } = props
@@ -28,7 +29,7 @@ const Dialogue = (props) => {
   const CharttableD_date = useRef(null); // CharttableD_date
   const [dashboardId, setDashboardId] = useState(null); // dashboardId
   const [CharttableDate, setCharttableDate] = useState(null);
-  const [LoadingState, setLoadingState] = useState(false);
+  const [LoadingState, setLoadingState] = useState(false); // 左侧遮罩层以及report停止生成状态
   const [startUse, setStartUse] = useState(false); // 初始化状态
   const [SendTableDate, setSendTableDate] = useState(0); // 发送表格状态
   const [LoadingMask, setLoadingMask] = useState(false); // 加载状态
@@ -40,7 +41,7 @@ const Dialogue = (props) => {
   const sourceTypeRef = useRef("mysql"); // 数据库类型
   const [percent, setPercent] = useState(0); // 进度条
   const [cachedTableDesc, setCachedTableDesc] = useState(null); // 添加一个状态来缓存数据
-  const MAX_QUESTIONS = chat_type === "chat" ? 5 : 1; // 假设最大问题数为5
+  const MAX_QUESTIONS = chat_type === "chat" ? 3 : 1; // 假设最大问题数为5
   const abortControllersRef = useRef([]); // 使用ref来跟踪所有的AbortController实例
   let timeoutId = null;
   const [inputMessage, setInputMessage] = useState("");// 输入的消息
@@ -535,7 +536,8 @@ const Dialogue = (props) => {
       }
       addChatList(allMessages, chat_type);
     }
-
+    // LoadingState
+    setLoadingState(false);
     cancelRequestAll();
   }
   // 取消所有请求
@@ -672,7 +674,7 @@ const Dialogue = (props) => {
     const questionCount = messages.filter(message => message.sender === "bot" && message.Cardloading).length;
     console.log("questionCount==", questionCount)
     if (questionCount >= MAX_QUESTIONS) {
-      toast.error("问题数超过最大问题数");
+      toast.error("为防止过大的Token消耗，每次对话最多只能提问" + MAX_QUESTIONS + "个问题");
       return;
     }
 
@@ -1064,7 +1066,7 @@ const Dialogue = (props) => {
       <div className="dialogue-content">
         <DialogueTop loadingMask={LoadingMask} Charttable={CharttableDate} CharttableItem={Charttable_item.current} closeDialogue={closeDialogue} chat_type={chat_type}></DialogueTop>
         {/* <OpenKey ref={OpenKeyRef}></OpenKey> */}
-        {/* {LoadingState && <MenuMask />} */}
+        {LoadingState && <MenuMask />}
         <DialogueContent
           databases_type={sourceTypeRef}
           ref={DialogueContentRef}

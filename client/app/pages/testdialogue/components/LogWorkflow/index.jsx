@@ -81,7 +81,7 @@ const LogWorkflow = props => {
         <Tooltip title={window.W_L.copy}>
           <Button
             icon={<CopyOutlinedIcon />}
-            style={{ position: "absolute", color: "#9d9d9d" }}
+            style={{ position: "absolute", color: "#9d9d9d",zIndex:1 }}
             type="text"
             size="small"
             className="copy_btn"
@@ -89,7 +89,7 @@ const LogWorkflow = props => {
             {/* {window.W_L.copy} */}
           </Button>
         </Tooltip>
-        <div className="log_terminal_content" style={{height:"auto",maxHeight:"470px"}}>
+        <div className="log_terminal_content" style={{height:"auto",maxHeight:"75vh"}}>
         {sourceList &&
             sourceList.length > 0 &&
             sourceList.map((item, index) => {
@@ -118,7 +118,7 @@ const LogWorkflow = props => {
         <Tooltip title={window.W_L.copy}>
           <Button
             icon={<CopyOutlinedIcon />}
-            style={{ position: "absolute", color: "#9d9d9d" }}
+            style={{ position: "absolute", color: "#9d9d9d",zIndex:1 }}
             type="text"
             size="small"
             className="copy_btn"
@@ -129,7 +129,7 @@ const LogWorkflow = props => {
         <Tooltip title="全屏">
           <Button
             icon={<CompressOutlinedIcon />}
-            style={{ position: "absolute", color: "#9d9d9d" }}
+            style={{ position: "absolute", color: "#9d9d9d",zIndex:1 }}
             type="text"
             size="small"
             className="compress_btn"

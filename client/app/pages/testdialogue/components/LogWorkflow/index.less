@@ -91,3 +91,56 @@
     font-size: 14px;
     padding: 10px 0;
   }
+
+
+
+  //滚动条
+  .log_terminal_modal {
+    width: 874px !important;
+    :global(.ant-modal-content){
+      :global(.anticon){
+        color: #fff;
+      }
+      :global(.ant-modal-footer){
+        padding: 10px 16px 24px 16px;
+        text-align: center;
+        background: transparent;
+        border-top: none;
+        border-radius: 0 0 8px 8px;
+        :global(.ant-btn + .ant-btn:not(.ant-dropdown-trigger)){
+          margin-bottom: 0;
+          margin-left: 24px;
+        }
+      }
+      :global(.ant-modal-header){
+        background-color: #2d7cff;
+        border-bottom: none;
+        :global(.ant-modal-title){
+          font-size: 20px;
+          font-weight: 400;
+          text-align: left;
+          color: #fff;
+          line-height: 24px;
+        }
+      }
+      :global(.ant-modal-body) {
+        height: 600px;
+        overflow: auto;
+        // 滚动条样式写在body类名上
+        &::-webkit-scrollbar {
+          width: 6px;
+          height: 4px;
+        }
+        &::-webkit-scrollbar-thumb {
+          background: rgba(149, 146, 146, 0.2);
+          border-radius: 10px;
+          box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.2);
+        }
+        &::-webkit-scrollbar-track {
+          background: rgba(0, 0, 0, 0.1);
+          border-radius: 10;
+          box-shadow: inset 0 0 5px rgba(205, 203, 203, 0.2);
+        }
+      }
+    } 
+  }

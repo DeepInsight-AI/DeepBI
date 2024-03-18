@@ -388,6 +388,7 @@ const Dialogue = (props) => {
       }));
       setLoadingState(false);
       scrollToBottom(true);
+      closeWS();
     }
 
     if (data.state === 500) {
@@ -789,13 +790,17 @@ const Dialogue = (props) => {
     scrollToBottom();
   }, [setState]);
 
+  const closeWS = () => {
+    if (wsRef.current && chat_type === "report") {
+      wsRef.current.close();
+    }
+  }
+
   // 添加一个函数来取消特定的对话请求
   const cancelRequest = useCallback((message) => {
     console.log(message, "message====")
     if (chat_type === "report") {
-      if (wsRef.current) {
-        wsRef.current.close();
-      }
+      closeWS();
       return
     }
     // 找到message与chat_id关联的内容的bot

@@ -21,14 +21,14 @@ const findQueryResult = useCallback(async (response,type,name,task_id) => {
     const res = await axios.get(`/api/query_results/${response.job.query_result_id}`);
     // console.log(res, 'gettable_data_success');
     if(res.query_result.data.rows.length===0){
-      sendSocketMessage(500,'bi','mysql_code',"sql没有查询到数据",task_id)
+      await sendSocketMessage(500,'bi','mysql_code',"sql没有查询到数据",task_id)
       return
     }
     
     if(type==='test'){
       await saveSql(res.query_result.query,name,task_id)
     }else{
-      sendSocketMessage(200,'bi','mysql_code',res.query_result.data,task_id)
+      await sendSocketMessage(200,'bi','mysql_code',res.query_result.data,task_id)
     }
 
   } catch (err) {
@@ -56,7 +56,7 @@ const findJob = useCallback(async (response,type,name,task_id,max=50) => {
       } else {
         if(res.job.error){
           clearInterval(timer);
-          sendSocketMessage(500,'bi','mysql_code',res.job.error,task_id)
+          await sendSocketMessage(500,'bi','mysql_code',res.job.error,task_id)
           return
         }
         // console.log(res, 'query_result_id_undefined');
@@ -83,7 +83,7 @@ const executeSql = useCallback(async (response,task_id) => {
     await findJob(res,"execute",null,task_id);
   } catch (err) {
     // console.log(err, 'executeSql_error');
-    sendSocketMessage(500,'bi','mysql_code',"",task_id)
+    await sendSocketMessage(500,'bi','mysql_code',"",task_id)
   }
 }, [findJob,sendSocketMessage]);
 

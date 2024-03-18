@@ -79,7 +79,7 @@ export const useChartCode = (sendSocketMessage,saveDashboardId, props, successSe
   
     } catch (err) {
       // console.log(err, 'save_error');
-      sendSocketMessage(500,'bi','chart_code',err,task_id)
+      await sendSocketMessage(500,'bi','chart_code',err,task_id)
     }
   }, [state, dashboardsId, publishQuery]);
   
@@ -103,7 +103,7 @@ const publishQuery = useCallback(async (type = null,task_id) => {
       }
     } catch (err) {
       // console.log(err, 'publishQuery_error');
-      sendSocketMessage(500, 'bi', 'chart_code', err,task_id)
+      await sendSocketMessage(500, 'bi', 'chart_code', err,task_id)
     }
 }, [state, CharttableDate, dashboardsId, newReport, sendSocketMessage]);
 // deleteReports
@@ -145,7 +145,7 @@ const dashboardsId = useCallback(async (response, type = null,task_id) => {
       dashboard_id = response.id;
     }
     // if (!CharttableDate.publicUrl && type === "ask_data") {
-    //   sendSocketMessage(500, 'bi', 'ask_data', [],task_id)
+    //   await sendSocketMessage(500, 'bi', 'ask_data', [],task_id)
     //   return
     // }
    
@@ -161,7 +161,7 @@ const dashboardsId = useCallback(async (response, type = null,task_id) => {
         return
       }
       if (type === "getPath" || type === "delGetPath") {
-        sendSocketMessage(200, 'bi', type==="getPath"?'chart_code':'delete_chart', res,task_id)
+        await sendSocketMessage(200, 'bi', type==="getPath"?'chart_code':'delete_chart', res,task_id)
         sendDashId(dashboard_id)
         successSetting()
         return
@@ -251,7 +251,7 @@ const dashboardsId = useCallback(async (response, type = null,task_id) => {
         })
         Promise.all(arr).then(res => {
           // console.log(content, '')
-          sendSocketMessage(200, 'bi', 'ask_data', content,task_id)
+          await sendSocketMessage(200, 'bi', 'ask_data', content,task_id)
         })
         return
       }
@@ -259,7 +259,7 @@ const dashboardsId = useCallback(async (response, type = null,task_id) => {
       if (type !== "edit") {
         // await publishReport(task_id)
         sendDashId(dashboard_id)
-      sendSocketMessage(200, 'bi', 'chart_code', res,task_id)
+      await sendSocketMessage(200, 'bi', 'chart_code', res,task_id)
       successSetting()
       } else {
         dashboardsId(res, "getPath",task_id)
@@ -283,7 +283,7 @@ const dashboardsId = useCallback(async (response, type = null,task_id) => {
   //     const res = await axios.post(`/api/dashboards/${dashboard_id}`, data)
   //     // await shareQuery(task_id);
   //     sendDashId(dashboard_id)
-  //     sendSocketMessage(200, 'bi', 'chart_code', res,task_id)
+  //     await sendSocketMessage(200, 'bi', 'chart_code', res,task_id)
   //     successSetting()
   //   } catch (error) {
   //   }
@@ -297,7 +297,7 @@ const dashboardsId = useCallback(async (response, type = null,task_id) => {
   //     console.log(res.public_url, 'send_public_url')
   //     // props.sendDashId(res.public_url)
   //     successSetting()
-  //     sendSocketMessage(200, 'bi', 'chart_code', res,task_id)
+  //     await sendSocketMessage(200, 'bi', 'chart_code', res,task_id)
   //   } catch (error) {
   //     console.log(error, 'share_error')
   //   }

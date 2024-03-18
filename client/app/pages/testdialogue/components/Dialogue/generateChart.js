@@ -18,16 +18,19 @@ export function generateChart(
   if (wsRef.current && wsRef.current.readyState === 1){
     console.log("old ws connection is open")
     ws = wsRef.current;
+    console.log("old params", params)
+    wsRef.current.send(JSON.stringify(params));
   }else{
     console.log("new ws connection")
     ws = new WebSocket(wsUrl);
     wsRef.current = ws;
+    ws.addEventListener("open", () => {
+      console.log("new params", params);
+      ws.send(JSON.stringify(params));
+    });
   }
 
-  ws.addEventListener("open", () => {
-    console.log("params", params);
-    ws.send(JSON.stringify(params));
-  });
+  
 
   ws.addEventListener("message", async (event) => {
     const response = JSON.parse(event.data);

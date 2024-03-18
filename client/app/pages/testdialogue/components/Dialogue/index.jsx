@@ -392,6 +392,7 @@ const Dialogue = (props) => {
     }
 
     if (data.state === 500) {
+      closeWS();
       if (data.receiver === 'bi') {
         if (data.data.data_type === 'mysql_comment_first') {
           // setState(prevState => ({ ...prevState, sendTableDate: 0 }));
@@ -407,6 +408,7 @@ const Dialogue = (props) => {
         return
       }
       // errorSetting();
+
       return;
     }
 
@@ -551,6 +553,7 @@ const Dialogue = (props) => {
   }
   // 取消所有请求
   const cancelRequestAll = () => {
+    closeWS();
     if (abortControllersRef.current.length === 0) {
       return;
     }

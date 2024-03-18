@@ -16,13 +16,16 @@ export function generateChart(
 
   let ws = null;
   if (wsRef.current && wsRef.current.readyState === 1){
+    console.log("old ws connection is open")
     ws = wsRef.current;
   }else{
+    console.log("new ws connection")
     ws = new WebSocket(wsUrl);
     wsRef.current = ws;
   }
 
   ws.addEventListener("open", () => {
+    console.log("params", params);
     ws.send(JSON.stringify(params));
   });
 

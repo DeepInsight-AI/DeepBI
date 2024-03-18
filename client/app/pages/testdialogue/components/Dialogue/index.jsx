@@ -404,14 +404,14 @@ const Dialogue = (props) => {
 
     if (data.receiver === 'bi') {
       if (data.data.data_type === 'mysql_code') {
-        print("开始执行sql" , data.data.content)
+        console.log("开始执行sql" , data.data.content)
         setData_type("mysql_code");
         testAndVerifySql(data.data.content, data.data.name, data.id);
       } else if (data.data.data_type === 'ask_data') {
         setData_type("ask_data");
         dashboardsId("", "ask_data", data.id);
       } else if (data.data.data_type === 'chart_code') {
-        print("开始执行chart_code" , data.data.content)
+        console.log("开始执行chart_code" , data.data.content)
         setData_type("chart_code")
         try {
           if (Dashboard_id.current) {
@@ -950,7 +950,7 @@ const Dialogue = (props) => {
         },
         id
       }
-      print("messgaeInfo", messgaeInfo)
+      console.log("messgaeInfo", messgaeInfo)
       generateChart(
         wsRef,
         messgaeInfo,

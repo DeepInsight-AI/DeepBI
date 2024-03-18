@@ -951,6 +951,11 @@ const Dialogue = (props) => {
         id
       }
       console.log("messgaeInfo", messgaeInfo)
+      if(wsRef.current && wsRef.current.readyState === 1){
+        console.log("wsRef.current.readyState", wsRef.current.readyState)
+        wsRef.current.send(JSON.stringify(messgaeInfo));
+        return
+      }
       generateChart(
         wsRef,
         messgaeInfo,

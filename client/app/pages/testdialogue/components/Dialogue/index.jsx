@@ -430,7 +430,7 @@ const Dialogue = (props) => {
             DialogueContentRef.current.sourceEdit(table_desc);
             handleSuccess(Charttable_id.current, data.data.content);
           } else {
-            updateCharttableDate();
+            
 
             setConfirmLoading(false);
             if (chat_type === "report") {
@@ -455,7 +455,7 @@ const Dialogue = (props) => {
             data_type: "mysql_comment_first"
           });
         }
-
+        updateCharttableDate();
         setLoadingMask(false);
         setSendTableDate(1);
         setStartUse(true);

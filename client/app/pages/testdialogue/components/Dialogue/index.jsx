@@ -364,19 +364,6 @@ const Dialogue = (props) => {
   // 返回处理
   const outPutMessage = async (data) => {
     if (data.receiver === 'user') {
-      // setState(prevState => ({
-      // ...prevState,
-      // messages: prevState.messages.map((message, i) =>
-      //   i === prevState.messages.length - 1 && message.sender === "bot"
-      //     ? { ...message, content: data.data.content, Cardloading: false, time: moment().format('YYYY-MM-DD HH:mm') }
-      //     : message
-      // ),
-      // messages: prevState.messages.map((message, i) =>
-      //   message.sender === "bot" && message.chat_id === data.chat_id
-      //     ? { ...message, content: data.data.content, Cardloading: false,time:moment().format('YYYY-MM-DD HH:mm') }
-      //     : message
-      // ),
-      // }));
       setState(prevState => ({
         ...prevState,
         messages: prevState.messages.map((message, i) =>
@@ -1077,7 +1064,7 @@ const Dialogue = (props) => {
       <div className="dialogue-content">
         <DialogueTop loadingMask={LoadingMask} Charttable={CharttableDate} CharttableItem={Charttable_item.current} closeDialogue={closeDialogue} chat_type={chat_type}></DialogueTop>
         {/* <OpenKey ref={OpenKeyRef}></OpenKey> */}
-        {LoadingState && <MenuMask />}
+        {/* {LoadingState && <MenuMask />} */}
         <DialogueContent
           databases_type={sourceTypeRef}
           ref={DialogueContentRef}

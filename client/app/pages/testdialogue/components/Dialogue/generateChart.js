@@ -14,9 +14,14 @@ export function generateChart(
   const wsUrl = `${wsProtocol}://${process.env.SOCKET}/${currentUser.id}_${currentUser.name}`;
   console.log("Connecting to backend @ ", wsUrl);
 
-  const ws = new WebSocket(wsUrl);
-  wsRef.current = ws;
-
+  const ws = null;
+  if (wsRef.current && wsRef.current.readyState === 1){
+    ws = wsRef.current;
+  }else{
+    ws = new WebSocket(wsUrl);
+    wsRef.current = ws;
+  }
+  
   ws.addEventListener("open", () => {
     ws.send(JSON.stringify(params));
   });

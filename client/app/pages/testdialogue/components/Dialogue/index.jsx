@@ -675,9 +675,7 @@ const Dialogue = (props) => {
   // 发送对话消息1
   const handleSendMessage1 = useCallback(async () => {
     const { messages } = state;
-    console.log("inputMessage==", inputMessage)
     if (inputMessage.trim() === "") {
-      console.log("inputMessage.trim() === ''", inputMessage.trim() === '')
       return;
     }
     // 判断问题数是否超过最大问题数
@@ -984,6 +982,7 @@ const Dialogue = (props) => {
       return
     }
 
+    // 
     const messageData = {
       user_id: currentUser.id,
       user_name: currentUser.name,

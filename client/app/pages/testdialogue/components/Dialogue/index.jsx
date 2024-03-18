@@ -312,8 +312,7 @@ const Dialogue = (props) => {
   };
 
   // 返回结果处理
-  const handleSocketMessage = useCallback(async (event) => {
-    console.log("调用handleSocketMessage======")
+  const handleSocketMessage =async (event) => {
     //   if(chat_type === "report"){
     //   websocket.onclose = (event) => {
     //     setState(prevState => ({
@@ -361,12 +360,13 @@ const Dialogue = (props) => {
       setLoadingState(false);
     }
 
-  }, [state, setState, props]);
+  };
 
   // 返回处理
   const outPutMessage = async (data) => {
-    console.log("调用outPutMessage======")
+    
     if (data.receiver === 'user') {
+      console.log("调用user======", data.data.content)
       setState(prevState => ({
         ...prevState,
         messages: prevState.messages.map((message, i) =>

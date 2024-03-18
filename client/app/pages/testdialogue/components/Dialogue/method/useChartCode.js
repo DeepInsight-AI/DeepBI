@@ -249,7 +249,7 @@ const dashboardsId = useCallback(async (response, type = null,task_id) => {
           // console.log(res, 'jsonget_success')
           content.push({ data: res.query_result.data, table_name: item.visualization.query.name })
         })
-        Promise.all(arr).then(res => {
+        Promise.all(arr).then(async res => {
           // console.log(content, '')
           await sendSocketMessage(200, 'bi', 'ask_data', content,task_id)
         })

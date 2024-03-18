@@ -787,12 +787,20 @@ const Dialogue = (props) => {
     setSendTableDate(type === "edit" ? 1 : 0);
     setLoadingState(false);
     // setStopGeneration(true);
-    scrollToBottom();
+    closeWS();
   }, [setState]);
 
   const closeWS = () => {
     if (wsRef.current && chat_type === "report") {
       wsRef.current.close();
+      setState(prevState => ({
+        ...prevState,
+        messages: prevState.messages.map((message, i) =>
+          i === prevState.messages.length - 1 && message.sender === "bot"
+            ? { ...message, Cardloading: false }
+            : message
+        ),
+      }));
     }
   }
 

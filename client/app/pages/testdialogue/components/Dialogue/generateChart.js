@@ -4,7 +4,7 @@ import { currentUser } from "@/services/auth";
 const ERROR_MESSAGE =
   "Error generating chart. Check the Developer Console AND the backend logs for details. Feel free to open a Github issue.";
 
-export function generateCode(
+export function generateChart(
   wsRef,
   params,
   onChange,

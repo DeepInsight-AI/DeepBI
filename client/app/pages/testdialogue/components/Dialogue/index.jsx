@@ -14,7 +14,7 @@ import moment from "moment";
 import { API_CHAT } from './const';
 import { currentUser } from "@/services/auth";
 import DialogueContext from '../../context/DialogueContext.js';
-import { generateCode } from './generateCode';
+import { generateChart } from './generateChart';
 const Dialogue = (props) => {
 
   const { chat_type, sendUrl, uuid } = props
@@ -796,7 +796,7 @@ const Dialogue = (props) => {
   const cancelRequest = useCallback((message) => {
     console.log(message, "message====")
     if (chat_type === "report") {
-      wsRef.cureet?.close();
+      wsRef.curreet?.close();
       return
     }
     // 找到message与chat_id关联的内容的bot
@@ -944,13 +944,15 @@ const Dialogue = (props) => {
         },
         id
       }
-      generateCode(
+      generateChart(
         wsRef,
         messgaeInfo,
-        onChange = (res) => {
+        // on Change
+        (res) => {
           handleSocketMessage(res);
         },
-        onCancel = () => {
+        // on Cancel
+        () => {
           setState(prevState => ({
             ...prevState,
             messages: prevState.messages.map((message, i) =>

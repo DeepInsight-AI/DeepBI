@@ -1,9 +1,6 @@
 import toast from "react-hot-toast";
 import { currentUser } from "@/services/auth";
 
-const ERROR_MESSAGE =
-  "Error generating chart. Check the Developer Console AND the backend logs for details. Feel free to open a Github issue.";
-
 export function generateChart(
   wsRef,
   params,
@@ -36,6 +33,6 @@ export function generateChart(
 
   ws.addEventListener("error", (error) => {
     console.error("WebSocket error", error);
-    toast.error(ERROR_MESSAGE);
+    toast.error(window.W_L.ERROR_MESSAGE);
   });
 }

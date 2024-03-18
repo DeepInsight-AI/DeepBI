@@ -717,11 +717,7 @@ const Dialogue = (props) => {
 
   // error消息
   const errorSetting = useCallback(() => {
-    // if(stopGeneration){
-    //   return
-    // }
     toast.error(window.W_L.connection_failed);
-    // setState(prevState => ({ ...prevState, Cardloading: false }));
     setLoadingState(false);
   }, [setState]);
 
@@ -966,7 +962,7 @@ const Dialogue = (props) => {
           }));
           setLoadingMask(false);
           setSendTableDate(0);
-          setLockReconnect(false);
+          setConfirmLoading(false);
           errorSetting();
         }
       );
@@ -1049,6 +1045,8 @@ const Dialogue = (props) => {
       console.error('Fetch error:', error);
       setLoadingMask(false);
       setLoadingState(false);
+      setConfirmLoading(false);
+      toast.error(window.W_L.ERROR_MESSAGE);
     }
   }, [state, isSendTableDate]);
 

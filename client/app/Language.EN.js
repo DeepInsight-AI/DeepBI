@@ -823,4 +823,5 @@ window.W_L = {
   'example2':'Example2',
   'example3':'Example3',
   'more':'More',
+  "ERROR_MESSAGE":"Error generating chart. Check the Developer Console AND the backend logs for details. Feel free to open a Github issue."
 }

@@ -796,7 +796,9 @@ const Dialogue = (props) => {
   const cancelRequest = useCallback((message) => {
     console.log(message, "message====")
     if (chat_type === "report") {
-      wsRef.current?.close();
+      if (wsRef.current) {
+        wsRef.current.close();
+      }
       return
     }
     // 找到message与chat_id关联的内容的bot

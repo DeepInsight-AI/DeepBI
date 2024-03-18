@@ -29,7 +29,7 @@ const Dialogue = (props) => {
   const CharttableD_date = useRef(null); // CharttableD_date
   const [dashboardId, setDashboardId] = useState(null); // dashboardId
   const [CharttableDate, setCharttableDate] = useState(null);
-  const [LoadingState, setLoadingState] = useState(false); // 左侧遮罩层以及report停止生成状态
+  const [LoadingState, setLoadingState] = useState(false); //z
   const [startUse, setStartUse] = useState(false); // 初始化状态
   const [SendTableDate, setSendTableDate] = useState(0); // 发送表格状态
   const [LoadingMask, setLoadingMask] = useState(false); // 加载状态
@@ -430,7 +430,7 @@ const Dialogue = (props) => {
             DialogueContentRef.current.sourceEdit(table_desc);
             handleSuccess(Charttable_id.current, data.data.content);
           } else {
-            
+            updateCharttableDate();
 
             setConfirmLoading(false);
             if (chat_type === "report") {
@@ -455,7 +455,7 @@ const Dialogue = (props) => {
             data_type: "mysql_comment_first"
           });
         }
-        updateCharttableDate();
+
         setLoadingMask(false);
         setSendTableDate(1);
         setStartUse(true);

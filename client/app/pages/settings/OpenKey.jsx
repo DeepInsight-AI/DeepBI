@@ -11,7 +11,6 @@ import routes from "@/services/routes";
 import { axios } from "@/services/axios";
 import Link from "@/components/Link";
 import QuestionCircleOutlinedIcon from "@ant-design/icons/QuestionCircleOutlined";
-// import { websocket, createWebSocket, closeWebSocket } from "../testdialogue/components/Dialogue/websocket";
 import { API_CHAT } from '../testdialogue/components/Dialogue/const';
 import toast from "react-hot-toast";
 import { currentUser } from "@/services/auth";

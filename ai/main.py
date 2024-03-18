@@ -33,48 +33,6 @@ class MockWebSocket:
         self.messages.append(message_with_delimiter)
         print("Message to send:", message_with_delimiter)  
 
-# async def demo1(mock_socket):
-#     result_message = {
-#                 'state': 200,
-#                 'receiver': 'bi',
-#                 'data': {
-#                     'data_type': 'mysql_code',
-#                     'content': "123123123123",
-#                     'name': "12312312312312"
-#                 },
-#                 'id': "123213"
-#     }
-#     result_message = json.dumps(result_message)
-#     print("result_message111: ", result_message)
-#     mock_socket.send(result_message)
-#     await demo2(mock_socket)
-
-# async def demo2(mock_socket):
-#     await asyncio.sleep(5)
-#     result_message = {
-#                 'state': 200,
-#                 'receiver': 'bi',
-#                 'data': {
-#                     'data_type': 'mysql_code',
-#                     'content': "456456456456",
-#                     'name': "456456456456"
-#                 },
-#                 'id': "456456"
-#     }
-#     result_message = json.dumps(result_message)
-#     print("result_message222: ", result_message)
-#     mock_socket.send(result_message)
-
-# def generate_stream(mock_socket):
-#     while True:
-#         if mock_socket.messages:
-#             message = mock_socket.messages.pop(0)
-#             print("message: ", message)
-#             yield f"{message}\n\n"
-#         else:
-#             time.sleep(1)
-
-
 def generate_stream(mock_socket, user_name, user_id, message,chat_id):
     try:
         def background_task():
@@ -83,8 +41,6 @@ def generate_stream(mock_socket, user_name, user_id, message,chat_id):
             master = ChatClass(mock_socket, user_name, user_id, message, chat_id)
             loop.run_until_complete(master.consume())
             loop.close()
-            # master = ChatClass(mock_socket, user_name, user_id, message,chat_id)
-            # listener_task = asyncio.ensure_future(master.consume())
         
         thread = threading.Thread(target=background_task)
         thread.start()
@@ -123,5 +79,5 @@ def chat():
     # return Response(stream(content), mimetype='text/plain')
 
 if __name__ == '__main__':
-    app.run(port=8339, host='0.0.0.0')
+    app.run(port=8341, host='0.0.0.0')
 

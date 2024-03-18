@@ -1,5 +1,5 @@
 
-export const DEEPBI_API_HOST = process.env.SOCKET
+export const DEEPBI_API_HOST = process.env.REACT_APP_SSE_URL
 
 export const API_LOCAL = window.location.protocol + '//'
 

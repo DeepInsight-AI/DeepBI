@@ -7,7 +7,7 @@ import PauseCircleOutlinedIcon from "@ant-design/icons/PauseCircleOutlined";
 import "./index.less";
 import DialogueContext from '../../context/DialogueContext';
 const Copy = props => {
-  const { cancelRequest } = useContext(DialogueContext); // 在C中使用useContext
+  const { cancelRequest, chat_type } = useContext(DialogueContext); // 在C中使用useContext
 
   const { source, message } = props;
   const copyCentent = () => {

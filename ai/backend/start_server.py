@@ -1,7 +1,7 @@
 import asyncio
 import websockets
 import time
-from ai.backend.chat_task import ChatClass
+from ai.backend.chat_task_socket import ChatClass
 
 
 class WSServer:

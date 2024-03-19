@@ -552,6 +552,7 @@ const Dialogue = (props) => {
   }
   // 取消所有请求
   const cancelRequestAll = () => {
+    console.log("cancelRequestAll=====",abortControllersRef)
     closeWS();
     if (abortControllersRef.current.length === 0) {
       return;

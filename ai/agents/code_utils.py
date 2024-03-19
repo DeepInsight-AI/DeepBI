@@ -304,18 +304,20 @@ def execute_code(
                 text=True,
             )
         else:
-            signal.signal(signal.SIGALRM, timeout_handler)
+            # signal.signal(signal.SIGALRM, timeout_handler)
             try:
-                signal.alarm(timeout)
+                # signal.alarm(timeout)
                 # run the code in a subprocess in the current docker container in the working directory
                 result = subprocess.run(
                     cmd,
                     cwd=work_dir,
                     capture_output=True,
                     text=True,
+                    timeout=timeout,
                 )
-                signal.alarm(0)
-            except TimeoutError:
+                # signal.alarm(0)
+            # except TimeoutError:
+            except subprocess.TimeoutExpired:
                 if original_filename is None:
                     os.remove(filepath)
                 return 1, TIMEOUT_MSG, None

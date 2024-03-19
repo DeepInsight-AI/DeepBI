@@ -395,8 +395,14 @@ const Dialogue = (props) => {
       setConfirmLoading(false);
       if (data.receiver === 'log') {
         toast.error(data.data.content);
-        return
       }
+      setState(prevState => ({
+        messages: prevState.messages.map((message, i) =>
+          message.chat_id === data.chat_id && message.Cardloading
+            ? { ...message, Cardloading: false }
+            : message
+        )
+      }));
       // errorSetting();
 
       return;

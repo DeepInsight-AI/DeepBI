@@ -21,7 +21,7 @@ class MockWebSocket:
         self.messages = []
         self.chat_id = 0
         pass
-    
+
     def set_chat_id(self, chat_id):
         self.chat_id = chat_id
 
@@ -31,7 +31,7 @@ class MockWebSocket:
         message = json.dumps(message)
         message_with_delimiter = message + "---ENDOFMESSAGE---"
         self.messages.append(message_with_delimiter)
-        print("Message to send:", message_with_delimiter)  
+        print("Message to send:", message_with_delimiter)
 
 def generate_stream(mock_socket, user_name, user_id, message,chat_id):
     try:
@@ -41,10 +41,10 @@ def generate_stream(mock_socket, user_name, user_id, message,chat_id):
             master = ChatClass(mock_socket, user_name, user_id, message, chat_id)
             loop.run_until_complete(master.consume())
             loop.close()
-        
+
         thread = threading.Thread(target=background_task)
         thread.start()
-        
+
         while thread.is_alive() or mock_socket.messages:
             if mock_socket.messages:
                 message = mock_socket.messages.pop(0)
@@ -52,11 +52,11 @@ def generate_stream(mock_socket, user_name, user_id, message,chat_id):
                 yield f"{message}\n\n"
             else:
                 time.sleep(1)
-    
+
     except Exception as e:
         print("error: ", e)
         return "error"
-    
+
 @app.route("/api/chat", methods=["POST"])
 @cross_origin()
 def chat():
@@ -72,12 +72,13 @@ def chat():
     print("chat_id: ", chat_id)
     mock_socket = MockWebSocket()
     mock_socket.set_chat_id(chat_id)
-    
+
     # return Response(stream_with_context(asyncio.run(demo1(mock_socket))), mimetype='text/event-stream')
     return Response(stream_with_context(generate_stream(mock_socket, user_name, user_id, message,chat_id)), mimetype='text/event-stream')
     # s = ChatClass(mock_socket, user_name, user_id, message,chat_id)
     # return Response(stream(content), mimetype='text/plain')
 
 if __name__ == '__main__':
-    app.run(port=8341, host='0.0.0.0')
+    app.run(port=8341, host='0.0.0.0', debug=True)
+    # app.run(port=8341, host='0.0.0.0', debug=True, threaded=False) # 尝试设置 主线程中调用API服务
 

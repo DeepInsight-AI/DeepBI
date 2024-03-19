@@ -78,7 +78,6 @@ const Dialogue = (props) => {
     selectTableNameRef.current = selectTableName;
   }, [selectTableName]);
   useEffect(() => {
-    console.log("CharttableDate===", CharttableDate)
     CharttableD_date.current = CharttableDate;
   }, [CharttableDate]);
 
@@ -103,6 +102,7 @@ const Dialogue = (props) => {
       if (res && res.length > 0) {
         console.log("res====", res)
         setCharttableDate(res[0].table_name);
+        CharttableD_date.current = res[0].table_name;
         saveDashboardId("", res[0].Charttable_id);
         sourceTypeRef.current = res[0].type;
         Charttable_item.current = {

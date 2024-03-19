@@ -248,7 +248,10 @@ const Dialogue = (props) => {
       databases_desc: "",
       table_desc: allIsPass
     }
-    await sendSocketMessage(code, 'bi', 'mysql_comment', content)
+    const abortController = new window.AbortController();
+    abortControllersRef.current.push(abortController);
+    await sendSocketMessage(code, 'bi', 'mysql_comment', content,0,"",1,abortController.signal);
+    abortControllersRef.current = abortControllersRef.current.filter(ac => ac !== abortController);
   }, [setState, sendSocketMessage]);
 
   // 表数据合并
@@ -732,7 +735,10 @@ const Dialogue = (props) => {
   const onUse = useCallback(async () => {
     const data_type = "mysql_comment_first"
     const baseMessageContent = await isSendTableDate(data_type);
-    await sendSocketMessage(200, 'bi', data_type, baseMessageContent);
+    const abortController = new window.AbortController();
+    abortControllersRef.current.push(abortController);
+    await sendSocketMessage(200, 'bi', data_type, baseMessageContent, 0, "", 1, abortController.signal);
+    abortControllersRef.current = abortControllersRef.current.filter(ac => ac !== abortController);
   }, [isSendTableDate]);
 
   // set data_type

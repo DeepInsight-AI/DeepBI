@@ -641,6 +641,10 @@ const Dialogue = (props) => {
 
   // 获取数据库字段信息
   const isSendTableDate = useCallback(async (data_type) => {
+    console.log("cachedTableDesc==", cachedTableDesc)
+    console.log("CharttableD_date.current==", CharttableD_date.current)
+    console.log("CharttableD_date.current.tableName==", CharttableD_date.current.tableName)
+    console.log("SendTableDate==", SendTableDate)
     let baseMessageContent = {}; // 初始化一个空对象来构建base_message内容
 
     if (data_type === "mysql_comment_first") {
@@ -737,6 +741,7 @@ const Dialogue = (props) => {
     const baseMessageContent = await isSendTableDate(data_type);
     const abortController = new window.AbortController();
     abortControllersRef.current.push(abortController);
+    console.log("first=====", baseMessageContent)
     await sendSocketMessage(200, 'bi', data_type, baseMessageContent, 0, "", 1, abortController.signal);
     abortControllersRef.current = abortControllersRef.current.filter(ac => ac !== abortController);
   }, [isSendTableDate]);

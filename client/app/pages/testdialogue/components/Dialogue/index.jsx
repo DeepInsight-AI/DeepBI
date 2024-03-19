@@ -577,6 +577,10 @@ const Dialogue = (props) => {
   // 保存对话记录
   useEffect(() => {
     messagesRef.current = state.messages;
+    const allNotLoading = state.messages.every(message => !message.Cardloading);
+    if (allNotLoading) {
+      setLoadingState(false);
+    }
   }, [state.messages]);
 
   // 在组件卸载时保存对话记录
@@ -1067,7 +1071,14 @@ const Dialogue = (props) => {
       setLoadingMask(false);
       setLoadingState(false);
       setConfirmLoading(false);
-      // toast.error(window.W_L.ERROR_MESSAGE);
+      setState(prevState => ({
+        messages: prevState.messages.map((message, i) =>
+          message.chat_id === chat_id && message.Cardloading
+            ? { ...message, Cardloading: false }
+            : message
+        )
+      }));
+      toast.error(window.W_L.ERROR_MESSAGE);
     }
   }, [state, isSendTableDate]);
 

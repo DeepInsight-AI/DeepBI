@@ -100,7 +100,7 @@ const Dialogue = (props) => {
           break;
       }
       if (res && res.length > 0) {
-        console.log("res====", res)
+        // console.log("res====", res)
         setCharttableDate(res[0].table_name);
         CharttableD_date.current = res[0].table_name;
         saveDashboardId("", res[0].Charttable_id);
@@ -371,7 +371,6 @@ const Dialogue = (props) => {
   const outPutMessage = async (data) => {
     
     if (data.receiver === 'user') {
-      console.log("调用user======", data.data.content)
       setState(prevState => ({
         ...prevState,
         messages: prevState.messages.map((message, i) =>
@@ -415,14 +414,14 @@ const Dialogue = (props) => {
 
     if (data.receiver === 'bi') {
       if (data.data.data_type === 'mysql_code') {
-        console.log("开始执行sql" , data.data.content)
+        // console.log("开始执行sql" , data.data.content)
         setData_type("mysql_code");
         testAndVerifySql(data.data.content, data.data.name, data.id);
       } else if (data.data.data_type === 'ask_data') {
         setData_type("ask_data");
         dashboardsId("", "ask_data", data.id);
       } else if (data.data.data_type === 'chart_code') {
-        console.log("开始执行chart_code" , data.data.content)
+        // console.log("开始执行chart_code" , data.data.content)
         setData_type("chart_code")
         try {
           if (Dashboard_id.current) {
@@ -557,7 +556,7 @@ const Dialogue = (props) => {
   }
   // 取消所有请求
   const cancelRequestAll = () => {
-    console.log("cancelRequestAll=====",abortControllersRef)
+    // console.log("cancelRequestAll=====",abortControllersRef)
     closeWS();
     if (abortControllersRef.current.length === 0) {
       return;
@@ -583,10 +582,6 @@ const Dialogue = (props) => {
   // 保存对话记录
   useEffect(() => {
     messagesRef.current = state.messages;
-    const allNotLoading = state.messages.every(message => !message.Cardloading);
-    if (allNotLoading) {
-      setLoadingState(false);
-    }
   }, [state.messages]);
 
   // 在组件卸载时保存对话记录
@@ -643,10 +638,10 @@ const Dialogue = (props) => {
 
   // 获取数据库字段信息
   const isSendTableDate = useCallback(async (data_type) => {
-    console.log("cachedTableDesc==", cachedTableDesc)
-    console.log("CharttableD_date.current==", CharttableD_date.current)
-    console.log("CharttableD_date.current.tableName==", CharttableD_date.current.tableName)
-    console.log("SendTableDate==", SendTableDate)
+    // console.log("cachedTableDesc==", cachedTableDesc)
+    // console.log("CharttableD_date.current==", CharttableD_date.current)
+    // console.log("CharttableD_date.current.tableName==", CharttableD_date.current.tableName)
+    // console.log("SendTableDate==", SendTableDate)
     let baseMessageContent = {}; // 初始化一个空对象来构建base_message内容
 
     if (data_type === "mysql_comment_first") {
@@ -696,14 +691,14 @@ const Dialogue = (props) => {
     }
     // 判断问题数是否超过最大问题数
     const questionCount = messages.filter(message => message.sender === "bot" && message.Cardloading).length;
-    console.log("questionCount==", questionCount)
+    // console.log("questionCount==", questionCount)
     if (questionCount >= MAX_QUESTIONS) {
       toast.error("为防止过大的Token消耗，每次对话最多只能提问" + MAX_QUESTIONS + "个问题");
       return;
     }
 
     const chat_id = moment().valueOf();
-    console.log("当前对话标识==", chat_id)
+    // console.log("当前对话标识==", chat_id)
     // 创建一个新的AbortController实例并保存其引用
     const abortController = new window.AbortController();
     abortControllersRef.current.push(abortController);
@@ -743,7 +738,7 @@ const Dialogue = (props) => {
     const baseMessageContent = await isSendTableDate(data_type);
     const abortController = new window.AbortController();
     abortControllersRef.current.push(abortController);
-    console.log("first=====", baseMessageContent)
+    // console.log("first=====", baseMessageContent)
     await sendSocketMessage(200, 'bi', data_type, baseMessageContent, 0, "", 1, abortController.signal);
     abortControllersRef.current = abortControllersRef.current.filter(ac => ac !== abortController);
   }, [isSendTableDate]);
@@ -824,14 +819,14 @@ const Dialogue = (props) => {
 
   // 添加一个函数来取消特定的对话请求
   const cancelRequest = useCallback((message) => {
-    console.log(message, "message====")
+    // console.log(message, "message====")
     if (chat_type === "report") {
       closeWS();
       return
     }
     // 找到message与chat_id关联的内容的bot
     if (message && message.abortController) {
-      console.log(message.abortController, "message.abortController====")
+      // console.log(message.abortController, "message.abortController====")
       try {
         message.abortController.abort();
         // 从ref中移除已取消的AbortController实例
@@ -974,9 +969,9 @@ const Dialogue = (props) => {
         },
         id
       }
-      console.log("messgaeInfo", messgaeInfo)
+      // console.log("messgaeInfo", messgaeInfo)
       if(wsRef.current && wsRef.current.readyState === 1){
-        console.log("wsRef.current.readyState", wsRef.current.readyState)
+        // console.log("wsRef.current.readyState", wsRef.current.readyState)
         wsRef.current.send(JSON.stringify(messgaeInfo));
         return
       }
@@ -1048,7 +1043,7 @@ const Dialogue = (props) => {
         // 递归函数处理流数据
         const processText = async ({ done, value }) => {
           if (done) {
-            console.log("Stream complete");
+            // console.log("Stream complete");
             return;
           }
 
@@ -1056,15 +1051,15 @@ const Dialogue = (props) => {
           buffer += decoder.decode(value, { stream: true });
           // 分割完整消息
           let parts = buffer.split('---ENDOFMESSAGE---');
-          console.log('Received buffer:', buffer);
-          console.log('Received parts:', parts);
+          // console.log('Received buffer:', buffer);
+          // console.log('Received parts:', parts);
           buffer = parts.pop(); // 保留未完成的部分
 
           parts.forEach(part => {
             try {
 
               const data = JSON.parse(part);
-              console.log('Parsed JSON:', data)
+              // console.log('Parsed JSON:', data)
               handleSocketMessage(data); // 处理解析后的消息
             } catch (error) {
               console.error('Error parsing JSON:', error);
@@ -1092,7 +1087,10 @@ const Dialogue = (props) => {
             : message
         )
       }));
-      toast.error(window.W_L.ERROR_MESSAGE);
+      if (error.name !== 'AbortError') {
+        toast.error(window.W_L.ERROR_MESSAGE);
+      }
+      // toast.error(window.W_L.ERROR_MESSAGE);
     }
   }, [state, isSendTableDate]);
 

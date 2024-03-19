@@ -192,7 +192,7 @@ class ChartPresenterAgent(ConversableAgent):
                 extracted.append(("", group2.strip()))
 
         return extracted
-    def extract_json_data(text: str):
+    def extract_json_data(self, text: str):
         # 搜索 JSON 数据
         json_pattern = re.compile(r'\{(?:[^{}]|(?R))*\}')
         json_matches = json_pattern.findall(text)

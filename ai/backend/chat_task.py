@@ -15,7 +15,7 @@ message_pool: ChatMemoryManager = ChatMemoryManager(name="message_pool")
 
 
 class ChatClass:
-    def __init__(self, websocket, user_name, user_id, message,chat_id):
+    def __init__(self, websocket, user_name, user_id = 0, message = '', chat_id = 0):
         self.ws = websocket
         self.incoming = asyncio.Queue()
         self.outgoing = asyncio.Queue()

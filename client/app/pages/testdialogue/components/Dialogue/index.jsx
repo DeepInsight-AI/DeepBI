@@ -545,9 +545,10 @@ const Dialogue = (props) => {
     if (chat_type === "chat" || chat_type === "report") {
       let allMessages = messagesRef.current;
       const lastMessage = messagesRef.current[messagesRef.current.length - 1];
-      if (lastMessage && lastMessage.sender === "bot" && lastMessage.Cardloading) {
+      if (lastMessage && lastMessage.sender === "bot" && lastMessage.Cardloading && !lastMessage.content && !lastMessage.chart) {
         allMessages.pop();
       }
+      
       addChatList(allMessages, chat_type);
     }
     // LoadingState

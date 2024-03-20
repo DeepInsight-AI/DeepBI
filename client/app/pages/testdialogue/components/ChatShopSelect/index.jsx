@@ -18,7 +18,7 @@ class ChatShopSelect extends React.Component {
     try {
       const selectedShop = this.state.shops.find(shop => shop.id === value);
       this.setState({ selectedShop: value });
-      if (selectedShop) {
+      if (selectedShop && selectedShop.name!== "默认") {
         localStorage.setItem("CommenExpressions", selectedShop.name);
       }
     } catch (error) {

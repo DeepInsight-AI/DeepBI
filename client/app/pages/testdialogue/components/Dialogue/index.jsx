@@ -521,6 +521,7 @@ const openSocket = useCallback(() => {
       }
       addChatList(allMessages,chat_type);
     }
+    sessionStorage.removeItem(`${chat_type}CommonExpressions`);
   }
   useEffect(() => {
     messagesRef.current = state.messages;

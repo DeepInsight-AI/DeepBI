@@ -1,6 +1,6 @@
 import React from 'react';
 import Select from 'antd/lib/select';
-import shopsData from './shop.json'; // 确保路径正确
+import shopsData from "@/assets/CommenExpressions/CommenExpressions.json";
 import "./index.less";
 const { Option } = Select;
 
@@ -15,9 +15,15 @@ class ChatShopSelect extends React.Component {
   };
 
   handleChange = (value) => {
-    this.setState({ selectedShop: value });
-    localStorage.setItem("selectedShop", value);
-    // 这里可以添加更多处理，例如调用父组件的方法
+    try {
+      const selectedShop = this.state.shops.find(shop => shop.id === value);
+      this.setState({ selectedShop: value });
+      if (selectedShop) {
+        localStorage.setItem("CommenExpressions", selectedShop.name);
+      }
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   render() {
@@ -25,8 +31,8 @@ class ChatShopSelect extends React.Component {
     return (
       <Select
         showSearch
-        style={{ width: 150 ,position:"absolute",left:"0",top:"-35px"}}
-        placeholder="选择店铺"
+        style={{ width: 150, position: "absolute", left: "0", top: "-35px" }}
+        placeholder="选择常用语"
         optionFilterProp="children"
         onChange={this.handleChange}
         className="custom-select"

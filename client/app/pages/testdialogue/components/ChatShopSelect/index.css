@@ -10,7 +10,6 @@
 .custom-select .ant-select:not(.ant-select-disabled):hover .ant-select-selector {
   border-color: #313131 !important;
 }
-.custom-select .ant-select-single .ant-select-selector .ant-select-selection-item,
-.custom-select .ant-select-single .ant-select-selector .ant-select-selection-placeholder {
+.custom-select .ant-select-single .ant-select-selector .ant-select-selection-item {
   line-height: 28px !important;
 }

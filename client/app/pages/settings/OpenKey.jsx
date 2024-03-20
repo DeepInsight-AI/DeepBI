@@ -148,23 +148,25 @@ const SettingsOpenKey = () => {
             console.log("Stream complete");
             return;
           }
-  
-          // 解码并处理接收到的数据
-          const chunk = decoder.decode(value);
-          console.log('Received chunk:', chunk);
-          // 假设服务器发送的是JSON字符串，尝试解析并更新状态
-          try {
-            const data = JSON.parse(chunk);
-            console.log('Parsed JSON:', data)
-            handleMessage(data);
-            // 更新状态或UI
-            // setState(prevState => ({
-            //   ...prevState,
-            //   messages: [...prevState.messages, { content: data.message, sender: "bot" }],
-            // }));
-          } catch (error) {
-            console.error('Error parsing JSON:', error);
-          }
+
+          // 累积数据块
+          buffer += decoder.decode(value, { stream: true });
+          // 分割完整消息
+          let parts = buffer.split('---ENDOFMESSAGE---');
+          // console.log('Received buffer:', buffer);
+          // console.log('Received parts:', parts);
+          buffer = parts.pop(); // 保留未完成的部分
+
+          parts.forEach(part => {
+            try {
+
+              const data = JSON.parse(part);
+              // console.log('Parsed JSON:', data)
+              handleMessage(data); // 处理解析后的消息
+            } catch (error) {
+              console.error('Error parsing JSON:', error);
+            }
+          });
   
           // 递归调用以读取下一个数据块
           reader.read().then(processText);

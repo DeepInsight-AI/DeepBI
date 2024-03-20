@@ -8,7 +8,7 @@ from bi import __version__, create_app, settings, rq_redis_connection
 from bi.cli import data_sources, database, groups, organization, queries, users, rq
 from bi.monitor import get_status
 from ai.backend.start_server import WSServer
-from ai.main import run_app
+from ai.main import app as run_chat_app
 from ai.backend.app2 import CustomApplication
 import tornado.web
 
@@ -31,7 +31,7 @@ def run_ai_api():
 @ai.command()
 def run_chat_api():
     """Starts the main Flask application."""
-    run_app()
+    run_chat_app.run(port=8341, host='0.0.0.0', debug=True)
 
 
 def create(group):

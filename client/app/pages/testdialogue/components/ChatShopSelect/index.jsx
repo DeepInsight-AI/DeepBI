@@ -1,6 +1,6 @@
 import React from 'react';
 import Select from 'antd/lib/select';
-import shopsData from './shops.json'; // 确保路径正确
+import shopsData from './shop.json'; // 确保路径正确
 import "./index.less";
 const { Option } = Select;
 

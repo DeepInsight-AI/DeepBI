@@ -11,7 +11,7 @@ export function generateChart(
   if (window.location.protocol === 'https:') {
     wsProtocol = 'wss';
   }
-  const wsUrl = `${wsProtocol}://${process.env.SOCKET}/${currentUser.id}_${currentUser.name}`;
+  const wsUrl = `${wsProtocol}://${process.env.SOCKET}${currentUser.id}_${currentUser.name}`;
 
   const onError = (error) => {
     console.error("WebSocket error", error);

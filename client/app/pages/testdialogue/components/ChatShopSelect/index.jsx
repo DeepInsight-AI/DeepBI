@@ -39,7 +39,7 @@ class ChatShopSelect extends React.Component {
       const selectedShop = this.state.shops.find(shop => shop.id === value);
       this.setState({ selectedShop: value });
       if (selectedShop) {
-        localStorage.setItem("CommenExpressions", JSON.stringify(selectedShop));
+        sessionStorage.setItem(`${this.state.chat_type}CommonExpressions`, JSON.stringify(selectedShop));
       }
     } catch (error) {
       console.log(error);

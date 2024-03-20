@@ -5,9 +5,13 @@ import "./index.less";
 const { Option } = Select;
 
 class ChatShopSelect extends React.Component {
+  static defaultShop = [
+    { "id": "0", "name": "所有" }
+  ];
+
   state = {
-    selectedShop: "0", // 当前选中的商店
-    shops: shopsData, // 从JSON文件中读取商店列表
+    selectedShop: "0",
+    shops: shopsData && shopsData.length > 0 ? shopsData : ChatShopSelect.defaultShop,
   };
 
   handleChange = (value) => {
@@ -21,7 +25,7 @@ class ChatShopSelect extends React.Component {
     return (
       <Select
         showSearch
-        style={{ width: 200 ,position:"absolute",left:"0",top:"-30px"}}
+        style={{ width: 150 ,position:"absolute",left:"0",top:"-35px"}}
         placeholder="选择店铺"
         optionFilterProp="children"
         onChange={this.handleChange}

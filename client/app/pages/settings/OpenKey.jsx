@@ -115,6 +115,7 @@ const SettingsOpenKey = () => {
     let messageData = {
       user_id: currentUser.id,
       user_name: currentUser.name,
+      chat_id: 0,
       message:{
         state: 200,
         receiver: "sender",
@@ -173,6 +174,7 @@ const SettingsOpenKey = () => {
       }
     } catch (error) {
       console.error('Fetch error:', error);
+      setDisabled(false);
     }
   };
   const handleConnectTestClick = () => {

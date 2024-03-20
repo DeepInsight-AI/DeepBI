@@ -146,11 +146,13 @@ class DataReportFileResource(BaseResource):  # BaseResource
 
     def send_post_request(self, user_id, report_id, file_name):
         user_name = str(user_id) + '_user'
+        print("user_id=====", user_id)
         data = {"user_name": user_name, "report_id": report_id, "file_name": file_name
                 }
 
         ai_web_server = settings.AI_WEB_SERVER
         url = 'http://' + str(ai_web_server) + '/api/autopilot'
+        print("url=====", url)
         response = requests.post(url, json=data)
 
         # 检查响应结果

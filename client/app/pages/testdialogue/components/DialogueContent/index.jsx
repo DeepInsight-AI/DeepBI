@@ -15,13 +15,13 @@ const DialogueContent = forwardRef(({
   sendTableDate,
   loadingMask,
   onUse,
-  messages, 
-  ChangeScrollTop, 
-  loadingState, 
-  stopSend, 
-  inputMessage, 
+  messages,
+  ChangeScrollTop,
+  loadingState,
+  stopSend,
+  inputMessage,
   newInputMessage,
-  setState, 
+  setState,
   handleSendMessage,
   chat_type,
   retry,
@@ -29,6 +29,7 @@ const DialogueContent = forwardRef(({
   onSuccess,
   percent,
   databases_type,
+  CharttableItem
 },ref) => {
   const selectSourceRef = useRef(null);
   const sourceEdit = (data) => {
@@ -37,6 +38,7 @@ const DialogueContent = forwardRef(({
   useImperativeHandle(ref, () => ({
     sourceEdit,
   }));
+  const shouldDisplay = CharttableItem && CharttableItem.label.includes("多店");
   return (
     <>
     <div className="dialogue-content-all">
@@ -57,12 +59,12 @@ const DialogueContent = forwardRef(({
         </div>
       </div>
       </div>
-     
+
       {
       chat_type!=="viewConversation" &&
       (
         <div className="main-all" style={{width:chat_type==="report"?"90%":"80%"}}>
-         
+
            {loadingState && messages.length>0 &&
       <div className="gpt-section-btn-list">
       <button className="gpt-btn-item" onClick={stopSend}>
@@ -76,10 +78,14 @@ const DialogueContent = forwardRef(({
             ""
             :
         <div className="dialogue-content-bottom">
-           <ChatShopSelect />
+
+          {
+            shouldDisplay && <ChatShopSelect chat_type={chat_type} />
+          }
+
         <div className="open-key" style={{display:"none"}} onClick={onOpenKeyClick}>
         </div>
-          
+
             <TextArea
             bordered={false}
             style={{ resize: 'none', maxHeight: '100px !important', fontSize: '15px', border: 'none !important' }}
@@ -101,7 +107,7 @@ const DialogueContent = forwardRef(({
           <div className="gpt-input-middle">
           <SendOutlinedIcon onClick={handleSendMessage} style={{color:inputMessage ? "" : "#ccc",fontSize:"20px",marginRight:"15px"}}></SendOutlinedIcon>
           </div>
-         
+
         </div>
       }
       </div>

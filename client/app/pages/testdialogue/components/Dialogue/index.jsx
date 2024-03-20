@@ -75,11 +75,11 @@ const Dialogue = (props) => {
 
 const sendSocketMessage = useCallback((state, sender, data_type, content,id=0) => {
   if(data_type === "question"){
-    let CommenExpressions = localStorage.getItem("CommenExpressions");
-    if (CommenExpressions) {
-      const CommenExpressionsObj = JSON.parse(CommenExpressions);
-      if (CommenExpressionsObj && CommenExpressionsObj.id !== "0") {
-        content = CommenExpressionsObj.label + "，" + content;
+    let CommonExpressions = sessionStorage.getItem(`${chat_type}CommonExpressions`);
+    if (CommonExpressions) {
+      const CommonExpressionsObj = JSON.parse(CommonExpressions);
+      if (CommonExpressionsObj && CommonExpressionsObj.id !== "0") {
+        content = CommonExpressionsObj.label + "，" + content;
       }
     }
   }
@@ -132,7 +132,7 @@ if(chat_type==="chat" ||chat_type==="report" ||chat_type==="autopilot"){
       }
       saveDashboardId("dashboard_id", null);
     }
-    
+
     if(res[0].messages&&res[0].messages.length>0){
       setState(prevState => ({
         ...prevState,
@@ -247,7 +247,7 @@ const onSuccess = useCallback((code, value,source_item,result,firstTableData) =>
   if(firstTableData){
     setSelectTableName(result)
   }
-  
+
   setSelectTableDesc({table_desc:value})
   const allIsPass= value.map(item => {
     const newFieldDesc = item.field_desc.filter(field => field.in_use === 1);
@@ -431,7 +431,7 @@ const handleSocketMessage = useCallback(() => {
               data_type: "mysql_comment_first"
             });
           }
-          
+
           setLoadingMask(false);
           setSendTableDate(1);
           setStartUse(true);
@@ -439,7 +439,7 @@ const handleSocketMessage = useCallback(() => {
           toast.success(window.W_L.configuration_completed + " " + chat_type==="autopilot"?"":window.W_L.start_the_dialogue,{
             icon: '👏',
           });
-          
+
         } else if(data.data.data_type === 'mysql_comment_second'){
           setState(prevState => ({
             ...prevState,
@@ -531,10 +531,10 @@ const openSocket = useCallback(() => {
     const handleBeforeUnload = () => {
       closeSetMessage();
     };
-  
+
     // 添加 beforeunload 事件监听
     window.addEventListener('beforeunload', handleBeforeUnload);
-  
+
     // 返回一个清理函数，在组件卸载时执行
     return () => {
       // 移除 beforeunload 事件监听
@@ -551,7 +551,7 @@ const openSocket = useCallback(() => {
     //   openSocket();
     //   return
     // }
-   
+
     // console.log(`selected ${value}`);
     // console.log(`selectedtype ${type}`);
     // Charttable_id.current = value;
@@ -775,6 +775,7 @@ const openSocket = useCallback(() => {
         onSuccess={onSuccess}
         percent={percent}
         sourceTypeRef={sourceTypeRef}
+        CharttableItem={Charttable_item.current}
         />
       </div>
     );

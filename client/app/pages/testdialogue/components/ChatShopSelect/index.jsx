@@ -14,13 +14,14 @@ class ChatShopSelect extends React.Component {
       ? shopsData.map((shop, index) => ({ ...shop, id: String(index + 1) }))
       : [];
     this.state = {
+      chat_type: props.chat_type || "chat",
       selectedShop: "0", // 默认选中
       shops: [ChatShopSelect.defaultShop[0], ...processedShopsData],
     };
   }
 
   componentDidMount() {
-    const selectedShopData = localStorage.getItem("CommenExpressions");
+    const selectedShopData = sessionStorage.getItem(`${this.state.chat_type}CommonExpressions`);
     if (selectedShopData) {
       const selectedShop = JSON.parse(selectedShopData);
       const shopExists = this.state.shops.some(shop => shop.id === selectedShop.id);

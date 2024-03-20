@@ -18,6 +18,8 @@ class DataReportFileResource(BaseResource):  # BaseResource
     def get(self, data_report_file_id=None):
         result = {}
         user_id = self.current_user.id
+        print("user_id", user_id)
+        print("data_report_file_id", data_report_file_id)
         if data_report_file_id:
             try:
                 data = models.DataReportFile.file_info(data_report_file_id, user_id)
@@ -42,13 +44,16 @@ class DataReportFileResource(BaseResource):  # BaseResource
             #     status_code = item.get('is_generate')
             #     if status_code is not None and status_code in status_mapping:
             #         item['is_generate'] = status_mapping[status_code]
-
+            print("result", result)
             for item in result:
                 status_code = item.get('is_generate')
+                print("status_code", status_code)
                 if status_code is not None and status_code in status_mapping:
                     if status_code == 0:
                         report_id = item.get('id')
                         file_name = item.get('file_name')
+                        print("report_id", report_id)
+                        print("file_name", file_name)
                         # 创建新线程并执行 POST 请求
                         thread = threading.Thread(target=self.send_post_request, args=(user_id, report_id, file_name))
                         thread.start()

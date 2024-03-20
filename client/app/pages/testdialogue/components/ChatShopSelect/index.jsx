@@ -6,20 +6,39 @@ const { Option } = Select;
 
 class ChatShopSelect extends React.Component {
   static defaultShop = [
-    { "id": "0", "name": "默认" }
+    { "id": "0", "label": "默认" }
   ];
+  constructor(props) {
+    super(props);
+    const processedShopsData = shopsData && shopsData.length > 0
+      ? shopsData.map((shop, index) => ({ ...shop, id: String(index + 1) }))
+      : [];
+    this.state = {
+      selectedShop: "0", // 默认选中
+      shops: [ChatShopSelect.defaultShop[0], ...processedShopsData],
+    };
+  }
 
-  state = {
-    selectedShop: "0",
-    shops: shopsData && shopsData.length > 0 ? shopsData : ChatShopSelect.defaultShop,
-  };
+  componentDidMount() {
+    const selectedShopData = localStorage.getItem("CommenExpressions");
+    if (selectedShopData) {
+      const selectedShop = JSON.parse(selectedShopData);
+      const shopExists = this.state.shops.some(shop => shop.id === selectedShop.id);
+      if (selectedShop && selectedShop.id && shopExists) {
+        this.setState({ selectedShop: selectedShop.id });
+      } else {
+        // 如果不存在，重置为默认商店
+        this.setState({ selectedShop: ChatShopSelect.defaultShop[0].id });
+      }
+    }
+  }
 
   handleChange = (value) => {
     try {
       const selectedShop = this.state.shops.find(shop => shop.id === value);
       this.setState({ selectedShop: value });
-      if (selectedShop && selectedShop.name!== "默认") {
-        localStorage.setItem("CommenExpressions", selectedShop.name);
+      if (selectedShop) {
+        localStorage.setItem("CommenExpressions", JSON.stringify(selectedShop));
       }
     } catch (error) {
       console.log(error);
@@ -37,14 +56,14 @@ class ChatShopSelect extends React.Component {
         onChange={this.handleChange}
         className="custom-select"
         value={selectedShop}
-        planment="topLeft"
+        placement="topLeft"
         filterOption={(input, option) =>
           option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
         }
       >
         {shops.map((shop) => (
           <Option key={shop.id} value={shop.id}>
-            {shop.name}
+            {shop.label}
           </Option>
         ))}
       </Select>

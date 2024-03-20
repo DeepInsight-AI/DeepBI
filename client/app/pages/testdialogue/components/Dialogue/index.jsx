@@ -74,10 +74,13 @@ const Dialogue = (props) => {
 
 
 const sendSocketMessage = useCallback((state, sender, data_type, content,id=0) => {
-  if(data_type==="question"){
-    let CommenExpressions = localStorage.getItem("CommenExpressions") || "";
+  if(data_type === "question"){
+    let CommenExpressions = localStorage.getItem("CommenExpressions");
     if (CommenExpressions) {
-      content = CommenExpressions + "，" + content;
+      const CommenExpressionsObj = JSON.parse(CommenExpressions);
+      if (CommenExpressionsObj && CommenExpressionsObj.id !== "0") {
+        content = CommenExpressionsObj.label + "，" + content;
+      }
     }
   }
     const messgaeInfo = {

@@ -19,8 +19,9 @@ from ai.agents.code_utils import (
 import traceback
 from ai.backend.util.write_log import logger
 from ai.agents.code_utils import tell_logger
-from ai.backend.util.base_util import dbinfo_decode
+from ai.backend.util.base_util import dbinfo_decode, is_json
 from ai.backend.util import database_util
+import re
 
 try:
     from termcolor import colored
@@ -28,17 +29,14 @@ except ImportError:
 
     def colored(x, *args, **kwargs):
         return x
-def format_decimal(value):
-    if isinstance(value, float):
-        return round(value, 2)
-    elif isinstance(value, int):
-        return value
-    return value
 
-# 函数，用于精确到小数点后两位
+
 def format_decimal(value):
     if isinstance(value, float):
-        return round(value, 2)
+        if (value < 0.05):
+            return round(value, 6)
+        else:
+            return round(value, 2)
     elif isinstance(value, int):
         return value
     return value
@@ -708,11 +706,15 @@ class PythonProxyAgent(Agent):
             if message["content"] is None:
                 continue
             code_blocks = extract_code(message["content"])
+
             if len(code_blocks) == 1 and code_blocks[0][0] == UNKNOWN:
                 continue
 
             if len(code_blocks) == 1 and code_blocks[0][0] != 'python':
                 continue
+
+            # fix mysql generate %%Y %%m %%d code :list
+            code_blocks = self.regex_fix_date_format(code_blocks)
 
             if self.db_id is not None:
                 obj = database_util.Main(self.db_id)
@@ -731,6 +733,8 @@ class PythonProxyAgent(Agent):
             exitcode2str = "execution succeeded" if exitcode == 0 else "execution failed"
             length = 10000
             if not str(logs).__contains__('echart_name'):
+                if "html" in logs or "HTML" in logs:
+                    return True, f"exitcode:exitcode failed\nCode output:Please do not output html files. The front end cannot display them. Please generate the correct echarts code."
                 if len(logs) > length:
                     print(' ++++++++++ Length exceeds 10000 characters limit, cropped  +++++++++++++++++')
                     logs = logs[:length]
@@ -739,77 +743,116 @@ class PythonProxyAgent(Agent):
 
             else:
                 json_data = str(logs)
+                # Pattern to find keys without quotes (lookahead and lookbehind to ensure matching only keys)
+                pattern_keys_without_quotes = r'(?<={|,)\s*(\w+)\s*(?=:)'
+                # Replace keys without quotes with quoted keys
+                fixed_keys = re.sub(pattern_keys_without_quotes, r'"\1"', json_data)
+                json_data = re.sub(r'\b(True|False)\b', lambda m: m.group(1).lower(), fixed_keys)
+                json_data = json_data.replace("'", "\"")
                 try:
-                    logs = json.loads(json_data)
-                except Exception as e:
-                    return True,f"exitcode:exitcode failed\nCode output: There is an error in the JSON code causing parsing errors,Please modify the JSON code for me:{traceback.format_exc()}"
-                for entry in logs:
-                    if 'echart_name' in entry and 'echart_code' in entry:
-                        # 如果满足条件，则打印并添加到base_content
-                        base_content.append(entry)
-                for echart in base_content:
-                    for serie in echart['echart_code']['series']:
-                        for item in serie['data']:
-                            item['value'] = format_decimal(item['value'])
-                for echart in base_content:
-                    echart = json.dumps(echart, indent=2)
-                agent_instance_util = AgentInstanceUtil(user_name=str(self.user_name),
-                                                        delay_messages=self.delay_messages,
-                                                        outgoing=self.outgoing,
-                                                        incoming=self.incoming,
-                                                        websocket=self.websocket
-                                                        )
-                bi_proxy = agent_instance_util.get_agent_bi_proxy()
-                is_chart = False
-                # Call the interface to generate pictures
-                for img_str in base_content:
-                    echart_name = img_str.get('echart_name')
-                    echart_code = img_str.get('echart_code')
-
-                    if len(echart_code) > 0 and str(echart_code).__contains__('x'):
-                        is_chart = True
-                        print("echart_name : ", echart_name)
-                        # 格式化echart_code
-                        # if base_util.is_json(str(echart_code)):
-                        #     json_obj = json.loads(str(echart_code))
-                        #     echart_code = json.dumps(json_obj)
-                        re_str = await bi_proxy.run_echart_code(str(echart_code), echart_name)
-                # 初始化一个空列表来保存每个echart的信息
-                echarts_data = []
-                # 遍历echarts_code列表，提取数据并构造字典
-                for echart in base_content:
-                    echart_name = echart['echart_name']
-                    series_data = []
-                    for serie in echart['echart_code']['series']:
-                        try:
-                            seri_info = {
-                                'type': serie['type'],
-                                'name': serie['name'],
-                                'data': serie['data']
-                            }
-                        except Exception as e:
-                            seri_info = {
-                                'type': serie['type'],
-                                'data': serie['data']
-                            }
-                        series_data.append(seri_info)
-                    if "xAxis" in echart["echart_code"]:
-                        xAxis_data = echart['echart_code']['xAxis'][0]['data']
-                        echart_dict = {
-                            'echart_name': echart_name,
-                            'series': series_data,
-                            'xAxis_data': xAxis_data
-                        }
+                    # 转json加判断逻辑
+                    # logs = json.loads(json_data)
+                    logs_new = []
+                    if is_json(json_data):
+                        # 解析 JSON 格式字符串
+                        report_demand_list = json.loads(json_data)
                     else:
-                        echart_dict = {
-                            'echart_name': echart_name,
-                            'series': series_data,
-                        }
-                    echarts_data.append(echart_dict)
-                return True, f"exitcode: {exitcode} ({exitcode2str})\nCode output: 图像已生成,请直接分析图表数据：{echarts_data}"
+                        report_demand_list = ast.literal_eval(json_data)
+                    for jstr in report_demand_list:
+                        if isinstance(jstr, dict) and 'echart_name' in jstr and 'echart_code' in jstr:
+                            logs_new.append(jstr)
+                    logs = logs_new
+                    # 以上为修改内容
+
+                    for entry in logs:
+                        if 'echart_name' in entry and 'echart_code' in entry:
+                            # 如果满足条件，则打印并添加到base_content
+                            base_content.append(entry)
+                    for echart in base_content:
+                        for serie in echart['echart_code']['series']:
+                            for item in serie['data']:
+                                # 确保item是一个字典
+                                if isinstance(item, dict) and 'value' in item:
+                                    item['value'] = format_decimal(item['value'])
+                                else:
+                                    # 如果item不是字典或没有'value'键，你可以选择跳过或者实现其他逻辑
+                                    continue
+                    for echart in base_content:
+                        echart = json.dumps(echart, indent=2)
+                    # 初始化一个空列表来保存每个echart的信息
+                    echarts_data = []
+                    # 遍历echarts_code列表，提取数据并构造字典
+                    # for echart in base_content:
+                    #     echart_name = echart['echart_name']
+                    #     series_data = []
+                    #     for serie in echart['echart_code']['series']:
+                    #         try:
+                    #             seri_info = {
+                    #                 'type': serie['type'],
+                    #                 'name': serie['name'],
+                    #                 'data': serie['data']
+                    #             }
+                    #         except Exception as e:
+                    #             seri_info = {
+                    #                 'type': serie['type'],
+                    #                 'data': serie['data']
+                    #             }
+                    #         series_data.append(seri_info)
+                    #     if "xAxis" in echart["echart_code"]:
+                    #         xAxis_data = echart['echart_code']['xAxis'][0]['data']
+                    #         if "%Y-%m" in xAxis_data:
+                    #             return True,f"exitcode:exitcode failed\nCode output:The SQL code query is incorrect. The query date should be %, not %%. Just for example: SELECT DATE_FORMAT(event_time, '%Y-%m-%d') is correct, but SELECT DATE_FORMAT(event_time, '%%Y -%%m-%%d') is wrong!"
+                    #         echart_dict = {
+                    #             'echart_name': echart_name,
+                    #             'series': series_data,
+                    #             'xAxis_data': xAxis_data
+                    #         }
+                    #     else:
+                    #         echart_dict = {
+                    #             'echart_name': echart_name,
+                    #             'series': series_data,
+                    #         }
+                    json_data_new = json.dumps(logs)
+                    data_new = json.loads(json_data_new)
+                    for entry in data_new:
+                        series = entry['echart_code']['series']
+                        for serie in series:
+                            data_list = serie.get('data', [])
+                            for item in data_list:
+                                if isinstance(item, dict) and 'value' in item:
+                                    item['value'] = format_decimal(item['value'])
+                                if len(echarts_data) < 2000:
+                                    echarts_data.append(item)
+                                else:
+                                    break
+                            if len(echarts_data) > 2000:
+                                break
+                    agent_instance_util = AgentInstanceUtil(user_name=str(self.user_name),
+                                                            delay_messages=self.delay_messages,
+                                                            outgoing=self.outgoing,
+                                                            incoming=self.incoming,
+                                                            websocket=self.websocket
+                                                            )
+                    bi_proxy = agent_instance_util.get_agent_bi_proxy()
+                    is_chart = False
+                    # Call the interface to generate pictures
+                    for img_str in base_content:
+                        echart_name = img_str.get('echart_name')
+                        echart_code = img_str.get('echart_code')
+
+                        if len(echart_code) > 0 and str(echart_code).__contains__('x'):
+                            is_chart = True
+                            print("echart_name : ", echart_name)
+                            # 格式化echart_code
+                            # if base_util.is_json(str(echart_code)):
+                            #     json_obj = json.loads(str(echart_code))
+                            #     echart_code = json.dumps(json_obj)
+                            re_str = await bi_proxy.run_echart_code(str(echart_code), echart_name)
+                    return True, f"exitcode: {exitcode} ({exitcode2str})\nCode output: 图像已生成,请直接分析图表数据：{echarts_data}"
+                except Exception as e:
+                    return True, f"exitcode:exitcode failed\nCode output: {json_data},There is an error in the JSON code causing parsing errors,Please modify the JSON code for me:{traceback.format_exc()}\n"
 
         code_execution_config["last_n_messages"] = last_n_messages
-
         return False, None
 
     async def generate_function_call_reply(
@@ -1221,3 +1264,23 @@ class PythonProxyAgent(Agent):
 
         # return "i have no question."
         return None
+
+    def regex_fix_date_format(self, code_blocks):
+        # fix mysql generate %%Y %%m %%d code :list
+        pattern1 = r"%s"
+        patterns_replacements = [
+            (r"%%Y-%%m-%%d %%H", "%Y-%m-%d %H"),
+            (r"%%Y-%%m-%%d", "%Y-%m-%d"),
+            (r"%%Y-%%m", "%Y-%m"),
+            (r"%%H", "%H"),
+            (r"%%Y-%%m-%%d %%H:%%i", "%Y-%m-%d %H:%i"),
+            (r"%%Y-%%m-%%d %%H:%%i:%%s", "%Y-%m-%d %H:%i:%s")]
+
+        if re.search(pattern1, str(code_blocks)):
+            for pattern, replacement in patterns_replacements:
+                code_blocks = [(language, re.sub(replacement, pattern, code)) for language, code in code_blocks]
+        else:
+            for pattern, replacement in patterns_replacements:
+                code_blocks = [(language, re.sub(pattern, replacement, code)) for language, code in code_blocks]
+
+        return code_blocks

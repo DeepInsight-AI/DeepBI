@@ -302,6 +302,7 @@ def execute_code(
                 cwd=work_dir,
                 capture_output=True,
                 text=True,
+                encoding='utf-8',
             )
         else:
             # signal.signal(signal.SIGALRM, timeout_handler)
@@ -314,6 +315,7 @@ def execute_code(
                     capture_output=True,
                     text=True,
                     timeout=timeout,
+                    encoding='utf-8',
                 )
                 # signal.alarm(0)
             # except TimeoutError:

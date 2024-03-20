@@ -136,8 +136,8 @@ class ChartPresenterAgent(ConversableAgent):
                     final, reply = reply_func(self, messages=messages, sender=sender,
                                               config=reply_func_tuple["config"])
 
-                # print(self.user_name, ' final : ', final)
-                # print(self.user_name, 'reply : ', reply)
+                print(self.user_name, ' final : ', final)
+                print(self.user_name, 'reply : ', reply)
 
                 if final:
                     print('messages[-1][content] :', messages[-1]['content'])
@@ -152,27 +152,27 @@ class ChartPresenterAgent(ConversableAgent):
                                                     'function_call': {'name': 'bi_run_chart_code',
                                                                       'arguments': json.dumps(arguments)}}
                                 return suggest_function
-                            else:
-                                # 在这里添加第三种方法的代码，匹配 JSON 大括号，提取相关数据
-                                extracted_json = self.extract_json_data(reply)
-
-                                # 判断是否提取到了有效的 JSON 数据
-                                if extracted_json and 'globalSeriesType' in extracted_json:
-                                    # 提取到有效的数据，构建 JSON 字典
-                                    arguments = {"chart_code_str": json.dumps(extracted_json)}
-
-                                    suggest_function = {
-                                        'role': 'assistant',
-                                        'content': None,
-                                        'function_call': {
-                                            'name': 'bi_run_chart_code',
-                                            'arguments': json.dumps(arguments)
-                                        }
-                                    }
-                                    return suggest_function
+                            # else:
+                            #     # 在这里添加第三种方法的代码，匹配 JSON 大括号，提取相关数据
+                            #     extracted_json = self.extract_json_data(reply)
+                            #
+                            #     # 判断是否提取到了有效的 JSON 数据
+                            #     if extracted_json and 'globalSeriesType' in extracted_json:
+                            #         # 提取到有效的数据，构建 JSON 字典
+                            #         arguments = {"chart_code_str": json.dumps(extracted_json)}
+                            #
+                            #         suggest_function = {
+                            #             'role': 'assistant',
+                            #             'content': None,
+                            #             'function_call': {
+                            #                 'name': 'bi_run_chart_code',
+                            #                 'arguments': json.dumps(arguments)
+                            #             }
+                            #         }
+                            #         return suggest_function
                         except Exception as e:
                             traceback.print_exc()
-                            
+
 
                     return reply
                     # return suggest_function

@@ -21,10 +21,11 @@ class ChatShopSelect extends React.Component {
     return (
       <Select
         showSearch
-        style={{ width: 200 ,position:"absolute",right:"0",top:"-30px"}}
+        style={{ width: 200 ,position:"absolute",left:"0",top:"-30px"}}
         placeholder="选择店铺"
         optionFilterProp="children"
         onChange={this.handleChange}
+        className="custom-select"
         value={selectedShop}
         planment="topLeft"
         filterOption={(input, option) =>

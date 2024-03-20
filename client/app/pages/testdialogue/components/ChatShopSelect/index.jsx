@@ -6,7 +6,7 @@ const { Option } = Select;
 
 class ChatShopSelect extends React.Component {
   static defaultShop = [
-    { "id": "0", "name": "所有" }
+    { "id": "0", "name": "默认" }
   ];
 
   state = {

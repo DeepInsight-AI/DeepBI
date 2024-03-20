@@ -141,7 +141,7 @@ const SettingsOpenKey = () => {
       if (response.body && response.body.getReader) {
         const reader = response.body.getReader();
         const decoder = new TextDecoder();
-  
+        let buffer = '';
         // 读取数据
         reader.read().then(function processText({ done, value }) {
           if (done) {

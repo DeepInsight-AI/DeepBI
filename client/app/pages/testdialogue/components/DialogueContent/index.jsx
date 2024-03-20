@@ -6,6 +6,7 @@ import TypingCard from "../TypingCard";
 
 import SendOutlinedIcon from "@ant-design/icons/SendOutlined";
 import PauseCircleOutlinedIcon from "@ant-design/icons/PauseCircleOutlined";
+import ChatShopSelect from "../ChatShopSelect";
 const { TextArea } = Input;
 const DialogueContent = forwardRef(({
   Charttable,
@@ -61,6 +62,7 @@ const DialogueContent = forwardRef(({
       chat_type!=="viewConversation" &&
       (
         <div className="main-all" style={{width:chat_type==="report"?"90%":"80%"}}>
+         
            {loadingState && messages.length>0 &&
       <div className="gpt-section-btn-list">
       <button className="gpt-btn-item" onClick={stopSend}>
@@ -74,6 +76,7 @@ const DialogueContent = forwardRef(({
             ""
             :
         <div className="dialogue-content-bottom">
+           <ChatShopSelect />
         <div className="open-key" style={{display:"none"}} onClick={onOpenKeyClick}>
         </div>
           

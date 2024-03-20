@@ -79,6 +79,6 @@ def chat():
     # return Response(stream(content), mimetype='text/plain')
 
 if __name__ == '__main__':
-    app.run(port=8341, host='0.0.0.0', debug=True)
+    app.run(port=8341, host='0.0.0.0')
     # app.run(port=8341, host='0.0.0.0', debug=True, threaded=False) # 尝试设置 主线程中调用API服务
 

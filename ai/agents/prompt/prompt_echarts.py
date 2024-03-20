@@ -292,12 +292,17 @@ Pay attention to check whether the sql statement in the code block is correct an
         xaxis_opts=opts.AxisOpts(type_="category", name="Year"),
         yaxis_opts=opts.AxisOpts(type_="value", name="Sales"),
         legend_opts=opts.LegendOpts(is_show=True, type_="scroll", pos_top="1%"),
+        # 调整柱状图的组件位置
         datazoom_opts=[
             opts.DataZoomOpts(
-                is_show=True, type_="slider", xaxis_index=[0], pos_left="1%", pos_bottom="0px"
+                is_show=True, id_="dataZoomX", type_="slider",
+                xaxis_index=[0], range_start=0, range_end=100, orient="horizontal",
+                pos_bottom="0px", pos_left="3%", pos_right="5%"
             ),
             opts.DataZoomOpts(
-                is_show=True, type_="slider", yaxis_index=[0], pos_right="1%", pos_top="0px"
+                is_show=True, id_="dataZoomY", type_="slider",
+                yaxis_index=[0], range_start=0, range_end=100, orient="vertical",
+                pos_top="3%", pos_right="2%", pos_bottom="5%"
             ),
         ],
         toolbox_opts=opts.ToolboxOpts(

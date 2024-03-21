@@ -323,23 +323,19 @@ class AIDB:
         except json.JSONDecodeError:
             logger.error("Failed to decode JSON from message.")
             return
-
+        print("json_str====", json_str)
         base_message = json_str.get('base_message')
+        print("base_message=====",base_message)
         if base_message:
             databases_id = json_str.get('data', {}).get('databases_id')
-            if databases_id is None:
-                logger.error("'databases_id' is missing in the message data.")
-                return
-
+            
             db_id = str(databases_id)
+            print("databases_id=====",databases_id)
             obj = database_util.Main(db_id)
             if_suss, db_info = obj.run()
             if if_suss:
-                base_mysql_info = (
-                    "When connecting to the database, be sure to bring the port. "
-                    "This is mysql database info:\n{}".format(db_info)
-                )
-                self.agent_instance_util.base_mysql_info = base_mysql_info
+                self.agent_instance_util.base_mysql_info = '  When connecting to the database, be sure to bring the port. This is database info :' + '\n' + str(
+                            db_info)
                 self.agent_instance_util.set_base_message(base_message)
                 self.agent_instance_util.db_id = db_id
             else:

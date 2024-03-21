@@ -95,7 +95,7 @@ class ChatClass:
             result = {'state': 200, 'data': {}, 'receiver': ''}
 
             json_str = json.loads(message)
-            print(json_str)
+            print("socket===", json_str)
 
             if json_str.get('sender'):
                 if json_str.get('sender') == 'heartCheck':

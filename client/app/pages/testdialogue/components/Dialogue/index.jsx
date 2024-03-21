@@ -981,6 +981,7 @@ const Dialogue = (props) => {
         messgaeInfo,
         // on Change
         (res) => {
+          console.log("res===",res)
           handleSocketMessage(res);
         },
         // on Cancel
@@ -1052,7 +1053,7 @@ const Dialogue = (props) => {
           buffer += decoder.decode(value, { stream: true });
           // 分割完整消息
           let parts = buffer.split('---ENDOFMESSAGE---');
-          // console.log('Received buffer:', buffer);
+          console.log('Received buffer:', buffer);
           // console.log('Received parts:', parts);
           buffer = parts.pop(); // 保留未完成的部分
 
@@ -1060,7 +1061,7 @@ const Dialogue = (props) => {
             try {
 
               const data = JSON.parse(part);
-              // console.log('Parsed JSON:', data)
+              console.log('Parsed JSON:', data)
               handleSocketMessage(data); // 处理解析后的消息
             } catch (error) {
               console.error('Error parsing JSON:', error);

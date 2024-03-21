@@ -30,6 +30,7 @@ class MainHandler(tornado.web.RequestHandler):
         user_name = data['user_name']
         report_id = data['report_id']
         file_name = data['file_name']
+        user_id = user_name.split('_')[0]
 
         report_file_name = CONFIG.up_file_path + file_name
         with open(report_file_name, 'r') as file:
@@ -39,7 +40,7 @@ class MainHandler(tornado.web.RequestHandler):
         if data.get('databases_type') is not None:
             databases_type = data['databases_type']
 
-        chat_class = ChatClass(None, user_name)
+        chat_class = ChatClass(None, user_name, user_id)
         json_str = {
             "file_name": file_name,
             "report_id": report_id

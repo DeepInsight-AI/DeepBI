@@ -23,7 +23,6 @@ class AIDB:
         self.user_name = chatClass.user_name
         self.websocket = chatClass.ws
         self.uid = chatClass.uid
-        self.message = chatClass.message
         self.log_list = []
 
     def set_language_mode(self, language_mode):
@@ -269,7 +268,6 @@ class AIDB:
         logger.info(send_mess)
 
     async def check_api_key(self):
-        self.set_base_message()
         # self.agent_instance_util.api_key_use = True
         # .token_[uid].json
         token_path = CONFIG.up_file_path + '.token_' + str(self.uid) + '.json'
@@ -319,9 +317,9 @@ class AIDB:
                                    content=self.error_miss_key)
             return False
 
-    def set_base_message(self):
+    def set_base_message(self, message):
         try:
-            json_str = json.loads(self.message) if isinstance(self.message, str) else self.message
+            json_str = json.loads(message) if isinstance(message, str) else message
         except json.JSONDecodeError:
             logger.error("Failed to decode JSON from message.")
             return

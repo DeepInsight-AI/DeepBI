@@ -26,6 +26,7 @@ class ReportMysql(Report):
 
         if q_sender == CONFIG.talker_user:
             if q_data_type == CONFIG.type_question:
+                self.set_base_message(q_str)
                 if self.agent_instance_util.base_message is not None:
                     await self.start_chatgroup(q_str)
                 else:

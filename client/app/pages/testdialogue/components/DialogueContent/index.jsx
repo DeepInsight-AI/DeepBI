@@ -38,7 +38,7 @@ const DialogueContent = forwardRef(({
   useImperativeHandle(ref, () => ({
     sourceEdit,
   }));
-  const shouldDisplay = CharttableItem && CharttableItem.label && CharttableItem.label.includes("test");
+  const shouldDisplay = CharttableItem && CharttableItem.label && CharttableItem.label.includes("多店");
   return (
     <>
     <div className="dialogue-content-all">

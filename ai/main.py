@@ -69,6 +69,7 @@ def chat():
     print("user_name: ", user_name)
     print("message: ", message)
     print("chat_id: ", chat_id)
+    message = json.dumps(message)
     mock_socket = MockWebSocket()
     mock_socket.set_chat_id(chat_id)
 

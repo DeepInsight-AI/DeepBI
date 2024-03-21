@@ -12,7 +12,7 @@ from ai.backend.util import base_util
 import asyncio
 from requests.exceptions import HTTPError
 from ai.backend.language_info import LanguageInfo
-
+from ai.backend.util import database_util
 
 class AIDB:
     def __init__(self, chatClass):
@@ -23,6 +23,7 @@ class AIDB:
         self.user_name = chatClass.user_name
         self.websocket = chatClass.ws
         self.uid = chatClass.uid
+        self.message = chatClass.message
         self.log_list = []
 
     def set_language_mode(self, language_mode):
@@ -268,8 +269,8 @@ class AIDB:
         logger.info(send_mess)
 
     async def check_api_key(self):
+        self.set_base_message()
         # self.agent_instance_util.api_key_use = True
-
         # .token_[uid].json
         token_path = CONFIG.up_file_path + '.token_' + str(self.uid) + '.json'
         print("token_path++++", token_path)
@@ -318,6 +319,19 @@ class AIDB:
                                    content=self.error_miss_key)
             return False
 
+    def set_base_message(self):
+        json_str = json.loads(self.message)
+        if json_str.get('base_message'):
+            databases_id = json_str['data']['databases_id']
+            db_id = str(databases_id)
+            obj = database_util.Main(db_id)
+            if_suss, db_info = obj.run()
+            if if_suss:
+                self.agent_instance_util.base_mysql_info = ' When connecting to the database, be sure to bring the port. This is mysql database info :' + '\n' + str(
+                    db_info)
+                self.agent_instance_util.set_base_message(json_str.get('base_message'))
+                self.agent_instance_util.db_id = db_id
+            
     async def test_api_key(self):
         # self.agent_instance_util.api_key_use = True
 

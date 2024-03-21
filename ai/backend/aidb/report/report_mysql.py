@@ -17,7 +17,6 @@ class ReportMysql(Report):
         q_data_type = json_str['data']['data_type']
         print('q_data_type : ', q_data_type)
         q_str = json_str['data']['content']
-        database_str = json_str.get('base_message', None)
 
 
         if not self.agent_instance_util.api_key_use:
@@ -27,15 +26,6 @@ class ReportMysql(Report):
 
         if q_sender == CONFIG.talker_user:
             if q_data_type == CONFIG.type_question:
-                if database_str:
-                    databases_id = json_str['data']['databases_id']
-                    db_id = str(databases_id)
-                    obj = database_util.Main(db_id)
-                    if_suss, db_info = obj.run()
-                    if if_suss:
-                        self.agent_instance_util.base_mysql_info = '  When connecting to the database, be sure to bring the port. This is database info :' + '\n' + str(
-                            db_info)
-                        self.agent_instance_util.set_base_message(database_str)
                 if self.agent_instance_util.base_message is not None:
                     await self.start_chatgroup(q_str)
                 else:

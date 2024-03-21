@@ -23,7 +23,6 @@ class AnalysisMysql(Analysis):
         q_data_type = json_str['data']['data_type']
         print('q_data_type : ', q_data_type)
         q_str = json_str['data']['content']
-        database_str = json_str.get('base_message', None)
 
         print("self.agent_instance_util.api_key_use :", self.agent_instance_util.api_key_use)
         if not self.agent_instance_util.api_key_use:
@@ -34,16 +33,6 @@ class AnalysisMysql(Analysis):
 
         if q_sender == 'user':
             if q_data_type == 'question':
-                if database_str:
-                    databases_id = json_str['data']['databases_id']
-                    db_id = str(databases_id)
-                    obj = database_util.Main(db_id)
-                    if_suss, db_info = obj.run()
-                    if if_suss:
-                        self.agent_instance_util.base_mysql_info = ' When connecting to the database, be sure to bring the port. This is mysql database info :' + '\n' + str(
-                            db_info)
-                        self.agent_instance_util.set_base_message(database_str)
-                        self.agent_instance_util.db_id = db_id
                 # print("agent_instance_util.base_message :", self.agent_instance_util.base_message)
                 if self.agent_instance_util.base_message is not None:
                     await self.start_chatgroup(q_str)

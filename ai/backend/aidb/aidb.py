@@ -272,7 +272,9 @@ class AIDB:
 
         # .token_[uid].json
         token_path = CONFIG.up_file_path + '.token_' + str(self.uid) + '.json'
+        print("token_path++++", token_path)
         if os.path.exists(token_path):
+            print("token_path====", token_path)
             try:
                 ApiKey, HttpProxyHost, HttpProxyPort, ApiHost, in_use = self.load_api_key(token_path)
                 if ApiKey is None or len(ApiKey) == 0:
@@ -305,6 +307,7 @@ class AIDB:
                 return False
             except Exception as e:
                 traceback.print_exc()
+                print("e=====", str(e))
                 logger.error("from user:[{}".format(self.user_name) + "] , " + "error: " + str(e))
                 await self.put_message(500, CONFIG.talker_log, CONFIG.type_log_data, self.error_miss_key)
                 return False

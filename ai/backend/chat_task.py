@@ -96,8 +96,8 @@ class ChatClass:
             # do something 'consuming' :)
             result = {'state': 200, 'data': {}, 'receiver': ''}
 
-            json_str = json.loads(self.message)
-            # json_str = self.message
+            # json_str = json.loads(self.message)
+            json_str = self.message
             print("api===", json_str)
 
             if json_str.get('sender'):

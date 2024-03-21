@@ -323,14 +323,10 @@ class AIDB:
         except json.JSONDecodeError:
             logger.error("Failed to decode JSON from message.")
             return
-        print("json_str====", json_str)
         base_message = json_str.get('base_message')
-        print("base_message=====",base_message)
         if base_message:
             databases_id = json_str.get('data', {}).get('databases_id')
-            
             db_id = str(databases_id)
-            print("databases_id=====",databases_id)
             obj = database_util.Main(db_id)
             if_suss, db_info = obj.run()
             if if_suss:

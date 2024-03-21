@@ -318,7 +318,11 @@ class AIDB:
             return False
 
     def set_base_message(self, message):
-        json_str = message
+        try:
+            json_str = json.loads(message) if isinstance(message, str) else message
+        except json.JSONDecodeError:
+            logger.error("Failed to decode JSON from message.")
+            return
         print("json_str====", json_str)
         base_message = json_str.get('base_message')
         print("base_message=====",base_message)

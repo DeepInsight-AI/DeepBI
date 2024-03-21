@@ -5,10 +5,8 @@ try:
 except ImportError:
     raise ImportError("Please install dependencies first. `pip install pyautogen[retrievechat]`")
 
-
 from typing import Callable, Dict, Optional, Union, List, Tuple, Any
 from IPython import get_ipython
-
 
 from ai.agents.agentchat.agent import Agent
 from ai.agents.agentchat import PythonProxyAgent
@@ -16,11 +14,9 @@ from ai.agents.code_utils import extract_code
 from ai.agents.token_count_utils import count_token
 from ai.agents.retrieve_utils import create_vector_db_from_dir, query_vector_db, TEXT_FORMATS
 
-
-
 import logging
-logger = logging.getLogger(__name__)
 
+logger = logging.getLogger(__name__)
 
 try:
     from termcolor import colored
@@ -28,7 +24,6 @@ except ImportError:
 
     def colored(x, *args, **kwargs):
         return x
-
 
 PROMPT_DEFAULT = """You're a retrieve augmented chatbot. You answer user's questions based on your own knowledge and the
 context provided by the user. You should follow the following steps to answer a question:
@@ -75,7 +70,16 @@ Context is: {input_context}
 # Context is: {input_context}
 # """
 
+# PROMPT_QA = """
+# Context is: {input_context}
+#
+# {input_question}
+# """
+
+
 PROMPT_QA = """
+{input_dbinfo}
+
 Context is: {input_context}
 
 {input_question}
@@ -303,7 +307,9 @@ class RetrievePythonProxyAgent(PythonProxyAgent):
         elif task.upper() == "CODE":
             message = PROMPT_CODE.format(input_question=self.problem, input_context=doc_contents)
         elif task.upper() == "QA":
-            message = PROMPT_QA.format(input_question=self.problem, input_context=doc_contents)
+            # message = PROMPT_QA.format(input_question=self.problem, input_context=doc_contents)
+            message = PROMPT_QA.format(input_question=self.problem, input_context=doc_contents,
+                                       input_dbinfo=self.db_info)
         elif task.upper() == "DEFAULT":
             message = PROMPT_DEFAULT.format(input_question=self.problem, input_context=doc_contents)
         else:
@@ -428,7 +434,7 @@ class RetrievePythonProxyAgent(PythonProxyAgent):
         self._results = results
         print("doc_ids: ", results["ids"])
 
-    def generate_init_message(self, problem: str, n_results: int = 5, search_string: str = ""):
+    def generate_init_message(self, problem: str, n_results: int = 5, search_string: str = "", db_info: str = ""):
         """Generate an initial message with the given problem and prompt.
 
         Args:
@@ -444,6 +450,7 @@ class RetrievePythonProxyAgent(PythonProxyAgent):
         self.problem = problem
         self.n_results = n_results
         doc_contents = self._get_context(self._results)
+        self.db_info = db_info
         message = self._generate_message(doc_contents, self._task)
         return message
 

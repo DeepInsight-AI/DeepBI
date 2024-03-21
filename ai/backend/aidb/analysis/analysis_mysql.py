@@ -167,7 +167,8 @@ class AnalysisMysql(Analysis):
                         table_comment = await self.select_table_comment(qustion_message, use_cache)
                         table_desc_length = len(table_comment['table_desc'])
                         if table_desc_length > 0:
-                            answer_message = await self.task_generate_echart_rag(qustion_message, table_comment, use_cache)
+                            answer_message = await self.task_generate_echart_rag(qustion_message, table_comment,
+                                                                                 use_cache)
                         else:
                             use_cache = False
                             continue
@@ -300,18 +301,25 @@ class AnalysisMysql(Analysis):
             logger.error("from user:[{}".format(self.user_name) + "] , " + "error: " + str(e))
         return self.agent_instance_util.data_analysis_error
 
-
     async def task_base_rag(self, qustion_message, table_comment, use_cache):
         """ Task type: mysql data analysis"""
         if os.path.exists(self.agent_instance_util.get_rag_doc()):
             base_mysql_assistant = self.get_agent_retrieve_base_mysql_assistant(use_cache=use_cache)
             python_executor = self.get_agent_retrieve_python_executor(docs_path=self.agent_instance_util.get_rag_doc())
 
+            # await python_executor.initiate_chat(
+            #     base_mysql_assistant,
+            #     problem='this is databases info: ' + '\n' + str(table_comment) + '\n' + self.question_ask + '\n' + str(
+            #         qustion_message),
+            # )
+
             await python_executor.initiate_chat(
                 base_mysql_assistant,
-                problem='this is databases info: ' + '\n' + str(table_comment) + '\n' + self.question_ask + '\n' + str(
+                problem=self.question_ask + '\n' + str(
                     qustion_message),
+                db_info='this is databases info: ' + '\n' + str(table_comment),
             )
+
         else:
             base_mysql_assistant = self.agent_instance_util.get_agent_base_mysql_assistant(use_cache=use_cache)
             python_executor = self.agent_instance_util.get_agent_python_executor()
@@ -332,11 +340,19 @@ class AnalysisMysql(Analysis):
             mysql_echart_assistant = self.get_agent_retrieve_mysql_echart_assistant(use_cache=use_cache)
             python_executor = self.get_agent_retrieve_python_executor(docs_path=self.agent_instance_util.get_rag_doc())
 
+            # await python_executor.initiate_chat(
+            #     mysql_echart_assistant,
+            #     problem='this is databases info: ' + '\n' + str(table_comment) + '\n' + self.question_ask + '\n' + str(
+            #         qustion_message),
+            # )
+
             await python_executor.initiate_chat(
                 mysql_echart_assistant,
-                problem='this is databases info: ' + '\n' + str(table_comment) + '\n' + self.question_ask + '\n' + str(
+                problem=self.question_ask + '\n' + str(
                     qustion_message),
+                db_info='this is databases info: ' + '\n' + str(table_comment),
             )
+
 
         else:
             mysql_echart_assistant = self.agent_instance_util.get_agent_mysql_echart_assistant(

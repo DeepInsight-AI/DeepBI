@@ -18,8 +18,6 @@ class DataReportFileResource(BaseResource):  # BaseResource
     def get(self, data_report_file_id=None):
         result = {}
         user_id = self.current_user.id
-        print("user_id", user_id)
-        print("data_report_file_id", data_report_file_id)
         if data_report_file_id:
             try:
                 data = models.DataReportFile.file_info(data_report_file_id, user_id)
@@ -30,38 +28,40 @@ class DataReportFileResource(BaseResource):  # BaseResource
             except ValueError:
                 abort(404, message="Data source file not found.")
         else:
-            try:
-                result = models.DataReportFile.get_user_files(user_id)
-                # Define state mapping
-                status_mapping = {
-                    -1: '失败',
-                    0: '待生成',
-                    1: '生成中',
-                    2: '成功'
-                }
-
-                for item in result:
-                    status_code = item.get('is_generate')
-                    if status_code is not None and status_code in status_mapping:
-                        if status_code == 0:
-                            report_id = item.get('id')
-                            file_name = item.get('file_name')
-                            # 创建新线程并执行 POST 请求
-                            thread = threading.Thread(target=self.send_post_request,
-                                                      args=(user_id, report_id, file_name))
-                            thread.start()
-                            print("Thread started...")
-                # 重新获取更新后的文件状态信息
-                result = models.DataReportFile.get_user_files(user_id)
-
-            except Exception as e:
-                print(f"Error occurred while fetching or processing user files: {e}")
-                return json_response({'code': 500, 'message': f"服务器内部错误，无法获取或处理数据报告文件 {e}"})
-
-        self.record_event(
-            {"action": "view", "object_id": data_report_file_id, "object_type": "data_report_file"}
-        )
-        return json_response({'code': 200, 'data': result})
+            return json_response({'code': 200, 'data': result})
+        #     try:
+        #         result = models.DataReportFile.get_user_files(user_id)
+        #         # Define state mapping
+        #         status_mapping = {
+        #             -1: '失败',
+        #             0: '待生成',
+        #             1: '生成中',
+        #             2: '成功'
+        #         }
+        #
+        #         for item in result:
+        #             status_code = item.get('is_generate')
+        #             if status_code is not None and status_code in status_mapping:
+        #                 if status_code == 0:
+        #                     report_id = item.get('id')
+        #                     file_name = item.get('file_name')
+        #                     # 创建新线程并执行 POST 请求
+        #                     thread = threading.Thread(target=self.send_post_request,
+        #                                               args=(user_id, report_id, file_name))
+        #                     thread.start()
+        #                     print("Thread started...")
+        #         # 重新获取更新后的文件状态信息
+        #         result = models.DataReportFile.get_user_files(user_id)
+        #
+        #
+        #     except Exception as e:
+        #         print(f"Error occurred while fetching or processing user files: {e}")
+        #         return json_response({'code': 500, 'message': f"服务器内部错误，无法获取或处理数据报告文件 {e}"})
+        #
+        # self.record_event(
+        #     {"action": "view", "object_id": data_report_file_id, "object_type": "data_report_file"}
+        # )
+        # return json_response({'code': 200, 'data': result})
 
     @require_permission("list_data_sources")
     def post(self):

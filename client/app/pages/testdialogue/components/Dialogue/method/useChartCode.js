@@ -320,5 +320,5 @@ const dashboardsId = useCallback(async (response, type = null,task_id) => {
     }
   }, [dashboardsId]);
 
-  return { DashId,saveChart,dashboardsId };
+  return { DashId,saveChart,dashboardsId, publishQuery };
 };

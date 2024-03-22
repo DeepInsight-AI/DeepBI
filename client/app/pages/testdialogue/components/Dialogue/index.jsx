@@ -392,7 +392,7 @@ const Dialogue = (props) => {
           // setState(prevState => ({ ...prevState, sendTableDate: 0 }));
           setSendTableDate(0)
           setLoadingMask(false);
-          setLoadingState(false);
+          
         }
       }
 
@@ -408,7 +408,7 @@ const Dialogue = (props) => {
         )
       }));
       // errorSetting();
-
+      setLoadingState(false);
       return;
     }
 

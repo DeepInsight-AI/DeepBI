@@ -23,13 +23,12 @@ except:
 
 # check function_call Strict mode or not
 STRICT_MODE_CHECK_FUNCTION = False
-MAX_TOKEN=10240
 # define default model
-Claude_AI_MODEL = 'anthropic.claude-3-sonnet-20240229-v1:0'
+# Claude_AI_MODEL = 'anthropic.claude-v2:1'
+Claude_AI_MODEL = 'claude-3-opus-20240229'
 # define default temperature
 Claude_AI_temperature = 0.1
 Claude_role_map = {
-    # "open ai name: claude name"
     "system": "Human",
     "user": "Human",
     "assistant": "Assistant",
@@ -39,7 +38,6 @@ Claude_role_map = {
 Claude_stop_reason_map = {
     "stop_sequence": "stop",
     "max_tokens": "length",
-    "end_turn": "stop",
 }
 
 
@@ -61,38 +59,29 @@ class AWSClaudeClient:
             aws_access_key_id=apiKey['ApiKey'],
             aws_secret_access_key=apiKey['ApkSecret']
         )
-        print("0" * 30)
-        print(data['messages'])
-        messages = cls.input_to_openai(data['messages'])
-        print(messages)
-        print("1" * 30)
+        prompt = cls.input_to_openai(data['messages'])
         if "functions" in data:
             prompt_begin = cls.functions_to_function_call_string()
             prompt_begin = prompt_begin + cls.functions_to_tools_string(data['functions'])
-            response = client_obj.invoke_model(
-                modelId=model_name,
-                body=json.dumps(
-                    {
-                        "anthropic_version": "bedrock-2023-05-31",
-                        "max_tokens": MAX_TOKEN,
-                        "messages": messages,
-                        "temperature": Claude_AI_temperature,
-                    },
-                ),
-                system=prompt_begin,
-            )
+            body = json.dumps({
+                "prompt": prompt_begin + "\n" + prompt,
+                "temperature": temperature,
+                "max_tokens_to_sample": 100000,
+                "top_p": 0.9,
+                "stop_sequences": ["\n\nHuman:", "</function_calls>"]
+            })
         else:
-            response = client_obj.invoke_model(
-                modelId=model_name,
-                body=json.dumps(
-                    {
-                        "anthropic_version": "bedrock-2023-05-31",
-                        "max_tokens": MAX_TOKEN,
-                        "messages": messages,
-                        "temperature": Claude_AI_temperature,
-                    },
-                )
-            )
+            prompt = cls.input_to_openai(data['messages'])
+            body = json.dumps({
+                "prompt": prompt,
+                "temperature": temperature,
+                "max_tokens_to_sample": 100000,
+                "top_p": 0.9
+            })
+        modelId = model_name
+        accept = 'application/json'
+        contentType = 'application/json'
+        response = client_obj.invoke_model(body=body, modelId=modelId, accept=accept, contentType=contentType)
         response_body = json.loads(response.get('body').read())
         print("-------------origin---response-------------")
         print(response_body)
@@ -102,14 +91,8 @@ class AWSClaudeClient:
 
     @classmethod
     def output_to_openai(cls, data):
-        completion = str(data["content"][0]['text'])
-        if "usage" in data:
-            in_token = data['usage']['input_tokens']
-            out_token = data['usage']['output_tokens']
-            sum_token = int(in_token) + int(out_token)
-        else:
-            in_token = out_token = 0
-            sum_token = int(cls.num_tokens_from_string(str(data["content"])))
+        completion = data['completion']
+        completion_tokens = cls.num_tokens_from_string(completion)
         # check function call
         if STRICT_MODE_CHECK_FUNCTION:
             function_call_flag = completion.strip().startswith("<function_calls>")
@@ -121,7 +104,7 @@ class AWSClaudeClient:
             """
             have function call
             """
-            choices = cls.return_to_open_function_call(completion)
+            choices = cls.return_to_open_function_call(data, completion_tokens)
         else:
             """ just process as message """
             # replace code
@@ -144,9 +127,9 @@ class AWSClaudeClient:
             "created": int(time.time()),
             "model": Claude_AI_MODEL,
             "usage": {
-                "prompt_tokens": in_token,
-                "completion_tokens": out_token,
-                "total_tokens": sum_token,
+                "prompt_tokens": 0,
+                "completion_tokens": completion_tokens,
+                "total_tokens": completion_tokens,
             },
             "choices": [choices],
         }
@@ -154,19 +137,18 @@ class AWSClaudeClient:
 
     @classmethod
     def input_to_openai(cls, messages):
-        result = []
+        prompt = ""
         for message in messages:
-            item = {}
             role = message["role"]
             content = message["content"]
             if content is None and 'function_call' in message and message['function_call'] is not None:
                 content = cls.function_call_to_xml(message['function_call'])
             else:
                 content = cls.replace_python_to_code(content)
-            item['role'] = role
-            item['content'] = [{"type": "text", "text": content}]
-            result.append(item)
-        return result
+            transformed_role = Claude_role_map[role]
+            prompt += f"\n\n{transformed_role.capitalize()}: {content}"
+        prompt += "\n\nAssistant: "
+        return prompt
 
     @classmethod
     def num_tokens_from_string(cls, string: str, encoding_name: str = "cl100k_base") -> int:
@@ -241,7 +223,7 @@ class AWSClaudeClient:
         pass
 
     @classmethod
-    def return_to_open_function_call(cls, data):
+    def return_to_open_function_call(cls, data, completion_tokens):
         """
         trans Claude2 to openai function call return
         """

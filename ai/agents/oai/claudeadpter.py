@@ -30,10 +30,9 @@ Claude_AI_MODEL = 'anthropic.claude-3-sonnet-20240229-v1:0'
 Claude_AI_temperature = 0.1
 Claude_role_map = {
     # "open ai name: claude name"
-    "system": "Human",
-    "user": "Human",
-    "assistant": "Assistant",
-    "function": "Assistant",
+    "user": "user",
+    "assistant": "assistant",
+    "function": "assistant",
 }
 
 Claude_stop_reason_map = {
@@ -63,7 +62,7 @@ class AWSClaudeClient:
         )
         print("0" * 30)
         print(data['messages'])
-        messages = cls.input_to_openai(data['messages'])
+        messages, system = cls.input_to_openai(data['messages'])
         print(messages)
         print("1" * 30)
         if "functions" in data:
@@ -76,7 +75,8 @@ class AWSClaudeClient:
                         "anthropic_version": "bedrock-2023-05-31",
                         "max_tokens": MAX_TOKEN,
                         "messages": messages,
-                        "temperature": Claude_AI_temperature,
+                        "temperature": temperature,
+                        "system": system
                     },
                 ),
                 system=prompt_begin,
@@ -90,6 +90,7 @@ class AWSClaudeClient:
                         "max_tokens": MAX_TOKEN,
                         "messages": messages,
                         "temperature": Claude_AI_temperature,
+                        "system": system
                     },
                 )
             )
@@ -155,18 +156,22 @@ class AWSClaudeClient:
     @classmethod
     def input_to_openai(cls, messages):
         result = []
+        system = None
         for message in messages:
             item = {}
             role = message["role"]
             content = message["content"]
-            if content is None and 'function_call' in message and message['function_call'] is not None:
-                content = cls.function_call_to_xml(message['function_call'])
+            if role.lower() == "system" and system is None:
+                system = content
             else:
-                content = cls.replace_python_to_code(content)
-            item['role'] = role
-            item['content'] = [{"type": "text", "text": content}]
-            result.append(item)
-        return result
+                if content is None and 'function_call' in message and message['function_call'] is not None:
+                    content = cls.function_call_to_xml(message['function_call'])
+                else:
+                    content = cls.replace_python_to_code(content)
+                item['role'] = Claude_role_map[role]
+                item['content'] = content
+                result.append(item)
+        return result, system
 
     @classmethod
     def num_tokens_from_string(cls, string: str, encoding_name: str = "cl100k_base") -> int:

@@ -10,7 +10,7 @@ DeepBI is an AI-native data analysis platform. DeepBI leverages the power of lar
 <div align="center">
 
   Languages： English [中文](README_CN.md)<br>
-Developer：dev@deep-insight.co  Business：hi@deep-insight.co
+Developer：dev@deepbi.com  Business：hi@deepbi.com
 
   <div style="display: flex; align-items: center;">
 
@@ -118,6 +118,6 @@ git clone http://github.com/DeepInsight-AI/DeepBI.git
 - We have tested on Mac OS 12.7/13.X /14.1.1, Ubuntu 20.04/22.04, and Windows11 WSL 22.04.
 - Windows 10 requires version 22H2 or higher to install WSL
 - The minimum memory requirement for server operation is 1 core 2G memory, and 2 core 4G memory is recommended
-- If you have any question, please contact us at dev@deep-insight.co
+- If you have any question, please contact us at dev@deepbi.com
 - <a href="https://github.com/DeepInsight-AI/DeepBI/issues">Issue</a>
 

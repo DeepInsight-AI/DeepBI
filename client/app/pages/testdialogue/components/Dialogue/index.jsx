@@ -34,7 +34,7 @@ const Dialogue = (props) => {
   const [SendTableDate, setSendTableDate] = useState(0); // 发送表格状态
   const [LoadingMask, setLoadingMask] = useState(false); // 加载状态
   const [selectTableName, setSelectTableName] = useState([]);
-  const [selectTableDesc, setSelectTableDesc] = useState({}); // 
+  const [selectTableDesc, setSelectTableDesc] = useState({}); //
   const selectTableDescRef = useRef(); // 保存selectTableDesc
   const selectTableNameRef = useRef(); // 保存selectTableName
   const [ConfirmLoading, setConfirmLoading] = useState(false); // 确认加载
@@ -369,7 +369,7 @@ const Dialogue = (props) => {
 
   // 返回处理
   const outPutMessage = async (data) => {
-    
+
     if (data.receiver === 'user') {
       setState(prevState => ({
         ...prevState,
@@ -492,10 +492,13 @@ const Dialogue = (props) => {
         setData_type("delete_chart");
         dashboardsId(data.data.content, "delete", data.id);
       } else if (data.data.data_type === 'table_code') {
+        console.log("table_code=====", data.id)
         setData_type("table_code");
         if (Dashboard_id.current) {
+          console.log("22222table_code=====", data.id)
           publishQuery("edit", data.id);
         } else {
+          console.log("111111table_code=====", data.id)
           publishQuery(null, data.id);
         }
       }
@@ -548,7 +551,7 @@ const Dialogue = (props) => {
       if (lastMessage && lastMessage.sender === "bot" && lastMessage.Cardloading && !lastMessage.content && !lastMessage.chart) {
         allMessages.pop();
       }
-      
+
       addChatList(allMessages, chat_type);
     }
     // LoadingState
@@ -952,7 +955,7 @@ const Dialogue = (props) => {
   // }, [state]);
 
 
-  // fetch请求 
+  // fetch请求
   const sendSocketMessage = useCallback(async (state, sender, data_type, content, id = 0, base_message = null, chat_id = 0, signal = null) => {
 
     if (chat_type === "report" && data_type !== "mysql_comment_first" && data_type !== "mysql_comment") {
@@ -1005,7 +1008,7 @@ const Dialogue = (props) => {
       return
     }
 
-    // 
+    //
     const messageData = {
       user_id: currentUser.id,
       user_name: currentUser.name,

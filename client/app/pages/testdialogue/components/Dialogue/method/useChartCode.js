@@ -76,16 +76,17 @@ export const useChartCode = (sendSocketMessage,saveDashboardId, props, successSe
         await publishQuery(null,task_id);
         // await newReport(type,task_id);
       }
-  
+
     } catch (err) {
       // console.log(err, 'save_error');
       await sendSocketMessage(500,'bi','chart_code',err,task_id)
     }
   }, [state, dashboardsId, publishQuery]);
-  
+
   // publishQuery
 const publishQuery = useCallback(async (type = null,task_id) => {
-  // console.log(task_id,"publishQuery")
+  console.log(task_id,"publishQuery")
+  console.log("new_sql.current===", new_sql.current)
   const sqlId = new_sql.current;
     const CharttableDate = CharttableDate;
     const data = {
@@ -95,14 +96,14 @@ const publishQuery = useCallback(async (type = null,task_id) => {
     }
     try {
       const res = await axios.post(`/api/queries/${sqlId}`, data);
-      // console.log(res, 'publishQuery_success');
+      console.log(res, 'publishQuery_success');
       if (CharttableDate && CharttableDate.dashboard_id) {
         await dashboardsId(res,type,task_id);
       } else {
         await newReport(type,task_id);
       }
     } catch (err) {
-      // console.log(err, 'publishQuery_error');
+      console.log(err, 'publishQuery_error');
       await sendSocketMessage(500, 'bi', 'chart_code', err,task_id)
     }
 }, [state, CharttableDate, dashboardsId, newReport, sendSocketMessage]);
@@ -133,7 +134,7 @@ const newReport = useCallback(async (type = null,task_id) => {
       // console.log(err, 'newReport_error');
     }
   }, [setState, saveDashboardId, dashboardsId]);
- 
+
 // DashboardsId
 const dashboardsId = useCallback(async (response, type = null,task_id) => {
   let dashboard_id;
@@ -148,7 +149,7 @@ const dashboardsId = useCallback(async (response, type = null,task_id) => {
     //   await sendSocketMessage(500, 'bi', 'ask_data', [],task_id)
     //   return
     // }
-   
+
     try {
       const res = await axios.get(`/api/dashboards/${dashboard_id}`);
       // console.log(res, 'get_dashboard_id_success');
@@ -171,7 +172,7 @@ const dashboardsId = useCallback(async (response, type = null,task_id) => {
       // console.log(err, 'get_dashboard_id_error');
     }
   }, [state, setState, sendSocketMessage, deleteReport, widgetsJson, props, successSetting, queriesId,saveDashboardId,sendDashId,DashId]);
-  
+
   const queriesId = useCallback(async (response, type,task_id) => {
     const sqlId = new_sql.current;
     try {
@@ -182,7 +183,7 @@ const dashboardsId = useCallback(async (response, type = null,task_id) => {
       // console.log(error, 'get_sql_id_error');
     }
   }, [state, editReport]);
-  
+
   // editReport
   const editReport = useCallback(async (response, response_dashboards, type,task_id) => {
     const dashboard_id = DashId.current;
@@ -216,7 +217,7 @@ const dashboardsId = useCallback(async (response, type = null,task_id) => {
       // console.log(err, 'add_error')
     }
   }, [state, saveReport]);
-  
+
   // saveReport
   const saveReport = useCallback(async (response, response_dashboards, type,task_id) => {
     let options=response.options
@@ -236,7 +237,7 @@ const dashboardsId = useCallback(async (response, type = null,task_id) => {
       console.log(error, 'saveReport_error')
     }
   }, [widgetsJson]);
-  
+
   // widgetsJson
   const widgetsJson = useCallback(async (response, type,task_id) => {
     const dashboard_id = DashId.current;
@@ -268,7 +269,7 @@ const dashboardsId = useCallback(async (response, type = null,task_id) => {
       // console.log(error, 'jsonget_error')
     }
   }, [state, sendSocketMessage,new_sql, dashboardsId]);
-  
+
 
 
   // publishReport
@@ -278,7 +279,7 @@ const dashboardsId = useCallback(async (response, type = null,task_id) => {
   //     id: dashboard_id,
   //     is_draft: false,
   //   }
-  
+
   //   try {
   //     const res = await axios.post(`/api/dashboards/${dashboard_id}`, data)
   //     // await shareQuery(task_id);
@@ -288,7 +289,7 @@ const dashboardsId = useCallback(async (response, type = null,task_id) => {
   //   } catch (error) {
   //   }
   // }, [state,successSetting,sendSocketMessage]);
-  
+
   // shareQuery
   // const shareQuery = useCallback(async (task_id) => {
   //    const dashboard_id = DashId.current;
@@ -302,7 +303,7 @@ const dashboardsId = useCallback(async (response, type = null,task_id) => {
   //     console.log(error, 'share_error')
   //   }
   // }, [state, props, successSetting, sendSocketMessage]);
-  
+
   // deleteReport
   const deleteReport = useCallback(async (nameList, response,task_id) => {
     try {
@@ -314,7 +315,7 @@ const dashboardsId = useCallback(async (response, type = null,task_id) => {
       Promise.all(arr).then(res => {
         dashboardsId(res, "delGetPath",task_id)
       })
-  
+
     } catch (error) {
     }
   }, [dashboardsId]);

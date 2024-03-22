@@ -387,6 +387,7 @@ class AnalysisMysql(Analysis):
                 Reply "TERMINATE" in the end when everything is done.
                 When you find an answer,  You are a report analysis, you have the knowledge and skills to turn raw data into information and insight, which can be used to make business decisions.include your analysis in your reply.
                 Be careful to avoid using mysql special keywords in mysql code.If creating a database connection using PyMySQL, please note that in the connect function of PyMySQL, the cursorclass parameter should be set to the default value: cursorclass=pymysql.cursors.Cursor or left unset. Do not set it to cursorclass=pymysql.cursors.DictCursor.
+                If you choose to use a connection method similar to db_connection_str = f"mysql+pymysql://{db_config['user']}:\"{db_config['passwd']}\"@{db_config['host']}:{db_config['port']}/{db_config['db']}?charset=utf8mb4", please be mindful of special characters in your password. Ensure that you correctly handle escaping and quotation marks in the connection string to guarantee the correctness of db_connection.
                 """ + '\n' + self.agent_instance_util.base_mysql_info + '\n' + CONFIG.python_base_dependency + '\n' + self.agent_instance_util.quesion_answer_language,
             human_input_mode="NEVER",
             user_name=self.user_name,
@@ -435,6 +436,7 @@ class AnalysisMysql(Analysis):
                                             Reply "TERMINATE" in the end when everything is done.
                                             When you find an answer,  You are a report analysis, you have the knowledge and skills to turn raw data into information and insight, which can be used to make business decisions.include your analysis in your reply.
                                             Be careful to avoid using mysql special keywords in mysql code.If creating a database connection using PyMySQL, please note that in the connect function of PyMySQL, the cursorclass parameter should be set to the default value: cursorclass=pymysql.cursors.Cursor or left unset. Do not set it to cursorclass=pymysql.cursors.DictCursor.
+                                            If you choose to use a connection method similar to db_connection_str = f"mysql+pymysql://{db_config['user']}:\"{db_config['passwd']}\"@{db_config['host']}:{db_config['port']}/{db_config['db']}?charset=utf8mb4", please be mindful of special characters in your password. Ensure that you correctly handle escaping and quotation marks in the connection string to guarantee the correctness of db_connection.
                                             One SQL query result is limited to 20 items.
                                             Don't generate html files.
                                             """ + '\n' + self.agent_instance_util.base_mysql_info + '\n' + CONFIG.python_base_dependency + '\n' + MYSQL_ECHART_TIPS_MESS,
@@ -448,3 +450,4 @@ class AnalysisMysql(Analysis):
 
         )
         return retrieve_mysql_echart_assistant
+

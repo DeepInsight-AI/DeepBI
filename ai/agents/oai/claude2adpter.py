@@ -98,7 +98,10 @@ class AWSClaudeClient:
             function_call_flag = completion.strip().startswith("<function_calls>")
         else:
             function_call_flag = completion.strip().startswith("<function_calls>") or\
-                                 all(substring in completion for substring in ("<function_calls>", "<invoke>", "<tool_name>", "</invoke>"))
+                                 all(substring in completion for substring in ("<function_calls>",
+                                                                               "<invoke>",
+                                                                               "<tool_name>",
+                                                                               "</invoke>"))
         # return openai result
         if function_call_flag:
             """

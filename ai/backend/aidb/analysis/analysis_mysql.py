@@ -226,6 +226,15 @@ class AnalysisMysql(Analysis):
                     print("base_content: ", base_content)
                     base_mess = []
                     base_mess.append(answer_message)
+                    # Reduce debugging processes in the message.
+                    message_return = []
+                    for step_res in answer_message:
+                        if step_res["content"] and "execution failed" in str(step_res["content"]):
+                            message_return.pop()
+                        else:
+                            message_return.append(step_res)
+                    if len(message_return) == 1:
+                        message_return.extend(answer_message[-2:])
                     break
 
 
@@ -282,7 +291,7 @@ class AnalysisMysql(Analysis):
                     await planner_user.initiate_chat(
                         analyst,
                         message=str(
-                            base_mess) + '\n' + self.question_ask + '\n' + question_supplement,
+                            message_return) + '\n' + self.question_ask + '\n' + question_supplement,
                     )
 
                     answer_message = planner_user.last_message()["content"]

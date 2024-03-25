@@ -119,6 +119,7 @@ const SelectSource = forwardRef(({ confirmLoading, Charttable, chat_type, onChan
     setCheckAll(false);
   };
   const getSchemaList = (val, max = 50) => {
+    setSelectLoading(true)
     return new Promise((resolve, reject) => {
       let num = 0;
       const timer = setInterval(async () => {
@@ -128,13 +129,25 @@ const SelectSource = forwardRef(({ confirmLoading, Charttable, chat_type, onChan
           reject([]);
         }
         try {
-          const res = await axios.get(`/api/data_sources/${val}/schema`);
-          if (res.schema) {
-            clearInterval(timer);
-            resolve(res.schema);
+          const res = await axios.get(`/api/data_sources/${val}/schema?refresh=true`);
+          if (res.job) {
+            if (res.job.status === 3) {
+              clearInterval(timer);
+              setSelectLoading(false)
+              resolve(res.job.result);
+            }else{
+              const job_id = res.job.id;
+              const job_res = await axios.get(`/api/jobs/${job_id}`);
+              if (job_res.job.status === 3) {
+                clearInterval(timer);
+                setSelectLoading(false)
+                resolve(job_res.job.result);
+              }
+            }
           }
         } catch (err) {
           clearInterval(timer);
+          setSelectLoading(false)
           reject(err);
         }
       }, 200);
@@ -411,7 +424,7 @@ const SelectSource = forwardRef(({ confirmLoading, Charttable, chat_type, onChan
       <Select.Option key={value} value={value}>
         <Space>
           <div aria-label={label} style={{ display: "flex", alignItems: "center" }}>
-            <span role="img" style={{ marginRight: "5px", display: "flex", alignItems: "center" }}>
+            <span role="img" style={{ marginRight: "5px"}}>
               <img src={`${imageFolder}/${type}.png`} alt={type} style={{ width: "30px", height: "30px" }} />
             </span>
             {label}

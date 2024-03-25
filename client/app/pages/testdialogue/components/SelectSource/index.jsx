@@ -411,7 +411,7 @@ const SelectSource = forwardRef(({ confirmLoading, Charttable, chat_type, onChan
       <Select.Option key={value} value={value}>
         <Space>
           <div aria-label={label} style={{ display: "flex", alignItems: "center" }}>
-            <span role="img" style={{ marginRight: "5px" }}>
+            <span role="img" style={{ marginRight: "5px", display: "flex", alignItems: "center" }}>
               <img src={`${imageFolder}/${type}.png`} alt={type} style={{ width: "30px", height: "30px" }} />
             </span>
             {label}

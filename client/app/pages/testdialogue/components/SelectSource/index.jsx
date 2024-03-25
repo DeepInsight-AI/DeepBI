@@ -118,39 +118,44 @@ const SelectSource = forwardRef(({ confirmLoading, Charttable, chat_type, onChan
     setIndeterminate(false);
     setCheckAll(false);
   };
-  const getSchemaList = (val, max = 50) => {
-    setSelectLoading(true)
-    return new Promise((resolve, reject) => {
-      let num = 0;
-      const timer = setInterval(async () => {
-        num++;
-        if (num > max) {
-          clearInterval(timer);
-          reject([]);
-        }
-        try {
-          const res = await axios.get(`/api/data_sources/${val}/schema?refresh=true`);
-          if (res.job) {
-            if (res.job.status === 3) {
+  const getSchemaList = async (val, max = 50) => {
+    setSelectLoading(true);
+    return new Promise(async (resolve, reject) => {
+      try {
+        const res = await axios.get(`/api/data_sources/${val}/schema?refresh=true`);
+        if (res.job && res.job.status !== 3) {
+          // 如果作业未立即完成，开始轮询作业状态
+          let num = 0;
+          const job_id = res.job.id;
+          const timer = setInterval(async () => {
+            num++;
+            if (num > max) {
               clearInterval(timer);
-              setSelectLoading(false)
-              resolve(res.job.result);
-            }else{
-              const job_id = res.job.id;
+              setSelectLoading(false); 
+              reject(new Error("Timeout waiting for job completion"));
+            }
+            try {
               const job_res = await axios.get(`/api/jobs/${job_id}`);
               if (job_res.job.status === 3) {
                 clearInterval(timer);
-                setSelectLoading(false)
+                setSelectLoading(false); 
                 resolve(job_res.job.result);
               }
+            } catch (err) {
+              clearInterval(timer);
+              setSelectLoading(false); 
+              reject(err);
             }
-          }
-        } catch (err) {
-          clearInterval(timer);
-          setSelectLoading(false)
-          reject(err);
+          }, 1000);
+        } else {
+          // 如果作业已完成，直接返回结果
+          setSelectLoading(false); 
+          resolve(res.job ? res.job.result : []);
         }
-      }, 200);
+      } catch (err) {
+        setSelectLoading(false); 
+        reject(err);
+      }
     });
   };
   const schemaList = async (val, type) => {

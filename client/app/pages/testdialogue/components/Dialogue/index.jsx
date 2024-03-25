@@ -41,7 +41,7 @@ const Dialogue = (props) => {
   const sourceTypeRef = useRef("mysql"); // 数据库类型
   const [percent, setPercent] = useState(0); // 进度条
   const [cachedTableDesc, setCachedTableDesc] = useState(null); // 添加一个状态来缓存数据
-  const MAX_QUESTIONS = chat_type === "chat" ? 3 : 1; // 假设最大问题数为5
+  const MAX_QUESTIONS = chat_type === "chat" ? 5 : 1; // 最大问题数
   const abortControllersRef = useRef([]); // 使用ref来跟踪所有的AbortController实例
   let timeoutId = null;
   const [inputMessage, setInputMessage] = useState("");// 输入的消息

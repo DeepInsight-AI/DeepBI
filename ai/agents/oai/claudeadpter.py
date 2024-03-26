@@ -32,7 +32,8 @@ Claude_role_map = {
     # "open ai name: claude name"
     "user": "user",
     "assistant": "assistant",
-    "function": "assistant",
+    "function": "user",
+    "system": "assistant"
 }
 
 Claude_stop_reason_map = {
@@ -65,9 +66,20 @@ class AWSClaudeClient:
         messages, system = cls.input_to_openai(data['messages'])
         print(messages)
         print("1" * 30)
+        for i in range(0, len(messages)):
+            messages[i]['role'] = "user" if i % 2 == 0 else 'assistant'
+
         if "functions" in data:
             prompt_begin = cls.functions_to_function_call_string()
             prompt_begin = prompt_begin + cls.functions_to_tools_string(data['functions'])
+            if messages[-1]['role'] == 'user':
+                messages[-1]['content'] = messages[-1]['content'] + prompt_begin
+            else:
+                new_message = {
+                    "role": "user",
+                    "content": prompt_begin
+                }
+                messages.append(new_message)
             response = client_obj.invoke_model(
                 modelId=model_name,
                 body=json.dumps(
@@ -78,8 +90,7 @@ class AWSClaudeClient:
                         "temperature": temperature,
                         "system": system
                     },
-                ),
-                system=prompt_begin,
+                )
             )
         else:
             response = client_obj.invoke_model(
@@ -250,7 +261,7 @@ class AWSClaudeClient:
         """
         trans Claude2 to openai function call return
         """
-        xml_string = data['completion']
+        xml_string = data
         match = re.search(r'<invoke>(.*?)</invoke>', xml_string, re.DOTALL)
         result = match.group(1)
         function_xml_str = "<function_calls>\n<invoke>\n" + result.strip() + "</invoke>\n</function_calls>"

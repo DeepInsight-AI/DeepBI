@@ -51,7 +51,7 @@ class ChatShopSelect extends React.Component {
     return (
       <Select
         showSearch
-        style={{ width: 150, position: "absolute", left: "0", top: "-35px" }}
+        style={{ width: 200, position: "absolute", left: "0", top: "-35px" }}
         placeholder="选择常用语"
         optionFilterProp="children"
         onChange={this.handleChange}

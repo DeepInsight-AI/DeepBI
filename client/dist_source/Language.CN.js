@@ -826,4 +826,5 @@ window.W_L=  {
     'example2':'示例2',
     'example3':'示例3',
     'more':'更多',
+    "ERROR_MESSAGE":"生成图表出错。请查看开发者控制台和后端日志以获取详细信息。欢迎在Github上提出问题。",
   }

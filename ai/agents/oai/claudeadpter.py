@@ -268,43 +268,41 @@ class AWSClaudeClient:
         root = E_T.fromstring(function_xml_str)
         invokes = root.findall("invoke")
         function_call = {}
-        if len(invokes) < 1:
-            raise Exception("Get Claude2 function call error")
-        else:
-            tool_name = invokes[0].find("tool_name").text
-            function_call['name'] = tool_name
-            args = invokes[0].find("parameters")
-            args_obj = {}
-            for item in args:
-                if "object" == item.tag:
-                    args_son = item.findall("./")
-                    if len(args_son) > 0:
-                        for son_item in args_son:
-                            arg_name = son_item.tag
-                            arg_value = son_item.text
-                            args_obj[arg_name] = arg_value
-                    else:
-                        arg_item_obj = json.loads(item.text)
-                        for k, v in arg_item_obj.items():
-                            args_obj[k] = json.dumps(v)
-                else:
-                    arg_name = item.tag
-                    arg_value = item.text
-                    args_obj[arg_name] = arg_value
 
-            return {
-                    "index": 0,
-                    "message": {
-                        "role": "assistant",
-                        "content": None,
-                        "function_call": {
-                            "name": tool_name,
-                            "arguments": json.dumps(args_obj)
-                        },
-                        "logprobs": None,
-                        "finish_reason": "function_call"
-                    }
+        tool_name = invokes[0].find("tool_name").text
+        function_call['name'] = tool_name
+        args = invokes[0].find("parameters")
+        args_obj = {}
+        for item in args:
+            if "object" == item.tag:
+                args_son = item.findall("./")
+                if len(args_son) > 0:
+                    for son_item in args_son:
+                        arg_name = son_item.tag
+                        arg_value = son_item.text
+                        args_obj[arg_name] = arg_value
+                else:
+                    arg_item_obj = json.loads(item.text)
+                    for k, v in arg_item_obj.items():
+                        args_obj[k] = json.dumps(v)
+            else:
+                arg_name = item.tag
+                arg_value = item.text
+                args_obj[arg_name] = arg_value
+
+        return {
+                "index": 0,
+                "message": {
+                    "role": "assistant",
+                    "content": None,
+                    "function_call": {
+                        "name": tool_name,
+                        "arguments": json.dumps(args_obj)
+                    },
+                    "logprobs": None,
+                    "finish_reason": "function_call"
                 }
+            }
         pass
 
     @classmethod

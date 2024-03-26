@@ -318,11 +318,12 @@ class AIDB:
             return False
 
     def set_base_message(self, message):
-        try:
-            json_str = json.loads(message) if isinstance(message, str) else message
-        except json.JSONDecodeError:
-            logger.error("Failed to decode JSON from message.")
-            return
+        # try:
+        #     json_str = json.loads(message) if isinstance(message, str) else message
+        # except json.JSONDecodeError:
+        #     logger.error("Failed to decode JSON from message.")
+        #     return
+        json_str = message
         base_message = json_str.get('base_message')
         if base_message:
             databases_id = json_str.get('data', {}).get('databases_id')

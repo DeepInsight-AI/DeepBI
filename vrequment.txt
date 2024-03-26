@@ -132,3 +132,4 @@ XlsxWriter==1.2.2
 xmlschema==2.5.0
 yarl==1.9.4
 zipp==3.17.0
+flask_cors==4.0.0

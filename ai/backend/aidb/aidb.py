@@ -327,21 +327,25 @@ class AIDB:
         base_message = json_str.get('base_message')
         if base_message:
             database = json_str.get('database')
-        if database == 'csv':
-            self.agent_instance_util.set_base_csv_info(base_message)
-            self.agent_instance_util.set_base_message = str(base_message)
-        else:
-            databases_id = json_str.get('data', {}).get('databases_id')
-            db_id = str(databases_id)
-            obj = database_util.Main(db_id)
-            if_suss, db_info = obj.run()
-            if if_suss:
-                self.agent_instance_util.base_mysql_info = '  When connecting to the database, be sure to bring the port. This is database info :' + '\n' + str(
-                            db_info)
-                self.agent_instance_util.set_base_message(base_message)
-                self.agent_instance_util.db_id = db_id
+            print('database+++++++', database)
+            if database == 'csv':
+                print('database------', database)
+                self.agent_instance_util.set_base_csv_info(base_message)
+                self.agent_instance_util.set_base_message = str(base_message)
             else:
-                logger.error("Failed to get database info for db_id: {}".format(db_id))
+                print('database=======', database)
+                databases_id = json_str.get('data', {}).get('databases_id')
+                db_id = str(databases_id)
+                obj = database_util.Main(db_id)
+                if_suss, db_info = obj.run()
+                if if_suss:
+                    if database == 'pg':
+                        database = 'postgresql'
+                    setattr(self.agent_instance_util, f"base_{database}_info", ' When connecting to the database, be sure to bring the port. This is ' + database + ' database info :' + '\n' + str(db_info))
+                    self.agent_instance_util.set_base_message(base_message)
+                    self.agent_instance_util.db_id = db_id
+                else:
+                    logger.error("Failed to get database info for db_id: {}".format(db_id))
             
     async def test_api_key(self):
         # self.agent_instance_util.api_key_use = True

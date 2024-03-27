@@ -331,7 +331,7 @@ class AIDB:
             if database == 'csv':
                 print('database------', database)
                 self.agent_instance_util.set_base_csv_info(base_message)
-                self.agent_instance_util.set_base_message = str(base_message)
+                self.agent_instance_util.set_base_message(base_message)
             else:
                 print('database=======', database)
                 databases_id = json_str.get('data', {}).get('databases_id')

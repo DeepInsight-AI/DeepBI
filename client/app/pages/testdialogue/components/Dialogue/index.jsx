@@ -712,7 +712,7 @@ const Dialogue = (props) => {
       data_type: "question"
     }));
     setInputMessage("");
-    setLoadingState(true);
+    setLoadingState(chat_type === "report" ? true : false);
     scrollToBottom();
 
     const baseMessageContent = await isSendTableDate("mysql_comment_second");

@@ -323,8 +323,14 @@ class AIDB:
         except json.JSONDecodeError:
             logger.error("Failed to decode JSON from message.")
             return
+        
         base_message = json_str.get('base_message')
         if base_message:
+            database = json_str.get('database')
+        if database == 'csv':
+            self.agent_instance_util.set_base_csv_info(base_message)
+            self.agent_instance_util.set_base_message = str(base_message)
+        else:
             databases_id = json_str.get('data', {}).get('databases_id')
             db_id = str(databases_id)
             obj = database_util.Main(db_id)

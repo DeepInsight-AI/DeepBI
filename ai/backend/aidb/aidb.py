@@ -327,13 +327,10 @@ class AIDB:
         base_message = json_str.get('base_message')
         if base_message:
             database = json_str.get('database')
-            print('database+++++++', database)
             if database == 'csv':
-                print('database------', database)
                 self.agent_instance_util.set_base_csv_info(base_message)
                 self.agent_instance_util.set_base_message(base_message)
             else:
-                print('database=======', database)
                 databases_id = json_str.get('data', {}).get('databases_id')
                 db_id = str(databases_id)
                 obj = database_util.Main(db_id)

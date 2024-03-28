@@ -10,7 +10,7 @@ from ai.agents.agentchat import (UserProxyAgent, GroupChat, AssistantAgent, Grou
                                  PythonProxyAgent, BIProxyAgent, TaskPlannerAgent, TaskSelectorAgent, CheckAgent,
                                  ChartPresenterAgent)
 from ai.backend.base_config import CONFIG
-from ai.agents.agentchat.contrib import RetrieveAssistantAgent, RetrievePythonProxyAgent, RetrieveUserProxyAgent
+from ai.agents.agentchat.contrib import RetrieveAssistantAgent, RetrieveUserProxyAgent
 import os
 
 max_retry_times = CONFIG.max_retry_times
@@ -1021,21 +1021,7 @@ class AgentInstanceUtil:
         )
         return python_executor
 
-    def get_agent_retrieve_python_executor(self, report_file_name=None):
-        python_executor = RetrievePythonProxyAgent(
-            name="python_executor",
-            system_message="python executor. Execute the python code and report the result.",
-            code_execution_config={"last_n_messages": 1, "work_dir": "paper"},
-            human_input_mode="NEVER",
-            websocket=self.websocket,
-            user_name=self.user_name,
-            default_auto_reply="TERMINATE",
-            # outgoing=self.outgoing,
-            # incoming=self.incoming,
-            db_id=self.db_id,
-            report_file_name=report_file_name,
-        )
-        return python_executor
+
 
     def get_agent_csv_echart_assistant(self, use_cache=True):
         """ csv_echart_assistant """

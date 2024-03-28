@@ -226,6 +226,15 @@ class AnalysisMysql(Analysis):
                     print("base_content: ", base_content)
                     base_mess = []
                     base_mess.append(answer_message)
+                    # Reduce debugging processes in the message.
+                    message_return = []
+                    for step_res in answer_message:
+                        if step_res["content"] and "execution failed" in str(step_res["content"]):
+                            message_return.pop()
+                        else:
+                            message_return.append(step_res)
+                    if len(message_return) == 1:
+                        message_return.extend(answer_message[-2:])
                     break
 
 
@@ -282,7 +291,7 @@ class AnalysisMysql(Analysis):
                     await planner_user.initiate_chat(
                         analyst,
                         message=str(
-                            base_mess) + '\n' + self.question_ask + '\n' + question_supplement,
+                            message_return) + '\n' + self.question_ask + '\n' + question_supplement,
                     )
 
                     answer_message = planner_user.last_message()["content"]
@@ -380,13 +389,14 @@ class AnalysisMysql(Analysis):
                     1. When you need to collect info, use the code to output the info you need, for example, browse or search the web, download/read a file, print the content of a webpage or a file, get the current date/time, check the operating system. After sufficient info is printed and the task is ready to be solved based on your language skill, you can solve the task by yourself.
                     2. When you need to perform some task with code, use the code to perform the task and output the result. Finish the task smartly.
                 Solve the task step by step if you need to. If a plan is not provided, explain your plan first. Be clear which step uses code, and which step uses your language skill.
-                When using code, you must indicate the script type in the code block. The user cannot provide any other feedback or perform any other action beyond executing the code you suggest. The user can't modify your code. So do not suggest incomplete code which requires users to modify. Don't use a code block if it's not intended to be executed by the user.
+                When using code, you must indicate the script type in the code block. The user cannot provide any other feedback or perform any other action beyond executing the code you suggest. The user can't modify your code. So do not suggest incomplete code which requires users to modify. Don't use a code block if it's not intended to be executed by the user.Please refrain from generating any graphics based on the data or producing any code related to generating graphics.
                 If you want the user to save the code in a file before executing it, put # filename: <filename> inside the code block as the first line. Don't include multiple code blocks in one response. Do not ask users to copy and paste the result. Instead, use 'print' function for the output when relevant. Check the execution result returned by the user.
                 Do not merely substitute the statistical characteristics of the overall data with those derived from sample data. In any case, even if the sample data is insufficient, do not fabricate data for the sake of visualization. Instead, you should reassess whether there is a flaw in the execution logic and attempt again, or plainly acknowledge the limitation.If the result indicates there is an error, fix the error and output the code again. Suggest the full code instead of partial code or code changes. If the error can't be fixed or if the task is not solved even after the code is executed successfully, analyze the problem, revisit your assumption, collect additional info you need, and think of a different approach to try.
                 When you find an answer, verify the answer carefully. Include verifiable evidence in your response if possible.
                 Reply "TERMINATE" in the end when everything is done.
                 When you find an answer,  You are a report analysis, you have the knowledge and skills to turn raw data into information and insight, which can be used to make business decisions.include your analysis in your reply.
                 Be careful to avoid using mysql special keywords in mysql code.If creating a database connection using PyMySQL, please note that in the connect function of PyMySQL, the cursorclass parameter should be set to the default value: cursorclass=pymysql.cursors.Cursor or left unset. Do not set it to cursorclass=pymysql.cursors.DictCursor.
+                If you choose to use a connection method similar to db_connection_str = f"mysql+pymysql://{db_config['user']}:\"{db_config['passwd']}\"@{db_config['host']}:{db_config['port']}/{db_config['db']}?charset=utf8mb4", please be mindful of special characters in your password. Ensure that you correctly handle escaping and quotation marks in the connection string to guarantee the correctness of db_connection.
                 """ + '\n' + self.agent_instance_util.base_mysql_info + '\n' + CONFIG.python_base_dependency + '\n' + self.agent_instance_util.quesion_answer_language,
             human_input_mode="NEVER",
             user_name=self.user_name,
@@ -436,6 +446,7 @@ class AnalysisMysql(Analysis):
                                             Reply "TERMINATE" in the end when everything is done.
                                             When you find an answer,  You are a report analysis, you have the knowledge and skills to turn raw data into information and insight, which can be used to make business decisions.include your analysis in your reply.
                                             Be careful to avoid using mysql special keywords in mysql code.If creating a database connection using PyMySQL, please note that in the connect function of PyMySQL, the cursorclass parameter should be set to the default value: cursorclass=pymysql.cursors.Cursor or left unset. Do not set it to cursorclass=pymysql.cursors.DictCursor.
+                                            If you choose to use a connection method similar to db_connection_str = f"mysql+pymysql://{db_config['user']}:\"{db_config['passwd']}\"@{db_config['host']}:{db_config['port']}/{db_config['db']}?charset=utf8mb4", please be mindful of special characters in your password. Ensure that you correctly handle escaping and quotation marks in the connection string to guarantee the correctness of db_connection.
                                             One SQL query result is limited to 20 items.
                                             Don't generate html files.
                                             """ + '\n' + self.agent_instance_util.base_mysql_info + '\n' + CONFIG.python_base_dependency + '\n' + MYSQL_ECHART_TIPS_MESS,
@@ -449,3 +460,4 @@ class AnalysisMysql(Analysis):
 
         )
         return retrieve_mysql_echart_assistant
+

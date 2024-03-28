@@ -24,8 +24,7 @@ except:
 # check function_call Strict mode or not
 STRICT_MODE_CHECK_FUNCTION = False
 # define default model
-# Claude_AI_MODEL = 'anthropic.claude-v2:1'
-Claude_AI_MODEL = 'claude-3-opus-20240229'
+Claude_AI_MODEL = 'anthropic.claude-v2:1'
 # define default temperature
 Claude_AI_temperature = 0.1
 Claude_role_map = {

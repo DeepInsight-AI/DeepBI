@@ -7,7 +7,7 @@ from .analysis import Analysis
 import re
 import ast
 from ai.backend.util import base_util
-from ai.agents.agentchat.contrib import RetrieveAssistantAgent, RetrievePythonProxyAgent, RetrieveUserProxyAgent
+from ai.agents.agentchat.contrib import RetrieveAssistantAgent, RetrievePythonProxyAgent
 import os
 from ai.agents.prompt import MYSQL_ECHART_TIPS_MESS
 
@@ -413,6 +413,7 @@ class AnalysisMysql(Analysis):
             retrieve_config={
                 "task": "qa",
                 "docs_path": docs_path,
+                "custom_text_types": "json",
             },
         )
         return retrieve_python_executor

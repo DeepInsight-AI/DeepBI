@@ -559,18 +559,18 @@ class AIDB:
         return select_analysis_assistant
 
     async def select_table_comment(self, qustion_message, use_cache):
-
-
+        print("qustion_message+++++", qustion_message)
+        print("self.db_info_json++++++", self.db_info_json)
         select_table_assistant = self.get_agent_select_table_assistant(db_info_json=self.db_info_json,
                                                                        use_cache=use_cache)
         planner_user = self.agent_instance_util.get_agent_planner_user()
-
+        print("select_table_assistant+++++", select_table_assistant)
         await planner_user.initiate_chat(
             select_table_assistant,
             message=qustion_message,
         )
         select_table_message = planner_user.last_message()["content"]
-
+        print("select_table_message++++++", select_table_message)
         match = re.search(
             r"\[.*\]", select_table_message.strip(), re.MULTILINE | re.IGNORECASE | re.DOTALL
         )

@@ -69,6 +69,7 @@ class AgentInstanceUtil:
 
     def get_rag_doc(self):
         rag_doc = CONFIG.up_file_path + '.rag_' + str(self.uid) + '_db' + str(self.db_id) + '.json'
+        print('rag_doc ： ', rag_doc)
         return rag_doc
 
     def set_api_key(self, api_key, api_host=None, in_use=CONFIG.apikey_openai):
@@ -241,7 +242,7 @@ class AgentInstanceUtil:
                     in message['table_desc']]
 
                 self.base_message = str(table_comments)
-                print('self.base_message : ', self.base_message)
+                # print('self.base_message : ', self.base_message)
 
     def get_agent_mysql_engineer(self):
         """mysql engineer"""
@@ -1020,8 +1021,6 @@ class AgentInstanceUtil:
             report_file_name=report_file_name,
         )
         return python_executor
-
-
 
     def get_agent_csv_echart_assistant(self, use_cache=True):
         """ csv_echart_assistant """

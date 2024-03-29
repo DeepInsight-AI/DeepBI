@@ -426,6 +426,9 @@ class AnalysisMysql(Analysis):
                 "task": "qa",
                 "docs_path": docs_path,
                 "custom_text_types": "json",
+                "extra_docs": False,
+                "collection_name": "autogen_docs_" + str(self.agent_instance_util.uid) + '_db' + str(
+                    self.agent_instance_util.db_id),
             },
         )
         return retrieve_python_executor
@@ -462,4 +465,3 @@ class AnalysisMysql(Analysis):
 
         )
         return retrieve_mysql_echart_assistant
-

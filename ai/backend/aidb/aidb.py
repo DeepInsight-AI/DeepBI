@@ -241,7 +241,7 @@ class AIDB:
                             if not fd.get('is_pass'):
                                 fd['is_pass'] = 0
 
-            print(" 最终 q_str : ", q_str)
+            # print(" 最终 q_str : ", q_str)
             await self.put_message(200, CONFIG.talker_bi, CONFIG.type_comment, q_str)
         else:
             databases_id = 0
@@ -303,7 +303,7 @@ class AIDB:
                                 if not fd.get('is_pass'):
                                     fd['is_pass'] = 1
 
-                print(" 最终 q_str : ", q_str)
+                # print(" 最终 q_str : ", q_str)
                 await self.put_message(200, CONFIG.talker_bi, CONFIG.type_comment, q_str)
 
     async def put_message(self, state=200, receiver='log', data_type=None, content=None):

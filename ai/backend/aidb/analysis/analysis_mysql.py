@@ -329,6 +329,13 @@ class AnalysisMysql(Analysis):
                 db_info='this is databases info: ' + '\n' + str(table_comment),
             )
 
+            # await python_executor.initiate_chat(
+            #     base_mysql_assistant,
+            #     problem=str(
+            #         qustion_message),
+            #     db_info='',
+            # )
+
         else:
             base_mysql_assistant = self.agent_instance_util.get_agent_base_mysql_assistant(use_cache=use_cache)
             python_executor = self.agent_instance_util.get_agent_python_executor()
@@ -429,6 +436,8 @@ class AnalysisMysql(Analysis):
                 "extra_docs": False,
                 "collection_name": "autogen_docs_" + str(self.agent_instance_util.uid) + '_db' + str(
                     self.agent_instance_util.db_id),
+                "chunk_mode": "multi_lines",
+                # "chunk_mode": "one_line",
             },
         )
         return retrieve_python_executor

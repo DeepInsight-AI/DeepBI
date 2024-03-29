@@ -713,6 +713,7 @@ class PythonProxyAgent(Agent):
 
             if len(code_blocks) == 1 and code_blocks[0][0] != 'python':
                 continue
+            code_blocks = self.regex_fix_date_format(code_blocks)
 
             if self.db_id is not None:
                 obj = database_util.Main(self.db_id)
@@ -1221,3 +1222,23 @@ class PythonProxyAgent(Agent):
 
         # return "i have no question."
         return None
+
+    def regex_fix_date_format(self, code_blocks):
+        # fix mysql generate %%Y %%m %%d code :list
+        pattern1 = r"%s"
+        patterns_replacements = [
+            (r"%%Y-%%m-%%d %%H", "%Y-%m-%d %H"),
+            (r"%%Y-%%m-%%d", "%Y-%m-%d"),
+            (r"%%Y-%%m", "%Y-%m"),
+            (r"%%H", "%H"),
+            (r"%%Y-%%m-%%d %%H:%%i", "%Y-%m-%d %H:%i"),
+            (r"%%Y-%%m-%%d %%H:%%i:%%s", "%Y-%m-%d %H:%i:%s")]
+
+        if re.search(pattern1, str(code_blocks)):
+            for pattern, replacement in patterns_replacements:
+                code_blocks = [(language, re.sub(replacement, pattern, code)) for language, code in code_blocks]
+        else:
+            for pattern, replacement in patterns_replacements:
+                code_blocks = [(language, re.sub(pattern, replacement, code)) for language, code in code_blocks]
+
+        return code_blocks

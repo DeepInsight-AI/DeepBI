@@ -557,6 +557,7 @@ const Dialogue = (props) => {
     // LoadingState
     setLoadingState(false);
     cancelRequestAll();
+    sessionStorage.removeItem(`${chat_type}CommonExpressions`);
   }
   // 取消所有请求
   const cancelRequestAll = () => {
@@ -1133,6 +1134,7 @@ const Dialogue = (props) => {
           onSuccess={onSuccess}
           percent={percent}
           sourceTypeRef={sourceTypeRef}
+          CharttableItem={Charttable_item.current}
         />
       </div>
     </DialogueContext.Provider>

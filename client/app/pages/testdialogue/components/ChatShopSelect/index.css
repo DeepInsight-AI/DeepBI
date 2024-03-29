@@ -1,0 +1,12 @@
+.custom-select .ant-select-selector {
+  height: 30px !important;
+  line-height: 28px !important;
+  border-radius: 10px !important;
+}
+.custom-select .ant-select-selector .ant-select-selection-item {
+  line-height: 28px !important;
+}
+.ant-select:not(.ant-select-disabled).ant-select:not(.ant-select-customize-input) .ant-select-selector {
+  border-color: #e5e7eb;
+  box-shadow: none;
+}

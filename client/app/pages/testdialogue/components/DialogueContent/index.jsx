@@ -6,6 +6,7 @@ import TypingCard from "../TypingCard";
 
 import SendOutlinedIcon from "@ant-design/icons/SendOutlined";
 import PauseCircleOutlinedIcon from "@ant-design/icons/PauseCircleOutlined";
+import ChatShopSelect from "../ChatShopSelect";
 const { TextArea } = Input;
 const DialogueContent = forwardRef(({
   Charttable,
@@ -26,6 +27,7 @@ const DialogueContent = forwardRef(({
   onSuccess,
   percent,
   databases_type,
+  CharttableItem
 },ref) => {
   const selectSourceRef = useRef(null);
   const sourceEdit = (data) => {
@@ -34,6 +36,7 @@ const DialogueContent = forwardRef(({
   useImperativeHandle(ref, () => ({
     sourceEdit,
   }));
+  const shouldDisplay = CharttableItem && CharttableItem.label && CharttableItem.label.includes("多店");
   return (
     <>
     <div className="dialogue-content-all">
@@ -65,7 +68,7 @@ const DialogueContent = forwardRef(({
         </div>
       </div>
       </div>
-     
+
       {
       chat_type!=="viewConversation" &&
       (
@@ -83,9 +86,14 @@ const DialogueContent = forwardRef(({
             ""
             :
         <div className="dialogue-content-bottom">
+
+          {
+            shouldDisplay && <ChatShopSelect chat_type={chat_type} />
+          }
+
         <div className="open-key" style={{display:"none"}} onClick={onOpenKeyClick}>
         </div>
-          
+
             <TextArea
             bordered={false}
             style={{ resize: 'none', maxHeight: '100px !important', fontSize: '15px', border: 'none !important' }}
@@ -107,7 +115,7 @@ const DialogueContent = forwardRef(({
           <div className="gpt-input-middle">
           <SendOutlinedIcon onClick={handleSendMessage} style={{color:inputMessage ? "" : "#ccc",fontSize:"20px",marginRight:"15px"}}></SendOutlinedIcon>
           </div>
-         
+
         </div>
       }
       </div>

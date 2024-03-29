@@ -6,7 +6,6 @@ from .agent import Agent
 from ai.backend.base_config import CONFIG
 import re
 
-
 class TaskSelectorAgent(ConversableAgent):
     """(In preview) A class for generic conversable agents which can be configured as assistant or user proxy.
 

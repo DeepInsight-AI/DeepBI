@@ -136,7 +136,8 @@ const config = {
       { from: "client/app/jquery.js" },
       { from: "client/app/assets/css/*.css", to: "styles/", flatten: true },
       { from: "client/app/assets/fonts", to: "fonts/" },
-      { from: "client/app/assets/static", to: "prettify" }
+      { from: "client/app/assets/static", to: "prettify" },
+      { from: "client/app/assets/CommenExpressions/CommenExpressions.json", to: "CommenExpressions/" }
     ]),
     isHotReloadingEnabled && new ReactRefreshWebpackPlugin({ overlay: false })
   ].filter(Boolean),

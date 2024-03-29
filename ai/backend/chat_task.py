@@ -39,6 +39,7 @@ class ChatClass:
                                                      delay_messages=self.delay_messages,
                                                      outgoing=self.outgoing,
                                                      incoming=self.incoming,
+                                                     uid=self.uid,
                                                      )
         self.agent_instance_util.set_socket(websocket)
         self.agent_instance_util.set_language_mode(CONFIG.default_language_mode)

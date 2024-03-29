@@ -37,6 +37,7 @@ class AgentInstanceUtil:
         outgoing: Optional = None,
         incoming: Optional = None,
         db_id: Optional = None,
+        uid: Optional = 0,
     ):
         self.base_message = base_message
         self.websocket = websocket
@@ -65,7 +66,8 @@ class AgentInstanceUtil:
         self.db_id = db_id
         self.is_rag = False
 
-        self.uid = self.user_name.split('_')[0]
+        # self.uid = self.user_name.split('_')[0]
+        self.uid = self.uid if self.uid != 0 else self.user_name.split('_')[0]
 
     def get_rag_doc(self):
         rag_doc = CONFIG.up_file_path + '.rag_' + str(self.uid) + '_db' + str(self.db_id) + '.json'

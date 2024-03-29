@@ -203,7 +203,7 @@ class RetrievePythonProxyAgent(PythonProxyAgent):
         self._model = self._retrieve_config.get("model", "gpt-4")
         self._max_tokens = self.get_max_tokens(self._model)
         # self._chunk_token_size = int(self._retrieve_config.get("chunk_token_size", self._max_tokens * 0.2))
-        self._chunk_token_size = int(self._retrieve_config.get("chunk_token_size", self._max_tokens * 0.4))
+        self._chunk_token_size = int(self._retrieve_config.get("chunk_token_size", self._max_tokens * 0.6))
         self._chunk_mode = self._retrieve_config.get("chunk_mode", "multi_lines")
         self._must_break_at_empty_line = self._retrieve_config.get("must_break_at_empty_line", True)
         self._embedding_model = self._retrieve_config.get("embedding_model", "all-MiniLM-L6-v2")

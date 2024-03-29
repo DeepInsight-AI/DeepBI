@@ -67,7 +67,7 @@ class AgentInstanceUtil:
         self.is_rag = False
 
         # self.uid = self.user_name.split('_')[0]
-        self.uid = self.uid if self.uid != 0 else self.user_name.split('_')[0]
+        self.uid = uid if uid != 0 else self.user_name.split('_')[0]
 
     def get_rag_doc(self):
         rag_doc = CONFIG.up_file_path + '.rag_' + str(self.uid) + '_db' + str(self.db_id) + '.json'

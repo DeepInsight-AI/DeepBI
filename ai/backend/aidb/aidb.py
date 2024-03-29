@@ -381,6 +381,7 @@ class AIDB:
         base_message = json_str.get('base_message')
         if base_message:
             database = json_str.get('database')
+            self.db_info_json = base_message
             if database == 'csv':
                 self.agent_instance_util.set_base_csv_info(base_message)
                 self.agent_instance_util.set_base_message(base_message)

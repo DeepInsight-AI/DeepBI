@@ -569,6 +569,8 @@ class AIDB:
             select_table_assistant,
             message=qustion_message,
         )
+        print("planner_user++++", planner_user)
+        print("planner_user.last_message()++++", planner_user.last_message())
         select_table_message = planner_user.last_message()["content"]
         print("select_table_message++++++", select_table_message)
         match = re.search(

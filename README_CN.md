@@ -13,7 +13,7 @@ DeepBI是一款AI原生的数据分析平台。DeepBI充分利用大语言模型
 <div align="center">
 
   Languages： 中文 [English](README.md)<br>
- 开发：dev@deep-insight.co，工作及商务：hi@deep-insight.co
+ 开发：dev@deepbi.com，工作及商务：hi@deepbi.com
 
   <div style="display: flex; align-items: center;">
     如果觉得 DeepBI 对您有帮助的话，请帮忙<a style="display: flex; align-items: center;margin:0px 6px" target="_blank" href='https://github.com/DeepInsight-AI/DeepBI'></a>
@@ -21,7 +21,7 @@ DeepBI是一款AI原生的数据分析平台。DeepBI充分利用大语言模型
   </div>
 </div>
 <div align="center">
-    DeepBI官网 <a href="http://www.deep-insight.co/" target="_blank">http://www.deep-insight.co/</a>
+    DeepBI官网 <a href="http://www.deepbi.com/" target="_blank">http://www.deepbi.com/</a>
 </div>
 
 
@@ -93,8 +93,7 @@ git clone http://github.com/DeepInsight-AI/DeepBI.git
 
 
 ## Contact Us
-
-<a><img src="https://github.com/DeepInsight-AI/DeepBI/assets/151519374/b0ba1fc3-8c71-4bf7-bd53-ecf17050581a" width="40%"/></a>
+<a><img src="https://github.com/DeepInsight-AI/DeepBI/assets/36986406/64916f33-6dbf-445a-aaf7-e4ebb35354fd" width="40%"/></a>
 <br>
 为感谢各位支持，本地化部署完成可以联系群内DeepBI小助手，免费领取Token。
 
@@ -105,6 +104,6 @@ git clone http://github.com/DeepInsight-AI/DeepBI.git
 - 我们已经在 Mac OS 12.7/13.X /14.1.1 , Ubuntu 20.04/22.04 和  Windows11 WSL 22.04 系统测试。
 - Windows 10 安装WSL需要 22H2版本，详见  [使用 Docker 安装](Docker_install_CN.md)
 - 服务器运行需求 最低 1核心 2G内存，建议2核心 4G内存 以上
-- 如果有什么问题，可以联系我们 dev@deep-insight.co
+- 如果有什么问题，可以联系我们 dev@deepbi.com
 - <a href="https://github.com/DeepInsight-AI/DeepBI/issues">Issue</a>
 

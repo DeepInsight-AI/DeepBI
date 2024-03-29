@@ -10,6 +10,8 @@ from ai.agents.agentchat import (UserProxyAgent, GroupChat, AssistantAgent, Grou
                                  PythonProxyAgent, BIProxyAgent, TaskPlannerAgent, TaskSelectorAgent, CheckAgent,
                                  ChartPresenterAgent)
 from ai.backend.base_config import CONFIG
+from ai.agents.agentchat.contrib import RetrieveAssistantAgent, RetrieveUserProxyAgent
+import os
 
 max_retry_times = CONFIG.max_retry_times
 language_chinese = CONFIG.language_chinese
@@ -61,6 +63,14 @@ class AgentInstanceUtil:
 
         self.openai_proxy = None
         self.db_id = db_id
+        self.is_rag = False
+
+        self.uid = self.user_name.split('_')[0]
+
+    def get_rag_doc(self):
+        rag_doc = CONFIG.up_file_path + '.rag_' + str(self.uid) + '_db' + str(self.db_id) + '.json'
+        print('rag_doc ： ', rag_doc)
+        return rag_doc
 
     def set_api_key(self, api_key, api_host=None, in_use=CONFIG.apikey_openai):
         self.api_key = api_key
@@ -182,7 +192,7 @@ class AgentInstanceUtil:
             "request_timeout": request_timeout,
         }
 
-    def set_base_message(self, message):
+    def set_base_message(self, message, databases_id=-1):
         print('run function set_base_message ... ')
         for table in message['table_desc']:
             for field in table['field_desc']:
@@ -191,8 +201,48 @@ class AgentInstanceUtil:
                     if key not in ['name', 'comment']:
                         field.pop(key)
 
-        self.base_message = str(message)
-        print('base_message : ', message)
+        mess = [
+            {
+                "role": "system",
+                "content": str(message),
+            }
+        ]
+
+        num_tokens = num_tokens_from_messages(mess, model='gpt-4')
+        print('num_tokens: ', num_tokens)
+        print('databases_id ：', databases_id)
+
+        if num_tokens < CONFIG.max_token_num:
+            self.base_message = str(message)
+            # print('base_message : ', message)
+        else:
+            if databases_id == -1:
+                content = '所选表格' + str(num_tokens) + ' , 超过了最大长度:' + str(CONFIG.max_token_num) + ' , 请重新选择'
+                print(content)
+            else:
+                if not os.path.exists(self.get_rag_doc()):
+                    print('RAG文档不存在 +++++++++++++++++++++++++++++ ')
+                    with open(self.get_rag_doc(), 'w') as output_file:
+                        output_file.write(str(message))
+
+                self.is_rag = True
+
+                # for table in message['table_desc']:
+                #     for field in table['field_desc']:
+                #         field_keys = list(field.keys())
+                #         for key in field_keys:
+                #             if key not in ['']:
+                #                 field.pop(key)
+                # self.base_message = str(message)
+
+                table_comments = {'table_desc': [], 'databases_desc': ''}
+
+                table_comments['table_desc'] = [
+                    {'table_name': table['table_name'], 'table_comment': table['table_comment']} for table
+                    in message['table_desc']]
+
+                self.base_message = str(table_comments)
+                # print('self.base_message : ', self.base_message)
 
     def get_agent_mysql_engineer(self):
         """mysql engineer"""
@@ -374,7 +424,7 @@ class AgentInstanceUtil:
                                 "type": "string",
                                 "description": "Annotations for SQL code generated data. Generally, it is the name of "
                                                "the chart or report, and supports Chinese. If a name is specified in the question, "
-                                "the given name is used.",
+                                               "the given name is used.",
                             }
                         },
                         "required": ["mongodb_code_str", "data_name"],
@@ -409,7 +459,6 @@ class AgentInstanceUtil:
             define mongodb operate
         """
         return mongodb_engineer
-
 
     def get_agent_chart_presenter_old(self):
         """chart designer"""
@@ -463,9 +512,9 @@ class AgentInstanceUtil:
         )
         return chart_presenter
 
-    def get_agent_base_mysql_assistant(self):
+    def get_agent_base_mysql_assistant(self, use_cache=True):
         """ Basic Agent, processing mysql data source """
-        base_mysql_assistant = TaskSelectorAgent(
+        base_mysql_assistant = AssistantAgent(
             name="base_mysql_assistant",
             system_message="""You are a helpful AI assistant.
                 Solve tasks using your coding and language skills.
@@ -475,7 +524,7 @@ class AgentInstanceUtil:
                 Solve the task step by step if you need to. If a plan is not provided, explain your plan first. Be clear which step uses code, and which step uses your language skill.
                 When using code, you must indicate the script type in the code block. The user cannot provide any other feedback or perform any other action beyond executing the code you suggest. The user can't modify your code. So do not suggest incomplete code which requires users to modify. Don't use a code block if it's not intended to be executed by the user.
                 If you want the user to save the code in a file before executing it, put # filename: <filename> inside the code block as the first line. Don't include multiple code blocks in one response. Do not ask users to copy and paste the result. Instead, use 'print' function for the output when relevant. Check the execution result returned by the user.
-                If the result indicates there is an error, fix the error and output the code again. Suggest the full code instead of partial code or code changes. If the error can't be fixed or if the task is not solved even after the code is executed successfully, analyze the problem, revisit your assumption, collect additional info you need, and think of a different approach to try.
+                Do not merely substitute the statistical characteristics of the overall data with those derived from sample data. In any case, even if the sample data is insufficient, do not fabricate data for the sake of visualization. Instead, you should reassess whether there is a flaw in the execution logic and attempt again, or plainly acknowledge the limitation.If the result indicates there is an error, fix the error and output the code again. Suggest the full code instead of partial code or code changes. If the error can't be fixed or if the task is not solved even after the code is executed successfully, analyze the problem, revisit your assumption, collect additional info you need, and think of a different approach to try.
                 When you find an answer, verify the answer carefully. Include verifiable evidence in your response if possible.
                 Reply "TERMINATE" in the end when everything is done.
                 When you find an answer,  You are a report analysis, you have the knowledge and skills to turn raw data into information and insight, which can be used to make business decisions.include your analysis in your reply.
@@ -489,6 +538,7 @@ class AgentInstanceUtil:
                 "request_timeout": request_timeout,
             },
             openai_proxy=self.openai_proxy,
+            use_cache=use_cache,
         )
         return base_mysql_assistant
 
@@ -716,6 +766,18 @@ class AgentInstanceUtil:
         )
         return database_describer
 
+    def get_agent_retrieve_database_describer(self):
+        pass
+        database_describer = RetrieveAssistantAgent(
+            name="retrieve_database_describer",
+            system_message="""data_describer.You are a data describer, describing in one sentence your understanding of the data selected by the user. For example, the data selected by the user includes X tables, and what data is in each table.""",
+            llm_config=self.gpt4_turbo_config,
+            user_name=self.user_name,
+            websocket=self.websocket,
+            openai_proxy=self.openai_proxy,
+        )
+        return database_describer
+
     def get_agent_bi_proxy(self):
         """ BI proxy """
         bi_proxy = BIProxyAgent(
@@ -751,6 +813,23 @@ class AgentInstanceUtil:
             report_file_name=report_file_name,
         )
         return planner_user
+
+    def get_agent_retrieve_planner_user(self, is_log_out=True, report_file_name=None, docs_path=None):
+        """Disposable conversation initiator, no reply"""
+        retrieve_planner_user = RetrieveUserProxyAgent(
+            name="retrieve_planner_user",
+            max_consecutive_auto_reply=0,  # terminate without auto-reply
+            human_input_mode="NEVER",
+            websocket=self.websocket,
+            is_log_out=is_log_out,
+            openai_proxy=self.openai_proxy,
+            report_file_name=report_file_name,
+            retrieve_config={
+                "task": "qa",
+                "docs_path": docs_path,
+            },
+        )
+        return retrieve_planner_user
 
     def get_agent_api_check(self):
         """Disposable conversation initiator, no reply"""
@@ -983,12 +1062,14 @@ class AgentInstanceUtil:
                                           When using code, you must indicate the script type in the code block. The user cannot provide any other feedback or perform any other action beyond executing the code you suggest. The user can't modify your code. So do not suggest incomplete code which requires users to modify. Don't use a code block if it's not intended to be executed by the user.
                                           If you want the user to save the code in a file before executing it, put # filename: <filename> inside the code block as the first line. Don't include multiple code blocks in one response. Do not ask users to copy and paste the result. Instead, use 'print' function for the output when relevant. Check the execution result returned by the user.
                                           If you need to use %Y-%M to query the date or timestamp, please use %Y-%M. You cannot use %%Y-%%M.(For example you should use SELECT * FROM your_table WHERE DATE_FORMAT(your_date_column, '%Y-%M') = '2024-February'; instead of SELECT * FROM your_table WHERE DATE_FORMAT(your_date_column, '%%Y-%%M') = '2024-%%M';)
-                                          If the result indicates there is an error, fix the error and output the code again. Suggest the full code instead of partial code or code changes. If the error can't be fixed or if the task is not solved even after the code is executed successfully, analyze the problem, revisit your assumption, collect additional info you need, and think of a different approach to try.
+                                          When writing code to connect to the MySQL server, please use the pymysql package. You cannot use the sqlalchemy package. For example, you should use import pymysql; Instead of from sqlalchemy import create.engine
+                                          Do not merely substitute the statistical characteristics of the overall data with those derived from sample data. In any case, even if the sample data is insufficient, do not fabricate data for the sake of visualization. Instead, you should reassess whether there is a flaw in the execution logic and attempt again, or plainly acknowledge the limitation.If the result indicates there is an error, fix the error and output the code again. Suggest the full code instead of partial code or code changes. If the error can't be fixed or if the task is not solved even after the code is executed successfully, analyze the problem, revisit your assumption, collect additional info you need, and think of a different approach to try.
                                           When you find an answer, verify the answer carefully. Include verifiable evidence in your response if possible.
                                           Reply "TERMINATE" in the end when everything is done.
                                           When you find an answer,  You are a report analysis, you have the knowledge and skills to turn raw data into information and insight, which can be used to make business decisions.include your analysis in your reply.
                                           Be careful to avoid using mysql special keywords in mysql code.
                                           One SQL query result is limited to 20 items.
+                                          Don't generate html files.
                                           """ + '\n' + self.base_mysql_info + '\n' + python_base_dependency + '\n' + MYSQL_ECHART_TIPS_MESS,
             human_input_mode="NEVER",
             user_name=self.user_name,
@@ -1266,7 +1347,7 @@ class AgentInstanceUtil:
             self.question_ask = ' 以下是我的问题，请用中文回答: '
             self.quesion_answer_language = '用中文回答问题.'
             self.data_analysis_error = '分析数据失败，请检查相关数据是否充分'
-        
+
         elif self.language_mode == language_japanese:
             self.error_message_timeout = "申し訳ありませんが、今回のAI-GPTインターフェース呼び出しがタイムアウトしました。もう一度お試しください。"
             self.question_ask = ' これが私の質問です。: '

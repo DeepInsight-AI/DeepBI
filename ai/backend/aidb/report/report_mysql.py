@@ -5,6 +5,7 @@ import traceback
 from ai.backend.base_config import CONFIG
 from ai.backend.util import database_util
 from ai.backend.util.token_util import num_tokens_from_messages
+import os
 
 max_retry_times = CONFIG.max_retry_times
 
@@ -37,6 +38,8 @@ class ReportMysql(Report):
             if q_data_type == 'mysql_comment':
                 await self.check_data_base(q_str)
             elif q_data_type == CONFIG.type_comment_first:
+                self.db_info_json = q_str
+
                 if json_str.get('data').get('language_mode'):
                     q_language_mode = json_str['data']['language_mode']
                     if q_language_mode == CONFIG.language_chinese or q_language_mode == CONFIG.language_english or q_language_mode == CONFIG.language_japanese:
@@ -52,17 +55,18 @@ class ReportMysql(Report):
                     if if_suss:
                         self.agent_instance_util.base_mysql_info = '  When connecting to the database, be sure to bring the port. This is database info :' + '\n' + str(
                             db_info)
-                        # self.agent_instance_util.base_message = str(q_str)
-                        self.agent_instance_util.set_base_message(q_str)
+                        self.agent_instance_util.db_id = db_id
+                        self.agent_instance_util.set_base_message(q_str, databases_id=db_id)
 
                 else:
-                    # self.agent_instance_util.base_message = str(q_str)
                     self.agent_instance_util.set_base_message(q_str)
 
                 # result['data']['content'] = json_str['data']['content']
 
                 await self.get_data_desc(q_str)
-            elif q_data_type == 'mysql_comment_second':
+            elif q_data_type == CONFIG.type_comment_second:
+                self.db_info_json = q_str
+
                 if json_str.get('data').get('language_mode'):
                     q_language_mode = json_str['data']['language_mode']
                     if q_language_mode == CONFIG.language_chinese or q_language_mode == CONFIG.language_english or q_language_mode == CONFIG.language_japanese:
@@ -77,8 +81,9 @@ class ReportMysql(Report):
                     if if_suss:
                         self.agent_instance_util.base_mysql_info = '  When connecting to the database, be sure to bring the port. This is database info :' + '\n' + str(
                             db_info)
-                        # self.agent_instance_util.base_message = str(q_str)
-                        self.agent_instance_util.set_base_message(q_str)
+                        self.agent_instance_util.set_base_message(q_str, databases_id=db_id)
+                        self.agent_instance_util.db_id = db_id
+
 
                 else:
                     # self.agent_instance_util.base_message = str(q_str)
@@ -104,22 +109,32 @@ class ReportMysql(Report):
             error_times = 0
             for i in range(max_retry_times):
                 try:
-                    planner_user = self.agent_instance_util.get_agent_planner_user()
-                    mysql_engineer = self.agent_instance_util.get_agent_mysql_engineer()
-                    bi_proxy = self.agent_instance_util.get_agent_bi_proxy()
-                    chart_presenter = self.agent_instance_util.get_agent_chart_presenter()
+                    if self.agent_instance_util.is_rag:
+                        table_comment = await self.select_table_comment(qustion_message, use_cache)
+                        table_desc_length = len(table_comment['table_desc'])
+                        if table_desc_length > 0:
+                            answer_message = await self.task_base_rag(qustion_message, table_comment, use_cache)
+                        else:
+                            use_cache = False
+                            continue
+                    else:
+                        planner_user = self.agent_instance_util.get_agent_planner_user()
+                        mysql_engineer = self.agent_instance_util.get_agent_mysql_engineer()
+                        bi_proxy = self.agent_instance_util.get_agent_bi_proxy()
+                        chart_presenter = self.agent_instance_util.get_agent_chart_presenter()
 
-                    agents = [mysql_engineer, bi_proxy, chart_presenter]
+                        agents = [mysql_engineer, bi_proxy, chart_presenter]
 
-                    manager = self.agent_instance_util.get_agent_GroupChatManager(agents)
+                        manager = self.agent_instance_util.get_agent_GroupChatManager(agents)
 
-                    await planner_user.initiate_chat(
-                        manager,
-                        message='This is database related information：' + '\n' + self.agent_instance_util.base_message + '\n' + " This is my question: " + '\n' + str(
-                            qustion_message),
-                    )
+                        await planner_user.initiate_chat(
+                            manager,
+                            message='This is database related information：' + '\n' + self.agent_instance_util.base_message + '\n' + " This is my question: " + '\n' + str(
+                                qustion_message),
+                        )
 
-                    answer_message = manager._oai_messages[bi_proxy]
+                        answer_message = manager._oai_messages[bi_proxy]
+
                     is_done = False
                     for answer_mess in answer_message:
                         if answer_mess['role']:
@@ -195,3 +210,56 @@ class ReportMysql(Report):
     async def task_base(self, qustion_message):
         """ Task type: base question """
         return self.error_no_report_question
+
+    async def task_generate_report_rag(self, qustion_message, table_comment):
+        """ Task type 1: Call BI and generate reports """
+        if os.path.exists(self.agent_instance_util.get_rag_doc()):
+            # base_mysql_assistant = self.get_agent_retrieve_base_mysql_assistant()
+            # python_executor = self.get_agent_retrieve_python_executor(docs_path=self.agent_instance_util.get_rag_doc())
+            #
+            # await python_executor.initiate_chat(
+            #     base_mysql_assistant,
+            #     problem='this is databases info: ' + '\n' + str(table_comment) + '\n' + self.question_ask + '\n' + str(
+            #         qustion_message),
+            # )
+            print('存在RAG文档：', self.agent_instance_util.get_rag_doc())
+            planner_user = self.agent_instance_util.get_agent_planner_user()
+            mysql_engineer = self.agent_instance_util.get_agent_mysql_engineer()
+            bi_proxy = self.agent_instance_util.get_agent_bi_proxy()
+            chart_presenter = self.agent_instance_util.get_agent_chart_presenter()
+
+            agents = [mysql_engineer, bi_proxy, chart_presenter]
+
+            manager = self.agent_instance_util.get_agent_GroupChatManager(agents)
+
+            await planner_user.initiate_chat(
+                manager,
+                message='This is database related information：' + '\n' + str(
+                    table_comment) + '\n' + self.question_ask + '\n' + str(
+                    qustion_message),
+            )
+
+            answer_message = manager._oai_messages[bi_proxy]
+
+
+
+        else:
+            planner_user = self.agent_instance_util.get_agent_planner_user()
+            mysql_engineer = self.agent_instance_util.get_agent_mysql_engineer()
+            bi_proxy = self.agent_instance_util.get_agent_bi_proxy()
+            chart_presenter = self.agent_instance_util.get_agent_chart_presenter()
+
+            agents = [mysql_engineer, bi_proxy, chart_presenter]
+
+            manager = self.agent_instance_util.get_agent_GroupChatManager(agents)
+
+            await planner_user.initiate_chat(
+                manager,
+                message='This is database related information：' + '\n' + str(
+                    table_comment) + '\n' + self.question_ask + '\n' + str(
+                    qustion_message),
+            )
+
+            answer_message = manager._oai_messages[bi_proxy]
+
+        return answer_message

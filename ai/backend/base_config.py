@@ -10,7 +10,7 @@ class Config:
 
         # self.database_model = 'test'
         self.database_model = 'online'
-        self.request_timeout = 90
+        self.request_timeout = 120
         self.max_retry_period = 90
         self.max_retry_times = 3
         self.up_file_path = base_util.get_upload_path()
@@ -28,9 +28,9 @@ class Config:
 
         self.if_hide_sensitive = False
 
-        self.python_base_dependency = """python installed dependency environment: pymysql, pandas, mysql-connector-python, pyecharts, sklearn, psycopg2, sqlalchemy，pymongo"""
+        self.python_base_dependency = """python installed dependency environment: pymysql, pandas, mysql-connector-python, pyecharts, sklearn, psycopg2, pymongo, snapshot_selenium"""
 
-        self.max_token_num = 7500
+        self.max_token_num = 500
 
         self.talker_bi = 'bi'
         self.talker_user = 'user'

@@ -107,6 +107,7 @@ class ReportMysql(Report):
         try:
             answer_contents = []
             error_times = 0
+            use_cache = True
             for i in range(max_retry_times):
                 try:
                     if self.agent_instance_util.is_rag:

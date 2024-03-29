@@ -393,7 +393,7 @@ class AIDB:
                     if database == 'pg':
                         database = 'postgresql'
                     setattr(self.agent_instance_util, f"base_{database}_info", ' When connecting to the database, be sure to bring the port. This is ' + database + ' database info :' + '\n' + str(db_info))
-                    self.agent_instance_util.set_base_message(base_message)
+                    self.agent_instance_util.set_base_message(base_message, databases_id=db_id)
                     self.agent_instance_util.db_id = db_id
                 else:
                     logger.error("Failed to get database info for db_id: {}".format(db_id))

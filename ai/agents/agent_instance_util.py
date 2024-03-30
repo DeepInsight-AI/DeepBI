@@ -512,7 +512,7 @@ class AgentInstanceUtil:
         )
         return chart_presenter
 
-    def get_agent_base_mysql_assistant(self, use_cache=True):
+    def get_agent_base_mysql_assistant(self, use_cache=True, add_message=''):
         """ Basic Agent, processing mysql data source """
         base_mysql_assistant = AssistantAgent(
             name="base_mysql_assistant",
@@ -529,13 +529,15 @@ class AgentInstanceUtil:
                 Reply "TERMINATE" in the end when everything is done.
                 When you find an answer,  You are a report analysis, you have the knowledge and skills to turn raw data into information and insight, which can be used to make business decisions.include your analysis in your reply.
                 Be careful to avoid using mysql special keywords in mysql code.
-                """ + '\n' + self.base_mysql_info + '\n' + python_base_dependency + '\n' + self.quesion_answer_language,
+                """ + '\n' + self.base_mysql_info + '\n' + python_base_dependency + '\n' + self.quesion_answer_language + '\n' + add_message,
             human_input_mode="NEVER",
             user_name=self.user_name,
             websocket=self.websocket,
             llm_config={
                 "config_list": self.config_list_gpt4_turbo,
                 "request_timeout": request_timeout,
+                "seed": 42,  # change the seed for different trials
+                "temperature": 0,
             },
             openai_proxy=self.openai_proxy,
             use_cache=use_cache,

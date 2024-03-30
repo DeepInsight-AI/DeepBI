@@ -10,6 +10,7 @@ from ai.backend.util import base_util
 from ai.agents.agentchat.contrib import RetrieveAssistantAgent, RetrievePythonProxyAgent
 import os
 from ai.agents.prompt import MYSQL_ECHART_TIPS_MESS
+from ai.agents.prompt.prompt_base import MYSQL_BASE_TIPS_MESS, MYSQL_BASE_TIPS_MESS_02
 
 max_retry_times = CONFIG.max_retry_times
 
@@ -329,12 +330,22 @@ class AnalysisMysql(Analysis):
                 db_info='this is databases info: ' + '\n' + str(table_comment),
             )
 
+            # add function select_rag_doc
+            # retrieve_rag_doc = await self.select_rag_doc(qustion_message, use_cache)
+            # base_mysql_assistant = self.agent_instance_util.get_agent_base_mysql_assistant(use_cache=use_cache, add_message= MYSQL_BASE_TIPS_MESS_02)
+            # python_executor = self.agent_instance_util.get_agent_python_executor()
+            #
             # await python_executor.initiate_chat(
             #     base_mysql_assistant,
-            #     problem=str(
+            #     message='this is databases info: ' + '\n' + str(
+            #         table_comment)
+            #             # + '\n' + str(retrieve_rag_doc)
+            #             # + '\n' + MYSQL_BASE_TIPS_MESS_02
+            #             + '\n' + self.question_ask + '\n' + str(
             #         qustion_message),
-            #     db_info='',
             # )
+
+
 
         else:
             base_mysql_assistant = self.agent_instance_util.get_agent_base_mysql_assistant(use_cache=use_cache)

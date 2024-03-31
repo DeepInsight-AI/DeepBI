@@ -199,7 +199,7 @@ class DwxMysqlRagUitl:
 				WHERE
 					Doll7Recycle.EDAY = '%s'
 			GROUP BY
-	Doll7Recycle.EDAY """ % (
+	Doll7Recycle.EDAY,total_cost """ % (
                 BusinessName, BusinessName, BusinessName, BusinessName, BusinessName, BusinessName, BusinessName,
                 BusinessName, date)
             df = pd.read_sql(query, con=conn)
@@ -369,7 +369,7 @@ class DwxMysqlRagUitl:
     							mp.ClassName
     						) AS GiftMachine ON Doll7Recycle.EDAY = GiftMachine.EDAY
     					GROUP BY
-    						Doll7Recycle.EDAY
+    						Doll7Recycle.EDAY,total_cost
     						),
     					DailyCoinPrice AS (
     						WITH temp AS (
@@ -607,7 +607,7 @@ class DwxMysqlRagUitl:
 							mp.ClassName
 						) AS GiftMachine ON Doll7Recycle.EDAY = GiftMachine.EDAY
 					GROUP BY
-						Doll7Recycle.EDAY
+						Doll7Recycle.EDAY,total_cost
 						),
 					DailyCoinPrice AS (
 						WITH temp AS (

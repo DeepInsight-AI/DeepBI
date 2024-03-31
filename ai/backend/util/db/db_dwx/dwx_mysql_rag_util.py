@@ -83,7 +83,7 @@ class DwxMysqlRagUitl:
                                         ON Doll7Recycle.EDAY = GiftMachine.EDAY
 WHERE
                 Doll7Recycle.EDAY  = '%s'
-GROUP BY Doll7Recycle.EDAY""" % date
+GROUP BY Doll7Recycle.EDAY, total_cost """ % date
             df = pd.read_sql(query, con=conn)
             return df
 
@@ -149,7 +149,7 @@ GROUP BY Doll7Recycle.EDAY""" % date
 					AND gb.GoodName NOT LIKE '普通娃娃'
 					AND gb.GoodName NOT LIKE '红票' GROUP BY mp.ClassName ) AS GiftMachine
 					ON Doll7Recycle.EDAY = GiftMachine.EDAY
-			GROUP BY Doll7Recycle.EDAY
+			GROUP BY Doll7Recycle.EDAY,total_cost
 	),
 DailyCoinPrice AS (
 		-- 日的币单价
@@ -246,7 +246,7 @@ WITH DailyCost AS (
 					AND gb.GoodName NOT LIKE '普通娃娃'
 					AND gb.GoodName NOT LIKE '红票' GROUP BY mp.ClassName ) AS GiftMachine
 					ON Doll7Recycle.EDAY = GiftMachine.EDAY
-			GROUP BY Doll7Recycle.EDAY
+			GROUP BY Doll7Recycle.EDAY,total_cost
 	),
 DailyCoinPrice AS (
 		-- 日的币单价
@@ -314,7 +314,7 @@ FROM
 JOIN DailyCoinTotal ON DailyCoinPrice.EDAY = DailyCoinTotal.EDAY
 WHERE
 		DailyCoinTotal.EDAY  = '%s'
-GROUP BY DailyCoinTotal.EDAY""" % date
+GROUP BY DailyCoinTotal.EDAY,daily_cost""" % date
             df = pd.read_sql(query, con=conn)
             return df
 

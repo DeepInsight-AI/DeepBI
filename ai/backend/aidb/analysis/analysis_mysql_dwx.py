@@ -550,7 +550,7 @@ class AnalysisMysql(Analysis):
 
     def set_function_call_dwx(self, db_info):
 
-        if str(db_info['db']) == 'test_dwx_all':
+        if str(db_info['db']) == 'dwx_all':
             # 电玩猩多店
             from ai.backend.util.db.db_dwx.dwx_all_mysql_rag_util import DwxMysqlRagUitl
 

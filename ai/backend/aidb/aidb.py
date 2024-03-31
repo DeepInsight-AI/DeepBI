@@ -601,9 +601,7 @@ class AIDB:
                 # print('rag_name :', rag_name)
                 basic_knowledge.append(rag_name)
 
-        # retrieve_rag_doc = "The following is a reference SQL example. If the example contains SQL code, it needs to be rewritten into python code that can be directly executed before execution. Be careful not to omit SQL examples."
-        retrieve_rag_doc = "The user can't modify your code. So do not suggest incomplete code which requires users to modify. 用户无法粘贴和修改内容，不要让用户去修改代码！！！"
-        retrieve_rag_doc = retrieve_rag_doc + '\n' + 'Context is: ' + '\n' + str(basic_knowledge)
+        retrieve_rag_doc = 'Context is: ' + '\n' + str(basic_knowledge)
 
         print('retrieve_rag_doc : ', retrieve_rag_doc)
         return retrieve_rag_doc

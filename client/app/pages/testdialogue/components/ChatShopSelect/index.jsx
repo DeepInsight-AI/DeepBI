@@ -10,42 +10,52 @@ class ChatShopSelect extends React.Component {
   ];
   constructor(props) {
     super(props);
-    const processedShopsData = shopsData && shopsData.length > 0
-      ? shopsData.map((shop, index) => ({ ...shop, id: String(index + 1) }))
-      : [];
+    
     this.state = {
       chat_type: props.chat_type || "chat",
       selectedShop: "0", // 默认选中
-      shops: [ChatShopSelect.defaultShop[0], ...processedShopsData],
+      shops: [ChatShopSelect.defaultShop[0]],
     };
   }
 
   componentDidMount() {
     this.fetchShopsData();
-    const selectedShopData = sessionStorage.getItem(`${this.state.chat_type}CommonExpressions`);
-    if (selectedShopData) {
-      const selectedShop = JSON.parse(selectedShopData);
-      const shopExists = this.state.shops.some(shop => shop.id === selectedShop.id);
-      if (selectedShop && selectedShop.id && shopExists) {
-        this.setState({ selectedShop: selectedShop.id });
-      } else {
-        // 如果不存在，重置为默认商店
-        this.setState({ selectedShop: ChatShopSelect.defaultShop[0].id });
-      }
-    }
+    // const selectedShopData = sessionStorage.getItem(`${this.state.chat_type}CommonExpressions`);
+    // if (selectedShopData) {
+    //   const selectedShop = JSON.parse(selectedShopData);
+    //   const shopExists = this.state.shops.some(shop => shop.id === selectedShop.id);
+    //   if (selectedShop && selectedShop.id && shopExists) {
+    //     this.setState({ selectedShop: selectedShop.id });
+    //   } else {
+    //     // 如果不存在，重置为默认商店
+    //     this.setState({ selectedShop: ChatShopSelect.defaultShop[0].id });
+    //   }
+    // }
   }
 
   fetchShopsData = () => {
     fetch('static/CommenExpressions/CommenExpressions.json')
       .then(response => response.json())
       .then(data => {
-        console.log(data, 'data')
-        // const processedShopsData = data && data.length > 0
-        //   ? data.map((shop, index) => ({ ...shop, id: String(index + 1) }))
-        //   : [];
-        // this.setState({
-        //   shops: [ChatShopSelect.defaultShop[0], ...processedShopsData],
-        // });
+        const processedShopsData = data && data.length > 0
+          ? data.map((shop, index) => ({ ...shop, id: String(index + 1) }))
+          : [];
+        this.setState({
+          shops: [ChatShopSelect.defaultShop[0], ...processedShopsData],
+        }, () => {
+          // 在状态更新后执行，确保shops已经被更新
+          const selectedShopData = sessionStorage.getItem(`${this.state.chat_type}CommonExpressions`);
+          if (selectedShopData) {
+            const selectedShop = JSON.parse(selectedShopData);
+            const shopExists = this.state.shops.some(shop => shop.id === selectedShop.id);
+            if (selectedShop && selectedShop.id && shopExists) {
+              this.setState({ selectedShop: selectedShop.id });
+            } else {
+              // 如果不存在，重置为默认商店
+              this.setState({ selectedShop: ChatShopSelect.defaultShop[0].id });
+            }
+          }
+        });
       })
       .catch(error => console.error('Error fetching shops data:', error));
   };

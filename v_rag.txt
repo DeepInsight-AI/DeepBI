@@ -120,4 +120,4 @@ Werkzeug==3.0.1
 yarl==1.9.4
 zstandard==0.22.0
 
-snapshot-selenium = 0.0.2
+snapshot-selenium == 0.0.2

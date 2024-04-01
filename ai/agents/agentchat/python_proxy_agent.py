@@ -750,8 +750,12 @@ class PythonProxyAgent(Agent):
                                 if series_data['type'] == "bar":
                                     formatted_series_data = [format_decimal(value) for value in series_data['data']]
                                 elif series_data['type'] == "pie":
-                                    formatted_series_data = [{"name": d["name"], "value": format_decimal(d["value"])} for d in series_data['data']]
-                                else:
+                                    formatted_series_data = [{"name": d["name"], "value": format_decimal(d["value"])} for
+                                                             d in series_data['data']]
+                                elif series_data['type'] == "Kline":
+                                    formatted_series_data = [[format_decimal(value) for value in sublist] for sublist in
+                                                             series_data['data']]
+                                else :
                                     formatted_series_data = [[year, format_decimal(value)] for year, value in
                                                          series_data['data']]
                                 series_data['data'] = formatted_series_data

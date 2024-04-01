@@ -74,6 +74,9 @@ class ChatShopSelect extends React.Component {
 
   render() {
     const { shops, selectedShop } = this.state;
+    if (shops.length <= 1) {
+      return null;
+    }
     return (
       <Select
         showSearch

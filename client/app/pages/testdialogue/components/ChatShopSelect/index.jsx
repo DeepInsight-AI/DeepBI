@@ -21,6 +21,7 @@ class ChatShopSelect extends React.Component {
   }
 
   componentDidMount() {
+    this.fetchShopsData();
     const selectedShopData = sessionStorage.getItem(`${this.state.chat_type}CommonExpressions`);
     if (selectedShopData) {
       const selectedShop = JSON.parse(selectedShopData);
@@ -33,6 +34,21 @@ class ChatShopSelect extends React.Component {
       }
     }
   }
+
+  fetchShopsData = () => {
+    fetch('static/CommenExpressions/CommenExpressions.json')
+      .then(response => response.json())
+      .then(data => {
+        console.log(data, 'data')
+        // const processedShopsData = data && data.length > 0
+        //   ? data.map((shop, index) => ({ ...shop, id: String(index + 1) }))
+        //   : [];
+        // this.setState({
+        //   shops: [ChatShopSelect.defaultShop[0], ...processedShopsData],
+        // });
+      })
+      .catch(error => console.error('Error fetching shops data:', error));
+  };
 
   handleChange = (value) => {
     try {

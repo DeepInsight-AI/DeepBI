@@ -734,7 +734,9 @@ class PythonProxyAgent(Agent):
 
             else:
                 try:
-                    logs = json.loads(eval(json.dumps(str(logs))))
+                    if "'echart_name'" in str(logs):
+                        logs = json.dumps(eval(str(logs)))
+                    logs = json.loads(str(logs))
                 except Exception as e:
                     return True,f"exitcode:exitcode failed\nCode output: There is an error in the JSON code causing parsing errors,Please modify the JSON code for me:{traceback.format_exc()}"
                 for entry in logs:

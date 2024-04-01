@@ -1,12 +1,12 @@
 import React from 'react';
 import Select from 'antd/lib/select';
-import shopsData from "/static/CommenExpressions/CommenExpressions.json";
+import shopsData from "@/assets/CommenExpressions/CommenExpressions.json";
 import "./index.less";
 const { Option } = Select;
 
 class ChatShopSelect extends React.Component {
   static defaultShop = [
-    { "id": "0", "label": "默认" } 
+    { "id": "0", "label": "默认" }
   ];
   constructor(props) {
     super(props);

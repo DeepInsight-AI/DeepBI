@@ -734,13 +734,22 @@ class PythonProxyAgent(Agent):
 
             else:
                 try:
-                    logs = json.loads(logs)
+                    logs = json.loads(json.dumps(eval(logs)))
                 except Exception as e:
                     return True,f"exitcode:exitcode failed\nCode output: There is an error in the JSON code causing parsing errors,Please modify the JSON code for me:{traceback.format_exc()}"
                 for entry in logs:
                     if 'echart_name' in entry and 'echart_code' in entry:
-                        # 如果满足条件，则打印并添加到base_content
+                        if "series" in entry['echart_code']:
+                            series_data = entry['echart_code']['series']
+                            formatted_series_list = []
+                            for series_data in series_data:
+                                formatted_series_data = [[year, format_decimal(value)] for year, value in
+                                                         series_data['data']]
+                                series_data['data'] = formatted_series_data
+                                formatted_series_list.append(series_data)
+                            entry['echart_code']['series'] = formatted_series_list
                         base_content.append(entry)
+
                 agent_instance_util = AgentInstanceUtil(user_name=str(self.user_name),
                                                         delay_messages=self.delay_messages,
                                                         outgoing=self.outgoing,

@@ -25,15 +25,9 @@ from ai.backend.util import database_util
 try:
     from termcolor import colored
 except ImportError:
-
     def colored(x, *args, **kwargs):
         return x
-def format_decimal(value):
-    if isinstance(value, float):
-        return round(value, 2)
-    elif isinstance(value, int):
-        return value
-    return value
+
 
 # 函数，用于精确到小数点后两位
 def format_decimal(value):
@@ -724,7 +718,7 @@ class PythonProxyAgent(Agent):
                                    code_blocks]
 
                     # code_blocks = self.replace_ab_with_ac(code_blocks, db_info)
-                    print('new_code_blocks : ', code_blocks)
+                    # print('new_code_blocks : ', code_blocks)
 
             # found code blocks, execute code and push "last_n_messages" back
             exitcode, logs = self.execute_code_blocks(code_blocks)
@@ -739,21 +733,14 @@ class PythonProxyAgent(Agent):
 
 
             else:
-                json_data = str(logs)
                 try:
-                    logs = json.loads(json_data)
+                    logs = json.loads(logs)
                 except Exception as e:
                     return True,f"exitcode:exitcode failed\nCode output: There is an error in the JSON code causing parsing errors,Please modify the JSON code for me:{traceback.format_exc()}"
                 for entry in logs:
                     if 'echart_name' in entry and 'echart_code' in entry:
                         # 如果满足条件，则打印并添加到base_content
                         base_content.append(entry)
-                for echart in base_content:
-                    for serie in echart['echart_code']['series']:
-                        for item in serie['data']:
-                            item['value'] = format_decimal(item['value'])
-                for echart in base_content:
-                    echart = json.dumps(echart, indent=2)
                 agent_instance_util = AgentInstanceUtil(user_name=str(self.user_name),
                                                         delay_messages=self.delay_messages,
                                                         outgoing=self.outgoing,
@@ -1231,6 +1218,7 @@ class PythonProxyAgent(Agent):
             (r"%%Y-%%m-%%d", "%Y-%m-%d"),
             (r"%%Y-%%m", "%Y-%m"),
             (r"%%H", "%H"),
+            (r"%%Y", "%Y"),
             (r"%%Y-%%m-%%d %%H:%%i", "%Y-%m-%d %H:%i"),
             (r"%%Y-%%m-%%d %%H:%%i:%%s", "%Y-%m-%d %H:%i:%s")]
 

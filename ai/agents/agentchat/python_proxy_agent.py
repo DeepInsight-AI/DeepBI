@@ -749,10 +749,14 @@ class PythonProxyAgent(Agent):
                             for series_data in series_data:
                                 if series_data['type'] in ["bar", "line"]:
                                     formatted_series_data = [format_decimal(value) for value in series_data['data']]
-                                elif series_data['type'] in ["pie", 'graph']:
+                                elif series_data['type'] in ["pie", "gauge"]:
                                     formatted_series_data = [{"name": d["name"], "value": format_decimal(d["value"])} for
                                                              d in series_data['data']]
-                                elif series_data['type'] in ["Kline", "radar", "heatmap", "scatter"]:
+                                elif series_data['type'] in ['graph']:
+                                    formatted_series_data = [
+                                        {'name': data_point['name'], 'symbolSize': format_decimal(data_point['symbolSize'])}
+                                        for data_point in series_data['data']]
+                                elif series_data['type'] in ["Kline", "radar", "heatmap", "scatter", "themeRiver"]:
                                     formatted_series_data = [[format_decimal(value) for value in sublist] for sublist in
                                                              series_data['data']]
                                 else:

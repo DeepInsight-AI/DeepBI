@@ -52,6 +52,13 @@ def generate_stream(mock_socket, user_name, user_id, message,chat_id):
             else:
                 time.sleep(1)
 
+    except GeneratorExit:
+        print("Client connection closed, stopping background task.")
+
+        if thread and thread.is_alive():
+            thread.join(timeout=1)
+
+
     except Exception as e:
         print("error: ", e)
         return "error"

@@ -1,7 +1,7 @@
 from ai.backend.util import base_util
 
 
-class Config():
+class Config:
     def __init__(self):
         self.load_conf()
 
@@ -66,6 +66,8 @@ class Config():
 
         self.default_base_message = """ """
 
+        self.agents_functions = ['task_generate_echart', 'task_generate_report', 'task_base']
+        self.default_agents_functions = 'task_base'
+
 
 CONFIG = Config()
-agents_functions=['task_generate_echart', 'task_generate_report', 'task_base']

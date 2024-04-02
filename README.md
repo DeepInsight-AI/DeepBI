@@ -88,7 +88,7 @@ The database connections supported by DeepBI are:
 Install directly on the ubuntu system, you need to install redis, postgresql python3.8.17 environment.
 
 - Redis can be accessed directly through the 127.0.0.1 password-free command line.
-- Require python version  3.8+
+- Require python version  3.8.x
 - Recommend using virtual environments such as pyenv coda
 - postgresql needs to install postgresql-16 version
 

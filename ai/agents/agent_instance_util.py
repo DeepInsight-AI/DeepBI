@@ -725,7 +725,7 @@ class AgentInstanceUtil:
             """,
             human_input_mode="NEVER",
             websocket=self.websocket,
-            code_execution_config=False,
+            code_execution_config={"last_n_messages": 1, "work_dir": "paper", "use_docker": False},
             default_auto_reply="TERMINATE",
             user_name=self.user_name,
             function_map={"run_mysql_code": BIProxyAgent.run_mysql_code,
@@ -931,7 +931,7 @@ class AgentInstanceUtil:
         python_executor = PythonProxyAgent(
             name="python_executor",
             system_message="python executor. Execute the python code and report the result.",
-            code_execution_config={"last_n_messages": 1, "work_dir": "paper"},
+            code_execution_config={"last_n_messages": 1, "work_dir": "paper", "use_docker": False},
             human_input_mode="NEVER",
             websocket=self.websocket,
             user_name=self.user_name,
@@ -1074,6 +1074,7 @@ class AgentInstanceUtil:
                                              When you find an answer, verify the answer carefully. Include verifiable evidence in your response if possible.
                                              Reply "TERMINATE" in the end when everything is done.
                                              When you find an answer,  You are a report analysis, you have the knowledge and skills to turn raw data into information and insight, which can be used to make business decisions.include your analysis in your reply.
+                                             Don't generate html files.
                                              """ + '\n' + self.base_starrocks_info + '\n' + python_base_dependency + '\n' + MYSQL_ECHART_TIPS_MESS,
             human_input_mode="NEVER",
             user_name=self.user_name,
@@ -1265,7 +1266,7 @@ class AgentInstanceUtil:
             self.question_ask = ' 以下是我的问题，请用中文回答: '
             self.quesion_answer_language = '用中文回答问题.'
             self.data_analysis_error = '分析数据失败，请检查相关数据是否充分'
-        
+
         elif self.language_mode == language_japanese:
             self.error_message_timeout = "申し訳ありませんが、今回のAI-GPTインターフェース呼び出しがタイムアウトしました。もう一度お試しください。"
             self.question_ask = ' これが私の質問です。: '

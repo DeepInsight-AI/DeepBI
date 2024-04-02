@@ -106,11 +106,11 @@ class Main:
         else:
             return False, ' error: Not found CONFIG.web_server_ip '
 
-        print(url)
+        # print(url)
         url_data = requests.get(url).text
-        print('url_data :', url_data)
+        # print('url_data :', url_data)
         json_data = json.loads(url_data)
-        print('json_data :', json_data)
+        # print('json_data :', json_data)
         if 200 == json_data['code']:
             decode_json = decode_data_info(json_data['data'])
             # print("decode", decode_json)
@@ -136,11 +136,11 @@ class Main:
             print('error: Not found CONFIG.web_server_ip ')
             return False, ' error: Not found CONFIG.web_server_ip '
 
-        print(url)
+        # print(url)
         url_data = requests.get(url).text
-        print('url_data :', url_data)
+        # print('url_data :', url_data)
         json_data = json.loads(url_data)
-        print('json_data :', json_data)
+        # print('json_data :', json_data)
         if 200 == json_data['code']:
             decode_json = decode_data_info(json_data['data'])
             # print("decode : ", decode_json)
@@ -151,8 +151,6 @@ class Main:
 
 
 if __name__ == "__main__":
-
-
     db_id = str(18)
     obj = Main(db_id)
     obj.run()

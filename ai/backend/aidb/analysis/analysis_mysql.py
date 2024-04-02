@@ -246,22 +246,22 @@ class AnalysisMysql(Analysis):
                 "from user:[{}".format(self.user_name) + "] , " + "，report_demand_list" + str(report_demand_list))
 
             bi_proxy = self.agent_instance_util.get_agent_bi_proxy()
-            is_chart = False
+            is_chart = True
             # Call the interface to generate pictures
-            for img_str in base_content:
-                echart_name = img_str.get('echart_name')
-                echart_code = img_str.get('echart_code')
-
-                if len(echart_code) > 0 and str(echart_code).__contains__('x'):
-                    is_chart = True
-                    print("echart_name : ", echart_name)
-                    # 格式化echart_code
-                    # if base_util.is_json(str(echart_code)):
-                    #     json_obj = json.loads(str(echart_code))
-                    #     echart_code = json.dumps(json_obj)
-
-                    re_str = await bi_proxy.run_echart_code(str(echart_code), echart_name)
-                    base_mess.append(re_str)
+            # for img_str in base_content:
+            #     echart_name = img_str.get('echart_name')
+            #     echart_code = img_str.get('echart_code')
+            #
+            #     if len(echart_code) > 0 and str(echart_code).__contains__('x'):
+            #         is_chart = True
+            #         print("echart_name : ", echart_name)
+            #         # 格式化echart_code
+            #         # if base_util.is_json(str(echart_code)):
+            #         #     json_obj = json.loads(str(echart_code))
+            #         #     echart_code = json.dumps(json_obj)
+            #
+            #         re_str = await bi_proxy.run_echart_code(str(echart_code), echart_name)
+            #         base_mess.append(re_str)
 
             error_times = 0
             for i in range(max_retry_times):
@@ -303,4 +303,3 @@ class AnalysisMysql(Analysis):
             traceback.print_exc()
             logger.error("from user:[{}".format(self.user_name) + "] , " + "error: " + str(e))
         return self.agent_instance_util.data_analysis_error
-

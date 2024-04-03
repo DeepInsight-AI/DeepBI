@@ -484,7 +484,7 @@ ORDER BY mc.yuefen
             print("Error while inserting data:", error)
 
     def get_total_monthly_income(self, date):
-        """按日计算全店总收入"""
+        """按月计算全店总收入"""
         try:
             conn = self.conn
 

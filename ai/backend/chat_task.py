@@ -107,7 +107,7 @@ class ChatClass:
                     consume_output = json.dumps(result)
                     return await self.outgoing.put(consume_output)
             """
-            q_data_type = json_str['data']['data_type']
+            q_data_type = json_str['data_type'] if "data_type" in json_str else "mysql"
             print('q_data_type : ', q_data_type)
 
             q_database = 'mysql'  # default value

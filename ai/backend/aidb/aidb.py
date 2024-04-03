@@ -410,6 +410,12 @@ class AIDB:
                     logger.error("Failed to get database info for db_id: {}".format(db_id))
         """
 
+    def set_api_key(self, apikey):
+        ApiKey, HttpProxyHost, HttpProxyPort, ApiHost, in_use = self.load_api_key(apikey)
+        if ApiKey is None or len(ApiKey) == 0:
+            return await self.put_message(200, CONFIG.talker_api, CONFIG.type_test, LanguageInfo.no_api_key)
+        self.agent_instance_util.set_api_key(ApiKey, ApiHost, in_use)
+
     async def test_api_key(self, apikey):
         try:
             ApiKey, HttpProxyHost, HttpProxyPort, ApiHost, in_use = self.load_api_key(apikey)

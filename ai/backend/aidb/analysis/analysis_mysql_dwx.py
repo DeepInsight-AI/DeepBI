@@ -350,9 +350,25 @@ class AnalysisMysql(Analysis):
                 # wxMysqlRagUitl.connect_close()
 
                 ##################### retrieve agent + funciton_call
-                wxMysqlRagUitl = self.set_function_call_dwx(db_info=db_info)
-                base_mysql_assistant = self.get_agent_retrieve_base_mysql_assistant_dwx(use_cache=use_cache)
-                python_executor = self.get_agent_retrieve_python_executor_dwx(
+                # wxMysqlRagUitl = self.set_function_call_dwx(db_info=db_info)
+                # base_mysql_assistant = self.get_agent_retrieve_base_mysql_assistant_dwx(use_cache=use_cache)
+                # python_executor = self.get_agent_retrieve_python_executor_dwx(
+                #     docs_path=self.agent_instance_util.get_rag_doc())
+                # await python_executor.initiate_chat(
+                #     base_mysql_assistant,
+                #     problem=self.question_ask + '\n' + str(
+                #         qustion_message),
+                #     db_info='this is databases info: ' + '\n' + str(table_comment),
+                # )
+                # # 关闭数据库链接
+                # wxMysqlRagUitl.connect_close()
+                ##################### retrieve agent + funciton_call
+
+
+
+                ##################### only retrieve agent
+                base_mysql_assistant = self.get_agent_retrieve_base_mysql_assistant(use_cache=use_cache)
+                python_executor = self.get_agent_retrieve_python_executor(
                     docs_path=self.agent_instance_util.get_rag_doc())
                 await python_executor.initiate_chat(
                     base_mysql_assistant,
@@ -360,10 +376,7 @@ class AnalysisMysql(Analysis):
                         qustion_message),
                     db_info='this is databases info: ' + '\n' + str(table_comment),
                 )
-                # 关闭数据库链接
-                wxMysqlRagUitl.connect_close()
-                ##################### retrieve agent + funciton_call
-
+                ##################### only retrieve agent
 
             else:
                 # 非 电玩猩 数据库

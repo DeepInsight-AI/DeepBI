@@ -115,11 +115,13 @@ class AnalysisMysql(Analysis):
                         table_comment = await self.select_table_comment(qustion_message, use_cache)
                         table_desc_length = len(table_comment['table_desc'])
 
-                        retrieve_rag_doc = await self.select_rag_doc(qustion_message, use_cache)
+                        # retrieve_rag_doc = await self.select_rag_doc(qustion_message, use_cache)
+                        # if table_desc_length > 0 or len(retrieve_rag_doc) > 20:
+                        #     answer_message = await self.task_base_rag(qustion_message, table_comment, use_cache,
+                        #                                               retrieve_rag_doc)
 
-                        if table_desc_length > 0 or len(retrieve_rag_doc) > 20:
-                            answer_message = await self.task_base_rag(qustion_message, table_comment, use_cache,
-                                                                      retrieve_rag_doc)
+                        if table_desc_length > 0:
+                            answer_message = await self.task_base_rag(qustion_message, table_comment, use_cache)
                         else:
                             use_cache = False
                             continue
@@ -489,7 +491,6 @@ class AnalysisMysql(Analysis):
         )
         return retrieve_base_mysql_assistant
 
-
     def get_agent_retrieve_python_executor(self, report_file_name=None, docs_path=None):
         retrieve_python_executor = RetrievePythonProxyAgent(
             name="retrieve_python_executor",
@@ -543,7 +544,6 @@ class AnalysisMysql(Analysis):
 
         )
         return retrieve_python_executor
-
 
     def get_agent_retrieve_mysql_echart_assistant(self, use_cache=True, report_file_name=None):
         """mysql_echart_assistant"""

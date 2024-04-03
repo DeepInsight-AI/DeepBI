@@ -121,7 +121,8 @@ class AnalysisMysql(Analysis):
                         #                                               retrieve_rag_doc)
 
                         if table_desc_length > 0:
-                            answer_message = await self.task_base_rag(qustion_message, table_comment, use_cache)
+                            answer_message = await self.task_base_rag(qustion_message=qustion_message,
+                                                                      table_comment=table_comment, use_cache=use_cache)
                         else:
                             use_cache = False
                             continue
@@ -317,7 +318,7 @@ class AnalysisMysql(Analysis):
             logger.error("from user:[{}".format(self.user_name) + "] , " + "error: " + str(e))
         return self.agent_instance_util.data_analysis_error
 
-    async def task_base_rag(self, qustion_message, table_comment, use_cache, retrieve_rag_doc):
+    async def task_base_rag(self, qustion_message, table_comment, use_cache, retrieve_rag_doc=None):
         """ Task type: mysql data analysis"""
         if os.path.exists(self.agent_instance_util.get_rag_doc()):
 

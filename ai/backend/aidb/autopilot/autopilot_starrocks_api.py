@@ -35,7 +35,7 @@ class AutopilotStarrocks(Autopilot):
         print("self.agent_instance_util.api_key_use :", self.agent_instance_util.api_key_use)
 
         if not self.agent_instance_util.api_key_use:
-            re_check = await self.check_api_key()
+            re_check = await self.check_api_key(json_str['api_key'])
             if not re_check:
                 return
 

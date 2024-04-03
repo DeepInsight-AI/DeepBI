@@ -28,7 +28,7 @@ class PrettifyDashboard(AIDB):
         print("self.agent_instance_util.api_key_use :", self.agent_instance_util.api_key_use)
 
         if not self.agent_instance_util.api_key_use:
-            re_check = await self.check_api_key()
+            re_check = await self.check_api_key(json_str['api_key'])
             if not re_check:
                 return
 
@@ -113,15 +113,15 @@ class PrettifyDashboard(AIDB):
 
         # 获取当前工作目录的路径
         current_directory = os.path.abspath(os.path.dirname(__file__))
-        
+
         if str(current_directory).endswith('dashboard'):
             next_level_filename = "html_template"
         else:
             next_level_filename = "dashboard/html_template"
-        
+
         html_template_path = os.path.join(current_directory, next_level_filename)
         print('html_template_path:', html_template_path)
-        
+
 
         template_id = data['template_id']
         # 读取模板文件

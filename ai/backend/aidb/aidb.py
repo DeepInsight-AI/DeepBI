@@ -321,55 +321,52 @@ class AIDB:
         print(send_mess)
         logger.info(send_mess)
 
-    async def check_api_key(self):
-        # self.agent_instance_util.api_key_use = True
-        # .token_[uid].json
+    async def check_api_key(self, apikey=None):
+        try:
+            ApiKey, HttpProxyHost, HttpProxyPort, ApiHost, in_use = self.load_api_key(apikey)
+            if ApiKey is None or len(ApiKey) == 0:
+                await self.put_message(500, CONFIG.talker_log, CONFIG.type_log_data, self.error_miss_key)
+                return False
+
+            self.agent_instance_util.set_api_key(ApiKey, ApiHost, in_use)
+
+            if HttpProxyHost is not None and len(str(HttpProxyHost)) > 0 and HttpProxyPort is not None and len(
+                str(HttpProxyPort)) > 0:
+                # openai_proxy = "http://127.0.0.1:7890"
+                self.agent_instance_util.openai_proxy = 'http://' + str(HttpProxyHost) + ':' + str(HttpProxyPort)
+
+            planner_user = self.agent_instance_util.get_agent_planner_user(is_log_out=False)
+            api_check = self.agent_instance_util.get_agent_api_check()
+            await asyncio.wait_for(planner_user.initiate_chat(
+                api_check,
+                # message=content + '\n' + " This is my question: " + '\n' + str(qustion_message),
+                message=""" 5-2 =?? """,
+            ), timeout=120)  # time out 120 seconds
+
+            self.agent_instance_util.api_key_use = True
+
+            return True
+        except HTTPError as http_err:
+            traceback.print_exc()
+            error_miss_key = self.generate_error_message(http_err, error_message=LanguageInfo.api_key_fail)
+            await self.put_message(500, CONFIG.talker_log, CONFIG.type_log_data, error_miss_key)
+            return False
+        except Exception as e:
+            traceback.print_exc()
+            print("e=====", str(e))
+            logger.error("from user:[{}".format(self.user_name) + "] , " + "error: " + str(e))
+            await self.put_message(500, CONFIG.talker_log, CONFIG.type_log_data, self.error_miss_key)
+            return False
+        """
         token_path = CONFIG.up_file_path + '.token_' + str(self.uid) + '.json'
         print("token_path++++", token_path)
         if os.path.exists(token_path):
             print("token_path====", token_path)
-            try:
-                ApiKey, HttpProxyHost, HttpProxyPort, ApiHost, in_use = self.load_api_key(token_path)
-                if ApiKey is None or len(ApiKey) == 0:
-                    await self.put_message(500, CONFIG.talker_log, CONFIG.type_log_data, self.error_miss_key)
-                    return False
-
-                self.agent_instance_util.set_api_key(ApiKey, ApiHost, in_use)
-
-                if HttpProxyHost is not None and len(str(HttpProxyHost)) > 0 and HttpProxyPort is not None and len(
-                    str(HttpProxyPort)) > 0:
-                    # openai_proxy = "http://127.0.0.1:7890"
-                    self.agent_instance_util.openai_proxy = 'http://' + str(HttpProxyHost) + ':' + str(HttpProxyPort)
-
-                planner_user = self.agent_instance_util.get_agent_planner_user(is_log_out=False)
-                api_check = self.agent_instance_util.get_agent_api_check()
-                await asyncio.wait_for(planner_user.initiate_chat(
-                    api_check,
-                    # message=content + '\n' + " This is my question: " + '\n' + str(qustion_message),
-                    message=""" 5-2 =?? """,
-                ), timeout=120)  # time out 120 seconds
-
-                self.agent_instance_util.api_key_use = True
-
-                return True
-            except HTTPError as http_err:
-                traceback.print_exc()
-
-                error_miss_key = self.generate_error_message(http_err, error_message=LanguageInfo.api_key_fail)
-                await self.put_message(500, CONFIG.talker_log, CONFIG.type_log_data, error_miss_key)
-                return False
-            except Exception as e:
-                traceback.print_exc()
-                print("e=====", str(e))
-                logger.error("from user:[{}".format(self.user_name) + "] , " + "error: " + str(e))
-                await self.put_message(500, CONFIG.talker_log, CONFIG.type_log_data, self.error_miss_key)
-                return False
-
-
         else:
             await self.put_message(500, receiver=CONFIG.talker_log, data_type=CONFIG.type_log_data,
                                    content=self.error_miss_key)
             return False
+        """
 
     def set_base_message(self, message):
         try:
@@ -377,8 +374,15 @@ class AIDB:
         except json.JSONDecodeError:
             logger.error("Failed to decode JSON from message.")
             return
-        
-        base_message = json_str.get('base_message')
+        db_id = json_str["data"]["databases_id"] if "data" in json_str and "databases_id" in json_str["data"] else 1
+        database = json_str['data_type'] if "data_type" in json_str else "mysql"
+        base_message = json_str['base_message'] if "base_message" in json_str else ""
+
+        setattr(self.agent_instance_util, f"base_{database}_info",
+                ' When connecting to the database, be sure to bring the port. This is ' + database + ' database info :' + '\n' + str(
+                    base_message))
+        self.agent_instance_util.set_base_message(base_message, databases_id=db_id)
+        """
         if base_message:
             database = json_str.get('database')
             self.db_info_json = base_message
@@ -404,93 +408,56 @@ class AIDB:
                     self.agent_instance_util.db_id = db_id
                 else:
                     logger.error("Failed to get database info for db_id: {}".format(db_id))
-            
-    async def test_api_key(self):
-        # self.agent_instance_util.api_key_use = True
+        """
 
-        # .token_[uid].json
+    async def test_api_key(self, apikey):
+        try:
+            ApiKey, HttpProxyHost, HttpProxyPort, ApiHost, in_use = self.load_api_key(apikey)
+            if ApiKey is None or len(ApiKey) == 0:
+                return await self.put_message(200, CONFIG.talker_api, CONFIG.type_test, LanguageInfo.no_api_key)
+
+            self.agent_instance_util.set_api_key(ApiKey, ApiHost, in_use)
+
+            if HttpProxyHost is not None and len(str(HttpProxyHost)) > 0 and HttpProxyPort is not None and len(
+                str(HttpProxyPort)) > 0:
+                # openai_proxy = "http://127.0.0.1:7890"
+                self.agent_instance_util.openai_proxy = 'http://' + str(HttpProxyHost) + ':' + str(HttpProxyPort)
+
+            planner_user = self.agent_instance_util.get_agent_planner_user(is_log_out=False)
+            api_check = self.agent_instance_util.get_agent_api_check()
+            await asyncio.wait_for(planner_user.initiate_chat(
+                api_check,
+                # message=content + '\n' + " This is my question: " + '\n' + str(qustion_message),
+                message=""" 5-2 =?? """,
+            ), timeout=120)  # time out 120 seconds
+            self.agent_instance_util.api_key_use = True
+            return await self.put_message(200, CONFIG.talker_api, CONFIG.type_test, LanguageInfo.api_key_success)
+
+        except HTTPError as http_err:
+            traceback.print_exc()
+
+            error_miss_key = self.generate_error_message(http_err, error_message=LanguageInfo.api_key_fail)
+            return await self.put_message(200, CONFIG.talker_api, CONFIG.type_test, error_miss_key)
+
+        except Exception as e:
+            traceback.print_exc()
+            logger.error("from user:[{}".format(self.user_name) + "] , " + "error: " + str(e))
+            return await self.put_message(200, CONFIG.talker_api, CONFIG.type_test, LanguageInfo.api_key_fail)
+
+        """
         token_path = CONFIG.up_file_path + '.token_' + str(self.uid) + '.json'
         print('token_path : ', token_path)
         if os.path.exists(token_path):
-            try:
-                ApiKey, HttpProxyHost, HttpProxyPort, ApiHost, in_use = self.load_api_key(token_path)
-                if ApiKey is None or len(ApiKey) == 0:
-                    return await self.put_message(200, CONFIG.talker_api, CONFIG.type_test, LanguageInfo.no_api_key)
-
-                self.agent_instance_util.set_api_key(ApiKey, ApiHost, in_use)
-
-                if HttpProxyHost is not None and len(str(HttpProxyHost)) > 0 and HttpProxyPort is not None and len(
-                    str(HttpProxyPort)) > 0:
-                    # openai_proxy = "http://127.0.0.1:7890"
-                    self.agent_instance_util.openai_proxy = 'http://' + str(HttpProxyHost) + ':' + str(HttpProxyPort)
-
-                planner_user = self.agent_instance_util.get_agent_planner_user(is_log_out=False)
-                api_check = self.agent_instance_util.get_agent_api_check()
-                await asyncio.wait_for(planner_user.initiate_chat(
-                    api_check,
-                    # message=content + '\n' + " This is my question: " + '\n' + str(qustion_message),
-                    message=""" 5-2 =?? """,
-                ), timeout=120)  # time out 120 seconds
-
-                self.agent_instance_util.api_key_use = True
-
-                return await self.put_message(200, CONFIG.talker_api, CONFIG.type_test, LanguageInfo.api_key_success)
-
-            except HTTPError as http_err:
-                traceback.print_exc()
-
-                error_miss_key = self.generate_error_message(http_err, error_message=LanguageInfo.api_key_fail)
-                return await self.put_message(200, CONFIG.talker_api, CONFIG.type_test, error_miss_key)
-
-            except Exception as e:
-                traceback.print_exc()
-                logger.error("from user:[{}".format(self.user_name) + "] , " + "error: " + str(e))
-                return await self.put_message(200, CONFIG.talker_api, CONFIG.type_test, LanguageInfo.api_key_fail)
-
         else:
             return await self.put_message(200, CONFIG.talker_api, CONFIG.type_test, LanguageInfo.no_api_key)
+        """
 
-    def load_api_key(self, token_path):
-        ApiKey = None
+    def load_api_key(self, apikey):
         HttpProxyHost = None
         HttpProxyPort = None
-        ApiHost = None
-        in_use = None
-
-        with open(token_path, 'r') as file:
-            data = json.load(file)
-
-        if data.get('in_use'):
-            in_use = data.get('in_use')
-            if in_use == 'OpenAI':
-                ApiKey = data[in_use]['OpenaiApiKey']
-                print('OpenaiApiKey : ', ApiKey)
-                HttpProxyHost = data[in_use]['HttpProxyHost']
-                print('HttpProxyHost : ', HttpProxyHost)
-                HttpProxyPort = data[in_use]['HttpProxyPort']
-                print('HttpProxyPort : ', HttpProxyPort)
-                openaiApiHost = data[in_use]['ApiHost']
-                if openaiApiHost is not None and len(str(openaiApiHost)) > 0:
-                    ApiHost = openaiApiHost
-            elif in_use == 'DeepInsight':
-                ApiKey = data[in_use]['ApiKey']
-                print('DeepBIApiKey : ', ApiKey)
-                # ApiHost = "https://apiserver.deep-thought.io/proxy"
-                ApiHost = CONFIG.ApiHost
-            elif in_use == 'Azure':
-                ApiKey = data[in_use]['AzureApiKey']
-                print('DeepBIAzureApiKey : ', ApiKey)
-                # ApiHost = "https://apiserver.deep-thought.io/proxy"
-                ApiHost = data[in_use]['AzureHost']
-        else:
-            ApiKey = data['OpenaiApiKey']
-            print('OpenaiApiKey : ', ApiKey)
-            HttpProxyHost = data['HttpProxyHost']
-            print('HttpProxyHost : ', HttpProxyHost)
-            HttpProxyPort = data['HttpProxyPort']
-            print('HttpProxyPort : ', HttpProxyPort)
-
-        return ApiKey, HttpProxyHost, HttpProxyPort, ApiHost, in_use
+        in_use = "DeepInsight"
+        ApiHost = "https://apiserver.deep-thought.io/proxy"
+        return apikey, HttpProxyHost, HttpProxyPort, ApiHost, in_use
 
     def generate_error_message(self, http_err, error_message=' API ERROR '):
         # print(f'HTTP error occurred: {http_err}')

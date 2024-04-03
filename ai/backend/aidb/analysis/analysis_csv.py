@@ -24,8 +24,10 @@ class AnalysisCsv(Analysis):
         q_str = json_str['data']['content']
 
         if not self.agent_instance_util.api_key_use:
-            re_check = await self.check_api_key()
+            re_check = await self.check_api_key(json_str['api_key'])
             if not re_check:
+                await self.put_message(500, receiver=CONFIG.talker_user, data_type=CONFIG.type_answer,
+                                       content=self.error_miss_key)
                 return
 
         if q_sender == CONFIG.talker_user:

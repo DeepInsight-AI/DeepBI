@@ -15,7 +15,7 @@ message_pool: ChatMemoryManager = ChatMemoryManager(name="message_pool")
 
 
 class ChatClass:
-    def __init__(self, websocket, user_name, user_id=0, message='', chat_id=0):
+    def __init__(self, websocket, user_name, user_id=0, message={}, chat_id=0):
         self.ws = websocket
         self.incoming = asyncio.Queue()
         self.outgoing = asyncio.Queue()
@@ -99,72 +99,67 @@ class ChatClass:
 
             # json_str = json.loads(self.message)
             json_str = self.message
-            print("api===", json_str)
-
+            print("api message===", json_str)
+            """
             if json_str.get('sender'):
                 if json_str.get('sender') == 'heartCheck':
                     result['receiver'] = 'heartCheck'
                     consume_output = json.dumps(result)
                     return await self.outgoing.put(consume_output)
+            """
+            q_data_type = json_str['data']['data_type']
+            print('q_data_type : ', q_data_type)
 
-            q_state = json_str['state']
+            q_database = 'mysql'  # default value
+            if "database" in json_str and json_str['database'] != "":
+                q_database = json_str['database']
+            """
+            q_chat_type = 'chat'  # default value
+            if json_str.get('chat_type'):
+                q_chat_type = json_str.get('chat_type')
+            """
+            if json_str['sender'] == 'test':
+                await AIDB(self).test_api_key(json_str['api_key'])
 
-            if q_state == 200 or q_state == 500:
-                q_data_type = json_str['data']['data_type']
-                print('q_data_type : ', q_data_type)
-
-                q_database = 'mysql'  # default value
-                if json_str.get('database'):
-                    q_database = json_str.get('database')
-
-                q_chat_type = 'chat'  # default value
-                if json_str.get('chat_type'):
-                    q_chat_type = json_str.get('chat_type')
-
-                if q_chat_type == 'test':
-                    await AIDB(self).test_api_key()
-
-                elif q_chat_type == 'chat':
-                    if q_database == 'mysql':
-                        print(" q_database ==  mysql ")
-                        await self.analysisMysql.deal_question(json_str, self.message)
-                    elif q_database == 'csv':
-                        await self.analysisCsv.deal_question(json_str, self.message)
-                    elif q_database == 'pg':
-                        # postgresql
-                        await self.analysisPostgresql.deal_question(json_str, self.message)
-                    elif q_database == 'starrocks':
-                        print(" q_database ==  starrocks ")
-                        await self.analysisStarrocks.deal_question(json_str, self.message)
-                    elif q_database == 'mongodb':
-                        print(" q_database ==  mongodb ")
-                        await self.analysisMongoDB.deal_question(json_str, self.message)
-
-                elif q_chat_type == 'report':
-                    if q_database == 'mysql':
-                        await self.reportMysql.deal_report(json_str, self.message)
-                    elif q_database == 'pg':
-                        await self.reportPostgresql.deal_report(json_str, self.message)
-                    elif q_database == 'starrocks':
-                        await self.reportStarrocks.deal_report(json_str, self.message)
-                    elif q_database == 'mongodb':
-                        await self.reportMongoDB.deal_report(json_str, self.message)
-                elif q_chat_type == 'autopilot':
-                    if q_database == 'mysql':
-                        await self.autopilotMysql.deal_question(json_str, self.message)
-                    elif q_database == 'starrocks':
-                        await self.autopilotMysql.deal_question(json_str, self.message)
-                    elif q_database == 'mongodb':
-                        await self.autopilotMongoDB.deal_question(json_str, self.message)
-
+            elif json_str['sender'] == 'user':
+                if q_database == 'mysql':
+                    print(" q_database ==  mysql ")
+                    await self.analysisMysql.deal_question(json_str, self.message)
+                elif q_database == 'csv':
+                    await self.analysisCsv.deal_question(json_str, self.message)
+                elif q_database == 'pg':
+                    # postgresql
+                    await self.analysisPostgresql.deal_question(json_str, self.message)
+                elif q_database == 'starrocks':
+                    print(" q_database ==  starrocks ")
+                    await self.analysisStarrocks.deal_question(json_str, self.message)
+                elif q_database == 'mongodb':
+                    print(" q_database ==  mongodb ")
+                    await self.analysisMongoDB.deal_question(json_str, self.message)
             else:
-                result['state'] = 500
-                if self.language_mode == CONFIG.language_chinese:
-                    result['data']['content'] = '状态码错误'
-                else:
-                    result['data']['content'] = 'Status code error'
+                result['data']['content'] = 'sender set error'
                 consume_output = json.dumps(result)
                 await self.outgoing.put(consume_output)
+            """
+            elif q_chat_type == 'chat':
+            elif q_chat_type == 'report':
+                if q_database == 'mysql':
+                    await self.reportMysql.deal_report(json_str, self.message)
+                elif q_database == 'pg':
+                    await self.reportPostgresql.deal_report(json_str, self.message)
+                elif q_database == 'starrocks':
+                    await self.reportStarrocks.deal_report(json_str, self.message)
+                elif q_database == 'mongodb':
+                    await self.reportMongoDB.deal_report(json_str, self.message)
+            elif q_chat_type == 'autopilot':
+                if q_database == 'mysql':
+                    await self.autopilotMysql.deal_question(json_str, self.message)
+                elif q_database == 'starrocks':
+                    await self.autopilotMysql.deal_question(json_str, self.message)
+                elif q_database == 'mongodb':
+                    await self.autopilotMongoDB.deal_question(json_str, self.message)
+            """
+
 
         except Exception as e:
             traceback.print_exc()

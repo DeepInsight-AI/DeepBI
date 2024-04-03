@@ -25,23 +25,25 @@ class AnalysisMysql(Analysis):
         q_data_type = json_str['data']['data_type']
         print('q_data_type : ', q_data_type)
         q_str = json_str['data']['content']
-
+        """
         print("self.agent_instance_util.api_key_use :", self.agent_instance_util.api_key_use)
         if not self.agent_instance_util.api_key_use:
-            re_check = await self.check_api_key()
+            re_check = await self.check_api_key(json_str['api_key'])
             print('re_check : ', re_check)
             if not re_check:
                 return
+        """
 
         if q_sender == 'user':
-            if q_data_type == 'question':
-                self.set_base_message(json_str)
-                # print("agent_instance_util.base_message :", self.agent_instance_util.base_message)
-                if self.agent_instance_util.base_message is not None:
-                    await self.start_chatgroup(q_str)
-                else:
-                    await self.put_message(500, receiver=CONFIG.talker_user, data_type=CONFIG.type_answer,
-                                           content=self.error_miss_data)
+            self.set_base_message(json_str)
+            # print("agent_instance_util.base_message :", self.agent_instance_util.base_message)
+            if self.agent_instance_util.base_message is not None:
+                await self.start_chatgroup(q_str)
+            else:
+                await self.put_message(500, receiver=CONFIG.talker_user, data_type=CONFIG.type_answer,
+                                       content=self.error_miss_data)
+
+        # check database comment
         elif q_sender == 'bi':
             if q_data_type == CONFIG.type_comment:
                 await self.check_data_base(q_str)
@@ -64,7 +66,6 @@ class AnalysisMysql(Analysis):
                             db_info)
                         self.agent_instance_util.db_id = db_id
                         self.agent_instance_util.set_base_message(q_str, databases_id=db_id)
-
 
                 else:
                     self.agent_instance_util.set_base_message(q_str)

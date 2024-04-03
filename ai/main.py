@@ -80,7 +80,7 @@ def chat():
     mock_socket.set_chat_id(chat_id)
 
     # return Response(stream_with_context(asyncio.run(demo1(mock_socket))), mimetype='text/event-stream')
-    return Response(stream_with_context(generate_stream(mock_socket, user_name, user_id, message,chat_id)), mimetype='text/event-stream')
+    return Response(stream_with_context(generate_stream(mock_socket, user_name, user_id, message, chat_id)), mimetype='text/event-stream')
     # s = ChatClass(mock_socket, user_name, user_id, message,chat_id)
     # return Response(stream(content), mimetype='text/plain')
 

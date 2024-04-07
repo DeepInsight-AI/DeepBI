@@ -223,7 +223,7 @@ sed -i "s|192.168.5.165:8339|$ip:$socket_port|g" ./client/dist/vendors~app.js
 sed -i "s|192.168.5.165:8339|$ip:$socket_port|g" ./client/dist/app.js
 line
 # copy language
-rm -rf./client/app/Language.CN.js
+rm -rf ./client/app/Language.CN.js
 cp ./client/app/Language_EN.js ./client/app/Language.CN.js
 source venv/bin/activate
 

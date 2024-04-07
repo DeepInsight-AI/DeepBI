@@ -31,7 +31,7 @@ class MockWebSocket:
         message = json.dumps(message)
         message_with_delimiter = message + "---ENDOFMESSAGE---"
         self.messages.append(message_with_delimiter)
-        print("Message to send:", message_with_delimiter)
+        # print("Message to send:", message_with_delimiter)
 
 def generate_stream(mock_socket, user_name, user_id, message,chat_id):
     try:

@@ -217,8 +217,8 @@ class AIDB:
                             percentage = (num / len(q_str.get('table_desc'))) * 100
                             percentage_integer = int(percentage)
 
-                            await self.put_message(200, CONFIG.talker_log, CONFIG.type_data_check,
-                                                   content=percentage_integer)
+                            # await self.put_message(200, CONFIG.talker_log, CONFIG.type_data_check,
+                            #                       content=percentage_integer)
                             num = num + 1
                         except Exception as e:
                             traceback.print_exc()
@@ -230,8 +230,8 @@ class AIDB:
                     return
             else:
                 percentage_integer = 100
-                await self.put_message(200, CONFIG.talker_log, CONFIG.type_data_check,
-                                       content=percentage_integer)
+                # await self.put_message(200, CONFIG.talker_log, CONFIG.type_data_check,
+                #                        content=percentage_integer)
 
             if q_str.get('table_desc'):
                 for tb in q_str.get('table_desc'):

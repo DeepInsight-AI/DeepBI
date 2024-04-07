@@ -601,6 +601,7 @@ def implement(
 
 
 async def tell_logger(websocket, log_str):
+    return
     try:
         log_str = str(log_str)
         if if_hide_sensitive:

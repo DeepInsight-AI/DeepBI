@@ -99,7 +99,7 @@ class ChatClass:
 
             # json_str = json.loads(self.message)
             json_str = self.message
-            print("api message chat_task.py 102 ===", json_str)
+            # print("api message chat_task.py 102 ===", json_str)
             """
             if json_str.get('sender'):
                 if json_str.get('sender') == 'heartCheck':
@@ -122,6 +122,7 @@ class ChatClass:
                 await AIDB(self).test_api_key(json_str['api_key'])
 
             elif json_str['sender'] == 'user':
+                await AIDB(self).set_api_key(json_str['api_key'])
                 if q_database == 'mysql':
                     print(" q_database ==  mysql ")
                     await self.analysisMysql.deal_question(json_str, self.message)

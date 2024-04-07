@@ -46,19 +46,19 @@ class AnalysisMysql(Analysis):
         # check database comment
         else:
             if q_data_type == CONFIG.type_comment:
-                print("LINE 49 analysis_mysql.py")
+                # print("LINE 49 analysis_mysql.py")
                 await self.check_data_base(q_str)
             elif q_data_type == CONFIG.type_comment_first:
-                self.db_info_json = q_str
-                self.agent_instance_util.set_base_message(q_str)
-                await self.get_data_desc(q_str)
-                """
                 if json_str.get('data').get('language_mode'):
                     q_language_mode = json_str['data']['language_mode']
                     if q_language_mode == CONFIG.language_chinese or q_language_mode == CONFIG.language_english or q_language_mode == CONFIG.language_japanese:
                         self.set_language_mode(q_language_mode)
                         self.agent_instance_util.set_language_mode(q_language_mode)
 
+                self.db_info_json = q_str
+                self.agent_instance_util.set_base_message(q_str)
+                await self.get_data_desc(q_str)
+                """
                 if CONFIG.database_model == 'online':
                     databases_id = json_str['data']['databases_id']
                     db_id = str(databases_id)

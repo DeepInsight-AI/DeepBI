@@ -50,7 +50,9 @@ class AnalysisMysql(Analysis):
                 await self.check_data_base(q_str)
             elif q_data_type == CONFIG.type_comment_first:
                 self.db_info_json = q_str
-
+                self.agent_instance_util.set_base_message(q_str)
+                await self.get_data_desc(q_str)
+                """
                 if json_str.get('data').get('language_mode'):
                     q_language_mode = json_str['data']['language_mode']
                     if q_language_mode == CONFIG.language_chinese or q_language_mode == CONFIG.language_english or q_language_mode == CONFIG.language_japanese:
@@ -69,9 +71,7 @@ class AnalysisMysql(Analysis):
                         self.agent_instance_util.set_base_message(q_str, databases_id=db_id)
 
                 else:
-                    self.agent_instance_util.set_base_message(q_str)
-
-                await self.get_data_desc(q_str)
+                """
             elif q_data_type == CONFIG.type_comment_second:
                 self.db_info_json = q_str
 

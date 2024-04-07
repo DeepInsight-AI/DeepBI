@@ -80,7 +80,7 @@
       <ul class="m-b-5 bg-border">
         <p>【数据解读】</p>
         {% for answer_item in question_data['answer'] %}
-          <li><strong>{{ answer_item['analysis_item'] }}：</strong>{{ answer_item['description'] }} </li>
+          <li><strong>{{ answer_item['analysis_item'] }}: </strong>{{ answer_item['description'] }} </li>
         {% endfor %}
       </ul>
 
@@ -97,7 +97,7 @@
     <h2 class="m-b-5 bg-border">报告总结</h2>
     <ul class="m-b-5 bg-border">
       {% for summary in report_analyst %}
-        <li><strong>{{ summary['analysis_item'] }}：</strong>{{ summary['description'] }} </li>
+        <li><strong>{{ summary['analysis_item'] }}: </strong>{{ summary['description'] }} </li>
       {% endfor %}
     </ul>
   </div>

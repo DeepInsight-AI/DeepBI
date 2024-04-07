@@ -1472,12 +1472,12 @@ class BIProxyAgent(Agent):
                 "from user:[{}".format(
                     self.user_name) + "] , " + self.name + " send a message:{}".format(
                     send_json_str))
-            return name + "：" + img_url + " , generated successfully"
+            return name + ": " + img_url + " , generated successfully"
         except Exception as e:
             traceback.print_exc()
             logger.error("from user:[{}".format(self.user_name) + "] , " + str(e))
 
-        return name + "：" + img_url + " , generation failed"
+        return name + ": " + img_url + " , generation failed"
         # return "Failed to generate chart. Please check whether the data format is correct"
 
     async def run_echart_code(self, chart_code_str: str, name: str):
@@ -1491,7 +1491,7 @@ class BIProxyAgent(Agent):
                 str_obj = ast.literal_eval(chart_code_str)
 
             if isinstance(str_obj, list):
-                return "Chart ：" + name + " configuration should not be a list."
+                return "Chart : " + name + " configuration should not be a list."
 
             json_str = json.dumps(str_obj)
 
@@ -1516,10 +1516,10 @@ class BIProxyAgent(Agent):
                 "from user:[{}".format(
                     self.user_name) + "] , " + self.name + " send a message:{}".format(
                     send_json_str))
-            return "Chart ：" + name + " generated successfully"
+            return "Chart : " + name + " generated successfully"
         except Exception as e:
             traceback.print_exc()
             logger.error("from user:[{}".format(self.user_name) + "] , " + str(e))
 
-        return "Chart ：" + name + " generation failed"
+        return "Chart : " + name + " generation failed"
         # return "Failed to generate chart. Please check whether the data format is correct"

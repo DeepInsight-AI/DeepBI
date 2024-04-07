@@ -683,7 +683,7 @@ class ConversableAgent(Agent):
             return result
 
         response = await consume_async()
-        # print("response：", response)
+        # print("response: ", response)
 
         # # TODO: #1143 handle token limit exceeded error
         # response = oai.ChatCompletion.create(

@@ -221,7 +221,7 @@ class AutopilotMongoDB(Autopilot):
         await planner_user.initiate_chat(
             analyst,
             message=str(
-                question_list) + '\n' + "这是本次报告的目标：" + '\n' + q_str + '\n' + self.question_ask + '\n' + question_supplement,
+                question_list) + '\n' + "这是本次报告的目标: " + '\n' + q_str + '\n' + self.question_ask + '\n' + question_supplement,
         )
 
         last_analyst = planner_user.last_message()["content"]
@@ -434,7 +434,7 @@ class AutopilotMongoDB(Autopilot):
                     question_supplement = 'Please make an analysis and summary in English, including which charts were generated, and briefly introduce the contents of these charts.'
                     if self.language_mode == CONFIG.language_chinese:
                         question_supplement = qustion_message + ".  请用中文帮我分析以上的报表数据，给我有价值的结论"
-                        print("question_supplement ：", question_supplement)
+                        print("question_supplement : ", question_supplement)
 
                     await planner_user.initiate_chat(
                         analyst,

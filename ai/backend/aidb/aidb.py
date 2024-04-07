@@ -150,7 +150,7 @@ class AIDB:
                         }
                         # table_content.append(tb_desc)
 
-            print("The number of tables to be processed this time： ", len(table_content))
+            print("The number of tables to be processed this time:  ", len(table_content))
             if len(table_content) > 0:
                 try:
                     num = 1 + (len(q_str.get('table_desc')) - len(table_content))
@@ -185,7 +185,7 @@ class AIDB:
                         try:
                             json_str = json_str.replace("```json", "")
                             json_str = json_str.replace("```", "")
-                            # print('json_str ：', json_str)
+                            # print('json_str : ', json_str)
                             chart_code_str = json_str.replace("\n", "")
                             if base_util.is_json(chart_code_str):
                                 table_desc = json.loads(chart_code_str)

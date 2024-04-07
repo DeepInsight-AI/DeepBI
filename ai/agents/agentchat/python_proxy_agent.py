@@ -820,7 +820,7 @@ class PythonProxyAgent(Agent):
                             'series': series_data,
                         }
                     echarts_data.append(echart_dict)
-                return True, f"exitcode: {exitcode} ({exitcode2str})\nCode output: 图像已生成,请直接分析图表数据：{echarts_data}"
+                return True, f"exitcode: {exitcode} ({exitcode2str})\nCode output: 图像已生成,请直接分析图表数据: {echarts_data}"
 
         code_execution_config["last_n_messages"] = last_n_messages
 

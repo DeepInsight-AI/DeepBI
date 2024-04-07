@@ -95,7 +95,7 @@ Reply "TERMINATE" in the end when everything is done.
             return result
 
         response = await consume_async()
-        # print("response：", response)
+        # print("response: ", response)
 
         # # TODO: #1143 handle token limit exceeded error
         # response = oai.ChatCompletion.create(

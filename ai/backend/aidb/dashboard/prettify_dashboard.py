@@ -63,7 +63,7 @@ class PrettifyDashboard(AIDB):
                 try:
                     # ai
                     print(
-                        "开始调用openai,第" + str(query_result['id']) + "个图表,图表类型为：" + query_result['chart_type'] + "+++++")
+                        "开始调用openai,第" + str(query_result['id']) + "个图表,图表类型为: " + query_result['chart_type'] + "+++++")
                     # echart_code = openai_response(query_result)
 
                     planner_user = self.agent_instance_util.get_agent_planner_user()
@@ -84,7 +84,7 @@ class PrettifyDashboard(AIDB):
                     # logger.error("from user:[{}".format(self.user_name) + "] , " + str(e))
                     use_cache = False
                     # 默认配置
-                    print("调用openai失败，使用默认配置,第" + str(query_result['id']) + "个图表,图表类型为：" + query_result[
+                    print("调用openai失败，使用默认配置,第" + str(query_result['id']) + "个图表,图表类型为: " + query_result[
                         'chart_type'] + "-----")
                     echart_code = acquiesce_echarts_code(query_result)
             query_result['echart_code'] = echart_code
@@ -113,15 +113,15 @@ class PrettifyDashboard(AIDB):
 
         # 获取当前工作目录的路径
         current_directory = os.path.abspath(os.path.dirname(__file__))
-        
+
         if str(current_directory).endswith('dashboard'):
             next_level_filename = "html_template"
         else:
             next_level_filename = "dashboard/html_template"
-        
+
         html_template_path = os.path.join(current_directory, next_level_filename)
         print('html_template_path:', html_template_path)
-        
+
 
         template_id = data['template_id']
         # 读取模板文件
@@ -137,7 +137,7 @@ class PrettifyDashboard(AIDB):
         with open(html_file_name, 'w',encoding='utf-8') as output_file:
             output_file.write(rendered_html)
 
-        print("HTML文件已生成：", html_file_name)
+        print("HTML文件已生成: ", html_file_name)
 
     def get_agent_pretty_dashboard(self, chart_type, report_file_name=None, use_cache=True):
         system_content = ECHARTS_BAR_PROMPT

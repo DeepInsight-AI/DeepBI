@@ -1104,9 +1104,9 @@ class Completion(openai_Completion):
 
 
             从完成或聊天响应中提取文本或功能调用。
-            Args：
-            response（dict）：来自OpenAI API的响应。
-            Returns：
+            Args:
+            response（dict）: 来自OpenAI API的响应。
+            Returns:
             响应中的文本或函数调用列表。
 
         """

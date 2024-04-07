@@ -99,7 +99,7 @@ class ChatClass:
 
             # json_str = json.loads(self.message)
             json_str = self.message
-            print("api message===", json_str)
+            print("api message chat_task.py 102 ===", json_str)
             """
             if json_str.get('sender'):
                 if json_str.get('sender') == 'heartCheck':
@@ -108,7 +108,7 @@ class ChatClass:
                     return await self.outgoing.put(consume_output)
             """
             q_data_type = json_str['data_type'] if "data_type" in json_str else "mysql"
-            print('q_data_type : ', q_data_type)
+            print('q_data_type_111 chat_task.py: ', q_data_type)
 
             q_database = 'mysql'  # default value
             if "database" in json_str and json_str['database'] != "":

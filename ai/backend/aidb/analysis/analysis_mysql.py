@@ -33,8 +33,8 @@ class AnalysisMysql(Analysis):
             if not re_check:
                 return
         """
-
-        if q_sender == 'user':
+        print(" sender_36, analysis_mysq.lpy", q_sender, "")
+        if q_sender == 'user' and q_data_type == "question":
             self.set_base_message(json_str)
             # print("agent_instance_util.base_message :", self.agent_instance_util.base_message)
             if self.agent_instance_util.base_message is not None:
@@ -44,7 +44,7 @@ class AnalysisMysql(Analysis):
                                        content=self.error_miss_data)
 
         # check database comment
-        elif q_sender == 'bi':
+        else:
             if q_data_type == CONFIG.type_comment:
                 await self.check_data_base(q_str)
             elif q_data_type == CONFIG.type_comment_first:
@@ -100,10 +100,12 @@ class AnalysisMysql(Analysis):
                 self.delay_messages['bi'][q_data_type].append(message)
                 print("delay_messages : ", self.delay_messages)
                 return
+        """
         else:
             print('error : q_sender is not user or bi')
             await self.put_message(500, receiver=CONFIG.talker_bi, data_type=CONFIG.type_comment_second,
                                    content='error : q_sender is not user or bi')
+        """
 
     async def task_base(self, qustion_message):
         """ Task type: mysql data analysis"""

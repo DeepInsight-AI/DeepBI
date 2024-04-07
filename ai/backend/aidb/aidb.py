@@ -109,7 +109,7 @@ class AIDB:
         ]
 
         num_tokens = num_tokens_from_messages(message, model='gpt-4')
-        print('num_tokens: ', num_tokens)
+        print('num_tokens: ', num_tokens, "\n\n")
 
         if num_tokens < CONFIG.max_token_num:
             table_content = []
@@ -151,12 +151,12 @@ class AIDB:
                         }
                         # table_content.append(tb_desc)
 
-            print("The number of tables to be processed this time： ", len(table_content))
+            print("The number of tables to be processed this time： ", len(table_content), "\n\n")
             if len(table_content) > 0:
                 try:
                     num = 1 + (len(q_str.get('table_desc')) - len(table_content))
                     for db_desc in table_content:
-                        print("Start processing table: ", str(db_desc))
+                        print("Start processing table: ", str(db_desc), "\n\n")
                         planner_user = self.agent_instance_util.get_agent_planner_user()
                         database_describer = self.agent_instance_util.get_agent_data_checker_assistant()
 

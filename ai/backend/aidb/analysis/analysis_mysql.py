@@ -33,7 +33,7 @@ class AnalysisMysql(Analysis):
             if not re_check:
                 return
         """
-        print(" sender_36, analysis_mysq.lpy", q_sender, "")
+        print("LINE sender_36, analysis_mysq.lpy", q_sender, "")
         if q_sender == 'user' and q_data_type == "question":
             self.set_base_message(json_str)
             # print("agent_instance_util.base_message :", self.agent_instance_util.base_message)
@@ -46,6 +46,7 @@ class AnalysisMysql(Analysis):
         # check database comment
         else:
             if q_data_type == CONFIG.type_comment:
+                print("LINE 49 analysis_mysql.py")
                 await self.check_data_base(q_str)
             elif q_data_type == CONFIG.type_comment_first:
                 self.db_info_json = q_str

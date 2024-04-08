@@ -3,15 +3,16 @@ from dotenv import load_dotenv
 # 加载 .env 文件中的环境变量
 load_dotenv()
 from flask import Flask, request, jsonify, stream_with_context, Response
-from flask_cors import CORS,cross_origin
+from flask_cors import CORS, cross_origin
 from ai.backend.chat_task import ChatClass
 import time  # 用于模拟延迟
 import json
 import asyncio
 import threading
 
-
 app = Flask(__name__)
+
+
 # CORS(app)
 
 # cors = CORS(app, resources={r"/api/*": {"origins": "*"}})
@@ -32,7 +33,8 @@ class MockWebSocket:
         message_with_delimiter = message + "---ENDOFMESSAGE---"
         self.messages.append(message_with_delimiter)
 
-def generate_stream(mock_socket, user_name, user_id, message,chat_id):
+
+def generate_stream(mock_socket, user_name, user_id, message, chat_id):
     try:
         def background_task():
             loop = asyncio.new_event_loop()
@@ -63,6 +65,7 @@ def generate_stream(mock_socket, user_name, user_id, message,chat_id):
         print("error: ", e)
         return "error"
 
+
 @app.route("/api/chat", methods=["POST"])
 @cross_origin()
 def chat():
@@ -80,11 +83,12 @@ def chat():
     mock_socket.set_chat_id(chat_id)
 
     # return Response(stream_with_context(asyncio.run(demo1(mock_socket))), mimetype='text/event-stream')
-    return Response(stream_with_context(generate_stream(mock_socket, user_name, user_id, message, chat_id)), mimetype='text/event-stream')
+    return Response(stream_with_context(generate_stream(mock_socket, user_name, user_id, message, chat_id)),
+                    mimetype='text/event-stream')
     # s = ChatClass(mock_socket, user_name, user_id, message,chat_id)
     # return Response(stream(content), mimetype='text/plain')
+
 
 if __name__ == '__main__':
     app.run(port=8341, host='0.0.0.0', debug=True)
     # app.run(port=8341, host='0.0.0.0', debug=True, threaded=False) # 尝试设置 主线程中调用API服务
-

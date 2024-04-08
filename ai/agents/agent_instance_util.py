@@ -119,7 +119,6 @@ class AgentInstanceUtil:
                 {
                     'model': 'gpt-4-1106-preview',
                     'api_key': self.api_key,
-
                 },
             ]
 
@@ -139,7 +138,6 @@ class AgentInstanceUtil:
         elif in_use == CONFIG.apikey_azure:
             self.config_list_gpt4 = [
                 {
-                    'model': 'gpt-4',
                     'api_key': api_key,
                     'api_type': 'azure',
                     'model': 'gpt-4',
@@ -149,7 +147,6 @@ class AgentInstanceUtil:
 
             self.config_list_gpt4_turbo = [
                 {
-                    'model': 'gpt-4-1106-preview',
                     'api_key': self.api_key,
                     'api_type': 'azure',
                     'model': 'gpt-4',
@@ -159,7 +156,6 @@ class AgentInstanceUtil:
 
             self.config_list_gpt35_turbo = [
                 {
-                    'model': 'gpt-3.5-turbo-1106',
                     'api_key': self.api_key,
                     'api_type': 'azure',
                     'model': 'gpt-4',
@@ -237,11 +233,9 @@ class AgentInstanceUtil:
                 #                 field.pop(key)
                 # self.base_message = str(message)
 
-                table_comments = {'table_desc': [], 'databases_desc': ''}
-
-                table_comments['table_desc'] = [
+                table_comments = {'table_desc': [
                     {'table_name': table['table_name'], 'table_comment': table['table_comment']} for table
-                    in message['table_desc']]
+                    in message['table_desc']], 'databases_desc': ''}
 
                 self.base_message = str(table_comments)
                 # print('self.base_message : ', self.base_message)

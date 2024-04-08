@@ -19,8 +19,8 @@ class AnalysisMysql(Analysis):
     async def deal_question(self, json_str, message):
         """
         Process mysql data source and select the corresponding workflow
-        """
         result = {'state': 200, 'data': {}, 'receiver': ''}
+        """
         q_sender = json_str['sender']
         q_data_type = json_str['data']['data_type']
         print('q_data_type : ', q_data_type)

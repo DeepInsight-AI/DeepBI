@@ -89,70 +89,39 @@ def decode_data_info(code):
 
 class Main:
     def __init__(self, db_id: str):
-        self.db_id = db_id
+        self.db = db_id
+        self.url = CONFIG.flip_os_web_api
+        print("GET flip_os_api_url", self.url)
         pass
 
     def run(self):
-        # db = "14"  # 这里是数据库id
-        db = self.db_id  # 这里是数据库id
-        # 生成 se 用于获取 接口权限
-        from_se = make_secret(db)
-        print("生成 获取 secret", from_se)
-        # url = "http://127.0.0.1:4999/data_source_info/" + db + "/" + from_se
-
-        if CONFIG.web_server_ip is not None:
-            url = "http://" + CONFIG.web_server_ip + "/data_source_info/" + db + "/" + from_se
-            print(url)
-        else:
-            return False, ' error: Not found CONFIG.web_server_ip '
-
-        print(url)
-        url_data = requests.get(url).text
-        print('url_data :', url_data)
-        json_data = json.loads(url_data)
-        print('json_data :', json_data)
-        if 200 == json_data['code']:
-            decode_json = decode_data_info(json_data['data'])
-            # print("decode", decode_json)
-
-            # 敏感信息隐藏
-            decode_json = dbinfo_encode(decode_json)
-            return True, decode_json
-        else:
-            print(json_data['msg'])
-            return False, json_data['msg']
+        result, data = self.get_api_data()
+        return result, dbinfo_encode(data)
 
     def run_decode(self):
-        db = self.db_id  # database id
-        # Generate se to obtain interface permissions
-        from_se = make_secret(db)
-        print("Generate secret", from_se)
-        # url = "http://127.0.0.1:4999/data_source_info/" + db + "/" + from_se
+        result, data = self.get_api_data()
+        return result, data
 
-        if CONFIG.web_server_ip is not None:
-            url = "http://" + CONFIG.web_server_ip + "/data_source_info/" + db + "/" + from_se
-
+    def get_api_data(self):
+        from_se = make_secret(self.db)
+        print("生成 获取 secret", from_se)
+        if self.url is not None:
+            # 临时使用读取本地信息
+            # url_data = requests.get(self.url).text
+            # 打开文件
+            with open('./flip_os_api_url.txt', 'r') as file:
+                # 读取文件内容
+                url_data = file.read()
+            print('url_data :', url_data)
+            json_data = json.loads(url_data)
+            print('json_data :', json_data)
+            if 200 == json_data['code']:
+                decode_json = decode_data_info(json_data['data'])
+                # 敏感信息隐藏
+                # decode_json = dbinfo_encode(decode_json)
+                return True, decode_json
+            else:
+                print(json_data['msg'])
+                return False, json_data['msg']
         else:
-            print('error: Not found CONFIG.web_server_ip ')
-            return False, ' error: Not found CONFIG.web_server_ip '
-
-        print(url)
-        url_data = requests.get(url).text
-        print('url_data :', url_data)
-        json_data = json.loads(url_data)
-        print('json_data :', json_data)
-        if 200 == json_data['code']:
-            decode_json = decode_data_info(json_data['data'])
-            # print("decode : ", decode_json)
-            return True, decode_json
-        else:
-            print(json_data['msg'])
-            return False, json_data['msg']
-
-
-if __name__ == "__main__":
-
-
-    db_id = str(18)
-    obj = Main(db_id)
-    obj.run()
+            return False, ' error: Not found CONFIG.flip_os_web_api '

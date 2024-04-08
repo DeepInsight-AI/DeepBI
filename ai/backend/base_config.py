@@ -1,3 +1,4 @@
+import os
 from ai.backend.util import base_util
 
 
@@ -47,6 +48,8 @@ class Config:
         self.default_base_message = """ """
         self.agents_functions = ['task_generate_echart', 'task_generate_report', 'task_base']
         self.default_agents_functions = 'task_base'
+        # flip os add api address
+        self.flip_os_web_api = os.environ.get("FLIP_OS_WEB_API", None)
 
 
 CONFIG = Config()

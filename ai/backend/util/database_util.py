@@ -95,10 +95,16 @@ class Main:
         pass
 
     def run(self):
+        """
+        get hidden db info
+        """
         result, data = self.get_api_data()
         return result, dbinfo_encode(data)
 
     def run_decode(self):
+        """
+        get db info
+        """
         result, data = self.get_api_data()
         return result, data
 

@@ -1009,7 +1009,12 @@ const Dialogue = (props) => {
       return
     }
 
-    //
+    if (data_type === "question") {
+      let CommenExpressions = JSON.parse(sessionStorage.getItem(`${chat_type}CommonExpressions`)) || '';
+      if (CommenExpressions && CommenExpressions.id !== "0") {
+        content = CommenExpressions.label + "，" + content;
+      }
+    }
     const messageData = {
       user_id: currentUser.id,
       user_name: currentUser.name,

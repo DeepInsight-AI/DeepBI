@@ -379,8 +379,8 @@ class AIDB:
         base_message = json_str['base_message'] if "base_message" in json_str else ""
 
         setattr(self.agent_instance_util, f"base_{database}_info",
-                ' When connecting to the database, be sure to bring the port. This is ' + database + ' database info :' + '\n' + str(
-                    base_message))
+                ' When connecting to the database, be sure to bring the port. This is ' + database + ' database info :'
+                + '\n' + str(base_message))
         self.agent_instance_util.set_base_message(base_message, databases_id=db_id)
         """
         if base_message:

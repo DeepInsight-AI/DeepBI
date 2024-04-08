@@ -33,7 +33,18 @@ class AnalysisMysql(Analysis):
             if not re_check:
                 return
         """
-        print("LINE sender_36, analysis_mysq.lpy", q_sender, "")
+
+        q_language_mode = json_str['data']['language_mode'] if "data" in json_str and \
+                                                               "language_mode" in json_str['data'] and \
+                                                               json_str['data']['language_mode'] in\
+                                                               [CONFIG.language_chinese,
+                                                                CONFIG.language_english,
+                                                                CONFIG.language_japanese] else "CN"
+
+        self.set_language_mode(q_language_mode)
+        self.agent_instance_util.set_language_mode(q_language_mode)
+
+        print("LINE sender_36, analysis_mysql.py", q_sender, "")
         if q_sender == 'user' and q_data_type == "question":
             self.set_base_message(json_str)
             # print("agent_instance_util.base_message :", self.agent_instance_util.base_message)
@@ -49,12 +60,6 @@ class AnalysisMysql(Analysis):
                 # print("LINE 49 analysis_mysql.py")
                 await self.check_data_base(q_str)
             elif q_data_type == CONFIG.type_comment_first:
-                if json_str.get('data').get('language_mode'):
-                    q_language_mode = json_str['data']['language_mode']
-                    if q_language_mode == CONFIG.language_chinese or q_language_mode == CONFIG.language_english or q_language_mode == CONFIG.language_japanese:
-                        self.set_language_mode(q_language_mode)
-                        self.agent_instance_util.set_language_mode(q_language_mode)
-
                 self.db_info_json = q_str
                 self.agent_instance_util.set_base_message(q_str)
                 await self.get_data_desc(q_str)

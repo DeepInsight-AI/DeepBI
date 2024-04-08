@@ -3,11 +3,7 @@ from ai.backend.util import base_util
 
 class Config:
     def __init__(self):
-        self.load_conf()
-
-    def load_conf(self):
         self.ApiHost = "https://apiserver.deep-thought.io/proxy"
-
         # self.database_model = 'test'
         self.database_model = 'online'
         self.request_timeout = 120

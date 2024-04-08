@@ -1006,7 +1006,7 @@ class AgentInstanceUtil:
         python_executor = PythonProxyAgent(
             name="python_executor",
             system_message="python executor. Execute the python code and report the result.",
-            code_execution_config={"last_n_messages": 1, "work_dir": "paper"},
+            code_execution_config={"last_n_messages": 1, "work_dir": "paper", "use_docker": False},
             human_input_mode="NEVER",
             websocket=self.websocket,
             user_name=self.user_name,

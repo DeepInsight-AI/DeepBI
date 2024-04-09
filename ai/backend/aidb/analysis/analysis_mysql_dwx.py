@@ -331,6 +331,10 @@ class AnalysisMysql(Analysis):
             # print(db_info)
             if str(db_info['db']).__contains__('dwx'):
 
+                ##################### 3, only  funciton_call
+                # self.table_comment = table_comment
+                # self.use_cache = use_cache
+                #
                 # wxMysqlRagUitl = self.set_function_call_dwx(db_info=db_info)
                 #
                 # base_mysql_assistant = self.get_agent_base_mysql_assistant_dwx(use_cache=use_cache,
@@ -339,17 +343,19 @@ class AnalysisMysql(Analysis):
                 #
                 # await python_executor.initiate_chat(
                 #     base_mysql_assistant,
-                #     message='this is databases info: ' + '\n' + str(
-                #         table_comment)
-                #             + '\n' + str(retrieve_rag_doc)
-                #             + '\n' + self.question_ask + '\n' + str(
+                #     message=
+                #     # 'this is databases info: ' + '\n'
+                #     # + str(table_comment)+ '\n'
+                #     # + str(retrieve_rag_doc)+ '\n' +
+                #     self.question_ask + '\n' + str(
                 #         qustion_message),
                 # )
                 #
                 # # 关闭数据库链接
                 # wxMysqlRagUitl.connect_close()
+                ##################### only  funciton_call
 
-                ##################### retrieve agent + funciton_call
+                ##################### 2, retrieve agent + funciton_call
                 # wxMysqlRagUitl = self.set_function_call_dwx(db_info=db_info)
                 # base_mysql_assistant = self.get_agent_retrieve_base_mysql_assistant_dwx(use_cache=use_cache)
                 # python_executor = self.get_agent_retrieve_python_executor_dwx(
@@ -364,20 +370,28 @@ class AnalysisMysql(Analysis):
                 # wxMysqlRagUitl.connect_close()
                 ##################### retrieve agent + funciton_call
 
-
-
-                ##################### only retrieve agent
-                base_mysql_assistant = self.get_agent_retrieve_base_mysql_assistant(use_cache=use_cache)
-                python_executor = self.get_agent_retrieve_python_executor(
-                    docs_path=self.agent_instance_util.get_rag_doc())
-                await python_executor.initiate_chat(
-                    base_mysql_assistant,
-                    problem=self.question_ask + '\n' + str(
-                        qustion_message),
-                    db_info='this is databases info: ' + '\n' + str(table_comment),
-                )
+                ##################### 1, only retrieve agent
+                # base_mysql_assistant = self.get_agent_retrieve_base_mysql_assistant(use_cache=use_cache)
+                # python_executor = self.get_agent_retrieve_python_executor(
+                #     docs_path=self.agent_instance_util.get_rag_doc())
+                # await python_executor.initiate_chat(
+                #     base_mysql_assistant,
+                #     problem=self.question_ask + '\n' + str(
+                #         qustion_message),
+                #     db_info='this is databases info: ' + '\n' + str(table_comment),
+                # )
                 ##################### only retrieve agent
 
+                ##### 4, two fucntion
+                self.table_comment = table_comment
+                self.use_cache = use_cache
+                question_type = await self.select_question_type(qustion_message=qustion_message, use_cache=use_cache)
+                if question_type == 'total_question':
+                    answer_message = await self.total_question(qustion_message,db_info)
+                    return answer_message
+                else:
+                    answer_message = await self.base_question(qustion_message)
+                    return answer_message
             else:
                 # 非 电玩猩 数据库
                 base_mysql_assistant = self.get_agent_retrieve_base_mysql_assistant(use_cache=use_cache)
@@ -659,12 +673,13 @@ class AnalysisMysql(Analysis):
                 "get_total_monthly_cost_rate": wxMysqlRagUitl.get_total_monthly_cost_rate,
                 "get_total_monthly_income": wxMysqlRagUitl.get_total_monthly_income,
                 "get_total_monthly_profit_rate": wxMysqlRagUitl.get_total_monthly_profit_rate,
+                "base_question": self.base_question,
             }
 
             self.function_config = [
                 {
                     "name": "get_total_daily_cost",
-                    "description": " 按日计算某个门店日成本  ",
+                    "description": "按日计算某个门店日成本",
                     "parameters": {
                         "type": "object",
                         "properties": {
@@ -806,6 +821,20 @@ class AnalysisMysql(Analysis):
                         "required": ["date"],
                     },
                 },
+                {
+                    "name": "base_question",
+                    "description": "获取其他问题的答案",
+                    "parameters": {
+                        "type": "object",
+                        "properties": {
+                            "qustion_message": {
+                                "type": "string",
+                                "description": "qustion message",
+                            }
+                        },
+                        "required": ["qustion_message"],
+                    },
+                },
 
             ]
 
@@ -823,6 +852,7 @@ class AnalysisMysql(Analysis):
                 "get_total_monthly_cost_rate": wxMysqlRagUitl.get_total_monthly_cost_rate,
                 "get_total_monthly_income": wxMysqlRagUitl.get_total_monthly_income,
                 "get_total_monthly_profit_rate": wxMysqlRagUitl.get_total_monthly_profit_rate,
+                "base_question": self.base_question
             }
 
             self.function_config = [
@@ -938,7 +968,67 @@ class AnalysisMysql(Analysis):
                         "required": ["date"],
                     },
                 },
+                {
+                    "name": "base_question",
+                    "description": "获取其他问题的答案",
+                    "parameters": {
+                        "type": "object",
+                        "properties": {
+                            "qustion_message": {
+                                "type": "string",
+                                "description": "qustion message",
+                            }
+                        },
+                        "required": ["qustion_message"],
+                    },
+                },
 
             ]
 
         return wxMysqlRagUitl
+
+    async def base_question(self, qustion_message):
+        table_comment = self.table_comment
+        use_cache = self.use_cache
+
+        base_mysql_assistant = self.get_agent_retrieve_base_mysql_assistant(use_cache=use_cache)
+        python_executor = self.get_agent_retrieve_python_executor(
+            docs_path=self.agent_instance_util.get_rag_doc())
+        await python_executor.initiate_chat(
+            base_mysql_assistant,
+            problem=self.question_ask + '\n' + str(
+                qustion_message),
+            db_info='this is databases info: ' + '\n' + str(table_comment),
+        )
+        answer_message = python_executor.chat_messages[base_mysql_assistant]
+        # python_executor_answer_message = base_mysql_assistant.chat_messages[python_executor]
+
+        # answer_message = [base_mysql_assistant_answer_message, python_executor_answer_message]
+
+        return answer_message
+
+    async def total_question(self, qustion_message,db_info):
+
+
+        wxMysqlRagUitl = self.set_function_call_dwx(db_info=db_info)
+
+        base_mysql_assistant = self.get_agent_base_mysql_assistant_dwx(use_cache=self.use_cache,
+                                                                       add_message='')
+        python_executor = self.get_agent_python_executor_dwx()
+
+        await python_executor.initiate_chat(
+            base_mysql_assistant,
+            message=
+            # 'this is databases info: ' + '\n'
+            # + str(table_comment)+ '\n'
+            # + str(retrieve_rag_doc)+ '\n' +
+            self.question_ask + '\n' + str(
+                qustion_message),
+        )
+
+        # 关闭数据库链接
+        wxMysqlRagUitl.connect_close()
+
+        answer_message = python_executor.chat_messages[base_mysql_assistant]
+        print("answer_message: ", answer_message)
+        return  answer_message

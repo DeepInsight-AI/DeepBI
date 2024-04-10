@@ -214,7 +214,6 @@ class DataSourceSchemaResource(BaseResource):
                 return {"schema": cached_schema}
 
         job = get_schema.delay(data_source.id, refresh)
-        print("job===", job)
         return serialize_job(job)
 
 

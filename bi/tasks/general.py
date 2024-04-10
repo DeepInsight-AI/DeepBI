@@ -42,7 +42,6 @@ def test_connection(data_source_id):
 def get_schema(data_source_id, refresh):
     try:
         data_source = models.DataSource.get_by_id(data_source_id)
-        print("data_source===",data_source)
         return data_source.get_schema(refresh)
     except NotSupported:
         return {

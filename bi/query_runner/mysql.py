@@ -143,6 +143,7 @@ class Mysql(BaseSQLQueryRunner):
         results = json_loads(results)
 
         for row in results["rows"]:
+            print("row===", row)
             if row["table_schema"] != self.configuration["db"]:
                 table_name = "{}.{}".format(row["table_schema"], row["table_name"])
             else:

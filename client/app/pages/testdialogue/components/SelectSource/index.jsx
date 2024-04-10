@@ -204,22 +204,36 @@ const SelectSource = forwardRef(({ confirmLoading, Charttable, chat_type, onChan
       setSchemaListDataItem(existingTable || table_desc_obj);
     }
 
-    const existingTableSelectedRowKeys = tableSelectedRowKeys.find(
-      table => table.table_name === table_desc_obj.table_name
-    );
-    if (existingTableSelectedRowKeys) {
-      console.log("existingTableSelectedRowKeys===111", existingTableSelectedRowKeys);
-      setSelectedRowKeys(existingTableSelectedRowKeys.selectedRowKeys);
-    } else {
-      const newSelectedRowKeys = table_desc_obj.field_desc.map(field => field.name);
-      if (!type) {
-        setSelectedRowKeys(table_desc_obj.field_desc.filter(field => field.in_use === 1).map(field => field.name));
-      }
-      setTableSelectedRowKeys(prevData => [
-        ...prevData,
-        { table_name: table_desc_obj.table_name, selectedRowKeys: newSelectedRowKeys },
-      ]);
+    // const existingTableSelectedRowKeys = tableSelectedRowKeys.find(
+    //   table => table.table_name === table_desc_obj.table_name
+    // );
+    // if (existingTableSelectedRowKeys) {
+    //   console.log("existingTableSelectedRowKeys===111", existingTableSelectedRowKeys);
+    //   setSelectedRowKeys(existingTableSelectedRowKeys.selectedRowKeys);
+    // } else {
+    //   const newSelectedRowKeys = table_desc_obj.field_desc.map(field => field.name);
+    //   if (!type) {
+    //     setSelectedRowKeys(table_desc_obj.field_desc.filter(field => field.in_use === 1).map(field => field.name));
+    //   }
+    //   setTableSelectedRowKeys(prevData => [
+    //     ...prevData,
+    //     { table_name: table_desc_obj.table_name, selectedRowKeys: newSelectedRowKeys },
+    //   ]);
+    // }
+
+    const newSelectedRowKeys = table_desc_obj.field_desc
+                                .filter(field => field.in_use === 1)
+                                .map(field => field.name);
+
+    if (!type) {
+      setSelectedRowKeys(newSelectedRowKeys);
     }
+    setTableSelectedRowKeys(prevData => [
+      ...prevData,
+      { table_name: table_desc_obj.table_name, selectedRowKeys: newSelectedRowKeys },
+    ]);
+
+
     setLoadingTableColumns(false);
   };
 

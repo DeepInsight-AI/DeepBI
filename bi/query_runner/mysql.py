@@ -130,8 +130,10 @@ class Mysql(BaseSQLQueryRunner):
         SELECT col.table_schema as table_schema,
                col.table_name as table_name,
                col.column_name as column_name,
-               col.column_comment as column_comment
+               col.column_comment as column_comment,
+               tbl.table_comment as table_comment
         FROM `information_schema`.`columns` col
+        JOIN `information_schema`.`tables` tbl ON col.table_schema = tbl.table_schema AND col.table_name = tbl.table_name
         WHERE col.table_schema NOT IN ('information_schema', 'performance_schema', 'mysql', 'sys');
         """
 
@@ -149,7 +151,8 @@ class Mysql(BaseSQLQueryRunner):
                 table_name = row["table_name"]
 
             if table_name not in schema:
-                schema[table_name] = {"name": table_name, "columns": [], 'comment': []}
+                print("table_name====", table_name)
+                schema[table_name] = {"name": table_name, "columns": [], 'comment': [], "table_comment": row["table_comment"]}
 
             schema[table_name]["columns"].append(row["column_name"])
             schema[table_name]["comment"].append(row["column_comment"])

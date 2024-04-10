@@ -760,6 +760,14 @@ class PythonProxyAgent(Agent):
                                 # 确保item是一个字典
                                 if isinstance(item, dict) and 'value' in item:
                                     item['value'] = format_decimal(item['value'])
+                                elif isinstance(item, list):  # 如果它是一个列表类型
+                                    item_value = []
+                                    for data_value in item:
+                                        data_value = format_decimal(data_value)
+                                        item_value.append(data_value)
+                                    item=item_value
+                                elif isinstance(item,float):
+                                    item= format_decimal(item)
                                 else:
                                     # 如果item不是字典或没有'value'键，你可以选择跳过或者实现其他逻辑
                                     continue
@@ -784,12 +792,15 @@ class PythonProxyAgent(Agent):
                                     'type': serie['type'],
                                     'data': serie['data']
                                 }
+                        seri_info_data=[]
                         for data in seri_info['data']:
                             count+=1
-                            if count<=2000:
-                                series_data.append(seri_info)
+                            if count<=1000:
+                                seri_info_data.append(data)
                             else:
                                 break
+                        seri_info['data']=seri_info_data
+                        series_data.append(seri_info)
                         if "xAxis" in echart["echart_code"]:
                             xAxis_data = echart['echart_code']['xAxis'][0]['data'][:count]
                             if "%Y-%m" in xAxis_data:
@@ -799,6 +810,15 @@ class PythonProxyAgent(Agent):
                                 'series': series_data,
                                 'xAxis_data': xAxis_data
                             }
+                            count_xAxis=0
+                            echart_dict_new=[]
+                            for x_data in echart_dict['xAxis_data']:
+                                count_xAxis += 1
+                                if count_xAxis <= 1000:
+                                    echart_dict_new.append(x_data)
+                                else:
+                                    break
+                            echart_dict['xAxis_data']=echart_dict_new
                         else:
                             echart_dict = {
                                 'echart_name': echart_name,
@@ -826,7 +846,10 @@ class PythonProxyAgent(Agent):
                             #     json_obj = json.loads(str(echart_code))
                             #     echart_code = json.dumps(json_obj)
                             re_str = await bi_proxy.run_echart_code(str(echart_code), echart_name)
-                    return True, f"exitcode: {exitcode} ({exitcode2str})\nCode output: 图像已生成,请直接分析图表数据：{echarts_data}"
+                    if(count>999):
+                        return True, f"exitcode: {exitcode} ({exitcode2str})\nCode output: 图像已生成,任务执行成功！但由于数据量过大，仅截取了1000条，请直接分析图表这些数据：{echarts_data}"
+                    else:
+                        return True, f"exitcode: {exitcode} ({exitcode2str})\nCode output: 图像已生成,任务执行成功！请直接分析图表数据：{echarts_data}"
                 except Exception as e:
                     return True,f"exitcode:exitcode failed\nCode output: {json_data},There is an error in the JSON code causing parsing errors,Please modify the JSON code for me:{traceback.format_exc()}\n"
 

@@ -151,12 +151,12 @@ class Mysql(BaseSQLQueryRunner):
                 table_name = row["table_name"]
 
             if table_name not in schema:
-                print("table_name====", table_name)
+                
                 schema[table_name] = {"name": table_name, "columns": [], 'comment': [], "table_comment": row["table_comment"]}
 
             schema[table_name]["columns"].append(row["column_name"])
             schema[table_name]["comment"].append(row["column_comment"])
-
+        print("schema====", schema)
         return list(schema.values())
 
     def run_query(self, query, user):

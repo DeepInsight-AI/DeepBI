@@ -156,7 +156,6 @@ class Mysql(BaseSQLQueryRunner):
 
             schema[table_name]["columns"].append(row["column_name"])
             schema[table_name]["comment"].append(row["column_comment"])
-        print("schema====", schema)
         return list(schema.values())
 
     def run_query(self, query, user):

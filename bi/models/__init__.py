@@ -228,12 +228,14 @@ class DataSource(BelongsToOrgMixin, db.Model):
                 result.append({
                     "name": i["name"],
                     "columns": i['columns'],
-                    "comment": i['comment']
+                    "comment": i['comment'],
+                    "table_comment": i.get('table_comment', '')
                 })
             else:
                 result.append({
                     "name": i["name"],
                     "columns": sorted(i["columns"], key=lambda x: x["name"] if isinstance(x, dict) else x),
+                    "table_comment": i.get('table_comment', '')
                 })
         return result
 

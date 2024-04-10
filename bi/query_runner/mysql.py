@@ -152,7 +152,7 @@ class Mysql(BaseSQLQueryRunner):
 
             if table_name not in schema:
                 
-                schema[table_name] = {"name": table_name, "columns": [], 'comment': [], "table_comment": row["table_comment"]}
+                schema[table_name] = {"name": "table_name", "columns": [], 'comment': [], "table_comment": row["table_comment"]}
 
             schema[table_name]["columns"].append(row["column_name"])
             schema[table_name]["comment"].append(row["column_comment"])

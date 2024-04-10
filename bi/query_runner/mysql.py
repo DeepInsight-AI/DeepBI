@@ -130,7 +130,7 @@ class Mysql(BaseSQLQueryRunner):
         SELECT col.table_schema as table_schema,
                col.table_name as table_name,
                col.column_name as column_name,
-               col.column_comment as column_comment
+               col.column_comment as column_comment,
                col.table_comment as table_comment
         FROM `information_schema`.`columns` col
         WHERE col.table_schema NOT IN ('information_schema', 'performance_schema', 'mysql', 'sys');

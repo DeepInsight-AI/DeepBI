@@ -131,8 +131,9 @@ class Mysql(BaseSQLQueryRunner):
                col.table_name as table_name,
                col.column_name as column_name,
                col.column_comment as column_comment,
-               col.table_comment as table_comment
+               tbl.table_comment as table_comment
         FROM `information_schema`.`columns` col
+        JOIN `information_schema`.`tables` tbl ON col.table_schema = tbl.table_schema AND col.table_name = tbl.table_name
         WHERE col.table_schema NOT IN ('information_schema', 'performance_schema', 'mysql', 'sys');
         """
 

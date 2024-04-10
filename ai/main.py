@@ -3,7 +3,7 @@ from dotenv import load_dotenv
 # 加载 .env 文件中的环境变量
 load_dotenv()
 
-import asyncio
+# import asyncio
 from ai.backend.start_server import WSServer
 
 if __name__ == '__main__':
@@ -13,4 +13,3 @@ if __name__ == '__main__':
     # t.daemon = True
     # t.start()
     s.serve_forever()
-    

@@ -208,11 +208,12 @@ const SelectSource = forwardRef(({ confirmLoading, Charttable, chat_type, onChan
       table => table.table_name === table_desc_obj.table_name
     );
     if (existingTableSelectedRowKeys) {
+      console.log("existingTableSelectedRowKeys===111", existingTableSelectedRowKeys);
       setSelectedRowKeys(existingTableSelectedRowKeys.selectedRowKeys);
     } else {
       const newSelectedRowKeys = table_desc_obj.field_desc.map(field => field.name);
       if (!type) {
-        setSelectedRowKeys(newSelectedRowKeys);
+        setSelectedRowKeys(table_desc_obj.field_desc.filter(field => field.in_use === 1).map(field => field.name));
       }
       setTableSelectedRowKeys(prevData => [
         ...prevData,
@@ -313,6 +314,7 @@ const SelectSource = forwardRef(({ confirmLoading, Charttable, chat_type, onChan
     console.log("newSchemaList===111", newSchemaList);
     console.log("SchemaList===111", SchemaList);
   };
+
   const clickSchemaItem = item => {
     if (loadingTableColumns) {
       return;

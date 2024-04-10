@@ -224,7 +224,6 @@ const SelectSource = forwardRef(({ confirmLoading, Charttable, chat_type, onChan
 
   const getTableColumns = async (item, type = null,val=null,sourceType=null) => {
     setLoadingTableColumns(true);
-    // 判断有没有type 有的话就用type 没有就用source_item.type
     const source_type = sourceType ? sourceType : source_item.type;
     const table_desc_obj = {
       table_name: "",
@@ -236,11 +235,11 @@ const SelectSource = forwardRef(({ confirmLoading, Charttable, chat_type, onChan
     );
     if (Object.keys(res).length !== 0) {
       table_desc_obj.table_name = res.table_name;
-      table_desc_obj.table_comment = res.table_desc || "";
+      table_desc_obj.table_comment = res.table_desc || item.table_comment;
       table_desc_obj.field_desc = res.table_columns_info.field_desc;
     } else {
       table_desc_obj.table_name = source_type === "csv" ? item.file_name : item.name;
-      table_desc_obj.table_comment = source_type === "csv" ? item.source_name : "";
+      table_desc_obj.table_comment = source_type === "csv" ? item.source_name : item.table_comment;
       if (source_type !== "csv") {
         item.columns.forEach((i, index) => {
           const field_desc_obj = {

@@ -266,7 +266,7 @@ const SelectSource = forwardRef(({ confirmLoading, Charttable, chat_type, onChan
         setSchemaListDataItem({});
       }
     }
-    console.log("changeSource===", selectSchema);
+    // console.log("changeSource===", selectSchema);
     setSelectSchema(newSelectSchema => {
       if (newSelectSchema.length === SchemaList.length) {
         setIndeterminate(false);
@@ -309,7 +309,7 @@ const SelectSource = forwardRef(({ confirmLoading, Charttable, chat_type, onChan
       setTableSelectedRowKeys([]);
       setSelectLoading(false);
     }
-    console.log("changeSourceAll===", newSchemaList);
+    // console.log("changeSourceAll===", newSchemaList);
   };
   const clickSchemaItem = item => {
     if (loadingTableColumns) {
@@ -360,9 +360,9 @@ const SelectSource = forwardRef(({ confirmLoading, Charttable, chat_type, onChan
         ]);
       }
 
-      console.log("rowSelection===111", selectedRowKeys);
-      console.log("rowSelection===222", selectedRows);
-      console.log("rowSelection===333", newSchemaListData);
+      // console.log("rowSelection===111", selectedRowKeys);
+      // console.log("rowSelection===222", selectedRows);
+      // console.log("rowSelection===333", newSchemaListData);
     },
   };
 
@@ -400,8 +400,8 @@ const SelectSource = forwardRef(({ confirmLoading, Charttable, chat_type, onChan
 
       await Promise.all(promises);
       result = { tableName: tableNameList };
-      console.log("result=====", result);
-      // onSuccess(200, sourceData, source_item, result, "");
+      // console.log("result=====", result);
+      onSuccess(200, sourceData, source_item, result, "");
     } else {
       const checkedSchema = selectSchema.filter(item => item.checked);
       tableNameList = checkedSchema.map(item => ({ name: item.name }));

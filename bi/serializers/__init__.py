@@ -328,7 +328,6 @@ def serialize_job(job):
     else:
         error = ""
         result = query_result_id = job.result
-    print("result===", result)
     return {
         "job": {
             "id": job.id,

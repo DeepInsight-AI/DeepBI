@@ -387,7 +387,7 @@ class AnalysisMysql(Analysis):
                 self.use_cache = use_cache
                 question_type = await self.select_question_type(qustion_message=qustion_message, use_cache=use_cache)
                 if question_type == 'total_question':
-                    answer_message = await self.total_question(qustion_message,db_info)
+                    answer_message = await self.total_question(qustion_message, db_info)
                     return answer_message
                 else:
                     answer_message = await self.base_question(qustion_message)
@@ -659,7 +659,7 @@ class AnalysisMysql(Analysis):
 
     def set_function_call_dwx(self, db_info):
 
-        if str(db_info['db']) == 'dwx_all':
+        if str(db_info['db']).__contains__('dwx_all'):
             # 电玩猩多店
             from ai.backend.util.db.db_dwx.dwx_all_mysql_rag_util import DwxMysqlRagUitl
 
@@ -1007,8 +1007,7 @@ class AnalysisMysql(Analysis):
 
         return answer_message
 
-    async def total_question(self, qustion_message,db_info):
-
+    async def total_question(self, qustion_message, db_info):
 
         wxMysqlRagUitl = self.set_function_call_dwx(db_info=db_info)
 
@@ -1031,4 +1030,4 @@ class AnalysisMysql(Analysis):
 
         answer_message = python_executor.chat_messages[base_mysql_assistant]
         print("answer_message: ", answer_message)
-        return  answer_message
+        return answer_message

@@ -122,10 +122,11 @@ class Main:
             json_data = json.loads(url_data)
             print('json_data :', json_data)
             if 200 == json_data['code']:
-                decode_json = decode_data_info(json_data['data'])
+
+                # decode_json = decode_data_info(json_data['data'])
                 # 敏感信息隐藏
                 # decode_json = dbinfo_encode(decode_json)
-                return True, decode_json
+                return True, json_data['data']
             else:
                 print(json_data['msg'])
                 return False, json_data['msg']

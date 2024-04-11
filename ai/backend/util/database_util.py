@@ -112,12 +112,19 @@ class Main:
         from_se = make_secret(self.db)
         print("生成 获取 secret", from_se)
         if self.url is not None:
-            # 临时使用读取本地信息
+            
+            # 线上使用
             # url_data = requests.get(self.url).text
+            
+
+
+            # 临时使用读取本地信息
             # 打开文件
             with open('./flip_os_api_url.txt', 'r') as file:
                 # 读取文件内容
                 url_data = file.read()
+            # 
+            
             print('url_data :', url_data)
             json_data = json.loads(url_data)
             print('json_data :', json_data)

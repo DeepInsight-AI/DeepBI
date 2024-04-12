@@ -169,7 +169,7 @@ class Analysis(AIDB):
         function_select = f"Read the conversation above. Then select the type of task from {function_names}. Only the task type is returned.",
 
         task_message = {
-            'total_question': '涉及到全店 日成本，日成本率，日营收，日利润率，月成本，月成本率，月营收，月利润率 的问题',
+            'total_question': '涉及到关于全店的日成本，日成本率，日营收，日收入，日利润率，月成本，月成本率，月营收，月收入，月利润率  或  当日成本，当日成本率，当日营收，当日收入，当日利润率，当月成本，当月成本率，当月营收，当月收入，当月利润率 的问题',
             'base_question': '非 total_question 里面涉及到的 其他问题'
         }
 

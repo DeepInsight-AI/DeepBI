@@ -733,7 +733,7 @@ class AnalysisMysql(Analysis):
                 },
                 {
                     "name": "get_total_daily_income",
-                    "description": " 按日计算某个门店日收入 ",
+                    "description": " 按日计算某个门店日营收或日收入 ",
                     "parameters": {
                         "type": "object",
                         "properties": {
@@ -787,7 +787,7 @@ class AnalysisMysql(Analysis):
                 },
                 {
                     "name": "get_total_monthly_income",
-                    "description": " 按月计算某个门店月收入 ",
+                    "description": " 按月计算某个门店月营收或月收入 ",
                     "parameters": {
                         "type": "object",
                         "properties": {
@@ -900,7 +900,7 @@ class AnalysisMysql(Analysis):
                 },
                 {
                     "name": "get_total_daily_income",
-                    "description": " 按日计算全店日收入 ",
+                    "description": " 按日计算全店日营收或日收入",
                     "parameters": {
                         "type": "object",
                         "properties": {
@@ -942,7 +942,7 @@ class AnalysisMysql(Analysis):
                 },
                 {
                     "name": "get_total_monthly_income",
-                    "description": " 按月计算全店月收入 ",
+                    "description": " 按月计算全店月营收或月收入 ",
                     "parameters": {
                         "type": "object",
                         "properties": {

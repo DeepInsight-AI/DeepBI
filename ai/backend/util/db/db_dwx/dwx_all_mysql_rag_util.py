@@ -109,7 +109,7 @@ class DwxMysqlRagUitl:
 					FROM
 						view_machinereturnrate vm
 					WHERE
-						TypeName = '7寸娃娃机'
+						( TypeName = '7寸娃娃机' OR  TypeName = '单人娃娃机' ) 	
 						AND vm.OwnedBusiness IN ( SELECT ID FROM mall_business WHERE BusinessName = '%s' )
 					GROUP BY
 						vm.Period
@@ -281,7 +281,7 @@ class DwxMysqlRagUitl:
     						FROM
     							view_machinereturnrate vm
     						WHERE
-    							vm.TypeName = '7寸娃娃机'
+    							( vm.TypeName = '7寸娃娃机' OR  vm.TypeName = '单人娃娃机' ) 	
     							AND vm.OwnedBusiness IN ( SELECT ID FROM mall_business WHERE BusinessName = '%s' )
     						GROUP BY
     							vm.Period
@@ -519,7 +519,7 @@ class DwxMysqlRagUitl:
 						FROM
 							view_machinereturnrate vm
 						WHERE
-							vm.TypeName = '7寸娃娃机'
+							( vm.TypeName = '7寸娃娃机' OR  vm.TypeName = '单人娃娃机' ) 	
 							AND vm.OwnedBusiness IN ( SELECT ID FROM mall_business WHERE BusinessName = '%s' )
 						GROUP BY
 							vm.Period
@@ -686,7 +686,7 @@ class DwxMysqlRagUitl:
             print("Error while inserting data:", error)
 
     def get_total_daily_income(self, date, BusinessName):
-        """按日计算某个门店日收入"""
+        """按日计算某个门店的日营收或日收入"""
         try:
             conn = self.conn
 
@@ -742,7 +742,9 @@ class DwxMysqlRagUitl:
 	GROUP BY
 		t0.EDAY
 	),
-	DailyCoinTotal AS ( /*日投币量*/ SELECT DATE( Period ) AS EDAY, SUM( InTotalCoin ) AS total_coin FROM view_machinereturnrate GROUP BY DATE( Period ) ) /*计算日收入*/
+	DailyCoinTotal AS ( /*日投币量*/ SELECT DATE( Period ) AS EDAY, SUM( InTotalCoin ) AS total_coin FROM view_machinereturnrate 
+	WHERE	OwnedBusiness IN ( SELECT ID FROM mall_business WHERE BusinessName = '%s') 
+	GROUP BY DATE( Period ) ) /*计算日收入*/
 SELECT
 	DailyCoinTotal.EDAY,
 	COALESCE ( ( DailyCoinTotal.total_coin * DailyCoinPrice.coin_price ), 0 ) AS daily_cost
@@ -752,7 +754,7 @@ FROM
 WHERE
 	DailyCoinTotal.EDAY = '%s'
 GROUP BY
-	DailyCoinTotal.EDAY""" % (BusinessName, BusinessName, BusinessName, date)
+	DailyCoinTotal.EDAY""" % (BusinessName, BusinessName, BusinessName, BusinessName, date)
             df = pd.read_sql(query, con=conn)
             return df
 
@@ -1161,7 +1163,7 @@ ORDER BY
             print("Error while inserting data:", error)
 
     def get_total_monthly_income(self, date, BusinessName):
-        """按月计算全店总收入"""
+        """按月计算全店总营收或月收入"""
         try:
             conn = self.conn
 

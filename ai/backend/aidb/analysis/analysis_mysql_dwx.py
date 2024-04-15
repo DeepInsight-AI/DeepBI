@@ -36,6 +36,7 @@ class AnalysisMysql(Analysis):
 
         if q_sender == 'user':
             if q_data_type == 'question':
+                self.set_base_message(json_str)
                 # print("agent_instance_util.base_message :", self.agent_instance_util.base_message)
                 if self.agent_instance_util.base_message is not None:
                     await self.start_chatgroup(q_str)

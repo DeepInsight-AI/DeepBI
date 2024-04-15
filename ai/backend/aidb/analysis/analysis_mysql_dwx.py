@@ -733,7 +733,7 @@ class AnalysisMysql(Analysis):
                 },
                 {
                     "name": "get_total_daily_income",
-                    "description": " 按日计算某个门店日营收或日收入 ",
+                    "description": " 按日计算某个门店日消费 ",
                     "parameters": {
                         "type": "object",
                         "properties": {

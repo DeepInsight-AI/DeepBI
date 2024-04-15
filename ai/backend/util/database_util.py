@@ -153,6 +153,11 @@ class Main:
 if __name__ == "__main__":
 
 
-    db_id = str(18)
-    obj = Main(db_id)
-    obj.run()
+    # db_id = str(18)
+    # obj = Main(db_id)
+    # obj.run()
+
+    obj = Main(56)
+    if_suss, db_info = obj.run_decode()
+    print(if_suss)
+    print(db_info)

@@ -19,7 +19,6 @@ class ReportMysql(Report):
         print('q_data_type : ', q_data_type)
         q_str = json_str['data']['content']
 
-
         if not self.agent_instance_util.api_key_use:
             re_check = await self.check_api_key()
             if not re_check:
@@ -114,7 +113,7 @@ class ReportMysql(Report):
                         table_comment = await self.select_table_comment(qustion_message, use_cache)
                         table_desc_length = len(table_comment['table_desc'])
                         if table_desc_length > 0:
-                            answer_message = await self.task_generate_report_rag(qustion_message, table_comment)
+                            answer_message = await self.task_generate_report_rag(qustion_message, table_comment, use_cache)
                         else:
                             use_cache = False
                             continue

@@ -323,11 +323,10 @@ class AIDB:
 
     async def check_api_key(self):
         # self.agent_instance_util.api_key_use = True
+
         # .token_[uid].json
         token_path = CONFIG.up_file_path + '.token_' + str(self.uid) + '.json'
-        print("token_path++++", token_path)
         if os.path.exists(token_path):
-            print("token_path====", token_path)
             try:
                 ApiKey, HttpProxyHost, HttpProxyPort, ApiHost, in_use = self.load_api_key(token_path)
                 if ApiKey is None or len(ApiKey) == 0:
@@ -360,7 +359,6 @@ class AIDB:
                 return False
             except Exception as e:
                 traceback.print_exc()
-                print("e=====", str(e))
                 logger.error("from user:[{}".format(self.user_name) + "] , " + "error: " + str(e))
                 await self.put_message(500, CONFIG.talker_log, CONFIG.type_log_data, self.error_miss_key)
                 return False
@@ -377,7 +375,7 @@ class AIDB:
         except json.JSONDecodeError:
             logger.error("Failed to decode JSON from message.")
             return
-        
+
         base_message = json_str.get('base_message')
         if base_message:
             database = json_str.get('database')
@@ -404,7 +402,7 @@ class AIDB:
                     self.agent_instance_util.db_id = db_id
                 else:
                     logger.error("Failed to get database info for db_id: {}".format(db_id))
-            
+
     async def test_api_key(self):
         # self.agent_instance_util.api_key_use = True
 
@@ -559,20 +557,18 @@ class AIDB:
         return select_analysis_assistant
 
     async def select_table_comment(self, qustion_message, use_cache):
-        print("qustion_message+++++", qustion_message)
-        print("self.db_info_json++++++", self.db_info_json)
+
+
         select_table_assistant = self.get_agent_select_table_assistant(db_info_json=self.db_info_json,
                                                                        use_cache=use_cache)
         planner_user = self.agent_instance_util.get_agent_planner_user()
-        print("select_table_assistant+++++", select_table_assistant)
+
         await planner_user.initiate_chat(
             select_table_assistant,
             message=qustion_message,
         )
-        print("planner_user++++", planner_user)
-        print("planner_user.last_message()++++", planner_user.last_message())
         select_table_message = planner_user.last_message()["content"]
-        print("select_table_message++++++", select_table_message)
+
         match = re.search(
             r"\[.*\]", select_table_message.strip(), re.MULTILINE | re.IGNORECASE | re.DOTALL
         )
@@ -605,3 +601,87 @@ class AIDB:
 
         print('table_comment : ', table_comment)
         return table_comment
+
+    async def select_rag_doc(self, qustion_message, use_cache):
+        rag_coc_path = self.agent_instance_util.get_rag_doc()
+
+        select_table_assistant = self.get_agent_select_ragdoc_assistant(ragdoc_path=rag_coc_path,
+                                                                        use_cache=use_cache)
+        planner_user = self.agent_instance_util.get_agent_planner_user()
+
+        await planner_user.initiate_chat(
+            select_table_assistant,
+            message=qustion_message,
+        )
+        select_table_message = planner_user.last_message()["content"]
+
+        match = re.search(
+            r"\[.*\]", select_table_message.strip(), re.MULTILINE | re.IGNORECASE | re.DOTALL
+        )
+        json_str = ""
+        if match:
+            json_str = match.group()
+        print("search_rag_json_str : ", json_str)
+        select_rag_list = json.loads(json_str)
+        print("select_rag_list : ", select_rag_list)
+
+        with open(rag_coc_path, 'r') as file:
+            # 读取JSON数据并将其转换为Python对象
+            ragdoc_json_data = json.load(file)
+
+        basic_knowledge = []
+        for key, value in ragdoc_json_data.items():
+            # print(key, ":", value)
+            if key in str(select_rag_list):
+                rag_name = {key: value}
+                # print('rag_name :', rag_name)
+                basic_knowledge.append(rag_name)
+
+        retrieve_rag_doc = 'Context is: ' + '\n' + str(basic_knowledge)
+
+        print('retrieve_rag_doc : ', retrieve_rag_doc)
+        return retrieve_rag_doc
+
+    def get_agent_select_ragdoc_assistant(self, ragdoc_path, use_cache=True):
+        """select_ragdoc_assistant"""
+
+        # 打开JSON文件
+        with open(ragdoc_path, 'r') as file:
+            # 读取JSON数据并将其转换为Python对象
+            json_data = json.load(file)
+
+        doc_names = []
+        for key, value in json_data.items():
+            # print(key, ":", value)
+            doc_names.append(key)
+
+        print('doc_names : ', doc_names)
+
+        table_select = f"Read the conversation above. Then select the name of the table involved in the question from {str(doc_names)}. Only the name of the table is returned.It can be one table or multiple tables"
+
+        select_analysis_assistant = TableSelectorAgent(
+            name="select_ragdoc_assistant",
+            system_message="""You are a helpful AI assistant.
+                        Divide the questions raised by users into corresponding task types.
+                        Different tasks have different processing methods.
+                        The output should be formatted as a JSON instance that conforms to the JSON schema below, the JSON is a list of dict,
+         [
+         “table_name”,
+         ““,
+         ,
+         ].
+         Reply "TERMINATE" in the end when everything is done.
+
+                        Task types are generally divided into the following categories:
+
+                         """ + str(doc_names) + '\n' + str(table_select),
+            human_input_mode="NEVER",
+            user_name=self.user_name,
+            websocket=self.websocket,
+            llm_config={
+                "config_list": self.agent_instance_util.config_list_gpt4_turbo,
+                "request_timeout": CONFIG.request_timeout,
+            },
+            openai_proxy=self.agent_instance_util.openai_proxy,
+        )
+        return select_analysis_assistant

@@ -711,7 +711,8 @@ class PythonProxyAgent(Agent):
                 continue
 
             if len(code_blocks) == 1 and code_blocks[0][0] != 'python':
-                continue
+                # continue
+                return True, f"exitcode:exitcode failed\nCode output: Please give me executable python code.\n"
 
             # fix mysql generate %%Y %%m %%d code :list
             code_blocks = self.regex_fix_date_format(code_blocks)

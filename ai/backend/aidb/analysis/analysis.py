@@ -174,7 +174,7 @@ class Analysis(AIDB):
         }
 
         select_analysis_assistant = TableSelectorAgent(
-            name="select_table_assistant",
+            name="select_question_assistant",
             system_message="""You are a helpful AI assistant.
                         Divide the questions raised by users into corresponding task types.
                         Different tasks have different processing methods.

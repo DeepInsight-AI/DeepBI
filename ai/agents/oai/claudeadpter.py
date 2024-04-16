@@ -23,7 +23,7 @@ except:
 
 # check function_call Strict mode or not
 STRICT_MODE_CHECK_FUNCTION = False
-MAX_TOKEN=10240
+MAX_TOKEN = 10240
 # define default model
 Claude_AI_MODEL = 'anthropic.claude-3-sonnet-20240229-v1:0'
 # define default temperature
@@ -63,7 +63,8 @@ class AWSClaudeClient:
         )
         print("0" * 30)
         print(data['messages'])
-        messages, system = cls.input_to_openai(data['messages'])
+        # messages, system = cls.input_to_openai(data['messages'])
+        messages, system = cls.transform_message_role(data['messages'])
         print(messages)
         print("1" * 30)
         for i in range(0, len(messages)):
@@ -127,7 +128,7 @@ class AWSClaudeClient:
             function_call_flag = completion.strip().startswith("<function_calls>")
         else:
             function_call_flag = completion.strip().startswith("<function_calls>") or\
-                                 all(substring in completion for substring in ("<function_calls>", "<invoke>", "<tool_name>", "</invoke>"))
+                all(substring in completion for substring in ("<function_calls>", "<invoke>", "<tool_name>", "</invoke>"))
         # return openai result
         if function_call_flag:
             """
@@ -291,18 +292,18 @@ class AWSClaudeClient:
                 args_obj[arg_name] = arg_value
 
         return {
-                "index": 0,
-                "message": {
-                    "role": "assistant",
-                    "content": None,
-                    "function_call": {
+            "index": 0,
+            "message": {
+                "role": "assistant",
+                "content": None,
+                "function_call": {
                         "name": tool_name,
                         "arguments": json.dumps(args_obj)
-                    },
-                    "logprobs": None,
-                    "finish_reason": "function_call"
-                }
+                },
+                "logprobs": None,
+                "finish_reason": "function_call"
             }
+        }
         pass
 
     @classmethod
@@ -316,3 +317,55 @@ class AWSClaudeClient:
         response_str = response_str.replace("\n```python\n", "\n<code>\n")
         response_str = response_str.replace("\n```\n", "\n</code>\n")
         return response_str
+
+    @classmethod
+    def transform_message_role(message):
+        transformed_message = []
+        now_content = ""
+        now_role = ""
+        now_item = None
+        system_msg = ""
+        user_define = ['user', 'function', 'system']
+
+        for i, item in enumerate(message):
+            role = item.get('role')
+            content = item.get('content')
+            role = item.get("role")
+            # jump first system msg
+            if role == "system" and system_msg == "":
+                system_msg = content
+                continue
+            # other not first system
+            if now_role == "":
+                # first role or change role
+                now_item = item
+                now_content = content
+                if role in user_define:
+                    now_item['role'] = "user"
+                    now_role = "user"
+                elif role == "assistant":
+                    now_item['role'] = "assistant"
+                    now_role = "assistant"
+                else:
+                    continue
+            else:
+                # other
+                now_content += "\n" + str(content)
+                pass
+
+            if i + 1 < len(message):
+                # check next message role
+                next_role = "user" if message[i +
+                                              1].get('role') in user_define else "assistant"
+                if next_role != now_role:
+                    now_item['content'] = now_content
+                    transformed_message.append(now_item)
+                    now_role = ""
+                    now_content = ""
+                    pass
+            else:
+                # last item
+                now_item['content'] = now_content
+                transformed_message.append(now_item)
+
+        return transformed_message, system_msg

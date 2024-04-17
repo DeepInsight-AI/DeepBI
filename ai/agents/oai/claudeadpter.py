@@ -328,7 +328,6 @@ class AWSClaudeClient:
         transformed_message = []
         now_content = ""
         now_role = ""
-        now_item = None
         system_msg = ""
         user_define = ['user', 'function', 'system']
 
@@ -339,7 +338,7 @@ class AWSClaudeClient:
             # other not first system
             if now_role == "":
                 # first role or change role
-                now_item = item
+                now_item = {}
                 now_content = content
                 if role in user_define:
                     now_item['role'] = "user"
@@ -369,4 +368,4 @@ class AWSClaudeClient:
                 now_item['content'] = now_content
                 transformed_message.append(now_item)
 
-        return transformed_message, system_msg
+        return transformed_message

@@ -200,7 +200,7 @@ class Completion(openai_Completion):
         openai_completion = (
             openai.ChatCompletion
             if config["model"].replace("gpt-35-turbo", "gpt-3.5-turbo") in cls.chat_models
-               or issubclass(cls, ChatCompletion)
+            or issubclass(cls, ChatCompletion)
             else openai.Completion
         )
         start_time = time.time()
@@ -221,8 +221,8 @@ class Completion(openai_Completion):
                 # print("~" * 30)
                 # print("setting", llm_setting)
                 other_llm_name = AGENT_LLM_MODEL[agent_name]['llm'] if agent_name in AGENT_LLM_MODEL and \
-                                                                       AGENT_LLM_MODEL[agent_name][
-                                                                           'replace_default'] and llm_setting is not None else use_llm_name
+                    AGENT_LLM_MODEL[agent_name][
+                    'replace_default'] and llm_setting is not None else use_llm_name
                 print("~" * 30, '_get_response ------------------------')
                 if agent_name in AGENT_LLM_MODEL:
                     print(agent_name in AGENT_LLM_MODEL, AGENT_LLM_MODEL[agent_name]['replace_default'])
@@ -253,7 +253,7 @@ class Completion(openai_Completion):
                     use_message_count = AGENT_LLM_MODEL[agent_name]['use_message_count']
                     if (agent_name in AGENT_LLM_MODEL and
                         AGENT_LLM_MODEL[agent_name]['replace_default'] and
-                        (0 == use_message_count or len(config['messages']) <= use_message_count)):
+                            (0 == use_message_count or len(config['messages']) <= use_message_count)):
                         "use diff model"
                         use_model = AGENT_LLM_MODEL[agent_name]['model']
 
@@ -281,7 +281,7 @@ class Completion(openai_Completion):
                         headers = {
                             "token": use_api_key,
                             "ainame": "openai",
-                            "module": use_model
+                            "model": use_model
                         }
                         print('create_url : ', use_url)
                         res = requests.post(use_url, json=data, headers=headers)
@@ -585,8 +585,8 @@ class Completion(openai_Completion):
                     cls.avg_input_tokens = np.mean(input_tokens)
                     if prune:
                         target_output_tokens = (
-                                                   inference_budget * 1000 - cls.avg_input_tokens * price_input
-                                               ) / price_output
+                            inference_budget * 1000 - cls.avg_input_tokens * price_input
+                        ) / price_output
                 result["inference_cost"] = (avg_n_tokens * price_output + cls.avg_input_tokens * price_input) / 1000
                 break
             else:

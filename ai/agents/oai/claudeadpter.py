@@ -65,10 +65,11 @@ class AWSClaudeClient:
         print(data['messages'])
         # messages, system = cls.input_to_openai(data['messages'])
         messages, system = cls.transform_message_role(data['messages'])
+        print("-------------trans role---------")
         print(messages)
         print("1" * 30)
-        for i in range(0, len(messages)):
-            messages[i]['role'] = "user" if i % 2 == 0 else 'assistant'
+        # for i in range(0, len(messages)):
+        #    messages[i]['role'] = "user" if i % 2 == 0 else 'assistant'
 
         if "functions" in data:
             prompt_begin = cls.functions_to_function_call_string()
@@ -319,7 +320,7 @@ class AWSClaudeClient:
         return response_str
 
     @classmethod
-    def transform_message_role(message):
+    def transform_message_role(cls, message):
         transformed_message = []
         now_content = ""
         now_role = ""

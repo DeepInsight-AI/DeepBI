@@ -63,10 +63,14 @@ class AWSClaudeClient:
         )
         print("0" * 30)
         print(data['messages'])
-        # messages, system = cls.input_to_openai(data['messages'])
-        messages, system = cls.transform_message_role(data['messages'])
+        messages, system = cls.input_to_openai(data['messages'])
+        messages = cls.transform_message_role(messages)
         print("-------------trans role---------")
         print(messages)
+        # 写到本地
+        with open("role.txt", "a") as file:
+            # 写入内容到文件末尾
+            file.write(str(system) + "\n" + str(messages) + "\n\n\n")
         print("1" * 30)
         # for i in range(0, len(messages)):
         #    messages[i]['role'] = "user" if i % 2 == 0 else 'assistant'
@@ -332,10 +336,6 @@ class AWSClaudeClient:
             role = item.get('role')
             content = item.get('content')
             role = item.get("role")
-            # jump first system msg
-            if role == "system" and system_msg == "":
-                system_msg = content
-                continue
             # other not first system
             if now_role == "":
                 # first role or change role

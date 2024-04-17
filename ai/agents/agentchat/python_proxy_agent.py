@@ -7,6 +7,8 @@ from ai.agents import oai
 from .agent import Agent
 import ast
 import re
+import numpy as np
+from sklearn.linear_model import LinearRegression
 from ai.backend.util import base_util
 from ai.agents.code_utils import (
     DEFAULT_MODEL,
@@ -28,15 +30,65 @@ except ImportError:
 
     def colored(x, *args, **kwargs):
         return x
+
+
 def format_decimal(value):
     if isinstance(value, float):
-        if(value<0.05):
-            return round(value,6)
+        if (value < 0.05):
+            return round(value, 6)
         else:
             return round(value, 2)
     elif isinstance(value, int):
         return value
     return value
+
+
+def calculate_dispersion(data):
+    x_values = np.array([point[0] for point in data])
+    y_values = np.array([point[1] for point in data])
+    x_std, y_std = np.std(x_values), np.std(y_values)
+    dispersion = format_decimal((x_std + y_std) / 2)
+    correlation = np.corrcoef(x_values, y_values)[0, 1]
+    correlation = format_decimal(correlation)
+    x_min, x_max = format_decimal(min(x_values)), format_decimal(max(x_values))
+    y_min, y_max = format_decimal(min(y_values)), format_decimal(max(y_values))
+    ave_x = format_decimal(sum(x_values) / len(x_values))
+    ave_y = format_decimal(sum(y_values) / len(y_values))
+    return dispersion, correlation, (x_min, x_max), (y_min, y_max), (ave_x, ave_y)
+
+def calculate_trendline(data):
+    x_values = np.array([point[0] for point in data]).reshape(-1, 1)
+    y_values = np.array([point[1] for point in data])
+
+    model = LinearRegression().fit(x_values, y_values)
+    slope = model.coef_[0]
+    intercept = model.intercept_
+
+    return slope, intercept
+
+def calculate_distance(point1, point2):
+    return np.sqrt((point1[0] - point2[0]) ** 2 + (point1[1] - point2[1]) ** 2)
+
+
+def count_outliers(data):
+    distances = []
+    # 计算所有数据点之间的距离
+    for i in range(len(data)):
+        for j in range(i + 1, len(data)):
+            distances.append(calculate_distance(data[i], data[j]))
+    # 计算平均距离
+    avg_distance = np.mean(distances)
+    # 找出中值点
+    median_point = np.median(data, axis=0)
+    # 计算距离中值点的距离，并检查是否大于平均距离的200%
+    outliers_count = sum([1 for point in data if calculate_distance(point, median_point) > avg_distance * 2])
+    if outliers_count<5:
+        outliers = [format_decimal(point) for point in data if any(calculate_distance(point, median_point) > avg_distance * 2 for p in data)]
+    else:
+        outliers = [format_decimal(point) for point in data if any(calculate_distance(point, median_point) > avg_distance * 2 for p in data)]
+        outliers.sort(key=lambda point: abs(calculate_distance(point, median_point)), reverse=True)
+        outliers = outliers[:5]
+    return outliers_count,outliers
 
 class PythonProxyAgent(Agent):
     """(In preview) A class for generic conversable agents which can be configured as assistant or user proxy.
@@ -726,7 +778,7 @@ class PythonProxyAgent(Agent):
             length = 10000
             if not str(logs).__contains__('echart_name'):
                 if "html" in logs or "HTML" in logs:
-                    return True,f"exitcode:exitcode failed\nCode output:Please do not output html files. The front end cannot display them. Please generate the correct echarts code."
+                    return True, f"exitcode:exitcode failed\nCode output:Please do not output html files. The front end cannot display them. Please generate the correct echarts code."
                 if len(logs) > length:
                     print(' ++++++++++ Length exceeds 10000 characters limit, cropped  +++++++++++++++++')
                     logs = logs[:length]
@@ -756,30 +808,44 @@ class PythonProxyAgent(Agent):
                             base_content.append(entry)
                     for echart in base_content:
                         for serie in echart['echart_code']['series']:
-                            for item in serie['data']:
-                                # 确保item是一个字典
+                            for idx, item in enumerate(serie['data']):  # 使用enumerate获取索引方便修改原始数据
                                 if isinstance(item, dict) and 'value' in item:
                                     item['value'] = format_decimal(item['value'])
-                                elif isinstance(item, list):  # 如果它是一个列表类型
+                                elif isinstance(item, list):
                                     item_value = []
                                     for data_value in item:
                                         data_value = format_decimal(data_value)
                                         item_value.append(data_value)
-                                    item=item_value
-                                elif isinstance(item,float):
-                                    item= format_decimal(item)
+                                    serie['data'][idx] = item_value  # 将处理后的值赋值给原始数据
+                                elif isinstance(item, float):
+                                    serie['data'][idx] = format_decimal(item)  # 将处理后的值赋值给原始数据
                                 else:
-                                    # 如果item不是字典或没有'value'键，你可以选择跳过或者实现其他逻辑
                                     continue
                     for echart in base_content:
                         echart = json.dumps(echart, indent=2)
+                    agent_instance_util = AgentInstanceUtil(user_name=str(self.user_name),
+                                                            delay_messages=self.delay_messages,
+                                                            outgoing=self.outgoing,
+                                                            incoming=self.incoming,
+                                                            websocket=self.websocket
+                                                            )
+                    bi_proxy = agent_instance_util.get_agent_bi_proxy()
+                    # Call the interface to generate pictures
+                    for img_str in base_content:
+                        echart_name = img_str.get('echart_name')
+                        echart_code = img_str.get('echart_code')
+
+                        if len(echart_code) > 0 and str(echart_code).__contains__('x'):
+                            is_chart = True
+                            print("echart_name : ", echart_name)
+                            re_str = await bi_proxy.run_echart_code(str(echart_code), echart_name)
                     # 初始化一个空列表来保存每个echart的信息
                     echarts_data = []
                     # 遍历echarts_code列表，提取数据并构造字典
                     for echart in base_content:
                         echart_name = echart['echart_name']
                         series_data = []
-                        count=0
+                        count = 0
                         for serie in echart['echart_code']['series']:
                             try:
                                 seri_info = {
@@ -792,66 +858,73 @@ class PythonProxyAgent(Agent):
                                     'type': serie['type'],
                                     'data': serie['data']
                                 }
-                        seri_info_data=[]
+                        seri_info_data = []
                         for data in seri_info['data']:
-                            count+=1
-                            if count<=1000:
+                            count += 1
+                            if count <= 1000:
                                 seri_info_data.append(data)
                             else:
                                 break
-                        seri_info['data']=seri_info_data
+                        seri_info['data'] = seri_info_data
                         series_data.append(seri_info)
                         if "xAxis" in echart["echart_code"]:
                             xAxis_data = echart['echart_code']['xAxis'][0]['data'][:count]
                             if "%Y-%m" in xAxis_data:
-                                return True,f"exitcode:exitcode failed\nCode output:The SQL code query is incorrect. The query date should be %, not %%. Just for example: SELECT DATE_FORMAT(event_time, '%Y-%m-%d') is correct, but SELECT DATE_FORMAT(event_time, '%%Y -%%m-%%d') is wrong!"
+                                return True, f"exitcode:exitcode failed\nCode output:The SQL code query is incorrect. The query date should be %, not %%. Just for example: SELECT DATE_FORMAT(event_time, '%Y-%m-%d') is correct, but SELECT DATE_FORMAT(event_time, '%%Y -%%m-%%d') is wrong!"
                             echart_dict = {
                                 'echart_name': echart_name,
                                 'series': series_data,
                                 'xAxis_data': xAxis_data
                             }
-                            count_xAxis=0
-                            echart_dict_new=[]
+                            if echart_dict['series'][0]['type'] == 'scatter':
+                                data = echart_dict['series'][0]['data']
+                                if(len(data)<10):
+                                    return True, f"exitcode: {exitcode} ({exitcode2str})\nCode output: 图像已生成,任务执行成功！请直接分析图表数据：{[echarts_data]}"
+                                data_set,count_tag=set(),0
+                                for i in data:
+                                    data_set.add(i[1])
+                                    if(len(data_set)==4):
+                                        count_tag=1
+                                        break
+                                if(count_tag==0):
+                                    data_dict = {item: 0 for item in data_set}
+                                    for i in data:
+                                        data_dict[i[1]]+=1
+                                    return True,f"exitcode: {exitcode} ({exitcode2str})\nCode output:图像已生成,生成的是散点图,该图的标题为:{echart_dict['echart_name']},描述了其相应的关系."\
+                                                f"它的数据一共有{len(data)}个,但是它的取值集合个数较少，每一种取值对应的数量关系为{data_dict}"
+                                correlation, dispersion,(x_min,x_max),(y_min,y_max),(ave_x,ave_y)=calculate_dispersion(data)
+                                outliers_count, outliers = count_outliers(data)
+                                threshold = 0.6  # 相关性阈值
+                                if correlation >= threshold:
+                                    slope, intercept = calculate_trendline(data)
+                                    return True,f"exitcode: {exitcode} ({exitcode2str})\nCode output:图像已生成,生成的是散点图,该图的标题为:{echart_dict['echart_name']},描述了其相应的关系.如下是它的评价指标:\n离散程度为(标准差）:{correlation},相关性评价指标为{dispersion}" \
+                                                f"散点图的x区间范围从{(x_min,x_max)},y区间范围从{(y_min,y_max)},中值点为{(ave_x,ave_y)}。定义一个数据点到中值点的距离大于其所有点至中值点平均距离的2倍作为离群点,则离群点的个数为{outliers_count},其中,最大的是几个离群点为{outliers}" \
+                                                "其相关性达到预设的阈值,计算得到其趋势线方程为: y = {:.2f}x+{:.2f}。(注意：这里所有的计算数据都约束到了两位有效小数)".format(slope, intercept)
+                                else:
+                                    return True,f"exitcode: {exitcode} ({exitcode2str})\nCode output:图像已生成,生成的是散点图,该图的标题为:{echart_dict['echart_name']},描述了其相应的关系.如下是它的评价指标:\n离散程度为(标准差）:{correlation},相关性评价指标为{dispersion}" \
+                                                f"散点图的x区间范围从{(x_min,x_max)},y区间范围从{(y_min,y_max)},中值点为{(ave_x,ave_y)}。定义一个数据点到中值点的距离大于其所有点至中值点平均距离的2倍作为离群点,则离群点的个数为{outliers_count},其中,最大的是几个离群点为{outliers}" \
+                                                f"但由于数据的相关性未达到阈值，即该散点图数据并没有明显的线性关系，无法计算趋势线。(注意：这里所有的计算数据都约束到了两位有效小数)"
+                            count_xAxis = 0
+                            echart_dict_new = []
                             for x_data in echart_dict['xAxis_data']:
                                 count_xAxis += 1
                                 if count_xAxis <= 1000:
                                     echart_dict_new.append(x_data)
                                 else:
                                     break
-                            echart_dict['xAxis_data']=echart_dict_new
+                            echart_dict['xAxis_data'] = echart_dict_new
                         else:
                             echart_dict = {
                                 'echart_name': echart_name,
                                 'series': series_data,
                             }
                         echarts_data.append(echart_dict)
-                    agent_instance_util = AgentInstanceUtil(user_name=str(self.user_name),
-                                                            delay_messages=self.delay_messages,
-                                                            outgoing=self.outgoing,
-                                                            incoming=self.incoming,
-                                                            websocket=self.websocket
-                                                            )
-                    bi_proxy = agent_instance_util.get_agent_bi_proxy()
-                    is_chart = False
-                    # Call the interface to generate pictures
-                    for img_str in base_content:
-                        echart_name = img_str.get('echart_name')
-                        echart_code = img_str.get('echart_code')
-
-                        if len(echart_code) > 0 and str(echart_code).__contains__('x'):
-                            is_chart = True
-                            print("echart_name : ", echart_name)
-                            # 格式化echart_code
-                            # if base_util.is_json(str(echart_code)):
-                            #     json_obj = json.loads(str(echart_code))
-                            #     echart_code = json.dumps(json_obj)
-                            re_str = await bi_proxy.run_echart_code(str(echart_code), echart_name)
-                    if(count>999):
+                    if (count > 999):
                         return True, f"exitcode: {exitcode} ({exitcode2str})\nCode output: 图像已生成,任务执行成功！但由于数据量过大，仅截取了1000条，请直接分析图表这些数据：{echarts_data}"
                     else:
                         return True, f"exitcode: {exitcode} ({exitcode2str})\nCode output: 图像已生成,任务执行成功！请直接分析图表数据：{echarts_data}"
                 except Exception as e:
-                    return True,f"exitcode:exitcode failed\nCode output: {json_data},There is an error in the JSON code causing parsing errors,Please modify the JSON code for me:{traceback.format_exc()}\n"
+                    return True, f"exitcode:exitcode failed\nCode output: {json_data},There is an error in the JSON code causing parsing errors,Please modify the JSON code for me:{traceback.format_exc()}\n"
 
         code_execution_config["last_n_messages"] = last_n_messages
 

@@ -16,7 +16,6 @@ class LanguageInfo():
 
     def load_info_cn(self):
         self.question_ask = ' 以下是我的问题，请用中文回答: '
-
         """ error message """
         self.error_message_timeout = "十分抱歉，本次AI-GPT接口调用超时，请再次重试"
         self.error_miss_data = '缺少数据库注释'

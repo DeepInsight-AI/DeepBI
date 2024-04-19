@@ -26,6 +26,8 @@ python_base_dependency = CONFIG.python_base_dependency
 request_timeout = CONFIG.request_timeout
 
 
+
+
 class AgentInstanceUtil:
     def __init__(
         self,
@@ -85,7 +87,8 @@ class AgentInstanceUtil:
 
             self.config_list_gpt4_turbo = [
                 {
-                    'model': 'gpt-4-1106-preview',
+                    # 'model': 'gpt-4-1106-preview',
+                    'model': CONFIG.llm_openai_gpt4,
                     'api_key': self.api_key,
 
                 },
@@ -115,7 +118,8 @@ class AgentInstanceUtil:
 
             self.config_list_gpt4_turbo = [
                 {
-                    'model': 'gpt-4-1106-preview',
+                    # 'model': 'gpt-4-1106-preview',
+                    'model': CONFIG.llm_openai_gpt4,
                     'api_key': self.api_key,
 
                 },

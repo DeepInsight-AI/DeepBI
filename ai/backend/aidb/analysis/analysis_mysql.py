@@ -215,7 +215,7 @@ class AnalysisMysql(Analysis):
                     if self.language_mode == CONFIG.language_chinese:
 
                         if is_chart:
-                            question_supplement = " 请用中文，简单介绍一下已生成图表中的数据内容,分析完毕后即结束任务."
+                            question_supplement = " 请用中文，详细介绍已生成图表中的数据内容,分析完毕后即结束任务."
                         else:
                             question_supplement = " 请用中文，从上诉对话中分析总结出问题的答案."
                     elif self.language_mode == CONFIG.language_japanese:

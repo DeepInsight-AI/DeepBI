@@ -832,12 +832,11 @@ class PythonProxyAgent(Agent):
                             print("echart_name : ", echart_name)
                             re_str = await bi_proxy.run_echart_code(str(echart_code), echart_name)
                     # 初始化一个空列表来保存每个echart的信息
-                    echarts_data = []
+                    echarts_data,series_data = [],[]
+                    xAxis_data_tag=0
                     # 遍历echarts_code列表，提取数据并构造字典
                     for echart in base_content:
                         echart_name = echart['echart_name']
-                        series_data = []
-                        count = 0
                         for serie in echart['echart_code']['series']:
                             try:
                                 seri_info = {
@@ -850,68 +849,104 @@ class PythonProxyAgent(Agent):
                                     'type': serie['type'],
                                     'data': serie['data']
                                 }
-                        seri_info_data = []
-                        for data in seri_info['data']:
-                            count += 1
-                            if count <= 1000:
-                                seri_info_data.append(data)
-                            else:
-                                break
-                        seri_info['data'] = seri_info_data
-                        series_data.append(seri_info)
-                        if "xAxis" in echart["echart_code"]:
-                            xAxis_data = echart['echart_code']['xAxis'][0]['data'][:count]
-                            if "%Y-%m" in xAxis_data:
-                                return True, f"exitcode:exitcode failed\nCode output:The SQL code query is incorrect. The query date should be %, not %%. Just for example: SELECT DATE_FORMAT(event_time, '%Y-%m-%d') is correct, but SELECT DATE_FORMAT(event_time, '%%Y -%%m-%%d') is wrong!"
-                            echart_dict = {
-                                'echart_name': echart_name,
-                                'series': series_data,
-                                'xAxis_data': xAxis_data
-                            }
-                            if echart_dict['series'][0]['type'] == 'scatter':
+                            series_data.append(seri_info)
+                            if "xAxis" in echart["echart_code"]:
+                                xAxis_data = echart['echart_code']['xAxis'][0]['data']
+                                xAxis_data_tag = 1
+                                if "%Y-%m" in xAxis_data:
+                                    return True, f"exitcode:exitcode failed\nCode output:The SQL code query is incorrect. The query date should be %, not %%. Just for example: SELECT DATE_FORMAT(event_time, '%Y-%m-%d') is correct, but SELECT DATE_FORMAT(event_time, '%%Y -%%m-%%d') is wrong!"
+                    if(xAxis_data_tag):
+                        echart_dict = {
+                            'echart_name': echart_name,
+                            'series': series_data,
+                            'xAxis_data': xAxis_data
+                        }
+                        if echart_dict['series'][0]['type'] == 'scatter':
+                            if (len(echart_dict['series']) == 1):
                                 data = echart_dict['series'][0]['data']
-                                if(len(data)<10):
-                                    return True, f"exitcode: {exitcode} ({exitcode2str})\nCode output: 图像已生成,任务执行成功！请直接分析图表数据：{[echarts_data]}"
-                                data_set,count_tag=set(),0
+                                if (len(data) < 10):
+                                    return True,f"exitcode: {exitcode} ({exitcode2str})\nCode output: 图像已生成,任务执行成功！请直接分析图表数据：{echart_dict}"
+                                data_set,count_tag = set(),0
                                 for i in data:
                                     data_set.add(i[1])
-                                    if(len(data_set)==4):
-                                        count_tag=1
+                                    if (len(data_set) == 4):
+                                        count_tag = 1
                                         break
-                                if(count_tag==0):
+                                if (count_tag == 0):
                                     data_dict = {item: 0 for item in data_set}
                                     for i in data:
-                                        data_dict[i[1]]+=1
-                                    return True,f"exitcode: {exitcode} ({exitcode2str})\nCode output:图像已生成,生成的是散点图,该图的标题为:{echart_dict['echart_name']},描述了其相应的关系."\
-                                                f"它的数据一共有{len(data)}个,但是它的取值集合个数较少，每一种取值对应的数量关系为{data_dict}"
-                                correlation, dispersion,(x_min,x_max),(y_min,y_max),(ave_x,ave_y)=calculate_dispersion(data)
+                                        data_dict[i[1]] += 1
+                                    return True,f"exitcode: {exitcode} ({exitcode2str})\ncode output:图像已生成,生成的是散点图,该图的标题为:{echart_dict['echart_name']},描述了其相应的关系." \
+                                        f"它的数据一共有{len(data)}个,但是它的取值集合个数较少，每一种取值对应的数量关系为{data_dict}"
+                                correlation, dispersion, (x_min, x_max), (y_min, y_max), (
+                                ave_x, ave_y) = calculate_dispersion(data)
                                 outliers_count, outliers = count_outliers(data)
                                 threshold = 0.6  # 相关性阈值
                                 if correlation >= threshold:
                                     slope, intercept = calculate_trendline(data)
                                     return True,f"exitcode: {exitcode} ({exitcode2str})\nCode output:图像已生成,生成的是散点图,该图的标题为:{echart_dict['echart_name']},描述了其相应的关系.如下是它的评价指标:\n离散程度为(标准差）:{correlation},相关性评价指标为{dispersion}" \
-                                                f"散点图的x区间范围从{(x_min,x_max)},y区间范围从{(y_min,y_max)},中值点为{(ave_x,ave_y)}。定义一个数据点到中值点的距离大于其所有点至中值点平均距离的2倍作为离群点,则离群点的个数为{outliers_count},其中,最大的是几个离群点为{outliers}" \
-                                                "其相关性达到预设的阈值,计算得到其趋势线方程为: y = {:.2f}x+{:.2f}。(注意：这里所有的计算数据都约束到了两位有效小数)".format(slope, intercept)
+                                        f"散点图的x区间范围从{(x_min, x_max)},y区间范围从{(y_min, y_max)},中值点为{(ave_x, ave_y)}。定义一个数据点到中值点的距离大于其所有点至中值点平均距离的2倍作为离群点,则离群点的个数为{outliers_count},其中,最大的是几个离群点为{outliers}" \
+                                        "其相关性达到预设的阈值,计算得到其趋势线方程为: y = {:.2f}x+{:.2f}。(注意：这里所有的计算数据都约束到了两位有效小数)".format(slope, intercept)
                                 else:
-                                    return True,f"exitcode: {exitcode} ({exitcode2str})\nCode output:图像已生成,生成的是散点图,该图的标题为:{echart_dict['echart_name']},描述了其相应的关系.如下是它的评价指标:\n离散程度为(标准差）:{correlation},相关性评价指标为{dispersion}" \
-                                                f"散点图的x区间范围从{(x_min,x_max)},y区间范围从{(y_min,y_max)},中值点为{(ave_x,ave_y)}。定义一个数据点到中值点的距离大于其所有点至中值点平均距离的2倍作为离群点,则离群点的个数为{outliers_count},其中,最大的是几个离群点为{outliers}" \
-                                                f"但由于数据的相关性未达到阈值，即该散点图数据并没有明显的线性关系，无法计算趋势线。(注意：这里所有的计算数据都约束到了两位有效小数)"
-                            count_xAxis = 0
-                            echart_dict_new = []
-                            for x_data in echart_dict['xAxis_data']:
-                                count_xAxis += 1
-                                if count_xAxis <= 1000:
-                                    echart_dict_new.append(x_data)
-                                else:
-                                    break
-                            echart_dict['xAxis_data'] = echart_dict_new
-                        else:
-                            echart_dict = {
+                                    return True,f"Code output:图像已生成,生成的是散点图,该图的标题为:{echart_dict['echart_name']},描述了其相应的关系.如下是它的评价指标:\n离散程度为(标准差）:{correlation},相关性评价指标为{dispersion}" \
+                                        f"散点图的x区间范围从{(x_min, x_max)},y区间范围从{(y_min, y_max)},中值点为{(ave_x, ave_y)}。定义一个数据点到中值点的距离大于其所有点至中值点平均距离的2倍作为离群点,则离群点的个数为{outliers_count},其中,最大的是几个离群点为{outliers}" \
+                                        f"但由于数据的相关性未达到阈值，即该散点图数据并没有明显的线性关系，无法计算趋势线。(注意：这里所有的计算数据都约束到了两位有效小数)"
+                            else:
+                                message = f"exitcode: {exitcode} ({exitcode2str})\nCode output:图像已生成,生成的是散点图,该图的标题为:{echart_dict['echart_name']},描述了其相应的关系,一共有{len(echart_dict['series'])}类散点数据:\n"
+                                count_class = 0
+                                for echart_data in echart_dict['series']:
+                                    count_class += 1
+                                    data = echart_data['data']
+                                    if (len(data) < 10):
+                                        message_data = f"第{count_class}类数据为{data}"
+                                        message += message_data
+                                        continue
+                                    else:
+                                        data_set, count_tag = set(), 0
+                                        for i in data:
+                                            data_set.add(i[1])
+                                            if (len(data_set) == 4):
+                                                count_tag = 1
+                                                break
+                                        if (count_tag == 0):
+                                            data_dict = {item: 0 for item in data_set}
+                                            for i in data:
+                                                data_dict[i[1]] += 1
+                                            message_data = f"名为{echart_data['name']}的数据一共有{len(data)}个,但是它的取值集合个数较少，每一种取值对应的数量关系为{data_dict}"
+                                            message += message_data
+                                            continue
+                                        else:
+                                            correlation, dispersion, (x_min, x_max), (y_min, y_max), (
+                                                ave_x, ave_y) = calculate_dispersion(data)
+                                            outliers_count, outliers = count_outliers(data)
+                                            threshold = 0.6  # 相关性阈值
+                                            if abs(dispersion) >= threshold:
+                                                slope, intercept = calculate_trendline(data)
+                                                message_data = f"名为{echart_data['name']}的数据，数据的离散程度为(标准差）:{correlation},相关性评价指标为{dispersion}" \
+                                                               f"散点图的x区间范围从{(x_min, x_max)},y区间范围从{(y_min, y_max)},中值点为{(ave_x, ave_y)}。定义一个数据点到中值点的距离大于其所有点至中值点平均距离的2倍作为离群点,则离群点的个数为{outliers_count},其中,最大的是几个离群点为{outliers}" \
+                                                               "其相关性达到预设的阈值,计算得到其趋势线方程为: y = {:.2f}x+{:.2f}。\n".format(
+                                                    slope, intercept)
+                                                message += message_data
+                                                continue
+                                            else:
+                                                message_data = f"名为{echart_data['name']}的数据,数据的离散程度为(标准差）:{correlation},相关性评价指标为{dispersion}" \
+                                                               f"散点图的x区间范围从{(x_min, x_max)},y区间范围从{(y_min, y_max)},中值点为{(ave_x, ave_y)}。离群点的个数为{outliers_count},其中,最大的是几个离群点为{outliers}" \
+                                                               f"但由于数据的相关性未达到阈值，即该散点图数据并没有明显的线性关系，无法计算趋势线。\n"
+                                                message += message_data
+                                                continue
+                                message=message+"请对每一类的数据性质都进行详细的分析"
+                                return True,f"exitcode: {exitcode} ({exitcode2str})\n{message}"
+                    else:
+                        echart_dict = {
                                 'echart_name': echart_name,
                                 'series': series_data,
                             }
-                        echarts_data.append(echart_dict)
-                    if (count > 999):
+                    count_max=1000
+                    echart_dict['series'][0]['data']=echart_dict['series'][0]['data'][:count_max]
+                    if(xAxis_data_tag):
+                        echart_dict['xAxis_data']=echart_dict['xAxis_data'][:count_max]
+                    echarts_data.append(echart_dict)
+                    if (len(echart_dict['series'][0]['data']) > 999):
                         return True, f"exitcode: {exitcode} ({exitcode2str})\nCode output: 图像已生成,任务执行成功！但由于数据量过大，仅截取了1000条，请直接分析图表这些数据：{echarts_data}"
                     else:
                         return True, f"exitcode: {exitcode} ({exitcode2str})\nCode output: 图像已生成,任务执行成功！请直接分析图表数据：{echarts_data}"

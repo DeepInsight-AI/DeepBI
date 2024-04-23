@@ -13,7 +13,7 @@ import asyncio
 from requests.exceptions import HTTPError
 from ai.backend.language_info import LanguageInfo
 from ai.agents.agentchat import TableSelectorAgent
-
+import difflib
 max_retry_times = CONFIG.max_retry_times
 
 
@@ -534,28 +534,35 @@ class AIDB:
             message=qustion_message,
         )
         select_table_message = planner_user.last_message()["content"]
-
         match = re.search(
             r"\[.*\]", select_table_message.strip(), re.MULTILINE | re.IGNORECASE | re.DOTALL
         )
         json_str = ""
         if match:
             json_str = match.group()
-        print("json_str : ", json_str)
-        select_table_list = json.loads(json_str)
+        try:
+            json_str = json_str.replace('“', '"').replace('”', '"')
+            select_table_list = json.loads(json_str)
+            print("json_str : ", json_str)
+        except json.JSONDecodeError as e:
+            return []
         print("select_table_list : ", select_table_list)
-
-        selece_table_names = []
+        all_table_names = [table['table_name'] for table in self.db_info_json['table_desc']]
+        selece_table_names =set()
         # for table_str in select_table_list:
         #     table_name = table_str.get("table_name")
         #     delete_table_names.append(table_name)
         for table_str in select_table_list:
             keyname = next(iter(table_str))
-            if table_str[keyname] == "":
-                selece_table_names.append(keyname)
-            else:
-                selece_table_names.append(table_str[keyname])
+            selected_name = table_str[keyname] if table_str[keyname] != "" else keyname
 
+            # 如果所选的表名不在数据库中
+            if selected_name not in all_table_names:
+                close_matches = difflib.get_close_matches(selected_name, all_table_names, n=3)
+                selece_table_names.update(close_matches)
+            else:
+                selece_table_names.add(selected_name)
+        selece_table_names=list(selece_table_names)
         print("selece_table_names : ", selece_table_names)
 
         table_comment = {'table_desc': [], 'databases_desc': ''}
@@ -659,3 +666,4 @@ class AIDB:
             openai_proxy=self.agent_instance_util.openai_proxy,
         )
         return select_analysis_assistant
+

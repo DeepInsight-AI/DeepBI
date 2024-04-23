@@ -782,37 +782,6 @@ class PythonProxyAgent(Agent):
                         echart = json.dumps(echart, indent=2)
                     # 初始化一个空列表来保存每个echart的信息
                     echarts_data = []
-                    # 遍历echarts_code列表，提取数据并构造字典
-                    # for echart in base_content:
-                    #     echart_name = echart['echart_name']
-                    #     series_data = []
-                    #     for serie in echart['echart_code']['series']:
-                    #         try:
-                    #             seri_info = {
-                    #                 'type': serie['type'],
-                    #                 'name': serie['name'],
-                    #                 'data': serie['data']
-                    #             }
-                    #         except Exception as e:
-                    #             seri_info = {
-                    #                 'type': serie['type'],
-                    #                 'data': serie['data']
-                    #             }
-                    #         series_data.append(seri_info)
-                    #     if "xAxis" in echart["echart_code"]:
-                    #         xAxis_data = echart['echart_code']['xAxis'][0]['data']
-                    #         if "%Y-%m" in xAxis_data:
-                    #             return True,f"exitcode:exitcode failed\nCode output:The SQL code query is incorrect. The query date should be %, not %%. Just for example: SELECT DATE_FORMAT(event_time, '%Y-%m-%d') is correct, but SELECT DATE_FORMAT(event_time, '%%Y -%%m-%%d') is wrong!"
-                    #         echart_dict = {
-                    #             'echart_name': echart_name,
-                    #             'series': series_data,
-                    #             'xAxis_data': xAxis_data
-                    #         }
-                    #     else:
-                    #         echart_dict = {
-                    #             'echart_name': echart_name,
-                    #             'series': series_data,
-                    #         }
                     json_data_new = json.dumps(logs)
                     data_new = json.loads(json_data_new)
                     for entry in data_new:
@@ -835,8 +804,24 @@ class PythonProxyAgent(Agent):
                                                             websocket=self.websocket
                                                             )
                     bi_proxy = agent_instance_util.get_agent_bi_proxy()
-                    is_chart = False
+                    # print("base_content中的内容为：",base_content)
                     # Call the interface to generate pictures
+                    try:
+                        max_data_show = 10#一组数据数量大于10就全部不显示了
+                        max_data_show_class=2 #一张图如果展示2组及以上数据，就都不显示了
+                        if len(base_content[0]['echart_code']['series'])>=max_data_show_class:
+                            for data_series in base_content[0]['echart_code']['series']:
+                                data_series['label']['show'] = False
+                        else:
+                            for data_series in base_content[0]['echart_code']['series']:
+                                if (len(data_series['data'])<max_data_show):
+                                    data_series['label']['show'] = True
+                                else:
+                                    data_series['label']['show'] = False
+                    except Exception as e:
+                        print("报错了")
+                        pass
+
                     for img_str in base_content:
                         echart_name = img_str.get('echart_name')
                         echart_code = img_str.get('echart_code')

@@ -69,5 +69,12 @@ class Config:
         self.agents_functions = ['task_generate_echart', 'task_generate_report', 'task_base']
         self.default_agents_functions = 'task_base'
 
+        # self.llm_openai_gpt4 = 'gpt-4-1106-preview'
+        self.llm_openai_gpt4 = 'gpt-4-turbo-2024-04-09'
+        self.llm_openai_gpt35 = 'gpt-3.5-turbo-1106'
+        self.llm_azure_gpt4 = '2023-07-01-preview'
+
+
+
 
 CONFIG = Config()

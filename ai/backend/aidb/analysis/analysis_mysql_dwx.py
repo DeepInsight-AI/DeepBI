@@ -391,7 +391,8 @@ class AnalysisMysql(Analysis):
                     answer_message = await self.total_question(qustion_message, db_info)
                     return answer_message
                 else:
-                    answer_message = await self.base_question(qustion_message)
+                    # answer_message = await self.base_question(qustion_message)
+                    answer_message = await self.base_question_llm(qustion_message)
                     return answer_message
             else:
                 # 非 电玩猩 数据库
@@ -422,21 +423,39 @@ class AnalysisMysql(Analysis):
 
     async def task_generate_echart_rag(self, qustion_message, table_comment, use_cache):
         if os.path.exists(self.agent_instance_util.get_rag_doc()):
-            mysql_echart_assistant = self.get_agent_retrieve_mysql_echart_assistant(use_cache=use_cache)
-            python_executor = self.get_agent_retrieve_python_executor(docs_path=self.agent_instance_util.get_rag_doc())
+            #####################  1，old RAG (Search using vector database)
 
+            # mysql_echart_assistant = self.get_agent_retrieve_mysql_echart_assistant(use_cache=use_cache)
+            # python_executor = self.get_agent_retrieve_python_executor(docs_path=self.agent_instance_util.get_rag_doc())
+            #
             # await python_executor.initiate_chat(
             #     mysql_echart_assistant,
-            #     problem='this is databases info: ' + '\n' + str(table_comment) + '\n' + self.question_ask + '\n' + str(
+            #     problem=self.question_ask + '\n' + str(
             #         qustion_message),
+            #     db_info='this is databases info: ' + '\n' + str(table_comment),
             # )
+            #####################  old RAG
+
+            #####################  2，LLM RAG (Search using LLM gpt3.5)
+
+            # table_comment = self.table_comment
+            # use_cache = self.use_cache
+            retrieve_rag_doc = await self.select_rag_doc(qustion_message, use_cache)
+
+            mysql_echart_assistant = self.agent_instance_util.get_agent_mysql_echart_assistant(
+                use_cache=use_cache)
+            python_executor = self.agent_instance_util.get_agent_python_executor()
 
             await python_executor.initiate_chat(
                 mysql_echart_assistant,
-                problem=self.question_ask + '\n' + str(
+                message=
+                'this is databases info: ' + '\n'
+                + str(table_comment) + '\n'
+                + str(retrieve_rag_doc) + '\n' +
+                self.question_ask + '\n' + str(
                     qustion_message),
-                db_info='this is databases info: ' + '\n' + str(table_comment),
             )
+            #####################  LLM RAG
 
 
         else:
@@ -1031,4 +1050,27 @@ class AnalysisMysql(Analysis):
 
         answer_message = python_executor.chat_messages[base_mysql_assistant]
         print("answer_message: ", answer_message)
+        return answer_message
+
+    async def base_question_llm(self, qustion_message):
+
+        table_comment = self.table_comment
+        use_cache = self.use_cache
+        retrieve_rag_doc = await self.select_rag_doc(qustion_message, use_cache)
+
+        base_mysql_assistant = self.agent_instance_util.get_agent_base_mysql_assistant(use_cache=use_cache,
+                                                                   add_message='')
+        python_executor = self.agent_instance_util.get_agent_python_executor()
+
+        await python_executor.initiate_chat(
+            base_mysql_assistant,
+            message=
+            'this is databases info: ' + '\n'
+            + str(table_comment) + '\n'
+            + str(retrieve_rag_doc) + '\n' +
+            self.question_ask + '\n' + str(
+                qustion_message),
+        )
+        answer_message = python_executor.chat_messages[base_mysql_assistant]
+
         return answer_message

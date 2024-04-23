@@ -1,4 +1,5 @@
 import traceback
+
 from ai.backend.util.write_log import logger
 from ai.backend.base_config import CONFIG
 import re
@@ -553,6 +554,7 @@ class AIDB:
                 "request_timeout": CONFIG.request_timeout,
             },
             openai_proxy=self.agent_instance_util.openai_proxy,
+            use_cache=use_cache,
         )
         return select_analysis_assistant
 
@@ -637,12 +639,14 @@ class AIDB:
             ragdoc_json_data = json.load(file)
 
         basic_knowledge = []
-        for key, value in ragdoc_json_data.items():
-            # print(key, ":", value)
-            if key in str(select_rag_list):
-                rag_name = {key: value}
-                # print('rag_name :', rag_name)
-                basic_knowledge.append(rag_name)
+        # for key, value in ragdoc_json_data.items():
+        #     # print(key, ":", value)
+        #     if key in str(select_rag_list):
+        #         rag_name = {key: value}
+        #         # print('rag_name :', rag_name)
+        #         basic_knowledge.append(rag_name)
+
+        basic_knowledge = base_util.read_target_keyvalue(ragdoc_json_data, select_rag_list)
 
         retrieve_rag_doc = 'Context is: ' + '\n' + str(basic_knowledge)
 
@@ -657,14 +661,17 @@ class AIDB:
             # 读取JSON数据并将其转换为Python对象
             json_data = json.load(file)
 
-        doc_names = []
-        for key, value in json_data.items():
-            # print(key, ":", value)
-            doc_names.append(key)
+        # doc_names = []
+        # for key, value in json_data.items():
+        #     # print(key, ":", value)
+        #     doc_names.append(key)
+
+        doc_names = base_util.read_json_keys(json_data)
 
         print('doc_names : ', doc_names)
 
-        table_select = f"Read the conversation above. Then select the name of the table involved in the question from {str(doc_names)}. Only the name of the table is returned.It can be one table or multiple tables"
+        # table_select = f"Read the conversation above. Then select the name of the table involved in the question from {str(doc_names)}. Only the name of the table is returned.It can be one table or multiple tables"
+        table_select = f"Read the conversation above. Then Select the top 5 doc names most relevant to the question from {str(doc_names)}. Only the name of the doc is returned."
 
         select_analysis_assistant = TableSelectorAgent(
             name="select_ragdoc_assistant",
@@ -673,8 +680,11 @@ class AIDB:
                         Different tasks have different processing methods.
                         The output should be formatted as a JSON instance that conforms to the JSON schema below, the JSON is a list of dict,
          [
-         “table_name”,
-         ““,
+         “doc_name1”,
+         “doc_name2”,
+         “doc_name3”,
+         “doc_name4”,
+         “doc_name5”,
          ,
          ].
          Reply "TERMINATE" in the end when everything is done.
@@ -686,7 +696,7 @@ class AIDB:
             user_name=self.user_name,
             websocket=self.websocket,
             llm_config={
-                "config_list": self.agent_instance_util.config_list_gpt4_turbo,
+                "config_list": self.agent_instance_util.config_list_gpt35_turbo,
                 "request_timeout": CONFIG.request_timeout,
             },
             openai_proxy=self.agent_instance_util.openai_proxy,

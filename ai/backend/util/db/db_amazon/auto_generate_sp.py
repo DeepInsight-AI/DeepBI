@@ -3,7 +3,7 @@ import json
 
 from flask import render_template, Flask
 
-from amazon_mysql_rag_util import AmazonMysqlRagUitl
+from amazon_mysql_rag_util_sp import AmazonMysqlRagUitl
 from auto_content import REPORT_THOUGHT,REPORT_ANALYST
 # -*- coding: utf-8 -*-
 from jinja2 import Template

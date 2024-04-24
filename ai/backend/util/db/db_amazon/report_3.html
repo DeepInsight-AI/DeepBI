@@ -13,6 +13,10 @@
     .m-b-5 {
       margin-bottom: 5px;
     }
+    .m-b-6 {
+        margin-bottom: 5px;
+        background-color: lightblue; /* 浅蓝色背景 */
+    }
 
     .color-white {
       color: #fff;
@@ -107,6 +111,44 @@
 .table2 tr:hover {
   background-color: #00008b;; /* 设置鼠标悬停时背景色为淡黄色 */
 }
+    .csvTable {
+        width: 100%; /* 表格宽度 */
+        border-collapse: collapse; /* 边框合并 */
+        margin: 20px 0; /* 上下外边距 */
+        font-size: 0.9em; /* 字体大小 */
+        font-family: sans-serif; /* 字体 */
+        min-width: 400px; /* 最小宽度 */
+        box-shadow: 0 0 20px rgba(0, 0, 0, 0.15); /* 阴影效果 */
+    }
+
+    /* 表头样式 */
+    .csvTable thead tr {
+        background-color: #009879; /* 背景颜色 */
+        color: #ffffff; /* 字体颜色 */
+        text-align: left; /* 文本对齐 */
+    }
+
+    /* 表格行样式，包括鼠标悬停效果 */
+    .csvTable th,
+    .csvTable td {
+        padding: 12px 15px; /* 内边距 */
+    }
+
+    .csvTable tbody tr {
+        border-bottom: 1px solid #dddddd; /* 行底部边框 */
+    }
+
+    .csvTable tbody tr:nth-of-type(even) {
+        background-color: #f3f3f3; /* 偶数行背景颜色 */
+    }
+
+    .csvTable tbody tr:last-of-type {
+        border-bottom: 2px solid #009879; /* 最后一行底部边框 */
+    }
+
+    .csvTable tbody tr:hover {
+        background-color: #f1f1f1; /* 鼠标悬停行背景颜色 */
+    }
   </style>
   <!-- 引入 ECharts -->
   <script src="https://cdn.bootcdn.net/ajax/libs/echarts/5.2.2/echarts.min.js"></script>
@@ -163,5 +205,170 @@
 
 </div>
 
+ {% for csv in result_csv %}
+
+<table class="csvTable"  id={{ csv }}>
+    <thead>
+    <tr></tr>
+    </thead>
+    <tbody>
+    </tbody>
+</table>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        console.log(123123)
+        fetch("{{ csv['filepath'] }}")
+            .then(response => response.text())
+            .then(text => {
+                console.log(text)
+                const data = parseCSV(text);
+                fillTable(data);
+            });
+    });
+
+    function parseCSV(text) {
+        const lines = text.split('\n');
+        return lines.map(line => line.split(','));
+    }
+
+    function fillTable(data) {
+        const table = document.getElementById(csv);
+        const thead = table.querySelector('thead tr');
+        const tbody = table.querySelector('tbody');
+
+        // 填充表头
+        data[0].forEach(header => {
+            const th = document.createElement('th');
+            th.textContent = header;
+            thead.appendChild(th);
+        });
+
+        // 填充表格数据
+        data.slice(1).forEach(row => {
+            const tr = document.createElement('tr');
+            row.forEach(cell => {
+                const td = document.createElement('td');
+                td.textContent = cell;
+                tr.appendChild(td);
+            });
+            tbody.appendChild(tr);
+        });
+    }
+</script>
+{% endfor %}
+
+
+{% for csv in csvfiles %}
+<!--<h4 class="m-b-5 bg-border color-white">{{ csv['title'] }}</h4>-->
+<div class="m-b-6">
+    <h4>{{ csv['title'] }}</h4>
+    <li>{{ csv['introduction'] }}</li>
+    <li>{{ csv['operate'] }}</li>
+    <!--    增加下载链接-->
+    <a href="{{ csv['file_path'] }}" download>DownloadFile</a>
+</div>
+<!--<table class="csvTable"  id="{{ csv['title'] }}">-->
+<!--    <thead>-->
+<!--    <tr></tr>-->
+<!--    </thead>-->
+<!--    <tbody>-->
+<!--    </tbody>-->
+<!--</table>-->
+<div style="overflow-x: auto;margin: 0 auto;">
+    <table class="csvTable"  id="{{ csv['title'] }}">
+        <thead>
+        <tr></tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+</div>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        console.log(123123)
+        fetch( "{{ csv['file_path'] }}" )
+            .then(response => response.text())
+            .then(text => {
+                console.log(text)
+                const data = parseCSV(text);
+                fillTable("{{ csv['title'] }}", data);
+            });
+    });
+
+    function parseCSV(text) {
+        const lines = text.split('\n');
+        return lines.map(line => line.split(','));
+    }
+
+    function fillTable(csvId, data) {
+        const table = document.getElementById(csvId);
+        const thead = table.querySelector('thead tr');
+        const tbody = table.querySelector('tbody');
+
+        // Clear the table header and body
+        thead.innerHTML = '';
+        tbody.innerHTML = '';
+
+        // Fill the table header
+        data[0].forEach(header => {
+            const th = document.createElement('th');
+            th.textContent = header;
+            thead.appendChild(th);
+        });
+
+        // Fill the table data
+        data.slice(1).forEach(row => {
+            const tr = document.createElement('tr');
+            row.forEach(cell => {
+                const td = document.createElement('td');
+                td.textContent = cell;
+                tr.appendChild(td);
+            });
+            tbody.appendChild(tr);
+        });
+    }
+</script>
+{% endfor %}
 </body>
+<style>
+    /* 整体表格样式 */
+    .csvTable {
+        width: 100%; /* 表格宽度 */
+        border-collapse: collapse; /* 边框合并 */
+        margin: 20px 0; /* 上下外边距 */
+        font-size: 0.9em; /* 字体大小 */
+        font-family: sans-serif; /* 字体 */
+        min-width: 400px; /* 最小宽度 */
+        box-shadow: 0 0 20px rgba(0, 0, 0, 0.15); /* 阴影效果 */
+    }
+
+    /* 表头样式 */
+    .csvTable thead tr {
+        background-color: #009879; /* 背景颜色 */
+        color: #ffffff; /* 字体颜色 */
+        text-align: left; /* 文本对齐 */
+    }
+
+    /* 表格行样式，包括鼠标悬停效果 */
+    .csvTable th,
+    .csvTable td {
+        padding: 12px 15px; /* 内边距 */
+    }
+
+    .csvTable tbody tr {
+        border-bottom: 1px solid #dddddd; /* 行底部边框 */
+    }
+
+    .csvTable tbody tr:nth-of-type(even) {
+        background-color: #f3f3f3; /* 偶数行背景颜色 */
+    }
+
+    .csvTable tbody tr:last-of-type {
+        border-bottom: 2px solid #009879; /* 最后一行底部边框 */
+    }
+
+    .csvTable tbody tr:hover {
+        background-color: #f1f1f1; /* 鼠标悬停行背景颜色 */
+    }
+</style>
 </html>

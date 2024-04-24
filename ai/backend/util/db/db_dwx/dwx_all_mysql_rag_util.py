@@ -5,7 +5,7 @@ db_info = {'host': '******', 'user': '******', 'passwd': '******', 'port': 3308,
            'charset': 'utf8mb4', 'use_unicode': True, }
 
 
-bussname_list = ['江苏淮安电玩猩-淮汽店', '江苏南京冲锋熊猫-百家湖店', '安徽合肥电玩猩-合肥店', '江苏南京电玩猩总部', '江苏徐州电玩猩（云龙店）', '江苏南京电玩猩-义乌店',
+bussname_list = ['江苏淮安电玩猩-淮汽店', '江苏南京冲锋熊猫-百家湖店', '安徽合肥电玩猩-合肥店', '江苏南京电玩猩总部', '江苏徐州电玩猩-云龙店', '江苏南京电玩猩-义乌店',
                  '江苏南通电玩猩-南通店', '江苏镇江电玩猩-江大店', '江苏淮安电玩猩-淮安万达店', '江苏徐州电玩猩-彭城店']
 
 
@@ -52,18 +52,18 @@ class DwxMysqlRagUitl:
 	Doll7Recycle.EDAY,(
 		ROUND(
 		(((CASE		WHEN Doll7Prize.prize_amount IS NULL THEN	0 ELSE Doll7Prize.prize_amount  END ) - ( CASE WHEN Doll7Recycle.recycle_amount IS NULL THEN 0 ELSE Doll7Recycle.recycle_amount END ) ) * 2.55 +
-		(CASE WHEN Doll7Recycle.recycle_amount IS NULL THEN 0 ELSE Doll7Recycle.recycle_amount END 	) * 1.2 	),2 	) + 
+		(CASE WHEN Doll7Recycle.recycle_amount IS NULL THEN 0 ELSE Doll7Recycle.recycle_amount END 	) * 1.2 	),2 	) +
 		ROUND(
-		(((CASE	WHEN Doll8Prize.prize_amount IS NULL THEN		0 ELSE Doll8Prize.prize_amount 		END 		)- ( CASE WHEN Doll8Recycle.recycle_amount IS NULL THEN 0 ELSE Doll8Recycle.recycle_amount END ))* 5.5 + 
+		(((CASE	WHEN Doll8Prize.prize_amount IS NULL THEN		0 ELSE Doll8Prize.prize_amount 		END 		)- ( CASE WHEN Doll8Recycle.recycle_amount IS NULL THEN 0 ELSE Doll8Recycle.recycle_amount END ))* 5.5 +
 		( CASE WHEN Doll8Recycle.recycle_amount IS NULL THEN 0 ELSE Doll8Recycle.recycle_amount END ) * 2.4 	),	2 	) +
-		ROUND((((CASE WHEN Doll15Prize.prize_amount IS NULL THEN	0 ELSE Doll15Prize.prize_amount END ) - ( CASE WHEN Doll15Recycle.recycle_amount IS NULL THEN 0 ELSE Doll15Recycle.recycle_amount END ))* 20 + 		( CASE WHEN Doll15Recycle.recycle_amount IS NULL THEN 0 ELSE Doll15Recycle.recycle_amount END ) * 14.4 		),	2 	) + 
-		( CASE WHEN Lottery.TotalTicket IS NULL THEN 0 ELSE Lottery.TotalTicket END ) + 
-		( CASE WHEN GiftMachine.total_cost IS NULL THEN 0 ELSE GiftMachine.total_cost END ) 
-) AS total_cost 
+		ROUND((((CASE WHEN Doll15Prize.prize_amount IS NULL THEN	0 ELSE Doll15Prize.prize_amount END ) - ( CASE WHEN Doll15Recycle.recycle_amount IS NULL THEN 0 ELSE Doll15Recycle.recycle_amount END ))* 20 + 		( CASE WHEN Doll15Recycle.recycle_amount IS NULL THEN 0 ELSE Doll15Recycle.recycle_amount END ) * 14.4 		),	2 	) +
+		( CASE WHEN Lottery.TotalTicket IS NULL THEN 0 ELSE Lottery.TotalTicket END ) +
+		( CASE WHEN GiftMachine.total_cost IS NULL THEN 0 ELSE GiftMachine.total_cost END )
+) AS total_cost
 FROM(
 					SELECT
 							dates.Date AS EDAY,
-							COALESCE(SUM(RecycledAmount), 0) AS recycle_amount 
+							COALESCE(SUM(RecycledAmount), 0) AS recycle_amount
 					FROM
 							(
 									SELECT DISTINCT mp.ClassName AS Date
@@ -73,8 +73,8 @@ FROM(
 							(
 									SELECT mp.ClassName, COALESCE(SUM(Amount), 0) AS RecycledAmount
 									FROM view_giftrecoverlogitem gf
-									JOIN mall_period mp ON gf.InPeriod = mp.ID 
-									WHERE (GoodName = '7寸娃娃' OR GoodName = '普通娃娃') 
+									JOIN mall_period mp ON gf.InPeriod = mp.ID
+									WHERE (GoodName = '7寸娃娃' OR GoodName = '普通娃娃')
 									AND gf.OwnedBusiness IN (SELECT ID FROM mall_business WHERE BusinessName = '%s')
 									GROUP BY mp.ClassName
 							) recycled ON dates.Date = recycled.ClassName
@@ -83,99 +83,99 @@ FROM(
 LEFT JOIN (
 					SELECT
 						Period AS EDAY,
-						COALESCE ( SUM( OutGift ), 0 ) AS prize_amount 
+						COALESCE ( SUM( OutGift ), 0 ) AS prize_amount
 					FROM
-						view_machinereturnrate 
+						view_machinereturnrate
 					WHERE
 						(TypeName = '7寸娃娃机'  OR TypeName ='单人娃娃机')
-						AND OwnedBusiness IN ( SELECT ID FROM mall_business WHERE BusinessName = '%s' ) 
+						AND OwnedBusiness IN ( SELECT ID FROM mall_business WHERE BusinessName = '%s' )
 					GROUP BY
-						Period 
+						Period
 ) AS Doll7Prize ON Doll7Recycle.EDAY = Doll7Prize.EDAY
 LEFT JOIN (
 					SELECT
 						mp.ClassName AS EDAY,
-						COALESCE ( SUM( Amount ), 0 ) AS recycle_amount 
+						COALESCE ( SUM( Amount ), 0 ) AS recycle_amount
 					FROM
 						view_giftrecoverlogitem gf
-						JOIN mall_period mp ON gf.InPeriod = mp.ID 
+						JOIN mall_period mp ON gf.InPeriod = mp.ID
 					WHERE
-						GoodName = '8寸娃娃' 
-						AND gf.OwnedBusiness IN ( SELECT ID FROM mall_business WHERE BusinessName = '%s' ) 
+						GoodName = '8寸娃娃'
+						AND gf.OwnedBusiness IN ( SELECT ID FROM mall_business WHERE BusinessName = '%s' )
 					GROUP BY
-						mp.ClassName 
+						mp.ClassName
 ) AS Doll8Recycle ON Doll7Recycle.EDAY = Doll8Recycle.EDAY
 LEFT JOIN (
 					SELECT
 						vm.Period AS EDAY,
-						COALESCE ( SUM( OutGift ), 0 ) AS prize_amount 
+						COALESCE ( SUM( OutGift ), 0 ) AS prize_amount
 					FROM
-						view_machinereturnrate vm 
+						view_machinereturnrate vm
 					WHERE
-						TypeName = '8寸娃娃机' 
-						AND vm.OwnedBusiness IN ( SELECT ID FROM mall_business WHERE BusinessName = '%s' ) 
+						TypeName = '8寸娃娃机'
+						AND vm.OwnedBusiness IN ( SELECT ID FROM mall_business WHERE BusinessName = '%s' )
 					GROUP BY
-						vm.Period 
+						vm.Period
 ) AS Doll8Prize ON Doll7Recycle.EDAY = Doll8Prize.EDAY
 LEFT JOIN (
 					SELECT
 						mp.ClassName AS EDAY,
-						COALESCE ( SUM( Amount ), 0 ) AS recycle_amount 
+						COALESCE ( SUM( Amount ), 0 ) AS recycle_amount
 					FROM
 						view_giftrecoverlogitem gf
-						JOIN mall_period mp ON gf.InPeriod = mp.ID 
+						JOIN mall_period mp ON gf.InPeriod = mp.ID
 					WHERE
-						GoodName = '15寸娃娃' 
-						AND gf.OwnedBusiness IN ( SELECT ID FROM mall_business WHERE BusinessName = '%s' ) 
+						GoodName = '15寸娃娃'
+						AND gf.OwnedBusiness IN ( SELECT ID FROM mall_business WHERE BusinessName = '%s' )
 					GROUP BY
-						mp.ClassName 
+						mp.ClassName
 ) AS Doll15Recycle ON Doll7Recycle.EDAY = Doll15Recycle.EDAY
 LEFT JOIN (
 					SELECT
 						vm.Period AS EDAY,
-						COALESCE ( SUM( OutGift ), 0 ) AS prize_amount 
+						COALESCE ( SUM( OutGift ), 0 ) AS prize_amount
 					FROM
-						view_machinereturnrate vm 
+						view_machinereturnrate vm
 					WHERE
-						TypeName = '15寸娃娃机' 
-						AND vm.OwnedBusiness IN ( SELECT ID FROM mall_business WHERE BusinessName = '%s' ) 
+						TypeName = '15寸娃娃机'
+						AND vm.OwnedBusiness IN ( SELECT ID FROM mall_business WHERE BusinessName = '%s' )
 					GROUP BY
-						vm.Period 
+						vm.Period
 ) AS Doll15Prize ON Doll7Recycle.EDAY = Doll15Prize.EDAY
 LEFT JOIN (
 					SELECT
 						vm.Period AS EDAY,
 						(
-						SUM( OutPhTicket ) + SUM( OutTicket ) + SUM( OutPhTicket ))/ 1000 AS TotalTicket 
+						SUM( OutPhTicket ) + SUM( OutTicket ) + SUM( OutPhTicket ))/ 1000 AS TotalTicket
 					FROM
-						view_machinereturnrate vm 
+						view_machinereturnrate vm
 					WHERE
-						TypeName = '彩票机' 
-						AND vm.OwnedBusiness IN ( SELECT ID FROM mall_business WHERE BusinessName = '%s' ) 
+						TypeName = '彩票机'
+						AND vm.OwnedBusiness IN ( SELECT ID FROM mall_business WHERE BusinessName = '%s' )
 					GROUP BY
-						vm.Period 
+						vm.Period
 ) AS Lottery ON Doll7Recycle.EDAY = Lottery.EDAY
 LEFT JOIN (
 					SELECT
 						mp.ClassName AS EDAY,
 						SUM(
-						ABS( gf.TotleMoney )) AS total_cost 
+						ABS( gf.TotleMoney )) AS total_cost
 					FROM
 						mall_stockchangelog gf
 						JOIN mall_period mp ON gf.InPeriod = mp.ID
-						JOIN mall_goodbase gb ON gf.Goods = gb.ID 
+						JOIN mall_goodbase gb ON gf.Goods = gb.ID
 					WHERE
-						gf.OrderType = '2' 
-						AND gb.GoodName NOT LIKE '7寸娃娃' 
-						AND gb.GoodName NOT LIKE '8寸娃娃' 
-						AND gb.GoodName NOT LIKE '普通娃娃' 
-						AND gb.GoodName NOT LIKE '红票' 
-						AND 	gb.GoodName NOT LIKE '实物币(实物币)' 
-						AND gf.OwnedBusiness IN ( SELECT ID FROM mall_business WHERE BusinessName = '%s' ) 
+						gf.OrderType = '2'
+						AND gb.GoodName NOT LIKE '7寸娃娃'
+						AND gb.GoodName NOT LIKE '8寸娃娃'
+						AND gb.GoodName NOT LIKE '普通娃娃'
+						AND gb.GoodName NOT LIKE '红票'
+						AND 	gb.GoodName NOT LIKE '实物币(实物币)'
+						AND gf.OwnedBusiness IN ( SELECT ID FROM mall_business WHERE BusinessName = '%s' )
 					GROUP BY
-						mp.ClassName 
-) AS GiftMachine ON Doll7Recycle.EDAY = GiftMachine.EDAY 
-				
+						mp.ClassName
+) AS GiftMachine ON Doll7Recycle.EDAY = GiftMachine.EDAY
+
 WHERE
 	Doll7Recycle.EDAY = '%s' """ % (
                 BusinessName, BusinessName, BusinessName, BusinessName, BusinessName, BusinessName, BusinessName,
@@ -202,46 +202,46 @@ WHERE
 		(
 			ROUND((((
 						CASE
-								
+
 								WHEN Doll7Prize.prize_amount IS NULL THEN
-								0 ELSE Doll7Prize.prize_amount 
-							END 
-							) - ( CASE WHEN Doll7Recycle.recycle_amount IS NULL THEN 0 ELSE Doll7Recycle.recycle_amount END ) 
+								0 ELSE Doll7Prize.prize_amount
+							END
+							) - ( CASE WHEN Doll7Recycle.recycle_amount IS NULL THEN 0 ELSE Doll7Recycle.recycle_amount END )
 							) * 2.55 +(
 						CASE
-								
+
 								WHEN Doll7Recycle.recycle_amount IS NULL THEN
-								0 ELSE Doll7Recycle.recycle_amount 
-							END 
-							) * 1.2 
+								0 ELSE Doll7Recycle.recycle_amount
+							END
+							) * 1.2
 							),
-						2 
+						2
 						) + ROUND((((
 								CASE
-										
+
 										WHEN Doll8Prize.prize_amount IS NULL THEN
-										0 ELSE Doll8Prize.prize_amount 
-									END 
-									)- ( CASE WHEN Doll8Recycle.recycle_amount IS NULL THEN 0 ELSE Doll8Recycle.recycle_amount END ) 
-									) * 5.5 + ( CASE WHEN Doll8Recycle.recycle_amount IS NULL THEN 0 ELSE Doll8Recycle.recycle_amount END ) * 2.4 
+										0 ELSE Doll8Prize.prize_amount
+									END
+									)- ( CASE WHEN Doll8Recycle.recycle_amount IS NULL THEN 0 ELSE Doll8Recycle.recycle_amount END )
+									) * 5.5 + ( CASE WHEN Doll8Recycle.recycle_amount IS NULL THEN 0 ELSE Doll8Recycle.recycle_amount END ) * 2.4
 								),
-							2 
+							2
 							) + ROUND((((
 									CASE
-											
+
 											WHEN Doll15Prize.prize_amount IS NULL THEN
-											0 ELSE Doll15Prize.prize_amount 
-										END 
-										) - ( CASE WHEN Doll15Recycle.recycle_amount IS NULL THEN 0 ELSE Doll15Recycle.recycle_amount END ) 
-										) * 20 + ( CASE WHEN Doll15Recycle.recycle_amount IS NULL THEN 0 ELSE Doll15Recycle.recycle_amount END ) * 14.4 
+											0 ELSE Doll15Prize.prize_amount
+										END
+										) - ( CASE WHEN Doll15Recycle.recycle_amount IS NULL THEN 0 ELSE Doll15Recycle.recycle_amount END )
+										) * 20 + ( CASE WHEN Doll15Recycle.recycle_amount IS NULL THEN 0 ELSE Doll15Recycle.recycle_amount END ) * 14.4
 									),
-								2 
-							) + ( CASE WHEN Lottery.TotalTicket IS NULL THEN 0 ELSE Lottery.TotalTicket END ) + ( CASE WHEN GiftMachine.total_cost IS NULL THEN 0 ELSE GiftMachine.total_cost END ) 
-						) AS total_cost 
+								2
+							) + ( CASE WHEN Lottery.TotalTicket IS NULL THEN 0 ELSE Lottery.TotalTicket END ) + ( CASE WHEN GiftMachine.total_cost IS NULL THEN 0 ELSE GiftMachine.total_cost END )
+						) AS total_cost
 FROM(
 					SELECT
 							dates.Date AS EDAY,
-							COALESCE(SUM(RecycledAmount), 0) AS recycle_amount 
+							COALESCE(SUM(RecycledAmount), 0) AS recycle_amount
 					FROM
 							(
 									SELECT DISTINCT mp.ClassName AS Date
@@ -251,8 +251,8 @@ FROM(
 							(
 									SELECT mp.ClassName, COALESCE(SUM(Amount), 0) AS RecycledAmount
 									FROM view_giftrecoverlogitem gf
-									JOIN mall_period mp ON gf.InPeriod = mp.ID 
-									WHERE (GoodName = '7寸娃娃' OR GoodName = '普通娃娃') 
+									JOIN mall_period mp ON gf.InPeriod = mp.ID
+									WHERE (GoodName = '7寸娃娃' OR GoodName = '普通娃娃')
 									AND gf.OwnedBusiness IN (SELECT ID FROM mall_business WHERE BusinessName = '%s')
 									GROUP BY mp.ClassName
 							) recycled ON dates.Date = recycled.ClassName
@@ -261,154 +261,154 @@ FROM(
 LEFT JOIN (
 					SELECT
 						Period AS EDAY,
-						COALESCE ( SUM( OutGift ), 0 ) AS prize_amount 
+						COALESCE ( SUM( OutGift ), 0 ) AS prize_amount
 					FROM
-						view_machinereturnrate 
+						view_machinereturnrate
 					WHERE
 						(TypeName = '7寸娃娃机'  OR TypeName ='单人娃娃机')
-						AND OwnedBusiness IN ( SELECT ID FROM mall_business WHERE BusinessName = '%s' ) 
+						AND OwnedBusiness IN ( SELECT ID FROM mall_business WHERE BusinessName = '%s' )
 					GROUP BY
-						Period 
-											
+						Period
+
 ) AS Doll7Prize ON Doll7Recycle.EDAY = Doll7Prize.EDAY
 LEFT JOIN (
 						SELECT
 							mp.ClassName AS EDAY,
-							COALESCE ( SUM( Amount ), 0 ) AS recycle_amount 
+							COALESCE ( SUM( Amount ), 0 ) AS recycle_amount
 						FROM
 							view_giftrecoverlogitem gf
-							JOIN mall_period mp ON gf.InPeriod = mp.ID 
+							JOIN mall_period mp ON gf.InPeriod = mp.ID
 						WHERE
-							gf.GoodName = '8寸娃娃' 
-							AND gf.OwnedBusiness IN ( SELECT ID FROM mall_business WHERE BusinessName = '%s' ) 
+							gf.GoodName = '8寸娃娃'
+							AND gf.OwnedBusiness IN ( SELECT ID FROM mall_business WHERE BusinessName = '%s' )
 						GROUP BY
-							mp.ClassName 
+							mp.ClassName
 ) AS Doll8Recycle ON Doll7Recycle.EDAY = Doll8Recycle.EDAY
 LEFT JOIN (
 						SELECT
 							vm.Period AS EDAY,
-							COALESCE ( SUM( OutGift ), 0 ) AS prize_amount 
+							COALESCE ( SUM( OutGift ), 0 ) AS prize_amount
 						FROM
-							view_machinereturnrate vm 
+							view_machinereturnrate vm
 						WHERE
-							vm.TypeName = '8寸娃娃机' 
-							AND vm.OwnedBusiness IN ( SELECT ID FROM mall_business WHERE BusinessName = '%s' ) 
+							vm.TypeName = '8寸娃娃机'
+							AND vm.OwnedBusiness IN ( SELECT ID FROM mall_business WHERE BusinessName = '%s' )
 						GROUP BY
-							vm.Period 
+							vm.Period
 ) AS Doll8Prize ON Doll7Recycle.EDAY = Doll8Prize.EDAY
 LEFT JOIN (
 						SELECT
 							mp.ClassName AS EDAY,
-							COALESCE ( SUM( Amount ), 0 ) AS recycle_amount 
+							COALESCE ( SUM( Amount ), 0 ) AS recycle_amount
 						FROM
 							view_giftrecoverlogitem gf
-							JOIN mall_period mp ON gf.InPeriod = mp.ID 
+							JOIN mall_period mp ON gf.InPeriod = mp.ID
 						WHERE
-							gf.GoodName = '15寸娃娃' 
-							AND gf.OwnedBusiness IN ( SELECT ID FROM mall_business WHERE BusinessName = '%s' ) 
+							gf.GoodName = '15寸娃娃'
+							AND gf.OwnedBusiness IN ( SELECT ID FROM mall_business WHERE BusinessName = '%s' )
 						GROUP BY
-							mp.ClassName 
+							mp.ClassName
 						) AS Doll15Recycle ON Doll7Recycle.EDAY = Doll15Recycle.EDAY
 LEFT JOIN (
 						SELECT
 							vm.Period AS EDAY,
-							COALESCE ( SUM( OutGift ), 0 ) AS prize_amount 
+							COALESCE ( SUM( OutGift ), 0 ) AS prize_amount
 						FROM
-							view_machinereturnrate vm 
+							view_machinereturnrate vm
 						WHERE
-							vm.TypeName = '15寸娃娃机' 
-							AND vm.OwnedBusiness IN ( SELECT ID FROM mall_business WHERE BusinessName = '%s' ) 
+							vm.TypeName = '15寸娃娃机'
+							AND vm.OwnedBusiness IN ( SELECT ID FROM mall_business WHERE BusinessName = '%s' )
 						GROUP BY
-							vm.Period 
+							vm.Period
 ) AS Doll15Prize ON Doll7Recycle.EDAY = Doll15Prize.EDAY
 LEFT JOIN (
 						SELECT
 							vm.Period AS EDAY,
 							(
-							SUM( OutPhTicket ) + SUM( OutTicket ) + SUM( OutPhTicket ))/ 1000 AS TotalTicket 
+							SUM( OutPhTicket ) + SUM( OutTicket ) + SUM( OutPhTicket ))/ 1000 AS TotalTicket
 						FROM
-							view_machinereturnrate vm 
+							view_machinereturnrate vm
 						WHERE
-							vm.TypeName = '彩票机' 
-							AND vm.OwnedBusiness IN ( SELECT ID FROM mall_business WHERE BusinessName = '%s' ) 
+							vm.TypeName = '彩票机'
+							AND vm.OwnedBusiness IN ( SELECT ID FROM mall_business WHERE BusinessName = '%s' )
 						GROUP BY
-							vm.Period 
+							vm.Period
 ) AS Lottery ON Doll7Recycle.EDAY = Lottery.EDAY
 LEFT JOIN (
 						SELECT
 							mp.ClassName AS EDAY,
 							SUM(
-							ABS( gf.TotleMoney )) AS total_cost 
+							ABS( gf.TotleMoney )) AS total_cost
 						FROM
 							mall_stockchangelog gf
 							JOIN mall_period mp ON gf.InPeriod = mp.ID
-							JOIN mall_goodbase gb ON gf.Goods = gb.ID 
+							JOIN mall_goodbase gb ON gf.Goods = gb.ID
 						WHERE
-							gf.OrderType = '2' 
-							AND gb.GoodName NOT LIKE '7寸娃娃' 
-							AND gb.GoodName NOT LIKE '8寸娃娃' 
-							AND gb.GoodName NOT LIKE '普通娃娃' 
-							AND gb.GoodName NOT LIKE '红票' 
-							AND gb.GoodName NOT LIKE '实物币(实物币)'  
-							AND gf.OwnedBusiness IN ( SELECT ID FROM mall_business WHERE BusinessName = '%s' ) 
+							gf.OrderType = '2'
+							AND gb.GoodName NOT LIKE '7寸娃娃'
+							AND gb.GoodName NOT LIKE '8寸娃娃'
+							AND gb.GoodName NOT LIKE '普通娃娃'
+							AND gb.GoodName NOT LIKE '红票'
+							AND gb.GoodName NOT LIKE '实物币(实物币)'
+							AND gf.OwnedBusiness IN ( SELECT ID FROM mall_business WHERE BusinessName = '%s' )
 						GROUP BY
-							mp.ClassName 
-) AS GiftMachine ON Doll7Recycle.EDAY = GiftMachine.EDAY 
+							mp.ClassName
+) AS GiftMachine ON Doll7Recycle.EDAY = GiftMachine.EDAY
 GROUP BY
-						Doll7Recycle.EDAY 
+						Doll7Recycle.EDAY
 ORDER BY
-						Doll7Recycle.EDAY 
+						Doll7Recycle.EDAY
 ),
-						
+
 DailyCoinPrice AS (
 		WITH temp AS (
 						SELECT
 							Period AS EDAY,
 							'total_revenue' AS rname,
-							SUM( SellMoney ) AS count 
+							SUM( SellMoney ) AS count
 						FROM
-							view_cmsalelogdetail 
+							view_cmsalelogdetail
 						WHERE
-							OwnedBusiness IN ( SELECT ID FROM mall_business WHERE BusinessName = '%s' ) 
+							OwnedBusiness IN ( SELECT ID FROM mall_business WHERE BusinessName = '%s' )
 							AND ChannelName NOT LIKE '本店'
 						GROUP BY
-							Period 
+							Period
 			UNION
 						SELECT
 							Period AS EDAY,
 							'TotalCoin' AS rname,
-							SUM( sale.ECoinAmount + sale.PCoinAmount + sale.GoldCoinAmount ) AS count 
+							SUM( sale.ECoinAmount + sale.PCoinAmount + sale.GoldCoinAmount ) AS count
 						FROM
-							view_cmsalelogdetail AS sale 
+							view_cmsalelogdetail AS sale
 						WHERE
-							sale.OwnedBusiness IN ( SELECT ID FROM mall_business WHERE BusinessName = '%s' ) 
+							sale.OwnedBusiness IN ( SELECT ID FROM mall_business WHERE BusinessName = '%s' )
 							AND sale.ChannelName NOT LIKE '本店'
 						GROUP BY
 							Period UNION
 						SELECT
 							giving.ClassName AS EDAY,
 							'givingcoin' AS rname,
-							SUM( giving.CoinNumber + giving.GoldCoinNumber + giving.PhysicalCoinNumber ) AS count 
+							SUM( giving.CoinNumber + giving.GoldCoinNumber + giving.PhysicalCoinNumber ) AS count
 						FROM
-							view_givingcoinlogquery AS giving 
+							view_givingcoinlogquery AS giving
 						WHERE
-							giving.OwnedBusiness IN ( SELECT ID FROM mall_business WHERE BusinessName = '%s' ) 
+							giving.OwnedBusiness IN ( SELECT ID FROM mall_business WHERE BusinessName = '%s' )
 						GROUP BY
-							giving.ClassName 
+							giving.ClassName
 						) SELECT
 						t0.EDAY,((
 							SELECT
-								count 
+								count
 							FROM
-								temp t1 
+								temp t1
 							WHERE
-								rname = 'total_revenue' 
-								AND t1.EDAY = t0.EDAY 
-							) / ( SELECT SUM( count ) FROM temp t2 WHERE rname IN ( 'TotalCoin', 'givingcoin' ) AND t2.EDAY = t0.EDAY )) AS coin_price 
+								rname = 'total_revenue'
+								AND t1.EDAY = t0.EDAY
+							) / ( SELECT SUM( count ) FROM temp t2 WHERE rname IN ( 'TotalCoin', 'givingcoin' ) AND t2.EDAY = t0.EDAY )) AS coin_price
 					FROM
-						temp t0 
+						temp t0
 					GROUP BY
-						t0.EDAY 
+						t0.EDAY
 					),
 DailyCoinTotal AS (
 					SELECT
@@ -416,14 +416,14 @@ DailyCoinTotal AS (
 							SUM( InTotalCoin ) AS InC,
 							SUM( OutPhCoin + OutCoin ) AS OutC,
 							(
-							SUM( InTotalCoin ) - SUM( OutPhCoin + OutCoin )) AS InTotal 
+							SUM( InTotalCoin ) - SUM( OutPhCoin + OutCoin )) AS InTotal
 						FROM
-							view_machinereturnrate 
+							view_machinereturnrate
 						WHERE
-							OwnedBusiness IN ( SELECT ID FROM mall_business WHERE BusinessName = '%s' ) 
+							OwnedBusiness IN ( SELECT ID FROM mall_business WHERE BusinessName = '%s' )
 						GROUP BY
 							DATE( Period )
-) 
+)
 SELECT
 					DailyCost.EDAY,
 					COALESCE (
@@ -431,7 +431,7 @@ SELECT
 				FROM
 					DailyCost
 					JOIN DailyCoinTotal ON DailyCost.EDAY = DailyCoinTotal.EDAY
-					JOIN DailyCoinPrice ON DailyCost.EDAY = DailyCoinPrice.EDAY 
+					JOIN DailyCoinPrice ON DailyCost.EDAY = DailyCoinPrice.EDAY
 			WHERE
 	DailyCost.EDAY = '%s' """ % (
                 BusinessName, BusinessName, BusinessName, BusinessName, BusinessName, BusinessName, BusinessName,
@@ -458,46 +458,46 @@ SELECT
 		(
 			ROUND((((
 						CASE
-								
+
 								WHEN Doll7Prize.prize_amount IS NULL THEN
-								0 ELSE Doll7Prize.prize_amount 
-							END 
-							) - ( CASE WHEN Doll7Recycle.recycle_amount IS NULL THEN 0 ELSE Doll7Recycle.recycle_amount END ) 
+								0 ELSE Doll7Prize.prize_amount
+							END
+							) - ( CASE WHEN Doll7Recycle.recycle_amount IS NULL THEN 0 ELSE Doll7Recycle.recycle_amount END )
 							) * 2.55 +(
 						CASE
-								
+
 								WHEN Doll7Recycle.recycle_amount IS NULL THEN
-								0 ELSE Doll7Recycle.recycle_amount 
-							END 
-							) * 1.2 
+								0 ELSE Doll7Recycle.recycle_amount
+							END
+							) * 1.2
 							),
-						2 
+						2
 						) + ROUND((((
 								CASE
-										
+
 										WHEN Doll8Prize.prize_amount IS NULL THEN
-										0 ELSE Doll8Prize.prize_amount 
-									END 
-									)- ( CASE WHEN Doll8Recycle.recycle_amount IS NULL THEN 0 ELSE Doll8Recycle.recycle_amount END ) 
-									) * 5.5 + ( CASE WHEN Doll8Recycle.recycle_amount IS NULL THEN 0 ELSE Doll8Recycle.recycle_amount END ) * 2.4 
+										0 ELSE Doll8Prize.prize_amount
+									END
+									)- ( CASE WHEN Doll8Recycle.recycle_amount IS NULL THEN 0 ELSE Doll8Recycle.recycle_amount END )
+									) * 5.5 + ( CASE WHEN Doll8Recycle.recycle_amount IS NULL THEN 0 ELSE Doll8Recycle.recycle_amount END ) * 2.4
 								),
-							2 
+							2
 							) + ROUND((((
 									CASE
-											
+
 											WHEN Doll15Prize.prize_amount IS NULL THEN
-											0 ELSE Doll15Prize.prize_amount 
-										END 
-										) - ( CASE WHEN Doll15Recycle.recycle_amount IS NULL THEN 0 ELSE Doll15Recycle.recycle_amount END ) 
-										) * 20 + ( CASE WHEN Doll15Recycle.recycle_amount IS NULL THEN 0 ELSE Doll15Recycle.recycle_amount END ) * 14.4 
+											0 ELSE Doll15Prize.prize_amount
+										END
+										) - ( CASE WHEN Doll15Recycle.recycle_amount IS NULL THEN 0 ELSE Doll15Recycle.recycle_amount END )
+										) * 20 + ( CASE WHEN Doll15Recycle.recycle_amount IS NULL THEN 0 ELSE Doll15Recycle.recycle_amount END ) * 14.4
 									),
-								2 
-							) + ( CASE WHEN Lottery.TotalTicket IS NULL THEN 0 ELSE Lottery.TotalTicket END ) + ( CASE WHEN GiftMachine.total_cost IS NULL THEN 0 ELSE GiftMachine.total_cost END ) 
-						) AS total_cost 
+								2
+							) + ( CASE WHEN Lottery.TotalTicket IS NULL THEN 0 ELSE Lottery.TotalTicket END ) + ( CASE WHEN GiftMachine.total_cost IS NULL THEN 0 ELSE GiftMachine.total_cost END )
+						) AS total_cost
 FROM(
 					SELECT
 							dates.Date AS EDAY,
-							COALESCE(SUM(RecycledAmount), 0) AS recycle_amount 
+							COALESCE(SUM(RecycledAmount), 0) AS recycle_amount
 					FROM
 							(
 									SELECT DISTINCT mp.ClassName AS Date
@@ -507,8 +507,8 @@ FROM(
 							(
 									SELECT mp.ClassName, COALESCE(SUM(Amount), 0) AS RecycledAmount
 									FROM view_giftrecoverlogitem gf
-									JOIN mall_period mp ON gf.InPeriod = mp.ID 
-									WHERE (GoodName = '7寸娃娃' OR GoodName = '普通娃娃') 
+									JOIN mall_period mp ON gf.InPeriod = mp.ID
+									WHERE (GoodName = '7寸娃娃' OR GoodName = '普通娃娃')
 									AND gf.OwnedBusiness IN (SELECT ID FROM mall_business WHERE BusinessName = '%s')
 									GROUP BY mp.ClassName
 							) recycled ON dates.Date = recycled.ClassName
@@ -517,154 +517,154 @@ FROM(
 LEFT JOIN (
 					SELECT
 						Period AS EDAY,
-						COALESCE ( SUM( OutGift ), 0 ) AS prize_amount 
+						COALESCE ( SUM( OutGift ), 0 ) AS prize_amount
 					FROM
-						view_machinereturnrate 
+						view_machinereturnrate
 					WHERE
 						(TypeName = '7寸娃娃机'  OR TypeName ='单人娃娃机')
-						AND OwnedBusiness IN ( SELECT ID FROM mall_business WHERE BusinessName = '%s' ) 
+						AND OwnedBusiness IN ( SELECT ID FROM mall_business WHERE BusinessName = '%s' )
 					GROUP BY
-						Period 
-											
+						Period
+
 ) AS Doll7Prize ON Doll7Recycle.EDAY = Doll7Prize.EDAY
 LEFT JOIN (
 						SELECT
 							mp.ClassName AS EDAY,
-							COALESCE ( SUM( Amount ), 0 ) AS recycle_amount 
+							COALESCE ( SUM( Amount ), 0 ) AS recycle_amount
 						FROM
 							view_giftrecoverlogitem gf
-							JOIN mall_period mp ON gf.InPeriod = mp.ID 
+							JOIN mall_period mp ON gf.InPeriod = mp.ID
 						WHERE
-							gf.GoodName = '8寸娃娃' 
-							AND gf.OwnedBusiness IN ( SELECT ID FROM mall_business WHERE BusinessName = '%s' ) 
+							gf.GoodName = '8寸娃娃'
+							AND gf.OwnedBusiness IN ( SELECT ID FROM mall_business WHERE BusinessName = '%s' )
 						GROUP BY
-							mp.ClassName 
+							mp.ClassName
 ) AS Doll8Recycle ON Doll7Recycle.EDAY = Doll8Recycle.EDAY
 LEFT JOIN (
 						SELECT
 							vm.Period AS EDAY,
-							COALESCE ( SUM( OutGift ), 0 ) AS prize_amount 
+							COALESCE ( SUM( OutGift ), 0 ) AS prize_amount
 						FROM
-							view_machinereturnrate vm 
+							view_machinereturnrate vm
 						WHERE
-							vm.TypeName = '8寸娃娃机' 
-							AND vm.OwnedBusiness IN ( SELECT ID FROM mall_business WHERE BusinessName = '%s' ) 
+							vm.TypeName = '8寸娃娃机'
+							AND vm.OwnedBusiness IN ( SELECT ID FROM mall_business WHERE BusinessName = '%s' )
 						GROUP BY
-							vm.Period 
+							vm.Period
 ) AS Doll8Prize ON Doll7Recycle.EDAY = Doll8Prize.EDAY
 LEFT JOIN (
 						SELECT
 							mp.ClassName AS EDAY,
-							COALESCE ( SUM( Amount ), 0 ) AS recycle_amount 
+							COALESCE ( SUM( Amount ), 0 ) AS recycle_amount
 						FROM
 							view_giftrecoverlogitem gf
-							JOIN mall_period mp ON gf.InPeriod = mp.ID 
+							JOIN mall_period mp ON gf.InPeriod = mp.ID
 						WHERE
-							gf.GoodName = '15寸娃娃' 
-							AND gf.OwnedBusiness IN ( SELECT ID FROM mall_business WHERE BusinessName = '%s' ) 
+							gf.GoodName = '15寸娃娃'
+							AND gf.OwnedBusiness IN ( SELECT ID FROM mall_business WHERE BusinessName = '%s' )
 						GROUP BY
-							mp.ClassName 
+							mp.ClassName
 						) AS Doll15Recycle ON Doll7Recycle.EDAY = Doll15Recycle.EDAY
 LEFT JOIN (
 						SELECT
 							vm.Period AS EDAY,
-							COALESCE ( SUM( OutGift ), 0 ) AS prize_amount 
+							COALESCE ( SUM( OutGift ), 0 ) AS prize_amount
 						FROM
-							view_machinereturnrate vm 
+							view_machinereturnrate vm
 						WHERE
-							vm.TypeName = '15寸娃娃机' 
-							AND vm.OwnedBusiness IN ( SELECT ID FROM mall_business WHERE BusinessName = '%s' ) 
+							vm.TypeName = '15寸娃娃机'
+							AND vm.OwnedBusiness IN ( SELECT ID FROM mall_business WHERE BusinessName = '%s' )
 						GROUP BY
-							vm.Period 
+							vm.Period
 ) AS Doll15Prize ON Doll7Recycle.EDAY = Doll15Prize.EDAY
 LEFT JOIN (
 						SELECT
 							vm.Period AS EDAY,
 							(
-							SUM( OutPhTicket ) + SUM( OutTicket ) + SUM( OutPhTicket ))/ 1000 AS TotalTicket 
+							SUM( OutPhTicket ) + SUM( OutTicket ) + SUM( OutPhTicket ))/ 1000 AS TotalTicket
 						FROM
-							view_machinereturnrate vm 
+							view_machinereturnrate vm
 						WHERE
-							vm.TypeName = '彩票机' 
-							AND vm.OwnedBusiness IN ( SELECT ID FROM mall_business WHERE BusinessName = '%s' ) 
+							vm.TypeName = '彩票机'
+							AND vm.OwnedBusiness IN ( SELECT ID FROM mall_business WHERE BusinessName = '%s' )
 						GROUP BY
-							vm.Period 
+							vm.Period
 ) AS Lottery ON Doll7Recycle.EDAY = Lottery.EDAY
 LEFT JOIN (
 						SELECT
 							mp.ClassName AS EDAY,
 							SUM(
-							ABS( gf.TotleMoney )) AS total_cost 
+							ABS( gf.TotleMoney )) AS total_cost
 						FROM
 							mall_stockchangelog gf
 							JOIN mall_period mp ON gf.InPeriod = mp.ID
-							JOIN mall_goodbase gb ON gf.Goods = gb.ID 
+							JOIN mall_goodbase gb ON gf.Goods = gb.ID
 						WHERE
-							gf.OrderType = '2' 
-							AND gb.GoodName NOT LIKE '7寸娃娃' 
-							AND gb.GoodName NOT LIKE '8寸娃娃' 
-							AND gb.GoodName NOT LIKE '普通娃娃' 
-							AND gb.GoodName NOT LIKE '红票' 
-							AND gb.GoodName NOT LIKE '实物币(实物币)'  
-							AND gf.OwnedBusiness IN ( SELECT ID FROM mall_business WHERE BusinessName = '%s' ) 
+							gf.OrderType = '2'
+							AND gb.GoodName NOT LIKE '7寸娃娃'
+							AND gb.GoodName NOT LIKE '8寸娃娃'
+							AND gb.GoodName NOT LIKE '普通娃娃'
+							AND gb.GoodName NOT LIKE '红票'
+							AND gb.GoodName NOT LIKE '实物币(实物币)'
+							AND gf.OwnedBusiness IN ( SELECT ID FROM mall_business WHERE BusinessName = '%s' )
 						GROUP BY
-							mp.ClassName 
-) AS GiftMachine ON Doll7Recycle.EDAY = GiftMachine.EDAY 
+							mp.ClassName
+) AS GiftMachine ON Doll7Recycle.EDAY = GiftMachine.EDAY
 GROUP BY
-						Doll7Recycle.EDAY 
+						Doll7Recycle.EDAY
 ORDER BY
-						Doll7Recycle.EDAY 
+						Doll7Recycle.EDAY
 ),
-						
+
 DailyCoinPrice AS (
 		WITH temp AS (
 						SELECT
 							Period AS EDAY,
 							'total_revenue' AS rname,
-							SUM( SellMoney ) AS count 
+							SUM( SellMoney ) AS count
 						FROM
-							view_cmsalelogdetail 
+							view_cmsalelogdetail
 						WHERE
-							OwnedBusiness IN ( SELECT ID FROM mall_business WHERE BusinessName = '%s' ) 
+							OwnedBusiness IN ( SELECT ID FROM mall_business WHERE BusinessName = '%s' )
 							AND ChannelName NOT LIKE '本店'
 						GROUP BY
-							Period 
+							Period
 			UNION
 						SELECT
 							Period AS EDAY,
 							'TotalCoin' AS rname,
-							SUM( sale.ECoinAmount + sale.PCoinAmount + sale.GoldCoinAmount ) AS count 
+							SUM( sale.ECoinAmount + sale.PCoinAmount + sale.GoldCoinAmount ) AS count
 						FROM
-							view_cmsalelogdetail AS sale 
+							view_cmsalelogdetail AS sale
 						WHERE
-							sale.OwnedBusiness IN ( SELECT ID FROM mall_business WHERE BusinessName = '%s' ) 
+							sale.OwnedBusiness IN ( SELECT ID FROM mall_business WHERE BusinessName = '%s' )
 							AND sale.ChannelName NOT LIKE '本店'
 						GROUP BY
 							Period UNION
 						SELECT
 							giving.ClassName AS EDAY,
 							'givingcoin' AS rname,
-							SUM( giving.CoinNumber + giving.GoldCoinNumber + giving.PhysicalCoinNumber ) AS count 
+							SUM( giving.CoinNumber + giving.GoldCoinNumber + giving.PhysicalCoinNumber ) AS count
 						FROM
-							view_givingcoinlogquery AS giving 
+							view_givingcoinlogquery AS giving
 						WHERE
-							giving.OwnedBusiness IN ( SELECT ID FROM mall_business WHERE BusinessName = '%s' ) 
+							giving.OwnedBusiness IN ( SELECT ID FROM mall_business WHERE BusinessName = '%s' )
 						GROUP BY
-							giving.ClassName 
+							giving.ClassName
 						) SELECT
 						t0.EDAY,((
 							SELECT
-								count 
+								count
 							FROM
-								temp t1 
+								temp t1
 							WHERE
-								rname = 'total_revenue' 
-								AND t1.EDAY = t0.EDAY 
-							) / ( SELECT SUM( count ) FROM temp t2 WHERE rname IN ( 'TotalCoin', 'givingcoin' ) AND t2.EDAY = t0.EDAY )) AS coin_price 
+								rname = 'total_revenue'
+								AND t1.EDAY = t0.EDAY
+							) / ( SELECT SUM( count ) FROM temp t2 WHERE rname IN ( 'TotalCoin', 'givingcoin' ) AND t2.EDAY = t0.EDAY )) AS coin_price
 					FROM
-						temp t0 
+						temp t0
 					GROUP BY
-						t0.EDAY 
+						t0.EDAY
 					),
 DailyCoinTotal AS (
 					SELECT
@@ -672,23 +672,23 @@ DailyCoinTotal AS (
 							SUM( InTotalCoin ) AS InC,
 							SUM( OutPhCoin + OutCoin ) AS OutC,
 							(
-							SUM( InTotalCoin ) - SUM( OutPhCoin + OutCoin )) AS InTotal 
+							SUM( InTotalCoin ) - SUM( OutPhCoin + OutCoin )) AS InTotal
 						FROM
-							view_machinereturnrate 
+							view_machinereturnrate
 						WHERE
-							OwnedBusiness IN ( SELECT ID FROM mall_business WHERE BusinessName = '%s' ) 
+							OwnedBusiness IN ( SELECT ID FROM mall_business WHERE BusinessName = '%s' )
 						GROUP BY
 							DATE( Period )
-) 
-					
+)
+
 	SELECT
 					DailyCost.EDAY,
 					COALESCE (
-					1 - ( DailyCost.total_cost ) / ( DailyCoinTotal.InTotal * DailyCoinPrice.coin_price )) AS daily_profit_rate 
+					1 - ( DailyCost.total_cost ) / ( DailyCoinTotal.InTotal * DailyCoinPrice.coin_price )) AS daily_profit_rate
 				FROM
 					DailyCost
 					JOIN DailyCoinTotal ON DailyCost.EDAY = DailyCoinTotal.EDAY
-					JOIN DailyCoinPrice ON DailyCost.EDAY = DailyCoinPrice.EDAY 
+					JOIN DailyCoinPrice ON DailyCost.EDAY = DailyCoinPrice.EDAY
 			WHERE
 	DailyCost.EDAY = '%s' """ % (
                 BusinessName, BusinessName, BusinessName, BusinessName, BusinessName, BusinessName, BusinessName,
@@ -715,82 +715,82 @@ DailyCoinTotal AS (
 		SELECT
 			Period AS EDAY,
 			'total_revenue' AS rname,
-			SUM( SellMoney ) AS count 
+			SUM( SellMoney ) AS count
 		FROM
-			view_cmsalelogdetail 
+			view_cmsalelogdetail
 		WHERE
-			OwnedBusiness IN ( SELECT ID FROM mall_business WHERE BusinessName = '%s' ) 
+			OwnedBusiness IN ( SELECT ID FROM mall_business WHERE BusinessName = '%s' )
 			AND ChannelName NOT LIKE '本店'
 		GROUP BY
 			Period
-			
+
 			UNION
-			
+
 		SELECT
 			Period AS EDAY,
 			'TotalCoin' AS rname,
-			SUM( sale.ECoinAmount + sale.PCoinAmount + sale.GoldCoinAmount ) AS count 
+			SUM( sale.ECoinAmount + sale.PCoinAmount + sale.GoldCoinAmount ) AS count
 		FROM
-			view_cmsalelogdetail AS sale 
+			view_cmsalelogdetail AS sale
 		WHERE
-			sale.OwnedBusiness IN ( SELECT ID FROM mall_business WHERE BusinessName = '%s' ) 
+			sale.OwnedBusiness IN ( SELECT ID FROM mall_business WHERE BusinessName = '%s' )
 			AND sale.ChannelName NOT LIKE '本店'
 		GROUP BY
-			Period 
-			
+			Period
+
 			UNION
-			
+
 		SELECT
 			giving.ClassName AS EDAY,
 			'givingcoin' AS rname,
-			SUM( giving.CoinNumber + giving.GoldCoinNumber + giving.PhysicalCoinNumber ) AS count 
+			SUM( giving.CoinNumber + giving.GoldCoinNumber + giving.PhysicalCoinNumber ) AS count
 		FROM
-			view_givingcoinlogquery AS giving 
+			view_givingcoinlogquery AS giving
 		WHERE
-			giving.OwnedBusiness IN ( SELECT ID FROM mall_business WHERE BusinessName = '%s' ) 
+			giving.OwnedBusiness IN ( SELECT ID FROM mall_business WHERE BusinessName = '%s' )
 		GROUP BY
-			giving.ClassName 
-		) 
-		
+			giving.ClassName
+		)
+
 		SELECT
 		t0.EDAY,((
 			SELECT
-				count 
+				count
 			FROM
-				temp t1 
+				temp t1
 			WHERE
-				rname = 'total_revenue' 
-				AND t1.EDAY = t0.EDAY 
-			) / ( SELECT SUM( count ) FROM temp t2 WHERE rname IN ( 'TotalCoin', 'givingcoin' ) AND t2.EDAY = t0.EDAY )) AS coin_price 
+				rname = 'total_revenue'
+				AND t1.EDAY = t0.EDAY
+			) / ( SELECT SUM( count ) FROM temp t2 WHERE rname IN ( 'TotalCoin', 'givingcoin' ) AND t2.EDAY = t0.EDAY )) AS coin_price
 	FROM
-		temp t0 
+		temp t0
 	GROUP BY
-		t0.EDAY 
+		t0.EDAY
 	),
-	
+
 DailyCoinTotal AS (
 /*日投币量*/
 	SELECT
 		DATE( Period ) AS EDAY,
 		SUM( InTotalCoin ) AS InC,
 		SUM( OutPhCoin + OutCoin ) AS OutC,
-		(	SUM( InTotalCoin ) - SUM( OutPhCoin + OutCoin )) AS InTotal 
+		(	SUM( InTotalCoin ) - SUM( OutPhCoin + OutCoin )) AS InTotal
 	FROM
-		view_machinereturnrate 
+		view_machinereturnrate
 	WHERE
-		OwnedBusiness IN ( SELECT ID FROM mall_business WHERE BusinessName = '%s' ) 
+		OwnedBusiness IN ( SELECT ID FROM mall_business WHERE BusinessName = '%s' )
 	GROUP BY
 		DATE( Period )
 	) /*计算日收入*/
-	
+
 SELECT
 	DailyCoinTotal.EDAY,
-	COALESCE ( ( DailyCoinTotal.InTotal * DailyCoinPrice.coin_price ), 0 ) AS daily_cost 
+	COALESCE ( ( DailyCoinTotal.InTotal * DailyCoinPrice.coin_price ), 0 ) AS daily_cost
 FROM
 	DailyCoinPrice
-	JOIN DailyCoinTotal ON DailyCoinPrice.EDAY = DailyCoinTotal.EDAY 
+	JOIN DailyCoinTotal ON DailyCoinPrice.EDAY = DailyCoinTotal.EDAY
 WHERE
-	DailyCoinTotal.EDAY = '%s' 
+	DailyCoinTotal.EDAY = '%s'
 	""" % (BusinessName, BusinessName, BusinessName, BusinessName, date)
             df = pd.read_sql(query, con=conn)
             return df

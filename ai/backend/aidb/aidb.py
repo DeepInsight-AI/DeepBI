@@ -15,6 +15,7 @@ from ai.backend.language_info import LanguageInfo
 from ai.backend.util import database_util
 from ai.agents.agentchat import TableSelectorAgent
 import difflib
+
 max_retry_times = CONFIG.max_retry_times
 
 
@@ -584,7 +585,7 @@ class AIDB:
             return []
         print("select_table_list : ", select_table_list)
         all_table_names = [table['table_name'] for table in self.db_info_json['table_desc']]
-        selece_table_names =set()
+        selece_table_names = set()
         # for table_str in select_table_list:
         #     table_name = table_str.get("table_name")
         #     delete_table_names.append(table_name)
@@ -598,7 +599,7 @@ class AIDB:
                 selece_table_names.update(close_matches)
             else:
                 selece_table_names.add(selected_name)
-        selece_table_names=list(selece_table_names)
+        selece_table_names = list(selece_table_names)
         print("selece_table_names : ", selece_table_names)
 
         table_comment = {'table_desc': [], 'databases_desc': ''}
@@ -696,10 +697,11 @@ class AIDB:
             user_name=self.user_name,
             websocket=self.websocket,
             llm_config={
-                "config_list": self.agent_instance_util.config_list_gpt35_turbo,
+                # "config_list": self.agent_instance_util.config_list_gpt35_turbo,
+                "config_list": self.agent_instance_util.config_list_gpt4_turbo,
                 "request_timeout": CONFIG.request_timeout,
             },
             openai_proxy=self.agent_instance_util.openai_proxy,
+            use_cache=False,
         )
         return select_analysis_assistant
-

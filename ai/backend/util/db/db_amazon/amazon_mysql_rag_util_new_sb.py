@@ -2,6 +2,8 @@ import pymysql
 import pandas as pd
 from datetime import datetime
 import warnings
+from generate_tools import ask_question,ask_question1
+import asyncio
 
 # 忽略特定类型的警告
 warnings.filterwarnings("ignore", category=UserWarning)
@@ -70,7 +72,7 @@ class AmazonMysqlNewSBRagUitl:
             print("1.1.1 Error while inserting data:", error)
 
     #  SB
-    def get_sb_keyword_111(self, startdate , enddate):
+    def get_sb_keyword_111(self, market,startdate , enddate):
         """关键词优化分析：-1-1.1  1.找出西班牙的SB广告的优质关键词"""
         try:
             conn = self.conn
@@ -103,6 +105,24 @@ HAVING
         ( SUM( cost ) / SUM( sales ) ) < 0.2
             """.format(startdate, enddate)
             df = pd.read_sql(query, con=conn)
+
+            try:
+                # 翻译测试
+                nation = {"US": "English", "UK": "English", "FR": "French", "DE": "German", "IT": "Italian",
+                          "ES": "Spanish"}
+                res = asyncio.get_event_loop().run_until_complete(ask_question(df["keywordText"], nation[market]))
+                # res = ask_question(df["keywordText"],"Chinese")
+                print(">>>>>>>>>>>>>>>>>>>")
+                print("原格式为：", type(df["keywordText"]))
+                print(df["keywordText"])
+                print("新格式：", type(res))
+                print("res is :", res)
+                print(">>>>>>>>>>>>>>>>>>>")
+                inres = eval(res)
+                df["keywordText_"+str(nation[market])]=inres
+            except Exception as e:
+                print("翻译出错，报错如下：",e)
+
             # return df
             output_filename = get_timestamp() + '_new_SB_keyword_1_1.csv'
             df.to_csv(output_filename, index=False, encoding='utf-8-sig')
@@ -113,7 +133,7 @@ HAVING
         except Exception as error:
             print("1.1.1 Error while inserting data:", error)
 
-    def get_sb_keyword_121(self, startdate, enddate):
+    def get_sb_keyword_121(self, market,startdate, enddate):
         """关键词优化分析：-1-2.1  1.找出法国的SB广告的优质关键词"""
         try:
             conn = self.conn
@@ -146,6 +166,17 @@ HAVING
         ( SUM( cost ) / SUM( sales ) ) < 0.2
             """.format(startdate, enddate)
             df = pd.read_sql(query, con=conn)
+
+            # 新增翻译列
+            try:
+                # 翻译测试
+                nation = {"US":"English","UK":"English","FR":"French","DE":"German","IT":"Italian","ES":"Spanish"}
+                res = asyncio.get_event_loop().run_until_complete(ask_question(df["keywordText"], nation[market]))
+                # res = ask_question(df["keywordText"],"Chinese")
+                inres = eval(str(res))
+                df["keywordText_"+str(nation[market])]=inres
+            except Exception as e:
+                print("翻译出错，报错如下：",e)
             # return df
             output_filename = get_timestamp() + '_new_SB_keyword_2_1.csv'
             df.to_csv(output_filename, index=False, encoding='utf-8-sig')
@@ -247,7 +278,7 @@ HAVING
             print("1.2.3 Error while inserting data:", error)
 
 
-    def get_sb_keyword_131(self, startdate, enddate):
+    def get_sb_keyword_131(self, market,startdate, enddate):
         """关键词优化分析：-1-3.1  1.找出美国的SB广告的优质关键词"""
         try:
             conn = self.conn
@@ -288,6 +319,18 @@ HAVING
 				)
             """.format(startdate, enddate,startdate, enddate)
             df = pd.read_sql(query, con=conn)
+
+            # 新增翻译列
+            try:
+                # 翻译测试
+                nation = {"US": "English", "UK": "English", "FR": "French", "DE": "German", "IT": "Italian",
+                          "ES": "Spanish"}
+                res = asyncio.get_event_loop().run_until_complete(ask_question(df["keywordText"], nation[market]))
+                # res = ask_question(df["keywordText"],"Chinese")
+                inres = eval(res)
+                df["keywordText_" + str(nation[market])] = inres
+            except Exception as e:
+                print("翻译出错，报错如下：", e)
             # return df
             output_filename = get_timestamp() + '_new_SB_keyword_3_1.csv'
             df.to_csv(output_filename, index=False, encoding='utf-8-sig')
@@ -390,7 +433,7 @@ HAVING
             print("1.3.3 Error while inserting data:", error)
 
 
-    def get_sb_advertise_311(self, startdate, enddate):
+    def get_sb_advertise_311(self, market,startdate, enddate):
         """广告优化分析：-3-1.1  找出意大利SP广告的优质关键词"""
         try:
             conn = self.conn
@@ -411,7 +454,7 @@ SELECT
 FROM
         amazon_targeting_reports_sp
 WHERE
-        market = 'It'
+        market = 'IT'
         AND date BETWEEN '{}'
         AND '{}'
 GROUP BY
@@ -426,6 +469,23 @@ HAVING
             """.format(startdate, enddate)
             df = pd.read_sql(query, con=conn)
             # return df
+            try:
+                # 翻译测试
+                # 避免行数过多时省略问题
+                pd.set_option('display.max_rows', None)
+
+                nation = {"US": "English", "UK": "English", "FR": "French", "DE": "German", "IT": "Italian",
+                          "ES": "Spanish"}
+                print("[[[[[[[[[[[[")
+                print("df_keyword is:",df["keyword"])
+                print("[[[[[[[[[[[[")
+                res = asyncio.get_event_loop().run_until_complete(ask_question1(df["keyword"], nation[market]))
+                # res = ask_question(df["keywordText"],"Chinese")
+                inres = eval(str(res))
+                df["keyword_" + str(nation[market])] = inres
+            except Exception as e:
+                print("翻译出错，报错如下：", e)
+
             output_filename = get_timestamp() + '_SB_advertise_1_1.csv'
             # df.to_csv("http://192.168.5.191:5173/src/assets/csv/"+output_filename, index=False, encoding='utf-8-sig')
             df.to_csv(output_filename, index=False, encoding='utf-8-sig')

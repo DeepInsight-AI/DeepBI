@@ -18,6 +18,7 @@ def auto_generepot(market,startdate,endate):
     db_info = {'host': '****', 'user': '****', 'passwd': '****', 'port': 3308,
                'db': '****',
                'charset': 'utf8mb4', 'use_unicode': True, }
+
     dwx = AmazonMysqlNewSBRagUitl(db_info)
 
     last_answer = {}
@@ -34,7 +35,7 @@ def auto_generepot(market,startdate,endate):
     # 1.找出西班牙的SB广告的优质关键词
     keyword_analysis_process_1 = []
     keyword_1_q1="1.1 在 {} 至 {} 这段时间内，找出西班牙的SB广告的优质关键词".format(startdate,endate)
-    keyword_1_a1=dwx.get_sb_keyword_111(startdate,endate)
+    keyword_1_a1=dwx.get_sb_keyword_111(market,startdate,endate)
     keyword_analysis_process_1.append({"question":keyword_1_q1,"answer":keyword_1_a1})
     # keyword_1_q2 = "1.2 在 {} 至 {} 这段时间内，{}_SP广告中 低于 平均ACOS值（替换为第一问结论） 10% 的 去重后用户搜索关键词 数量 和 总点击量 是多少".format(startdate,endate,market)
     # keyword_1_a2 = dwx.get_sp_searchterm_keyword_info_belowavg10per(market,startdate,endate)
@@ -57,7 +58,7 @@ def auto_generepot(market,startdate,endate):
     # 2.找出法国的SB广告的优质关键词
     keyword_analysis_process_2 = []
     keyword_2_q1 = "2.1，在 {} 至 {} 这段时间内，找出法国的SB广告的优质关键词".format(startdate,endate)
-    keyword_2_a1 = dwx.get_sb_keyword_121(startdate,endate)
+    keyword_2_a1 = dwx.get_sb_keyword_121(market,startdate,endate)
     keyword_analysis_process_2.append({"question": keyword_2_q1, "answer": keyword_2_a1})
     # keyword_2_q2 = "2.2，在 {} 至 {} 这段时间内，  {}_SB广告中ACOS值在14%到16% 的 定向投放关键词，将这些关键词信息生成csv文件，里面记录这些关键词的以下信息，CPC，SKU/ASIN， ACOS, Clicks，adgroupid.(ACOS20%的-20%-30%)".format(startdate,endate,market)
     # keyword_2_a2 = dwx.get_sb_keyword_122(market,startdate,endate)
@@ -80,7 +81,7 @@ def auto_generepot(market,startdate,endate):
     # 3.找出美国的SB广告的优质关键词
     keyword_analysis_process_3 = []
     keyword_3_q1 = "3.1，在 {} 至 {} 这段时间内，找出法国的SB广告的优质关键词".format(startdate,endate)
-    keyword_3_a1 = dwx.get_sb_keyword_131(startdate,endate)
+    keyword_3_a1 = dwx.get_sb_keyword_131(market,startdate,endate)
     keyword_analysis_process_3.append({"question": keyword_3_q1, "answer": keyword_3_a1})
     # keyword_3_q2 = "3.2，在 {} 至 {} 这段时间内，  {}_SP广告中ACOS值在24%到26% 区间的 定向投放关键词。将这些关键词信息生成csv文件，里面记录这些关键词的以下信息，CPC，SKU/ASIN， ACOS, Clicks，adgroupid.（ACOS20%的+20%+30%)".format(startdate,endate,market)
     # keyword_3_a2 = dwx.get_sb_keyword_132(market,startdate,endate)
@@ -190,7 +191,7 @@ def auto_generepot(market,startdate,endate):
     # 1，找出 campaign 广告活动 中的 优质广告活动，提升预算
     campaign_analysis_process_1 = []
     campaign_1_q1="1.1，在 {} 至 {} 这段时间内，找出意大利SP广告的优质关键词".format(startdate,endate)
-    campaign_1_a1=dwx.get_sb_advertise_311(startdate,endate)
+    campaign_1_a1=dwx.get_sb_advertise_311(market,startdate,endate)
     campaign_analysis_process_1.append({"question":campaign_1_q1,"answer":campaign_1_a1})
     # campaign_1_q2 = "1.2，.在 2024.04.01 至 2024.04.14 这段时间内，  法国SB广告中 ACOS值在14%到16% 区间的 campaign 广告活动。将这些信息生成csv文件，里面记录这些关键词的以下信息，CPC， ACOS,  Clicks，campaignid，spend.（-20-30）".format(startdate,endate,market)
     # campaign_1_a2 = dwx.get_sb_advertise_312(market,startdate,endate)

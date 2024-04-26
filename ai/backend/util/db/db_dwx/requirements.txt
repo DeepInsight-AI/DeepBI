@@ -1,0 +1,37 @@
+aiohttp==3.9.5
+aiosignal==1.3.1
+attrs==23.2.0
+Bottleneck @ file:///C:/b/abs_f05kqh7yvj/croot/bottleneck_1707864273291/work
+certifi==2024.2.2
+cffi @ file:///C:/b/abs_924gv1kxzj/croot/cffi_1700254355075/work
+charset-normalizer==3.3.2
+colorama==0.4.6
+cryptography @ file:///C:/b/abs_f5n93r0tun/croot/cryptography_1710350404202/work
+distro==1.9.0
+frozenlist==1.4.1
+h11==0.14.0
+httpcore==1.0.5
+httpx==0.27.0
+idna==3.7
+Jinja2 @ file:///C:/b/abs_f7x5a8op2h/croot/jinja2_1706733672594/work
+MarkupSafe @ file:///C:/b/abs_ecfdqh67b_/croot/markupsafe_1704206030535/work
+mkl-fft @ file:///C:/b/abs_19i1y8ykas/croot/mkl_fft_1695058226480/work
+mkl-random @ file:///C:/b/abs_edwkj1_o69/croot/mkl_random_1695059866750/work
+mkl-service==2.4.0
+multidict==6.0.5
+numexpr @ file:///C:/b/abs_5fucrty5dc/croot/numexpr_1696515448831/work
+numpy @ file:///C:/b/abs_c1ywpu18ar/croot/numpy_and_numpy_base_1708638681471/work/dist/numpy-1.26.4-cp311-cp311-win_amd64.whl#sha256=5dfd3e04dc1c2826d3f404fdc7f93c097901f5da9b91f4f394f79d4e038ed81d
+openai==0.28.0
+pandas @ file:///C:/b/abs_3awk0iw2ab/croot/pandas_1709590545218/work/dist/pandas-2.2.1-cp311-cp311-win_amd64.whl#sha256=d6c6b110e8e5c0a299efcaa9935f84d8ad7abc5511d6d8ab94cc6bd137d93ff3
+pycparser @ file:///tmp/build/80754af9/pycparser_1636541352034/work
+pymssql==2.2.11
+PyMySQL @ file:///C:/ci_311/pymysql_1676454444121/work
+python-dateutil @ file:///tmp/build/80754af9/python-dateutil_1626374649649/work
+python-dotenv==1.0.1
+pytz @ file:///C:/b/abs_6ap4tsz1ox/croot/pytz_1713974360290/work
+requests==2.31.0
+six @ file:///tmp/build/80754af9/six_1644875935023/work
+tqdm==4.66.2
+tzdata @ file:///croot/python-tzdata_1690578112552/work
+urllib3==2.2.1
+yarl==1.9.4

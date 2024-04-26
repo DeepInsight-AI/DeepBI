@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>{{ report_name }}</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .m-b-5 {
+      margin-bottom: 5px;
+    }
+
+    .color-white {
+      color: #fff;
+    }
+
+    /* 样式定义 */
+    .content {
+      background: #0a1532;
+      color: #fff;
+      padding: 10px;
+      padding-bottom: 10px;
+    }
+
+    .bg-border {
+      background: #0c1d40;
+      border-radius: 5px;
+    }
+
+    .content h1 {
+      text-align: center;
+      font-family: cursive;
+      font-style: italic;
+    }
+
+    .content h5 {
+      padding: 10px;
+      text-align: center;
+      font-family: cursive;
+      font-style: italic;
+    }
+
+    .content h2 {
+      text-align: center;
+      padding: 10px;
+      font-size: 18px;
+    }
+
+    .chart {
+      width: 100%;
+      height: 400px;
+    }
+
+    .content ul {
+      padding: 10px;
+    }
+
+    .content ul p {
+      color: #3eadff;
+      font-weight: bold;
+    }
+
+    .content ul li {
+      margin: 5px 0;
+      color: #ccc;
+      font-size: 14px;
+    }
+
+    .thought li {
+      color: #d3d3d3 !important;
+      font-weight: bold;
+    }
+
+    .content strong {
+      color: #FFFF99;
+    }
+  </style>
+  <!-- 引入 ECharts -->
+  <script src="https://cdn.bootcdn.net/ajax/libs/echarts/5.2.2/echarts.min.js"></script>
+</head>
+<body>
+<div class="content">
+  <h1 class="color-white">{{ report_name }}</h1>
+  <h5 class="color-white">----Powered by DeepBI{{ report_author }}</h5>
+
+  <ul class="m-b-5 bg-border thought">
+    <p>分析思路</p>
+    {% for thought in report_thought %}
+      <li><strong>{{ thought['report_name'] }}</strong>{{ thought['description'] }} </li>
+    {% endfor %}
+  </ul>
+  {% for question_data in report_question %}
+    <div class="question-section">
+      <h2 class="m-b-5 bg-border color-white">{{ question_data['question']['report_name'] }}</h2>
+      <li>{{ question_data['question']['description'] }}</li>
+
+      <ul class="m-b-5 bg-border">
+        <p>【DeepBI自动分析过程】</p>
+        {% for answer_item in question_data['answer'] %}
+<!--          <li><strong>{{ answer_item['analysis_item'] }}：</strong><br> Answer: {{ answer_item['description'] }} </li>-->
+        <h4>{{ answer_item['analysis_item'] }}</h4>
+          <li>{{ answer_item['description'] }} </li>
+          {% for analysis_que in answer_item['analysis_process'] %}
+<!--            <li>{{ analysis_que['question'] }} :<br> &nbsp;&nbsp;&nbsp;&nbsp;Answer is : {{ analysis_que['answer'] }}</li>-->
+            <li style="color: green;">{{ analysis_que['question'] }} :</li>
+            <li>&nbsp;&nbsp;&nbsp;&nbsp;Answer is : {{ analysis_que['answer'] }}</li>
+          {% endfor %}
+        {% endfor %}
+      </ul>
+
+<!--      <div id="chart_{{ timestamp }}"></div>-->
+
+<!--      <div id="chart{{ loop.index }}_{{ timestamp }}" class="chart m-b-5 bg-border"></div>-->
+<!--      <script type="text/javascript">-->
+<!--        var chart{{ loop.index }}_{{ timestamp }} = echarts.init(document.getElementById('chart{{ loop.index }}_{{ timestamp }}'), "dark");-->
+<!--        var option{{ loop.index }}_{{ timestamp }} = {{ question_data['echart_code'] | safe }};-->
+<!--        chart{{ loop.index }}_{{ timestamp }}.setOption(option{{ loop.index }}_{{ timestamp }});-->
+<!--      </script>-->
+    </div>
+  {% endfor %}
+
+  <div class="report-summary">
+    <h2 class="m-b-5 bg-border color-white">优化策略</h2>
+    <ul class="m-b-5 bg-border">
+      {% for summary in report_analyst %}
+        <li><strong>{{ summary['analysis_item'] }}：</strong>{{ summary['description'] }} </li>
+      {% endfor %}
+    </ul>
+  </div>
+</div>
+</body>
+</html>

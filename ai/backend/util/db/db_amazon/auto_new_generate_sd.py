@@ -41,7 +41,7 @@ def auto_generepot(market,startdate,endate):
     keyword_1_a2 = dwx.get_sd_product_112(startdate,endate)
     keyword_analysis_process_1.append({"question":keyword_1_q2,"answer":keyword_1_a2})
     keyword_1_q3 = "1.3 在 {} 至 {} 这段时间内，美国_SD广告中ACOS 低于 20% 以上的 广告标签categories。将这些广告标签categories信息生成csv文件，里面记录这些广告标签categories的以下信息：CPC（美元和欧元分两列标出）， ACOS, Clicks，adgroupId，adGroupName，targetingText（原本关键词text和翻译后的text），targetingId.".format(startdate,endate)
-    keyword_1_a3 = dwx.get_sd_product_113(startdate,endate)
+    keyword_1_a3 = dwx.get_sd_product_113(market,startdate,endate)
     keyword_analysis_process_1.append({"question":keyword_1_q3,"answer":keyword_1_a3})
 
     keyword_answer_1 = {}
@@ -61,7 +61,7 @@ def auto_generepot(market,startdate,endate):
     keyword_2_a2 = dwx.get_sd_product_122(startdate,endate)
     keyword_analysis_process_2.append({"question": keyword_2_q2, "answer": keyword_2_a2})
     keyword_2_q3 = "2.3，在 {} 至 {} 这段时间内，美国_SD广告中ACOS 低于 20% 以上的 广告标签categories。将这些广告标签categories信息生成csv文件，里面记录这些广告标签categories的以下信息：CPC（美元和欧元分两列标出）， ACOS, Clicks，adgroupId，adGroupName，targetingText（原本关键词text和翻译后的text），targetingId.".format(startdate,endate)
-    keyword_2_a3 = dwx.get_sd_product_123(startdate,endate)
+    keyword_2_a3 = dwx.get_sd_product_123(market,startdate,endate)
     keyword_analysis_process_2.append({"question": keyword_2_q3, "answer": keyword_2_a3})
     keyword_answer_2 = {}
     keyword_answer_2["analysis_item"] = '2.统计德国SD广告优质标签'

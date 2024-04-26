@@ -2,6 +2,9 @@ import pymysql
 import pandas as pd
 from datetime import datetime
 import warnings
+from generate_tools import ask_question,ask_question1
+import asyncio
+
 
 # 忽略特定类型的警告
 warnings.filterwarnings("ignore", category=UserWarning)
@@ -97,7 +100,7 @@ HAVING ACOS < 0.2
             print("1-1.2Error while inserting data:", error)
 
 
-    def get_sd_product_113(self, startdate, enddate):
+    def get_sd_product_113(self,market, startdate, enddate):
         """优秀标签-1.统计美国SD广告优质标签：-1-1.3  找出在 2024.04.01 至 2024.04.14 这段时间内，  美国SD广告中 低于 20% 30% 以上的 sku广告。将这些信息生成csv文件，里面记录这些广告的以下信息，CPC，SKU/ASIN， ACOS,  Clicks，adgroupid."""
         try:
             conn = self.conn
@@ -114,6 +117,18 @@ HAVING ACOS < 0.2
                 HAVING ACOS < 0.2
                     """.format(startdate, enddate)
             df = pd.read_sql(query, con=conn)
+
+            try:
+                # 翻译测试
+                nation = {"US": "English", "UK": "English", "FR": "French", "DE": "German", "IT": "Italian",
+                          "ES": "Spanish"}
+                res = asyncio.get_event_loop().run_until_complete(ask_question1(df["targetingText"], nation[market]))
+                # res = ask_question(df["keywordText"],"Chinese")
+                inres = eval(str(res))
+                df["targetingText_" + str(nation[market])] = inres
+            except Exception as e:
+                print("翻译出错，报错如下：", e)
+
             print(df)
             # 保存到CSV文件中
             output_filename = get_timestamp() + '_new_sd_targetting_1_3.csv'
@@ -182,7 +197,7 @@ HAVING ACOS < 0.2
         except Exception as error:
             print("1-2.2Error while inserting data:", error)
 
-    def get_sd_product_123(self, startdate, enddate):
+    def get_sd_product_123(self,market, startdate, enddate):
         """优秀标签-1.统计德国SD广告优质标签：-1-2.3  找出在 2024.04.01 至 2024.04.14 这段时间内，  德国SD广告中 低于 20% 30% 以上的 sku广告。将这些信息生成csv文件，里面记录这些广告的以下信息，CPC，SKU/ASIN， ACOS,  Clicks，adgroupid."""
         try:
             conn = self.conn
@@ -199,6 +214,18 @@ HAVING ACOS < 0.2
                 HAVING ACOS < 0.2
                     """.format(startdate, enddate)
             df = pd.read_sql(query, con=conn)
+
+            try:
+                # 翻译测试
+                nation = {"US": "English", "UK": "English", "FR": "French", "DE": "German", "IT": "Italian",
+                          "ES": "Spanish"}
+                res = asyncio.get_event_loop().run_until_complete(ask_question1(df["targetingText"], nation[market]))
+                # res = ask_question(df["keywordText"],"Chinese")
+                inres = eval(str(res))
+                df["targetingText_" + str(nation[market])] = inres
+            except Exception as e:
+                print("翻译出错，报错如下：", e)
+
             print(df)
             # 保存到CSV文件中
             output_filename = get_timestamp() + '_new_sd_targetting_2_3.csv'
@@ -282,6 +309,17 @@ group by keywordId,keyword,adGroupId,adGroupName,campaignName, targeting
 having  ACOS < 0.2
                     """.format(startdate, enddate,market)
             df = pd.read_sql(query, con=conn)
+            try:
+                # 翻译测试
+                nation = {"US": "English", "UK": "English", "FR": "French", "DE": "German", "IT": "Italian",
+                          "ES": "Spanish"}
+                res = asyncio.get_event_loop().run_until_complete(ask_question1(df["keyword"], nation[market]))
+                # res = ask_question(df["keywordText"],"Chinese")
+                inres = eval(str(res))
+                df["keyword_" + str(nation[market])] = inres
+            except Exception as e:
+                print("翻译出错，报错如下：", e)
+
             print(df)
             # 保存到CSV文件中
             output_filename = get_timestamp() + '_new_sd_keyword_1_3.csv'

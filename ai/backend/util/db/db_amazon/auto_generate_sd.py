@@ -453,7 +453,7 @@ def generate():
 
     print("HTML文件已生成：output_sd_US.html")
 
-# generate()
+generate()
 # def main():
 #     # 在这里调用 generate() 函数
 #     generate()

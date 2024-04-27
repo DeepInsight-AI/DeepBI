@@ -44,30 +44,56 @@ def format_decimal(value):
 
 
 def calculate_dispersion(data):
-    x_values = np.array([point[0] for point in data])
-    y_values = np.array([point[1] for point in data])
+    error_tag = 0
+    x_values = []
+    y_values = []
+
+    # 预处理阶段，避免重复的类型转换和判断
+    for point in data:
+        x = 0 if point[0] is None else float(point[0])
+        y = 0 if point[1] is None else point[1]
+        x_values.append(x)
+        y_values.append(y)
+
+    x_values = np.array(x_values)
+    y_values = np.array(y_values)
+
+    try:
+        if error_tag == 0:
+            x_values = np.array([float(point[0]) for point in data], dtype=np.float64)
+        else:
+            raise ValueError("Error processing x_values.")
+    except Exception as e:
+        error_tag = 1
+        x_values = np.arange(1, len(data) + 1, dtype=np.float64)
+
     x_std, y_std = np.std(x_values), np.std(y_values)
     dispersion = format_decimal((x_std + y_std) / 2)
-    correlation = np.corrcoef(x_values, y_values)[0, 1]
+
+    if np.all(x_values == 0) or np.all(y_values == 0):
+        correlation = 0
+    else:
+        correlation = np.corrcoef(x_values, y_values)[0, 1]
     correlation = format_decimal(correlation)
-    x_min, x_max = format_decimal(min(x_values)), format_decimal(max(x_values))
-    y_min, y_max = format_decimal(min(y_values)), format_decimal(max(y_values))
-    ave_x = format_decimal(sum(x_values) / len(x_values))
-    ave_y = format_decimal(sum(y_values) / len(y_values))
+
+    x_min, x_max = np.min(x_values), np.max(x_values)
+    y_min, y_max = np.min(y_values), np.max(y_values)
+    ave_x = np.mean(x_values)
+    ave_y = np.mean(y_values)
+    x_min, x_max, ave_x = map(format_decimal, (x_min, x_max, ave_x))
+    y_min, y_max, ave_y = map(format_decimal, (y_min, y_max, ave_y))
+
+    if error_tag:
+        return dispersion, correlation, (data[0][0], data[-1][0]), (y_min, y_max), (data[len(data) // 2][0], ave_y)
     return dispersion, correlation, (x_min, x_max), (y_min, y_max), (ave_x, ave_y)
 
-def calculate_trendline(data):
-    x_values = np.array([point[0] for point in data]).reshape(-1, 1)
-    y_values = np.array([point[1] for point in data])
-
-    model = LinearRegression().fit(x_values, y_values)
-    slope = model.coef_[0]
-    intercept = model.intercept_
-
-    return slope, intercept
 
 def calculate_distance(point1, point2):
-    return np.sqrt((point1[0] - point2[0]) ** 2 + (point1[1] - point2[1]) ** 2)
+    try:
+        return np.sqrt((point1[0] - point2[0]) ** 2 + (point1[1] - point2[1]) ** 2)
+    except Exception as e:
+        return np.abs(point1[1]-point2[1])
+
 
 
 def count_outliers(data):
@@ -79,7 +105,11 @@ def count_outliers(data):
     # 计算平均距离
     avg_distance = np.mean(distances)
     # 找出中值点
-    median_point = np.median(data, axis=0)
+    try:
+        median_point = np.median(data, axis=0)
+    except Exception as e:
+
+        median_point=np.array(data[len(data)//2],np.median(np.array([point[1] if point[1] is not None else 0 for point in data])))
     # 计算距离中值点的距离，并检查是否大于平均距离的200%
     outliers_count = sum([1 for point in data if calculate_distance(point, median_point) > avg_distance * 2])
     if outliers_count<5:
@@ -821,6 +851,57 @@ class PythonProxyAgent(Agent):
                                     serie['data'][idx] = format_decimal(item)  # 将处理后的值赋值给原始数据
                                 else:
                                     continue
+                    try:
+                        max_data_show = 10#一组数据数量大于10就全部不显示了
+                        max_data_show_class=2 #一张图如果展示2组及以上数据，就都不显示了
+                        if len(base_content[0]['echart_code']['series'])>=max_data_show_class:
+                            for data_series in base_content[0]['echart_code']['series']:
+                                data_series['label']['show'] = False
+                        else:
+                            for data_series in base_content[0]['echart_code']['series']:
+                                if (len(data_series['data'])<max_data_show):
+                                    data_series['label']['show'] = True
+                                else:
+                                    data_series['label']['show'] = False
+                    except Exception as e:
+                        print("报错了")
+                        pass
+                    if len(base_content[0]['echart_code']['series'][0]['data'])==0:
+                        return True,f"exitcode:exitcode failed\nCode output:There is no data in echartcode. Please check if your SQL logic is correct, and after careful consideration and confirmation, make the necessary changes"
+                    replace_echarts_code_bar_line_stack={'toolbox':{"show": True, "orient": "vertical", "itemSize": 15, "itemGap": 10, "left": "left", "top": "15%", "feature": {"saveAsImage": {"type": "png", "backgroundColor": "auto", "connectedBackgroundColor": "#fff", "show": True, "title": "保存为图片", "pixelRatio": 1}, "restore": {"show": True, "title": "还原"}, "dataView": {"show": True, "title": "数据视图", "readOnly": False, "lang": ["数据视图", "关闭", "刷新"], "backgroundColor": "#fff", "textareaColor": "#fff", "textareaBorderColor": "#333", "textColor": "#000", "buttonColor": "#c23531", "buttonTextColor": "#fff"}, "dataZoom": {"show": True, "title": {"zoom": "区域缩放", "back": "区域缩放还原"}, "icon": {}, "filterMode": "filter"}, "magicType": {"show": True, "type": ["line", "bar", "stack", "tiled"], "title": {"line": "切换为折线图", "bar": "切换为柱状图", "stack": "切换为堆叠", "tiled": "切换为平铺"}, "icon": {}}}},
+                                          'dataZoom':[{"show": True, "type": "slider", "showDetail": True, "showDataShadow": True, "realtime": True, "start": 0, "end": 100, "orient": "horizontal", "xAxisIndex": [0], "zoomLock": False, "filterMode": "filter"}, {"show": True, "type": "slider", "showDetail": True, "showDataShadow": True, "realtime": True, "start": 0, "end": 100, "orient": "vertical", "yAxisIndex": [0], "zoomLock": False, "filterMode": "filter"}, {"show": True, "type": "inside", "showDetail": True, "showDataShadow": True, "realtime": True, "start": 20, "end": 80, "orient": "horizontal", "xAxisIndex": [0], "zoomLock": False, "filterMode": "filter"}, {"show":True, "type": "inside", "showDetail": True, "showDataShadow": True, "realtime": True, "start": 20, "end": 80, "orient": "vertical", "yAxisIndex": [0], "zoomLock": False, "filterMode": "filter"}]}
+                    replace_echarts_code_pie={'avoidLabelOverlap':True,'percentPrecision':2,'legendHoverLink':True,'selectedMode':True,'orient':'vertical','right':'right'}
+                    #饼状图的数据标签格式，'avoidLabelOverlap'表示是否启用标签避让，为true表示不会让标签重叠。'percentPrecision'表示数据精确位数
+                    #'legendHoverLink'表示是否启用图例(hover)高亮和视觉引导线。'legendHoverLink'表示是否可以通过点击扇形区域选中数据
+                    if(base_content[0]['echart_code']['series'][0]['type'] in ['line','bar','stack']):
+                        for replace in ['toolbox','dataZoom']:
+                            try:
+                                base_content[0]['echart_code'][replace]=replace_echarts_code_bar_line_stack[replace]
+                            except Exception as e:
+                                pass
+                        NaN_tag = 1
+                        for data in base_content[0]['echart_code']['series'][0]['data']:
+                            if (isinstance(data, list)):
+                                if data[1] != None:
+                                    NaN_tag = 0
+                                    break
+                            else:
+                                if (isinstance(data, int) or isinstance(data, float)):
+                                    NaN_tag = 0
+                                    break
+                        if (NaN_tag):
+                            return True, f"exitcode:exitcode failed\nCode output:All data in echart_code is NaN. Please check if your SQL logic is correct, and after careful consideration and confirmation, make changes and absolute adjustments"
+                    elif(base_content[0]['echart_code']['series'][0]['type']=='pie'):
+                        for replace in ['avoidLabelOverlap','percentPrecision','legendHoverLink','legendHoverLink','vertical','right']:
+                            try:
+                                if replace in ['avoidLabelOverlap','percentPrecision','legendHoverLink','legendHoverLink']:
+                                    base_content[0]['echart_code']['series'][0][replace]=replace_echarts_code_pie[replace]
+                                else:
+                                    base_content[0]['echart_code'][replace]=replace_echarts_code_pie[replace]
+
+                            except Exception as e:
+                                print("出错了")
+                                pass
                     for echart in base_content:
                         echart = json.dumps(echart, indent=2)
                     agent_instance_util = AgentInstanceUtil(user_name=str(self.user_name),
@@ -840,12 +921,11 @@ class PythonProxyAgent(Agent):
                             print("echart_name : ", echart_name)
                             re_str = await bi_proxy.run_echart_code(str(echart_code), echart_name)
                     # 初始化一个空列表来保存每个echart的信息
-                    echarts_data = []
+                    echarts_data, series_data = [], []
+                    xAxis_data_tag = 0
                     # 遍历echarts_code列表，提取数据并构造字典
                     for echart in base_content:
                         echart_name = echart['echart_name']
-                        series_data = []
-                        count = 0
                         for serie in echart['echart_code']['series']:
                             try:
                                 seri_info = {
@@ -858,68 +938,86 @@ class PythonProxyAgent(Agent):
                                     'type': serie['type'],
                                     'data': serie['data']
                                 }
-                        seri_info_data = []
-                        for data in seri_info['data']:
-                            count += 1
-                            if count <= 1000:
-                                seri_info_data.append(data)
-                            else:
-                                break
-                        seri_info['data'] = seri_info_data
-                        series_data.append(seri_info)
-                        if "xAxis" in echart["echart_code"]:
-                            xAxis_data = echart['echart_code']['xAxis'][0]['data'][:count]
-                            if "%Y-%m" in xAxis_data:
-                                return True, f"exitcode:exitcode failed\nCode output:The SQL code query is incorrect. The query date should be %, not %%. Just for example: SELECT DATE_FORMAT(event_time, '%Y-%m-%d') is correct, but SELECT DATE_FORMAT(event_time, '%%Y -%%m-%%d') is wrong!"
-                            echart_dict = {
-                                'echart_name': echart_name,
-                                'series': series_data,
-                                'xAxis_data': xAxis_data
-                            }
-                            if echart_dict['series'][0]['type'] == 'scatter':
+                            series_data.append(seri_info)
+                            if "xAxis" in echart["echart_code"]:
+                                xAxis_data = echart['echart_code']['xAxis'][0]['data']
+                                xAxis_data_tag = 1
+                                if "%Y-%m" in xAxis_data:
+                                    return True, f"exitcode:exitcode failed\nCode output:The SQL code query is incorrect. The query date should be %, not %%. Just for example: SELECT DATE_FORMAT(event_time, '%Y-%m-%d') is correct, but SELECT DATE_FORMAT(event_time, '%%Y -%%m-%%d') is wrong!"
+                    if (xAxis_data_tag):
+                        echart_dict = {
+                            'echart_name': echart_name,
+                            'series': series_data,
+                            'xAxis_data': xAxis_data
+                        }
+                        if echart_dict['series'][0]['type'] == 'scatter':
+                            if (len(echart_dict['series']) == 1):
                                 data = echart_dict['series'][0]['data']
-                                if(len(data)<10):
-                                    return True, f"exitcode: {exitcode} ({exitcode2str})\nCode output: 图像已生成,任务执行成功！请直接分析图表数据：{[echarts_data]}"
-                                data_set,count_tag=set(),0
+                                if (len(data) < 10):
+                                    return True, f"exitcode: {exitcode} ({exitcode2str})\nCode output: 图像已生成,任务执行成功！请直接分析图表数据：{echart_dict}"
+                                data_set, count_tag = set(), 0
                                 for i in data:
                                     data_set.add(i[1])
-                                    if(len(data_set)==4):
-                                        count_tag=1
+                                    if (len(data_set) == 4):
+                                        count_tag = 1
                                         break
-                                if(count_tag==0):
+                                if (count_tag == 0):
                                     data_dict = {item: 0 for item in data_set}
                                     for i in data:
-                                        data_dict[i[1]]+=1
-                                    return True,f"exitcode: {exitcode} ({exitcode2str})\nCode output:图像已生成,生成的是散点图,该图的标题为:{echart_dict['echart_name']},描述了其相应的关系."\
-                                                f"它的数据一共有{len(data)}个,但是它的取值集合个数较少，每一种取值对应的数量关系为{data_dict}"
-                                correlation, dispersion,(x_min,x_max),(y_min,y_max),(ave_x,ave_y)=calculate_dispersion(data)
+                                        data_dict[i[1]] += 1
+                                    return True, f"exitcode: {exitcode} ({exitcode2str})\ncode output:图像已生成,生成的是散点图,该图的标题为:{echart_dict['echart_name']},描述了其相应的关系." \
+                                                 f"它的数据一共有{len(data)}个,但是它的取值集合个数较少，每一种取值对应的数量关系为{data_dict}"
+                                correlation, dispersion, (x_min, x_max), (y_min, y_max), (
+                                    ave_x, ave_y) = calculate_dispersion(data)
                                 outliers_count, outliers = count_outliers(data)
-                                threshold = 0.6  # 相关性阈值
-                                if correlation >= threshold:
-                                    slope, intercept = calculate_trendline(data)
-                                    return True,f"exitcode: {exitcode} ({exitcode2str})\nCode output:图像已生成,生成的是散点图,该图的标题为:{echart_dict['echart_name']},描述了其相应的关系.如下是它的评价指标:\n离散程度为(标准差）:{correlation},相关性评价指标为{dispersion}" \
-                                                f"散点图的x区间范围从{(x_min,x_max)},y区间范围从{(y_min,y_max)},中值点为{(ave_x,ave_y)}。定义一个数据点到中值点的距离大于其所有点至中值点平均距离的2倍作为离群点,则离群点的个数为{outliers_count},其中,最大的是几个离群点为{outliers}" \
-                                                "其相关性达到预设的阈值,计算得到其趋势线方程为: y = {:.2f}x+{:.2f}。(注意：这里所有的计算数据都约束到了两位有效小数)".format(slope, intercept)
-                                else:
-                                    return True,f"exitcode: {exitcode} ({exitcode2str})\nCode output:图像已生成,生成的是散点图,该图的标题为:{echart_dict['echart_name']},描述了其相应的关系.如下是它的评价指标:\n离散程度为(标准差）:{correlation},相关性评价指标为{dispersion}" \
-                                                f"散点图的x区间范围从{(x_min,x_max)},y区间范围从{(y_min,y_max)},中值点为{(ave_x,ave_y)}。定义一个数据点到中值点的距离大于其所有点至中值点平均距离的2倍作为离群点,则离群点的个数为{outliers_count},其中,最大的是几个离群点为{outliers}" \
-                                                f"但由于数据的相关性未达到阈值，即该散点图数据并没有明显的线性关系，无法计算趋势线。(注意：这里所有的计算数据都约束到了两位有效小数)"
-                            count_xAxis = 0
-                            echart_dict_new = []
-                            for x_data in echart_dict['xAxis_data']:
-                                count_xAxis += 1
-                                if count_xAxis <= 1000:
-                                    echart_dict_new.append(x_data)
-                                else:
-                                    break
-                            echart_dict['xAxis_data'] = echart_dict_new
-                        else:
-                            echart_dict = {
-                                'echart_name': echart_name,
-                                'series': series_data,
-                            }
-                        echarts_data.append(echart_dict)
-                    if (count > 999):
+                                return True, f"exitcode: {exitcode} ({exitcode2str})\nCode output:图像已生成,生成的是散点图,该图的标题为:{echart_dict['echart_name']},描述了其相应的关系.如下是它的评价指标:\n离散程度为(标准差）:{correlation},相关性评价指标为{dispersion}" \
+                                                 f"散点图的x区间范围从{(x_min, x_max)},y区间范围从{(y_min, y_max)},中值点为{(ave_x, ave_y)}。定义一个数据点到中值点的距离大于其所有点至中值点平均距离的2倍作为离群点,则离群点的个数为{outliers_count},其中,最大的是几个离群点为{outliers},注意，所有小数点都约束到了后两位"
+
+                            else:
+                                message = f"exitcode: {exitcode} ({exitcode2str})\nCode output:图像已生成,生成的是散点图,该图的标题为:{echart_dict['echart_name']},描述了其相应的关系,一共有{len(echart_dict['series'])}类散点数据:\n"
+                                count_class = 0
+                                for echart_data in echart_dict['series']:
+                                    count_class += 1
+                                    data = echart_data['data']
+                                    if (len(data) < 10):
+                                        message_data = f"第{count_class}类数据为{data}"
+                                        message += message_data
+                                        continue
+                                    else:
+                                        data_set, count_tag = set(), 0
+                                        for i in data:
+                                            data_set.add(i[1])
+                                            if (len(data_set) == 4):
+                                                count_tag = 1
+                                                break
+                                        if (count_tag == 0):
+                                            data_dict = {item: 0 for item in data_set}
+                                            for i in data:
+                                                data_dict[i[1]] += 1
+                                            message_data = f"名为{echart_data['name']}的数据一共有{len(data)}个,但是它的取值集合个数较少，每一种取值对应的数量关系为{data_dict}"
+                                            message += message_data
+                                            continue
+                                        else:
+                                            correlation, dispersion, (x_min, x_max), (y_min, y_max), (
+                                                ave_x, ave_y) = calculate_dispersion(data)
+                                            outliers_count, outliers = count_outliers(data)
+                                            message_data = f"名为{echart_data['name']}的数据，数据的离散程度为(标准差）:{correlation},相关性评价指标为{dispersion}" \
+                                                               f"散点图的x区间范围从{(x_min, x_max)},y区间范围从{(y_min, y_max)},中值点为{(ave_x, ave_y)}。定义一个数据点到中值点的距离大于其所有点至中值点平均距离的2倍作为离群点,则离群点的个数为{outliers_count},其中,最大的是几个离群点为{outliers}注意，所有小数点都约束到了后两位"
+                                            message += message_data
+                                            continue
+                                message = message + "请对每一类的数据性质都进行详细的分析"
+                                return True, f"exitcode: {exitcode} ({exitcode2str})\n{message}"
+                    else:
+                        echart_dict = {
+                            'echart_name': echart_name,
+                            'series': series_data,
+                        }
+                    count_max = 1000
+                    echart_dict['series'][0]['data'] = echart_dict['series'][0]['data'][:count_max]
+                    if (xAxis_data_tag):
+                        echart_dict['xAxis_data'] = echart_dict['xAxis_data'][:count_max]
+                    echarts_data.append(echart_dict)
+                    if (len(echart_dict['series'][0]['data']) > 999):
                         return True, f"exitcode: {exitcode} ({exitcode2str})\nCode output: 图像已生成,任务执行成功！但由于数据量过大，仅截取了1000条，请直接分析图表这些数据：{echarts_data}"
                     else:
                         return True, f"exitcode: {exitcode} ({exitcode2str})\nCode output: 图像已生成,任务执行成功！请直接分析图表数据：{echarts_data}"
@@ -1339,3 +1437,23 @@ class PythonProxyAgent(Agent):
 
         # return "i have no question."
         return None
+    def regex_fix_date_format(self, code_blocks):
+        # fix mysql generate %%Y %%m %%d code :list
+        pattern1 = r"%s"
+        patterns_replacements = [
+            (r"%%Y-%%m-%%d %%H", "%Y-%m-%d %H"),
+            (r"%%Y-%%m-%%d", "%Y-%m-%d"),
+            (r"%%Y-%%m", "%Y-%m"),
+            (r"%%H", "%H"),
+            (r"%%Y", "%Y"),
+            (r"%%Y-%%m-%%d %%H:%%i", "%Y-%m-%d %H:%i"),
+            (r"%%Y-%%m-%%d %%H:%%i:%%s", "%Y-%m-%d %H:%i:%s")]
+
+        if re.search(pattern1, str(code_blocks)):
+            for pattern, replacement in patterns_replacements:
+                code_blocks = [(language, re.sub(replacement, pattern, code)) for language, code in code_blocks]
+        else:
+            for pattern, replacement in patterns_replacements:
+                code_blocks = [(language, re.sub(pattern, replacement, code)) for language, code in code_blocks]
+
+        return code_blocks

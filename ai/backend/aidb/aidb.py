@@ -621,8 +621,8 @@ class AIDB:
         with open(rag_coc_path, 'r',encoding='utf-8') as file:
             # 读取JSON数据并将其转换为Python对象
             print('rag : ',json.load(file))
-            str = file.read()
-            ragdoc_json_data = json.loads(str)
+            file1 = json.dumps(file)
+            ragdoc_json_data = json.load(file1)
 
         order_json_data = []
         # 给每个键值对添加序号

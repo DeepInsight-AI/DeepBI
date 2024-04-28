@@ -615,9 +615,11 @@ class AIDB:
     async def select_rag_doc(self, qustion_message, use_cache):
         rag_coc_path = self.agent_instance_util.get_rag_doc()
 
+        print('rag_path', rag_coc_path)
         # 读取JSON文件并为其添加序号
         with open(rag_coc_path, 'r') as file:
             # 读取JSON数据并将其转换为Python对象
+            print('rag',json.load(file))
             ragdoc_json_data = json.load(file)
 
         order_json_data = []

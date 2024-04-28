@@ -127,6 +127,8 @@ def read_json_keys(data, keys=[]):
 
 def read_target_keyvalue(ragdoc_json_data, select_rag_list, basic_knowledge=[]):
     # basic_knowledge = []
+    if basic_knowledge is None:
+        basic_knowledge = []
     if isinstance(ragdoc_json_data, dict):
         for key, value in ragdoc_json_data.items():
             if not isinstance(value, (dict, list)):

@@ -698,7 +698,7 @@ class AIDB:
             websocket=self.websocket,
             llm_config={
                 # "config_list": self.agent_instance_util.config_list_gpt35_turbo,
-                "config_list": self.agent_instance_util.config_list_gpt4_turbo,
+                "config_list": self.agent_instance_util.config_list_gpt35_turbo,
                 "request_timeout": CONFIG.request_timeout,
             },
             openai_proxy=self.agent_instance_util.openai_proxy,

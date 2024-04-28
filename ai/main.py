@@ -86,6 +86,7 @@ def chat():
     # return Response(stream(content), mimetype='text/plain')
 
 
+
 @app.route("/api/readRag", methods=["GET"])
 @cross_origin()
 def readRag():

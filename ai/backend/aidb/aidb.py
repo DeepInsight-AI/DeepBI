@@ -615,29 +615,8 @@ class AIDB:
     async def select_rag_doc(self, qustion_message, use_cache):
         rag_coc_path = self.agent_instance_util.get_rag_doc()
 
-        print('rag_path : ', rag_coc_path)
-        # 读取JSON文件并为其添加序号
-
-        with open(rag_coc_path, 'r',encoding='utf-8') as file:
-            file1 = file.read()
-            # 读取JSON数据并将其转换为Python对象
-            print('rag : ',json.loads(file1))
-            ragdoc_json_data = json.loads(file1)
-
-        order_json_data = []
-        # 给每个键值对添加序号
-        for index, (key, value) in enumerate(ragdoc_json_data.items(), start=1):
-            rag_name = {"index": index, "key": key, "value": value}
-            order_json_data.append(rag_name)
-
-        print("order_json_data : ", order_json_data)
-
-        # 创建助手时传入ragdoc_json_data和order_json_data
-        select_table_assistant = self.get_agent_select_ragdoc_assistant(order_json_data=order_json_data,
+        select_table_assistant = self.get_agent_select_ragdoc_assistant(ragdoc_path=rag_coc_path,
                                                                         use_cache=use_cache)
-
-        # select_table_assistant = self.get_agent_select_ragdoc_assistant(ragdoc_path=rag_coc_path,
-        #                                                                 use_cache=use_cache)
         planner_user = self.agent_instance_util.get_agent_planner_user()
 
         await planner_user.initiate_chat(
@@ -649,19 +628,16 @@ class AIDB:
         match = re.search(
             r"\[.*\]", select_table_message.strip(), re.MULTILINE | re.IGNORECASE | re.DOTALL
         )
-        json_order = ""
+        json_str = ""
         if match:
-            json_order = match.group()
-        print("search_rag_json_order : ", json_order)
-        select_rag_list = json.loads(json_order)
+            json_str = match.group()
+        print("search_rag_json_str : ", json_str)
+        select_rag_list = json.loads(json_str)
         print("select_rag_list : ", select_rag_list)
 
-        order_knowledge = []
-        order_knowledge = base_util.read_target_keyvalue(order_json_data, select_rag_list)
-
-        json_str = base_util.read_json_values(order_knowledge)
-
-        print('search_rag_json_str : ', json_str)
+        with open(rag_coc_path, 'r') as file:
+            # 读取JSON数据并将其转换为Python对象
+            ragdoc_json_data = json.load(file)
 
         basic_knowledge = []
         # for key, value in ragdoc_json_data.items():
@@ -671,10 +647,6 @@ class AIDB:
         #         # print('rag_name :', rag_name)
         #         basic_knowledge.append(rag_name)
 
-        # print("search_rag_json_str : ", json_str)
-        select_rag_list = json.loads(json_str)
-        # print("select_rag_list : ", select_rag_list)
-
         basic_knowledge = base_util.read_target_keyvalue(ragdoc_json_data, select_rag_list)
 
         retrieve_rag_doc = 'Context is: ' + '\n' + str(basic_knowledge)
@@ -682,25 +654,26 @@ class AIDB:
         print('retrieve_rag_doc : ', retrieve_rag_doc)
         return retrieve_rag_doc
 
-    def get_agent_select_ragdoc_assistant(self, order_json_data, use_cache=True):
+    def get_agent_select_ragdoc_assistant(self, ragdoc_path, use_cache=True):
         """select_ragdoc_assistant"""
 
         # 打开JSON文件
-        # with open(ragdoc_path, 'r') as file:
-        #     # 读取JSON数据并将其转换为Python对象
-        #     json_data = json.load(file)
+        with open(ragdoc_path, 'r') as file:
+            file1 = file.read()
+            # 读取JSON数据并将其转换为Python对象
+            json_data = json.load(file1)
 
         # doc_names = []
         # for key, value in json_data.items():
         #     # print(key, ":", value)
         #     doc_names.append(key)
 
-        doc_names = base_util.read_json_values(order_json_data)
+        doc_names = base_util.read_json_keys(json_data)
 
         print('doc_names : ', doc_names)
 
         # table_select = f"Read the conversation above. Then select the name of the table involved in the question from {str(doc_names)}. Only the name of the table is returned.It can be one table or multiple tables"
-        table_select = f"Read the conversation above. Then Select the top 5 doc names most relevant to the question from {str(doc_names)}. According to order_json_data, only the name of the doc as the key corresponding to the value is returned."
+        table_select = f"Read the conversation above. Then Select the top 5 doc names most relevant to the question from {str(doc_names)}. Only the name of the doc is returned."
 
         select_analysis_assistant = TableSelectorAgent(
             name="select_ragdoc_assistant",
@@ -709,19 +682,18 @@ class AIDB:
                         Different tasks have different processing methods.
                         The output should be formatted as a JSON instance that conforms to the JSON schema below, the JSON is a list of dict,
          [
-         “1”,
-         “2”,
-         “3”,
-         “4”,
-         “5”,
+         “doc_name1”,
+         “doc_name2”,
+         “doc_name3”,
+         “doc_name4”,
+         “doc_name5”,
          ,
          ].
          Reply "TERMINATE" in the end when everything is done.
 
                         Task types are generally divided into the following categories:
 
-                         """ + str(doc_names) + '\n' + str(
-                table_select) + '\n' + "这是我们的order_json_data" + '\n' + str(order_json_data),
+                         """ + str(doc_names) + '\n' + str(table_select),
             human_input_mode="NEVER",
             user_name=self.user_name,
             websocket=self.websocket,

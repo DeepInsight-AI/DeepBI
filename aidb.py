@@ -1,5 +1,4 @@
 import traceback
-
 from ai.backend.util.write_log import logger
 from ai.backend.base_config import CONFIG
 import re
@@ -12,11 +11,9 @@ from ai.backend.util import base_util
 import asyncio
 from requests.exceptions import HTTPError
 from ai.backend.language_info import LanguageInfo
-from ai.backend.util import database_util
-from ai.agents.agentchat import TableSelectorAgent
-import difflib
+from ai.agents.agentchat import TaskSelectorAgent, TableSelectorAgent
 
-max_retry_times = CONFIG.max_retry_times
+
 
 
 class AIDB:
@@ -244,7 +241,7 @@ class AIDB:
                             if not fd.get('is_pass'):
                                 fd['is_pass'] = 0
 
-            # print(" 最终 q_str : ", q_str)
+            print(" 最终 q_str : ", q_str)
             await self.put_message(200, CONFIG.talker_bi, CONFIG.type_comment, q_str)
         else:
             databases_id = 0
@@ -306,7 +303,7 @@ class AIDB:
                                 if not fd.get('is_pass'):
                                     fd['is_pass'] = 1
 
-                # print(" 最终 q_str : ", q_str)
+                print(" 最终 q_str : ", q_str)
                 await self.put_message(200, CONFIG.talker_bi, CONFIG.type_comment, q_str)
 
     async def put_message(self, state=200, receiver='log', data_type=None, content=None):
@@ -370,40 +367,6 @@ class AIDB:
             await self.put_message(500, receiver=CONFIG.talker_log, data_type=CONFIG.type_log_data,
                                    content=self.error_miss_key)
             return False
-
-    def set_base_message(self, message):
-        try:
-            json_str = json.loads(message) if isinstance(message, str) else message
-        except json.JSONDecodeError:
-            logger.error("Failed to decode JSON from message.")
-            return
-
-        base_message = json_str.get('base_message')
-        if base_message:
-            database = json_str.get('database')
-            self.db_info_json = base_message
-            if json_str.get('data').get('language_mode'):
-                    q_language_mode = json_str['data']['language_mode']
-                    # print("q_language_mode======", q_language_mode)
-                    if q_language_mode == CONFIG.language_chinese or q_language_mode == CONFIG.language_english or q_language_mode == CONFIG.language_japanese:
-                        self.set_language_mode(q_language_mode)
-                        self.agent_instance_util.set_language_mode(q_language_mode)
-            if database == 'csv':
-                self.agent_instance_util.set_base_csv_info(base_message)
-                self.agent_instance_util.set_base_message(base_message)
-            else:
-                databases_id = json_str.get('data', {}).get('databases_id')
-                db_id = str(databases_id)
-                obj = database_util.Main(db_id)
-                if_suss, db_info = obj.run()
-                if if_suss:
-                    if database == 'pg':
-                        database = 'postgresql'
-                    setattr(self.agent_instance_util, f"base_{database}_info", ' When connecting to the database, be sure to bring the port. This is ' + database + ' database info :' + '\n' + str(db_info))
-                    self.agent_instance_util.set_base_message(base_message, databases_id=db_id)
-                    self.agent_instance_util.db_id = db_id
-                else:
-                    logger.error("Failed to get database info for db_id: {}".format(db_id))
 
     async def test_api_key(self):
         # self.agent_instance_util.api_key_use = True
@@ -516,7 +479,7 @@ class AIDB:
             error_message = error_message + ' ' + str(status_code) + ' ' + str(http_err.response.text)
         return error_message
 
-    def get_agent_select_table_assistant(self, db_info_json, use_cache=True):
+    def get_agent_select_table_assistant(self, db_info_json):
         """select_table_assistant"""
 
         table_names = []
@@ -555,15 +518,11 @@ class AIDB:
                 "request_timeout": CONFIG.request_timeout,
             },
             openai_proxy=self.agent_instance_util.openai_proxy,
-            use_cache=use_cache,
         )
         return select_analysis_assistant
 
-    async def select_table_comment(self, qustion_message, use_cache):
-
-
-        select_table_assistant = self.get_agent_select_table_assistant(db_info_json=self.db_info_json,
-                                                                       use_cache=use_cache)
+    async def select_table_comment(self, qustion_message):
+        select_table_assistant = self.get_agent_select_table_assistant(db_info_json=self.db_info_json)
         planner_user = self.agent_instance_util.get_agent_planner_user()
 
         await planner_user.initiate_chat(
@@ -571,162 +530,30 @@ class AIDB:
             message=qustion_message,
         )
         select_table_message = planner_user.last_message()["content"]
+
         match = re.search(
             r"\[.*\]", select_table_message.strip(), re.MULTILINE | re.IGNORECASE | re.DOTALL
         )
         json_str = ""
         if match:
             json_str = match.group()
-        try:
-            json_str = json_str.replace('“', '"').replace('”', '"')
-            select_table_list = json.loads(json_str)
-            print("json_str : ", json_str)
-        except json.JSONDecodeError as e:
-            return []
+        print("json_str : ", json_str)
+        select_table_list = json.loads(json_str)
         print("select_table_list : ", select_table_list)
-        all_table_names = [table['table_name'] for table in self.db_info_json['table_desc']]
-        selece_table_names = set()
-        # for table_str in select_table_list:
-        #     table_name = table_str.get("table_name")
-        #     delete_table_names.append(table_name)
-        for table_str in select_table_list:
-            keyname = next(iter(table_str))
-            selected_name = table_str[keyname] if table_str[keyname] != "" else keyname
 
-            # 如果所选的表名不在数据库中
-            if selected_name not in all_table_names:
-                close_matches = difflib.get_close_matches(selected_name, all_table_names, n=3)
-                selece_table_names.update(close_matches)
-            else:
-                selece_table_names.add(selected_name)
-        selece_table_names = list(selece_table_names)
-        print("selece_table_names : ", selece_table_names)
+        delete_table_names = []
+        for table_str in select_table_list:
+            table_name = table_str.get("table_name")
+            delete_table_names.append(table_name)
+
+        print("delete_table_names : ", delete_table_names)
 
         table_comment = {'table_desc': [], 'databases_desc': ''}
 
         for table in self.db_info_json['table_desc']:
             # print('table : ', table)
-            if table['table_name'] in selece_table_names:
+            if table['table_name'] in delete_table_names:
                 table_comment['table_desc'].append(table)
 
         print('table_comment : ', table_comment)
         return table_comment
-
-    async def select_rag_doc(self, qustion_message, use_cache):
-        rag_coc_path = self.agent_instance_util.get_rag_doc()
-
-        # 读取JSON文件并为其添加序号
-        with open(rag_coc_path, 'r') as file:
-            # 读取JSON数据并将其转换为Python对象
-            ragdoc_json_data = json.load(file)
-
-        order_json_data = []
-        # 给每个键值对添加序号
-        for index, (key, value) in enumerate(ragdoc_json_data.items(), start=1):
-            rag_name = {"index": index, "key": key, "value": value}
-            order_json_data.append(rag_name)
-
-        print("order_json_data : ", order_json_data)
-
-        # 创建助手时传入ragdoc_json_data和order_json_data
-        select_table_assistant = self.get_agent_select_ragdoc_assistant(order_json_data=order_json_data,
-                                                                        use_cache=use_cache)
-
-        # select_table_assistant = self.get_agent_select_ragdoc_assistant(ragdoc_path=rag_coc_path,
-        #                                                                 use_cache=use_cache)
-        planner_user = self.agent_instance_util.get_agent_planner_user()
-
-        await planner_user.initiate_chat(
-            select_table_assistant,
-            message=qustion_message,
-        )
-        select_table_message = planner_user.last_message()["content"]
-
-        match = re.search(
-            r"\[.*\]", select_table_message.strip(), re.MULTILINE | re.IGNORECASE | re.DOTALL
-        )
-        json_order = ""
-        if match:
-            json_order = match.group()
-        print("search_rag_json_order : ", json_order)
-        select_rag_list = json.loads(json_order)
-        print("select_rag_list : ", select_rag_list)
-
-        order_knowledge = []
-        order_knowledge = base_util.read_target_keyvalue(order_json_data, select_rag_list)
-
-        json_str = base_util.read_json_values(order_knowledge)
-
-        print('search_rag_json_str : ', json_str)
-
-        basic_knowledge = []
-        # for key, value in ragdoc_json_data.items():
-        #     # print(key, ":", value)
-        #     if key in str(select_rag_list):
-        #         rag_name = {key: value}
-        #         # print('rag_name :', rag_name)
-        #         basic_knowledge.append(rag_name)
-
-        # print("search_rag_json_str : ", json_str)
-        select_rag_list = json.loads(json_str)
-        # print("select_rag_list : ", select_rag_list)
-
-        basic_knowledge = base_util.read_target_keyvalue(ragdoc_json_data, select_rag_list)
-
-        retrieve_rag_doc = 'Context is: ' + '\n' + str(basic_knowledge)
-
-        print('retrieve_rag_doc : ', retrieve_rag_doc)
-        return retrieve_rag_doc
-
-    def get_agent_select_ragdoc_assistant(self, order_json_data, use_cache=True):
-        """select_ragdoc_assistant"""
-
-        # 打开JSON文件
-        # with open(ragdoc_path, 'r') as file:
-        #     # 读取JSON数据并将其转换为Python对象
-        #     json_data = json.load(file)
-
-        # doc_names = []
-        # for key, value in json_data.items():
-        #     # print(key, ":", value)
-        #     doc_names.append(key)
-
-        doc_names = base_util.read_json_values(order_json_data)
-
-        print('doc_names : ', doc_names)
-
-        # table_select = f"Read the conversation above. Then select the name of the table involved in the question from {str(doc_names)}. Only the name of the table is returned.It can be one table or multiple tables"
-        table_select = f"Read the conversation above. Then Select the top 5 doc names most relevant to the question from {str(doc_names)}. According to order_json_data, only the name of the doc as the key corresponding to the value is returned."
-
-        select_analysis_assistant = TableSelectorAgent(
-            name="select_ragdoc_assistant",
-            system_message="""You are a helpful AI assistant.
-                        Divide the questions raised by users into corresponding task types.
-                        Different tasks have different processing methods.
-                        The output should be formatted as a JSON instance that conforms to the JSON schema below, the JSON is a list of dict,
-         [
-         “1”,
-         “2”,
-         “3”,
-         “4”,
-         “5”,
-         ,
-         ].
-         Reply "TERMINATE" in the end when everything is done.
-
-                        Task types are generally divided into the following categories:
-
-                         """ + str(doc_names) + '\n' + str(
-                table_select) + '\n' + "这是我们的order_json_data" + '\n' + str(order_json_data),
-            human_input_mode="NEVER",
-            user_name=self.user_name,
-            websocket=self.websocket,
-            llm_config={
-                # "config_list": self.agent_instance_util.config_list_gpt35_turbo,
-                "config_list": self.agent_instance_util.config_list_gpt4_turbo,
-                "request_timeout": CONFIG.request_timeout,
-            },
-            openai_proxy=self.agent_instance_util.openai_proxy,
-            use_cache=False,
-        )
-        return select_analysis_assistant

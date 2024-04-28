@@ -659,9 +659,8 @@ class AIDB:
 
         # 打开JSON文件
         with open(ragdoc_path, 'r') as file:
-            file1 = file.read()
             # 读取JSON数据并将其转换为Python对象
-            json_data = json.load(file1)
+            json_data = json.load(file)
 
         # doc_names = []
         # for key, value in json_data.items():

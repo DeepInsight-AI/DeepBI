@@ -633,6 +633,8 @@ class AIDB:
             json_str = match.group()
         print("search_rag_json_str : ", json_str)
         select_rag_list = json.loads(json_str)
+        new_items = ['查询店铺使用字段约束', '问题中有店铺名称，xxxxxxx-xx店','问题中涉及时间、日期']
+        select_rag_list.extend(new_items)
         print("select_rag_list : ", select_rag_list)
 
         with open(rag_coc_path, 'r') as file:
@@ -686,7 +688,6 @@ class AIDB:
          “doc_name3”,
          “doc_name4”,
          “doc_name5”,
-         ,
          ].
          Reply "TERMINATE" in the end when everything is done.
 

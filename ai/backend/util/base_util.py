@@ -126,9 +126,7 @@ def read_json_keys(data, keys=[]):
 
 
 def read_target_keyvalue(ragdoc_json_data, select_rag_list, basic_knowledge=[]):
-    # basic_knowledge = []
-    if basic_knowledge is None:
-        basic_knowledge = []
+    basic_knowledge = []
     for key, value in ragdoc_json_data.items():
         if key in select_rag_list:
             rag_name = {key: value}

@@ -1579,7 +1579,7 @@ select count(distinct campaignId,placement) as placementcount  ,sum(Clicks) as t
 """.format(market,startdate, enddate,market,startdate, enddate)
             df = pd.read_sql(query, con=conn)
             # return df
-            placementcount = df.loc[0, 'avgacos']
+            placementcount = df.loc[0, 'placementcount']
             totalclicks = df.loc[0, 'totalclicks']
 
             result_str = "低于 平均ACOS值（替换为第一问结论） 10% 的  campaign 广告活动中placement 数量:{} 和 总点击量 是:{}".format(placementcount,totalclicks)
@@ -1609,7 +1609,7 @@ select count(distinct campaignId,placement) as placementcount  ,sum(Clicks) as t
 """.format(market, startdate, enddate, market, startdate, enddate)
             df = pd.read_sql(query, con=conn)
             # return df
-            placementcount = df.loc[0, 'avgacos']
+            placementcount = df.loc[0, 'placementcount']
             totalclicks = df.loc[0, 'totalclicks']
 
             result_str = "高于 平均ACOS值（替换为第一问结论） 10% 的  campaign 广告活动中placement 数量:{} 和 总点击量 是:{}".format(
@@ -2078,37 +2078,6 @@ HAVING
             print("3-3.9Error while inserting data:", error)
 
 #
-# if __name__ == '__main__':
-#     print("====amazon ====")
-#     startdate = '2024-04-01'
-#     endate = '2024-04-14'
-#     market = 'US'
-#     dwx = AmazonMysqlRagUitl(db_info)
-#     daily_cost_rate = dwx.get_sp_searchterm_keyword_info_belowavg10per(market, startdate,endate)
-#     print(daily_cost_rate)
-#     # daily_cost_rate2 = dwx.get_sp_searchterm_keyword_info_belowavg10per(market, startdate,endate)
-#     # daily_cost_rate3 = dwx.get_sp_searchterm_keyword_info_belowavg10toper_notintarget(market, startdate,endate)
-#     # print(daily_cost_rate)
-#     # print(daily_cost_rate2)
-#     # print(daily_cost_rate3)
-#     # print('-------------2---------------')
-#     # res2_1 = dwx.get_sp_searchterm_keyword_info_target(market, startdate,endate)
-#     # res2_2 = dwx.get_sp_searchterm_keyword_info_target_below10per(market, startdate,endate)
-#     # res2_3 = dwx.get_sp_searchterm_keyword_info_target_below30per_csv(market, startdate, endate)
-#     # res2_4 = dwx.get_sp_searchterm_keyword_info_target_20and30per_csv(market, startdate, endate)
-#     # res2_4 = dwx.get_sp_searchterm_keyword_info_target_10and20per_csv(market, startdate, endate)
-#     # print('-------------3---------------')
-#     # # res4_1=dwx.get_sp__keyword_info_targetacos(market, startdate,endate)
-#     # # res4_1=dwx.get_sp_keyword_target_up10per(market, startdate,endate)
-#     # # print(res4_1)
-#     #
-#     # # print("-------------------------产品优化-------------")
-#     # # res2_2 = dwx.get_sp_product_upacos10to20(market, startdate,endate)
-#     # # print(res2_2)
-#     # print("-------------------------广告计划优化-------------")
-#     # res2_2 = dwx.get_sp_campaignplacement_below10to20(market, startdate,endate)
-    # print(res2_2)
-
 
 
 

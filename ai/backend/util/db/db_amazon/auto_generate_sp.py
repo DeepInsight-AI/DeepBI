@@ -16,6 +16,7 @@ def auto_generepot(market,startdate,endate):
     db_info = {'host': '****', 'user': '****', 'passwd': '****', 'port': 3306,
                'db': '****',
                'charset': 'utf8mb4', 'use_unicode': True, }
+
     dwx = AmazonMysqlRagUitl(db_info)
 
     last_answer = {}
@@ -245,19 +246,19 @@ def auto_generepot(market,startdate,endate):
     campaign_2_a5 = dwx.get_sp_campaignplacement_below10to20(market,startdate,endate)
     campaign_analysis_process_2.append({"question": campaign_2_q5, "answer": campaign_2_a5})
 
-    campaign_2_q6 = "2.6[劣质位置]，在 {} 至 {} 这段时间内，{}_SP广告中 低于 平均ACOS值（替换为第一问结论） 10% 的  campaign 广告活动中placement 数量 和 总点击量 是多少".format(
+    campaign_2_q6 = "2.6[劣质位置]，在 {} 至 {} 这段时间内，{}_SP广告中 高于 平均ACOS值（替换为第一问结论） 10% 的  campaign 广告活动中placement 数量 和 总点击量 是多少".format(
         startdate, endate, market)
     campaign_2_a6 = dwx.apcampaign326(market,startdate,endate)
     campaign_analysis_process_2.append({"question": campaign_2_q6, "answer": campaign_2_a6})
-    campaign_2_q7 = "2.7[劣质位置]，找出在 {} 至 {} 这段时间内，{}_SP广告中 低于 平均ACOS值（替换为第一问结论） 30% 以上的  campaign 广告活动中 placement。将这些信息生成csv文件，里面记录这些关键词的以下信息，CPC， ACOS,  Clicks，campaignid，spend， placement.".format(
+    campaign_2_q7 = "2.7[劣质位置]，找出在 {} 至 {} 这段时间内，{}_SP广告中 高于 平均ACOS值（替换为第一问结论） 30% 以上的  campaign 广告活动中 placement。将这些信息生成csv文件，里面记录这些关键词的以下信息，CPC， ACOS,  Clicks，campaignid，spend， placement.".format(
         startdate, endate, market)
     campaign_2_a7 = dwx.apcampaign327(market,startdate,endate)
     campaign_analysis_process_2.append({"question": campaign_2_q7, "answer": campaign_2_a7})
-    campaign_2_q8 = "2.8[劣质位置]，找出在 {} 至 {} 这段时间内，{}_SP广告中 低于 平均ACOS值（替换为第一问结论） 20% - 30% 的 campaign 广告活动中 placement。将这些信息生成csv文件，里面记录这些关键词的以下信息，CPC， ACOS,  Clicks，campaignid，spend， placement.".format(
+    campaign_2_q8 = "2.8[劣质位置]，找出在 {} 至 {} 这段时间内，{}_SP广告中 高于 平均ACOS值（替换为第一问结论） 20% - 30% 的 campaign 广告活动中 placement。将这些信息生成csv文件，里面记录这些关键词的以下信息，CPC， ACOS,  Clicks，campaignid，spend， placement.".format(
         startdate, endate, market)
     campaign_2_a8 = dwx.apcampaign328(market,startdate,endate)
     campaign_analysis_process_2.append({"question": campaign_2_q8, "answer": campaign_2_a8})
-    campaign_2_q9 = "2.9[劣质位置]，找出在 {} 至 {} 这段时间内，{}_SP广告中 低于 平均ACOS值（替换为第一问结论） 10% - 20% 的 campaign 广告活动中的 placement。将这些信息生成csv文件，里面记录这些关键词的以下信息，CPC， ACOS,  Clicks，campaignid，spend， placement.".format(
+    campaign_2_q9 = "2.9[劣质位置]，找出在 {} 至 {} 这段时间内，{}_SP广告中 高于 平均ACOS值（替换为第一问结论） 10% - 20% 的 campaign 广告活动中的 placement。将这些信息生成csv文件，里面记录这些关键词的以下信息，CPC， ACOS,  Clicks，campaignid，spend， placement.".format(
         startdate, endate, market)
     campaign_2_a9 = dwx.apcampaign329(market,startdate,endate)
     campaign_analysis_process_2.append({"question": campaign_2_q9, "answer": campaign_2_a9})
@@ -328,45 +329,141 @@ def auto_generepot(market,startdate,endate):
     def getfilepath(filename):
         res="C:\\Users\\1\\Desktop\\api\\generate_report\\"+str(filename.split("：")[-1])
         return res
-    # def getcsvcont(path):
-    #     #读取到json
-    #     data = []
-    #     # 打开CSV文件并读取数据
-    #     with open(path, 'r', encoding='utf-8') as file:
-    #         csv_reader = csv.DictReader(file)
-    #         # 遍历CSV文件的每一行
-    #         for row in csv_reader:
-    #             # 将每一行数据添加到列表中
-    #             data.append(row)
-    #
-    #     # 将数据转换为JSON格式
-    #     json_data = json.dumps(data, ensure_ascii=False)
-    #
-    #     return json_data
-
-    # result_csv=[]
-    # # 以下记得取消注释
-    # keyword_1_a4="2024-04-18_1713438544_prodcut_1_3.csv"
-    # keyword_2_a3="2024-04-18_1713438547_prodcut_1_4.csv"
-    # keyword_2_a4="2024-04-18_1713438572_prodcut_2_4.csv"
-    # keyword_2_a5="2024-04-18_1713438575_prodcut_2_5.csv"
-    # result_csv.append({"title":"关键词优化分析 1-1.4","csv_file_path":"","filename":getfilepath(keyword_1_a4),"tablecontent":getcsvcont(getfilepath(keyword_1_a4)),"strategy":"这是关键词1-1.1的优化策略"})
-    # result_csv.append({"title":"关键词优化分析 1-2.3","csv_file_path":"","filename":getfilepath(keyword_2_a3),"strategy":"这是关键词1-2.3的优化策略"})
-    # result_csv.append({"title":"关键词优化分析 1-2.4","csv_file_path":"","filename":getfilepath(keyword_2_a4),"strategy":"这是关键词1-2.4的优化策略"})
-    # result_csv.append({"title":"关键词优化分析 1-2.5","csv_file_path":"","filename":getfilepath(keyword_2_a5),"strategy":"这是关键词1-2.5的优化策略"})
-    # result_csv.append({"title": "关键词优化分析 1-4.3", "csv_file_path": "", "filename": getfilepath(keyword_4_a3),"strategy": "这是关键词1-4.3的优化策略"})
-    # result_csv.append({"title": "关键词优化分析 1-4.4", "csv_file_path": "", "filename": getfilepath(keyword_4_a4),"strategy": "这是关键词1-4.4的优化策略"})
-    # result_csv.append({"title": "关键词优化分析 1-4.5", "csv_file_path": "", "filename": getfilepath(keyword_4_a5),"strategy": "这是关键词1-4.5的优化策略"})
-    #
-    # result_csv.append({"title": "关键词优化分析 2-1.3", "csv_file_path": "", "filename": getfilepath(keyword_2_a3),"strategy": "这是关键词2-1.3的优化策略"})
-    # result_csv.append({"title": "关键词优化分析 2-1.4", "csv_file_path": "", "filename": getfilepath(keyword_2_a4),"strategy": "这是关键词2-1.4的优化策略"})
-    # result_csv.append({"title": "关键词优化分析 2-1.5", "csv_file_path": "", "filename": getfilepath(keyword_2_a5),"strategy": "这是关键词2-1.5的优化策略"})
-    # result_csv.append({"title": "关键词优化分析 2-2.3", "csv_file_path": "", "filename": getfilepath(keyword_2_a3),"strategy": "这是关键词2-2.3的优化策略"})
-    # result_csv.append({"title": "关键词优化分析 2-2.4", "csv_file_path": "", "filename": getfilepath(keyword_2_a4),"strategy": "这是关键词2-2.4的优化策略"})
-    # result_csv.append({"title": "关键词优化分析 2-2.5", "csv_file_path": "", "filename": getfilepath(keyword_2_a5),"strategy": "这是关键词2-2.5的优化策略"})
-
 
     # last_answer["result_csvs"]=result_csv
+
+    # 需要增加展示CSV的功能在最后
+    csvfiles = [{'title': '1.2.3',
+                 'file_path': getfilepath(keyword_2_a3),
+                 'introduction': '以下为 低于 平均ACOS值 30% 以上的',
+                 'operate': '建议执行的操作：关键词提高出价10%'},
+                {'title': '1.2.4',
+                 'file_path': getfilepath(keyword_2_a4),
+                 'introduction': '以下为 低于 平均ACOS值 20% - 30%',
+                 'operate': '建议执行的操作：关键词提高出价5%'},
+                {'title': '1.2.5',
+                 'file_path': getfilepath(keyword_2_a5),
+                 'introduction': '以下为 低于 平均ACOS值 10% - 20% 的',
+                 'operate': '建议执行的操作：关键词提高出价3%'},
+                {'title': '1.4.3',
+                 'file_path': getfilepath(keyword_4_a3),
+                 'introduction': '以下为 高于 平均ACOS值 30% 以上的',
+                 'operate': '建议执行的操作：关闭关键词投放'},
+                {'title': '1.4.4',
+                 'file_path': getfilepath(keyword_4_a4),
+                 'introduction': '以下为 高于 平均ACOS值 20% - 30% 的',
+                 'operate': '建议执行的操作：降低出价 20%'},
+                {'title': '1.4.5',
+                 'file_path': getfilepath(keyword_4_a5),
+                 'introduction': '以下为 高于 平均ACOS值 10% - 20% 的',
+                 'operate': '建议执行的操作：降低出价 10%'},
+
+                # 继续
+                {'title': '2.1.3',
+                 'file_path': getfilepath(product_1_a3),
+                 'introduction': '以下为 低于 平均ACOS值 30%以上的 sku广告',
+                 'operate': '建议执行的操作：新开计划（关键词和原计划一样），预算增加30%，关键词价格上调10%。 '},
+                {'title': '2.1.4',
+                 'file_path': getfilepath(product_1_a4),
+                 'introduction': '以下为 低于 平均ACOS值 20% - 30% 的 sku广告',
+                 'operate': '建议执行的操作：暂不操作'},
+                {'title': '2.1.5',
+                 'file_path': getfilepath(product_1_a5),
+                 'introduction': '以下为 低于 平均ACOS值 10% - 20% 的 sku广告',
+                 'operate': '建议执行的操作：暂不操作'},
+
+                {'title': '2.2.3',
+                 'file_path': getfilepath(product_2_a3),
+                 'introduction': '以下为 高于 平均ACOS值 30%以上的 sku广告',
+                 'operate': '建议执行的操作：暂不操作'},
+                {'title': '2.2.4',
+                 'file_path': getfilepath(product_2_a4),
+                 'introduction': '以下为 高于 平均ACOS值 20% - 30% 的 sku广告',
+                 'operate': '建议执行的操作：暂不操作'},
+                {'title': '2.2.5',
+                 'file_path': getfilepath(product_2_a5),
+                 'introduction': '以下为 高于 平均ACOS值 10% - 20% 的 sku广告',
+                 'operate': '建议执行的操作：暂不操作'},
+
+                {'title': '3.1.3',
+                 'file_path': getfilepath(campaign_1_a3),
+                 'introduction': '以下为 低于 平均ACOS值30% 以上的 campaign 广告活动',
+                 'operate': '建议执行的操作：预算提升30%'},
+                {'title': '3.1.4',
+                 'file_path': getfilepath(campaign_1_a4),
+                 'introduction': '以下为 低于 平均ACOS值 20% - 30% 的 campaign 广告活动',
+                 'operate': '建议执行的操作：预算提升20%'},
+                {'title': '3.1.5',
+                 'file_path': getfilepath(campaign_1_a5),
+                 'introduction': '以下为 低于 平均ACOS值 10% - 20% 的 campaign 广告活动',
+                 'operate': '建议执行的操作：预算提升10%'},
+                {'title': '3.1.7',
+                 'file_path': getfilepath(campaign_1_a7),
+                 'introduction': '以下为 高于 平均ACOS值30% 以上的 campaign 广告活动',
+                 'operate': '建议执行的操作：预算降低30%'},
+                {'title': '3.1.8',
+                 'file_path': getfilepath(campaign_1_a8),
+                 'introduction': '以下为 高于 平均ACOS值 20% - 30% 的 campaign 广告活动',
+                 'operate': '建议执行的操作：预算降低20%'},
+                {'title': '3.1.9',
+                 'file_path': getfilepath(campaign_1_a9),
+                 'introduction': '以下为 高于 平均ACOS值 10% - 20% 的 campaign 广告活动',
+                 'operate': '建议执行的操作：预算降低10%'},
+
+                {'title': '3.2.3',
+                 'file_path': getfilepath(campaign_2_a3),
+                 'introduction': '以下为 低于 平均ACOS值30% 以上的 campaign 广告活动placement',
+                 'operate': '建议执行的操作：溢价提升10%, （增加）'},
+                {'title': '3.2.4',
+                 'file_path': getfilepath(campaign_2_a4),
+                 'introduction': '以下为 低于 平均ACOS值 20% - 30% 的 campaign 广告活动placement',
+                 'operate': '建议执行的操作：溢价提升5%'},
+                {'title': '3.2.5',
+                 'file_path': getfilepath(campaign_2_a5),
+                 'introduction': '以下为 低于 平均ACOS值 10% - 20% 的 campaign 广告活动placement',
+                 'operate': '建议执行的操作：溢价提升3%'},
+                {'title': '3.2.7',
+                 'file_path': getfilepath(campaign_2_a7),
+                 'introduction': '以下为 高于 平均ACOS值30% 以上的 campaign 广告活动placement',
+                 'operate': '建议执行的操作：溢价清零，归到0%的溢价。'},
+                {'title': '3.2.8',
+                 'file_path': getfilepath(campaign_2_a8),
+                 'introduction': '以下为 高于 平均ACOS值 20% - 30% 的 campaign 广告活动placement',
+                 'operate': '建议执行的操作：溢价下调10%，直到0%'},
+                {'title': '3.2.9',
+                 'file_path': getfilepath(campaign_2_a9),
+                 'introduction': '以下为 高于 平均ACOS值 10% - 20% 的 campaign 广告活动placement',
+                 'operate': '建议执行的操作：溢价下调5%，直到0%'},
+
+                {'title': '3.3.3',
+                 'file_path': getfilepath(campaign_3_a3),
+                 'introduction': '以下为 低于 平均ACOS值30% 以上的 campaign 广告 adgroup',
+                 'operate': '建议执行的操作：基础出价提升10%， 自动广告组的基础出价'},
+                {'title': '3.3.4',
+                 'file_path': getfilepath(campaign_3_a4),
+                 'introduction': '以下为 低于 平均ACOS值 20% - 30% 的 campaign 广告 adgroup',
+                 'operate': '建议执行的操作：基础出价提升5%'},
+                {'title': '3.3.5',
+                 'file_path': getfilepath(campaign_3_a5),
+                 'introduction': '以下为 低于 平均ACOS值 10% - 20% 的 campaign 广告 adgroup',
+                 'operate': '建议执行的操作：基础出价提升3%'},
+                {'title': '3.3.7',
+                 'file_path': getfilepath(campaign_3_a7),
+                 'introduction': '以下为 高于 平均ACOS值30% 以上的 campaign 广告 adgroup',
+                 'operate': '建议执行的操作：基础出价降低15%'},
+                {'title': '3.3.8',
+                 'file_path': getfilepath(campaign_3_a8),
+                 'introduction': '以下为 高于 平均ACOS值 20% - 30% 的 campaign 广告 adgroup',
+                 'operate': '建议执行的操作：基础出价降低10%'},
+                {'title': '3.3.9',
+                 'file_path': getfilepath(campaign_3_a9),
+                 'introduction': '以下为 高于 平均ACOS值 10% - 20% 的 campaign 广告 adgroup',
+                 'operate': '建议执行的操作：基础出价降低5%'},
+
+                ]
+
+    last_answer["csvfiles"] = csvfiles
+
 
 
     print(last_answer)
@@ -376,7 +473,7 @@ def auto_generepot(market,startdate,endate):
 
 # res = auto_generepot('US','2024-04-01','2024-04-14')
 def generate():
-    last_answer = auto_generepot('ES', '2024-04-01', '2024-04-14')
+    last_answer = auto_generepot('FR', '2024-04-19', '2024-04-28')
     data = last_answer
     # 给定的数据
     print(last_answer)
@@ -390,10 +487,10 @@ def generate():
     rendered_html = template.render(data, timestamp=timestamp)
 
     # 将渲染后的HTML写入文件
-    with open('output_ES.html', 'w', encoding='utf-8') as output_file:
+    with open('output_FR_0429.html', 'w', encoding='utf-8') as output_file:
         output_file.write(rendered_html)
 
-    print("HTML文件已生成：output_ES.html")
+    print("HTML文件已生成：output_FR_0429.html")
 
 # generate()
 def main():

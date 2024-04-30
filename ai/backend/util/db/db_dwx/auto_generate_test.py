@@ -1,13 +1,16 @@
 
 # from db_amazon.amazon_mysql_rag_util import AmazonMysqlRagUitl
+from datetime import datetime
+
 from auto_content_test import REPORT_THOUGHT,REPORT_ANALYST
 # -*- coding: utf-8 -*-
 from jinja2 import Template
+from jinja2 import Environment
+env = Environment()
+env.globals['now'] = datetime.now
 import time
-
+from dwx_generate_tools import generate_ecode,fun_Wenxin
 from dwx_all_mysql_rag_util import DwxMysqlRagUitl
-
-from Fun_LLM.Fun_Wenxin import fun_Wenxin
 import json
 
 
@@ -21,8 +24,6 @@ def auto_generepot(BusinessName, startdate, endate,BusinessName2,last_start,last
                'db': '****',
                'charset': 'utf8mb4',
                'use_unicode': True, }
-
-
     dwx = DwxMysqlRagUitl(db_info)
 
     last_answer = {}
@@ -43,19 +44,23 @@ def auto_generepot(BusinessName, startdate, endate,BusinessName2,last_start,last
     channel_analysis_process_1 = []
     channel_1_q1="1.1 计算 {} -{}这段时间，{}的各个渠道套餐销售额分别是多少？".format(startdate, endate, BusinessName)
     channel_1_a1=dwx.get_nt_total_sellMoney(startdate, endate, BusinessName)
-    channel_analysis_process_1.append({"question":channel_1_q1,"answer":channel_1_a1})
+    channel_1_a1_ecode = generate_ecode(channel_1_a1)
+    channel_analysis_process_1.append({"question":channel_1_q1,"answer":channel_1_a1,"echart_id":"channel_1_1","echart_code":channel_1_a1_ecode})
 
     channel_1_q2 = "1.2 计算{}-{}这段时间，{}的各个渠道套餐销售额占比".format(startdate, endate, BusinessName)
     channel_1_a2 = dwx.calculate_channel_sellMoney_proportion(startdate, endate, BusinessName)
-    channel_analysis_process_1.append({"question": channel_1_q2, "answer": channel_1_a2})
+    channel_1_a2_ecode = generate_ecode(channel_1_a2)
+    channel_analysis_process_1.append({"question": channel_1_q2, "answer": channel_1_a2,"echart_id":"channel_1_2","echart_code":channel_1_a2_ecode})
 
     channel_1_q3 = "1.3 计算{}-{}这段时间，各个店铺的各渠道套餐销售额占比".format(startdate, endate)
     channel_1_a3 = dwx.calculate_store_channel_sellMoney_proportion(startdate, endate)
-    channel_analysis_process_1.append({"question": channel_1_q3, "answer": channel_1_a3})
+    channel_1_a3_ecode = generate_ecode(channel_1_a3)
+    channel_analysis_process_1.append({"question": channel_1_q3, "answer": channel_1_a3,"echart_id":"channel_1_3","echart_code":channel_1_a3_ecode})
 
     channel_1_q4 = "1.4 找出{}-{}这段时间，{}销售额占比（1.2结论）低于总占比（1.3结论）的80%的销售渠道".format(startdate,endate, BusinessName)
     channel_1_a4 = dwx.find_low_sellMoney_channel(startdate, endate, BusinessName)
-    channel_analysis_process_1.append({"question": channel_1_q4, "answer": channel_1_a4})
+    channel_1_a4_ecode = ""
+    channel_analysis_process_1.append({"question": channel_1_q4, "answer": channel_1_a4,"echart_code":channel_1_a4_ecode})
 
     channel_answer_1 = {}
     channel_answer_1["analysis_item"] = '1. 分析南通店可以优化的代币套餐渠道'
@@ -69,15 +74,18 @@ def auto_generepot(BusinessName, startdate, endate,BusinessName2,last_start,last
     channel_analysis_process_2 = []
     channel_2_q1 = "2.1 计算{}-{}这段时间内{}可优化渠道（1.4结论）的各套餐销量占比".format(startdate, endate, BusinessName)
     channel_2_a1 = dwx.calculate_optimizable_channel_sellProportion(startdate, endate, BusinessName)
-    channel_analysis_process_2.append({"question": channel_2_q1, "answer": channel_2_a1})
+    channel_2_a1_ecode = generate_ecode(channel_2_a1)
+    channel_analysis_process_2.append({"question": channel_2_q1, "answer": channel_2_a1,"echart_id":"channel_2_1","echart_code":channel_2_a1_ecode})
 
     channel_2_q2 = "2.2 分析{}-{}这段时间内{}在可优化渠道（1.4结论）中各套餐销量平均占比".format(startdate, endate, BusinessName)
     channel_2_a2 = dwx.calculate_average_sellProportion(startdate, endate)
-    channel_analysis_process_2.append({"question": channel_2_q2, "answer": channel_2_a2})
+    channel_2_a2_ecode = generate_ecode(channel_2_a2)
+    channel_analysis_process_2.append({"question": channel_2_q2, "answer": channel_2_a2,"echart_id":"channel_2_2","echart_code":channel_2_a2_ecode})
 
     channel_2_q3 = "2.3 分析{}-{}这段时间内{}在可优化渠道（1.4结论）滞销套餐名（销量占比低于均值的80%）".format(startdate, endate, BusinessName)
     channel_2_a3 = dwx.analyze_underperforming_packages(startdate, endate, BusinessName)
-    channel_analysis_process_2.append({"question": channel_2_q3, "answer": channel_2_a3})
+    channel_2_a3_ecode = ""
+    channel_analysis_process_2.append({"question": channel_2_q3, "answer": channel_2_a3,"echart_id":"channel_2_3","echart_code":channel_2_a3_ecode})
 
 # 2.4 主观问题
     channel_2_q4 = "2.4根据1.4和2.3的问题和结论 给出建议如何优化滞销套餐"
@@ -113,17 +121,18 @@ def auto_generepot(BusinessName, startdate, endate,BusinessName2,last_start,last
 
 
 
-
     # 2日营收优化分析
     daily_revenue_analysis_process_1 = []
 
     daily_revenue_1_1_q = "1.1 分析{}-{}这段时间内{}每日营收金额波动情况".format(startdate, endate, BusinessName)
     daily_revenue_1_1_a = dwx.analyze_daily_revenue_fluctuation(startdate, endate, BusinessName)
-    daily_revenue_analysis_process_1.append({"question": daily_revenue_1_1_q, "answer": daily_revenue_1_1_a})
+    daily_revenue_1_1_a_ecode = generate_ecode(daily_revenue_1_1_a)
+    daily_revenue_analysis_process_1.append({"question": daily_revenue_1_1_q, "answer": daily_revenue_1_1_a,"echart_id":"daily_revenue_1_1_a_ecode","echart_code":daily_revenue_1_1_a_ecode})
 
     daily_revenue_1_2_q = "1.2 分析{}-{},{}这一周营收金额是否有异常情况,分析这周最低营收是否低于上周最低值的80%".format(startdate,endate, BusinessName)
     daily_revenue_1_2_a = dwx.analyze_weekly_revenue_anomaly(last_start,last_end,startdate,endate, BusinessName)
-    daily_revenue_analysis_process_1.append({"question": daily_revenue_1_2_q, "answer": daily_revenue_1_2_a})
+    daily_revenue_1_2_a_ecode = generate_ecode(daily_revenue_1_2_a)
+    daily_revenue_analysis_process_1.append({"question": daily_revenue_1_2_q, "answer": daily_revenue_1_2_a,"echart_id":"daily_revenue_1_2_a_ecode","echart_code":daily_revenue_1_2_a_ecode})
 
 
 # 2 1.3 主观问题
@@ -136,11 +145,8 @@ def auto_generepot(BusinessName, startdate, endate,BusinessName2,last_start,last
     # print(daily_revenue_1_3_q_new )
     if daily_revenue_1_3_a:
         print("2 1.3 data succeed")
-
     daily_revenue_analysis_process_1.append({"question": daily_revenue_1_3_q, "answer": daily_revenue_1_3_a})
-
     chat_question.append(daily_revenue_1_3_q_new)
-
 
 
     daily_revenue_answer_1 = {}
@@ -159,8 +165,6 @@ def auto_generepot(BusinessName, startdate, endate,BusinessName2,last_start,last
     all_report_question.append(daily_revenue_question)
 
 
-
-
     # 3日成本优化分析
 
     # 1. 分析南通店第14周日成本波动情况
@@ -169,17 +173,20 @@ def auto_generepot(BusinessName, startdate, endate,BusinessName2,last_start,last
     # 1.1 计算南通店第14周各日成本波动情况
     cost_1_q1 = "1.1 计算南通店第14周每日成本波动情况"
     cost_1_a1 = dwx.calculate_cost_fluctuation_weekly(startdate, endate, BusinessName)
-    cost_analysis_process_1.append({"question": cost_1_q1, "answer": cost_1_a1})
+    cost_1_a1_ecode = generate_ecode(cost_1_a1)
+    cost_analysis_process_1.append({"question": cost_1_q1, "answer": cost_1_a1,"echart_id":"cost_1_a1_ecode","echart_code":cost_1_a1_ecode})
 
     # 1.2 分析南通店第14周日消费波动情况
     cost_1_q2 = "1.2 分析南通店第14周每日消费波动情况"
     cost_1_a2 = dwx.analyze_spending_fluctuation_weekly(startdate, endate, BusinessName)
-    cost_analysis_process_1.append({"question": cost_1_q2, "answer": cost_1_a2})
+    cost_1_a2_ecode = generate_ecode(cost_1_a2)
+    cost_analysis_process_1.append({"question": cost_1_q2, "answer": cost_1_a2,"echart_id":"cost_1_a2_ecode","echart_code":cost_1_a2_ecode})
 
     # 1.3 比较南通店第13周和14周是否有当日成本超出当日营收50%的情况
     cost_1_q3 = "1.3 分析南通店第13周和14周是否有当日成本超出当日营收50%的情况"
     cost_1_a3 = dwx.compare_cost_revenue_ratio(last_start, endate, BusinessName)
-    cost_analysis_process_1.append({"question": cost_1_q3, "answer": cost_1_a3})
+    cost_1_a3_ecode = generate_ecode(cost_1_a3)
+    cost_analysis_process_1.append({"question": cost_1_q3, "answer": cost_1_a3,"echart_id":"cost_1_a3_ecode","echart_code":cost_1_a3_ecode})
 
     cost_answer_1 = {}
     cost_answer_1["analysis_item"] = '1.分析本周成本是否有异常情况'
@@ -486,14 +493,13 @@ def auto_generepot(BusinessName, startdate, endate,BusinessName2,last_start,last
     last_answer["report_thought"]=REPORT_THOUGHT
     # 增加report_analyst
     last_answer["report_analyst"] = REPORT_ANALYST
-
     # last_answer["report_analyst"].append(chat_answer)
 
-
+    # 增加前端展示图形测试 --auserwn
+    # last_answer["autogen_echart"]=generate_ecode(analysis_2_5_answer)
 
     print(last_answer)
     return last_answer
-
 
 
 # res = auto_generepot('US','2024-04-01','2024-04-14')

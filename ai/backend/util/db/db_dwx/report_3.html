@@ -105,9 +105,18 @@
         <h4>{{ answer_item['analysis_item'] }}</h4>
           <li>{{ answer_item['description'] }} </li>
           {% for analysis_que in answer_item['analysis_process'] %}
-<!--            <li>{{ analysis_que['question'] }} :<br> &nbsp;&nbsp;&nbsp;&nbsp;Answer is : {{ analysis_que['answer'] }}</li>-->
             <li style="color: green;">{{ analysis_que['question'] }} :</li>
             <li>&nbsp;&nbsp;&nbsp;&nbsp;Answer is : {{ analysis_que['answer'] }}</li>
+                {% if analysis_que['echart_code'] %}
+    <div style="width: 80%; margin: 0 auto;">
+      <div id="chart{{ analysis_que['echart_id'] }}" class="chart m-b-5 bg-border"></div>
+      <script type="text/javascript">
+        var chart{{ analysis_que['echart_id'] }} = echarts.init(document.getElementById('chart{{ analysis_que['echart_id'] }}'), "dark-blue");
+        var option{{ analysis_que['echart_id'] }} = {{ analysis_que['echart_code']| safe }};
+        chart{{ analysis_que['echart_id'] }}.setOption(option{{ analysis_que['echart_id'] }});
+      </script>
+    </div>
+    {% endif %}
           {% endfor %}
         {% endfor %}
       </ul>
@@ -131,6 +140,15 @@
       {% endfor %}
     </ul>
   </div>
-</div>
+
+
+{#图形测试#}
+{#  <div id="chart2_1714118978917" class="chart m-b-5 bg-border"></div>#}
+{#      <script type="text/javascript">#}
+{#        var chart2_1714118978917 = echarts.init(document.getElementById('chart2_1714118978917'), "dark");#}
+{#        var option2_1714118978917 = {{ autogen_echart }};#}
+{#        chart2_1714118978917.setOption(option2_1714118978917);#}
+{#      </script>#}
+{#</div>#}
 </body>
 </html>

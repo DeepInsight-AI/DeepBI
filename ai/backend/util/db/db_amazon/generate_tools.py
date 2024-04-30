@@ -15,13 +15,14 @@ from ai.agents.code_utils import (
     append_report_logger,
 )
 
-
+api_key = '***'
+api_host = "****"
 
 config_list_gpt4_turbo = [
     {
         'model': 'gpt-4-1106-preview',
-        'api_key': "",
-        'api_base': "",
+        'api_key': api_key,
+        'api_base': api_host,
     },
 ]
 
@@ -47,8 +48,6 @@ Note: Please translate the above content into English one by one, without skippi
     }
 )
 
-
-
 user_proxy = HumanProxyAgent(
     name="Admin",
     system_message="A human admin. Interact with the planner to discuss the plan. ",
@@ -58,8 +57,6 @@ user_proxy = HumanProxyAgent(
     user_name=user_name,
     outgoing=None,
 )
-
-# q_strq_str = '数据集中最常见的房屋布局是什么?'
 
 
 async def ask_question(question,targetlanguage):

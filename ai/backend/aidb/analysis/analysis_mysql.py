@@ -169,10 +169,9 @@ class AnalysisMysql(Analysis):
 
     async def task_generate_echart(self, qustion_message):
         try:
-            base_content = []
             base_mess = []
             report_demand_list = []
-            json_str = ""
+            is_chart=False
             error_times = 0
             use_cache = True
             for i in range(max_retry_times):
@@ -188,51 +187,13 @@ class AnalysisMysql(Analysis):
                     )
 
                     answer_message = mysql_echart_assistant.chat_messages[python_executor]
-
-                    for answer_mess in answer_message:
-                        # print("answer_mess :", answer_mess)
-                        if answer_mess['content']:
-                            if str(answer_mess['content']).__contains__('execution succeeded'):
-
-                                answer_mess_content = str(answer_mess['content']).replace('\n', '')
-
-                                print("answer_mess: ", answer_mess)
-                                match = re.search(
-                                    r"\[.*\]", answer_mess_content.strip(), re.MULTILINE | re.IGNORECASE | re.DOTALL
-                                )
-
-                                if match:
-                                    json_str = match.group()
-                                print("json_str : ", json_str)
-                                # report_demand_list = json.loads(json_str)
-
-                                chart_code_str = str(json_str).replace("\n", "")
-                                if len(chart_code_str) > 0:
-                                    print("chart_code_str: ", chart_code_str)
-                                    if base_util.is_json(chart_code_str):
-                                        report_demand_list = json.loads(chart_code_str)
-
-                                        print("report_demand_list: ", report_demand_list)
-
-                                        for jstr in report_demand_list:
-                                            if str(jstr).__contains__('echart_name') and str(jstr).__contains__(
-                                                'echart_code'):
-                                                base_content.append(jstr)
-                                    else:
-                                        # String instantiated as object
-                                        report_demand_list = ast.literal_eval(chart_code_str)
-                                        print("report_demand_list: ", report_demand_list)
-                                        for jstr in report_demand_list:
-                                            if str(jstr).__contains__('echart_name') and str(jstr).__contains__(
-                                                'echart_code'):
-                                                base_content.append(jstr)
-
-                    print("base_content: ", base_content)
                     base_mess = []
                     base_mess.append(answer_message)
+                    if str(answer_message).__contains__('图像已生成'):
+                        is_chart=True
+                    else:
+                        is_chart=False
                     break
-
-
                 except Exception as e:
                     traceback.print_exc()
                     logger.error("from user:[{}".format(self.user_name) + "] , " + "error: " + str(e))
@@ -244,25 +205,6 @@ class AnalysisMysql(Analysis):
 
             logger.info(
                 "from user:[{}".format(self.user_name) + "] , " + "，report_demand_list" + str(report_demand_list))
-
-            bi_proxy = self.agent_instance_util.get_agent_bi_proxy()
-            is_chart = True
-            # Call the interface to generate pictures
-            # for img_str in base_content:
-            #     echart_name = img_str.get('echart_name')
-            #     echart_code = img_str.get('echart_code')
-            #
-            #     if len(echart_code) > 0 and str(echart_code).__contains__('x'):
-            #         is_chart = True
-            #         print("echart_name : ", echart_name)
-            #         # 格式化echart_code
-            #         # if base_util.is_json(str(echart_code)):
-            #         #     json_obj = json.loads(str(echart_code))
-            #         #     echart_code = json.dumps(json_obj)
-            #
-            #         re_str = await bi_proxy.run_echart_code(str(echart_code), echart_name)
-            #         base_mess.append(re_str)
-
             error_times = 0
             for i in range(max_retry_times):
                 try:
@@ -273,7 +215,7 @@ class AnalysisMysql(Analysis):
                     if self.language_mode == CONFIG.language_chinese:
 
                         if is_chart:
-                            question_supplement = " 请用中文，简单介绍一下已生成图表中的数据内容."
+                            question_supplement = " 请用中文，详细介绍已生成图表中的数据内容,分析完毕后即结束任务."
                         else:
                             question_supplement = " 请用中文，从上诉对话中分析总结出问题的答案."
                     elif self.language_mode == CONFIG.language_japanese:

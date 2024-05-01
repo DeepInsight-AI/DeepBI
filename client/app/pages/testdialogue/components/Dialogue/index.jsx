@@ -252,6 +252,7 @@ const onSuccess = useCallback((code, value,source_item,result,firstTableData) =>
     databases_desc: "",
     table_desc: allIsPass
   }
+  // console.log("content",content)
   sendSocketMessage(code, 'bi', 'mysql_comment', content)
 }, [setState, sendSocketMessage]);
 const mergeObj= (obj1,obj2)=>{

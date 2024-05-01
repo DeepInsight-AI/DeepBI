@@ -226,7 +226,7 @@ class Completion(openai_Completion):
                     headers = {
                         "token": config['api_key'],
                         "ai_name": "openai",
-                        "module": config['model']
+                        "model": config['model']
                     }
                     # print('request json : ', data)
 

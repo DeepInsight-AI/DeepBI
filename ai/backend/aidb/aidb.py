@@ -624,7 +624,7 @@ class AIDB:
             message=qustion_message,
         )
         select_table_message = planner_user.last_message()["content"]
-
+        print('select_table_message : ', select_table_message)
         match = re.search(
             r"\[.*\]", select_table_message.strip(), re.MULTILINE | re.IGNORECASE | re.DOTALL
         )

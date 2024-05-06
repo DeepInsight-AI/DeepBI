@@ -386,7 +386,8 @@ class AnalysisMysql(Analysis):
                 ##### 4, two fucntion
                 self.table_comment = table_comment
                 self.use_cache = use_cache
-                question_type = await self.select_question_type(qustion_message=qustion_message, use_cache=use_cache)
+                question_type ='base_question'
+                # question_type = await self.select_question_type(qustion_message=qustion_message, use_cache=use_cache)
                 if question_type == 'total_question':
                     answer_message = await self.total_question(qustion_message, db_info)
                     return answer_message

@@ -663,7 +663,7 @@ class AIDB:
 
     def get_agent_select_ragdoc_assistant(self, ragdoc_path, use_cache=False):
         """select_ragdoc_assistant"""
-
+        json_data = []
         # 打开JSON文件
         with open(ragdoc_path, 'r') as file:
             # 读取JSON数据并将其转换为Python对象

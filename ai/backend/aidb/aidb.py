@@ -633,28 +633,33 @@ class AIDB:
             json_str = match.group()
         print("search_rag_json_str : ", json_str)
         select_rag_list = json.loads(json_str)
-        new_items = ['查询店铺使用字段约束', '问题中有店铺名称，xxxxxxx-xx店','问题中涉及时间、日期']
-        select_rag_list.extend(new_items)
-        print("select_rag_list : ", select_rag_list)
 
         with open(rag_coc_path, 'r') as file:
             # 读取JSON数据并将其转换为Python对象
             ragdoc_json_data = json.load(file)
 
-        basic_knowledge = []
-        # for key, value in ragdoc_json_data.items():
-        #     # print(key, ":", value)
-        #     if key in str(select_rag_list):
-        #         rag_name = {key: value}
-        #         # print('rag_name :', rag_name)
-        #         basic_knowledge.append(rag_name)
+        matching_keys = [key for key in ragdoc_json_data.keys() if key in select_rag_list]
+        if matching_keys:
+            new_items = ['查询店铺使用字段约束', '问题中有店铺名称，xxxxxxx-xx店','问题中涉及时间、日期']
+            select_rag_list.extend(new_items)
+            print("select_rag_list : ", select_rag_list)
 
-        basic_knowledge = base_util.read_target_keyvalue(ragdoc_json_data, select_rag_list)
 
-        retrieve_rag_doc = 'Context is: ' + '\n' + str(basic_knowledge)
 
-        print('retrieve_rag_doc : ', retrieve_rag_doc)
-        return retrieve_rag_doc
+            basic_knowledge = []
+            # for key, value in ragdoc_json_data.items():
+            #     # print(key, ":", value)
+            #     if key in str(select_rag_list):
+            #         rag_name = {key: value}
+            #         # print('rag_name :', rag_name)
+            #         basic_knowledge.append(rag_name)
+
+            basic_knowledge = base_util.read_target_keyvalue(ragdoc_json_data, select_rag_list)
+
+            retrieve_rag_doc = 'Context is: ' + '\n' + str(basic_knowledge)
+
+            print('retrieve_rag_doc : ', retrieve_rag_doc)
+            return retrieve_rag_doc
 
     def get_agent_select_ragdoc_assistant(self, ragdoc_path, use_cache=True):
         """select_ragdoc_assistant"""

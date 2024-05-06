@@ -93,7 +93,7 @@ git clone http://github.com/DeepInsight-AI/DeepBI.git
 
 
 ## Contact Us
-<a><img src="https://github.com/DeepInsight-AI/DeepBI/assets/151519374/d29725ed-c348-4acb-9dab-51b9a0b0772d" width="40%"/></a>
+<a><img src="https://github.com/DeepInsight-AI/DeepBI/assets/151519374/1fb50bec-bec1-4acf-a82f-49611b754a3d" width="40%"/></a>
 <br>
 为感谢各位支持，本地化部署完成可以联系群内DeepBI小助手，免费领取Token。
 

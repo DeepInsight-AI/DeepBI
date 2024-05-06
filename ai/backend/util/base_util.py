@@ -111,7 +111,7 @@ def read_json_values(data):
 
 
 def read_json_keys(data, keys=[]):
-    # keys = []
+    keys = []
     # 提取值不是对象的键值对
     if isinstance(data, dict):
         for key, value in data.items():

@@ -661,7 +661,7 @@ class AIDB:
             print('retrieve_rag_doc : ', retrieve_rag_doc)
             return retrieve_rag_doc
 
-    def get_agent_select_ragdoc_assistant(self, ragdoc_path, use_cache=False):
+    def get_agent_select_ragdoc_assistant(self, ragdoc_path, use_cache=True):
         """select_ragdoc_assistant"""
         json_data = []
         # 打开JSON文件
@@ -669,7 +669,7 @@ class AIDB:
             # 读取JSON数据并将其转换为Python对象
             json_data = json.load(file)
 
-        # doc_names = []
+        doc_names = []
         # for key, value in json_data.items():
         #     # print(key, ":", value)
         #     doc_names.append(key)

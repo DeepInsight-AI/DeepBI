@@ -697,6 +697,14 @@ class AIDB:
          “doc_name4”,
          “doc_name5”,
          ].
+                        Do not return the following format,
+         [
+         “name1”: "doc_name1",
+         “name2”: "doc_name2",
+         “name3”: "doc_name3",
+         “name4”: "doc_name4",
+         “name5”: "doc_name5",
+         ]
          Reply "TERMINATE" in the end when everything is done.
 
                         Task types are generally divided into the following categories:

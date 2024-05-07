@@ -111,7 +111,7 @@ def read_json_values(data):
 
 
 def read_json_keys(data, keys=[]):
-    # keys = []
+    keys = []
     # 提取值不是对象的键值对
     if isinstance(data, dict):
         for key, value in data.items():
@@ -126,18 +126,10 @@ def read_json_keys(data, keys=[]):
 
 
 def read_target_keyvalue(ragdoc_json_data, select_rag_list, basic_knowledge=[]):
-    # basic_knowledge = []
-    if isinstance(ragdoc_json_data, dict):
-        for key, value in ragdoc_json_data.items():
-            if not isinstance(value, (dict, list)):
-                if key in str(select_rag_list):
-                    rag_name = {key: value}
-                    # print('rag_name :', rag_name)
-                    # yield rag_name
-                    basic_knowledge.append(rag_name)
-            else:
-                read_target_keyvalue(value, select_rag_list, basic_knowledge)
-    elif isinstance(ragdoc_json_data, list):
-        for item in ragdoc_json_data:
-            read_target_keyvalue(item, select_rag_list, basic_knowledge)
+    basic_knowledge = []
+    for key, value in ragdoc_json_data.items():
+        if key in select_rag_list:
+            rag_name = {key: value}
+            basic_knowledge.append(rag_name)
     return basic_knowledge
+

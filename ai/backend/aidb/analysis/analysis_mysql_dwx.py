@@ -386,7 +386,8 @@ class AnalysisMysql(Analysis):
                 ##### 4, two fucntion
                 self.table_comment = table_comment
                 self.use_cache = use_cache
-                question_type = await self.select_question_type(qustion_message=qustion_message, use_cache=use_cache)
+                question_type ='base_question'
+                # question_type = await self.select_question_type(qustion_message=qustion_message, use_cache=use_cache)
                 if question_type == 'total_question':
                     answer_message = await self.total_question(qustion_message, db_info)
                     return answer_message
@@ -440,7 +441,19 @@ class AnalysisMysql(Analysis):
 
             # table_comment = self.table_comment
             # use_cache = self.use_cache
-            retrieve_rag_doc = await self.select_rag_doc(qustion_message, use_cache)
+            max_attempts = 3  # 最大尝试次数
+            attempts = 0  # 当前尝试次数
+            retrieve_rag_doc = None
+
+            while attempts < max_attempts:
+                retrieve_rag_doc = await self.select_rag_doc(qustion_message, use_cache)
+                if retrieve_rag_doc:  # 如果 retrieve_rag_doc 不为空，则跳出循环
+                    break
+                attempts += 1
+
+            if retrieve_rag_doc is None:
+                print("No data retrieved after maximum attempts.")
+            # retrieve_rag_doc = await self.select_rag_doc(qustion_message, use_cache)
 
             mysql_echart_assistant = self.agent_instance_util.get_agent_mysql_echart_assistant(
                 use_cache=use_cache)
@@ -1056,7 +1069,19 @@ class AnalysisMysql(Analysis):
 
         table_comment = self.table_comment
         use_cache = self.use_cache
-        retrieve_rag_doc = await self.select_rag_doc(qustion_message, use_cache)
+        max_attempts = 3  # 最大尝试次数
+        attempts = 0  # 当前尝试次数
+        retrieve_rag_doc = None
+
+        while attempts < max_attempts:
+            retrieve_rag_doc = await self.select_rag_doc(qustion_message, use_cache)
+            if retrieve_rag_doc:  # 如果 retrieve_rag_doc 不为空，则跳出循环
+                break
+            attempts += 1
+
+        if retrieve_rag_doc is None:
+            print("No data retrieved after maximum attempts.")
+        # retrieve_rag_doc = await self.select_rag_doc(qustion_message, use_cache)
 
         base_mysql_assistant = self.agent_instance_util.get_agent_base_mysql_assistant(use_cache=use_cache,
                                                                    add_message='')

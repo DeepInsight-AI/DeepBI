@@ -660,6 +660,9 @@ class AIDB:
 
             print('retrieve_rag_doc : ', retrieve_rag_doc)
             return retrieve_rag_doc
+        else:
+            retrieve_rag_doc = []
+            return retrieve_rag_doc
 
     def get_agent_select_ragdoc_assistant(self, ragdoc_path, use_cache=True):
         """select_ragdoc_assistant"""

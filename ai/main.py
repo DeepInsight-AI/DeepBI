@@ -4,7 +4,7 @@ from dotenv import load_dotenv
 load_dotenv()
 from flask import Flask, request, jsonify, stream_with_context, Response, send_file
 from flask_cors import CORS,cross_origin
-#from ai.backend.chat_task import ChatClass
+from ai.backend.chat_task import ChatClass
 import time  # 用于模拟延迟
 import json
 import asyncio

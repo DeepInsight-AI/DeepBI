@@ -38,7 +38,7 @@ class DeepSeekClient:
         """
         print("0" * 30)
         print(data['messages'])
-        messages = cls.transform_message_role(data)
+        messages = cls.transform_message_role(data['messages'])
         print("-------------trans role---------")
         print(messages)
         model = model if model else DEEPSEEK_MODEL
@@ -261,7 +261,7 @@ class DeepSeekClient:
         transformed_message = []
         now_content = ""
         now_role = ""
-        user_define = ['user', 'function', 'system']
+        user_define = ['user', 'function']
 
         for i, item in enumerate(message):
             role = item.get('role')

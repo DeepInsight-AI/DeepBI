@@ -76,6 +76,8 @@ class DeepSeekClient:
             response = requests.request("POST", DEEPSEEK_DEFAULT_URL, headers=headers, data=payload)
             result = json.loads(response.text)
         except Exception as e:
+            print("error" * 10)
+            print(response.text)
             print(e)
             result = {}
         return result
@@ -278,6 +280,9 @@ class DeepSeekClient:
                 elif role == "assistant":
                     now_item['role'] = "assistant"
                     now_role = "assistant"
+                elif role == "system":
+                    now_item['role'] = "system"
+                    now_role = "system"
                 else:
                     continue
             else:

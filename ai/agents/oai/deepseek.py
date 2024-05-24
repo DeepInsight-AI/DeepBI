@@ -32,7 +32,7 @@ Deepseek_stop_reason_map = {
 class DeepSeekClient:
 
     @classmethod
-    def run(cls, apiKey, data):
+    def run(cls, apiKey, data, model=None):
         """
         定义入口
         """
@@ -41,8 +41,8 @@ class DeepSeekClient:
         messages = cls.transform_message_role(data)
         print("-------------trans role---------")
         print(messages)
-
-        ai_result = cls.call_deepSeek(apiKey, messages)
+        model = model if model else DEEPSEEK_MODEL
+        ai_result = cls.call_deepSeek(apiKey, messages, model)
         print("-------------ai_result-----------")
         print(ai_result)
         return cls.output_to_openai(ai_result)

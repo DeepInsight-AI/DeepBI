@@ -49,10 +49,11 @@ class DeepSeekClient:
         pass
 
     @classmethod
-    def call_deepSeek(apikey, message, model=DEEPSEEK_MODEL, temperature=DEEPSEEK_TEMPERTURE):
+    def call_deepSeek(cls, apikey, message, model=DEEPSEEK_MODEL, temperature=DEEPSEEK_TEMPERTURE):
         """
         调用deepSeek
         """
+        print("apikey", "-" + apikey + "-")
         try:
             payload = json.dumps({
                 "messages": message,
@@ -120,7 +121,7 @@ class DeepSeekClient:
 
         return {
             "id": f"chatcmpl-{str(time.time())}",
-            "object": data['chat.completion'],
+            "object": data['object'],
             "created": int(time.time()),
             "model": DEEPSEEK_MODEL,
             "usage": {

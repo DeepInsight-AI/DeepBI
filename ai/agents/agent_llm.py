@@ -16,169 +16,172 @@
                 1 times
                 2 times
    notice:
+        DeepInsight
         Determine the model apikey Settings and make them correct
+        
+        DeepInsight
 """
 AGENT_LLM_MODEL = {
     "planner_user": {
-        "llm": "DeepInsight",
-        "model": "gpt-4-1106-preview",
-        "replace_default": False,
-        "use_message_count": 1
+        "llm": "Deepseek",
+        "model": "deepseek-coder",
+        "replace_default": True,
+        "use_message_count": 0
     },
     "mysql_engineer": {
-        "llm": "DeepInsight",
-        "model": "gpt-4-1106-preview",
-        "replace_default": False,
-        "use_message_count": 1
+        "llm": "Deepseek",
+        "model": "deepseek-coder",
+        "replace_default": True,
+        "use_message_count": 0
     },
     "postgresql_engineer": {
-        "llm": "DeepInsight",
-        "model": "gpt-4-1106-preview",
-        "replace_default": False,
-        "use_message_count": 1
+        "llm": "Deepseek",
+        "model": "deepseek-coder",
+        "replace_default": True,
+        "use_message_count": 0
     },
     "chart_presenter": {
-        "llm": "DeepInsight",
-        "model": "gpt-4-1106-preview",
-        "replace_default": False,
-        "use_message_count": 1
+        "llm": "Deepseek",
+        "model": "deepseek-coder",
+        "replace_default": True,
+        "use_message_count": 0
     },
     "mongodb_engineer": {
-        "llm": "DeepInsight",
-        "model": "gpt-4-1106-preview",
-        "replace_default": False,
-        "use_message_count": 1
+        "llm": "Deepseek",
+        "model": "deepseek-coder",
+        "replace_default": True,
+        "use_message_count": 0
     },
     "base_mysql_assistant": {
-        "llm": "DeepInsight",
-        "model": "gpt-4-1106-preview",
-        "replace_default": False,
-        "use_message_count": 1
+        "llm": "Deepseek",
+        "model": "deepseek-coder",
+        "replace_default": True,
+        "use_message_count": 0
     },
     "base_assistant": {
-        "llm": "DeepInsight",
-        "model": "gpt-4-1106-preview",
-        "replace_default": False,
-        "use_message_count": 1
+        "llm": "Deepseek",
+        "model": "deepseek-coder",
+        "replace_default": True,
+        "use_message_count": 0
     },
     "base_csv_assistant": {
-        "llm": "DeepInsight",
+        "llm": "Deepseek",
         "model": "glm-4",
-        "replace_default": False,
-        "use_message_count": 1
+        "replace_default": True,
+        "use_message_count": 0
     },
     "base_postgresql_assistant": {
-        "llm": "DeepInsight",
-        "model": "gpt-4-1106-preview",
-        "replace_default": False,
-        "use_message_count": 1
+        "llm": "Deepseek",
+        "model": "deepseek-coder",
+        "replace_default": True,
+        "use_message_count": 0
     },
     "database_describer": {
-        "llm": "DeepInsight",
-        "model": "gpt-4-1106-preview",
-        "replace_default": False,
-        "use_message_count": 1
+        "llm": "Deepseek",
+        "model": "deepseek-coder",
+        "replace_default": True,
+        "use_message_count": 0
     },
     "Executor": {
-        "llm": "DeepInsight",
-        "model": "gpt-4-1106-preview",
-        "replace_default": False,
-        "use_message_count": 1
+        "llm": "Deepseek",
+        "model": "deepseek-coder",
+        "replace_default": True,
+        "use_message_count": 0
     },
     "task_selector": {
-        "llm": "DeepInsight",
-        "model": "gpt-4-1106-preview",
-        "replace_default": False,
-        "use_message_count": 1
+        "llm": "Deepseek",
+        "model": "deepseek-coder",
+        "replace_default": True,
+        "use_message_count": 0
     },
     "task_planner": {
-        "llm": "DeepInsight",
-        "model": "gpt-4-1106-preview",
-        "replace_default": False,
-        "use_message_count": 1
+        "llm": "Deepseek",
+        "model": "deepseek-coder",
+        "replace_default": True,
+        "use_message_count": 0
     },
     "data_planner": {
-        "llm": "DeepInsight",
-        "model": "gpt-4-1106-preview",
-        "replace_default": False,
-        "use_message_count": 1
+        "llm": "Deepseek",
+        "model": "deepseek-coder",
+        "replace_default": True,
+        "use_message_count": 0
     },
     "chart_planner": {
-        "llm": "DeepInsight",
-        "model": "gpt-4-1106-preview",
-        "replace_default": False,
-        "use_message_count": 1
+        "llm": "Deepseek",
+        "model": "deepseek-coder",
+        "replace_default": True,
+        "use_message_count": 0
     },
     "Analyst": {
-        "llm": "DeepInsight",
-        "model": "gpt-4-1106-preview",
-        "replace_default": False,
-        "use_message_count": 1
+        "llm": "Deepseek",
+        "model": "deepseek-coder",
+        "replace_default": True,
+        "use_message_count": 0
     },
     "python_executor": {
-        "llm": "DeepInsight",
-        "model": "gpt-4-1106-preview",
-        "replace_default": False,
-        "use_message_count": 1
+        "llm": "Deepseek",
+        "model": "deepseek-coder",
+        "replace_default": True,
+        "use_message_count": 0
     },
     "csv_echart_assistant": {
-        "llm": "DeepInsight",
-        "model": "gpt-4-1106-preview",
-        "replace_default": False,
-        "use_message_count": 1
+        "llm": "Deepseek",
+        "model": "deepseek-coder",
+        "replace_default": True,
+        "use_message_count": 0
     },
     "mysql_echart_assistant": {
-        "llm": "DeepInsight",
-        "model": "gpt-4-1106-preview",
-        "replace_default": False,
-        "use_message_count": 1
+        "llm": "Deepseek",
+        "model": "deepseek-coder",
+        "replace_default": True,
+        "use_message_count": 0
     },
     "postgresql_echart_assistant": {
-        "llm": "DeepInsight",
-        "model": "gpt-4-1106-preview",
-        "replace_default": False,
-        "use_message_count": 1
+        "llm": "Deepseek",
+        "model": "deepseek-coder",
+        "replace_default": True,
+        "use_message_count": 0
     },
     "starrocks_echart_assistant": {
-        "llm": "DeepInsight",
-        "model": "gpt-4-1106-preview",
-        "replace_default": False,
-        "use_message_count": 1
+        "llm": "Deepseek",
+        "model": "deepseek-coder",
+        "replace_default": True,
+        "use_message_count": 0
     },
     "mongodb_echart_assistant": {
-        "llm": "DeepInsight",
-        "model": "gpt-4-1106-preview",
-        "replace_default": False,
-        "use_message_count": 1
+        "llm": "Deepseek",
+        "model": "deepseek-coder",
+        "replace_default": True,
+        "use_message_count": 0
     },
     "mysql_matplotlib_assistant": {
-        "llm": "DeepInsight",
-        "model": "gpt-4-1106-preview",
-        "replace_default": False,
-        "use_message_count": 1
+        "llm": "Deepseek",
+        "model": "deepseek-coder",
+        "replace_default": True,
+        "use_message_count": 0
     },
     "mongodb_matplotlib_assistant": {
-        "llm": "DeepInsight",
-        "model": "gpt-4-1106-preview",
-        "replace_default": False,
-        "use_message_count": 1
+        "llm": "Deepseek",
+        "model": "deepseek-coder",
+        "replace_default": True,
+        "use_message_count": 0
     },
     "data_checker_assistant": {
-        "llm": "DeepInsight",
-        "model": "gpt-4-1106-preview",
-        "replace_default": False,
-        "use_message_count": 1
+        "llm": "Deepseek",
+        "model": "deepseek-coder",
+        "replace_default": True,
+        "use_message_count": 0
     },
     "select_analysis_assistant": {
-        "llm": "DeepInsight",
+        "llm": "Deepseek",
         "model": "glm-4",
-        "replace_default": False,
-        "use_message_count": 1
+        "replace_default": True,
+        "use_message_count": 0
     },
     "Admin": {
-        "llm": "DeepInsight",
+        "llm": "Deepseek",
         "model": "glm-4",
-        "replace_default": False,
-        "use_message_count": 1
+        "replace_default": True,
+        "use_message_count": 0
     }
 }

@@ -289,6 +289,12 @@ class Completion(openai_Completion):
                         """
                         from .zhipuaiadpter import ZhiPuAIClient
                         response = ZhiPuAIClient.run(use_api_key, data, use_model)
+                    elif "Deepseek" == use_llm_name:
+                        """
+                        The Deepseek is called here
+                        """
+                        from .deepseek import DeepSeekClient
+                        response = DeepSeekClient.run(use_api_key, data, use_model)
                     elif "AWSClaude" == use_llm_name:
                         from .claudeadpter import AWSClaudeClient
                         api_data = {

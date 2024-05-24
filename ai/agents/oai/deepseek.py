@@ -265,11 +265,12 @@ class DeepSeekClient:
         now_content = ""
         now_role = ""
         user_define = ['user', 'function']
-
+        user_replace = ['system', 'user', 'function']
         for i, item in enumerate(message):
             role = item.get('role')
             content = item.get('content')
             role = item.get("role")
+            system_flag = False
             # other not first system
             if now_role == "":
                 # first role or change role
@@ -282,8 +283,13 @@ class DeepSeekClient:
                     now_item['role'] = "assistant"
                     now_role = "assistant"
                 elif role == "system":
-                    now_item['role'] = "system"
-                    now_role = "system"
+                    if not system_flag:
+                        now_item['role'] = "system"
+                        now_role = "system"
+                        system_flag = True
+                    else:
+                        now_item['role'] = "user"
+                        now_role = "user"
                 else:
                     continue
             else:
@@ -294,7 +300,7 @@ class DeepSeekClient:
             if i + 1 < len(message):
                 # check next message role
                 next_role = "user" if message[i +
-                                              1].get('role') in user_define else "assistant"
+                                              1].get('role') in user_replace else "assistant"
                 if next_role != now_role:
                     now_item['content'] = now_content
                     transformed_message.append(now_item)

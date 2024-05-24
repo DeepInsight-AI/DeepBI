@@ -254,7 +254,7 @@ class AIDB:
                 self.agent_instance_util.set_api_key(ApiKey, ApiType, ApiHost, LlmSetting)
 
                 if HttpProxyHost is not None and len(str(HttpProxyHost)) > 0 and HttpProxyPort is not None and len(
-                    str(HttpProxyPort)) > 0:
+                        str(HttpProxyPort)) > 0:
                     # openai_proxy = "http://127.0.0.1:7890"
                     self.agent_instance_util.openai_proxy = 'http://' + str(HttpProxyHost) + ':' + str(HttpProxyPort)
 
@@ -281,7 +281,6 @@ class AIDB:
                 await self.put_message(500, CONFIG.talker_log, CONFIG.type_log_data, self.error_miss_key)
                 return False
 
-
         else:
             await self.put_message(500, receiver=CONFIG.talker_log, data_type=CONFIG.type_log_data,
                                    content=self.error_miss_key)
@@ -302,7 +301,7 @@ class AIDB:
                 self.agent_instance_util.set_api_key(ApiKey, ApiType, ApiHost, LlmSetting)
 
                 if HttpProxyHost is not None and len(str(HttpProxyHost)) > 0 and HttpProxyPort is not None and len(
-                    str(HttpProxyPort)) > 0:
+                        str(HttpProxyPort)) > 0:
                     # openai_proxy = "http://127.0.0.1:7890"
                     self.agent_instance_util.openai_proxy = 'http://' + str(HttpProxyHost) + ':' + str(HttpProxyPort)
 
@@ -363,6 +362,9 @@ class AIDB:
                 ApiKey = data[in_use]['ApiKey']
                 ApiHost = data[in_use]['ApiHost']
             elif "AWSClaude" == in_use:
+                ApiKey = data[in_use]['ApiKey']
+                ApiHost = data[in_use]['ApiHost']
+            elif "Deepseek" == in_use:
                 ApiKey = data[in_use]['ApiKey']
                 ApiHost = data[in_use]['ApiHost']
         else:

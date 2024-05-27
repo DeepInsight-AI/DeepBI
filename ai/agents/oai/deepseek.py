@@ -318,7 +318,7 @@ class DeepSeekClient:
             else:
                 now_role = role
                 now_content = content
-            if i == len(transformed_message):
+            if i == len(transformed_message) - 1:
                 # 如果是最后一个了，则直接处理
                 now_item['content'] = now_content
                 now_item['role'] = now_role

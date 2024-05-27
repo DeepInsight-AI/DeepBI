@@ -264,10 +264,10 @@ class DeepSeekClient:
         transformed_message = []
         now_content = ""
         now_role = ""
+        system_flag = False
         for i, item in enumerate(message):
             content = item.get('content')
             role = item.get("role")
-            system_flag = False
             # 重新配置
             now_item = {}
             now_item['content'] = content

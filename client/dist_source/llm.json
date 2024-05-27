@@ -15,20 +15,5 @@
             "required": [
                 "ApiKey"
             ]
-        },
-        "ZhiPuAI": {
-          "ApiKey": "",
-          "ApiHost": "ZhiPuAI",
-          "required": [
-                "ApiKey", "ApiHost"
-            ]
-        },
-        "AWSClaude": {
-            "ApiKey": "",
-            "ApkSecret": "",
-            "ApiHost": "AWSClaude",
-            "required": [
-                "ApiKey", "ApkSecret", "AWSClaude"
-            ]
         }
 }

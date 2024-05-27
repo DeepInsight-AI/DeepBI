@@ -367,6 +367,8 @@ class AIDB:
             elif "Deepseek" == in_use:
                 ApiKey = data[in_use]['ApiKey']
                 ApiHost = data[in_use]['ApiHost']
+            else:
+                raise Exception("No in_use llm in token_[uid].json")
         else:
             ApiKey = data['OpenaiApiKey']
             print('OpenaiApiKey : ', ApiKey)

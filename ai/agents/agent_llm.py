@@ -25,163 +25,163 @@ AGENT_LLM_MODEL = {
     "planner_user": {
         "llm": "Deepseek",
         "model": "deepseek-coder",
-        "replace_default": True,
+        "replace_default": False,
         "use_message_count": 0
     },
     "mysql_engineer": {
         "llm": "Deepseek",
         "model": "deepseek-coder",
-        "replace_default": True,
+        "replace_default": False,
         "use_message_count": 0
     },
     "postgresql_engineer": {
         "llm": "Deepseek",
         "model": "deepseek-coder",
-        "replace_default": True,
+        "replace_default": False,
         "use_message_count": 0
     },
     "chart_presenter": {
         "llm": "Deepseek",
         "model": "deepseek-coder",
-        "replace_default": True,
+        "replace_default": False,
         "use_message_count": 0
     },
     "mongodb_engineer": {
         "llm": "Deepseek",
         "model": "deepseek-coder",
-        "replace_default": True,
+        "replace_default": False,
         "use_message_count": 0
     },
     "base_mysql_assistant": {
         "llm": "Deepseek",
         "model": "deepseek-coder",
-        "replace_default": True,
+        "replace_default": False,
         "use_message_count": 0
     },
     "base_assistant": {
         "llm": "Deepseek",
         "model": "deepseek-coder",
-        "replace_default": True,
+        "replace_default": False,
         "use_message_count": 0
     },
     "base_csv_assistant": {
         "llm": "Deepseek",
         "model": "glm-4",
-        "replace_default": True,
+        "replace_default": False,
         "use_message_count": 0
     },
     "base_postgresql_assistant": {
         "llm": "Deepseek",
         "model": "deepseek-coder",
-        "replace_default": True,
+        "replace_default": False,
         "use_message_count": 0
     },
     "database_describer": {
         "llm": "Deepseek",
         "model": "deepseek-coder",
-        "replace_default": True,
+        "replace_default": False,
         "use_message_count": 0
     },
     "Executor": {
         "llm": "Deepseek",
         "model": "deepseek-coder",
-        "replace_default": True,
+        "replace_default": False,
         "use_message_count": 0
     },
     "task_selector": {
         "llm": "Deepseek",
         "model": "deepseek-coder",
-        "replace_default": True,
+        "replace_default": False,
         "use_message_count": 0
     },
     "task_planner": {
         "llm": "Deepseek",
         "model": "deepseek-coder",
-        "replace_default": True,
+        "replace_default": False,
         "use_message_count": 0
     },
     "data_planner": {
         "llm": "Deepseek",
         "model": "deepseek-coder",
-        "replace_default": True,
+        "replace_default": False,
         "use_message_count": 0
     },
     "chart_planner": {
         "llm": "Deepseek",
         "model": "deepseek-coder",
-        "replace_default": True,
+        "replace_default": False,
         "use_message_count": 0
     },
     "Analyst": {
         "llm": "Deepseek",
         "model": "deepseek-coder",
-        "replace_default": True,
+        "replace_default": False,
         "use_message_count": 0
     },
     "python_executor": {
         "llm": "Deepseek",
         "model": "deepseek-coder",
-        "replace_default": True,
+        "replace_default": False,
         "use_message_count": 0
     },
     "csv_echart_assistant": {
         "llm": "Deepseek",
         "model": "deepseek-coder",
-        "replace_default": True,
+        "replace_default": False,
         "use_message_count": 0
     },
     "mysql_echart_assistant": {
         "llm": "Deepseek",
         "model": "deepseek-coder",
-        "replace_default": True,
+        "replace_default": False,
         "use_message_count": 0
     },
     "postgresql_echart_assistant": {
         "llm": "Deepseek",
         "model": "deepseek-coder",
-        "replace_default": True,
+        "replace_default": False,
         "use_message_count": 0
     },
     "starrocks_echart_assistant": {
         "llm": "Deepseek",
         "model": "deepseek-coder",
-        "replace_default": True,
+        "replace_default": False,
         "use_message_count": 0
     },
     "mongodb_echart_assistant": {
         "llm": "Deepseek",
         "model": "deepseek-coder",
-        "replace_default": True,
+        "replace_default": False,
         "use_message_count": 0
     },
     "mysql_matplotlib_assistant": {
         "llm": "Deepseek",
         "model": "deepseek-coder",
-        "replace_default": True,
+        "replace_default": False,
         "use_message_count": 0
     },
     "mongodb_matplotlib_assistant": {
         "llm": "Deepseek",
         "model": "deepseek-coder",
-        "replace_default": True,
+        "replace_default": False,
         "use_message_count": 0
     },
     "data_checker_assistant": {
         "llm": "Deepseek",
         "model": "deepseek-coder",
-        "replace_default": True,
+        "replace_default": False,
         "use_message_count": 0
     },
     "select_analysis_assistant": {
         "llm": "Deepseek",
         "model": "glm-4",
-        "replace_default": True,
+        "replace_default": False,
         "use_message_count": 0
     },
     "Admin": {
         "llm": "Deepseek",
         "model": "glm-4",
-        "replace_default": True,
+        "replace_default": False,
         "use_message_count": 0
     }
 }

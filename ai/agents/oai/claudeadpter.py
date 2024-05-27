@@ -47,13 +47,12 @@ class AWSClaudeClient:
 
     @classmethod
     def run(cls, apiKey, data, model_name=None, temperature=None):
-        if "ApiKey" not in apiKey or "ApkSecret" not in apiKey:
-            raise Exception("agent_llm llm api key empty use_model: ", model_name, " need apikey and ApkSecret")
-
-        if model_name is None:
-            model_name = Claude_AI_MODEL
-        if temperature is None:
-            temperature = Claude_AI_temperature
+        model_name = Claude_AI_MODEL if model_name is None else model_name
+        temperature = Claude_AI_temperature if temperature is None else temperature
+        if "ApiKey" not in apiKey or apiKey['ApiKey'] is None or "" == apiKey['ApiKey']:
+            raise Exception("LLM Claude api key empty,use_model: ", model_name, " need apikey")
+        if "ApkSecret" not in apiKey or apiKey['ApkSecret'] is None or "" == apiKey['ApkSecret']:
+            raise Exception("LLM Claude apk_secret empty,use_model: ", model_name, " need ApkSecret")
 
         client_obj = boto3.client(
             service_name='bedrock-runtime',
@@ -61,17 +60,9 @@ class AWSClaudeClient:
             aws_access_key_id=apiKey['ApiKey'],
             aws_secret_access_key=apiKey['ApkSecret']
         )
-        print("0" * 30)
-        print(data['messages'])
         messages, system = cls.input_to_openai(data['messages'])
         messages = cls.transform_message_role(messages)
-        print("-------------trans role---------")
-        print(messages)
-        # 写到本地
-        with open("role.txt", "a") as file:
-            # 写入内容到文件末尾
-            file.write(str(system) + "\n" + str(messages) + "\n\n\n")
-        print("1" * 30)
+
         # for i in range(0, len(messages)):
         #    messages[i]['role'] = "user" if i % 2 == 0 else 'assistant'
 
@@ -112,9 +103,6 @@ class AWSClaudeClient:
                 )
             )
         response_body = json.loads(response.get('body').read())
-        print("-------------origin---response-------------")
-        print(response_body)
-        print("-------------origin---response--end-----------")
         return cls.output_to_openai(response_body)
         pass
 

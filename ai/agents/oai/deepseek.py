@@ -10,9 +10,9 @@ import re
 STRICT_MODE_CHECK_FUNCTION = False
 # 定义默认参数
 DEEPSEEK_DEFAULT_URL = "https://api.deepseek.com/chat/completions"
-DEEPSEEK_MODEL = "deepseek-coder"
+DEEPSEEK_MODEL = "deepseek-chat"
 DEEPSEEK_TEMPERTURE = 0.7
-DEEPSEEK_MAX_TOKENS = 2048
+DEEPSEEK_MAX_TOKENS = 10240
 
 Deepseek_role_map = {
     # "open ai name: Deepseek name"
@@ -36,15 +36,9 @@ class DeepSeekClient:
         """
         定义入口
         """
-        print("0" * 30)
-        print(data['messages'])
         messages = cls.transform_message_role(data['messages'])
-        print("-------------trans role---------")
-        print(messages)
         model = model if model else DEEPSEEK_MODEL
         ai_result = cls.call_deepSeek(apiKey, messages, model)
-        print("-------------ai_result-----------")
-        print(ai_result)
         return cls.output_to_openai(ai_result)
         pass
 
@@ -53,7 +47,6 @@ class DeepSeekClient:
         """
         调用deepSeek
         """
-        print("apikey", "-" + apikey + "-")
         try:
             payload = json.dumps({
                 "messages": message,

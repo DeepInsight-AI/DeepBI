@@ -11,7 +11,8 @@ const EChartsChart = memo(({ content }) => {
   }, [content]);
 
   useEffect(() => {
-    let chartInstance = null;
+    try {
+      let chartInstance = null;
 
     if (chartRef.current) {
       chartInstance = echarts.init(chartRef.current); // del 'wonderland'
@@ -32,6 +33,9 @@ const EChartsChart = memo(({ content }) => {
       }
       window.removeEventListener('resize', handleResize);
     };
+    } catch (error) {
+      console.log('Error in EChartsChart: ', error);
+    }
   }, [chartJson]);
 
   const handleResize = () => {

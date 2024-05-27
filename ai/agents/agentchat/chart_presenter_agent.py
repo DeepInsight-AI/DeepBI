@@ -152,8 +152,27 @@ class ChartPresenterAgent(ConversableAgent):
                                                     'function_call': {'name': 'bi_run_chart_code',
                                                                       'arguments': json.dumps(arguments)}}
                                 return suggest_function
+                            else:
+                                # 在这里添加第三种方法的代码，匹配 JSON 大括号，提取相关数据
+                                extracted_json = self.extract_json_data(reply)
+
+                                # 判断是否提取到了有效的 JSON 数据
+                                if extracted_json and 'globalSeriesType' in extracted_json:
+                                    # 提取到有效的数据，构建 JSON 字典
+                                    arguments = {"chart_code_str": json.dumps(extracted_json)}
+
+                                    suggest_function = {
+                                        'role': 'assistant',
+                                        'content': None,
+                                        'function_call': {
+                                            'name': 'bi_run_chart_code',
+                                            'arguments': json.dumps(arguments)
+                                        }
+                                    }
+                                    return suggest_function
                         except Exception as e:
                             traceback.print_exc()
+                            
 
                     return reply
                     # return suggest_function
@@ -174,3 +193,18 @@ class ChartPresenterAgent(ConversableAgent):
                 extracted.append(("", group2.strip()))
 
         return extracted
+    def extract_json_data(text: str):
+        # 搜索 JSON 数据
+        json_pattern = re.compile(r'\{(?:[^{}]|(?R))*\}')
+        json_matches = json_pattern.findall(text)
+
+        # 提取有效的 JSON 数据
+        extracted_json = None
+        for match in json_matches:
+            try:
+                extracted_json = json.loads(match)
+                break
+            except json.JSONDecodeError:
+                continue
+
+        return extracted_json

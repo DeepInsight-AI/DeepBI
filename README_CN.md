@@ -13,7 +13,7 @@ DeepBI是一款AI原生的数据分析平台。DeepBI充分利用大语言模型
 <div align="center">
 
   Languages： 中文 [English](README.md)<br>
- 开发：dev@deep-insight.co，工作及商务：hi@deep-insight.co
+ 开发：dev@deepbi.com，工作及商务：hi@deepbi.com
 
   <div style="display: flex; align-items: center;">
     如果觉得 DeepBI 对您有帮助的话，请帮忙<a style="display: flex; align-items: center;margin:0px 6px" target="_blank" href='https://github.com/DeepInsight-AI/DeepBI'></a>
@@ -21,7 +21,7 @@ DeepBI是一款AI原生的数据分析平台。DeepBI充分利用大语言模型
   </div>
 </div>
 <div align="center">
-    DeepBI官网 <a href="http://www.deep-insight.co/" target="_blank">http://www.deep-insight.co/</a>
+    DeepBI官网 <a href="http://www.deepbi.com/" target="_blank">http://www.deepbi.com/</a>
 </div>
 
 
@@ -54,6 +54,9 @@ DeepBI 支持的数据库连接有:
 - MySQL
 - PostgreSQL
 - csv/Excel导入
+- Doris
+- Starrocks
+- MongoDB
 
 ## 📦 Windows exe 安装文件安装
 - 下载最新版本的 ```window_install_exe_CN.zip``` 安装包. <a href="https://github.com/DeepInsight-AI/DeepBI/releases">点击这里去下载</a>，目前测试支持 Win10 Win11
@@ -70,7 +73,7 @@ DeepBI 支持的数据库连接有:
 - 直接在ubuntu 系统安装,需要将安装redis,postgresql python3.8.17 环境
 - 环境建议
     1. redis 可以直接通过127.0.0.1,无密码命令行访问
-    2. python版本要求3.8+ 建议使用pyenv coda 等虚拟环境
+    2. python版本要求3.8.x 建议使用pyenv coda 等虚拟环境
     3. postgresql 需要安装postgresql-16 版本
 - 下载我们的代码
  ```
@@ -90,8 +93,7 @@ git clone http://github.com/DeepInsight-AI/DeepBI.git
 
 
 ## Contact Us
-
-<a><img src="https://github.com/DeepInsight-AI/DeepBI/assets/151519374/b0ba1fc3-8c71-4bf7-bd53-ecf17050581a" width="40%"/></a>
+<a><img src="https://github.com/DeepInsight-AI/DeepBI/assets/151519374/c581c012-d017-4aff-93a0-0395a00517b0" width="40%"/></a>
 <br>
 为感谢各位支持，本地化部署完成可以联系群内DeepBI小助手，免费领取Token。
 
@@ -102,6 +104,6 @@ git clone http://github.com/DeepInsight-AI/DeepBI.git
 - 我们已经在 Mac OS 12.7/13.X /14.1.1 , Ubuntu 20.04/22.04 和  Windows11 WSL 22.04 系统测试。
 - Windows 10 安装WSL需要 22H2版本，详见  [使用 Docker 安装](Docker_install_CN.md)
 - 服务器运行需求 最低 1核心 2G内存，建议2核心 4G内存 以上
-- 如果有什么问题，可以联系我们 dev@deep-insight.co
+- 如果有什么问题，可以联系我们 dev@deepbi.com
 - <a href="https://github.com/DeepInsight-AI/DeepBI/issues">Issue</a>
 

@@ -3,6 +3,8 @@ from typing import Callable, Dict, List, Optional, Union
 from ai.backend.util.write_log import logger
 from .conversable_agent import ConversableAgent
 from .agent import Agent
+from ai.backend.base_config import CONFIG
+import re
 
 
 class TaskSelectorAgent(ConversableAgent):
@@ -146,28 +148,29 @@ class TaskSelectorAgent(ConversableAgent):
 
                     # suggest_function = {'role': 'assistant', 'content': None, 'function_call': {'name': 'task_base',
                     #                                                          'arguments': '{"qustion_message":"\\nWhat is the most common house layout in the dataset?"}'}}
-                    if "task_base" in reply:
-                        reply = "task_base"
-                    elif "task_generate_echart" in reply:
-                        reply = "task_generate_echart"
-                    elif "task_generate_report" in reply:
-                        reply = "task_generate_report"
-                    else:
-                        reply = "error:file task_selector_agent.py 156"
 
-                    suggest_function = {'role': 'assistant',
-                                        'content': None,
-                                        'function_call': {
-                                            'name': reply,
-                                            'arguments': '{"qustion_message":"' + str(messages[-1]['content']) + '"}'
-                                        }
-                                        }
+                    # Check if reply is in agents_functions
+                    is_func = False
+                    for func in CONFIG.agents_functions:
+                        if len(str(reply)) > 0 and func in str(reply):
+                            is_func = True
+                            suggest_function = {'role': 'assistant', 'content': None, 'function_call': {'name': func,
+                                                                                                        'arguments': '{"qustion_message":"' + str(
+                                                                                                            messages[
+                                                                                                                -1][
+                                                                                                                'content']) + '"}'}}
+                            print('reply : ', reply)
+                            # return reply
+                            return suggest_function
 
-                    # {"qustion_message": " """ + str(messages[-1]['content']) + """"}
-
-                    print('reply : ', reply)
-
-                    # return reply
-                    return suggest_function
+                    if not is_func:
+                        suggest_function = {'role': 'assistant', 'content': None,
+                                            'function_call': {'name': CONFIG.default_agents_functions,
+                                                              'arguments': '{"qustion_message":"' + str(
+                                                                  messages[-1][
+                                                                      'content']) + '"}'}}
+                        print('reply : ', reply)
+                        # return reply
+                        return suggest_function
         # return messages
         return self._default_auto_reply

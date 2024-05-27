@@ -10,7 +10,7 @@ DeepBI is an AI-native data analysis platform. DeepBI leverages the power of lar
 <div align="center">
 
   Languages： English [中文](README_CN.md)<br>
-Developer：dev@deep-insight.co  Business：hi@deep-insight.co
+Developer：dev@deepbi.com  Business：hi@deepbi.com
 
   <div style="display: flex; align-items: center;">
 
@@ -48,6 +48,9 @@ The database connections supported by DeepBI are:
 - MySQL
 - PostgreSQL
 - csv/Excel Import
+- Doris
+- StarRocks
+- MongoDB
 
 
 ## 📦 Windows exe installation
@@ -85,10 +88,12 @@ The database connections supported by DeepBI are:
 Install directly on the ubuntu system, you need to install redis, postgresql python3.8.17 environment.
 
 - Redis can be accessed directly through the 127.0.0.1 password-free command line.
-- Require python version  3.8+
+- Require python version  3.8.x
 - Recommend using virtual environments such as pyenv coda
 - postgresql needs to install postgresql-16 version
-- Download the DeepBI code by the command :
+
+- Download the DeepBI code by the command 
+
 ```
 git clone https://github.com/DeepInsight-AI/DeepBI.git
 ```
@@ -96,6 +101,7 @@ If the download fails to replace the protocol, run the following code
 ```
 git clone http://github.com/DeepInsight-AI/DeepBI.git
  ```
+
 - Just run ```. ubuntu_install.sh``` directly (note that you run . ubuntu_install.sh instead of sh xxx here, because you need to run the python virtual environment)
 - Default port is 8338 and 8339
 - Web access: http://ip:8338
@@ -104,7 +110,7 @@ git clone http://github.com/DeepInsight-AI/DeepBI.git
 
 
 ## Contact Us
-<a><img src="https://github.com/DeepInsight-AI/DeepBI/assets/151519915/1b7d9848-49fb-4f06-bad7-86d751841a6b" width="40%"/></a>
+<a><img src="https://github.com/DeepInsight-AI/DeepBI/assets/151519374/c581c012-d017-4aff-93a0-0395a00517b0" width="40%"/></a>
 
 
 
@@ -112,6 +118,6 @@ git clone http://github.com/DeepInsight-AI/DeepBI.git
 - We have tested on Mac OS 12.7/13.X /14.1.1, Ubuntu 20.04/22.04, and Windows11 WSL 22.04.
 - Windows 10 requires version 22H2 or higher to install WSL
 - The minimum memory requirement for server operation is 1 core 2G memory, and 2 core 4G memory is recommended
-- If you have any question, please contact us at dev@deep-insight.co
+- If you have any question, please contact us at dev@deepbi.com
 - <a href="https://github.com/DeepInsight-AI/DeepBI/issues">Issue</a>
 

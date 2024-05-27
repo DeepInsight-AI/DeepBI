@@ -13,7 +13,8 @@ from ai.backend.base_config import CONFIG
 
 max_retry_times = CONFIG.max_retry_times
 language_chinese = CONFIG.language_chinese
-language_english = CONFIG.language_chinese
+language_english = CONFIG.language_english
+language_japanese = CONFIG.language_japanese
 default_language_mode = CONFIG.default_language_mode
 local_base_postgresql_info = CONFIG.local_base_postgresql_info
 local_base_xls_info = CONFIG.local_base_xls_info
@@ -63,6 +64,7 @@ class AgentInstanceUtil:
         self.openai_proxy = None
         self.db_id = db_id
 
+
     def set_api_key(self, api_key, ApiType="openai", api_host=None, LlmSetting=None):
         self.api_key = api_key
         if api_host is not None:
@@ -98,6 +100,7 @@ class AgentInstanceUtil:
                 },
             ]
         else:
+
             self.config_list_gpt4 = [
                 {
                     'model': 'gpt-4',
@@ -111,6 +114,7 @@ class AgentInstanceUtil:
                 {
                     'model': 'gpt-4-1106-preview',
                     'api_key': self.api_key,
+
                     'api_type': ApiType,
                     'llm_setting': LlmSetting
                 },
@@ -124,6 +128,13 @@ class AgentInstanceUtil:
                     'llm_setting': LlmSetting
                 },
             ]
+
+            if api_host is not None:
+                # api_base = "https://api.openai.com/"
+                print('api_host: ', api_host)
+                self.config_list_gpt4[0]['api_base'] = api_host
+                self.config_list_gpt4_turbo[0]['api_base'] = api_host
+                self.config_list_gpt35_turbo[0]['api_base'] = api_host
 
         self.gpt4_turbo_config = {
             "seed": 42,  # change the seed for different trials
@@ -285,17 +296,19 @@ class AgentInstanceUtil:
                      There are currently several types of charts that can be used, including line, column, area, pie, scanner, bubble, heatmap, box, and table.
                      For example, selecting a set of data to display in a column chart format and specifying the x and y axis data.
                      Usually, there can only be one set of x-axis data, while there can be multiple sets of y-axis data.
-                     Hand over your code to the Executor for execution.
-                     There can only be x-axis and y-axis mappings in columnMapping
-                     In columnMapping, some or all data can be mapped.
+
+                     Please check the SQL statement in context. If a gourp by is included in the SQL statement, the chart must use fields that are not designated as x-axis or y-axis as gourp by values.
                      There can only be one mapping on the x-axis, such as {"mon": "x"}.
                      There can be one or more mappings on the y-axis, such as {"prao": "y", "prbo": "y"}.
+                     gourp by can only have one mapping, such as
+                         {"fix":"series"}
+
                      The output should be formatted as a JSON instance that conforms to the JSON schema below, the JSON is a list of dict,
                       [
-                          {"globalSeriesType":"box","columnMapping":{"mon":"x","prao":"y","prbo":"y","prco":"y"}}
+                         {"globalSeriesType":"box","columnMapping":{"mon":"x","prao":"y","prbo":"y","prco":"y","fix":"series"}}
                       ].
 
-                      If there is no suitable chart, or if the user requests a table, use the table to display, and the returned results are as follows:
+                     If there is no suitable chart, or if the user requests a table, use the table to display, and the returned results are as follows:
                       [
                          {"globalSeriesType": "table", "columnMapping": ""}
                       ]
@@ -687,7 +700,7 @@ class AgentInstanceUtil:
             """,
             human_input_mode="NEVER",
             websocket=self.websocket,
-            code_execution_config=False,
+            code_execution_config={"last_n_messages": 1, "work_dir": "paper", "use_docker": False},
             default_auto_reply="TERMINATE",
             user_name=self.user_name,
             function_map={"run_mysql_code": BIProxyAgent.run_mysql_code,
@@ -893,7 +906,7 @@ class AgentInstanceUtil:
         python_executor = PythonProxyAgent(
             name="python_executor",
             system_message="python executor. Execute the python code and report the result.",
-            code_execution_config={"last_n_messages": 1, "work_dir": "paper"},
+            code_execution_config={"last_n_messages": 1, "work_dir": "paper", "use_docker": False},
             human_input_mode="NEVER",
             websocket=self.websocket,
             user_name=self.user_name,
@@ -944,6 +957,7 @@ class AgentInstanceUtil:
                                           Solve the task step by step if you need to. If a plan is not provided, explain your plan first. Be clear which step uses code, and which step uses your language skill.
                                           When using code, you must indicate the script type in the code block. The user cannot provide any other feedback or perform any other action beyond executing the code you suggest. The user can't modify your code. So do not suggest incomplete code which requires users to modify. Don't use a code block if it's not intended to be executed by the user.
                                           If you want the user to save the code in a file before executing it, put # filename: <filename> inside the code block as the first line. Don't include multiple code blocks in one response. Do not ask users to copy and paste the result. Instead, use 'print' function for the output when relevant. Check the execution result returned by the user.
+                                          If you need to use %Y-%M to query the date or timestamp, please use %Y-%M. You cannot use %%Y-%%M.(For example you should use SELECT * FROM your_table WHERE DATE_FORMAT(your_date_column, '%Y-%M') = '2024-February'; instead of SELECT * FROM your_table WHERE DATE_FORMAT(your_date_column, '%%Y-%%M') = '2024-%%M';)
                                           If the result indicates there is an error, fix the error and output the code again. Suggest the full code instead of partial code or code changes. If the error can't be fixed or if the task is not solved even after the code is executed successfully, analyze the problem, revisit your assumption, collect additional info you need, and think of a different approach to try.
                                           When you find an answer, verify the answer carefully. Include verifiable evidence in your response if possible.
                                           Reply "TERMINATE" in the end when everything is done.
@@ -1035,6 +1049,7 @@ class AgentInstanceUtil:
                                              When you find an answer, verify the answer carefully. Include verifiable evidence in your response if possible.
                                              Reply "TERMINATE" in the end when everything is done.
                                              When you find an answer,  You are a report analysis, you have the knowledge and skills to turn raw data into information and insight, which can be used to make business decisions.include your analysis in your reply.
+                                             Don't generate html files.
                                              """ + '\n' + self.base_starrocks_info + '\n' + python_base_dependency + '\n' + MYSQL_ECHART_TIPS_MESS,
             human_input_mode="NEVER",
             user_name=self.user_name,
@@ -1226,6 +1241,12 @@ class AgentInstanceUtil:
             self.question_ask = ' 以下是我的问题，请用中文回答: '
             self.quesion_answer_language = '用中文回答问题.'
             self.data_analysis_error = '分析数据失败，请检查相关数据是否充分'
+
+        elif self.language_mode == language_japanese:
+            self.error_message_timeout = "申し訳ありませんが、今回のAI-GPTインターフェース呼び出しがタイムアウトしました。もう一度お試しください。"
+            self.question_ask = ' これが私の質問です。: '
+            self.quesion_answer_language = '日本語で質問に答える。'
+            self.data_analysis_error = 'データの分析に失敗しました。関連データが十分かどうかを確認してください。'
 
     def set_base_csv_info(self, db_info):
         csv_content = []

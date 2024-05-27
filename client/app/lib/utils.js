@@ -56,7 +56,7 @@ export function localizeTime(time) {
 }
 
 export function secondsToInterval(count) {
-  let IntervalInfo = window.W_L.language_mode==="EN"?AbbreviatedTimeUnits:IntervalEnum
+  let IntervalInfo = window.W_L.language_mode==="CN"?IntervalEnum:AbbreviatedTimeUnits
   if (!count) {
     return { interval: IntervalInfo.NEVER };
   }

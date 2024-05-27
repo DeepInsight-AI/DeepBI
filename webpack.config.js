@@ -46,7 +46,7 @@ const htmlTitle = CONFIG.title || "DeepBI";
 const basePath = path.join(__dirname, "client");
 const appPath = path.join(__dirname, "client", "app");
 
-const web_language_js = "CN" === process.env.WEB_LANGUAGE ? "Language.CN.js": "Language.EN.js";
+const web_language_js = `Language.${process.env.WEB_LANGUAGE || "EN"}.js`;
 
 const extensionsRelativePath =
   process.env.EXTENSIONS_DIRECTORY || path.join("client", "app", "extensions");

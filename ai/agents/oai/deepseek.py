@@ -264,52 +264,64 @@ class DeepSeekClient:
         transformed_message = []
         now_content = ""
         now_role = ""
-        user_define = ['user', 'function']
-        user_replace = ['system', 'user', 'function']
         for i, item in enumerate(message):
-            role = item.get('role')
             content = item.get('content')
             role = item.get("role")
             system_flag = False
-            # other not first system
-            if now_role == "":
-                # first role or change role
-                now_item = {}
-                now_content = content
-                if role in user_define:
+            # 重新配置
+            now_item = {}
+            now_item['content'] = content
+            if role == "system":
+                if not system_flag:
+                    now_item['role'] = "system"
+                    system_flag = True
+                    # 添加到 message
+                    transformed_message.append(now_item)
+                    # 进行下一个
+                    continue
+                else:
+                    # 如果是第二个系统，则则转换为user
                     now_item['role'] = "user"
-                    now_role = "user"
+            else:
+                # 如果不是系统
+                if role == 'user':
+                    now_item['role'] = "user"
                 elif role == "assistant":
                     now_item['role'] = "assistant"
-                    now_role = "assistant"
-                elif role == "system":
-                    if not system_flag:
-                        now_item['role'] = "system"
-                        now_role = "system"
-                        system_flag = True
-                    else:
-                        now_item['role'] = "user"
-                        now_role = "user"
+                elif role == "function":
+                    now_item['role'] = "user"
                 else:
-                    continue
-            else:
-                # other
-                now_content += "\n" + str(content)
-                pass
-
-            if i + 1 < len(message):
-                # check next message role
-                next_role = "user" if message[i +
-                                              1].get('role') in user_replace else "assistant"
-                if next_role != now_role:
+                    now_item['role'] = "user"
+            # 将所有的转换添加到结果
+            transformed_message.append(now_item)
+        # 重新配置 role
+        now_role = ""
+        now_content = ""
+        result = []
+        for i, item in enumerate(transformed_message):
+            content = item.get('content')
+            role = item.get("role")
+            # other not first system
+            if now_role != "":
+                # 如果变换了角色，则判断下一个是否一致，如果不一致，则添加到 message
+                if role == now_role:
+                    # 如果新的角色与历史相同，将新的内容追加
+                    now_content = now_content + "\n" + content
+                else:
+                    # 如果更换了角色
                     now_item['content'] = now_content
-                    transformed_message.append(now_item)
-                    now_role = ""
-                    now_content = ""
-                    pass
+                    now_item['role'] = now_role
+                    # 将历史添加到结果
+                    result.apend(now_item)
+                    now_role = role
+                    now_content = content
             else:
-                # last item
+                now_role = role
+                now_content = content
+            if i == len(transformed_message):
+                # 如果是最后一个了，则直接处理
                 now_item['content'] = now_content
-                transformed_message.append(now_item)
+                now_item['role'] = now_role
+                result.apend(now_item)
 
-        return transformed_message
+        return result

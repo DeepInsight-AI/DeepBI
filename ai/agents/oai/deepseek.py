@@ -312,7 +312,7 @@ class DeepSeekClient:
                     now_item['content'] = now_content
                     now_item['role'] = now_role
                     # 将历史添加到结果
-                    result.apend(now_item)
+                    result.append(now_item)
                     now_role = role
                     now_content = content
             else:
@@ -322,6 +322,6 @@ class DeepSeekClient:
                 # 如果是最后一个了，则直接处理
                 now_item['content'] = now_content
                 now_item['role'] = now_role
-                result.apend(now_item)
+                result.append(now_item)
 
         return result

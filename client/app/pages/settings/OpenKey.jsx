@@ -25,28 +25,28 @@ const SettingsOpenKey = () => {
 
       const response = await fetch("/static/llm.json");
       if (!response.ok) {
-        throw new Error("Failed to load local API key data");
+        throw new Error("Failed to load local llm.json API key data");
       }
       const JSON_ROOT = await response.json();
       // 合并接口数据和本地数据
       const mergedData = { ...JSON_ROOT };
       const inUse = data && data.in_use ? data.in_use : mergedData.in_use;
-      console.log("JSON_ROOT", JSON_ROOT);
-      console.log("mergedData", mergedData);
+      // console.log("JSON_ROOT", JSON_ROOT);
+      // console.log("mergedData", mergedData);
       Object.keys(data).forEach(key => {
         if (data[key]) {
           mergedData[key] = { ...mergedData[key], ...data[key] };
         }
       });
-      console.log("mergedData-----", mergedData);
+      // console.log("mergedData-----", mergedData);
       delete mergedData.in_use;
       setAiOptions(mergedData);
       setRequiredFields(mergedData[inUse].required || []);
       setAiOption(inUse);
       form.setFieldsValue(mergedData[inUse]);
     } catch (error) {
-      console.log("error", error)
-      toast.error(window.W_L.fail);
+      // console.log("error", error)
+      toast.error(error.message);
     }
     createWebSocket();
     setDisabled(false);

@@ -1,29 +1,29 @@
-from tools_adGroup import AdGroupTools
+from tools_sp_adGroup import AdGroupTools
 from tools_db_sp import DbSpTools
 from tools_db_new_sp import DbNewSpTools
 from datetime import datetime
 
-from tools_product import ProductTools
+from tools_sp_product import ProductTools
 db_info = {'host': '****', 'user': '****', 'passwd': '****', 'port': 3306,
                'db': '****',
                'charset': 'utf8mb4', 'use_unicode': True, }
 
 # 创建/新增品
-def create_productsku(market,campaignId,asin,state,sku,adGroupId):
+def create_productsku(market,campaignId,adGroupId,sku,asin,state):
     product_info = {
   "productAds": [
     {
-      "campaignId": campaignId,
-      "asin": asin,
+      "campaignId": str(campaignId),
       "state": state,
       "sku": sku,
-      "adGroupId": adGroupId
+      "asin": asin,
+      "adGroupId": str(adGroupId)
     }
   ]
 }
     # 执行新增品 返回adId
     apitoolProduct=ProductTools()
-    adId = apitoolProduct.create_product_api(product_info)
+    adId = apitoolProduct.create_product_api(product_info,market)
     print(adId)
 
     # 如果执行成功或者失败 记录到log表记录
@@ -32,9 +32,9 @@ def create_productsku(market,campaignId,asin,state,sku,adGroupId):
         dbNewTools.create_sp_product(market,campaignId,asin,sku,adGroupId,adId[1],"success",datetime.now())
     else:
         dbNewTools.create_sp_product(market,campaignId,asin,sku,adGroupId,adId[1],"failed",datetime.now())
-
+    return adId[1]
 # 新增测试
-# create_productsku('US','531571979684792','B075SWSWHR','PAUSED','LPM17SS00350BLK00MR4','311043566627712')
+# create_productsku('FR','284793893968513','B075SWSWHR','PAUSED','LPM17SS0035MT0300LR4','397527887041271')
 
 
 # 修改品的信息  - 暂时只能修改品的状态

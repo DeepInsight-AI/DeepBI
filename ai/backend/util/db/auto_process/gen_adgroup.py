@@ -1,6 +1,6 @@
 import asyncio
 
-from tools_adGroup import AdGroupTools
+from tools_sp_adGroup import AdGroupTools
 from tools_db_sp import DbSpTools
 from tools_db_new_sp import DbNewSpTools
 from datetime import datetime
@@ -12,7 +12,7 @@ db_info = {'host': '****', 'user': '****', 'passwd': '****', 'port': 3306,
                'charset': 'utf8mb4', 'use_unicode': True, }
 
 # 创建广告组
-def create_adgroup(market,campaignId,name,state,defaultBid):
+def create_adgroup(market,campaignId,name,defaultBid,state):
     adgroup_info = {
         "adGroups": [
             {
@@ -24,7 +24,7 @@ def create_adgroup(market,campaignId,name,state,defaultBid):
         ]
     }
     apitool = AdGroupTools()
-    res = apitool.create_adGroup_api(adgroup_info)
+    res = apitool.create_adGroup_api(adgroup_info,market)
     # 根据结果更新log
     #     def create_sp_adgroups(self,market,campaignId,adGroupName,adGroupId,state,defaultBid,adGroupState,update_time):
     dbNewTools = DbNewSpTools()
@@ -32,7 +32,7 @@ def create_adgroup(market,campaignId,name,state,defaultBid):
         dbNewTools.create_sp_adgroups(market,campaignId,name,res[1],state,defaultBid,"success",datetime.now())
     else:
         dbNewTools.create_sp_adgroups(market,campaignId,name,res[1],state,defaultBid,"failed",datetime.now())
-
+    return res[1]
 # 新建测试
 # res = create_adgroup('US','513987903939456','20240507test','PAUSED',2)
 # print(res)
@@ -112,9 +112,7 @@ def update_batch_adgroup(market,startdate,enddate,start_acos,end_acos,adjuest):
                                          row['standards_acos'], row['acos'], adjuest, "failed", datetime.now())
 
 
-def add_adGroup_negative_keyword(market,campaignId,adGroupId,matchType,state,keywordText):
-
-    # 翻译注意
+def add_adGroup_negative_keyword(market,campaignId,adGroupId,keywordText,matchType,state):
     translate_kw = asyncio.get_event_loop().run_until_complete(ask_question(keywordText, market))
     keywordText_new = eval(translate_kw)[0]
     # keywordText_new = keywordText
@@ -122,17 +120,17 @@ def add_adGroup_negative_keyword(market,campaignId,adGroupId,matchType,state,key
     adGroup_negative_keyword_info = {
   "negativeKeywords": [
     {
-      "campaignId": campaignId,
+      "campaignId": str(campaignId),
       "matchType": matchType,
       "state": state,
-      "adGroupId": adGroupId,
+      "adGroupId": str(adGroupId),
       "keywordText": keywordText_new
     }
   ]
 }
     # api更新
     apitool = AdGroupTools()
-    apires = apitool.add_adGroup_negativekw(adGroup_negative_keyword_info)
+    apires = apitool.add_adGroup_negativekw(adGroup_negative_keyword_info,market)
     # 结果写入日志
     #  def add_sp_adGroup_negativeKeyword(self, market, adGroupName, adGroupId, campaignId, campaignName, matchType,
     #                                         keyword_state, keywordText, campaignNegativeKeywordId, operation_state,
@@ -144,6 +142,7 @@ def add_adGroup_negative_keyword(market,campaignId,adGroupId,matchType,state,key
     else:
         newdbtool.add_sp_adGroup_negativeKeyword(market, None, adGroupId, campaignId, None, matchType, state, keywordText,keywordText_new,
                                                   apires[1], "success", datetime.now())
+    return apires[1]
 
 
 # 给广告组更新否定关键词
@@ -167,11 +166,59 @@ def update_adGroup_negative_keyword(market,adGroupNegativeKeywordId,keyword_stat
         newdbtool.update_sp_adGroup_negativeKeyword(market,keyword_state,None,adGroupNegativeKeywordId,"success",datetime.now())
     else:
         newdbtool.update_sp_adGroup_negativeKeyword(market,keyword_state,None,adGroupNegativeKeywordId,"failed",datetime.now())
+
+def list_adGroup_negative_product(adGroupId,market):
+    campaigninfo = {
+"maxResults": 0,
+"nextToken": None,
+"adGroupIdFilter": {
+"include": [
+    str(adGroupId)
+]
+},
+"includeExtendedDataFields": True
+}
+    # 执行创建
+    apitool = AdGroupTools()
+    res = apitool.list_adGroup_negative_pd(campaigninfo, market)
+
+    # 根据创建结果更新log
+    # dbNewTools = DbNewSpTools()
+    # if res[0] == "success":
+    #     dbNewTools.create_sp_campaigin(market,portfolioId,endDate,name,res[1],targetingType,state,startDate,budgetType,budget,"success",datetime.now())
+    # else:
+    #     dbNewTools.create_sp_campaigin(market,portfolioId,endDate,name,res[1],targetingType,state,startDate,budgetType,budget,"failed",datetime.now())
+
+    return print(res[1])
+#list_adGroup_negative_product(29481039123844,'UK')
+def update_adGroup_TargetingClause(market,target_id,state,bid):
+    adGroup_info = {
+  "targetingClauses": [
+    {
+      "targetId": str(target_id),
+      "state": state,
+      "bid": bid
+    }
+  ]
+}
+    # api更新
+    apitool = AdGroupTools()
+    apires = apitool.update_adGroup_TargetingC(adGroup_info,market)
+    # 结果写入日志
+    # def update_sp_adGroup_negativeKeyword(self, market, keyword_state, keywordText, campaignNegativeKeywordId,
+    #                                            operation_state, update_time):
+    # newdbtool = DbNewSpTools()
+    # if apires[0]=="success":
+    #     newdbtool.update_sp_adGroup_negativeKeyword(market,keyword_state,None,adGroupNegativeKeywordId,"success",datetime.now())
+    # else:
+    #     newdbtool.update_sp_adGroup_negativeKeyword(market,keyword_state,None,adGroupNegativeKeywordId,"failed",datetime.now())
+    return apires[1]["targetId"]
+#update_adGroup_TargetingClause('FR',50905748319531,'ENABLED',0.15)
 # 广告组更新否定关键词测试
 # update_adGroup_negative_keyword('US','426879824500654','PAUSED')
 
 # 广告组新增否定关键词测试
-# add_adGroup_negative_keyword('US','531571979684792','311043566627712','NEGATIVE_EXACT',"ENABLED","冷天装备")
+# add_adGroup_negative_keyword('FR','284793893968513','397527887041271','NEGATIVE_EXACT',"ENABLED",'5xl')
 
 # 更新测试以下为出价规则
 # update_adgroup('US','2024-03-01','2024-03-31',-0.99,-0.3,0.1) # ACOS值低于基础值30%的：基础出价提升10%

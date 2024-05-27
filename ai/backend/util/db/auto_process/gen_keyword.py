@@ -2,7 +2,7 @@ import asyncio
 
 from tools_db_new_sp import DbNewSpTools
 from datetime import datetime
-from tools_keyword import SPKeywordTools
+from tools_sp_keyword import SPKeywordTools
 from ai.backend.util.db.db_amazon.generate_tools import ask_question
 
 
@@ -19,18 +19,18 @@ def add_keyword_toadGroup(market,campaignId,matchType,state,bid,adGroupId,keywor
     keyword_info={
   "keywords": [
     {
-      "campaignId": campaignId,
+      "campaignId": str(campaignId),
       "matchType": matchType,
       "state": state,
       "bid": bid,
-      "adGroupId": adGroupId,
+      "adGroupId": str(adGroupId),
       "keywordText": keywordText_new
     }
   ]
 }
     # 新增关键词操作
     apitool = SPKeywordTools()
-    res = apitool.create_spkeyword_api(keyword_info)
+    res = apitool.create_spkeyword_api(keyword_info, market)
 
     # 根据结果更新log
     dbNewTools = DbNewSpTools()
@@ -38,6 +38,7 @@ def add_keyword_toadGroup(market,campaignId,matchType,state,bid,adGroupId,keywor
         dbNewTools.add_sp_keyword_toadGroup(market,res[1],campaignId,matchType,state,bid,adGroupId,keywordText,keywordText_new,"success",datetime.now())
     else:
         dbNewTools.add_sp_keyword_toadGroup(market,res[1],campaignId,matchType,state,bid,adGroupId,keywordText,keywordText_new,"failed",datetime.now())
+    return res[1]
 
 def update_keyword_toadGroup(market,keywordId,state,bid):
 

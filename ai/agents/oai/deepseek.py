@@ -298,6 +298,7 @@ class DeepSeekClient:
         now_role = ""
         now_content = ""
         result = []
+
         for i, item in enumerate(transformed_message):
             content = item.get('content')
             role = item.get("role")
@@ -309,6 +310,7 @@ class DeepSeekClient:
                     now_content = now_content + "\n" + content
                 else:
                     # 如果更换了角色
+                    now_item = {}
                     now_item['content'] = now_content
                     now_item['role'] = now_role
                     # 将历史添加到结果
@@ -320,6 +322,7 @@ class DeepSeekClient:
                 now_content = content
             if i == len(transformed_message) - 1:
                 # 如果是最后一个了，则直接处理
+                now_item = {}
                 now_item['content'] = now_content
                 now_item['role'] = now_role
                 result.append(now_item)

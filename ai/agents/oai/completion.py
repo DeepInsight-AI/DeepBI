@@ -262,11 +262,7 @@ class Completion(openai_Completion):
                         The Azure is called here
                         """
                         from .azureAdapter import AzureClient
-                        api_data = {
-                            'ApiKey': use_api_key,
-                            'ApiHost': use_url
-                        }
-                        response = AzureClient.run(use_api_key, data, use_model)
+                        response = AzureClient.run(use_api_key, data, use_model, use_url)
                     elif "ZhiPuAI" == use_llm_name:
                         """
                         The ZhipuAI is called here
@@ -278,14 +274,14 @@ class Completion(openai_Completion):
                         The Deepseek is called here
                         """
                         from .deepseekAdapter import DeepSeekClient
-                        response = DeepSeekClient.run(use_api_key, data, use_model)
+                        response = DeepSeekClient.run(use_api_key, data, use_model, use_url)
                     elif "AWSClaude" == use_llm_name:
                         from .claudeAdapter import AWSClaudeClient
                         api_data = {
                             'ApiKey': use_api_key,
                             'ApkSecret': use_api_secret
                         }
-                        response = AWSClaudeClient.run(api_data, data, use_model)
+                        response = AWSClaudeClient.run(api_data, data, use_model, use_url)
                     else:
                         raise Exception("No model:", use_llm_name)
                 else:

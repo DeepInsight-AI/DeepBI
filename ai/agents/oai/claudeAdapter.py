@@ -46,17 +46,19 @@ Claude_stop_reason_map = {
 class AWSClaudeClient:
 
     @classmethod
-    def run(cls, apiKey, data, model_name=None, temperature=None):
-        model_name = Claude_AI_MODEL if model_name is None or "" == model_name else model_name
+    def run(cls, apiKey, data, model_name=None, temperature=None, use_url=None):
+        model_name = model_name if model_name else Claude_AI_MODEL
         temperature = Claude_AI_temperature if temperature is None else temperature
         if "ApiKey" not in apiKey or apiKey['ApiKey'] is None or "" == apiKey['ApiKey']:
             raise Exception("LLM Claude api key empty,use_model: ", model_name, " need apikey")
         if "ApkSecret" not in apiKey or apiKey['ApkSecret'] is None or "" == apiKey['ApkSecret']:
             raise Exception("LLM Claude apk_secret empty,use_model: ", model_name, " need ApkSecret")
 
+        use_url = use_url if use_url else "us-east-1"
+
         client_obj = boto3.client(
             service_name='bedrock-runtime',
-            region_name="us-east-1",
+            region_name=use_url,
             aws_access_key_id=apiKey['ApiKey'],
             aws_secret_access_key=apiKey['ApkSecret']
         )

@@ -32,7 +32,7 @@ Deepseek_stop_reason_map = {
 class DeepSeekClient:
 
     @classmethod
-    def run(cls, apiKey, data, model=None):
+    def run(cls, apiKey, data, model=None, use_url=None):
         """
         define run function
         """
@@ -40,13 +40,13 @@ class DeepSeekClient:
         model_name = model_name if model_name else DEEPSEEK_MODEL
         if apiKey is None or apiKey == "":
             raise Exception("LLM DeepSeek apikey empty,use_model: ", model_name, " need apikey")
-
-        ai_result = cls.call_deepSeek(apiKey, messages, model)
+        use_url = use_url if use_url else DEEPSEEK_DEFAULT_URL
+        ai_result = cls.call_deepSeek(apiKey, messages, model, use_url)
         return cls.output_to_openai(ai_result)
         pass
 
     @classmethod
-    def call_deepSeek(cls, apikey, message, model=DEEPSEEK_MODEL, temperature=DEEPSEEK_TEMPERTURE):
+    def call_deepSeek(cls, apikey, message, model=DEEPSEEK_MODEL, temperature=DEEPSEEK_TEMPERTURE, use_url=DEEPSEEK_DEFAULT_URL):
         """
         call deepSeek
         """
@@ -70,7 +70,7 @@ class DeepSeekClient:
                 'Authorization': 'Bearer ' + str(apikey)
             }
 
-            response = requests.request("POST", DEEPSEEK_DEFAULT_URL, headers=headers, data=payload)
+            response = requests.request("POST", use_url, headers=headers, data=payload)
             result = json.loads(response.text)
         except Exception as e:
             print("error" * 10)

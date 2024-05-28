@@ -12,14 +12,13 @@ AZURE_OPENAI_API_VERSION = "2023-12-01-preview"
 
 class AzureClient:
     @classmethod
-    def run(cls, apiKey, data, model):
+    def run(cls, apiKey, data, model, use_api_host=None):
         """
         :param data: requrest
         :param model:  default is azure setting gpt-4
         :return: ai response
         """
         use_api_key = apiKey['ApiKey']
-        use_api_host = apiKey['ApiHost']
         if use_api_key is None or "" == use_api_key:
             raise Exception("Error, need: apiKey")
         if use_api_host is None or "" == use_api_host:

@@ -31,7 +31,7 @@ def object_to_dict(obj):
 class ZhiPuAIClient:
 
     @classmethod
-    def run(cls, apiKey, data, model_name=None, temperature=None):
+    def run(cls, apiKey, data, model_name=None, temperature=None, use_url=None):
         if "" == apiKey or apiKey is None:
             raise Exception("LLM ZhiPuAI api key empty use_model: ", model_name, " need apikey")
         if model_name is None or "" == model_name:

@@ -36,17 +36,21 @@ class DeepSeekClient:
         """
         define run function
         """
-        messages = cls.transform_message_role(data['messages'])
-        model = model if model else DEEPSEEK_MODEL
+
         if apiKey is None or apiKey == "":
             raise Exception("LLM DeepSeek apikey empty,use_model: ", model, " need apikey")
+        messages = cls.transform_message_role(data['messages'])
+        model = model if model else DEEPSEEK_MODEL
         use_url = use_url if use_url else DEEPSEEK_DEFAULT_URL
         ai_result = cls.call_deepSeek(apiKey, messages, model, use_url)
-        return cls.output_to_openai(ai_result)
+        if ai_result:
+            return cls.output_to_openai(ai_result)
+        else:
+            return False
         pass
 
     @classmethod
-    def call_deepSeek(cls, apikey, message, model=DEEPSEEK_MODEL, temperature=DEEPSEEK_TEMPERTURE, use_url=DEEPSEEK_DEFAULT_URL):
+    def call_deepSeek(cls, apikey, message, model=DEEPSEEK_MODEL, use_url=DEEPSEEK_DEFAULT_URL, temperature=DEEPSEEK_TEMPERTURE):
         """
         call deepSeek
         """
@@ -76,7 +80,7 @@ class DeepSeekClient:
             print("error" * 10)
             print(response.text)
             print(e)
-            result = {}
+            result = False
         return result
         pass
 

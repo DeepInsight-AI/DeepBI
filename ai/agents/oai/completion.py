@@ -207,7 +207,7 @@ class Completion(openai_Completion):
         while True:
             try:
                 use_llm_name = config.get("api_type")  # default llm
-                use_url = config['api_base']
+                use_url = config['api_base'] if "api_base" in config else None
                 use_model = config['model']
                 use_api_key = config['api_key']
                 llm_setting = config.get("llm_setting")  # all llm config

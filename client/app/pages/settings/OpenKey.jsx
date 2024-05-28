@@ -30,10 +30,12 @@ const SettingsOpenKey = () => {
       const JSON_ROOT = await response.json();
       // 合并接口数据和本地数据
       const mergedData = { ...JSON_ROOT };
-      const inUse = data && data.in_use ? data.in_use : mergedData.in_use;
+      // 确保inUse是有效的
+      let inUse = data.in_use && mergedData.hasOwnProperty(data.in_use) ? data.in_use : mergedData.in_use;
+      // const inUse = data && data.in_use ? data.in_use : mergedData.in_use;
       // console.log("JSON_ROOT", JSON_ROOT);
       // console.log("mergedData", mergedData);
-      Object.keys(data).forEach(key => {
+      Object.keys(mergedData).forEach(key => {
         if (data[key]) {
           mergedData[key] = { ...mergedData[key], ...data[key] };
         }

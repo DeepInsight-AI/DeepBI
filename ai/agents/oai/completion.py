@@ -288,6 +288,8 @@ class Completion(openai_Completion):
                     """
                     By default, openai is invoked
                     """
+                    if "llm_setting" in config:
+                        del config['llm_setting']
                     openai_completion = (
                         openai.ChatCompletion
                         if config["model"].replace("gpt-35-turbo", "gpt-3.5-turbo") in cls.chat_models

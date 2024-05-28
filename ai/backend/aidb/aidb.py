@@ -375,6 +375,9 @@ class AIDB:
             elif "Deepseek" == in_use:
                 ApiKey = data[in_use]['ApiKey']
                 ApiHost = data[in_use]['ApiHost']
+            elif "Azure" == in_use:
+                ApiKey = data[in_use]['ApiKey']
+                ApiHost = data[in_use]['ApiHost']
             else:
                 raise Exception("No in_use llm in token_[uid].json")
         else:

@@ -3,9 +3,9 @@ try:
     import openai
     OPENAI_VERSION = openai.__version__
 except ImportError:
-    raise Exception("Error, need: pip install ipenai")
+    raise Exception("Error, need: pip install openai")
 
-AZURE_OPENAI_API_DEFAULT_MODEL = ""
+AZURE_OPENAI_API_DEFAULT_MODEL = "gpt4"
 OPEN_AI_TIMEOUT = 120
 AZURE_OPENAI_API_VERSION = "2023-12-01-preview"
 

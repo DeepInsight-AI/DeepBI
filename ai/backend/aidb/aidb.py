@@ -356,11 +356,15 @@ class AIDB:
                 openaiApiHost = data[in_use]['ApiHost']
                 if openaiApiHost is not None and len(str(openaiApiHost)) > 0:
                     ApiHost = openaiApiHost
-
-            elif in_use == 'DeepInsight':
+                if ApiModel is None:
+                    ApiModel = "gpt-4-1106-preview"
+            elif "DeepInsight" == in_use:
                 ApiKey = data[in_use]['ApiKey']
+                # set default openai or deep insight model 
+                if ApiModel is None:
+                    ApiModel = "gpt-4-1106-preview"
+                # Other default models are configured through the client
                 print('DeepBIApiKey : ', ApiKey)
-                # ApiHost = "https://apiserver.deep-thought.io/proxy"
                 ApiHost = CONFIG.ApiHost
             elif "ZhiPuAI" == in_use:
                 ApiKey = data[in_use]['ApiKey']

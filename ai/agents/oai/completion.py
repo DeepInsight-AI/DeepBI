@@ -214,14 +214,9 @@ class Completion(openai_Completion):
                 other_llm_name = AGENT_LLM_MODEL[agent_name]['llm'] if agent_name in AGENT_LLM_MODEL and \
                     AGENT_LLM_MODEL[agent_name][
                     'replace_default'] and llm_setting is not None else use_llm_name
-                if "DeepInsight" != use_llm_name and "OpenAI" != use_llm_name:
-                    use_model = None
                 use_api_secret = llm_setting[use_llm_name]['ApkSecret'] if "ApkSecret" in llm_setting[use_llm_name] else None
                 print("Agent_name", agent_name, 'default: llm:', use_llm_name, "url:", use_url, "model", use_model, "other LLM", other_llm_name)
                 if other_llm_name is not None and use_llm_name != other_llm_name:
-                    """
-                    agent use different llm
-                    """
                     use_message_count = AGENT_LLM_MODEL[agent_name]['use_message_count']
                     if 0 == use_message_count or len(config['messages']) <= use_message_count:
                         use_llm_name = other_llm_name
@@ -231,10 +226,9 @@ class Completion(openai_Completion):
                         if "" == use_api_key:
                             print("agent_llm llm api key empty, use_model:", use_model)
                             raise Exception("agent_llm llm api key empty use_model:", use_model)
-                    else:
-                        print("~~agent use same llm~~")
+                    pass
 
-                print("agent_name:", agent_name, 'fact use: llm:', use_llm_name, "url:", use_url, "pre use model", use_model)
+                print("agent_name:", agent_name, 'fact use: llm:', use_llm_name, "url:", use_url, "may use model:", use_model)
                 if use_llm_name != "OpenAI":
                     """
                     A different LLM is called here
@@ -260,10 +254,6 @@ class Completion(openai_Completion):
                         }
                         print('create_url : ', use_url)
                         res = requests.post(use_url, json=data, headers=headers)
-                        # print("res :", res)
-                        # print('res.text +++++++++ : ', res.text)
-
-                        # check response status_code
                         if res.status_code != 200:
                             res.raise_for_status()
                         response = res.json()

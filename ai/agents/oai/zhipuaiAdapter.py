@@ -34,7 +34,7 @@ class ZhiPuAIClient:
     def run(cls, apiKey, data, model_name=None, temperature=None):
         if "" == apiKey or apiKey is None:
             raise Exception("LLM ZhiPuAI api key empty use_model: ", model_name, " need apikey")
-        if model_name is None:
+        if model_name is None or "" == model_name:
             model_name = ZHIPU_AI_MODEL
         if temperature is None:
             temperature = ZHIPU_AI_temperature

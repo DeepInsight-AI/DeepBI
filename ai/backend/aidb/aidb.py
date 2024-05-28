@@ -357,12 +357,12 @@ class AIDB:
                 if openaiApiHost is not None and len(str(openaiApiHost)) > 0:
                     ApiHost = openaiApiHost
                 if ApiModel is None or "" == ApiModel.strip():
-                    ApiModel = "gpt-4-1106-preview"
+                    ApiModel = "gpt-4o"
             elif "DeepInsight" == in_use:
                 ApiKey = data[in_use]['ApiKey']
                 # set default openai or deep insight model
                 if ApiModel is None or "" == ApiModel.strip():
-                    ApiModel = "gpt-4-1106-preview"
+                    ApiModel = "gpt-4o"
                 # Other default models are configured through the client
                 print('DeepBIApiKey : ', ApiKey)
                 ApiHost = CONFIG.ApiHost

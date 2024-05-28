@@ -374,6 +374,7 @@ class AIDB:
             else:
                 raise Exception("No in_use llm in token_[uid].json")
         else:
+            # 这里是默认的 openai 所有配置都有问题
             ApiKey = data['OpenaiApiKey']
             print('OpenaiApiKey : ', ApiKey)
             HttpProxyHost = data['HttpProxyHost']
@@ -381,7 +382,7 @@ class AIDB:
             HttpProxyPort = data['HttpProxyPort']
             print('HttpProxyPort : ', HttpProxyPort)
             ApiType = "openai"
-            ApiModel = None
+            ApiModel = data[in_use]['Model'] if in_use in data and 'Model' in data[in_use] else None
         # all llm config
         del data['in_use']
         return ApiKey, HttpProxyHost, HttpProxyPort, ApiHost, ApiType, ApiModel, data

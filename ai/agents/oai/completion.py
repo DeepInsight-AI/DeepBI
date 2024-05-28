@@ -197,12 +197,7 @@ class Completion(openai_Completion):
                 # print("using cached response")
                 cls._book_keeping(config, response)
                 return response
-        openai_completion = (
-            openai.ChatCompletion
-            if config["model"].replace("gpt-35-turbo", "gpt-3.5-turbo") in cls.chat_models
-            or issubclass(cls, ChatCompletion)
-            else openai.Completion
-        )
+
         start_time = time.time()
         request_timeout = cls.request_timeout
         max_retry_period = config.pop("max_retry_period", cls.max_retry_period)
@@ -218,9 +213,6 @@ class Completion(openai_Completion):
                 use_model = config['model']
                 use_api_key = config['api_key']
                 llm_setting = config.get("llm_setting")  # all llm config
-                # print("~" * 30)
-                # print("setting", llm_setting)
-                # use other llm or use default llm
                 other_llm_name = AGENT_LLM_MODEL[agent_name]['llm'] if agent_name in AGENT_LLM_MODEL and \
                     AGENT_LLM_MODEL[agent_name][
                     'replace_default'] and llm_setting is not None else use_llm_name
@@ -230,15 +222,16 @@ class Completion(openai_Completion):
                 if "DeepInsight" != use_llm_name and "OpenAI" != use_llm_name:
                     use_model = None
                 use_api_secret = llm_setting[use_llm_name]['ApkSecret'] if "ApkSecret" in llm_setting[use_llm_name] else None
-
+                # log
                 print("==agent_name==", agent_name, 'default: llm:', use_llm_name, "url:", use_url, "model", use_model, "other LLM", other_llm_name)
+
                 if other_llm_name is not None and use_llm_name != other_llm_name:
                     """
                     different llm
                     """
                     use_message_count = AGENT_LLM_MODEL[agent_name]['use_message_count']
                     if 0 == use_message_count or len(config['messages']) <= use_message_count:
-                        print("～~Change LLM model~～ message less", use_message_count, "message count", len(config['messages']))
+                        print("Change LLM model:message less", use_message_count, "message count", len(config['messages']))
                         use_llm_name = other_llm_name
                         use_model = AGENT_LLM_MODEL[agent_name]['model'] if 'model' in AGENT_LLM_MODEL[agent_name] else None
                         use_api_key = llm_setting[AGENT_LLM_MODEL[agent_name]['llm']]['ApiKey']
@@ -276,10 +269,6 @@ class Completion(openai_Completion):
                         }
                         print('create_url : ', use_url)
                         res = requests.post(use_url, json=data, headers=headers)
-                        # print("res :", res)
-                        # print('res.text +++++++++ : ', res.text)
-
-                        # check response status_code
                         if res.status_code != 200:
                             res.raise_for_status()
                         response = res.json()
@@ -308,6 +297,12 @@ class Completion(openai_Completion):
                     """
                     By default, openai is invoked
                     """
+                    openai_completion = (
+                        openai.ChatCompletion
+                        if config["model"].replace("gpt-35-turbo", "gpt-3.5-turbo") in cls.chat_models
+                        or issubclass(cls, ChatCompletion)
+                        else openai.Completion
+                    )
                     if "request_timeout" in config:
                         response = openai_completion.create(**config)
                     else:

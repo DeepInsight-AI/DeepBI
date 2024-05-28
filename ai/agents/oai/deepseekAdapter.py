@@ -32,20 +32,27 @@ Deepseek_stop_reason_map = {
 class DeepSeekClient:
 
     @classmethod
-    def run(cls, apiKey, data, model=None):
+    def run(cls, apiKey, data, model=None, use_url=None):
         """
-        定义入口
+        define run function
         """
+
+        if apiKey is None or apiKey == "":
+            raise Exception("LLM DeepSeek apikey empty,use_model: ", model, " need apikey")
         messages = cls.transform_message_role(data['messages'])
         model = model if model else DEEPSEEK_MODEL
-        ai_result = cls.call_deepSeek(apiKey, messages, model)
-        return cls.output_to_openai(ai_result)
+        use_url = use_url if use_url else DEEPSEEK_DEFAULT_URL
+        ai_result = cls.call_deepSeek(apiKey, messages, model, use_url)
+        if ai_result:
+            return cls.output_to_openai(ai_result)
+        else:
+            return False
         pass
 
     @classmethod
-    def call_deepSeek(cls, apikey, message, model=DEEPSEEK_MODEL, temperature=DEEPSEEK_TEMPERTURE):
+    def call_deepSeek(cls, apikey, message, model=DEEPSEEK_MODEL, use_url=DEEPSEEK_DEFAULT_URL, temperature=DEEPSEEK_TEMPERTURE):
         """
-        调用deepSeek
+        call deepSeek
         """
         try:
             payload = json.dumps({
@@ -67,13 +74,13 @@ class DeepSeekClient:
                 'Authorization': 'Bearer ' + str(apikey)
             }
 
-            response = requests.request("POST", DEEPSEEK_DEFAULT_URL, headers=headers, data=payload)
+            response = requests.request("POST", use_url, headers=headers, data=payload)
             result = json.loads(response.text)
         except Exception as e:
             print("error" * 10)
             print(response.text)
             print(e)
-            result = {}
+            result = False
         return result
         pass
 

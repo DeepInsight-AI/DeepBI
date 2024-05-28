@@ -190,6 +190,7 @@ class Completion(openai_Completion):
         agent_name = config['agent_name'] if 'agent_name' in config else None
         openai.api_key_path = config.pop("api_key_path", openai.api_key_path)
         key = get_key(config)
+        # use cache
         if use_cache:
             response = cls._cache.get(key, None)
             print('use_cache_response: ', response)
@@ -205,33 +206,19 @@ class Completion(openai_Completion):
 
         while True:
             try:
-
-                # print("config :", config)
-                # print("config.get('api_base')", config.get('api_base'))
                 use_llm_name = config.get("api_type")  # default llm
-                use_url = config['api_base']
-                use_model = config['model']
+                use_url = config['api_base'].strip() if "api_base" in config and config['api_base'] is not None else None
+                use_model = config['model'].strip() if "model" in config and config['model'] is not None else None
                 use_api_key = config['api_key']
                 llm_setting = config.get("llm_setting")  # all llm config
                 other_llm_name = AGENT_LLM_MODEL[agent_name]['llm'] if agent_name in AGENT_LLM_MODEL and \
                     AGENT_LLM_MODEL[agent_name][
                     'replace_default'] and llm_setting is not None else use_llm_name
-                print("~" * 30, 'agent llm config ------------------------')
-                if agent_name in AGENT_LLM_MODEL:
-                    print(agent_name in AGENT_LLM_MODEL, AGENT_LLM_MODEL[agent_name]['replace_default'])
-                if "DeepInsight" != use_llm_name and "OpenAI" != use_llm_name:
-                    use_model = None
                 use_api_secret = llm_setting[use_llm_name]['ApkSecret'] if "ApkSecret" in llm_setting[use_llm_name] else None
-                # log
-                print("==agent_name==", agent_name, 'default: llm:', use_llm_name, "url:", use_url, "model", use_model, "other LLM", other_llm_name)
-
+                print("Agent_name", agent_name, 'default: llm:', use_llm_name, "url:", use_url, "model", use_model, "other LLM", other_llm_name)
                 if other_llm_name is not None and use_llm_name != other_llm_name:
-                    """
-                    different llm
-                    """
                     use_message_count = AGENT_LLM_MODEL[agent_name]['use_message_count']
                     if 0 == use_message_count or len(config['messages']) <= use_message_count:
-                        print("Change LLM model:message less", use_message_count, "message count", len(config['messages']))
                         use_llm_name = other_llm_name
                         use_model = AGENT_LLM_MODEL[agent_name]['model'] if 'model' in AGENT_LLM_MODEL[agent_name] else None
                         use_api_key = llm_setting[AGENT_LLM_MODEL[agent_name]['llm']]['ApiKey']
@@ -239,11 +226,9 @@ class Completion(openai_Completion):
                         if "" == use_api_key:
                             print("agent_llm llm api key empty, use_model:", use_model)
                             raise Exception("agent_llm llm api key empty use_model:", use_model)
-                    else:
-                        print("~~The llm model is not replaced because the number of messages is insufficient.~~")
+                    pass
 
-                print("agent_name", agent_name, 'fact use: llm:', use_llm_name, "url:", use_url, "pre use model", use_model)
-                print("~" * 30, "begin call llm", "*" * 30)
+                print("agent_name:", agent_name, 'fact use: llm:', use_llm_name, "url:", use_url, "may use model:", use_model)
                 if use_llm_name != "OpenAI":
                     """
                     A different LLM is called here
@@ -272,31 +257,43 @@ class Completion(openai_Completion):
                         if res.status_code != 200:
                             res.raise_for_status()
                         response = res.json()
+                    elif "Azure" == use_llm_name:
+                        """
+                        The Azure is called here
+                        """
+                        from .azureAdapter import AzureClient
+                        response = AzureClient.run(use_api_key, data, use_model, use_url)
                     elif "ZhiPuAI" == use_llm_name:
                         """
                         The ZhipuAI is called here
                         """
-                        from .zhipuaiadpter import ZhiPuAIClient
+                        from .zhipuaiAdapter import ZhiPuAIClient
                         response = ZhiPuAIClient.run(use_api_key, data, use_model)
                     elif "Deepseek" == use_llm_name:
                         """
                         The Deepseek is called here
                         """
-                        from .deepseek import DeepSeekClient
-                        response = DeepSeekClient.run(use_api_key, data, use_model)
+                        from .deepseekAdapter import DeepSeekClient
+                        response = DeepSeekClient.run(use_api_key, data, use_model, use_url)
                     elif "AWSClaude" == use_llm_name:
-                        from .claudeadpter import AWSClaudeClient
+                        from .claudeAdapter import AWSClaudeClient
                         api_data = {
                             'ApiKey': use_api_key,
                             'ApkSecret': use_api_secret
                         }
-                        response = AWSClaudeClient.run(api_data, data, use_model)
+                        response = AWSClaudeClient.run(api_data, data, use_model, use_url)
                     else:
                         raise Exception("No model:", use_llm_name)
                 else:
                     """
                     By default, openai is invoked
                     """
+                    if "llm_setting" in config:
+                        del config['llm_setting']
+                    if "agent_name" in config:
+                        del config['agent_name']
+                    if "api_type" in config:
+                        del config['api_type']
                     openai_completion = (
                         openai.ChatCompletion
                         if config["model"].replace("gpt-35-turbo", "gpt-3.5-turbo") in cls.chat_models
@@ -307,15 +304,7 @@ class Completion(openai_Completion):
                         response = openai_completion.create(**config)
                     else:
                         response = openai_completion.create(request_timeout=request_timeout, **config)
-                print("*" * 30, "call end, response as follow: ", "*" * 30)
-                print(response)
-                print("*" * 30, "response end", "*" * 30)
-                # write cost
-                cost_str = agent_name + " " + use_llm_name + " " + str(use_model) + " cost:" + str(response['usage'])
-                with open("cost.txt", "a") as file:
-                    # 写入内容到文件末尾
-                    file.write(cost_str + "\n")
-                #
+
             except (
                 ServiceUnavailableError,
                 APIConnectionError,

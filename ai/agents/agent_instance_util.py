@@ -53,26 +53,22 @@ class AgentInstanceUtil:
         self.base_postgresql_info = local_base_postgresql_info
         self.base_mongodb_info = local_base_mongodb_info
         self.base_starrocks_info = None
-
         self.is_log_out = True
-
         self.language_mode = default_language_mode
         self.set_language_mode(self.language_mode)
-
         self.api_key_use = False
-
         self.openai_proxy = None
         self.db_id = db_id
 
 
-    def set_api_key(self, api_key, ApiType="openai", api_host=None, LlmSetting=None):
+    def set_api_key(self, api_key, ApiType="openai", api_host=None, ApiModel=None, LlmSetting=None):
         self.api_key = api_key
         if api_host is not None:
             # api_base = "https://api.openai.com/"
             print('api_host: ', api_host)
             self.config_list_gpt4 = [
                 {
-                    'model': 'gpt-4',
+                    'model': ApiModel,
                     'api_key': api_key,
                     'api_base': api_host,
                     'api_type': ApiType,
@@ -82,7 +78,7 @@ class AgentInstanceUtil:
 
             self.config_list_gpt4_turbo = [
                 {
-                    'model': 'gpt-4-1106-preview',
+                    'model': ApiModel,
                     'api_key': self.api_key,
                     'api_base': api_host,
                     'api_type': ApiType,
@@ -103,7 +99,7 @@ class AgentInstanceUtil:
 
             self.config_list_gpt4 = [
                 {
-                    'model': 'gpt-4',
+                    'model': ApiModel,
                     'api_key': api_key,
                     'api_type': ApiType,
                     'llm_setting': LlmSetting
@@ -112,7 +108,7 @@ class AgentInstanceUtil:
 
             self.config_list_gpt4_turbo = [
                 {
-                    'model': 'gpt-4-1106-preview',
+                    'model': ApiModel,
                     'api_key': self.api_key,
 
                     'api_type': ApiType,

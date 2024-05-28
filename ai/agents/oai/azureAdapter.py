@@ -5,7 +5,7 @@ try:
 except ImportError:
     raise Exception("Error, need: pip install openai")
 
-AZURE_OPENAI_API_DEFAULT_MODEL = "gpt4"
+AZURE_OPENAI_API_DEFAULT_MODEL = "gpt-4"
 OPEN_AI_TIMEOUT = 120
 AZURE_OPENAI_API_VERSION = "2023-12-01-preview"
 

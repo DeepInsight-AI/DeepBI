@@ -208,7 +208,7 @@ class Completion(openai_Completion):
             try:
                 use_llm_name = config.get("api_type")  # default llm
                 use_url = config['api_base'].strip() if "api_base" in config and config['api_base'] is not None else None
-                use_model = config['model'].strip() if "model" in config and config['api_base'] is not None else None
+                use_model = config['model'].strip() if "model" in config and config['model'] is not None else None
                 use_api_key = config['api_key']
                 llm_setting = config.get("llm_setting")  # all llm config
                 other_llm_name = AGENT_LLM_MODEL[agent_name]['llm'] if agent_name in AGENT_LLM_MODEL and \

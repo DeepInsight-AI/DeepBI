@@ -271,7 +271,7 @@ class Completion(openai_Completion):
                         """
                         The Azure is called here
                         """
-                        from .azureadpter import AzureClient
+                        from .azureAdapter import AzureClient
                         api_data = {
                             'ApiKey': use_api_key,
                             'ApiHost': use_url
@@ -281,16 +281,16 @@ class Completion(openai_Completion):
                         """
                         The ZhipuAI is called here
                         """
-                        from .zhipuaiadpter import ZhiPuAIClient
+                        from .zhipuaiAdapter import ZhiPuAIClient
                         response = ZhiPuAIClient.run(use_api_key, data, use_model)
                     elif "Deepseek" == use_llm_name:
                         """
                         The Deepseek is called here
                         """
-                        from .deepseekadpter import DeepSeekClient
+                        from .deepseekAdapter import DeepSeekClient
                         response = DeepSeekClient.run(use_api_key, data, use_model)
                     elif "AWSClaude" == use_llm_name:
-                        from .claudeadpter import AWSClaudeClient
+                        from .claudeAdapter import AWSClaudeClient
                         api_data = {
                             'ApiKey': use_api_key,
                             'ApkSecret': use_api_secret

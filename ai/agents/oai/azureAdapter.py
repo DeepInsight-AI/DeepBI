@@ -18,8 +18,8 @@ class AzureClient:
         :param model:  default is azure setting gpt-4
         :return: ai response
         """
-        use_api_key = apiKey['ApiKey']
-        if use_api_key is None or "" == use_api_key:
+
+        if apiKey is None or "" == apiKey:
             raise Exception("Error, need: apiKey")
         if use_api_host is None or "" == use_api_host:
             raise Exception("Error, need: apiHost")
@@ -29,7 +29,7 @@ class AzureClient:
             from openai import AzureOpenAI
             # version 1.x.x
             client = AzureOpenAI(
-                api_key=use_api_key,
+                api_key=apiKey,
                 api_version=AZURE_OPENAI_API_VERSION,
                 azure_endpoint=use_api_host,
                 timeout=OPEN_AI_TIMEOUT
@@ -43,7 +43,7 @@ class AzureClient:
             pass
         elif OPENAI_VERSION.startswith("0."):
             # version 0.x.x
-            openai.api_key = use_api_key
+            openai.api_key = apiKey
             openai.api_base = use_api_host
             openai.api_type = 'azure'
             openai.api_version = AZURE_OPENAI_API_VERSION  # this might change in the future

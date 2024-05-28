@@ -47,7 +47,7 @@ class AWSClaudeClient:
 
     @classmethod
     def run(cls, apiKey, data, model_name=None, temperature=None):
-        model_name = Claude_AI_MODEL if model_name is None else model_name
+        model_name = Claude_AI_MODEL if model_name is None or "" == model_name else model_name
         temperature = Claude_AI_temperature if temperature is None else temperature
         if "ApiKey" not in apiKey or apiKey['ApiKey'] is None or "" == apiKey['ApiKey']:
             raise Exception("LLM Claude api key empty,use_model: ", model_name, " need apikey")

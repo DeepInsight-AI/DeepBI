@@ -37,9 +37,9 @@ class DeepSeekClient:
         define run function
         """
         messages = cls.transform_message_role(data['messages'])
-        model_name = model_name if model_name else DEEPSEEK_MODEL
+        model = model if model else DEEPSEEK_MODEL
         if apiKey is None or apiKey == "":
-            raise Exception("LLM DeepSeek apikey empty,use_model: ", model_name, " need apikey")
+            raise Exception("LLM DeepSeek apikey empty,use_model: ", model, " need apikey")
         use_url = use_url if use_url else DEEPSEEK_DEFAULT_URL
         ai_result = cls.call_deepSeek(apiKey, messages, model, use_url)
         return cls.output_to_openai(ai_result)

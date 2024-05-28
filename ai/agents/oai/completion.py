@@ -290,6 +290,10 @@ class Completion(openai_Completion):
                     """
                     if "llm_setting" in config:
                         del config['llm_setting']
+                    if "agent_name" in config:
+                        del config['agent_name']
+                    if "api_type" in config:
+                        del config['api_type']
                     openai_completion = (
                         openai.ChatCompletion
                         if config["model"].replace("gpt-35-turbo", "gpt-3.5-turbo") in cls.chat_models

@@ -274,14 +274,6 @@ class AIDB:
         token_path = CONFIG.up_file_path + '.token_' + str(self.uid) + '.json'
         if os.path.exists(token_path):
             try:
-<<<<<<< HEAD
-                ApiKey, HttpProxyHost, HttpProxyPort, ApiHost, ApiType, LlmSetting = self.load_api_key(token_path)
-
-                if ApiKey is None or len(ApiKey) == 0:
-                    await self.put_message(500, CONFIG.talker_log, CONFIG.type_log_data, self.error_miss_key)
-                    return False
-                self.agent_instance_util.set_api_key(ApiKey, ApiType, ApiHost, LlmSetting)
-=======
                 ApiKey, HttpProxyHost, HttpProxyPort, ApiHost, ApiType, ApiModel, LlmSetting = self.load_api_key(token_path)
                 if ApiKey is None or len(ApiKey) == 0:
                     await self.put_message(500, CONFIG.talker_log, CONFIG.type_log_data, self.error_miss_key)
@@ -289,10 +281,8 @@ class AIDB:
 
                 self.agent_instance_util.set_api_key(ApiKey, ApiType, ApiHost, ApiModel, LlmSetting)
 
->>>>>>> diff_agent_amazon
                 if HttpProxyHost is not None and len(str(HttpProxyHost)) > 0 and HttpProxyPort is not None and len(
                         str(HttpProxyPort)) > 0:
-                    # openai_proxy = "http://127.0.0.1:7890"
                     self.agent_instance_util.openai_proxy = 'http://' + str(HttpProxyHost) + ':' + str(HttpProxyPort)
 
                 planner_user = self.agent_instance_util.get_agent_planner_user(is_log_out=False)
@@ -374,15 +364,6 @@ class AIDB:
         HttpProxyPort = None
         ApiHost = None
         ApiType = None
-<<<<<<< HEAD
-        in_use = None
-        with open(token_path, 'r') as file:
-            data = json.load(file)
-
-        if data.get('in_use'):
-            in_use = ApiType = data.get('in_use')
-            if in_use == 'DeepInsight':
-=======
         try:
             with open(token_path, 'r') as file:
                 data = json.load(file)
@@ -405,7 +386,6 @@ class AIDB:
                 if ApiModel is None or "" == ApiModel.strip():
                     ApiModel = "gpt-4o"
             elif "DeepInsight" == in_use:
->>>>>>> diff_agent_amazon
                 ApiKey = data[in_use]['ApiKey']
                 # set default openai or deep insight model
                 if ApiModel is None or "" == ApiModel.strip():
@@ -422,29 +402,11 @@ class AIDB:
             elif "Deepseek" == in_use:
                 ApiKey = data[in_use]['ApiKey']
                 ApiHost = data[in_use]['ApiHost']
-<<<<<<< HEAD
-            elif in_use == 'Azure':
-                ApiKey = data[in_use]['ApiKey']
-                print('DeepBIAzureApiKey : ', ApiKey)
-                # ApiHost = "https://apiserver.deep-thought.io/proxy"
-                ApiHost = data[in_use]['ApiHost']
-            else:
-                ApiKey = data[in_use]['OpenaiApiKey']
-                print('OpenaiApiKey : ', ApiKey)
-                HttpProxyHost = data[in_use]['HttpProxyHost']
-                print('HttpProxyHost : ', HttpProxyHost)
-                HttpProxyPort = data[in_use]['HttpProxyPort']
-                print('HttpProxyPort : ', HttpProxyPort)
-                openaiApiHost = data[in_use]['ApiHost']
-                if openaiApiHost is not None and len(str(openaiApiHost)) > 0:
-                    ApiHost = openaiApiHost
-=======
             elif "Azure" == in_use:
                 ApiKey = data[in_use]['ApiKey']
                 ApiHost = data[in_use]['ApiHost']
             else:
                 raise Exception("No in_use llm in token_[uid].json")
->>>>>>> diff_agent_amazon
         else:
             # 这里是默认的 openai 所有配置都有问题
             ApiKey = data['OpenaiApiKey']

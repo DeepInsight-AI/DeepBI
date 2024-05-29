@@ -148,6 +148,4 @@ WTForms==2.2.1
 XlsxWriter==1.2.2
 xmlschema==2.5.0
 yarl==1.9.4
-zhipu==1.0.1
-zhipuai==2.0.1
 zipp==3.17.0

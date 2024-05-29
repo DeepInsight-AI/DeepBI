@@ -375,11 +375,8 @@ class AIDB:
             ApiModel = data[in_use]['Model'] if in_use in data and 'Model' in data[in_use] else None
             if in_use == 'OpenAI':
                 ApiKey = data[in_use]['OpenaiApiKey']
-                print('OpenaiApiKey : ', ApiKey)
                 HttpProxyHost = data[in_use]['HttpProxyHost']
-                print('HttpProxyHost : ', HttpProxyHost)
                 HttpProxyPort = data[in_use]['HttpProxyPort']
-                print('HttpProxyPort : ', HttpProxyPort)
                 openaiApiHost = data[in_use]['ApiHost']
                 if openaiApiHost is not None and len(str(openaiApiHost)) > 0:
                     ApiHost = openaiApiHost
@@ -391,7 +388,6 @@ class AIDB:
                 if ApiModel is None or "" == ApiModel.strip():
                     ApiModel = "gpt-4o"
                 # Other default models are configured through the client
-                print('DeepBIApiKey : ', ApiKey)
                 ApiHost = CONFIG.ApiHost
             elif "ZhiPuAI" == in_use:
                 ApiKey = data[in_use]['ApiKey']
@@ -410,11 +406,8 @@ class AIDB:
         else:
             # 这里是默认的 openai 所有配置都有问题
             ApiKey = data['OpenaiApiKey']
-            print('OpenaiApiKey : ', ApiKey)
             HttpProxyHost = data['HttpProxyHost']
-            print('HttpProxyHost : ', HttpProxyHost)
             HttpProxyPort = data['HttpProxyPort']
-            print('HttpProxyPort : ', HttpProxyPort)
             ApiType = "openai"
             ApiModel = data[in_use]['Model'] if in_use in data and 'Model' in data[in_use] else None
         # all llm config

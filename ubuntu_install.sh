@@ -122,8 +122,8 @@ virtualenv venv -p python3
 echo "activate venv"
 source venv/bin/activate
 line
-echo "set pip config"
-pip config set global.index-url https://pypi.tuna.tsinghua.edu.cn/simple
+# echo "set pip config"
+# pip config set global.index-url https://pypi.tuna.tsinghua.edu.cn/simple
 pip install --upgrade pip
 line
 echo "need python require"
@@ -136,7 +136,7 @@ else
   if [ -f /usr/include/mysql/mysql.h ]; then
       sudo ln -s /usr/include/mysql/mysql.h  /usr/include/mysql/my_config.h
   else
-      echo "mysql config file is not ok, please check  /usr/include/mysql/my_config.h exsist or not "
+      echo "mysql configuration file does not exist, please check  /usr/include/mysql/my_config.h exsist or not "
       exit 1
   fi
 fi

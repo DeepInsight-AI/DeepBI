@@ -23,7 +23,8 @@
         "Model": "",
         "required": [
             "ApiKey",
-            "ApiHost"
+            "ApiHost",
+            "Model"
         ]
     },
     "AWSClaude": {

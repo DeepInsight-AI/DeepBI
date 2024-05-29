@@ -1,47 +1,19 @@
 {
-    "in_use": "DeepInsight",
-    "OpenAI": {
-        "OpenaiApiKey": "",
-        "Model": "",
-        "HttpProxyHost": "",
-        "HttpProxyPort": "",
-        "ApiHost": "",
-        "required": [
-            "OpenaiApiKey"
-        ]
-    },
-    "DeepInsight": {
-        "ApiKey": "",
-        "Model": "",
-        "required": [
-            "ApiKey"
-        ]
-    },
-    "Azure": {
-        "ApiKey": "",
-        "ApiHost": "",
-        "Model": "",
-        "required": [
-            "ApiKey",
-            "ApiHost",
-            "Model"
-        ]
-    },
-    "AWSClaude": {
-        "ApiKey": "",
-        "ApkSecret": "",
-        "Model": "",
-        "required": [
-            "ApiKey",
-            "ApkSecret"
-        ]
-    },
-    "Deepseek": {
-        "ApiKey": "",
-        "Model": "",
-        "ApiHost": "",
-        "required": [
-            "ApiKey"
-        ]
-    }
+        "in_use": "DeepInsight",
+        "OpenAI": {
+            "OpenaiApiKey": "",
+            "HttpProxyHost": "",
+            "HttpProxyPort": "",
+            "ApiHost": "",
+            "required": [
+                "OpenaiApiKey",
+                "HttpProxyHost"
+            ]
+        },
+        "DeepInsight": {
+            "ApiKey": "",
+            "required": [
+                "ApiKey"
+            ]
+        }
 }

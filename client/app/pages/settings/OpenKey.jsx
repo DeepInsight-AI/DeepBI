@@ -148,7 +148,7 @@ const SettingsOpenKey = () => {
       chat_type: "test",
       data: {
         data_type: "apikey",
-        content: values,
+        content: "",
         language_mode: window.W_L.language_mode,
       },
     };

@@ -242,29 +242,6 @@ class Completion(openai_Completion):
                         data = {
                             "messages": config['messages']
                         }
-<<<<<<< HEAD
-
-                    # set header
-                    headers = {
-                        "token": config['api_key'],
-                        "ai_name": "openai",
-                        "model": config['model']
-                    }
-                    # print('request json : ', data)
-
-                    # url = 'http://apiserver.deep-thought.io/proxy'
-                    url = config['api_base']
-                    print('create_url : ', url)
-                    res = requests.post(url, json=data, headers=headers)
-                    print("res :", res)
-                    print('res.text +++++++++ : ', res.text)
-
-                    # check response status_code
-                    if res.status_code != 200:
-                        res.raise_for_status()
-
-                    response = res.json()
-=======
                     # Here the judgment calls a different LLM
                     if "DeepInsight" == use_llm_name:
                         """
@@ -307,7 +284,6 @@ class Completion(openai_Completion):
                         response = AWSClaudeClient.run(api_data, data, use_model, use_url)
                     else:
                         raise Exception("No model:", use_llm_name)
->>>>>>> llm_marge_main
                 else:
                     """
                     By default, openai is invoked

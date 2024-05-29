@@ -180,11 +180,12 @@ class ChartPresenterAgent(ConversableAgent):
         return self._default_auto_reply
 
     def find_extract_code(self, text: str):
+        extracted = []
         code_pattern = re.compile(r"`{3}(\w+)?\s*([\s\S]*?)`{3}|`([^`]+)`")
         code_blocks = code_pattern.findall(text)
 
         # Extract the individual code blocks and languages from the matched groups
-        extracted = []
+
         for lang, group1, group2 in code_blocks:
             if group1:
                 extracted.append((lang.strip(), group1.strip()))

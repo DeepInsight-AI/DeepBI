@@ -148,6 +148,7 @@ class TaskSelectorAgent(ConversableAgent):
 
                     # suggest_function = {'role': 'assistant', 'content': None, 'function_call': {'name': 'task_base',
                     #                                                          'arguments': '{"qustion_message":"\\nWhat is the most common house layout in the dataset?"}'}}
+
                     # Check if reply is in agents_functions
                     is_func = False
                     for func in CONFIG.agents_functions:
@@ -171,6 +172,5 @@ class TaskSelectorAgent(ConversableAgent):
                         print('reply : ', reply)
                         # return reply
                         return suggest_function
-
         # return messages
         return self._default_auto_reply

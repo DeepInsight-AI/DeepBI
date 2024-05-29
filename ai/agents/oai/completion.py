@@ -9,6 +9,7 @@ from flaml import tune, BlendSearch
 from flaml.tune.space import is_constant
 from flaml.automl.logger import logger_formatter
 from .openai_utils import get_key
+from ..agent_llm import AGENT_LLM_MODEL
 import requests
 
 try:
@@ -186,8 +187,10 @@ class Completion(openai_Completion):
         Try cache first. If not found, call the openai api. If the api call fails, retry after retry_wait_time.
         """
         config = config.copy()
+        agent_name = config['agent_name'] if 'agent_name' in config else None
         openai.api_key_path = config.pop("api_key_path", openai.api_key_path)
         key = get_key(config)
+        # use cache
         if use_cache:
             response = cls._cache.get(key, None)
             print('use_cache_response: ', response)
@@ -195,23 +198,41 @@ class Completion(openai_Completion):
                 # print("using cached response")
                 cls._book_keeping(config, response)
                 return response
-        openai_completion = (
-            openai.ChatCompletion
-            if config["model"].replace("gpt-35-turbo", "gpt-3.5-turbo") in cls.chat_models
-               or issubclass(cls, ChatCompletion)
-            else openai.Completion
-        )
+
         start_time = time.time()
         request_timeout = cls.request_timeout
         max_retry_period = config.pop("max_retry_period", cls.max_retry_period)
         retry_wait_time = config.pop("retry_wait_time", cls.retry_wait_time)
+
         while True:
             try:
-                print('_get_response function +++++++++++++++++++')
-                # print("config :", config)
-                # print("config.get('api_base')", config.get('api_base'))
-                if config.get('api_base') is not None and str(config['api_base']).__contains__('apiserver.deep-thought.io'):
+                use_llm_name = config.get("api_type")  # default llm
+                use_url = config['api_base'].strip() if "api_base" in config and config['api_base'] is not None else None
+                use_model = config['model'].strip() if "model" in config and config['model'] is not None else None
+                use_api_key = config['api_key']
+                llm_setting = config.get("llm_setting")  # all llm config
+                other_llm_name = AGENT_LLM_MODEL[agent_name]['llm'] if agent_name in AGENT_LLM_MODEL and \
+                    AGENT_LLM_MODEL[agent_name][
+                    'replace_default'] and llm_setting is not None else use_llm_name
+                use_api_secret = llm_setting[use_llm_name]['ApkSecret'] if "ApkSecret" in llm_setting[use_llm_name] else None
+                print("Agent_name", agent_name, 'default: llm:', use_llm_name, "url:", use_url, "model", use_model, "other LLM", other_llm_name)
+                if other_llm_name is not None and use_llm_name != other_llm_name:
+                    use_message_count = AGENT_LLM_MODEL[agent_name]['use_message_count']
+                    if 0 == use_message_count or len(config['messages']) <= use_message_count:
+                        use_llm_name = other_llm_name
+                        use_model = AGENT_LLM_MODEL[agent_name]['model'] if 'model' in AGENT_LLM_MODEL[agent_name] else None
+                        use_api_key = llm_setting[AGENT_LLM_MODEL[agent_name]['llm']]['ApiKey']
+                        use_api_secret = llm_setting[AGENT_LLM_MODEL[agent_name]['llm']]['ApkSecret'] if "ApkSecret" in llm_setting[AGENT_LLM_MODEL[agent_name]['llm']] else None
+                        if "" == use_api_key:
+                            print("agent_llm llm api key empty, use_model:", use_model)
+                            raise Exception("agent_llm llm api key empty use_model:", use_model)
+                    pass
 
+                print("agent_name:", agent_name, 'fact use: llm:', use_llm_name, "url:", use_url, "may use model:", use_model)
+                if use_llm_name != "OpenAI":
+                    """
+                    A different LLM is called here
+                    """
                     if config.get('functions'):
                         data = {
                             "messages": config['messages'],
@@ -221,6 +242,7 @@ class Completion(openai_Completion):
                         data = {
                             "messages": config['messages']
                         }
+<<<<<<< HEAD
 
                     # set header
                     headers = {
@@ -242,12 +264,70 @@ class Completion(openai_Completion):
                         res.raise_for_status()
 
                     response = res.json()
+=======
+                    # Here the judgment calls a different LLM
+                    if "DeepInsight" == use_llm_name:
+                        """
+                        The DeepInsight webserver is called here
+                        """
+                        headers = {
+                            "token": use_api_key,
+                            "ai_name": "openai",
+                            "model": use_model
+                        }
+                        print('create_url : ', use_url)
+                        res = requests.post(use_url, json=data, headers=headers)
+                        if res.status_code != 200:
+                            res.raise_for_status()
+                        response = res.json()
+                    elif "Azure" == use_llm_name:
+                        """
+                        The Azure is called here
+                        """
+                        from .azureAdapter import AzureClient
+                        response = AzureClient.run(use_api_key, data, use_model, use_url)
+                    elif "ZhiPuAI" == use_llm_name:
+                        """
+                        The ZhipuAI is called here
+                        """
+                        from .zhipuaiAdapter import ZhiPuAIClient
+                        response = ZhiPuAIClient.run(use_api_key, data, use_model)
+                    elif "Deepseek" == use_llm_name:
+                        """
+                        The Deepseek is called here
+                        """
+                        from .deepseekAdapter import DeepSeekClient
+                        response = DeepSeekClient.run(use_api_key, data, use_model, use_url)
+                    elif "AWSClaude" == use_llm_name:
+                        from .claudeAdapter import AWSClaudeClient
+                        api_data = {
+                            'ApiKey': use_api_key,
+                            'ApkSecret': use_api_secret
+                        }
+                        response = AWSClaudeClient.run(api_data, data, use_model, use_url)
+                    else:
+                        raise Exception("No model:", use_llm_name)
+>>>>>>> llm_marge_main
                 else:
+                    """
+                    By default, openai is invoked
+                    """
+                    if "llm_setting" in config:
+                        del config['llm_setting']
+                    if "agent_name" in config:
+                        del config['agent_name']
+                    if "api_type" in config:
+                        del config['api_type']
+                    openai_completion = (
+                        openai.ChatCompletion
+                        if config["model"].replace("gpt-35-turbo", "gpt-3.5-turbo") in cls.chat_models
+                        or issubclass(cls, ChatCompletion)
+                        else openai.Completion
+                    )
                     if "request_timeout" in config:
                         response = openai_completion.create(**config)
                     else:
                         response = openai_completion.create(request_timeout=request_timeout, **config)
-                print("response: ", response)
 
             except (
                 ServiceUnavailableError,
@@ -519,8 +599,8 @@ class Completion(openai_Completion):
                     cls.avg_input_tokens = np.mean(input_tokens)
                     if prune:
                         target_output_tokens = (
-                                                   inference_budget * 1000 - cls.avg_input_tokens * price_input
-                                               ) / price_output
+                            inference_budget * 1000 - cls.avg_input_tokens * price_input
+                        ) / price_output
                 result["inference_cost"] = (avg_n_tokens * price_output + cls.avg_input_tokens * price_input) / 1000
                 break
             else:
@@ -739,6 +819,7 @@ class Completion(openai_Completion):
         raise_on_ratelimit_or_timeout: Optional[bool] = True,
         allow_format_str_template: Optional[bool] = False,
         openai_proxy: Optional[str] = None,
+        agent_name: Optional[str] = None,
         **config,
     ):
         """Make a completion for a given context.
@@ -838,6 +919,7 @@ class Completion(openai_Completion):
                         use_cache,
                         raise_on_ratelimit_or_timeout=i < last or raise_on_ratelimit_or_timeout,
                         openai_proxy=openai_proxy,
+                        agent_name=agent_name,
                         **base_config,
                     )
                     # print('response: ', response)
@@ -857,6 +939,7 @@ class Completion(openai_Completion):
                     if i == last:
                         raise
         params = cls._construct_params(context, config, allow_format_str_template=allow_format_str_template)
+        params['agent_name'] = agent_name
         if not use_cache:
             return cls._get_response(
                 params, raise_on_ratelimit_or_timeout=raise_on_ratelimit_or_timeout, use_cache=False

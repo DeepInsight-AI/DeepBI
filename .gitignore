@@ -1,3 +1,4 @@
+paper/
 .venv
 Dockerfile
 test.py

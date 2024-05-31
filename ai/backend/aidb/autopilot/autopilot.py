@@ -188,7 +188,7 @@ class Autopilot(AIDB):
         with open(CONFIG.up_file_path + 'output_' + str(timestamp) + '.html', 'w', encoding='utf-8') as output_file:
             output_file.write(rendered_html)
 
-        print("HTML文件已生成：output.html")
+        print("HTML文件已生成: output.html")
         return str(rendered_html)
 
     def get_agent_questioner(self, report_file_name=None):

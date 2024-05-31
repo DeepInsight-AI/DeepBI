@@ -1,0 +1,1 @@
+export const JSON_ROOT = "static/apiKey/apikey.json";

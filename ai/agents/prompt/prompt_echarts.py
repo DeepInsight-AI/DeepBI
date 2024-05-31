@@ -320,6 +320,68 @@ Pay attention to check whether the sql statement in the code block is correct an
     print(output)
     </code>
 
+    Q:Create a machine learning model to predict future sales and plot historical and forecasted sales figures
+    note:For such prediction problems based on machine learning, the front-end page can only be displayed based on json code. If visualization is required, be sure to package the data into json code and return it!
+    <code>
+    import numpy as np
+    import matplotlib.pyplot as plt
+    import pandas as pd
+    import pymysql
+    from sklearn.linear_model import LinearRegression
+    from sklearn.model_selection import train_test_split
+    import json
+    from io import BytesIO
+    import base64
+    # Database connection
+    connection = pymysql.connect(
+        host='your_host',
+        user='your_user',
+        password='your_password',
+        database='your_database',
+        port=3306
+    )
+    # SQL query
+    query = "SELECT YEAR(`date`) AS year, SUM(sales) AS sales FROM your_table GROUP BY year"
+    # Retrieve data
+    df = pd.read_sql(query, con=connection)
+    connection.close()
+
+    # Prepare data for machine learning
+    df['year'] = pd.to_numeric(df['year'])
+    X = df[['year']]  # Features
+    y = df['sales']  # Target variable
+    # Train-test split
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+    # Fit linear regression model
+    model = LinearRegression()
+    model.fit(X_train, y_train)
+
+    # Predict future sales
+    future_years = np.array(range(df['year'].max() + 1, df['year'].max() + 6)).reshape(-1, 1)
+    predicted_sales = model.predict(future_years)
+
+    # Plotting historical and predicted sales
+    plt.figure(figsize=(10, 6))
+    plt.scatter(X, y, color='blue', label='Historical Sales')
+    plt.plot(X, model.predict(X), color='red', label='Model Fit')
+    plt.scatter(future_years, predicted_sales, color='green', label='Predicted Sales')
+    plt.xlabel('Year')
+    plt.ylabel('Sales')
+    plt.title('Sales Prediction')
+    plt.legend()
+    # Convert plot to JSON
+    buf = BytesIO()
+    plt.savefig(buf, format='png')
+    buf.seek(0)
+    image_base64 = base64.b64encode(buf.read()).decode('utf-8')
+    plot_json = json.dumps({'image_base64': image_base64})
+    plt.close()
+
+    # Output
+    output = [{"echart_name": "Sales forecast chart","plot_data": plot_json}]
+    print(output)
+    </code>
 
       The output should be formatted as a JSON instance that conforms to the JSON schema below, the JSON is a list of dict,
                         [

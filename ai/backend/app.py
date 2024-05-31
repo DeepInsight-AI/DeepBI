@@ -77,6 +77,7 @@ async def post_request():
             response = oai.ChatCompletion.create(
                 context=messages[-1].pop("context", None), use_cache=self.use_cache,
                 messages=self._oai_system_message + messages,
+                agent_name=self.name,
                 **llm_config
             )
         else:
@@ -84,6 +85,7 @@ async def post_request():
                 context=messages[-1].pop("context", None), use_cache=self.use_cache,
                 messages=self._oai_system_message + messages,
                 openai_proxy=self.openai_proxy,
+                agent_name=self.name,
                 **llm_config
             )
 

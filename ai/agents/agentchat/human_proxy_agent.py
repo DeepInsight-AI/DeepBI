@@ -659,7 +659,10 @@ class HumanProxyAgent(Agent):
 
         # TODO: #1143 handle token limit exceeded error
         response = oai.ChatCompletion.create(
-            context=messages[-1].pop("context", None), messages=self._oai_system_message + messages, **llm_config
+            context=messages[-1].pop("context", None),
+            messages=self._oai_system_message + messages,
+            agent_name=self.name,
+            **llm_config
         )
         return True, oai.ChatCompletion.extract_text_or_function_call(response)[0]
 
@@ -1190,7 +1193,10 @@ class HumanProxyAgent(Agent):
 
         # TODO: #1143 handle token limit exceeded error
         # response = oai.ChatCompletion.create(
-        #     context=messages[-1].pop("context", None), messages=self._oai_system_message + messages, **llm_config
+        #     context=messages[-1].pop("context", None),
+        #     messages=self._oai_system_message + messages,
+        #     agent_name=self.name,
+        #     **llm_config
         # )
 
         # context = messages[-1].pop("context", None)

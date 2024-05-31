@@ -113,8 +113,8 @@ class ReportMysql(Report):
 
                     await planner_user.initiate_chat(
                         manager,
-                        message='This is database related information：' + '\n' + self.agent_instance_util.base_message + '\n' + " This is my question: " + '\n' + str(
-                            qustion_message),
+                        message='This is database related information：' + '\n' + self.agent_instance_util.base_message
+                                + '\n' + " This is my question: " + '\n' + str(qustion_message),
                     )
 
                     answer_message = manager._oai_messages[bi_proxy]
@@ -160,7 +160,7 @@ class ReportMysql(Report):
                             if self.language_mode == CONFIG.language_chinese:
                                 que_str = " 以下是我的问题，请用中文回答: " + '\n' + " 简单介绍一下已生成图表中的数据内容 "
                             elif self.language_mode == CONFIG.language_japanese:
-                                que_str = " 以下が私の質問です。日本語で回答してください：" + '\n' + " 生成されたグラフのデータ内容を簡単に説明してください。"
+                                que_str = " 以下が私の質問です。日本語で回答してください: " + '\n' + " 生成されたグラフのデータ内容を簡単に説明してください。"
                             else:
                                 que_str = " The following is my question, please answer it in English: " + '\n' + " Briefly introduce the data content in the generated chart. "
 

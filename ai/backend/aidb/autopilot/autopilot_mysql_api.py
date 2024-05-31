@@ -151,7 +151,7 @@ class AutopilotMysql(Autopilot):
             await planner_user.initiate_chat(
                 analyst,
                 message=str(
-                    question_list) + '\n' + " This is the goal of this report：" + '\n' + q_str + '\n' + LanguageInfo.question_ask + '\n' + question_supplement,
+                    question_list) + '\n' + " This is the goal of this report: " + '\n' + q_str + '\n' + LanguageInfo.question_ask + '\n' + question_supplement,
             )
 
             last_analyst = planner_user.last_message()["content"]
@@ -374,7 +374,7 @@ class AutopilotMysql(Autopilot):
                     analyst = self.get_agent_analyst(report_file_name=report_file_name)
 
                     question_supplement = qustion_message + '\n' + "Analyze the above report data and give me valuable conclusions"
-                    print("question_supplement ：", question_supplement)
+                    print("question_supplement : ", question_supplement)
 
                     await planner_user.initiate_chat(
                         analyst,

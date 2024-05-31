@@ -119,7 +119,7 @@ class AnalysisCsv(Analysis):
 
                     # Get column headers (first row of data)
                     column_titles = list(data.columns)
-                    # print("column_titles ：", column_titles)
+                    # print("column_titles : ", column_titles)
 
                     for i in range(len(column_titles)):
                         tb['field_desc'].append({

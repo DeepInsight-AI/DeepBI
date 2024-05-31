@@ -75,6 +75,7 @@ Reply "TERMINATE" in the end when everything is done.
                 response = oai.ChatCompletion.create(
                     context=messages[-1].pop("context", None), messages=self._oai_system_message + messages,
                     use_cache=False,
+                    agent_name=self.name,
                     **llm_config
                 )
             else:
@@ -82,6 +83,7 @@ Reply "TERMINATE" in the end when everything is done.
                     context=messages[-1].pop("context", None), messages=self._oai_system_message + messages,
                     use_cache=False,
                     openai_proxy=self.openai_proxy,
+                    agent_name=self.name,
                     **llm_config
                 )
             # print("response: ", response)
@@ -95,11 +97,12 @@ Reply "TERMINATE" in the end when everything is done.
             return result
 
         response = await consume_async()
-        # print("response：", response)
+        # print("response: ", response)
 
         # # TODO: #1143 handle token limit exceeded error
         # response = oai.ChatCompletion.create(
-        #     context=messages[-1].pop("context", None), messages=self._oai_system_message + messages, **llm_config
+        #     context=messages[-1].pop("context", None), messages=self._oai_system_message + messages,
+        #     agent_name=self.name, **llm_config
         # )
 
         return True, oai.ChatCompletion.extract_text_or_function_call(response)[0]

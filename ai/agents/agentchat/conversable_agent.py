@@ -112,8 +112,9 @@ class ConversableAgent(Agent):
         # a dictionary of conversations, default value is list
         self._oai_messages = defaultdict(list)
         self._oai_system_message = [{"content": system_message, "role": "system"}]
+        #  or "TERMINATE" in x.get('content')
         self._is_termination_msg = (
-            is_termination_msg if is_termination_msg is not None else (lambda x: x.get("content") == "TERMINATE")
+            is_termination_msg if is_termination_msg is not None else (lambda x: (x.get("content") == "TERMINATE"))
         )
         if llm_config is False:
             self.llm_config = False
@@ -662,6 +663,7 @@ class ConversableAgent(Agent):
                 response = oai.ChatCompletion.create(
                     context=messages[-1].pop("context", None), use_cache=self.use_cache,
                     messages=self._oai_system_message + messages,
+                    agent_name=self.name,
                     **llm_config
                 )
             else:
@@ -669,6 +671,7 @@ class ConversableAgent(Agent):
                     context=messages[-1].pop("context", None), use_cache=self.use_cache,
                     messages=self._oai_system_message + messages,
                     openai_proxy=self.openai_proxy,
+                    agent_name=self.name,
                     **llm_config
                 )
 
@@ -683,11 +686,13 @@ class ConversableAgent(Agent):
             return result
 
         response = await consume_async()
-        # print("response：", response)
+        # print("response: ", response)
 
         # # TODO: #1143 handle token limit exceeded error
         # response = oai.ChatCompletion.create(
-        #     context=messages[-1].pop("context", None), messages=self._oai_system_message + messages, **llm_config
+        #     context=messages[-1].pop("context", None), messages=self._oai_system_message + messages,
+        #     agent_name=self.name,
+        #     **llm_config
         # )
 
         return True, oai.ChatCompletion.extract_text_or_function_call(response)[0]

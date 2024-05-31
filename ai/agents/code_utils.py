@@ -125,7 +125,7 @@ def extract_code(
 #     params = {**_FIND_CODE_CONFIG, **config}
 #     if sys_msg is None or not sys_msg[0]["content"]:
 #         sys_msg = _FIND_CODE_SYS_MSG
-#     response = oai.ChatCompletion.create(messages=sys_msg + messages, **params)
+#     response = oai.ChatCompletion.create(messages=sys_msg + messages, agent_name=self.name, **params)
 #     content = oai.Completion.extract_text(response)[0]
 #     return extract_code(content), content
 

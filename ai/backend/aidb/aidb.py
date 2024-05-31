@@ -150,7 +150,7 @@ class AIDB:
                         }
                         # table_content.append(tb_desc)
 
-            print("The number of tables to be processed this time： ", len(table_content))
+            print("The number of tables to be processed this time:  ", len(table_content))
             if len(table_content) > 0:
                 try:
                     num = 1 + (len(q_str.get('table_desc')) - len(table_content))
@@ -185,7 +185,7 @@ class AIDB:
                         try:
                             json_str = json_str.replace("```json", "")
                             json_str = json_str.replace("```", "")
-                            # print('json_str ：', json_str)
+                            # print('json_str : ', json_str)
                             chart_code_str = json_str.replace("\n", "")
                             if base_util.is_json(chart_code_str):
                                 table_desc = json.loads(chart_code_str)
@@ -274,16 +274,15 @@ class AIDB:
         token_path = CONFIG.up_file_path + '.token_' + str(self.uid) + '.json'
         if os.path.exists(token_path):
             try:
-                ApiKey, HttpProxyHost, HttpProxyPort, ApiHost, in_use = self.load_api_key(token_path)
+                ApiKey, HttpProxyHost, HttpProxyPort, ApiHost, ApiType, ApiModel, LlmSetting = self.load_api_key(token_path)
                 if ApiKey is None or len(ApiKey) == 0:
                     await self.put_message(500, CONFIG.talker_log, CONFIG.type_log_data, self.error_miss_key)
                     return False
 
-                self.agent_instance_util.set_api_key(ApiKey, ApiHost, in_use)
+                self.agent_instance_util.set_api_key(ApiKey, ApiType, ApiHost, ApiModel, LlmSetting)
 
                 if HttpProxyHost is not None and len(str(HttpProxyHost)) > 0 and HttpProxyPort is not None and len(
-                    str(HttpProxyPort)) > 0:
-                    # openai_proxy = "http://127.0.0.1:7890"
+                        str(HttpProxyPort)) > 0:
                     self.agent_instance_util.openai_proxy = 'http://' + str(HttpProxyHost) + ':' + str(HttpProxyPort)
 
                 planner_user = self.agent_instance_util.get_agent_planner_user(is_log_out=False)
@@ -309,7 +308,6 @@ class AIDB:
                 await self.put_message(500, CONFIG.talker_log, CONFIG.type_log_data, self.error_miss_key)
                 return False
 
-
         else:
             await self.put_message(500, receiver=CONFIG.talker_log, data_type=CONFIG.type_log_data,
                                    content=self.error_miss_key)
@@ -323,14 +321,14 @@ class AIDB:
         print('token_path : ', token_path)
         if os.path.exists(token_path):
             try:
-                ApiKey, HttpProxyHost, HttpProxyPort, ApiHost, in_use = self.load_api_key(token_path)
+                ApiKey, HttpProxyHost, HttpProxyPort, ApiHost, ApiType, ApiModel, LlmSetting = self.load_api_key(token_path)
                 if ApiKey is None or len(ApiKey) == 0:
                     return await self.put_message(200, CONFIG.talker_api, CONFIG.type_test, LanguageInfo.no_api_key)
 
-                self.agent_instance_util.set_api_key(ApiKey, ApiHost, in_use)
+                self.agent_instance_util.set_api_key(ApiKey, ApiType, ApiHost, ApiModel, LlmSetting)
 
                 if HttpProxyHost is not None and len(str(HttpProxyHost)) > 0 and HttpProxyPort is not None and len(
-                    str(HttpProxyPort)) > 0:
+                        str(HttpProxyPort)) > 0:
                     # openai_proxy = "http://127.0.0.1:7890"
                     self.agent_instance_util.openai_proxy = 'http://' + str(HttpProxyHost) + ':' + str(HttpProxyPort)
 
@@ -365,42 +363,56 @@ class AIDB:
         HttpProxyHost = None
         HttpProxyPort = None
         ApiHost = None
-        in_use = None
-
-        with open(token_path, 'r') as file:
-            data = json.load(file)
+        ApiType = None
+        try:
+            with open(token_path, 'r') as file:
+                data = json.load(file)
+        except:
+            raise Exception("load_api_key error")
 
         if data.get('in_use'):
-            in_use = data.get('in_use')
+            in_use = ApiType = data.get('in_use')
+            ApiModel = data[in_use]['Model'] if in_use in data and 'Model' in data[in_use] else None
             if in_use == 'OpenAI':
                 ApiKey = data[in_use]['OpenaiApiKey']
-                print('OpenaiApiKey : ', ApiKey)
                 HttpProxyHost = data[in_use]['HttpProxyHost']
-                print('HttpProxyHost : ', HttpProxyHost)
                 HttpProxyPort = data[in_use]['HttpProxyPort']
-                print('HttpProxyPort : ', HttpProxyPort)
                 openaiApiHost = data[in_use]['ApiHost']
                 if openaiApiHost is not None and len(str(openaiApiHost)) > 0:
                     ApiHost = openaiApiHost
-            elif in_use == 'DeepInsight':
+                if ApiModel is None or "" == ApiModel.strip():
+                    ApiModel = "gpt-4o"
+            elif "DeepInsight" == in_use:
                 ApiKey = data[in_use]['ApiKey']
-                print('DeepBIApiKey : ', ApiKey)
-                # ApiHost = "https://apiserver.deep-thought.io/proxy"
+                # set default openai or deep insight model
+                if ApiModel is None or "" == ApiModel.strip():
+                    ApiModel = "gpt-4o"
+                # Other default models are configured through the client
                 ApiHost = CONFIG.ApiHost
-            elif in_use == 'Azure':
-                ApiKey = data[in_use]['AzureApiKey']
-                print('DeepBIAzureApiKey : ', ApiKey)
-                # ApiHost = "https://apiserver.deep-thought.io/proxy"
-                ApiHost = data[in_use]['AzureHost']
+            elif "ZhiPuAI" == in_use:
+                ApiKey = data[in_use]['ApiKey']
+                ApiHost = data[in_use]['ApiHost']
+            elif "AWSClaude" == in_use:
+                ApiKey = data[in_use]['ApiKey']
+                ApiHost = data[in_use]['ApiHost']
+            elif "Deepseek" == in_use:
+                ApiKey = data[in_use]['ApiKey']
+                ApiHost = data[in_use]['ApiHost']
+            elif "Azure" == in_use:
+                ApiKey = data[in_use]['ApiKey']
+                ApiHost = data[in_use]['ApiHost']
+            else:
+                raise Exception("No in_use llm in token_[uid].json")
         else:
+            # 这里是默认的 openai 所有配置都有问题
             ApiKey = data['OpenaiApiKey']
-            print('OpenaiApiKey : ', ApiKey)
             HttpProxyHost = data['HttpProxyHost']
-            print('HttpProxyHost : ', HttpProxyHost)
             HttpProxyPort = data['HttpProxyPort']
-            print('HttpProxyPort : ', HttpProxyPort)
-
-        return ApiKey, HttpProxyHost, HttpProxyPort, ApiHost, in_use
+            ApiType = "openai"
+            ApiModel = data[in_use]['Model'] if in_use in data and 'Model' in data[in_use] else None
+        # all llm config
+        del data['in_use']
+        return ApiKey, HttpProxyHost, HttpProxyPort, ApiHost, ApiType, ApiModel, data
 
     def generate_error_message(self, http_err, error_message=' API ERROR '):
         # print(f'HTTP error occurred: {http_err}')

@@ -42,6 +42,8 @@ class AgentInstanceUtil:
         self.delay_messages = delay_messages
         self.outgoing = outgoing
         self.incoming = incoming
+        # add by lu, Set the model name in use
+        self.llm_in_use_name = None
 
         # self.base_mysql_info = online_base_mysql_info
         self.base_mysql_info = local_base_mysql_info
@@ -51,33 +53,36 @@ class AgentInstanceUtil:
         self.base_postgresql_info = local_base_postgresql_info
         self.base_mongodb_info = local_base_mongodb_info
         self.base_starrocks_info = None
-
         self.is_log_out = True
-
         self.language_mode = default_language_mode
         self.set_language_mode(self.language_mode)
-
         self.api_key_use = False
-
         self.openai_proxy = None
         self.db_id = db_id
 
-    def set_api_key(self, api_key, api_host=None, in_use=CONFIG.apikey_openai):
-        self.api_key = api_key
 
-        if in_use == CONFIG.apikey_openai:
+    def set_api_key(self, api_key, ApiType="openai", api_host=None, ApiModel=None, LlmSetting=None):
+        self.api_key = api_key
+        if api_host is not None:
+            # api_base = "https://api.openai.com/"
+            print('api_host: ', api_host)
             self.config_list_gpt4 = [
                 {
-                    'model': 'gpt-4',
+                    'model': ApiModel,
                     'api_key': api_key,
+                    'api_base': api_host,
+                    'api_type': ApiType,
+                    'llm_setting': LlmSetting
                 },
             ]
 
             self.config_list_gpt4_turbo = [
                 {
-                    'model': 'gpt-4-1106-preview',
+                    'model': ApiModel,
                     'api_key': self.api_key,
-
+                    'api_base': api_host,
+                    'api_type': ApiType,
+                    'llm_setting': LlmSetting
                 },
             ]
 
@@ -85,77 +90,43 @@ class AgentInstanceUtil:
                 {
                     'model': 'gpt-3.5-turbo-1106',
                     'api_key': self.api_key,
+                    'api_base': api_host,
+                    'api_type': ApiType,
+                    'llm_setting': LlmSetting
+                },
+            ]
+        else:
+
+            self.config_list_gpt4 = [
+                {
+                    'model': ApiModel,
+                    'api_key': api_key,
+                    'api_type': ApiType,
+                    'llm_setting': LlmSetting
+                },
+            ]
+
+            self.config_list_gpt4_turbo = [
+                {
+                    'model': ApiModel,
+                    'api_key': self.api_key,
+
+                    'api_type': ApiType,
+                    'llm_setting': LlmSetting
+                },
+            ]
+
+            self.config_list_gpt35_turbo = [
+                {
+                    'model': 'gpt-3.5-turbo-1106',
+                    'api_key': self.api_key,
+                    'api_type': ApiType,
+                    'llm_setting': LlmSetting
                 },
             ]
 
             if api_host is not None:
                 # api_base = "https://api.openai.com/"
-                print('api_host: ', api_host)
-                self.config_list_gpt4[0]['api_base'] = api_host
-                self.config_list_gpt4_turbo[0]['api_base'] = api_host
-                self.config_list_gpt35_turbo[0]['api_base'] = api_host
-
-        elif in_use == CONFIG.apikey_deepinsight:
-            self.config_list_gpt4 = [
-                {
-                    'model': 'gpt-4',
-                    'api_key': api_key,
-                },
-            ]
-
-            self.config_list_gpt4_turbo = [
-                {
-                    'model': 'gpt-4-1106-preview',
-                    'api_key': self.api_key,
-
-                },
-            ]
-
-            self.config_list_gpt35_turbo = [
-                {
-                    'model': 'gpt-3.5-turbo-1106',
-                    'api_key': self.api_key,
-                },
-            ]
-
-            if api_host is not None:
-                print('api_host: ', api_host)
-                self.config_list_gpt4[0]['api_base'] = api_host
-                self.config_list_gpt4_turbo[0]['api_base'] = api_host
-                self.config_list_gpt35_turbo[0]['api_base'] = api_host
-
-        elif in_use == CONFIG.apikey_azure:
-            self.config_list_gpt4 = [
-                {
-                    'model': 'gpt-4',
-                    'api_key': api_key,
-                    'api_type': 'azure',
-                    'model': 'gpt-4',
-                    'api_version': "2023-07-01-preview",
-                },
-            ]
-
-            self.config_list_gpt4_turbo = [
-                {
-                    'model': 'gpt-4-1106-preview',
-                    'api_key': self.api_key,
-                    'api_type': 'azure',
-                    'model': 'gpt-4',
-                    'api_version': "2023-07-01-preview",
-                },
-            ]
-
-            self.config_list_gpt35_turbo = [
-                {
-                    'model': 'gpt-3.5-turbo-1106',
-                    'api_key': self.api_key,
-                    'api_type': 'azure',
-                    'model': 'gpt-4',
-                    'api_version': "2023-07-01-preview",
-                },
-            ]
-
-            if api_host is not None:
                 print('api_host: ', api_host)
                 self.config_list_gpt4[0]['api_base'] = api_host
                 self.config_list_gpt4_turbo[0]['api_base'] = api_host
@@ -364,7 +335,7 @@ class AgentInstanceUtil:
                  Example Query information about all users: {"collection": "users"};
                  Example Query the '_id' and 'name' fields of all users: {"collection": "users", "fields": {"_id": 1, "name": 2}};
                  Example Query the user named "deep":  {"collection": "users", "query": {"name": "deep"}};
-                 Example Query all users whose names start with 'deep'：{"collection": "users","query":{"name": {"$regex": "^deep"}}}
+                 Example Query all users whose names start with 'deep': {"collection": "users","query":{"name": {"$regex": "^deep"}}}
                  Example Query the number of users starting with 'deep' among all users :{"collection": "users","query":{"name": {"$regex": "^deep"}},"count":"1"}
                  Query the top 10 users in descending order of "name":{"collection": "users","sort":[{"name":"name", "direction": -1}],"limit":10}
                  This is a mongodb database, not mysql, do not use mysql statements,Must be returned using the sample json format.
@@ -1129,7 +1100,7 @@ class AgentInstanceUtil:
                                     If you want the user to save the code in a file before executing it, put # filename: <filename> inside the code block as the first line. Don't include multiple code blocks in one response. Do not ask users to copy and paste the result. Instead, use 'print' function for the output when relevant. Check the execution result returned by the user.
                                     If the result indicates there is an error, fix the error and output the code again. Suggest the full code instead of partial code or code changes. If the error can't be fixed or if the task is not solved even after the code is executed successfully, analyze the problem, revisit your assumption, collect additional info you need, and think of a different approach to try.
                                     When you find an answer, verify the answer carefully. Include verifiable evidence in your response if possible.
-                                    The database name needs to be replaced with the actual database name in the database connection string, "your_dbname" in the database connection string  "mongodb://your_host:your_port/your_dbname"  must be replaced with the actual database name：q
+                                    The database name needs to be replaced with the actual database name in the database connection string, "your_dbname" in the database connection string  "mongodb://your_host:your_port/your_dbname"  must be replaced with the actual database name: q
                                     Reply "TERMINATE" in the end when everything is done.
                                     When you find an answer,  You are a report analysis, you have the knowledge and skills to turn raw data into information and insight, which can be used to make business decisions.include your analysis in your reply.
                                     """ + '\n' + self.base_mysql_info + '\n' + python_base_dependency + '\n' + MYSQL_MATPLOTLIB_TIPS_MESS,
@@ -1356,7 +1327,7 @@ class AgentInstanceUtil:
                             "description"]
                         await planner_user.initiate_chat(
                             manager,
-                            message='This is database related information：' + '\n' + self.base_message + '\n' + " This is my question: " + '\n' + str(
+                            message='This is database related information: ' + '\n' + self.base_message + '\n' + " This is my question: " + '\n' + str(
                                 q_str),
                         )
 
@@ -1406,8 +1377,8 @@ class AgentInstanceUtil:
                                 analyst,
                                 message=str(
                                     answer_contents) + '\n' + " 以下是我的问题，请用中文回答: " + '\n' + " 1,本次生成哪些报表？简单描述一下各报表 "
-                                        + '\n' + " 以下是一个回答案例：" + '\n' +
-                                        """总结：
+                                        + '\n' + " 以下是一个回答案例: " + '\n' +
+                                        """总结:
                                         -- Monthly Sales Summary Q1 2019: 同名图表历史已生成过，此次不再生成,若要重新生成图表，请先删除已有同名报表。2019年第一季度的月度销售总结。它包括了每个月的总销售额、利润和订单数量的详细信息.
                                         -- Summary Q1 2018: 生成成功。2018年第一季度的月度销售总结。它包括了每个月的总销售额、利润和订单数量的详细信息.
                                     """,
@@ -1437,7 +1408,7 @@ class AgentInstanceUtil:
         return "报表生成失败，请检查相关数据是否充分。"
 
     async def task_generate_report1108(self, qustion_message):
-        """ 任务类型1： 调用 bi, 生成报表 """
+        """ 任务类型1:  调用 bi, 生成报表 """
         try:
             print('运行 【task_generate_report】函数')
             error_times = 0  # 失败次数
@@ -1514,7 +1485,7 @@ class AgentInstanceUtil:
                             "description"]
                         await planner_user.initiate_chat(
                             manager,
-                            message='This is database related information：' + '\n' + self.base_message + '\n' + " This is my question: " + '\n' + str(
+                            message='This is database related information: ' + '\n' + self.base_message + '\n' + " This is my question: " + '\n' + str(
                                 q_str),
                         )
 
@@ -1565,8 +1536,8 @@ class AgentInstanceUtil:
                                 analyst,
                                 message=str(
                                     answer_contents) + '\n' + " 以下是我的问题，请用中文回答: " + '\n' + " 1,本次生成哪些报表？简单描述一下各报表 "
-                                        + '\n' + " 以下是一个回答案例：" + '\n' +
-                                        """总结：
+                                        + '\n' + " 以下是一个回答案例: " + '\n' +
+                                        """总结:
                                         -- Monthly Sales Summary Q1 2019: 同名图表历史已生成过，此次不再生成,若要重新生成图表，请先删除已有同名报表。2019年第一季度的月度销售总结。它包括了每个月的总销售额、利润和订单数量的详细信息.
                                         -- Summary Q1 2018: 生成成功。2018年第一季度的月度销售总结。它包括了每个月的总销售额、利润和订单数量的详细信息.
                                     """,
@@ -1598,7 +1569,7 @@ class AgentInstanceUtil:
         return "报表生成失败，请检查相关数据是否充分。"
 
     async def task_analysis_data(self, qustion_message):
-        """ 任务类型2： 数据分析 """
+        """ 任务类型2:  数据分析 """
         try:
             base_content = []
             report_demand_list = []
@@ -1752,7 +1723,7 @@ class AgentInstanceUtil:
         return "分析数据失败，请检查相关数据是否充分。"
 
     async def task_delete_chart(self, qustion_message):
-        """ 任务类型3： 删除图表 """
+        """ 任务类型3:  删除图表 """
         print('运行 【task_delete_chart】函数')
         logger.info("from user:[{}".format(self.user_name) + "] , " + "运行 【task_delete_chart】函数")
 
@@ -1823,7 +1794,7 @@ class AgentInstanceUtil:
         return "删除图表失败。 请检查提供的图表列表格式是否正确以及图表名称是否存在。"
 
     async def task_chart_img(self, qustion_message):
-        """ 任务类型： 使用 matplotlib 生成图表图片，暂时停用 """
+        """ 任务类型:  使用 matplotlib 生成图表图片，暂时停用 """
         try:
 
             base_content = []

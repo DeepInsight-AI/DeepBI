@@ -34,15 +34,22 @@ class AlibailianClient:
 
     @classmethod
     def call_alibailian(cls, data, model):
+        print("-----source message------------")
+        print(data['messages'])
+        print("-----change role result-----------")
+        data['messages'] = cls.input_to_openai(data['messages'])
+        print(data['messages'])
+        print("---------------------------------")
+
         try:
             if "functions" in data:
-                response = Generation.call(model="qwen-turbo",
+                response = Generation.call(model=model,
                                            tools=data['functions'],
                                            messages=data['messages'],
                                            seed=random.randint(1, 10000),
                                            result_format='message')
             else:
-                response = Generation.call(model="qwen-turbo",
+                response = Generation.call(model=model,
                                            messages=data['messages'],
                                            seed=random.randint(1, 10000),
                                            result_format='message')
@@ -110,6 +117,7 @@ class AlibailianClient:
                 now_item['content'] = now_content
                 now_item['role'] = now_role
                 result.append(now_item)
+        return result
         pass
 
     @classmethod

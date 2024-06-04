@@ -364,8 +364,10 @@ class AIDB:
                 if ApiModel is None or "" == ApiModel.strip():
                     ApiModel = "gpt-4o"
                 # Other default models are configured through the client
-                print('DeepBIApiKey : ', ApiKey)
+                # print('DeepBIApiKey : ', ApiKey)
                 ApiHost = CONFIG.ApiHost
+            elif "AliBaiLian" == in_use:
+                ApiKey = data[in_use]['ApiKey']
             elif "ZhiPuAI" == in_use:
                 ApiKey = data[in_use]['ApiKey']
                 ApiHost = data[in_use]['ApiHost']

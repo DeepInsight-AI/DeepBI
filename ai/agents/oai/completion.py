@@ -263,6 +263,9 @@ class Completion(openai_Completion):
                         """
                         from .azureAdapter import AzureClient
                         response = AzureClient.run(use_api_key, data, use_model, use_url)
+                    elif "AliBaiLian" == use_llm_name:
+                        from .alibailianAdapter import AlibailianClient
+                        response = AlibailianClient.run(use_api_key, data, use_model)
                     elif "ZhiPuAI" == use_llm_name:
                         """
                         The ZhipuAI is called here

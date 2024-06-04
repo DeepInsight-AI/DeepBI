@@ -139,12 +139,12 @@ class AlibailianClient:
         将输出的message转换为openai的message格式,这里主要处理的是function call 和 role
         """
         result = {}
-        result['status_code'] = data.pop("status_code")
-        result['id'] = data.pop("request_id", "defaultid")
+        result['status_code'] = data['status_code']
+        result['id'] = data["request_id"]
         result['model'] = model
         result['created'] = int(time.time())
         result['object'] = "chat.completion"
-        output = data.pop("output", "")
+        output = data["output"]
         if output['choices'][0]['finish_reason'] == "tool_calls":
             # function call
             choices = {
@@ -172,6 +172,6 @@ class AlibailianClient:
             }
             pass
         result['choices'] = [choices]
-        result['usage'] = data.pop("usage")
+        result['usage'] = data["usage"]
         return result
     pass

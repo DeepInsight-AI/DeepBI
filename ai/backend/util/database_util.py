@@ -16,7 +16,7 @@ from ai.backend.util.base_util import dbinfo_encode
 
 
 DB_API_SECRET_KEY = os.environ.get("DB_API_SECRET_KEY", None)
-print('DB_API_SECRET_KEY : ', DB_API_SECRET_KEY)
+# print('DB_API_SECRET_KEY : ', DB_API_SECRET_KEY)
 
 
 def encrypt(text, key):
@@ -46,7 +46,7 @@ def make_secret(text):
     """ By default, it is the data id when it comes in, and it is the json serialized string when it goes back."""
     now_int_time = int(time.time())
     code_str = str(now_int_time) + "$$" + str(text) + "$$" + str(DB_API_SECRET_KEY)
-    print(code_str)
+    # print(code_str)
     return encrypt(code_str, DB_API_SECRET_KEY)
     pass
 
@@ -106,11 +106,11 @@ class Main:
         else:
             return False, ' error: Not found CONFIG.web_server_ip '
 
-        print(url)
+        # print(url)
         url_data = requests.get(url).text
-        print('url_data :', url_data)
+        # print('url_data :', url_data)
         json_data = json.loads(url_data)
-        print('json_data :', json_data)
+        # print('json_data :', json_data)
         if 200 == json_data['code']:
             decode_json = decode_data_info(json_data['data'])
             # print("decode", decode_json)
@@ -126,7 +126,7 @@ class Main:
         db = self.db_id  # database id
         # Generate se to obtain interface permissions
         from_se = make_secret(db)
-        print("Generate secret", from_se)
+        # print("Generate secret", from_se)
         # url = "http://127.0.0.1:4999/data_source_info/" + db + "/" + from_se
 
         if CONFIG.web_server_ip is not None:
@@ -136,22 +136,21 @@ class Main:
             print('error: Not found CONFIG.web_server_ip ')
             return False, ' error: Not found CONFIG.web_server_ip '
 
-        print(url)
+        # print(url)
         url_data = requests.get(url).text
-        print('url_data :', url_data)
+        # print('url_data :', url_data)
         json_data = json.loads(url_data)
-        print('json_data :', json_data)
+        # print('json_data :', json_data)
         if 200 == json_data['code']:
             decode_json = decode_data_info(json_data['data'])
             # print("decode : ", decode_json)
             return True, decode_json
         else:
-            print(json_data['msg'])
+            # print(json_data['msg'])
             return False, json_data['msg']
 
 
 if __name__ == "__main__":
-
 
     db_id = str(18)
     obj = Main(db_id)

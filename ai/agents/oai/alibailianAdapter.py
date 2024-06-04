@@ -15,7 +15,7 @@ import time
 from dashscope import Generation
 from http import HTTPStatus
 
-Ali_bailian_AI_MODEL = "qwen-turbo"
+Ali_bailian_AI_MODEL = "qwen-max"
 
 """
  阿里role支持 

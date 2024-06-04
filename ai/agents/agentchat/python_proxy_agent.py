@@ -706,7 +706,7 @@ class PythonProxyAgent(Agent):
                                    code_blocks]
 
                     # code_blocks = self.replace_ab_with_ac(code_blocks, db_info)
-                    print('new_code_blocks : ', code_blocks)
+                    # print('new_code_blocks : ', code_blocks)
 
             # found code blocks, execute code and push "last_n_messages" back
             exitcode, logs = self.execute_code_blocks(code_blocks)

@@ -41,13 +41,8 @@ class AlibailianClient:
 
     @classmethod
     def call_alibailian(cls, data, model):
-        print("-----source message------------")
-        print(data['messages'])
-        print("-----change role result-----------")
         new_message = {}
-        new_message['messages'] = cls.input_to_openai(data['messages'])
-        print(data['messages'])
-        print("---------------------------------")
+        new_message['messages'] = cls.input_to_openai(data['messages'].copy())
 
         try:
             if "functions" in data:
@@ -61,8 +56,6 @@ class AlibailianClient:
                                            messages=new_message['messages'],
                                            seed=random.randint(1, 10000),
                                            result_format='message')
-            print("ai return ", response)
-            print("-------------------------------")
             if response.status_code == HTTPStatus.OK:
                 return cls.output_to_openai(response, model)
             else:
@@ -137,9 +130,6 @@ class AlibailianClient:
     def output_to_openai(cls, data, model):
         """
             将输出的message转换为openai的message格式,这里主要处理的是function call 和 role
-        """
-        """
-        将输出的message转换为openai的message格式,这里主要处理的是function call 和 role
         """
         result = {}
         result['status_code'] = "200"

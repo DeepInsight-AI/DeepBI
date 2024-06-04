@@ -38,7 +38,7 @@ class ZhiPuAIClient:
             model_name = ZHIPU_AI_MODEL
         if temperature is None:
             temperature = ZHIPU_AI_temperature
-        zhipu_data = cls.input_to_openai(data)
+        zhipu_data = cls.input_to_openai(data.copy())
         client = ZhipuAI(api_key=apiKey)
         if "functions" in data:
             tools = zhipu_data["tools"]

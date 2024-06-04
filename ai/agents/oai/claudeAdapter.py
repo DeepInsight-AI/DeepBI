@@ -62,7 +62,7 @@ class AWSClaudeClient:
             aws_access_key_id=apiKey['ApiKey'],
             aws_secret_access_key=apiKey['ApkSecret']
         )
-        messages, system = cls.input_to_openai(data['messages'])
+        messages, system = cls.input_to_openai(data['messages'].copy())
         messages = cls.transform_message_role(messages)
 
         if "functions" in data:

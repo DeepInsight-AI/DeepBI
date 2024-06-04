@@ -39,7 +39,7 @@ class DeepSeekClient:
 
         if apiKey is None or apiKey == "":
             raise Exception("LLM DeepSeek apikey empty,use_model: ", model, " need apikey")
-        messages = cls.transform_message_role(data['messages'])
+        messages = cls.transform_message_role(data['messages'].copy())
         model = model if model else DEEPSEEK_MODEL
         use_url = use_url if use_url else DEEPSEEK_DEFAULT_URL
         ai_result = cls.call_deepSeek(apiKey, messages, model, use_url)

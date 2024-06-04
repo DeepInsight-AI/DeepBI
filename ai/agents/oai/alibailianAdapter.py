@@ -138,10 +138,12 @@ class AlibailianClient:
         """
         将输出的message转换为openai的message格式,这里主要处理的是function call 和 role
         """
-        data['id'] = data.pop("request_id", "defaultid")
-        data['model'] = model
-        data['created'] = int(time.time())
-        data['object'] = "chat.completion"
+        result = {}
+        result['status_code'] = data.pop("status_code")
+        result['id'] = data.pop("request_id", "defaultid")
+        result['model'] = model
+        result['created'] = int(time.time())
+        result['object'] = "chat.completion"
         output = data.pop("output", "")
         if output['choices'][0]['finish_reason'] == "tool_calls":
             # function call
@@ -169,6 +171,7 @@ class AlibailianClient:
                 "finish_reason": "stop"  # 原来是tools_call
             }
             pass
-        data['choices'] = [choices]
-        return data
+        result['choices'] = [choices]
+        result['usage'] = data.pop("usage")
+        return result
     pass

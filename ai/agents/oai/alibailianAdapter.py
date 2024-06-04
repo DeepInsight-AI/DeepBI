@@ -44,7 +44,8 @@ class AlibailianClient:
         print("-----source message------------")
         print(data['messages'])
         print("-----change role result-----------")
-        data['messages'] = cls.input_to_openai(data['messages'])
+        new_message = {}
+        new_message['messages'] = cls.input_to_openai(data['messages'])
         print(data['messages'])
         print("---------------------------------")
 
@@ -52,14 +53,16 @@ class AlibailianClient:
             if "functions" in data:
                 response = Generation.call(model=model,
                                            tools=data['functions'],
-                                           messages=data['messages'],
+                                           messages=new_message['messages'],
                                            seed=random.randint(1, 10000),
                                            result_format='message')
             else:
                 response = Generation.call(model=model,
-                                           messages=data['messages'],
+                                           messages=new_message['messages'],
                                            seed=random.randint(1, 10000),
                                            result_format='message')
+            print("ai return ", response)
+            print("-------------------------------")
             if response.status_code == HTTPStatus.OK:
                 return cls.output_to_openai(response, model)
             else:

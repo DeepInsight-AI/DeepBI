@@ -2,12 +2,18 @@
 """
     阿里百炼平台适配，可以自行调整模型
     适配Openai 接口
+    pip install dashscope
+
 """
+try:
+    import dashscope
+except Exception as e:
+    raise Exception("dashscope not install, please install dashscope,use commnd : pip install dashscope")
 import random
 import time
 from dashscope import Generation
 from http import HTTPStatus
-import dashscope
+
 Ali_bailian_AI_MODEL = "qwen-turbo"
 
 """
@@ -92,6 +98,9 @@ class AlibailianClient:
             transformed_message.append(message)
         result = []
         # marge message
+        now_role = ""
+        now_content = ""
+        result = []
         for i, item in enumerate(transformed_message):
             content = item.get('content')
             role = item.get("role")

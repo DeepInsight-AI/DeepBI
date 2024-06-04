@@ -36,6 +36,7 @@ class AlibailianClient:
         # call ai
         model = model if model is not None or "" == model else Ali_bailian_AI_MODEL
         result = cls.call_alibailian(data, model)
+        return result
         pass
 
     @classmethod
@@ -60,7 +61,7 @@ class AlibailianClient:
                                            seed=random.randint(1, 10000),
                                            result_format='message')
             if response.status_code == HTTPStatus.OK:
-                return cls.output_to_openai(response)
+                return cls.output_to_openai(response, model)
             else:
                 raise Exception('Request id: %s, Status code: %s, error code: %s, error message: %s' % (
                     response.request_id, response.status_code,

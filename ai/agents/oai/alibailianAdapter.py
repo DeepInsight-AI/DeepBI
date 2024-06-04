@@ -9,6 +9,7 @@ try:
     import dashscope
 except Exception as e:
     raise Exception("dashscope not install, please install dashscope,use commnd : pip install dashscope")
+import copy
 import random
 import time
 from dashscope import Generation
@@ -42,7 +43,8 @@ class AlibailianClient:
     @classmethod
     def call_alibailian(cls, data, model):
         new_message = {}
-        new_message['messages'] = cls.input_to_openai(data['messages'].copy())
+        messages_copy = copy.deepcopy(data['messages'])
+        new_message['messages'] = cls.input_to_openai(messages_copy)
 
         try:
             if "functions" in data:

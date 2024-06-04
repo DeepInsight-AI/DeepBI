@@ -14,7 +14,7 @@ import json
 import time
 import xml.etree.ElementTree as E_T
 import re
-
+import copy
 try:
     import tiktoken
     import boto3
@@ -62,7 +62,8 @@ class AWSClaudeClient:
             aws_access_key_id=apiKey['ApiKey'],
             aws_secret_access_key=apiKey['ApkSecret']
         )
-        messages, system = cls.input_to_openai(data['messages'].copy())
+        messages_copy = copy.deepcopy(data['messages'])
+        messages, system = cls.input_to_openai(messages_copy)
         messages = cls.transform_message_role(messages)
 
         if "functions" in data:

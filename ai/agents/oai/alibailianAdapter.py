@@ -72,7 +72,7 @@ class AlibailianClient:
     @classmethod
     def input_to_openai(cls, messages):
         """
-            将输入的message转换为openai的message格式,这里主要处理的是function call 和 role
+            将输入的openai message转换为现在模型的message格式,这里主要处理的是function call 和 role
         """
         # change role and function name
         transformed_message = []

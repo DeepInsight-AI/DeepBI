@@ -368,6 +368,8 @@ class AIDB:
                 ApiHost = CONFIG.ApiHost
             elif "AliBaiLian" == in_use:
                 ApiKey = data[in_use]['ApiKey']
+            elif "BaiduQianFan" == in_use:
+                ApiKey = data[in_use]['ApiKey']
             elif "ZhiPuAI" == in_use:
                 ApiKey = data[in_use]['ApiKey']
                 ApiHost = data[in_use]['ApiHost']

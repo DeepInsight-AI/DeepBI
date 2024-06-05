@@ -1,34 +1,55 @@
 {
-        "in_use": "DeepInsight",
-        "OpenAI": {
-            "OpenaiApiKey": "",
-            "HttpProxyHost": "",
-            "HttpProxyPort": "",
-            "ApiHost": "",
-            "required": [
-                "OpenaiApiKey",
-                "HttpProxyHost"
-            ]
-        },
-        "DeepInsight": {
-            "ApiKey": "",
-            "required": [
-                "ApiKey"
-            ]
-        },
-        "ZhiPuAI": {
-          "ApiKey": "",
-          "ApiHost": "ZhiPuAI",
-          "required": [
-                "ApiKey", "ApiHost"
-            ]
-        },
-        "AWSClaude": {
-            "ApiKey": "",
-            "ApkSecret": "",
-            "ApiHost": "AWSClaude",
-            "required": [
-                "ApiKey", "ApkSecret", "AWSClaude"
-            ]
-        }
+    "in_use": "DeepInsight",
+    "OpenAI": {
+        "OpenaiApiKey": "",
+        "HttpProxyHost": "",
+        "HttpProxyPort": "",
+        "ApiHost": "",
+        "required": [
+            "OpenaiApiKey",
+            "HttpProxyHost"
+        ]
+    },
+    "DeepInsight": {
+        "ApiKey": "",
+        "required": [
+            "ApiKey"
+        ]
+    },
+    "ZhiPuAI": {
+        "ApiKey": "",
+        "ApiHost": "ZhiPuAI",
+        "required": [
+            "ApiKey",
+            "ApiHost"
+        ]
+    },
+    "AWSClaude": {
+        "ApiKey": "",
+        "ApiSecret": "",
+        "ApiHost": "AWSClaude",
+        "required": [
+            "ApiKey",
+            "ApiSecret",
+            "AWSClaude"
+        ]
+    },
+    "AliBaiLian": {
+        "ApiKey": "",
+        "Model": "",
+        "required": [
+            "ApiKey",
+            "Model"
+        ]
+    },
+    "BaiduQianFan": {
+        "ApiKey": "",
+        "ApiSecret": "",
+        "Model": "",
+        "required": [
+            "ApiKey",
+            "ApiSecret",
+            "Model"
+        ]
+    }
 }

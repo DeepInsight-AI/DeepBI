@@ -119,7 +119,7 @@ class Main:
             decode_json = dbinfo_encode(decode_json)
             return True, decode_json
         else:
-            print(json_data['msg'])
+            # print(json_data['msg'])
             return False, json_data['msg']
 
     def run_decode(self):

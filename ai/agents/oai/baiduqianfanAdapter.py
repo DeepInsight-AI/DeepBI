@@ -22,19 +22,12 @@ class BaiduqianfanClient:
         access_token = cls.get_access_token(api_key, secrat_key)
         # copy data
         messages_copy = copy.deepcopy(data['messages'])
-        print("input" + "7" * 20)
-        print(data['messages'])
         functon_call = data['functions'] if "functions" in data else None
         call_message = cls.input_to_openai(messages_copy, functon_call)
-        print("trans role" + "8" * 20)
-        print(call_message)
-        print("call result" + "9" * 20)
         response = cls.call_baiduqianfan(call_message, model, access_token)
         if "error_code" in response:
             raise Exception("Error, call baiduqianfan api error" + str(response))
-        print(response)
         result = cls.output_to_openai(response, model)
-        print("over" * 20)
         return result
         pass
 

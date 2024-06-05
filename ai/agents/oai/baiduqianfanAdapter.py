@@ -30,6 +30,9 @@ class BaiduqianfanClient:
         print(call_message)
         print("call result" + "9" * 20)
         response = cls.call_baiduqianfan(call_message, model, access_token)
+        if "error_code" in response:
+            print(response)
+            raise Exception("Error, call baiduqianfan api error")
         print(response)
         result = cls.output_to_openai(response, model)
         print("over" * 20)

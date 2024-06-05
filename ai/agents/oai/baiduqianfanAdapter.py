@@ -40,7 +40,9 @@ class BaiduqianfanClient:
     def call_baiduqianfan(cls, messages, model, access_token):
         try:
             url = f"https://aip.baidubce.com/rpc/2.0/ai_custom/v1/wenxinworkshop/chat/{model}?access_token={access_token}"
-            payload = json.dumps(messages)
+            payload = json.dumps({
+                "messages": messages
+            })
             headers = {
                 'Content-Type': 'application/json'
             }

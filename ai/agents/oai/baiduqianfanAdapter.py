@@ -175,7 +175,7 @@ class BaiduqianfanClient:
             } 
         """
         result = {}
-        result['id'] = data["request_id"]
+        result['id'] = data["id"]
         result['model'] = model
         result['created'] = data["created"]
         result['object'] = data['object']

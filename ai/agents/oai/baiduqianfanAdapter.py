@@ -31,8 +31,9 @@ class BaiduqianfanClient:
         print("call result" + "9" * 20)
         response = cls.call_baiduqianfan(call_message, model, access_token)
         print(response)
+        result = cls.output_to_openai(response, model)
         print("over" * 20)
-        return response
+        return result
         pass
 
     @classmethod

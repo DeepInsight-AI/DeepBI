@@ -16,12 +16,12 @@
             "ApiKey"
         ]
     },
-    "ZhiPuAI": {
+    "Deepseek": {
         "ApiKey": "",
-        "ApiHost": "ZhiPuAI",
+        "Model": "",
+        "ApiHost": "",
         "required": [
-            "ApiKey",
-            "ApiHost"
+            "ApiKey"
         ]
     },
     "AWSClaude": {

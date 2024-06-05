@@ -31,8 +31,7 @@ class BaiduqianfanClient:
         print("call result" + "9" * 20)
         response = cls.call_baiduqianfan(call_message, model, access_token)
         if "error_code" in response:
-            print(response)
-            raise Exception("Error, call baiduqianfan api error")
+            raise Exception("Error, call baiduqianfan api error" + str(response))
         print(response)
         result = cls.output_to_openai(response, model)
         print("over" * 20)
@@ -59,7 +58,7 @@ class BaiduqianfanClient:
     @classmethod
     def get_access_token(cls, api_key, secrat_key):
         try:
-            url = "https://aip.baidubce.com/oauth/2.0/token?grant_type=client_credentials&client_id={api_key}&client_secret={secrat_key}"
+            url = f"https://aip.baidubce.com/oauth/2.0/token?grant_type=client_credentials&client_id={api_key}&client_secret={secrat_key}"
 
             payload = json.dumps("")
             headers = {

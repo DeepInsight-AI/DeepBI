@@ -14,7 +14,7 @@ import json
 import time
 import xml.etree.ElementTree as E_T
 import re
-
+import copy
 try:
     import tiktoken
     import boto3
@@ -51,8 +51,8 @@ class AWSClaudeClient:
         temperature = Claude_AI_temperature if temperature is None else temperature
         if "ApiKey" not in apiKey or apiKey['ApiKey'] is None or "" == apiKey['ApiKey']:
             raise Exception("LLM Claude api key empty,use_model: ", model_name, " need apikey")
-        if "ApkSecret" not in apiKey or apiKey['ApkSecret'] is None or "" == apiKey['ApkSecret']:
-            raise Exception("LLM Claude apk_secret empty,use_model: ", model_name, " need ApkSecret")
+        if "ApiSecret" not in apiKey or apiKey['ApiSecret'] is None or "" == apiKey['ApiSecret']:
+            raise Exception("LLM Claude apk_secret empty,use_model: ", model_name, " need ApiSecret")
 
         use_url = use_url if use_url else "us-east-1"
 
@@ -60,9 +60,10 @@ class AWSClaudeClient:
             service_name='bedrock-runtime',
             region_name=use_url,
             aws_access_key_id=apiKey['ApiKey'],
-            aws_secret_access_key=apiKey['ApkSecret']
+            aws_secret_access_key=apiKey['ApiSecret']
         )
-        messages, system = cls.input_to_openai(data['messages'])
+        messages_copy = copy.deepcopy(data['messages'])
+        messages, system = cls.input_to_openai(messages_copy)
         messages = cls.transform_message_role(messages)
 
         if "functions" in data:
@@ -195,7 +196,7 @@ class AWSClaudeClient:
             if "name" in item:
                 return_str = return_str + "<tool_name>" + item['name'] + "</tool_name>\n"
             if "description" in item:
-                return_str = return_str + "<description>" + item['name'] + "</description>\n"
+                return_str = return_str + "<description>" + item['description'] + "</description>\n"
             # parameters
             if "parameters" in item:
                 return_str = return_str + "<parameters>\n"

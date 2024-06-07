@@ -44,8 +44,8 @@ class AWSClaudeClient:
 
     @classmethod
     def run(cls, apiKey, data, model_name=None, temperature=None):
-        if "ApiKey" not in apiKey or "ApkSecret" not in apiKey:
-            raise Exception("agent_llm llm api key empty use_model: ", model_name, " need apikey and ApkSecret")
+        if "ApiKey" not in apiKey or "ApiSecret" not in apiKey:
+            raise Exception("agent_llm llm api key empty use_model: ", model_name, " need apikey and ApiSecret")
 
         if model_name is None:
             model_name = Claude_AI_MODEL
@@ -56,7 +56,7 @@ class AWSClaudeClient:
             service_name='bedrock-runtime',
             region_name="us-east-1",
             aws_access_key_id=apiKey['ApiKey'],
-            aws_secret_access_key=apiKey['ApkSecret']
+            aws_secret_access_key=apiKey['ApiSecret']
         )
         prompt = cls.input_to_openai(data['messages'])
         if "functions" in data:
@@ -97,10 +97,10 @@ class AWSClaudeClient:
             function_call_flag = completion.strip().startswith("<function_calls>")
         else:
             function_call_flag = completion.strip().startswith("<function_calls>") or\
-                                 all(substring in completion for substring in ("<function_calls>",
-                                                                               "<invoke>",
-                                                                               "<tool_name>",
-                                                                               "</invoke>"))
+                all(substring in completion for substring in ("<function_calls>",
+                                                              "<invoke>",
+                                                              "<tool_name>",
+                                                              "</invoke>"))
         # return openai result
         if function_call_flag:
             """
@@ -256,18 +256,18 @@ class AWSClaudeClient:
                     args_obj[arg_name] = arg_value
 
             return {
-                    "index": 0,
-                    "message": {
-                        "role": "assistant",
-                        "content": None,
-                        "function_call": {
+                "index": 0,
+                "message": {
+                    "role": "assistant",
+                    "content": None,
+                    "function_call": {
                             "name": tool_name,
                             "arguments": json.dumps(args_obj)
-                        },
-                        "logprobs": None,
-                        "finish_reason": "function_call"
-                    }
+                    },
+                    "logprobs": None,
+                    "finish_reason": "function_call"
                 }
+            }
         pass
 
     @classmethod

@@ -389,6 +389,10 @@ class AIDB:
                     ApiModel = "gpt-4o"
                 # Other default models are configured through the client
                 ApiHost = CONFIG.ApiHost
+            elif "AliBaiLian" == in_use:
+                ApiKey = data[in_use]['ApiKey']
+            elif "BaiduQianFan" == in_use:
+                ApiKey = data[in_use]['ApiKey']
             elif "ZhiPuAI" == in_use:
                 ApiKey = data[in_use]['ApiKey']
                 ApiHost = data[in_use]['ApiHost']

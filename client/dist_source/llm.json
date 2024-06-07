@@ -2,38 +2,18 @@
     "in_use": "DeepInsight",
     "OpenAI": {
         "OpenaiApiKey": "",
-        "Model": "",
         "HttpProxyHost": "",
         "HttpProxyPort": "",
         "ApiHost": "",
         "required": [
-            "OpenaiApiKey"
+            "OpenaiApiKey",
+            "HttpProxyHost"
         ]
     },
     "DeepInsight": {
         "ApiKey": "",
-        "Model": "",
         "required": [
             "ApiKey"
-        ]
-    },
-    "Azure": {
-        "ApiKey": "",
-        "ApiHost": "",
-        "Model": "",
-        "required": [
-            "ApiKey",
-            "ApiHost",
-            "Model"
-        ]
-    },
-    "AWSClaude": {
-        "ApiKey": "",
-        "ApkSecret": "",
-        "Model": "",
-        "required": [
-            "ApiKey",
-            "ApkSecret"
         ]
     },
     "Deepseek": {
@@ -42,6 +22,34 @@
         "ApiHost": "",
         "required": [
             "ApiKey"
+        ]
+    },
+    "AWSClaude": {
+        "ApiKey": "",
+        "ApiSecret": "",
+        "ApiHost": "AWSClaude",
+        "required": [
+            "ApiKey",
+            "ApiSecret",
+            "AWSClaude"
+        ]
+    },
+    "AliBaiLian": {
+        "ApiKey": "",
+        "Model": "",
+        "required": [
+            "ApiKey",
+            "Model"
+        ]
+    },
+    "BaiduQianFan": {
+        "ApiKey": "",
+        "ApiSecret": "",
+        "Model": "",
+        "required": [
+            "ApiKey",
+            "ApiSecret",
+            "Model"
         ]
     }
 }

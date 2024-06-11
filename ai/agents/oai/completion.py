@@ -214,7 +214,7 @@ class Completion(openai_Completion):
                 other_llm_name = AGENT_LLM_MODEL[agent_name]['llm'] if agent_name in AGENT_LLM_MODEL and \
                     AGENT_LLM_MODEL[agent_name][
                     'replace_default'] and llm_setting is not None else use_llm_name
-                use_api_secret = llm_setting[use_llm_name]['ApkSecret'] if "ApkSecret" in llm_setting[use_llm_name] else None
+                use_api_secret = llm_setting[use_llm_name]['ApiSecret'] if "ApiSecret" in llm_setting[use_llm_name] else None
                 print("Agent_name", agent_name, 'default: llm:', use_llm_name, "url:", use_url, "model", use_model, "other LLM", other_llm_name)
                 if other_llm_name is not None and use_llm_name != other_llm_name:
                     use_message_count = AGENT_LLM_MODEL[agent_name]['use_message_count']
@@ -222,7 +222,7 @@ class Completion(openai_Completion):
                         use_llm_name = other_llm_name
                         use_model = AGENT_LLM_MODEL[agent_name]['model'] if 'model' in AGENT_LLM_MODEL[agent_name] else None
                         use_api_key = llm_setting[AGENT_LLM_MODEL[agent_name]['llm']]['ApiKey']
-                        use_api_secret = llm_setting[AGENT_LLM_MODEL[agent_name]['llm']]['ApkSecret'] if "ApkSecret" in llm_setting[AGENT_LLM_MODEL[agent_name]['llm']] else None
+                        use_api_secret = llm_setting[AGENT_LLM_MODEL[agent_name]['llm']]['ApiSecret'] if "ApiSecret" in llm_setting[AGENT_LLM_MODEL[agent_name]['llm']] else None
                         if "" == use_api_key:
                             print("agent_llm llm api key empty, use_model:", use_model)
                             raise Exception("agent_llm llm api key empty use_model:", use_model)
@@ -263,6 +263,9 @@ class Completion(openai_Completion):
                         """
                         from .azureAdapter import AzureClient
                         response = AzureClient.run(use_api_key, data, use_model, use_url)
+                    elif "AliBaiLian" == use_llm_name:
+                        from .alibailianAdapter import AlibailianClient
+                        response = AlibailianClient.run(use_api_key, data, use_model)
                     elif "ZhiPuAI" == use_llm_name:
                         """
                         The ZhipuAI is called here
@@ -275,11 +278,17 @@ class Completion(openai_Completion):
                         """
                         from .deepseekAdapter import DeepSeekClient
                         response = DeepSeekClient.run(use_api_key, data, use_model, use_url)
+                    elif "BaiduQianFan" == use_llm_name:
+                        """
+                        The BaiduQianFan 百度千帆 平台
+                        """
+                        from .baiduqianfanAdapter import BaiduqianfanClient
+                        response = BaiduqianfanClient.run(use_api_key, use_api_secret, data, use_model)
                     elif "AWSClaude" == use_llm_name:
                         from .claudeAdapter import AWSClaudeClient
                         api_data = {
                             'ApiKey': use_api_key,
-                            'ApkSecret': use_api_secret
+                            'ApiSecret': use_api_secret
                         }
                         response = AWSClaudeClient.run(api_data, data, use_model, use_url)
                     else:

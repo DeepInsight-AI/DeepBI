@@ -16,7 +16,7 @@ from ai.backend.util.base_util import dbinfo_encode
 
 
 DB_API_SECRET_KEY = os.environ.get("DB_API_SECRET_KEY", None)
-print('DB_API_SECRET_KEY : ', DB_API_SECRET_KEY)
+# print('DB_API_SECRET_KEY : ', DB_API_SECRET_KEY)
 
 
 def encrypt(text, key):
@@ -46,7 +46,7 @@ def make_secret(text):
     """ By default, it is the data id when it comes in, and it is the json serialized string when it goes back."""
     now_int_time = int(time.time())
     code_str = str(now_int_time) + "$$" + str(text) + "$$" + str(DB_API_SECRET_KEY)
-    print(code_str)
+    # print(code_str)
     return encrypt(code_str, DB_API_SECRET_KEY)
     pass
 
@@ -119,14 +119,14 @@ class Main:
             decode_json = dbinfo_encode(decode_json)
             return True, decode_json
         else:
-            print(json_data['msg'])
+            # print(json_data['msg'])
             return False, json_data['msg']
 
     def run_decode(self):
         db = self.db_id  # database id
         # Generate se to obtain interface permissions
         from_se = make_secret(db)
-        print("Generate secret", from_se)
+        # print("Generate secret", from_se)
         # url = "http://127.0.0.1:4999/data_source_info/" + db + "/" + from_se
 
         if CONFIG.web_server_ip is not None:
@@ -146,7 +146,7 @@ class Main:
             # print("decode : ", decode_json)
             return True, decode_json
         else:
-            print(json_data['msg'])
+            # print(json_data['msg'])
             return False, json_data['msg']
 
 

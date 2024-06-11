@@ -41,7 +41,7 @@ const TypingCard = (props) => {
   const renderChatContent = useMemo(() => {
     return (
       <div
-        style={{ wordBreak: "break-all" }}
+        style={{ overflowWrap: "break-word" }}
         ref={sourceEl}
         dangerouslySetInnerHTML={{ __html: sourceText }}
       />

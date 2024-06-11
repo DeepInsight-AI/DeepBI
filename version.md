@@ -1,4 +1,10 @@
 # Version
+### 2.0.1
+- Add support LLM configurations,including BaiduQianfan、AliBailian
+
+### 2.0.0
+- Supports different LLM configurations, including Azure openai, AwsClaude3 sonnetDeepSeek, DeepSeek and other LLMS
+
 ### 1.3.0
 - Update DeepBI logo
 - Update ubuntu install shell,make log dir and write pid file

@@ -4,6 +4,8 @@ Dockerfile
 test.py
 *.log
 venv/
+paper
+paper/
 ./bin/run
 .cache
 .coverage.*

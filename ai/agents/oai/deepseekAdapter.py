@@ -4,6 +4,7 @@ import json
 import time
 import xml.etree.ElementTree as E_T
 import re
+import copy
 
 
 # 强制 检查函数
@@ -39,7 +40,8 @@ class DeepSeekClient:
 
         if apiKey is None or apiKey == "":
             raise Exception("LLM DeepSeek apikey empty,use_model: ", model, " need apikey")
-        messages = cls.transform_message_role(data['messages'])
+        messages_copy = copy.deepcopy(data['messages'])
+        messages = cls.transform_message_role(messages_copy)
         model = model if model else DEEPSEEK_MODEL
         use_url = use_url if use_url else DEEPSEEK_DEFAULT_URL
         ai_result = cls.call_deepSeek(apiKey, messages, model, use_url)

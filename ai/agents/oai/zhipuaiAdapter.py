@@ -3,7 +3,7 @@
 info:  Define ZhiPuAI
 """
 import json
-
+import copy
 # import base
 try:
     from zhipuai import ZhipuAI
@@ -38,7 +38,8 @@ class ZhiPuAIClient:
             model_name = ZHIPU_AI_MODEL
         if temperature is None:
             temperature = ZHIPU_AI_temperature
-        zhipu_data = cls.input_to_openai(data)
+        messages_copy = copy.deepcopy(data)
+        zhipu_data = cls.input_to_openai(messages_copy)
         client = ZhipuAI(api_key=apiKey)
         if "functions" in data:
             tools = zhipu_data["tools"]

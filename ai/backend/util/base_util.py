@@ -77,7 +77,6 @@ def dbinfo_encode(json_data):
 
 def dbinfo_decode(data, sql_mess):
     if sql_mess.get('user'):
-        print(sql_mess['user'])
         data = data.replace(user_secret, sql_mess['user'])
 
     if sql_mess.get('passwd'):

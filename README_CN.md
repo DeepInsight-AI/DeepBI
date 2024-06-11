@@ -90,7 +90,124 @@ git clone http://github.com/DeepInsight-AI/DeepBI.git
     完成安装后, 请看上面的使用说明进行设置和使用
 - 查看本机IP ```ifconfig | grep -Eo 'inet (addr:)?([0-9]*\.){3}[0-9]*' | grep -vE '^inet 127(\.[0-9]{1,3}){3}'```
 
+## 🚀  Using different LLM
 
+-- 支持不同的LLM，详见下表<使用不同LLM DeepBI 适配情况>
+<table>
+  <tr>
+    <th>服务提供商</th>
+    <th>模型名称</th>
+    <th>文本生成</th>
+    <th>代码生成</th>
+    <th>图像生成</th>
+    <th>音频生成</th>
+    <th>特别说明</th>
+    <th>价格信息</th>
+  </tr>
+  <tr>
+    <td>OpenAI</td>
+    <td>gpt-4</td>
+    <td>支持</td>
+    <td>支持</td>
+    <td>支持</td>
+    <td>支持</td>
+    <td></td>
+    <td>8K / 输入0.219元输出$0.438元（约）</td>
+  </tr>
+  <tr>
+    <td>OpenAI</td>
+    <td>gpt-4o</td>
+    <td>支持</td>
+    <td>支持</td>
+    <td>支持</td>
+    <td>支持</td>
+    <td>价格更便宜</td>
+    <td>128k/ 输入0.036元输出0.109元（约）</td>
+  </tr>
+  <tr>
+    <td>DeepInsight</td>
+    <td>gpt-4o</td>
+    <td>支持</td>
+    <td>支持</td>
+    <td>支持</td>
+    <td>支持</td>
+    <td>目前只支持gpt-4o</td>
+    <td>128k/ 输入0.036元输出0.109元（约）</td>
+  </tr>
+  <tr>
+    <td>Microsoft Azure</td>
+    <td>gpt-4</td>
+    <td>支持</td>
+    <td>支持</td>
+    <td>支持</td>
+    <td>支持</td>
+    <td></td>
+    <td>8K / 输入0.219元输出$0.438元（约）</td>
+  </tr>
+  <tr>
+    <td>Microsoft Azure</td>
+    <td>gpt-4o</td>
+    <td>支持</td>
+    <td>支持</td>
+    <td>支持</td>
+    <td>支持</td>
+    <td>价格更便宜</td>
+    <td>128k/ 输入0.036元输出0.109元（约）</td>
+  </tr>
+  <tr>
+    <td>AwsBendrock</td>
+    <td>Claude3 sonet</td>
+    <td>支持</td>
+    <td>不适配</td>
+    <td>不适配</td>
+    <td>不适配</td>
+    <td>价格更便宜</td>
+    <td>200k/ 输入0.0219元输出0.109元（约）</td>
+  </tr>
+  <tr>
+    <td>AwsBendrock</td>
+    <td>Claude3 Opus</td>
+    <td>支持</td>
+    <td>不适配</td>
+    <td>不适配</td>
+    <td>不适配</td>
+    <td></td>
+    <td>200k/ 输入0.109元输出0.545元（约）</td>
+  </tr>
+  <tr>
+    <td>DeepSeek</td>
+    <td>deepseek-chat</td>
+    <td>支持</td>
+    <td>不适配</td>
+    <td>不适配</td>
+    <td>不适配</td>
+    <td>价格十分便宜</td>
+    <td>32k/ 输入0.001元输出0.002元</td>
+  </tr>
+  <tr>
+    <td>阿里百炼</td>
+    <td>qwen2-72b-instruct</td>
+    <td>支持</td>
+    <td>不适配</td>
+    <td>不适配</td>
+    <td>不适配</td>
+    <td>DeepBi 2.0.1</td>
+    <td>182k/ 尚未给出，根据历史估计0.12元</td>
+  </tr>
+  <tr>
+    <td>百度千帆</td>
+    <td>ernie-4.0-8k-0329</td>
+    <td>支持</td>
+    <td>不适配</td>
+    <td>不适配</td>
+    <td>不适配</td>
+    <td>单数据表分析相对可以，多表适应差，DeepBI2.0.1</td>
+    <td>5k / 输入输出均为0.12元</td>
+  </tr>
+  <tr>
+    <td colspan="7">声明: 测试数据和问题具有局限性以及结论理解上非标准化，仅供参考。</td><td>价格/汇率以官方为准</td>
+  </tr>
+</table>
 
 ## Contact Us
 <a><img src="https://github.com/DeepInsight-AI/DeepBI/assets/151519915/85fcd577-20f1-42a5-9686-6036ccd06506" width="40%"/></a>

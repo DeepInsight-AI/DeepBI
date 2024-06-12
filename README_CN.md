@@ -97,12 +97,12 @@ git clone http://github.com/DeepInsight-AI/DeepBI.git
   <tr>
     <th>服务提供商</th>
     <th>模型名称</th>
-    <th>文本生成</th>
-    <th>代码生成</th>
-    <th>图像生成</th>
-    <th>音频生成</th>
-    <th>特别说明</th>
-    <th>价格信息</th>
+    <th>辅助数据分析</th>
+    <th>报表分析</th>
+    <th>仪表盘</th>
+    <th>自动数据分析报告</th>
+    <th>备注(DeepBI2.0.0开始)</th>
+    <th>最大输入/价格/千token</th>
   </tr>
   <tr>
     <td>OpenAI</td>
@@ -118,7 +118,7 @@ git clone http://github.com/DeepInsight-AI/DeepBI.git
     <td>OpenAI</td>
     <td>gpt-4o</td>
     <td>支持</td>
-    <td>支持</td>
+    <td>不稳定</td>
     <td>支持</td>
     <td>支持</td>
     <td>价格更便宜</td>
@@ -128,7 +128,7 @@ git clone http://github.com/DeepInsight-AI/DeepBI.git
     <td>DeepInsight</td>
     <td>gpt-4o</td>
     <td>支持</td>
-    <td>支持</td>
+    <td>不稳定</td>
     <td>支持</td>
     <td>支持</td>
     <td>目前只支持gpt-4o</td>
@@ -148,7 +148,7 @@ git clone http://github.com/DeepInsight-AI/DeepBI.git
     <td>Microsoft Azure</td>
     <td>gpt-4o</td>
     <td>支持</td>
-    <td>支持</td>
+    <td>不稳定</td>
     <td>支持</td>
     <td>支持</td>
     <td>价格更便宜</td>

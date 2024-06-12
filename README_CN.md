@@ -97,12 +97,12 @@ git clone http://github.com/DeepInsight-AI/DeepBI.git
   <tr>
     <th>服务提供商</th>
     <th>模型名称</th>
-    <th>文本生成</th>
-    <th>代码生成</th>
-    <th>图像生成</th>
-    <th>音频生成</th>
-    <th>特别说明</th>
-    <th>价格信息</th>
+    <th>辅助数据分析</th>
+    <th>报表分析</th>
+    <th>仪表盘</th>
+    <th>自动数据分析报告</th>
+    <th>备注(DeepBI2.0.0开始)</th>
+    <th>最大输入/价格/千token</th>
   </tr>
   <tr>
     <td>OpenAI</td>

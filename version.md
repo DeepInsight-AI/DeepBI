@@ -1,4 +1,7 @@
 # Version
+### 2.0.2
+- Adapt an existing function call to the new openai version of tools
+
 ### 2.0.1
 - Add support LLM configurations,including BaiduQianfan、AliBailian
 

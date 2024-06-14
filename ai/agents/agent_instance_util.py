@@ -60,7 +60,6 @@ class AgentInstanceUtil:
         self.openai_proxy = None
         self.db_id = db_id
 
-
     def set_api_key(self, api_key, ApiType="openai", api_host=None, ApiModel=None, LlmSetting=None):
         self.api_key = api_key
         if api_host is not None:
@@ -380,7 +379,6 @@ class AgentInstanceUtil:
             define mongodb operate
         """
         return mongodb_engineer
-
 
     def get_agent_chart_presenter_old(self):
         """chart designer"""
@@ -819,7 +817,6 @@ class AgentInstanceUtil:
         return task_selector
 
     def get_agent_task_planner(self):
-
         """ Make plans for tasks and assign tasks to other agents step by step """
         task_planner = TaskPlannerAgent(
             name="task_planner",
@@ -1377,8 +1374,8 @@ class AgentInstanceUtil:
                                 analyst,
                                 message=str(
                                     answer_contents) + '\n' + " 以下是我的问题，请用中文回答: " + '\n' + " 1,本次生成哪些报表？简单描述一下各报表 "
-                                        + '\n' + " 以下是一个回答案例: " + '\n' +
-                                        """总结:
+                                + '\n' + " 以下是一个回答案例: " + '\n' +
+                                """总结:
                                         -- Monthly Sales Summary Q1 2019: 同名图表历史已生成过，此次不再生成,若要重新生成图表，请先删除已有同名报表。2019年第一季度的月度销售总结。它包括了每个月的总销售额、利润和订单数量的详细信息.
                                         -- Summary Q1 2018: 生成成功。2018年第一季度的月度销售总结。它包括了每个月的总销售额、利润和订单数量的详细信息.
                                     """,
@@ -1536,8 +1533,8 @@ class AgentInstanceUtil:
                                 analyst,
                                 message=str(
                                     answer_contents) + '\n' + " 以下是我的问题，请用中文回答: " + '\n' + " 1,本次生成哪些报表？简单描述一下各报表 "
-                                        + '\n' + " 以下是一个回答案例: " + '\n' +
-                                        """总结:
+                                + '\n' + " 以下是一个回答案例: " + '\n' +
+                                """总结:
                                         -- Monthly Sales Summary Q1 2019: 同名图表历史已生成过，此次不再生成,若要重新生成图表，请先删除已有同名报表。2019年第一季度的月度销售总结。它包括了每个月的总销售额、利润和订单数量的详细信息.
                                         -- Summary Q1 2018: 生成成功。2018年第一季度的月度销售总结。它包括了每个月的总销售额、利润和订单数量的详细信息.
                                     """,

@@ -202,7 +202,6 @@ class AgentInstanceUtil:
                 Hand over your code to the Executor for execution.
                 Don’t query too much data, Try to merge query data as simply as possible.
                 Be careful to avoid using mysql special keywords in mysql code.
-                If function call is needed, the function name mast be 'run_mysql_code', be sure contains no other characters.
                 Reply "TERMINATE" in the end when everything is done.
                 ''',
             websocket=self.websocket,

@@ -94,6 +94,7 @@ sec_key=$(openssl rand -hex 16)
 env_content=$(echo "$env_content" | sed "s/SEC_KEY/$sec_key/g")
 # save .env file
 echo "$env_content" > .env
+echo "DATA_SOURCE_FILE_DIR=/app/user_upload_files" >> .env
 cp Dockerfile.template Dockerfile
 # save env file over
 echo "You setting as fellows:"

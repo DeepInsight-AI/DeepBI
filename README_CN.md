@@ -118,7 +118,7 @@ git clone http://github.com/DeepInsight-AI/DeepBI.git
     <td>OpenAI</td>
     <td>gpt-4o</td>
     <td>支持</td>
-    <td>不稳定</td>
+    <td>支持</td>
     <td>支持</td>
     <td>支持</td>
     <td>价格更便宜</td>
@@ -128,7 +128,7 @@ git clone http://github.com/DeepInsight-AI/DeepBI.git
     <td>DeepInsight</td>
     <td>gpt-4o</td>
     <td>支持</td>
-    <td>不稳定</td>
+    <td>支持</td>
     <td>支持</td>
     <td>支持</td>
     <td>目前只支持gpt-4o</td>
@@ -148,7 +148,7 @@ git clone http://github.com/DeepInsight-AI/DeepBI.git
     <td>Microsoft Azure</td>
     <td>gpt-4o</td>
     <td>支持</td>
-    <td>不稳定</td>
+    <td>支持</td>
     <td>支持</td>
     <td>支持</td>
     <td>价格更便宜</td>

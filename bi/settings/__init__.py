@@ -30,7 +30,6 @@ if 'CN' != WEB_LANGUAGE:
 DATA_SOURCE_FILE_DIR = os.environ.get("DATA_SOURCE_FILE_DIR")
 if DATA_SOURCE_FILE_DIR is None or "" == DATA_SOURCE_FILE_DIR:
     DATA_SOURCE_FILE_DIR = "./user_upload_files"
-print("--------bi_init-- upload_files-----------", DATA_SOURCE_FILE_DIR)
 
 STATSD_HOST = os.environ.get("DEEPBI_STATSD_HOST", "127.0.0.1")
 STATSD_PORT = int(os.environ.get("DEEPBI_STATSD_PORT", "8125"))

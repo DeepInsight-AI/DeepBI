@@ -4,7 +4,7 @@ from dotenv import load_dotenv
 from pathlib import Path
 
 # from bi.settings import DATA_SOURCE_FILE_DIR as docker_data_source_file_dir
-docker_data_source_file_dir = "./user_upload_files"
+docker_data_source_file_dir = "/app/user_upload_files"
 
 host_secret = 'tNGoVq0KpQ4LKr5WMIZM'
 db_secret = 'aCyBIffJv2OSW5dOvREL'
@@ -28,12 +28,8 @@ def get_upload_path():
     else:
         # 获取当前工作目录的路径
         current_directory = Path.cwd()
-
         # 获取当前工作目录的父级目录
-        # parent_directory = current_directory.parent
         data_source_file_dir = str(current_directory) + '/user_upload_files/'
-
-        # data_source_file_dir = '/app/user_upload_files/'
         return data_source_file_dir
 
 

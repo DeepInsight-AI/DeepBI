@@ -9,7 +9,7 @@ from ai.backend.base_config import CONFIG
 from ai.backend.aidb.report import ReportMysql, ReportPostgresql, ReportStarrocks, ReportMongoDB
 from ai.backend.aidb.analysis import AnalysisMysql, AnalysisCsv, AnalysisPostgresql, AnalysisStarrocks, AnalysisMongoDB
 from ai.backend.aidb import AIDB
-from ai.backend.aidb.autopilot import AutopilotMysql, AutopilotMongoDB
+from ai.backend.aidb.autopilot import AutopilotMysql, AutopilotMongoDB, AutopilotCSV
 
 message_pool: ChatMemoryManager = ChatMemoryManager(name="message_pool")
 
@@ -59,6 +59,7 @@ class ChatClass:
 
         self.autopilotMysql = AutopilotMysql(self)
         self.autopilotMongoDB = AutopilotMongoDB(self)
+        self.autopilotCSV = AutopilotCSV(self)
 
     async def get_message(self):
         """ Receive messages and put them into the [pending] message queue """
@@ -152,6 +153,8 @@ class ChatClass:
                         await self.autopilotMysql.deal_question(json_str, message)
                     elif q_database == 'mongodb':
                         await self.autopilotMongoDB.deal_question(json_str, message)
+                    elif q_database == 'csv':
+                        await self.autopilotCSV.deal_question(json_str, message)
 
             else:
                 result['state'] = 500

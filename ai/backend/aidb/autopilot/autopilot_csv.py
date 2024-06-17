@@ -65,18 +65,11 @@ class AutopilotCSV(Autopilot):
                         self.agent_instance_util.set_language_mode(q_language_mode)
 
                 if CONFIG.database_model == 'online':
-                    print('online')
-                    databases_id = json_str['data']['databases_id']
-                    db_id = str(databases_id)
-                    obj = database_util.Main(db_id)
-                    if_suss, db_info = obj.run()
-                    if if_suss:
-                        self.agent_instance_util.base_mysql_info = ' When connecting to the database, be sure to bring the port. This is mysql database info :' + '\n' + str(
-                            db_info)
-                        self.agent_instance_util.base_message = str(q_str)
-                        self.agent_instance_util.db_id = db_id
-
+                    # Set csv basic information
+                    self.agent_instance_util.set_base_csv_info(q_str)
+                    self.agent_instance_util.base_message = str(q_str)
                 else:
+                    self.agent_instance_util.set_base_csv_info(q_str)
                     self.agent_instance_util.base_message = str(q_str)
 
                 await self.get_data_desc(q_str)

@@ -1511,7 +1511,7 @@ class BIProxyAgent(Agent):
             websocket = self.websocket
 
             send_json_str = json.dumps(result_message)
-            if send_json_str.isinstance(str):
+            if isinstance(send_json_str, str):
                 await websocket.send(send_json_str)
             print(str(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())) + ' ---- ' + " send a message:{}".format(
                 send_json_str))

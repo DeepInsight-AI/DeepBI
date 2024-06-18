@@ -1197,7 +1197,7 @@ class BIProxyAgent(Agent):
 
                 for config in str_obj:
                     if 'columnMapping' in config and isinstance(config['columnMapping'], dict) and config[
-                        'columnMapping']:
+                            'columnMapping']:
                         for variable, axis in config['columnMapping'].items():
                             print('axis :', axis)
                             if axis in ["x"]:
@@ -1404,7 +1404,6 @@ class BIProxyAgent(Agent):
                 "from user:[{}".format(self.user_name) + "] , " + self.name + " send a message:{}".format(
                     send_json_str))
 
-
         except Exception as e:
             traceback.print_exc()
             logger.error("from user:[{}".format(self.user_name) + "] , " + str(e))
@@ -1512,7 +1511,8 @@ class BIProxyAgent(Agent):
             websocket = self.websocket
 
             send_json_str = json.dumps(result_message)
-            await websocket.send(send_json_str)
+            if send_json_str.isinstance(str):
+                await websocket.send(send_json_str)
             print(str(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())) + ' ---- ' + " send a message:{}".format(
                 send_json_str))
             logger.info(

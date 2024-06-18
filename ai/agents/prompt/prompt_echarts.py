@@ -322,7 +322,7 @@ Pay attention to check whether the query statement in the execution code block c
     When using pie charts, there must be no parameter x
     
     Set one or more dataZoom rooms based on site requirements
-
+    Do not have any output or debug messages in the middle of the code, only output content at the end of the code
     The output should be formatted as a JSON instance that conforms to the JSON schema below, the JSON is a list of dict,
     [
     {"echart_name": "Sales over Years", "echart_code": ret_json}

@@ -37,27 +37,23 @@ Pay attention to check whether the query statement in the execution code block c
         datazoom_opts=[
             opts.DataZoomOpts(
                 # 设置 x 轴 dataZoom
-                id_="dataZoomX",
                 type_="slider",
-                xAxisIndex=[0],  # 控制 x 轴
+                xaxis_index=[0],  # 控制 x 轴
             ),
             opts.DataZoomOpts(
                 # 设置 y 轴 dataZoom
-                id_="dataZoomY",
                 type_="slider",
-                yAxisIndex=[0],  # 控制 y 轴
+                yaxis_index=[0],  # 控制 y 轴
             ),
             opts.DataZoomOpts(
                 # 设置 x 轴 dataZoom
-                id_="dataZoomX",
                 type_="inside",
-                xAxisIndex=[0],  # 控制 x 轴
+                xaxis_index=[0],  # 控制 x 轴
             ),
             opts.DataZoomOpts(
                 # 设置 y 轴 dataZoom
-                id_="dataZoomY",
                 type_="inside",
-                yAxisIndex=[0],  # 控制 y 轴
+                yaxis_index=[0],  # 控制 y 轴
             ),
         ],
         legend_opts=opts.LegendOpts(
@@ -118,27 +114,23 @@ Pay attention to check whether the query statement in the execution code block c
         datazoom_opts=[
             opts.DataZoomOpts(
                 # 设置 x 轴 dataZoom
-                id_="dataZoomX",
                 type_="slider",
-                xAxisIndex=[0],  # 控制 x 轴
+                xaxis_index=[0],  # 控制 x 轴
             ),
             opts.DataZoomOpts(
                 # 设置 y 轴 dataZoom
-                id_="dataZoomY",
                 type_="slider",
-                yAxisIndex=[0],  # 控制 y 轴
+                yaxis_index=[0],  # 控制 y 轴
             ),
             opts.DataZoomOpts(
                 # 设置 x 轴 dataZoom
-                id_="dataZoomX",
                 type_="inside",
-                xAxisIndex=[0],  # 控制 x 轴
+                xaxis_index=[0],  # 控制 x 轴
             ),
             opts.DataZoomOpts(
                 # 设置 y 轴 dataZoom
-                id_="dataZoomY",
                 type_="inside",
-                yAxisIndex=[0],  # 控制 y 轴
+                yaxis_index=[0],  # 控制 y 轴
             ),
         ],
         legend_opts=opts.LegendOpts(
@@ -210,27 +202,23 @@ Pay attention to check whether the query statement in the execution code block c
         datazoom_opts=[
             opts.DataZoomOpts(
                 # 设置 x 轴 dataZoom
-                id_="dataZoomX",
                 type_="slider",
-                xAxisIndex=[0],  # 控制 x 轴
+                xaxis_index=[0],  # 控制 x 轴
             ),
             opts.DataZoomOpts(
                 # 设置 y 轴 dataZoom
-                id_="dataZoomY",
                 type_="slider",
-                yAxisIndex=[0],  # 控制 y 轴
+                yaxis_index=[0],  # 控制 y 轴
             ),
             opts.DataZoomOpts(
                 # 设置 x 轴 dataZoom
-                id_="dataZoomX",
                 type_="inside",
-                xAxisIndex=[0],  # 控制 x 轴
+                xaxis_index=[0],  # 控制 x 轴
             ),
             opts.DataZoomOpts(
                 # 设置 y 轴 dataZoom
-                id_="dataZoomY",
                 type_="inside",
-                yAxisIndex=[0],  # 控制 y 轴
+                yaxis_index=[0],  # 控制 y 轴
             ),
         ],
         legend_opts=opts.LegendOpts(
@@ -291,27 +279,23 @@ Pay attention to check whether the query statement in the execution code block c
         datazoom_opts=[
             opts.DataZoomOpts(
                 # 设置 x 轴 dataZoom
-                id_="dataZoomX",
                 type_="slider",
-                xAxisIndex=[0],  # 控制 x 轴
+                xaxis_index=[0],  # 控制 x 轴
             ),
             opts.DataZoomOpts(
                 # 设置 y 轴 dataZoom
-                id_="dataZoomY",
                 type_="slider",
-                yAxisIndex=[0],  # 控制 y 轴
+                yaxis_index=[0],  # 控制 y 轴
             ),
             opts.DataZoomOpts(
                 # 设置 x 轴 dataZoom
-                id_="dataZoomX",
                 type_="inside",
-                xAxisIndex=[0],  # 控制 x 轴
+                xaxis_index=[0],  # 控制 x 轴
             ),
             opts.DataZoomOpts(
                 # 设置 y 轴 dataZoom
-                id_="dataZoomY",
                 type_="inside",
-                yAxisIndex=[0],  # 控制 y 轴
+                yaxis_index=[0],  # 控制 y 轴
             ),
         ],
         legend_opts=opts.LegendOpts(
@@ -335,6 +319,9 @@ Pay attention to check whether the query statement in the execution code block c
     out_put = [{"echart_name": "Sales over Years", "echart_code": echart_code}]
     print(out_put)
     </code>
+    When using pie charts, there must be no parameter x
+    
+    Set one or more dataZoom rooms based on site requirements
 
     The output should be formatted as a JSON instance that conforms to the JSON schema below, the JSON is a list of dict,
     [
@@ -622,25 +609,25 @@ Pay attention to check whether the query statement in the execution code block c
                 # 设置 x 轴 dataZoom
                 id_="dataZoomX",
                 type_="slider",
-                xAxisIndex=[0],  # 控制 x 轴
+                xaxis_index=[0],  # 控制 x 轴
             ),
             opts.DataZoomOpts(
                 # 设置 y 轴 dataZoom
                 id_="dataZoomY",
                 type_="slider",
-                yAxisIndex=[0],  # 控制 y 轴
+                yaxis_index=[0],  # 控制 y 轴
             ),
             opts.DataZoomOpts(
                 # 设置 x 轴 dataZoom
                 id_="dataZoomX",
                 type_="inside",
-                xAxisIndex=[0],  # 控制 x 轴
+                xaxis_index=[0],  # 控制 x 轴
             ),
             opts.DataZoomOpts(
                 # 设置 y 轴 dataZoom
                 id_="dataZoomY",
                 type_="inside",
-                yAxisIndex=[0],  # 控制 y 轴
+                yaxis_index=[0],  # 控制 y 轴
             ),
         ],
         legend_opts=opts.LegendOpts(
@@ -712,25 +699,25 @@ Pay attention to check whether the query statement in the execution code block c
                 # 设置 x 轴 dataZoom
                 id_="dataZoomX",
                 type_="slider",
-                xAxisIndex=[0],  # 控制 x 轴
+                xaxis_index=[0],  # 控制 x 轴
             ),
             opts.DataZoomOpts(
                 # 设置 y 轴 dataZoom
                 id_="dataZoomY",
                 type_="slider",
-                yAxisIndex=[0],  # 控制 y 轴
+                yaxis_index=[0],  # 控制 y 轴
             ),
             opts.DataZoomOpts(
                 # 设置 x 轴 dataZoom
                 id_="dataZoomX",
                 type_="inside",
-                xAxisIndex=[0],  # 控制 x 轴
+                xaxis_index=[0],  # 控制 x 轴
             ),
             opts.DataZoomOpts(
                 # 设置 y 轴 dataZoom
                 id_="dataZoomY",
                 type_="inside",
-                yAxisIndex=[0],  # 控制 y 轴
+                yaxis_index=[0],  # 控制 y 轴
             ),
         ],
         legend_opts=opts.LegendOpts(
@@ -814,25 +801,25 @@ Pay attention to check whether the query statement in the execution code block c
                 # 设置 x 轴 dataZoom
                 id_="dataZoomX",
                 type_="slider",
-                xAxisIndex=[0],  # 控制 x 轴
+                xaxis_index=[0],  # 控制 x 轴
             ),
             opts.DataZoomOpts(
                 # 设置 y 轴 dataZoom
                 id_="dataZoomY",
                 type_="slider",
-                yAxisIndex=[0],  # 控制 y 轴
+                yaxis_index=[0],  # 控制 y 轴
             ),
             opts.DataZoomOpts(
                 # 设置 x 轴 dataZoom
                 id_="dataZoomX",
                 type_="inside",
-                xAxisIndex=[0],  # 控制 x 轴
+                xaxis_index=[0],  # 控制 x 轴
             ),
             opts.DataZoomOpts(
                 # 设置 y 轴 dataZoom
                 id_="dataZoomY",
                 type_="inside",
-                yAxisIndex=[0],  # 控制 y 轴
+                yaxis_index=[0],  # 控制 y 轴
             ),
         ],
         legend_opts=opts.LegendOpts(

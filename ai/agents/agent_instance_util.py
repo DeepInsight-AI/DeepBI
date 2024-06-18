@@ -4,8 +4,8 @@ import json
 from ai.backend.util.write_log import logger
 import traceback
 from ai.backend.util.token_util import num_tokens_from_messages
-from ai.agents.prompt import CSV_ECHART_TIPS_MESS, \
-    MYSQL_ECHART_TIPS_MESS, MYSQL_MATPLOTLIB_TIPS_MESS, POSTGRESQL_ECHART_TIPS_MESS, MONGODB_ECHART_TIPS_MESS
+from ai.agents.prompt import EXCEL_ECHART_TIPS_MESS, \
+    MYSQL_ECHART_TIPS_MESS, MYSQL_MATPLOTLIB_TIPS_MESS, POSTGRESQL_ECHART_TIPS_MESS, MONGODB_ECHART_TIPS_MESS, CSV_ECHART_TIPS_MESS
 from ai.agents.agentchat import (UserProxyAgent, GroupChat, AssistantAgent, GroupChatManager,
                                  PythonProxyAgent, BIProxyAgent, TaskPlannerAgent, TaskSelectorAgent, CheckAgent,
                                  ChartPresenterAgent)

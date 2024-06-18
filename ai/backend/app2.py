@@ -5,7 +5,7 @@ from ai.backend.chat_task import ChatClass
 from ai.backend.aidb.autopilot.autopilot_mysql_api import AutopilotMysql
 from ai.backend.aidb.autopilot.autopilot_starrocks_api import AutopilotStarrocks
 from ai.backend.aidb.autopilot.autopilot_mongodb_api import AutopilotMongoDB
-from ai.backend.aidb.autopilot.autopilot_csv import AutopilotCSV
+from ai.backend.aidb.autopilot.autopilot_csv_api import AutopilotCSV
 from ai.backend.base_config import CONFIG
 from ai.backend.aidb.dashboard.prettify_dashboard import PrettifyDashboard
 

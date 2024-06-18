@@ -1,4 +1,4 @@
-CSV_ECHART_TIPS_MESS = """Here are some examples of generating mysql and pyecharts Code based on the given question.
+EXCEL_ECHART_TIPS_MESS = """Here are some examples of generating mysql and pyecharts Code based on the given question.
  Please generate new one based on the data and question human asks you, import the neccessary libraries and make sure the code is correct.
 
 IMPORTANT: You need to follow the coding style, and the type of the x, y axis.Title and label are not displayed under any circumstances. In either case, the datazoom and scroll legend must be displayed. The datazoom of the x-axis must be left=1, horizontal located below the x-axis, and the datazoom of the y-axis must be right=1, vertical located on the far right side of the container.  The toolbox is only shown in line charts and bar charts. The five function buttons must be located on the left side of the line chart and bar chart according to pop_left=1, pop_top=15%, and vertical. Scroll legends for line and bar charts must be placed above the chart with pop_top=1 and horizontal. The scrolling legends of other charts must be placed vertically on the right side of the chart according to pop_right=1, pop_top=15%, and avoidLabelOverlap should be turned on as much as possible. If the x-axis can be sorted according to certain rules (such as date and time size or value size), please sort by the x-axis, otherwise sort by size.But also need to focus on the column name of the uploaded tables(if exists). Generally, PyEcharts does not accept numpy.int or numpy.float, etc. It only supports built-in data type like int, float, and str.
@@ -100,6 +100,179 @@ Pay attention to check whether the query statement in the execution code block c
     from pyecharts.charts import Bar
     from pyecharts import options as opts
     df = pd.read_excel('company_sales.xlsx')
+    years = [str(_) for _ in df['year'].tolist()]
+    sales = [float(_) for _ in df['sales'].tolist()]
+    bar = Bar()
+    bar.add_xaxis(years)
+    bar.add_yaxis("Sales", sales)
+    bar.set_global_opts(
+        xaxis_opts=opts.AxisOpts(
+            type_="category",
+            name="Year",
+        ),
+        yaxis_opts=opts.AxisOpts(
+            type_="value",
+            name="Sales",
+        ),
+        title_opts=opts.TitleOpts(title="Sales over Years",is_show=false),
+        datazoom_opts=[
+            opts.DataZoomOpts(
+                # 设置 x 轴 dataZoom
+                id_="dataZoomX",
+                type_="slider",
+                xAxisIndex=[0],  # 控制 x 轴
+            ),
+            opts.DataZoomOpts(
+                # 设置 y 轴 dataZoom
+                id_="dataZoomY",
+                type_="slider",
+                yAxisIndex=[0],  # 控制 y 轴
+            ),
+            opts.DataZoomOpts(
+                # 设置 x 轴 dataZoom
+                id_="dataZoomX",
+                type_="inside",
+                xAxisIndex=[0],  # 控制 x 轴
+            ),
+            opts.DataZoomOpts(
+                # 设置 y 轴 dataZoom
+                id_="dataZoomY",
+                type_="inside",
+                yAxisIndex=[0],  # 控制 y 轴
+            ),
+        ],
+        legend_opts=opts.LegendOpts(
+            type_="scroll",  # 设置图例类型为滚动
+        ),
+        toolbox_opts=opts.ToolboxOpts(
+            is_show=true,
+            feature={
+                "dataZoom": opts.ToolBoxFeatureDataZoomOpts(),
+                "dataView": opts.ToolBoxFeatureDataViewOpts(),
+                "magicType": opts.ToolBoxFeatureMagicTypeOpts(type_=['line', 'bar','stack']),
+                "restore": opts.ToolBoxFeatureRestoreOpts(),
+                "saveAsImage": opts.ToolBoxFeatureSaveAsImageOpts(),
+            },
+        ),
+    )
+    # Render the chart
+    ret_json = bar.dump_options()
+    echart_code = json.loads(ret_json)
+
+    out_put = [{"echart_name": "Sales over Years", "echart_code": echart_code}]
+    print(out_put)
+    </code>
+
+    The output should be formatted as a JSON instance that conforms to the JSON schema below, the JSON is a list of dict,
+    [
+    {"echart_name": "Sales over Years", "echart_code": ret_json}
+    {},
+    {},
+    ].
+    """
+
+CSV_ECHART_TIPS_MESS = """Here are some examples of generating pyecharts Code based on the given question.
+ Please generate new one based on the data and question human asks you, import the neccessary libraries and make sure the code is correct.
+
+IMPORTANT: You need to follow the coding style, and the type of the x, y axis.Title and label are not displayed under any circumstances. In either case, the datazoom and scroll legend must be displayed. The datazoom of the x-axis must be left=1, horizontal located below the x-axis, and the datazoom of the y-axis must be right=1, vertical located on the far right side of the container.  The toolbox is only shown in line charts and bar charts. The five function buttons must be located on the left side of the line chart and bar chart according to pop_left=1, pop_top=15%, and vertical. Scroll legends for line and bar charts must be placed above the chart with pop_top=1 and horizontal. The scrolling legends of other charts must be placed vertically on the right side of the chart according to pop_right=1, pop_top=15%, and avoidLabelOverlap should be turned on as much as possible. If the x-axis can be sorted according to certain rules (such as date and time size or value size), please sort by the x-axis, otherwise sort by size.But also need to focus on the column name of the uploaded tables(if exists). Generally, PyEcharts does not accept numpy.int or numpy.float, etc. It only supports built-in data type like int, float, and str.
+Pay attention to check whether the query statement in the execution code block can correctly query the data.
+
+
+    Given the same `company_sales.csv`.
+    Q: A line chart comparing sales and profit over time would be useful. Could you help plot it?
+    <code>
+    import pandas as pd
+    from pyecharts.charts import Line
+    from pyecharts import options as opts
+    import json
+
+    df = pd.read_csv('company_sales.csv')
+    year = [str(_) for _ in df["year"].to_list()]
+    sales = [float(_) for _ in df["sales"].to_list()]
+    profit = [float(_) for _ in df["profit"].to_list()]
+    line = Line()
+    # Add x-axis and y-axis data
+    line.add_xaxis(year)
+    line.add_yaxis("Sales", sales)
+    line.add_yaxis("Profit", profit)
+    line.set_global_opts(
+        xaxis_opts=opts.AxisOpts(
+            type_="category", # better use category rather than value
+            name="year",
+            min_=min(year),
+            max_=max(year),
+        ),
+        yaxis_opts=opts.AxisOpts(
+            type_="value",
+            name="price",
+        ),
+        title_opts=opts.TitleOpts(title="Sales and Profit over Time",is_show=false),
+        datazoom_opts=[
+            opts.DataZoomOpts(
+                # 设置 x 轴 dataZoom
+                id_="dataZoomX",
+                type_="slider",
+                xAxisIndex=[0],  # 控制 x 轴
+            ),
+            opts.DataZoomOpts(
+                # 设置 y 轴 dataZoom
+                id_="dataZoomY",
+                type_="slider",
+                yAxisIndex=[0],  # 控制 y 轴
+            ),
+            opts.DataZoomOpts(
+                # 设置 x 轴 dataZoom
+                id_="dataZoomX",
+                type_="inside",
+                xAxisIndex=[0],  # 控制 x 轴
+            ),
+            opts.DataZoomOpts(
+                # 设置 y 轴 dataZoom
+                id_="dataZoomY",
+                type_="inside",
+                yAxisIndex=[0],  # 控制 y 轴
+            ),
+        ],
+        legend_opts=opts.LegendOpts(
+            type_="scroll",  # 设置图例类型为滚动
+        ),
+        toolbox_opts=opts.ToolboxOpts(
+            is_show=true,
+            feature={
+                "dataZoom": opts.ToolBoxFeatureDataZoomOpts(),
+                "dataView": opts.ToolBoxFeatureDataViewOpts(),
+                "magicType": opts.ToolBoxFeatureMagicTypeOpts(type_=['line', 'bar','stack']),
+                "restore": opts.ToolBoxFeatureRestoreOpts(),
+                "saveAsImage": opts.ToolBoxFeatureSaveAsImageOpts(),
+            },
+        ),
+    )
+    line.set_series_opts(
+        areastyle_opts=opts.AreaStyleOpts(opacity=0.5),
+    )
+    ret_json = line.dump_options()
+    echart_code = json.loads(ret_json)
+
+    out_put = [{"echart_name": "Sales and Profit over Time", "echart_code": echart_code}]
+    print(out_put)
+    </code>
+
+
+    Given the following data:
+    company_sales.csv
+    year  sales  profit  expenses  employees
+    0  2010    100      60        40         10
+    1  2011    120      80        50         12
+    2  2012    150      90        60         14
+    3  2013    170     120        70         16
+    [too long to show]
+
+    Q: Could you help plot a bar chart with the year on the x-axis and the sales on the y-axis?
+    <code>
+    import pandas as pd
+    from pyecharts.charts import Bar
+    from pyecharts import options as opts
+    df = pd.read_csv('company_sales.csv')
     years = [str(_) for _ in df['year'].tolist()]
     sales = [float(_) for _ in df['sales'].tolist()]
     bar = Bar()

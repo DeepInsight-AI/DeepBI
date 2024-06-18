@@ -270,7 +270,7 @@ class AutopilotCSV(Autopilot):
                     csv_echart_assistant = self.agent_instance_util.get_agent_csv_echart_assistant(
                         use_cache=use_cache)
                     python_executor = self.agent_instance_util.get_agent_python_executor(
-                        report_file_name=report_file_name)
+                        report_file_name=report_file_name, is_auto_pilot=True)
 
                     await python_executor.initiate_chat(
                         csv_echart_assistant,

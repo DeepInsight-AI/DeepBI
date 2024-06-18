@@ -896,7 +896,7 @@ class AgentInstanceUtil:
         )
         return chart_planner
 
-    def get_agent_python_executor(self, report_file_name=None):
+    def get_agent_python_executor(self, report_file_name=None, is_auto_pilot =False):
         python_executor = PythonProxyAgent(
             name="python_executor",
             system_message="python executor. Execute the python code and report the result.",
@@ -909,6 +909,7 @@ class AgentInstanceUtil:
             # incoming=self.incoming,
             db_id=self.db_id,
             report_file_name=report_file_name,
+            is_auto_pilot =is_auto_pilot
         )
         return python_executor
 

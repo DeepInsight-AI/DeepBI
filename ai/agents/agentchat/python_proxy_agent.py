@@ -759,7 +759,7 @@ class PythonProxyAgent(Agent):
             if len(code_blocks) == 1 and code_blocks[0][0] != 'python':
                 # continue
                 return True, f"exitcode:exitcode failed\nCode output: Please give me executable python code.\n"
-            if self.db_id is not None and self.db_id > 0:
+            if self.db_id is not None and int(self.db_id) > 0:
                 obj = database_util.Main(self.db_id)
                 if_suss, db_info = obj.run_decode()
                 if if_suss:

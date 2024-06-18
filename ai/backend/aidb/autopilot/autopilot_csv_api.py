@@ -6,6 +6,7 @@ from ai.backend.base_config import CONFIG
 from ai.backend.util import database_util
 from .autopilot import Autopilot
 import re
+import os
 import ast
 from ai.backend.util import base_util
 from ai.backend.util.db.postgresql_report import PsgReport
@@ -32,6 +33,9 @@ class AutopilotCSV(Autopilot):
         db_id = str(data['databases_id'])
         q_str = data['report_desc']
         q_name = data['report_name']
+        csv_file = db_comment['table_desc'][0]['table_name']
+
+        csv_local_path = CONFIG.up_file_path + "/" + csv_file
 
         print("self.agent_instance_util.api_key_use :", self.agent_instance_util.api_key_use)
 
@@ -39,16 +43,12 @@ class AutopilotCSV(Autopilot):
             re_check = await self.check_api_key()
             if not re_check:
                 return
+        if_suss = os.path.exists(csv_local_path)
 
-        print("db_id:", db_id)
-        obj = database_util.Main(db_id)
-        if_suss, db_info = obj.run()
         if if_suss:
-            self.agent_instance_util.base_mysql_info = '  When connecting to the database, be sure to bring the port. This is mysql database info :' + '\n' + str(
-                db_info)
-            # self.agent_instance_util.base_message = str(db_comment)
+            self.agent_instance_util.base_csv_info = '  csv file path is :' + str(
+                csv_local_path)
             self.agent_instance_util.set_base_message(db_comment)
-
             self.agent_instance_util.db_id = db_id
             # start chat
             try:
@@ -267,18 +267,18 @@ class AutopilotCSV(Autopilot):
             use_cache = True
             for i in range(max_retry_times):
                 try:
-                    mysql_echart_assistant = self.agent_instance_util.get_agent_mysql_echart_assistant(
-                        use_cache=use_cache, report_file_name=report_file_name)
+                    csv_echart_assistant = self.agent_instance_util.get_agent_csv_echart_assistant(
+                        use_cache=use_cache)
                     python_executor = self.agent_instance_util.get_agent_python_executor(
                         report_file_name=report_file_name)
 
                     await python_executor.initiate_chat(
-                        mysql_echart_assistant,
+                        csv_echart_assistant,
                         message=self.agent_instance_util.base_message + '\n' + LanguageInfo.question_ask + '\n' + str(
                             qustion_message),
                     )
 
-                    answer_message = mysql_echart_assistant.chat_messages[python_executor]
+                    answer_message = csv_echart_assistant.chat_messages[python_executor]
 
                     for answer_mess in answer_message:
                         # print("answer_mess :", answer_mess)

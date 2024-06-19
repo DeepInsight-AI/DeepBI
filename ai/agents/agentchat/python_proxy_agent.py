@@ -765,6 +765,7 @@ class PythonProxyAgent(Agent):
             if len(code_blocks) == 1 and code_blocks[0][0] != 'python':
                 # continue
                 if self.is_auto_pilot:
+                    # if is auto pilot, no code TERMINATE
                     return True, "TERMINATE"
                 else:
                     return True, f"exitcode:exitcode failed\nCode output: Please give me executable python code.\n"
@@ -828,7 +829,7 @@ class PythonProxyAgent(Agent):
                         # if have multy echarts
                         if index != len(logs) - 1:
                             continue
-                        return True, f"exitcode: {exitcode} ({exitcode2str})\nCode output: 图像已生成,任务执行成功！图表数据：{base_content}"
+                        return True, f"exitcode: {exitcode} ({exitcode2str})\nCode output: 图像已生成,任务执行成功！图表数据：{base_content} \nTERMINATE"
 
                     # not autopilot
                     if not self.is_auto_pilot:

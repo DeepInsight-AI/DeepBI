@@ -33,9 +33,17 @@ class AutopilotCSV(Autopilot):
         db_id = str(data['databases_id'])
         q_str = data['report_desc']
         q_name = data['report_name']
-        csv_file = db_comment['table_desc'][0]['table_name']
 
-        csv_local_path = CONFIG.up_file_path + csv_file
+        csv_local_paths = []
+        for item in db_comment['table_desc']:
+            csv_file = item['table_name']
+            csv_local_path = CONFIG.up_file_path + csv_file
+            if os.path.exists(csv_local_path):
+                table = {
+                    "table_name": item['table_name'],
+                    item['table_name'] + "_file_path": csv_local_path
+                }
+                csv_local_paths.append(csv_local_path)
 
         print("self.agent_instance_util.api_key_use :", self.agent_instance_util.api_key_use)
 
@@ -43,9 +51,8 @@ class AutopilotCSV(Autopilot):
             re_check = await self.check_api_key(is_auto_pilot=True)
             if not re_check:
                 return
-        if_suss = os.path.exists(csv_local_path)
 
-        if if_suss:
+        if len(csv_local_paths) > 0:
             self.agent_instance_util.base_csv_info = '  csv file path is :' + str(
                 csv_local_path)
             self.agent_instance_util.set_base_message(db_comment)

@@ -896,7 +896,7 @@ class AgentInstanceUtil:
         )
         return chart_planner
 
-    def get_agent_python_executor(self, report_file_name=None, is_auto_pilot =False):
+    def get_agent_python_executor(self, report_file_name=None, is_auto_pilot=False):
         python_executor = PythonProxyAgent(
             name="python_executor",
             system_message="python executor. Execute the python code and report the result.",
@@ -909,7 +909,7 @@ class AgentInstanceUtil:
             # incoming=self.incoming,
             db_id=self.db_id,
             report_file_name=report_file_name,
-            is_auto_pilot =is_auto_pilot
+            is_auto_pilot=is_auto_pilot
         )
         return python_executor
 
@@ -929,6 +929,10 @@ class AgentInstanceUtil:
                     When you find an answer, verify the answer carefully. Include verifiable evidence in your response if possible.
                     Reply "TERMINATE" in the end when everything is done.
                     When you find an answer,  You are a report analysis, you have the knowledge and skills to turn raw data into information and insight, which can be used to make business decisions.include your analysis in your reply.
+                    It involves data queries that truncate the data if it exceeds 1000 rows, or reduce the number of rows by summing and other means.
+                    It involves data queries that truncate the data if it exceeds 1000 rows, or reduce the number of rows by summing and other means.
+                    It involves data queries that truncate the data if it exceeds 1000 rows, or reduce the number of rows by summing and other means.
+                    It involves data queries that truncate the data if it exceeds 1000 rows, or reduce the number of rows by summing and other means.
                     """ + '\n' + self.base_csv_info + '\n' + python_base_dependency + '\n' + CSV_ECHART_TIPS_MESS,
             human_input_mode="NEVER",
             user_name=self.user_name,

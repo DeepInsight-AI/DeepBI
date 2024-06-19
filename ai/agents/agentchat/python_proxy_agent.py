@@ -811,7 +811,7 @@ class PythonProxyAgent(Agent):
                                     formatted_series_data = [
                                         {'name': data_point['name'], 'symbolSize': format_decimal(data_point['symbolSize'])}
                                         for data_point in series_data['data']]
-                                elif series_data['type'] in ["Kline", "radar", "heatmap", "scatter", "themeRiver",'parallel', 'effectScatter']:
+                                elif series_data['type'] in ["Kline", "radar", "heatmap", "scatter", "themeRiver", 'parallel', 'effectScatter']:
                                     formatted_series_data = [[format_decimal(value) for value in sublist] for sublist in
                                                              series_data['data']]
                                 else:

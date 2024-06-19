@@ -307,7 +307,7 @@ class AutopilotCSV(Autopilot):
 
                                         for jstr in report_demand_list:
                                             if str(jstr).__contains__('echart_name') and str(jstr).__contains__(
-                                                    'echart_code'):
+                                                    'echart_code') and jstr not in base_content:
                                                 base_content.append(jstr)
                                     else:
                                         # String instantiated as object
@@ -315,7 +315,7 @@ class AutopilotCSV(Autopilot):
                                         print("report_demand_list: ", report_demand_list)
                                         for jstr in report_demand_list:
                                             if str(jstr).__contains__('echart_name') and str(jstr).__contains__(
-                                                    'echart_code'):
+                                                    'echart_code') and jstr not in base_content:
                                                 base_content.append(jstr)
 
                     print("base_content: ", base_content)

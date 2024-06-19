@@ -822,8 +822,8 @@ class PythonProxyAgent(Agent):
                             entry['echart_code']['series'] = formatted_series_list
                         base_content.append(entry)
                     # this is autopilot
-                    # if self.is_auto_pilot:
-                    #    return len(base_content) > 0, base_content
+                    if self.is_auto_pilot:
+                        return True, f"exitcode: {exitcode} ({exitcode2str})\nCode output: 图像已生成,任务执行成功！图表数据：{base_content}"
 
                     # not autopilot
                     if not self.is_auto_pilot:

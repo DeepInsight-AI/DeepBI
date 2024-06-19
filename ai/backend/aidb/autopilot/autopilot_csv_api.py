@@ -35,12 +35,12 @@ class AutopilotCSV(Autopilot):
         q_name = data['report_name']
         csv_file = db_comment['table_desc'][0]['table_name']
 
-        csv_local_path = CONFIG.up_file_path + "/" + csv_file
+        csv_local_path = CONFIG.up_file_path + csv_file
 
         print("self.agent_instance_util.api_key_use :", self.agent_instance_util.api_key_use)
 
         if not self.agent_instance_util.api_key_use:
-            re_check = await self.check_api_key()
+            re_check = await self.check_api_key(is_auto_pilot=True)
             if not re_check:
                 return
         if_suss = os.path.exists(csv_local_path)

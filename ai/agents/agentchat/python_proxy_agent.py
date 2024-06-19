@@ -795,7 +795,7 @@ class PythonProxyAgent(Agent):
                     logs = json.loads(str(logs))
                 except Exception as e:
                     return True, f"exitcode:exitcode failed\nCode output: There is an error in the JSON code causing parsing errors,Please modify the JSON code for me:{traceback.format_exc()}"
-                for entry in logs:
+                for index, entry in enumerate(logs):
                     if 'echart_name' in entry and 'echart_code' in entry:
                         if isinstance(entry['echart_code'], str):
                             entry['echart_code'] = json.loads(entry['entry']['echart_code'])
@@ -822,6 +822,9 @@ class PythonProxyAgent(Agent):
                         base_content.append(entry)
                     # this is autopilot
                     if self.is_auto_pilot:
+                        # if have multy echarts
+                        if index != len(logs) - 1:
+                            continue
                         return True, f"exitcode: {exitcode} ({exitcode2str})\nCode output: 图像已生成,任务执行成功！图表数据：{base_content}"
 
                     # not autopilot

@@ -267,7 +267,7 @@ class AIDB:
         print(send_mess)
         logger.info(send_mess)
 
-    async def check_api_key(self):
+    async def check_api_key(self, is_auto_pilot=False):
         # self.agent_instance_util.api_key_use = True
 
         # .token_[uid].json
@@ -276,7 +276,8 @@ class AIDB:
             try:
                 ApiKey, HttpProxyHost, HttpProxyPort, ApiHost, ApiType, ApiModel, LlmSetting = self.load_api_key(token_path)
                 if ApiKey is None or len(ApiKey) == 0:
-                    await self.put_message(500, CONFIG.talker_log, CONFIG.type_log_data, self.error_miss_key)
+                    if not is_auto_pilot:
+                        await self.put_message(500, CONFIG.talker_log, CONFIG.type_log_data, self.error_miss_key)
                     return False
 
                 self.agent_instance_util.set_api_key(ApiKey, ApiType, ApiHost, ApiModel, LlmSetting)
@@ -300,12 +301,14 @@ class AIDB:
                 traceback.print_exc()
 
                 error_miss_key = self.generate_error_message(http_err, error_message=LanguageInfo.api_key_fail)
-                await self.put_message(500, CONFIG.talker_log, CONFIG.type_log_data, error_miss_key)
+                if not is_auto_pilot:
+                    await self.put_message(500, CONFIG.talker_log, CONFIG.type_log_data, error_miss_key)
                 return False
             except Exception as e:
                 traceback.print_exc()
                 logger.error("from user:[{}".format(self.user_name) + "] , " + "error: " + str(e))
-                await self.put_message(500, CONFIG.talker_log, CONFIG.type_log_data, self.error_miss_key)
+                if not is_auto_pilot:
+                    await self.put_message(500, CONFIG.talker_log, CONFIG.type_log_data, self.error_miss_key)
                 return False
 
         else:

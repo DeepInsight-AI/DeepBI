@@ -883,7 +883,7 @@ class PythonProxyAgent(Agent):
                             if (len(echart_dict['series']) == 1):
                                 data = echart_dict['series'][0]['data']
                                 if (len(data) < 10):
-                                    return True, f"exitcode: {exitcode} ({exitcode2str})\nCode output: 图像已生成,任务执行成功！请直接分析图表数据：{echart_dict}"
+                                    return True, f"exitcode: {exitcode} ({exitcode2str})\nCode output: 图像已生成,任务执行成功！请直接分析图表数据：{echart_dict} \nTERMINATE"
                                 data_set, count_tag = set(), 0
                                 for i in data:
                                     data_set.add(i[1])
@@ -895,7 +895,7 @@ class PythonProxyAgent(Agent):
                                     for i in data:
                                         data_dict[i[1]] += 1
                                     return True, f"exitcode: {exitcode} ({exitcode2str})\ncode output:图像已生成,生成的是散点图,该图的标题为:{echart_dict['echart_name']},描述了其相应的关系." \
-                                        f"它的数据一共有{len(data)}个,但是它的取值集合个数较少，每一种取值对应的数量关系为{data_dict}"
+                                        f"它的数据一共有{len(data)}个,但是它的取值集合个数较少，每一种取值对应的数量关系为{data_dict} \nTERMINATE"
                                 correlation, dispersion, (x_min, x_max), (y_min, y_max), (
                                     ave_x, ave_y) = calculate_dispersion(data)
                                 outliers_count, outliers = count_outliers(data)
@@ -904,11 +904,11 @@ class PythonProxyAgent(Agent):
                                     slope, intercept = calculate_trendline(data)
                                     return True, f"exitcode: {exitcode} ({exitcode2str})\nCode output:图像已生成,生成的是散点图,该图的标题为:{echart_dict['echart_name']},描述了其相应的关系.如下是它的评价指标:\n离散程度为(标准差）:{correlation},相关性评价指标为{dispersion}" \
                                         f"散点图的x区间范围从{(x_min, x_max)},y区间范围从{(y_min, y_max)},中值点为{(ave_x, ave_y)}。定义一个数据点到中值点的距离大于其所有点至中值点平均距离的2倍作为离群点,则离群点的个数为{outliers_count},其中,最大的是几个离群点为{outliers}" \
-                                        "其相关性达到预设的阈值,计算得到其趋势线方程为: y = {:.2f}x+{:.2f}。(注意：这里所有的计算数据都约束到了两位有效小数)".format(slope, intercept)
+                                        "其相关性达到预设的阈值,计算得到其趋势线方程为: y = {:.2f}x+{:.2f}。(注意：这里所有的计算数据都约束到了两位有效小数)\nTERMINATE".format(slope, intercept)
                                 else:
                                     return True, f"Code output:图像已生成,生成的是散点图,该图的标题为:{echart_dict['echart_name']},描述了其相应的关系.如下是它的评价指标:\n离散程度为(标准差）:{correlation},相关性评价指标为{dispersion}" \
                                         f"散点图的x区间范围从{(x_min, x_max)},y区间范围从{(y_min, y_max)},中值点为{(ave_x, ave_y)}。定义一个数据点到中值点的距离大于其所有点至中值点平均距离的2倍作为离群点,则离群点的个数为{outliers_count},其中,最大的是几个离群点为{outliers}" \
-                                        f"但由于数据的相关性未达到阈值，即该散点图数据并没有明显的线性关系，无法计算趋势线。(注意：这里所有的计算数据都约束到了两位有效小数)"
+                                        f"但由于数据的相关性未达到阈值，即该散点图数据并没有明显的线性关系，无法计算趋势线。(注意：这里所有的计算数据都约束到了两位有效小数)\nTERMINATE"
                             else:
                                 message = f"exitcode: {exitcode} ({exitcode2str})\nCode output:图像已生成,生成的是散点图,该图的标题为:{echart_dict['echart_name']},描述了其相应的关系,一共有{len(echart_dict['series'])}类散点数据:\n"
                                 count_class = 0
@@ -953,7 +953,7 @@ class PythonProxyAgent(Agent):
                                                 message += message_data
                                                 continue
                                 message = message + "请对每一类的数据性质都进行详细的分析"
-                                return True, f"exitcode: {exitcode} ({exitcode2str})\n{message}"
+                                return True, f"exitcode: {exitcode} ({exitcode2str})\n{message}\nTERMINATE"
                     else:
                         echart_dict = {
                             'echart_name': echart_name,

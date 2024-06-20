@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html>
+
 <head>
   <meta charset="UTF-8">
   <title>{{ report_name }}</title>
@@ -82,47 +83,60 @@
   <!-- import ECharts -->
   <!-- <script src="https://cdn.bootcdn.net/ajax/libs/echarts/5.2.2/echarts.min.js"></script> -->
 </head>
-<body>
-<div class="content">
-  <h1 class="color-white">{{ report_name }}</h1>
-  <h5 class="color-white">----Powered by {{ report_author }}</h5>
 
-  <ul class="m-b-5 bg-border thought">
-    <p>【Analysis Framework】</p>
-    {% for thought in report_thought %}
+<body>
+  <div class="content">
+    <h1 class="color-white">{{ report_name }}</h1>
+    <h5 class="color-white">----Powered by {{ report_author }}</h5>
+
+    <ul class="m-b-5 bg-border thought">
+      <p>【Analysis Framework】</p>
+      {% for thought in report_thought %}
       <li><strong>{{ thought['report_name'] }}: </strong>{{ thought['description'] }} </li>
-    {% endfor %}
-  </ul>
-  {% for question_data in report_question %}
+      {% endfor %}
+    </ul>
+    {% for question_data in report_question %}
     <div class="question-section">
       <h2 class="m-b-5 bg-border color-white">{{ question_data['question']['report_name'] }}</h2>
 
       <ul class="m-b-5 bg-border">
         <p>【Data Interpretation】</p>
         {% for answer_item in question_data['answer'] %}
-          <li><strong>{{ answer_item['analysis_item'] }}: </strong>{{ answer_item['description'] }} </li>
+        <li><strong>{{ answer_item['analysis_item'] }}: </strong>{{ answer_item['description'] }} </li>
         {% endfor %}
       </ul>
 
       <div id="chart_{{ timestamp }}"></div>
 
+      {% if question_data['echart_code'] is string %}
       <div id="chart{{ loop.index }}_{{ timestamp }}" class="chart m-b-5 bg-border"></div>
       <script type="text/javascript">
-        var chart{{ loop.index }}_{{ timestamp }} = echarts.init(document.getElementById('chart{{ loop.index }}_{{ timestamp }}'), "dark");
-        var option{{ loop.index }}_{{ timestamp }} = {{ question_data['echart_code'] | safe }};
-        chart{{ loop.index }}_{{ timestamp }}.setOption(option{{ loop.index }}_{{ timestamp }});
+        var chart{{ loop.index }}_{ { timestamp } } = echarts.init(document.getElementById('chart{{ loop.index }}_{{ timestamp }}'), "dark");
+        var option{{ loop.index }}_{ { timestamp } } = { { question_data['echart_code'] | safe } };
+                chart{ { loop.index } }_{ { timestamp } }.setOption(option{{ loop.index }}_{{ timestamp }});
       </script>
-    </div>
-  {% endfor %}
-
-  <div class="report-summary">
-    <h2 class="m-b-5 bg-border color-white">Report Summary</h2>
-    <ul class="m-b-5 bg-border">
-      {% for summary in report_analyst %}
-        <li><strong>{{ summary['analysis_item'] }}: </strong>{{ summary['description'] }} </li>
+      {% elif question_data['echart_code'] is list %}
+      {% for echart_code in question_data['echart_code'] %}
+      <div id="chart{{ loop.parent.index }}_{{ loop.index }}_{{ timestamp }}" class="chart m-b-5 bg-border"></div>
+      <script type="text/javascript">
+        var chart{{ loop.parent.index }}_{ { loop.index } }_{ { timestamp } } = echarts.init(document.getElementById('chart{{ loop.parent.index }}_{{ loop.index }}_{{ timestamp }}'), "dark");
+        var option{{ loop.parent.index }}_{ { loop.index } }_{ { timestamp } } = { { echart_code | safe } };
+                    chart{ { loop.parent.index } }_{ { loop.index } }_{ { timestamp } }.setOption(option{{ loop.parent.index }}_{{ loop.index }}_{{ timestamp }});
+      </script>
       {% endfor %}
-    </ul>
+      {% endif %}
+    </div>
+    {% endfor %}
+
+    <div class="report-summary">
+      <h2 class="m-b-5 bg-border color-white">Report Summary</h2>
+      <ul class="m-b-5 bg-border">
+        {% for summary in report_analyst %}
+        <li><strong>{{ summary['analysis_item'] }}: </strong>{{ summary['description'] }} </li>
+        {% endfor %}
+      </ul>
+    </div>
   </div>
-</div>
 </body>
+
 </html>

@@ -345,7 +345,7 @@ class AutopilotCSV(Autopilot):
             # bi_proxy = self.agent_instance_util.get_agent_bi_proxy()
             is_chart = False
             # Call the interface to generate pictures
-            last_echart_code = None
+            last_echart_code = []
             for img_str in base_content:
                 echart_name = img_str.get('echart_name')
                 echart_code = img_str.get('echart_code')
@@ -358,15 +358,15 @@ class AutopilotCSV(Autopilot):
                         if base_util.is_json(str(echart_code)):
                             json_str = json.loads(str(echart_code))
                             json_str = json.dumps(json_str)
-                            last_echart_code = json_str
+                            last_echart_code.append(json_str)
                         else:
                             str_obj = ast.literal_eval(str(echart_code))
                             json_str = json.dumps(str_obj)
-                            last_echart_code = json_str
+                            last_echart_code.append(json_str)
                     except Exception as e:
                         traceback.print_exc()
                         logger.error("from user:[{}".format(self.user_name) + "] , " + "error: " + str(e))
-                        last_echart_code = json.dumps(echart_code)
+                        last_echart_code.append(json.dumps(echart_code))
 
                     # re_str = await bi_proxy.run_echart_code(str(echart_code), echart_name)
                     # base_mess.append(re_str)

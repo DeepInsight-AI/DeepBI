@@ -966,9 +966,9 @@ class PythonProxyAgent(Agent):
 
                     echarts_data.append(echart_dict)
                     if (len(echart_dict['series'][0]['data']) > 999):
-                        return True, f"exitcode: {exitcode} ({exitcode2str})\nCode output: 图像已生成,任务执行成功！但由于数据量过大，仅截取了1000条，请直接分析图表这些数据：{echarts_data}"
+                        return True, f"exitcode: {exitcode} ({exitcode2str})\nCode output: 图像已生成,任务执行成功！但由于数据量过大，仅截取了1000条，请直接分析图表这些数据：{echarts_data}\nTERMINATE"
                     else:
-                        return True, f"exitcode: {exitcode} ({exitcode2str})\nCode output: 图像已生成,任务执行成功！请直接分析图表数据：{echarts_data}"
+                        return True, f"exitcode: {exitcode} ({exitcode2str})\nCode output: 图像已生成,任务执行成功！请直接分析图表数据：{echarts_data}\nTERMINATE"
         code_execution_config["last_n_messages"] = last_n_messages
 
         return False, None

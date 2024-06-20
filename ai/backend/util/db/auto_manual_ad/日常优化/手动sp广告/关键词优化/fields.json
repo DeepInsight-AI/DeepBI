@@ -1,0 +1,88 @@
+{
+    "field_desc": [
+        {
+            "name": "keywordId",
+            "comment": "关键词id"
+        },
+        {
+            "name": "keyword",
+            "comment": "关键词"
+        },
+        {
+            "name": "targeting",
+            "comment": "投放词"
+        },
+        {
+            "name": "keywordBid",
+            "comment": "关键词竞价"
+        },
+        {
+            "name": "matchType",
+            "comment": "关键词匹配类型"
+        },
+        {
+            "name": "adGroupName",
+            "comment": "关键词所在的广告组"
+        },
+        {
+            "name": "campaignName",
+            "comment": "关键词所在的广告活动"
+        },
+        {
+            "name": "ORDER_1m",
+            "comment": "关键词最近一个月的订单数"
+        },
+        {
+            "name": "total_clicks_30d",
+            "comment": "关键词最近30天的总点击数"
+        },
+        {
+            "name": "total_clicks_7d",
+            "comment": "关键词最近7天的总点击数"
+        },
+        {
+            "name": "total_clicks_yesterday",
+            "comment": "关键词昨天的点击数"
+        },
+        {
+            "name": "total_sales14d_30d",
+            "comment": "关键词最近30天的总销售额"
+        },
+        {
+            "name": "total_sales14d_7d",
+            "comment": "关键词最近7天的总销售额"
+        },
+        {
+            "name": "total_sales14d_yesterday",
+            "comment": "关键词昨天的销售额"
+        },
+        {
+            "name": "total_cost_30d",
+            "comment": "关键词最近30天的总花费"
+        },
+        {
+            "name": "total_cost_7d",
+            "comment": "关键词最近7天的总花费"
+        },
+        {
+            "name": "total_cost_4d",
+            "comment": "关键词最近4天的花费"
+        },
+        {
+            "name": "total_cost_yesterday",
+            "comment": "关键词昨天的花费"
+        },
+        {
+            "name": "ACOS_30d",
+            "comment": "关键词最近30天的平均ACOS值"
+        },
+        {
+            "name": "ACOS_7d",
+            "comment": "关键词最近7天的平均ACOS值"
+        },
+        {
+            "name": "ACOS_yesterday",
+            "comment": "关键词昨天的ACOS值"
+        }
+    ]
+}

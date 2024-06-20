@@ -252,7 +252,7 @@ Pay attention to check whether the query statement in the execution code block c
         title_opts=opts.TitleOpts(title="Sales over Years",is_show=false),
         datazoom_opts=[
             opts.DataZoomOpts(
-                is_show=True, id_="dataZoomX", type_="slider",
+                is_show=True,  type_="slider",
                 xaxis_index=[0], range_start=0, range_end=100, orient="horizontal",
                 pos_bottom="0px", pos_left="1%", pos_right="1%"
             ),
@@ -344,7 +344,7 @@ Pay attention to check whether the sql statement in the code block is correct an
         legend_opts=opts.LegendOpts(is_show=True, type_="scroll"),  # 显示滚动图例
         datazoom_opts=[
             opts.DataZoomOpts(
-                is_show=True, id_="dataZoomX", type_="slider",
+                is_show=True,  type_="slider",
                 xaxis_index=[0], range_start=0, range_end=100, orient="horizontal",
                 pos_bottom="0px", pos_left="1%", pos_right="1%"
             ),
@@ -422,7 +422,7 @@ Pay attention to check whether the sql statement in the code block is correct an
         legend_opts=opts.LegendOpts(is_show=True, type_="scroll", pos_top="1%"),
         datazoom_opts=[
             opts.DataZoomOpts(
-                is_show=True, id_="dataZoomX", type_="slider",
+                is_show=True,  type_="slider",
                 xaxis_index=[0], range_start=0, range_end=100, orient="horizontal",
                 pos_bottom="0px", pos_left="1%", pos_right="1%"
             ),
@@ -584,7 +584,7 @@ Pay attention to check whether the query statement in the execution code block c
         title_opts=opts.TitleOpts(title="Sales and Profit over Time",is_show=false),
         datazoom_opts=[
             opts.DataZoomOpts(
-                is_show=True, id_="dataZoomX", type_="slider",
+                is_show=True,  type_="slider",
                 xaxis_index=[0], range_start=0, range_end=100, orient="horizontal",
                 pos_bottom="0px", pos_left="1%", pos_right="1%"
             ),
@@ -660,7 +660,7 @@ Pay attention to check whether the query statement in the execution code block c
         title_opts=opts.TitleOpts(title="Sales over Years",is_show=false),
         datazoom_opts=[
             opts.DataZoomOpts(
-                is_show=True, id_="dataZoomX", type_="slider",
+                is_show=True,  type_="slider",
                 xaxis_index=[0], range_start=0, range_end=100, orient="horizontal",
                 pos_bottom="0px", pos_left="1%", pos_right="1%"
             ),
@@ -748,7 +748,7 @@ Pay attention to check whether the query statement in the execution code block c
         title_opts=opts.TitleOpts(title="Sales over Years",is_show=false),
         datazoom_opts=[
             opts.DataZoomOpts(
-                is_show=True, id_="dataZoomX", type_="slider",
+                is_show=True,  type_="slider",
                 xaxis_index=[0], range_start=0, range_end=100, orient="horizontal",
                 pos_bottom="0px", pos_left="1%", pos_right="1%"
             ),

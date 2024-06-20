@@ -257,7 +257,7 @@ Pay attention to check whether the query statement in the execution code block c
                 pos_bottom="0px", pos_left="1%", pos_right="1%"
             ),
             opts.DataZoomOpts(
-                is_show=True, id_="dataZoomY", type_="slider",
+                is_show=True,  type_="slider",
                 yaxis_index=[0], range_start=0, range_end=100, orient="vertical",
                 pos_top="0px", pos_right="1%", pos_bottom="3%"
             ),
@@ -349,7 +349,7 @@ Pay attention to check whether the sql statement in the code block is correct an
                 pos_bottom="0px", pos_left="1%", pos_right="1%"
             ),
             opts.DataZoomOpts(
-                is_show=True, id_="dataZoomY", type_="slider",
+                is_show=True,  type_="slider",
                 yaxis_index=[0], range_start=0, range_end=100, orient="vertical",
                 pos_top="0px", pos_right="1%", pos_bottom="3%"
             ),
@@ -427,7 +427,7 @@ Pay attention to check whether the sql statement in the code block is correct an
                 pos_bottom="0px", pos_left="1%", pos_right="1%"
             ),
             opts.DataZoomOpts(
-                is_show=True, id_="dataZoomY", type_="slider",
+                is_show=True,  type_="slider",
                 yaxis_index=[0], range_start=0, range_end=100, orient="vertical",
                 pos_top="0px", pos_right="1%", pos_bottom="3%"
             ),
@@ -589,7 +589,7 @@ Pay attention to check whether the query statement in the execution code block c
                 pos_bottom="0px", pos_left="1%", pos_right="1%"
             ),
             opts.DataZoomOpts(
-                is_show=True, id_="dataZoomY", type_="slider",
+                is_show=True,  type_="slider",
                 yaxis_index=[0], range_start=0, range_end=100, orient="vertical",
                 pos_top="0px", pos_right="1%", pos_bottom="3%"
             ),
@@ -665,7 +665,7 @@ Pay attention to check whether the query statement in the execution code block c
                 pos_bottom="0px", pos_left="1%", pos_right="1%"
             ),
             opts.DataZoomOpts(
-                is_show=True, id_="dataZoomY", type_="slider",
+                is_show=True,  type_="slider",
                 yaxis_index=[0], range_start=0, range_end=100, orient="vertical",
                 pos_top="0px", pos_right="1%", pos_bottom="3%"
             ),
@@ -753,7 +753,7 @@ Pay attention to check whether the query statement in the execution code block c
                 pos_bottom="0px", pos_left="1%", pos_right="1%"
             ),
             opts.DataZoomOpts(
-                is_show=True, id_="dataZoomY", type_="slider",
+                is_show=True,  type_="slider",
                 yaxis_index=[0], range_start=0, range_end=100, orient="vertical",
                 pos_top="0px", pos_right="1%", pos_bottom="3%"
             ),

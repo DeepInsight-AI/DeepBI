@@ -95,7 +95,9 @@
       <li><strong>{{ thought['report_name'] }}: </strong>{{ thought['description'] }} </li>
       {% endfor %}
     </ul>
-    {% for question_data in report_question %}
+	{% set chart_index = 0 %}
+	{% for question_data in report_question %}
+	{% set chart_index = chart_index + 1 %}
     <div class="question-section">
       <h2 class="m-b-5 bg-border color-white">{{ question_data['question']['report_name'] }}</h2>
 
@@ -105,26 +107,26 @@
         <li><strong>{{ answer_item['analysis_item'] }}: </strong>{{ answer_item['description'] }}</li>
         {% endfor %}
       </ul>
+	  
       {% if question_data['echart_code'] is string %}
-      <div id="chart{{ loop.index }}_{{ timestamp }}" class="chart m-b-5 bg-border"></div>
-      <script type="text/javascript">
-        var chart{{ loop.index }}_{ { timestamp } } = echarts.init(document.getElementById('chart{{ loop.index }}_{{ timestamp }}'), "dark");
-        var option{{ loop.index }}_{ { timestamp } } = { { question_data['echart_code'] | safe } };
-                chart{ { loop.index } }_{ { timestamp } }.setOption(option{{ loop.index }}_{{ timestamp }});
-      </script>
-      {% elif question_data['echart_code'] is list %}
-      {% for echart_code in question_data['echart_code'] %}
-      <div id="chart{{ loop.parent.index }}_{{ loop.index }}_{{ timestamp }}" class="chart m-b-5 bg-border"></div>
-      <script type="text/javascript">
-        var chart{{ loop.parent.index }}_{ { loop.index } }_{ { timestamp } } = echarts.init(document.getElementById('chart{{ loop.parent.index }}_{{ loop.index }}_{{ timestamp }}'), "dark");
-        var option{{ loop.parent.index }}_{ { loop.index } }_{ { timestamp } } = { { echart_code | safe } };
-                    chart{ { loop.parent.index } }_{ { loop.index } }_{ { timestamp } }.setOption(option{{ loop.parent.index }}_{{ loop.index }}_{{ timestamp }});
-      </script>
-      {% endfor %}
-      {% endif %}
-    </div>
-    {% endfor %}
-
+		  <div id="chart{{ loop.index }}_{{ timestamp }}" class="chart m-b-5 bg-border"></div>
+		  <script type="text/javascript">
+			var chart{{ loop.index }}_{ { timestamp }} = echarts.init(document.getElementById('chart{{ loop.index }}_{{ timestamp }}'), "dark");
+			var option{{ loop.index }}_{ { timestamp }} = {{ question_data['echart_code'] | safe }};
+					chart{{ loop.index }}_{{ timestamp }}.setOption(option{{ loop.index }}_{{ timestamp }});
+		  </script>
+	 {% elif question_data['echart_code'] is sequence %}
+			{% for echart_code in question_data['echart_code'] %}
+			<div id="chart{{ chart_index }}_{{ loop.index }}_{{ timestamp }}" class="chart m-b-5 bg-border"></div>
+			<script type="text/javascript">
+			  var chart{{ chart_index }}_{{ loop.index }}_{{ timestamp}} = echarts.init(document.getElementById('chart{{ chart_index }}_{{ loop.index }}_{{ timestamp }}'), "dark");
+			  var option{{ chart_index }}_{{ loop.index }}_{{ timestamp }} = {{ echart_code | safe }};
+						  chart{{ chart_index }}_{{ loop.index }}_{{ timestamp }}.setOption(option{{ chart_index }}_{{ loop.index }}_{{ timestamp }});
+			</script>
+			{% endfor %}
+	{% endif %}
+	</div>
+ {% endfor %}
 
     <div class="report-summary">
       <h2 class="m-b-5 bg-border color-white">报告总结</h2>

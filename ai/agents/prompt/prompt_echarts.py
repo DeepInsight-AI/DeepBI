@@ -36,24 +36,14 @@ Pay attention to check whether the query statement in the execution code block c
         title_opts=opts.TitleOpts(title="Sales and Profit over Time",is_show=false),
         datazoom_opts=[
             opts.DataZoomOpts(
-                # 设置 x 轴 dataZoom
-                type_="slider",
-                xaxis_index=[0],  # 控制 x 轴
+                is_show=True, type_="slider",
+                xaxis_index=[0], range_start=0, range_end=100, orient="horizontal",
+                pos_bottom="0px", pos_left="1%", pos_right="1%"
             ),
             opts.DataZoomOpts(
-                # 设置 y 轴 dataZoom
-                type_="slider",
-                yaxis_index=[0],  # 控制 y 轴
-            ),
-            opts.DataZoomOpts(
-                # 设置 x 轴 dataZoom
-                type_="inside",
-                xaxis_index=[0],  # 控制 x 轴
-            ),
-            opts.DataZoomOpts(
-                # 设置 y 轴 dataZoom
-                type_="inside",
-                yaxis_index=[0],  # 控制 y 轴
+                is_show=True, type_="slider",
+                yaxis_index=[0], range_start=0, range_end=100, orient="vertical",
+                pos_top="0px", pos_right="1%", pos_bottom="3%"
             ),
         ],
         legend_opts=opts.LegendOpts(
@@ -113,24 +103,14 @@ Pay attention to check whether the query statement in the execution code block c
         title_opts=opts.TitleOpts(title="Sales over Years",is_show=false),
         datazoom_opts=[
             opts.DataZoomOpts(
-                # 设置 x 轴 dataZoom
-                type_="slider",
-                xaxis_index=[0],  # 控制 x 轴
+                is_show=True, type_="slider",
+                xaxis_index=[0], range_start=0, range_end=100, orient="horizontal",
+                pos_bottom="0px", pos_left="1%", pos_right="1%"
             ),
             opts.DataZoomOpts(
-                # 设置 y 轴 dataZoom
-                type_="slider",
-                yaxis_index=[0],  # 控制 y 轴
-            ),
-            opts.DataZoomOpts(
-                # 设置 x 轴 dataZoom
-                type_="inside",
-                xaxis_index=[0],  # 控制 x 轴
-            ),
-            opts.DataZoomOpts(
-                # 设置 y 轴 dataZoom
-                type_="inside",
-                yaxis_index=[0],  # 控制 y 轴
+                is_show=True, type_="slider",
+                yaxis_index=[0], range_start=0, range_end=100, orient="vertical",
+                pos_top="0px", pos_right="1%", pos_bottom="3%"
             ),
         ],
         legend_opts=opts.LegendOpts(
@@ -201,24 +181,14 @@ Pay attention to check whether the query statement in the execution code block c
         title_opts=opts.TitleOpts(title="Sales and Profit over Time",is_show=false),
         datazoom_opts=[
             opts.DataZoomOpts(
-                # 设置 x 轴 dataZoom
-                type_="slider",
-                xaxis_index=[0],  # 控制 x 轴
+                is_show=True, type_="slider",
+                xaxis_index=[0], range_start=0, range_end=100, orient="horizontal",
+                pos_bottom="0px", pos_left="1%", pos_right="1%"
             ),
             opts.DataZoomOpts(
-                # 设置 y 轴 dataZoom
-                type_="slider",
-                yaxis_index=[0],  # 控制 y 轴
-            ),
-            opts.DataZoomOpts(
-                # 设置 x 轴 dataZoom
-                type_="inside",
-                xaxis_index=[0],  # 控制 x 轴
-            ),
-            opts.DataZoomOpts(
-                # 设置 y 轴 dataZoom
-                type_="inside",
-                yaxis_index=[0],  # 控制 y 轴
+                is_show=True, type_="slider",
+                yaxis_index=[0], range_start=0, range_end=100, orient="vertical",
+                pos_top="0px", pos_right="1%", pos_bottom="3%"
             ),
         ],
         legend_opts=opts.LegendOpts(
@@ -278,24 +248,14 @@ Pay attention to check whether the query statement in the execution code block c
         title_opts=opts.TitleOpts(title="Sales over Years",is_show=false),
         datazoom_opts=[
             opts.DataZoomOpts(
-                # 设置 x 轴 dataZoom
-                type_="slider",
-                xaxis_index=[0],  # 控制 x 轴
+                is_show=True, id_="dataZoomX", type_="slider",
+                xaxis_index=[0], range_start=0, range_end=100, orient="horizontal",
+                pos_bottom="0px", pos_left="1%", pos_right="1%"
             ),
             opts.DataZoomOpts(
-                # 设置 y 轴 dataZoom
-                type_="slider",
-                yaxis_index=[0],  # 控制 y 轴
-            ),
-            opts.DataZoomOpts(
-                # 设置 x 轴 dataZoom
-                type_="inside",
-                xaxis_index=[0],  # 控制 x 轴
-            ),
-            opts.DataZoomOpts(
-                # 设置 y 轴 dataZoom
-                type_="inside",
-                yaxis_index=[0],  # 控制 y 轴
+                is_show=True, id_="dataZoomY", type_="slider",
+                yaxis_index=[0], range_start=0, range_end=100, orient="vertical",
+                pos_top="0px", pos_right="1%", pos_bottom="3%"
             ),
         ],
         legend_opts=opts.LegendOpts(
@@ -320,7 +280,8 @@ Pay attention to check whether the query statement in the execution code block c
     print(out_put)
     </code>
     When using pie charts, there must be no parameter x
-    
+    X axis dataZoom is set to orient: horizontal
+    Y-axis dataZoom is set to orient: vertical"
     Set one or more dataZoom rooms based on site requirements
     Do not have any output or debug messages in the middle of the code, only output content at the end of the code
     The output should be formatted as a JSON instance that conforms to the JSON schema below, the JSON is a list of dict,

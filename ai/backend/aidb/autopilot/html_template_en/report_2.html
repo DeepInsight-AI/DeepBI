@@ -110,8 +110,8 @@
       {% if question_data['echart_code'] is string %}
 		  <div id="chart{{ loop.index }}_{{ timestamp }}" class="chart m-b-5 bg-border"></div>
 		  <script type="text/javascript">
-			var chart{{ loop.index }}_{ { timestamp }} = echarts.init(document.getElementById('chart{{ loop.index }}_{{ timestamp }}'), "dark");
-			var option{{ loop.index }}_{ { timestamp }} = {{ question_data['echart_code'] | safe }};
+			var chart{{ loop.index }}_{{ timestamp }} = echarts.init(document.getElementById('chart{{ loop.index }}_{{ timestamp }}'), "dark");
+			var option{{ loop.index }}_{{ timestamp }} = {{ question_data['echart_code'] | safe }};
 					chart{{ loop.index }}_{{ timestamp }}.setOption(option{{ loop.index }}_{{ timestamp }});
 		  </script>
 	 {% elif question_data['echart_code'] is sequence %}

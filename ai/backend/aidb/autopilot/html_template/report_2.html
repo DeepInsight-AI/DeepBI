@@ -95,9 +95,8 @@
       <li><strong>{{ thought['report_name'] }}: </strong>{{ thought['description'] }} </li>
       {% endfor %}
     </ul>
-	{% set chart_index = 0 %}
 	{% for question_data in report_question %}
-	{% set chart_index = chart_index + 1 %}
+	{% set chart_index = loop.index %}
     <div class="question-section">
       <h2 class="m-b-5 bg-border color-white">{{ question_data['question']['report_name'] }}</h2>
 

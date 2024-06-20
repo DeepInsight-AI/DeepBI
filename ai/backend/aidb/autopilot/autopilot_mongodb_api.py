@@ -36,7 +36,7 @@ class AutopilotMongoDB(Autopilot):
         print("self.agent_instance_util.api_key_use :", self.agent_instance_util.api_key_use)
 
         if not self.agent_instance_util.api_key_use:
-            re_check = await self.check_api_key()
+            re_check = await self.check_api_key(is_auto_pilot=True)
             if not re_check:
                 return
 
@@ -274,7 +274,7 @@ class AutopilotMongoDB(Autopilot):
                         use_cache=use_cache, report_file_name=report_file_name)
 
                     python_executor = self.agent_instance_util.get_agent_python_executor(
-                        report_file_name=report_file_name)
+                        report_file_name=report_file_name, is_auto_pilot=True)
                     # new db
                     await python_executor.initiate_chat(
                         mongodb_echart_assistant,
@@ -311,7 +311,7 @@ class AutopilotMongoDB(Autopilot):
 
                                         for jstr in report_demand_list:
                                             if str(jstr).__contains__('echart_name') and str(jstr).__contains__(
-                                                'echart_code'):
+                                                    'echart_code'):
                                                 base_content.append(jstr)
                                     else:
                                         # String instantiated as object
@@ -319,14 +319,13 @@ class AutopilotMongoDB(Autopilot):
                                         print("report_demand_list: ", report_demand_list)
                                         for jstr in report_demand_list:
                                             if str(jstr).__contains__('echart_name') and str(jstr).__contains__(
-                                                'echart_code'):
+                                                    'echart_code'):
                                                 base_content.append(jstr)
 
                     print("base_content: ", base_content)
                     base_mess = []
                     base_mess.append(answer_message)
                     break
-
 
                 except Exception as e:
                     traceback.print_exc()

@@ -205,6 +205,7 @@ class AgentInstanceUtil:
                 If function call is needed, the function name mast be 'run_mysql_code', be sure contains no other characters.
                 Reply "TERMINATE" in the end when everything is done.
                 ''',
+            function_map={"bi_run_chart_code": BIProxyAgent.run_chart_code},
             websocket=self.websocket,
             is_log_out=self.is_log_out,
             user_name=self.user_name,

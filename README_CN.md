@@ -136,7 +136,7 @@ git clone http://github.com/DeepInsight-AI/DeepBI.git
   </tr>
   <tr>
     <td>Microsoft Azure</td>
-    <td>gpt-4</td>
+    <td>gpt-4 (自定义的名称)</td>
     <td>支持</td>
     <td>支持</td>
     <td>支持</td>
@@ -146,7 +146,7 @@ git clone http://github.com/DeepInsight-AI/DeepBI.git
   </tr>
   <tr>
     <td>Microsoft Azure</td>
-    <td>gpt-4o</td>
+    <td>gpt-4o(自定义的名称)</td>
     <td>支持</td>
     <td>支持</td>
     <td>支持</td>

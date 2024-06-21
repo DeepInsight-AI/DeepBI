@@ -1,4 +1,12 @@
 # Version
+### 2.0.3 
+- The problem of generating pictures in the process of modifying report dialog .
+- The problem of not finding function in modifying auxiliary data analysis dialog. 
+- Added the csv automatic data analysis function. 
+- Modify the exe startup problem
+
+
+
 ### 2.0.2
 - Adapt an existing function call to the new openai version of tools
 

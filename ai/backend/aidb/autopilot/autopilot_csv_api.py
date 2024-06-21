@@ -6,17 +6,18 @@ from ai.backend.base_config import CONFIG
 from ai.backend.util import database_util
 from .autopilot import Autopilot
 import re
+import os
 import ast
 from ai.backend.util import base_util
 from ai.backend.util.db.postgresql_report import PsgReport
-from ai.agents.agentchat import AssistantAgent
-
+from ai.agents.agentchat import Questioner, AssistantAgent
+from ai.backend.language_info import LanguageInfo
 
 max_retry_times = CONFIG.max_retry_times
 max_report_question = 5
 
 
-class AutopilotStarrocks(Autopilot):
+class AutopilotCSV(Autopilot):
 
     async def deal_question(self, json_str):
         """
@@ -33,6 +34,17 @@ class AutopilotStarrocks(Autopilot):
         q_str = data['report_desc']
         q_name = data['report_name']
 
+        csv_local_paths = []
+        for item in db_comment['table_desc']:
+            csv_file = item['table_name']
+            csv_local_path = CONFIG.up_file_path + csv_file
+            if os.path.exists(csv_local_path):
+                table = {
+                    "table_name": item['table_name'],
+                    item['table_name'] + "_file_path": csv_local_path
+                }
+                csv_local_paths.append(csv_local_path)
+
         print("self.agent_instance_util.api_key_use :", self.agent_instance_util.api_key_use)
 
         if not self.agent_instance_util.api_key_use:
@@ -40,21 +52,10 @@ class AutopilotStarrocks(Autopilot):
             if not re_check:
                 return
 
-        # if json_str.get('data').get('language_mode'):
-        #     q_language_mode = json_str['data']['language_mode']
-        #     if q_language_mode == CONFIG.language_chinese or q_language_mode == CONFIG.language_english:
-        #         self.set_language_mode(q_language_mode)
-        #         self.agent_instance_util.set_language_mode(q_language_mode)
-
-        print("db_id:", db_id)
-        obj = database_util.Main(db_id)
-        if_suss, db_info = obj.run()
-        if if_suss:
-            self.agent_instance_util.base_mysql_info = '  When connecting to the database, be sure to bring the port. This is starrocks database info :' + '\n' + str(
-                db_info)
-            # self.agent_instance_util.base_message = str(db_comment)
+        if len(csv_local_paths) > 0:
+            self.agent_instance_util.base_csv_info = '  csv file path is :' + str(
+                csv_local_path)
             self.agent_instance_util.set_base_message(db_comment)
-
             self.agent_instance_util.db_id = db_id
             # start chat
             try:
@@ -76,43 +77,7 @@ class AutopilotStarrocks(Autopilot):
                 PsgReport().update_data(data_to_update)
 
     async def task_base(self, qustion_message):
-        """ Task type: mysql data analysis"""
-        try:
-            error_times = 0
-            for i in range(max_retry_times):
-                try:
-                    base_mysql_assistant = self.get_agent_base_mysql_assistant()
-                    python_executor = self.agent_instance_util.get_agent_python_executor()
-
-                    await python_executor.initiate_chat(
-                        base_mysql_assistant,
-                        message=self.agent_instance_util.base_message + '\n' + self.question_ask + '\n' + str(
-                            qustion_message),
-                    )
-
-                    answer_message = python_executor.chat_messages[base_mysql_assistant]
-                    print("answer_message: ", answer_message)
-
-                    for i in range(len(answer_message)):
-                        answer_mess = answer_message[len(answer_message) - 1 - i]
-                        # print("answer_mess :", answer_mess)
-                        if answer_mess['content'] and answer_mess['content'] != 'TERMINATE':
-                            print("answer_mess['content'] ", answer_mess['content'])
-                            return answer_mess['content']
-
-                except Exception as e:
-                    traceback.print_exc()
-                    logger.error("from user:[{}".format(self.user_name) + "] , " + "error: " + str(e))
-                    error_times = error_times + 1
-
-            if error_times >= max_retry_times:
-                return self.error_message_timeout
-
-        except Exception as e:
-            traceback.print_exc()
-            logger.error("from user:[{}".format(self.user_name) + "] , " + "error: " + str(e))
-
-        return self.agent_instance_util.data_analysis_error
+        return qustion_message
 
     def get_agent_base_mysql_assistant(self):
         """ Basic Agent, processing mysql data source """
@@ -144,9 +109,9 @@ class AutopilotStarrocks(Autopilot):
         return base_mysql_assistant
 
     async def start_chatgroup(self, q_str, report_file_name, report_id, q_name):
+
         report_html_code = {}
         try:
-            # report_html_code['report_name'] = '电商销售报告'
             report_html_code['report_name'] = q_name
             report_html_code['report_author'] = 'DeepBI'
 
@@ -188,14 +153,12 @@ class AutopilotStarrocks(Autopilot):
             planner_user = self.agent_instance_util.get_agent_planner_user(report_file_name=report_file_name)
             analyst = self.get_agent_analyst(report_file_name=report_file_name)
 
-            question_supplement = 'Please make an analysis and summary in English, including which charts were generated, and briefly introduce the contents of these charts.'
-            if self.language_mode == CONFIG.language_chinese:
-                question_supplement = " 请用中文帮我对报告做最终总结，给我有价值的结论"
+            question_supplement = " Make a final summary of the report and give me valuable conclusions. "
 
             await planner_user.initiate_chat(
                 analyst,
                 message=str(
-                    question_list) + '\n' + "这是本次报告的目标: " + '\n' + q_str + '\n' + self.question_ask + '\n' + question_supplement,
+                    question_list) + '\n' + " This is the goal of this report: " + '\n' + q_str + '\n' + LanguageInfo.question_ask + '\n' + question_supplement,
             )
 
             last_analyst = planner_user.last_message()["content"]
@@ -249,12 +212,12 @@ class AutopilotStarrocks(Autopilot):
         questioner = self.get_agent_questioner(report_file_name)
         ai_analyst = self.get_agent_ai_analyst(report_file_name)
 
-        message = self.agent_instance_util.base_message + '\n' + self.question_ask + '\n\n' + q_str
+        message = self.agent_instance_util.base_message + '\n' + LanguageInfo.question_ask + '\n\n' + q_str
         print(' generate_quesiton message:  ', message)
 
         await questioner.initiate_chat(
             ai_analyst,
-            message=self.agent_instance_util.base_message + '\n' + self.question_ask + '\n\n' + q_str,
+            message=message,
         )
 
         base_content = []
@@ -280,11 +243,15 @@ class AutopilotStarrocks(Autopilot):
                     chart_code_str = str(json_str).replace("\n", "")
                     if len(chart_code_str) > 0:
                         print("chart_code_str: ", chart_code_str)
+                        report_demand_list = None
                         if base_util.is_json(chart_code_str):
                             report_demand_list = json.loads(chart_code_str)
-                            print("report_demand_list: ", report_demand_list)
+                        else:
+                            # String instantiated as object
+                            report_demand_list = ast.literal_eval(chart_code_str)
+                        print("report_demand_list: ", report_demand_list)
+                        if report_demand_list is not None:
                             for jstr in report_demand_list:
-
                                 # 检查列表中是否存在相同名字的对象
                                 name_exists = any(item['report_name'] == jstr['report_name'] for item in base_content)
 
@@ -295,24 +262,6 @@ class AutopilotStarrocks(Autopilot):
                                     # print("插入成功")
                                 else:
                                     print("对象已存在，不重复插入")
-
-                        else:
-                            # String instantiated as object
-                            report_demand_list = ast.literal_eval(chart_code_str)
-                            print("report_demand_list: ", report_demand_list)
-                            for jstr in report_demand_list:
-
-                                # 检查列表中是否存在相同名字的对象
-                                name_exists = any(item['report_name'] == jstr['report_name'] for item in base_content)
-
-                                if not name_exists:
-                                    if len(base_content) > max_report_question:
-                                        break
-                                    base_content.append(jstr)
-                                    print("插入成功")
-                                else:
-                                    print("对象已存在，不重复插入")
-
         return base_content
 
     async def task_generate_echart(self, qustion_message, report_file_name):
@@ -325,20 +274,18 @@ class AutopilotStarrocks(Autopilot):
             use_cache = True
             for i in range(max_retry_times):
                 try:
-                    mysql_echart_assistant = self.agent_instance_util.get_agent_starrocks_echart_assistant(
-                        use_cache=use_cache, report_file_name=report_file_name)
-                    # mysql_echart_assistant = self.agent_instance_util.get_agent_mysql_echart_assistant35(
-                    #     use_cache=use_cache, report_file_name=report_file_name)
+                    csv_echart_assistant = self.agent_instance_util.get_agent_csv_echart_assistant(
+                        use_cache=use_cache)
                     python_executor = self.agent_instance_util.get_agent_python_executor(
                         report_file_name=report_file_name, is_auto_pilot=True)
 
                     await python_executor.initiate_chat(
-                        mysql_echart_assistant,
-                        message=self.agent_instance_util.base_message + '\n' + self.question_ask + '\n' + str(
+                        csv_echart_assistant,
+                        message=self.agent_instance_util.base_message + '\n' + LanguageInfo.question_ask + '\n' + str(
                             qustion_message),
                     )
 
-                    answer_message = mysql_echart_assistant.chat_messages[python_executor]
+                    answer_message = csv_echart_assistant.chat_messages[python_executor]
 
                     for answer_mess in answer_message:
                         # print("answer_mess :", answer_mess)
@@ -367,7 +314,7 @@ class AutopilotStarrocks(Autopilot):
 
                                         for jstr in report_demand_list:
                                             if str(jstr).__contains__('echart_name') and str(jstr).__contains__(
-                                                    'echart_code'):
+                                                    'echart_code') and jstr not in base_content:
                                                 base_content.append(jstr)
                                     else:
                                         # String instantiated as object
@@ -375,7 +322,7 @@ class AutopilotStarrocks(Autopilot):
                                         print("report_demand_list: ", report_demand_list)
                                         for jstr in report_demand_list:
                                             if str(jstr).__contains__('echart_name') and str(jstr).__contains__(
-                                                    'echart_code'):
+                                                    'echart_code') and jstr not in base_content:
                                                 base_content.append(jstr)
 
                     print("base_content: ", base_content)
@@ -398,7 +345,7 @@ class AutopilotStarrocks(Autopilot):
             # bi_proxy = self.agent_instance_util.get_agent_bi_proxy()
             is_chart = False
             # Call the interface to generate pictures
-            last_echart_code = None
+            last_echart_code = []
             for img_str in base_content:
                 echart_name = img_str.get('echart_name')
                 echart_code = img_str.get('echart_code')
@@ -411,15 +358,15 @@ class AutopilotStarrocks(Autopilot):
                         if base_util.is_json(str(echart_code)):
                             json_str = json.loads(str(echart_code))
                             json_str = json.dumps(json_str)
-                            last_echart_code = json_str
+                            last_echart_code.append(json_str)
                         else:
                             str_obj = ast.literal_eval(str(echart_code))
                             json_str = json.dumps(str_obj)
-                            last_echart_code = json_str
+                            last_echart_code.append(json_str)
                     except Exception as e:
                         traceback.print_exc()
                         logger.error("from user:[{}".format(self.user_name) + "] , " + "error: " + str(e))
-                        last_echart_code = json.dumps(echart_code)
+                        last_echart_code.append(json.dumps(echart_code))
 
                     # re_str = await bi_proxy.run_echart_code(str(echart_code), echart_name)
                     # base_mess.append(re_str)
@@ -432,15 +379,12 @@ class AutopilotStarrocks(Autopilot):
                     planner_user = self.agent_instance_util.get_agent_planner_user(report_file_name=report_file_name)
                     analyst = self.get_agent_analyst(report_file_name=report_file_name)
 
-                    question_supplement = 'Please make an analysis and summary in English, including which charts were generated, and briefly introduce the contents of these charts.'
-                    if self.language_mode == CONFIG.language_chinese:
-                        question_supplement = qustion_message + ".  请用中文帮我分析以上的报表数据，给我有价值的结论"
-                        print("question_supplement : ", question_supplement)
+                    question_supplement = qustion_message + '\n' + "Analyze the above report data and give me valuable conclusions"
+                    print("question_supplement : ", question_supplement)
 
                     await planner_user.initiate_chat(
                         analyst,
-                        message=str(
-                            base_mess) + '\n' + self.question_ask + '\n' + question_supplement,
+                        message=str(base_mess) + '\n' + LanguageInfo.question_ask + '\n' + question_supplement,
                     )
 
                     answer_message = planner_user.last_message()["content"]

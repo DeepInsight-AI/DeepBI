@@ -494,4 +494,3 @@ CSRF_TIME_LIMIT = int(os.environ.get("DEEPBI_CSRF_TIME_LIMIT", 3600 * 6))
 BLOCKED_DOMAINS = set_from_string(os.environ.get("DEEPBI_BLOCKED_DOMAINS", ""))
 
 AI_WEB_SERVER = os.environ.get('AI_WEB_SERVER', '127.0.0.1:8340')
-

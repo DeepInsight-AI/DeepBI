@@ -7,73 +7,134 @@ from ai.backend.util import database_util
 from .autopilot import Autopilot
 import re
 import ast
-from ai.backend.util import base_util
-from ai.backend.util.db.postgresql_report import PsgReport
+import pandas as pd
+import chardet
 from ai.agents.agentchat import AssistantAgent
+from ai.backend.util import base_util
 
 
 max_retry_times = CONFIG.max_retry_times
-max_report_question = 5
 
 
-class AutopilotStarrocks(Autopilot):
+class AutopilotCSV(Autopilot):
 
-    async def deal_question(self, json_str):
+    async def deal_question(self, json_str, message):
         """
         Process mysql data source and select the corresponding workflow
         """
-
-        report_file_name = CONFIG.up_file_path + json_str['file_name']
-        report_id = json_str['report_id']
-
-        with open(report_file_name, 'r') as file:
-            data = json.load(file)
-        db_comment = data['db_comment']
-        db_id = str(data['databases_id'])
-        q_str = data['report_desc']
-        q_name = data['report_name']
+        result = {'state': 200, 'data': {}, 'receiver': ''}
+        q_sender = json_str['sender']
+        q_data_type = json_str['data']['data_type']
+        print('q_data_type : ', q_data_type)
+        q_str = json_str['data']['content']
+        print('q_str: ', q_str)
 
         print("self.agent_instance_util.api_key_use :", self.agent_instance_util.api_key_use)
 
         if not self.agent_instance_util.api_key_use:
-            re_check = await self.check_api_key(is_auto_pilot=True)
+            re_check = await self.check_api_key()
             if not re_check:
                 return
 
-        # if json_str.get('data').get('language_mode'):
-        #     q_language_mode = json_str['data']['language_mode']
-        #     if q_language_mode == CONFIG.language_chinese or q_language_mode == CONFIG.language_english:
-        #         self.set_language_mode(q_language_mode)
-        #         self.agent_instance_util.set_language_mode(q_language_mode)
+        if q_sender == 'user':
+            if q_data_type == 'question':
+                # print("agent_instance_util.base_message :", self.agent_instance_util.base_message)
+                if self.agent_instance_util.base_message is not None:
+                    try:
+                        await self.start_chatgroup(q_str)
+                    except Exception as e:
+                        traceback.print_exc()
+                        logger.error("from user:[{}".format(self.user_name) + "] , " + str(e))
 
-        print("db_id:", db_id)
-        obj = database_util.Main(db_id)
-        if_suss, db_info = obj.run()
-        if if_suss:
-            self.agent_instance_util.base_mysql_info = '  When connecting to the database, be sure to bring the port. This is starrocks database info :' + '\n' + str(
-                db_info)
-            # self.agent_instance_util.base_message = str(db_comment)
-            self.agent_instance_util.set_base_message(db_comment)
-
-            self.agent_instance_util.db_id = db_id
-            # start chat
-            try:
-                psg = PsgReport()
-                re = psg.select_data(report_id)
-                if re is not None and len(re) > 0:
-                    print('need deal task')
-                    data_to_update = (1, report_id)
-                    update_state = psg.update_data(data_to_update)
-                    if update_state:
-                        await self.start_chatgroup(q_str, report_file_name, report_id, q_name)
+                        result['receiver'] = 'user'
+                        result['data']['data_type'] = 'answer'
+                        result['data']['content'] = self.error_message_timeout
+                        consume_output = json.dumps(result)
+                        await self.outgoing.put(consume_output)
                 else:
-                    print('no task')
+                    await self.put_message(500, receiver=CONFIG.talker_user, data_type=CONFIG.type_answer,
+                                           content=self.error_miss_data)
+        elif q_sender == CONFIG.talker_bi:
+            if q_data_type == CONFIG.type_comment:
+                await self.check_data_csv(q_str)
+            elif q_data_type == CONFIG.type_comment_first:
+                if json_str.get('data').get('language_mode'):
+                    q_language_mode = json_str['data']['language_mode']
+                    if q_language_mode == CONFIG.language_chinese or q_language_mode == CONFIG.language_english:
+                        self.set_language_mode(q_language_mode)
+                        self.agent_instance_util.set_language_mode(q_language_mode)
 
-            except Exception as e:
-                traceback.print_exc()
-                # update report status
-                data_to_update = (-1, report_id)
-                PsgReport().update_data(data_to_update)
+                if CONFIG.database_model == 'online':
+                    # Set csv basic information
+                    self.agent_instance_util.set_base_csv_info(q_str)
+                    self.agent_instance_util.base_message = str(q_str)
+                else:
+                    self.agent_instance_util.set_base_csv_info(q_str)
+                    self.agent_instance_util.base_message = str(q_str)
+
+                await self.get_data_desc(q_str)
+            elif q_data_type == CONFIG.type_comment_second:
+                print(CONFIG.type_comment_second)
+                if json_str.get('data').get('language_mode'):
+                    q_language_mode = json_str['data']['language_mode']
+                    if q_language_mode == CONFIG.language_chinese or q_language_mode == CONFIG.language_english:
+                        self.set_language_mode(q_language_mode)
+                        self.agent_instance_util.set_language_mode(q_language_mode)
+
+                if CONFIG.database_model == 'online':
+                    databases_id = json_str['data']['databases_id']
+                    db_id = str(databases_id)
+                    print("db_id:", db_id)
+                    obj = database_util.Main(db_id)
+                    if_suss, db_info = obj.run()
+                    if if_suss:
+                        self.agent_instance_util.base_mysql_info = '  When connecting to the database, be sure to bring the port. This is mysql database info :' + '\n' + str(
+                            db_info)
+                        self.agent_instance_util.base_message = str(q_str)
+                        self.agent_instance_util.db_id = db_id
+                else:
+                    self.agent_instance_util.base_message = str(q_str)
+
+                await self.put_message(200, receiver=CONFIG.talker_bi, data_type=CONFIG.type_comment_second,
+                                       content='')
+            elif q_data_type == 'mysql_code' or q_data_type == 'chart_code' or q_data_type == 'delete_chart' or q_data_type == 'ask_data':
+                self.delay_messages['bi'][q_data_type].append(message)
+                print("delay_messages : ", self.delay_messages)
+                return
+        else:
+            print("q_sender is not right")
+
+    async def check_data_csv(self, q_str):
+        """Check the data description to see if it meets the requirements"""
+        print("CONFIG.up_file_path  : " + CONFIG.up_file_path)
+        if q_str.get('table_desc'):
+            for tb in q_str.get('table_desc'):
+                if len(tb.get('field_desc')) == 0:
+                    table_name = tb.get('table_name')
+
+                    # Read file and detect encoding
+                    csv_file = CONFIG.up_file_path + table_name
+                    f = open(csv_file, 'rb')
+                    # Read the file using the detected encoding
+                    encoding = chardet.detect(f.read())['encoding']
+                    f.close()
+                    if str(table_name).endswith('.csv'):
+                        data = pd.read_csv(open(csv_file, encoding=encoding, errors='ignore'))
+                    else:
+                        data = pd.read_excel(csv_file)
+
+                    # Get column headers (first row of data)
+                    column_titles = list(data.columns)
+                    # print("column_titles : ", column_titles)
+
+                    for i in range(len(column_titles)):
+                        tb['field_desc'].append({
+                            "name": column_titles[i],
+                            "comment": '',
+                            "in_use": 1
+                        })
+
+        await self.check_data_base(q_str)
 
     async def task_base(self, qustion_message):
         """ Task type: mysql data analysis"""
@@ -143,111 +204,96 @@ class AutopilotStarrocks(Autopilot):
         )
         return base_mysql_assistant
 
-    async def start_chatgroup(self, q_str, report_file_name, report_id, q_name):
+    async def start_chatgroup(self, q_str):
+
         report_html_code = {}
-        try:
-            # report_html_code['report_name'] = '电商销售报告'
-            report_html_code['report_name'] = q_name
-            report_html_code['report_author'] = 'DeepBI'
+        report_html_code['report_name'] = '电商销售报告'
 
-            report_html_code['report_question'] = []
-            report_html_code['report_thought'] = []
-            report_html_code['report_analyst'] = []
+        report_html_code['report_question'] = []
 
-            question_message = await self.generate_quesiton(q_str, report_file_name)
+        question_message = await self.generate_quesiton(q_str)
+        print('question_message :', question_message)
 
-            print('question_message :', question_message)
+        report_html_code['report_thought'] = question_message
 
-            report_html_code['report_thought'] = question_message
+        question_list = []
+        que_num = 1
+        for ques in question_message:
+            print('ques :', ques)
+            report_demand = 'i need a echart report , ' + ques['report_name'] + ':' + ques['description']
+            print("report_demand: ", report_demand)
 
-            question_list = []
-            que_num = 0
-            for ques in question_message:
-                print('ques :', ques)
-                report_demand = 'i need a echart report , ' + ques['report_name'] + ' : ' + ques['description']
-                # report_demand = ' 10-1= ?? '
-                print("report_demand: ", report_demand)
+            question = {}
+            question['question'] = ques
+            que_num = que_num + 1
+            if que_num > 5:
+                break
 
-                question = {}
-                question['question'] = ques
-                que_num = que_num + 1
-                if que_num > max_report_question:
-                    break
+            answer_message, echart_code = await self.task_generate_echart(str(report_demand))
+            question['answer'] = answer_message
+            question['echart_code'] = echart_code
+            report_html_code['report_question'].append(question)
 
-                answer_message, echart_code = await self.task_generate_echart(str(report_demand), report_file_name)
-                if answer_message is not None and echart_code is not None:
-                    question['answer'] = answer_message
-                    question['echart_code'] = echart_code
-                    report_html_code['report_question'].append(question)
+            question_obj = {'question': report_demand, 'answer': answer_message, 'echart_code': ""}
+            question_list.append(question_obj)
 
-                question_obj = {'question': report_demand, 'answer': answer_message, 'echart_code': ""}
-                question_list.append(question_obj)
+        print('question_list:   ', question_list)
 
-            print('question_list:   ', question_list)
+        planner_user = self.agent_instance_util.get_agent_planner_user()
+        analyst = self.get_agent_analyst()
 
-            planner_user = self.agent_instance_util.get_agent_planner_user(report_file_name=report_file_name)
-            analyst = self.get_agent_analyst(report_file_name=report_file_name)
+        question_supplement = 'Please make an analysis and summary in English, including which charts were generated, and briefly introduce the contents of these charts.'
+        if self.language_mode == CONFIG.language_chinese:
+            question_supplement = " 请用中文帮我对报告做最终总结，给我有价值的结论"
 
-            question_supplement = 'Please make an analysis and summary in English, including which charts were generated, and briefly introduce the contents of these charts.'
-            if self.language_mode == CONFIG.language_chinese:
-                question_supplement = " 请用中文帮我对报告做最终总结，给我有价值的结论"
+        await planner_user.initiate_chat(
+            analyst,
+            message=str(
+                question_list) + '\n' + "这是本次报告的目标: " + '\n' + q_str + '\n' + self.question_ask + '\n' + question_supplement,
+        )
 
-            await planner_user.initiate_chat(
-                analyst,
-                message=str(
-                    question_list) + '\n' + "这是本次报告的目标: " + '\n' + q_str + '\n' + self.question_ask + '\n' + question_supplement,
-            )
+        last_analyst = planner_user.last_message()["content"]
 
-            last_analyst = planner_user.last_message()["content"]
+        print('last_analyst : ', last_analyst)
 
-            print('last_analyst : ', last_analyst)
+        match = re.search(
+            r"\[.*\]", last_analyst.strip(), re.MULTILINE | re.IGNORECASE | re.DOTALL
+        )
 
-            match = re.search(
-                r"\[.*\]", last_analyst.strip(), re.MULTILINE | re.IGNORECASE | re.DOTALL
-            )
+        if match:
+            json_str = match.group()
+        print("json_str : ", json_str)
+        # report_demand_list = json.loads(json_str)
 
-            if match:
-                json_str = match.group()
-            print("json_str : ", json_str)
-            # report_demand_list = json.loads(json_str)
-
-            last_analyst_str = str(json_str).replace("\n", "")
-            if len(last_analyst_str) > 0:
-                print("chart_code_str: ", last_analyst_str)
-                if base_util.is_json(last_analyst_str):
-                    report_demand_list = json.loads(last_analyst_str)
-                    report_html_code['report_analyst'] = report_demand_list
-                else:
-                    report_demand_list = ast.literal_eval(last_analyst_str)
-                    report_html_code['report_analyst'] = report_demand_list
-
-        except Exception as e:
-            traceback.print_exc()
-            data_to_update = (-1, report_id)
-            PsgReport().update_data(data_to_update)
-        else:
-            # 更新数据
-            data_to_update = (2, report_id)
-            PsgReport().update_data(data_to_update)
+        chart_code_str = str(json_str).replace("\n", "")
+        if len(chart_code_str) > 0:
+            print("chart_code_str: ", chart_code_str)
+            if base_util.is_json(chart_code_str):
+                report_demand_list = json.loads(chart_code_str)
+                report_html_code['report_analyst'] = report_demand_list
+            else:
+                report_demand_list = ast.literal_eval(chart_code_str)
+                report_html_code['report_analyst'] = report_demand_list
 
         print('report_html_code +++++++++++++++++ :', report_html_code)
-        if len(report_html_code['report_thought']) > 0:
-            rendered_html = self.generate_report_template(report_html_code)
-            with open(report_file_name, 'r') as file:
-                data = json.load(file)
 
-            # 修改其中的值
-            data['html_code'] = rendered_html
-            # if self.log_list is not None:
-            #     data['chat_log'] = self.log_list
+        rendered_html = self.generate_report_template(report_html_code)
 
-            # 将更改后的内容写回文件
-            with open(report_file_name, 'w') as file:
-                json.dump(data, file, indent=4)
+        result_message = {
+            'state': 200,
+            'receiver': 'autopilot',
+            'data': {
+                'data_type': 'autopilot_code',
+                'content': rendered_html
+            }
+        }
 
-    async def generate_quesiton(self, q_str, report_file_name):
-        questioner = self.get_agent_questioner(report_file_name)
-        ai_analyst = self.get_agent_ai_analyst(report_file_name)
+        send_json_str = json.dumps(result_message)
+        await self.websocket.send(send_json_str)
+
+    async def generate_quesiton(self, q_str):
+        questioner = self.get_agent_questioner()
+        ai_analyst = self.get_agent_ai_analyst()
 
         message = self.agent_instance_util.base_message + '\n' + self.question_ask + '\n\n' + q_str
         print(' generate_quesiton message:  ', message)
@@ -289,10 +335,8 @@ class AutopilotStarrocks(Autopilot):
                                 name_exists = any(item['report_name'] == jstr['report_name'] for item in base_content)
 
                                 if not name_exists:
-                                    if len(base_content) > max_report_question:
-                                        break
                                     base_content.append(jstr)
-                                    # print("插入成功")
+                                    print("插入成功")
                                 else:
                                     print("对象已存在，不重复插入")
 
@@ -306,8 +350,6 @@ class AutopilotStarrocks(Autopilot):
                                 name_exists = any(item['report_name'] == jstr['report_name'] for item in base_content)
 
                                 if not name_exists:
-                                    if len(base_content) > max_report_question:
-                                        break
                                     base_content.append(jstr)
                                     print("插入成功")
                                 else:
@@ -315,7 +357,7 @@ class AutopilotStarrocks(Autopilot):
 
         return base_content
 
-    async def task_generate_echart(self, qustion_message, report_file_name):
+    async def task_generate_echart(self, qustion_message):
         try:
             base_content = []
             base_mess = []
@@ -325,12 +367,9 @@ class AutopilotStarrocks(Autopilot):
             use_cache = True
             for i in range(max_retry_times):
                 try:
-                    mysql_echart_assistant = self.agent_instance_util.get_agent_starrocks_echart_assistant(
-                        use_cache=use_cache, report_file_name=report_file_name)
-                    # mysql_echart_assistant = self.agent_instance_util.get_agent_mysql_echart_assistant35(
-                    #     use_cache=use_cache, report_file_name=report_file_name)
-                    python_executor = self.agent_instance_util.get_agent_python_executor(
-                        report_file_name=report_file_name, is_auto_pilot=True)
+                    mysql_echart_assistant = self.agent_instance_util.get_agent_mysql_echart_assistant(
+                        use_cache=use_cache)
+                    python_executor = self.agent_instance_util.get_agent_python_executor()
 
                     await python_executor.initiate_chat(
                         mysql_echart_assistant,
@@ -406,21 +445,7 @@ class AutopilotStarrocks(Autopilot):
                 if len(echart_code) > 0 and str(echart_code).__contains__('x'):
                     is_chart = True
                     print("echart_name : ", echart_name)
-                    # 格式化echart_code
-                    try:
-                        if base_util.is_json(str(echart_code)):
-                            json_str = json.loads(str(echart_code))
-                            json_str = json.dumps(json_str)
-                            last_echart_code = json_str
-                        else:
-                            str_obj = ast.literal_eval(str(echart_code))
-                            json_str = json.dumps(str_obj)
-                            last_echart_code = json_str
-                    except Exception as e:
-                        traceback.print_exc()
-                        logger.error("from user:[{}".format(self.user_name) + "] , " + "error: " + str(e))
-                        last_echart_code = json.dumps(echart_code)
-
+                    last_echart_code = json.dumps(echart_code)
                     # re_str = await bi_proxy.run_echart_code(str(echart_code), echart_name)
                     # base_mess.append(re_str)
                     base_mess = []
@@ -429,8 +454,8 @@ class AutopilotStarrocks(Autopilot):
             error_times = 0
             for i in range(max_retry_times):
                 try:
-                    planner_user = self.agent_instance_util.get_agent_planner_user(report_file_name=report_file_name)
-                    analyst = self.get_agent_analyst(report_file_name=report_file_name)
+                    planner_user = self.agent_instance_util.get_agent_planner_user()
+                    analyst = self.get_agent_analyst()
 
                     question_supplement = 'Please make an analysis and summary in English, including which charts were generated, and briefly introduce the contents of these charts.'
                     if self.language_mode == CONFIG.language_chinese:
@@ -470,11 +495,9 @@ class AutopilotStarrocks(Autopilot):
                     error_times = error_times + 1
 
             if error_times == max_retry_times:
-                print(self.error_message_timeout)
-                return None, None
+                return self.error_message_timeout
 
         except Exception as e:
             traceback.print_exc()
             logger.error("from user:[{}".format(self.user_name) + "] , " + "error: " + str(e))
-        print(self.agent_instance_util.data_analysis_error)
-        return None, None
+        return self.agent_instance_util.data_analysis_error

@@ -86,6 +86,7 @@ sec_key=$(openssl rand -hex 16)
 env_content=$(echo "$env_content" | sed "s/SEC_KEY/$sec_key/g")
 # save .env file，保存文件
 echo "$env_content" > .env
+echo "DATA_SOURCE_FILE_DIR=/app/user_upload_files" >> .env
 # 修改配置 pip 为国内清华源
 sed 's/#CN#//g' Dockerfile.template > Dockerfile
 # 输出说明：

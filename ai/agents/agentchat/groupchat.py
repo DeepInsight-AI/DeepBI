@@ -109,7 +109,7 @@ class GroupChatManager(ConversableAgent):
             sender: Optional[Agent] = None,
             config: Optional[GroupChat] = None,
     ) -> Union[str, Dict, None]:
-        """Run a group chat."""
+        """Run a group chat.   mysql_engineer, bi_proxy, chart_presenter"""
         if messages is None:
             messages = self._oai_messages[sender]
         message = messages[-1]

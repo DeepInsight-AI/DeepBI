@@ -103,7 +103,6 @@ class DataReportFileResource(BaseResource):  # BaseResource
         with open(file_name, 'w') as file:
             json.dump(data, file)
 
-        pass
         result = models.DataReportFile(
             user_id=user_id,
             org_id=self.current_org.id,

@@ -4,8 +4,8 @@ import json
 from ai.backend.util.write_log import logger
 import traceback
 from ai.backend.util.token_util import num_tokens_from_messages
-from ai.agents.prompt import CSV_ECHART_TIPS_MESS, \
-    MYSQL_ECHART_TIPS_MESS, MYSQL_MATPLOTLIB_TIPS_MESS, POSTGRESQL_ECHART_TIPS_MESS, MONGODB_ECHART_TIPS_MESS
+from ai.agents.prompt import EXCEL_ECHART_TIPS_MESS, \
+    MYSQL_ECHART_TIPS_MESS, MYSQL_MATPLOTLIB_TIPS_MESS, POSTGRESQL_ECHART_TIPS_MESS, MONGODB_ECHART_TIPS_MESS, CSV_ECHART_TIPS_MESS
 from ai.agents.agentchat import (UserProxyAgent, GroupChat, AssistantAgent, GroupChatManager,
                                  PythonProxyAgent, BIProxyAgent, TaskPlannerAgent, TaskSelectorAgent, CheckAgent,
                                  ChartPresenterAgent)
@@ -202,8 +202,10 @@ class AgentInstanceUtil:
                 Hand over your code to the Executor for execution.
                 Don’t query too much data, Try to merge query data as simply as possible.
                 Be careful to avoid using mysql special keywords in mysql code.
+                If function call is needed, the function name mast be 'run_mysql_code', be sure contains no other characters.
                 Reply "TERMINATE" in the end when everything is done.
                 ''',
+            function_map={"bi_run_chart_code": BIProxyAgent.run_chart_code},
             websocket=self.websocket,
             is_log_out=self.is_log_out,
             user_name=self.user_name,
@@ -895,7 +897,7 @@ class AgentInstanceUtil:
         )
         return chart_planner
 
-    def get_agent_python_executor(self, report_file_name=None):
+    def get_agent_python_executor(self, report_file_name=None, is_auto_pilot=False):
         python_executor = PythonProxyAgent(
             name="python_executor",
             system_message="python executor. Execute the python code and report the result.",
@@ -908,6 +910,7 @@ class AgentInstanceUtil:
             # incoming=self.incoming,
             db_id=self.db_id,
             report_file_name=report_file_name,
+            is_auto_pilot=is_auto_pilot
         )
         return python_executor
 
@@ -927,6 +930,10 @@ class AgentInstanceUtil:
                     When you find an answer, verify the answer carefully. Include verifiable evidence in your response if possible.
                     Reply "TERMINATE" in the end when everything is done.
                     When you find an answer,  You are a report analysis, you have the knowledge and skills to turn raw data into information and insight, which can be used to make business decisions.include your analysis in your reply.
+                    It involves data queries that truncate the data if it exceeds 1000 rows, or reduce the number of rows by summing and other means.
+                    It involves data queries that truncate the data if it exceeds 1000 rows, or reduce the number of rows by summing and other means.
+                    It involves data queries that truncate the data if it exceeds 1000 rows, or reduce the number of rows by summing and other means.
+                    It involves data queries that truncate the data if it exceeds 1000 rows, or reduce the number of rows by summing and other means.
                     """ + '\n' + self.base_csv_info + '\n' + python_base_dependency + '\n' + CSV_ECHART_TIPS_MESS,
             human_input_mode="NEVER",
             user_name=self.user_name,

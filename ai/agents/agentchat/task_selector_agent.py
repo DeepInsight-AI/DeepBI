@@ -154,21 +154,29 @@ class TaskSelectorAgent(ConversableAgent):
                     for func in CONFIG.agents_functions:
                         if len(str(reply)) > 0 and func in str(reply):
                             is_func = True
-                            suggest_function = {'role': 'assistant', 'content': None, 'function_call': {'name': func,
-                                                                                                        'arguments': '{"qustion_message":"' + str(
-                                                                                                            messages[
-                                                                                                                -1][
-                                                                                                                'content']) + '"}'}}
+                            suggest_function = {
+                                'role': 'assistant',
+                                'content': None,
+                                'function_call':
+                                    {
+                                        'name': func,
+                                        'arguments': '{"qustion_message":"' + str(messages[-1]['content']).replace('"', '\\"') + '"}'
+                                    }
+                            }
                             print('reply : ', reply)
                             # return reply
                             return suggest_function
 
                     if not is_func:
-                        suggest_function = {'role': 'assistant', 'content': None,
-                                            'function_call': {'name': CONFIG.default_agents_functions,
-                                                              'arguments': '{"qustion_message":"' + str(
-                                                                  messages[-1][
-                                                                      'content']) + '"}'}}
+                        suggest_function = {
+                            'role': 'assistant',
+                            'content': None,
+                            'function_call':
+                                {
+                                    'name': CONFIG.default_agents_functions,
+                                    'arguments': '{"qustion_message":"' + str(messages[-1]['content']).replace('"', '\\"') + '"}'
+                                }
+                        }
                         print('reply : ', reply)
                         # return reply
                         return suggest_function

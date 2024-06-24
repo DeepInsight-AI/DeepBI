@@ -1,0 +1,72 @@
+{
+    "field_desc": [
+        {
+            "name": "campaignId",
+            "comment": "广告活动ID"
+        },
+        {
+            "name": "campaignName",
+            "comment": "广告活动"
+        },
+        {
+            "name": "Budget",
+            "comment": "预算"
+        },
+        {
+            "name": "market",
+            "comment": "国家"
+        },
+        {
+            "name": "cost_yesterday",
+            "comment": "广告活动昨天的花费"
+        },
+        {
+            "name": "clicks_yesterday",
+            "comment": "广告活动昨天的点击数"
+        },
+        {
+            "name": "sales_yesterday",
+            "comment": "广告活动昨天的销售额"
+        },
+        {
+            "name": "total_cost_7d",
+            "comment": "广告活动最近7天的总花费"
+        },
+        {
+            "name": "total_sales14d_7d",
+            "comment": "广告活动最近7天的总销售额"
+        },
+        {
+            "name": "total_cost_30d",
+            "comment": "广告活动最近30天的总花费"
+        },
+        {
+            "name": "total_sales14d_30d",
+            "comment": "广告活动最近30天的总销售额"
+        },
+        {
+            "name": "total_clicks_30d",
+            "comment": "广告活动最近30天的总点击数"
+        },
+        {
+            "name": "total_clicks_7d",
+            "comment": "广告活动最近7天的总点击数"
+        },
+        {
+            "name": "ACOS_30d",
+            "comment": "广告活动最近30天的平均ACOS值"
+        },
+        {
+            "name": "ACOS_7d",
+            "comment": "广告活动最近7天的平均ACOS值"
+        },
+        {
+            "name": "ACOS_yesterday",
+            "comment": "广告活动昨天的平均ACOS值"
+        },
+        {
+            "name": "country_avg_ACOS_1m",
+            "comment": "该国家广告活动最近一个月整体的平均ACOS值"
+        }
+    ]
+}

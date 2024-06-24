@@ -1,0 +1,60 @@
+{
+    "field_desc": [
+        {
+            "name": "campaignName",
+            "comment": "广告活动"
+        },
+        {
+            "name": "campaignId",
+            "comment": "广告活动ID"
+        },
+        {
+            "name": "total_sales14d_1m",
+            "comment": "广告活动最近30天的总销售额"
+        },
+        {
+            "name": "total_sales14d_7d",
+            "comment": "广告活动最近7天的总销售额"
+        },
+        {
+            "name": "total_cost_30d",
+            "comment": "广告活动最近30天的总花费"
+        },
+        {
+            "name": "total_cost_7d",
+            "comment": "广告活动最近7天的总花费"
+        },
+        {
+            "name": "ACOS_30d",
+            "comment": "广告活动最近30天的平均ACOS值"
+        },
+        {
+            "name": "ACOS_7d",
+            "comment": "广告活动最近7天的平均ACOS值"
+        },
+        {
+            "name": "ACOS_yesterday",
+            "comment": "广告活动昨天的ACOS值"
+        },
+        {
+            "name": "impressions_yesterday",
+            "comment": "广告活动昨天的impressions"
+        },
+        {
+            "name": "clicks_yesterday",
+            "comment": "广告活动昨天的点击数"
+        },
+        {
+            "name": "cost_yesterday",
+            "comment": "广告活动昨天的花费"
+        },
+        {
+            "name": "campaignBudgetAmount",
+            "comment": "广告活动的预算"
+        },
+        {
+            "name": "sales14d_yesterday",
+            "comment": "广告活动昨天的销售额"
+        }
+    ]
+}

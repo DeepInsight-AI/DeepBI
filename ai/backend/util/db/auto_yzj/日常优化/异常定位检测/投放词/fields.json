@@ -1,0 +1,100 @@
+{
+    "field_desc": [
+        {
+            "name": "campaignName",
+            "comment": "广告活动"
+        },
+        {
+            "name": "campaignId",
+            "comment": "广告活动ID"
+        },
+        {
+            "name": "adGroupName",
+            "comment": "广告组"
+        },
+        {
+            "name": "targeting",
+            "comment": "投放词"
+        },
+        {
+            "name": "matchType",
+            "comment": "匹配类型"
+        },
+        {
+            "name": "total_sales14d_1m",
+            "comment": "投放词最近30天的总销售额"
+        },
+        {
+            "name": "total_sales14d_7d",
+            "comment": "投放词最近7天的总销售额"
+        },
+        {
+            "name": "total_cost_30d",
+            "comment": "投放词最近30天的总花费"
+        },
+        {
+            "name": "total_cost_7d",
+            "comment": "投放词最近7天的总花费"
+        },
+        {
+            "name": "total_purchases7d_30d",
+            "comment": "投放词最近30天的总订单数"
+        },
+        {
+            "name": "total_purchases7d_7d",
+            "comment": "投放词最近7天的总订单数"
+        },
+        {
+            "name": "total_clicks_30d",
+            "comment": "投放词最近30天的总点击数"
+        },
+        {
+            "name": "total_clicks_7d",
+            "comment": "投放词最近7天的总点击数"
+        },
+        {
+            "name": "CPC_30d",
+            "comment": "投放词最近30天的CPC值"
+        },
+        {
+            "name": "CPC_7d",
+            "comment": "投放词最近7天的CPC值"
+        },
+        {
+            "name": "CPC_yesterday",
+            "comment": "投放词昨天的CPC值"
+        },
+        {
+            "name": "ACOS_30d",
+            "comment": "投放词最近30天的平均ACOS值"
+        },
+        {
+            "name": "ACOS_7d",
+            "comment": "投放词最近7天的平均ACOS值"
+        },
+        {
+            "name": "ACOS_yesterday",
+            "comment": "投放词昨天的ACOS值"
+        },
+        {
+            "name": "impressions_yesterday",
+            "comment": "投放词昨天的impressions"
+        },
+        {
+            "name": "clicks_yesterday",
+            "comment": "投放词昨天的点击数"
+        },
+        {
+            "name": "cost_yesterday",
+            "comment": "投放词昨天的花费"
+        },
+        {
+            "name": "purchases7d_yesterday",
+            "comment": "投放词昨天的订单数"
+        },
+        {
+            "name": "sales14d_yesterday",
+            "comment": "投放词昨天的销售额"
+        }
+    ]
+}

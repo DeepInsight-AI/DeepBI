@@ -1,0 +1,36 @@
+{
+    "field_desc": [
+        {
+            "name": "campaignName",
+            "comment": "广告活动名称"
+        },
+        {
+            "name": "adGroupName",
+            "comment": "广告组名称"
+        },
+        {
+            "name": "total_sales_15d",
+            "comment": "自动定位组最近15天的总销售额"
+        },
+        {
+            "name": "total_clicks_7d",
+            "comment": "自动定位组最近15天的总销售额"
+        },
+        {
+            "name": "keyword",
+            "comment": "关键词"
+        },
+        {
+            "name": "matchType",
+            "comment": "匹配类型"
+        },
+        {
+            "name": "keywordBid",
+            "comment": "自动定位组竞价"
+        },
+        {
+            "name": "keywordId",
+            "comment": "自动定位组id"
+        }
+    ]
+}

@@ -1,8 +1,8 @@
 import asyncio
 
-from tools_sp_campaign import CampaignTools
-from tools_db_sp import DbSpTools
-from tools_db_new_sp import DbNewSpTools
+from ai.backend.util.db.auto_process.tools_sp_campaign import CampaignTools
+from ai.backend.util.db.auto_process.tools_db_sp import DbSpTools
+from ai.backend.util.db.auto_process.tools_db_new_sp import DbNewSpTools
 from datetime import datetime
 from ai.backend.util.db.db_amazon.generate_tools import ask_question
 
@@ -55,7 +55,7 @@ class Gen_campaign:
 
 
     # 新增广告系列
-    def create_camapign(self,market,name,dynamicBidding,startDate,portfolioId,endDate,targetingType,state,budgetType,budget):
+    def create_camapign(self,market,name,startDate,dynamicBidding,portfolioId,endDate,targetingType,state,budgetType,budget):
         campaigninfo = {
       "campaigns": [
         {
@@ -81,9 +81,9 @@ class Gen_campaign:
         # 根据创建结果更新log
         dbNewTools = DbNewSpTools()
         if res[0] == "success":
-            dbNewTools.create_sp_campaigin(market,portfolioId,endDate,name,res[1],targetingType,state,startDate,budgetType,budget,"success",datetime.now())
+            dbNewTools.create_sp_campaigin(market,portfolioId,endDate,name,res[1],targetingType,state,startDate,budgetType,budget,"success",datetime.now(),"SP",None)
         else:
-            dbNewTools.create_sp_campaigin(market,portfolioId,endDate,name,res[1],targetingType,state,startDate,budgetType,budget,"failed",datetime.now())
+            dbNewTools.create_sp_campaigin(market,portfolioId,endDate,name,res[1],targetingType,state,startDate,budgetType,budget,"failed",datetime.now(),"SP",None)
 
         return res[1]
 
@@ -91,23 +91,22 @@ class Gen_campaign:
 
 
     # 更新广告系列 简单数据更新
-    def update_camapign_v0(self,market,campaignId,campaignName,state,budgetType,budget_new,budget_old=None):
+    def update_camapign_v0(self,market,campaignId,campaignName,budget_old,budget_new,state):
         campaign_info = {
             "campaigns": [
                 {
-                    "campaignId": campaignId,
-                    "name": campaignName,
+                    "campaignId": str(campaignId),
                     "state": state,
                     "budget": {
-                        "budgetType": budgetType,
+                        "budgetType": "DAILY",
                         "budget": budget_new
-                    },
+                    }
                 }
             ]
         }
         #调用api
         apitool = CampaignTools()
-        apires = apitool.update_campaigns(campaign_info)
+        apires = apitool.update_campaigns(campaign_info,market)
 
         # 更新log
         #     def update_sp_campaign(self,market,campaign_name,campaign_id,budget_old,budget_new,standards_acos,acos,beizhu,status,update_time):
@@ -173,7 +172,7 @@ class Gen_campaign:
 
     # 更新广告系列的placement
     # 按照顺序进行传入
-    def update_campaign_placement(self,market,campaignId,p_top_percentage,p_res_of_search_percentage,p_product_page_percentage):
+    def update_campaign_placement(self,market,campaignId,Budget,percentage,placement):
         campaign_placement_info = {
             "campaigns": [
                 {
@@ -181,16 +180,8 @@ class Gen_campaign:
                     "dynamicBidding": {
                         "placementBidding": [
                             {
-                                "percentage": p_top_percentage,
-                                "placement": "PLACEMENT_TOP"
-                            },
-                            {
-                                "percentage": p_res_of_search_percentage,
-                                "placement": "PLACEMENT_REST_OF_SEARCH"
-                            },
-                            {
-                                "percentage": p_product_page_percentage,
-                                "placement": "PLACEMENT_PRODUCT_PAGE"
+                                "percentage": percentage,
+                                "placement": placement
                             },
                         ],
                     },
@@ -200,16 +191,15 @@ class Gen_campaign:
 
         # api更新
         apitool = CampaignTools()
-        res = apitool.update_campaigns(campaign_placement_info)
+        res = apitool.update_campaigns(campaign_placement_info,market)
         # 根据结果写入日志
         #     def update_sp_campaign_placement(self,market,campaignId,p_top,p_top_percentage,p_res_of_search,p_res_of_search_percentage,p_product_page,p_product_page_percentage,status,update_time):
         newdbtool = DbNewSpTools()
         if res[0]=="success":
-            newdbtool.update_sp_campaign_placement(market,campaignId,"PLACEMENT_TOP",p_top_percentage,"PLACEMENT_REST_OF_SEARCH",p_res_of_search_percentage,"PLACEMENT_PRODUCT_PAGE",p_product_page_percentage,"success",datetime.now())
+            newdbtool.update_sp_campaign_placement(market,campaignId,placement,Budget,percentage,"success",datetime.now())
         else:
-            newdbtool.update_sp_campaign_placement(market, campaignId, "PLACEMENT_TOP", p_top_percentage,
-                                                   "PLACEMENT_REST_OF_SEARCH", p_res_of_search_percentage,
-                                                   "PLACEMENT_PRODUCT_PAGE", p_product_page_percentage, "failed",
+            newdbtool.update_sp_campaign_placement(market, campaignId, placement, Budget,
+                                                   percentage, "failed",
                                                    datetime.now())
     # 更新placement测试
     # update_campaign_placement('US','531571979684792',0,0,0)
@@ -265,7 +255,7 @@ class Gen_campaign:
             newdbtool.update_sp_campaign_negativeKeyword(market, keyword_state, None, campaignNegativeKeywordId, "failed",datetime.now())
 
 # ins = Gen_campaign()
-# ins.list_camapign(campaignId=425905373052430, market='FR')
+# ins.list_camapign(campaignId=427804187615144, market='FR')
 # ins.create_camapign(market='FR',portfolioId=None,dynamicBidding={"placementBidding": [{"percentage": 20, "placement": "PLACEMENT_TOP"}], "strategy": "AUTO_FOR_SALES"}, endDate=None,name='DeepBI_AUTO_test',targetingType='AUTO',state='PAUSED',startDate='2024-05-20',budgetType='DAILY',budget=10)
     #修改关键词状态测试：
     #update_campaigin_negative_keyword('US','428799562608462','PAUSED')

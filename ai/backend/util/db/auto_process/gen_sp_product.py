@@ -1,9 +1,9 @@
-from tools_sp_adGroup import AdGroupTools
-from tools_db_sp import DbSpTools
-from tools_db_new_sp import DbNewSpTools
+from ai.backend.util.db.auto_process.tools_sp_adGroup import AdGroupTools
+from ai.backend.util.db.auto_process.tools_db_sp import DbSpTools
+from ai.backend.util.db.auto_process.tools_db_new_sp import DbNewSpTools
 from datetime import datetime
 
-from tools_sp_product import ProductTools
+from ai.backend.util.db.auto_process.tools_sp_product import ProductTools
 db_info = {'host': '****', 'user': '****', 'passwd': '****', 'port': 3306,
                'db': '****',
                'charset': 'utf8mb4', 'use_unicode': True, }
@@ -29,9 +29,9 @@ def create_productsku(market,campaignId,adGroupId,sku,asin,state):
     # 如果执行成功或者失败 记录到log表记录
     dbNewTools = DbNewSpTools()
     if adId[0]=="success":
-        dbNewTools.create_sp_product(market,campaignId,asin,sku,adGroupId,adId[1],"success",datetime.now())
+        dbNewTools.create_sp_product(market,campaignId,asin,sku,adGroupId,adId[1],"success",datetime.now(),"SP")
     else:
-        dbNewTools.create_sp_product(market,campaignId,asin,sku,adGroupId,adId[1],"failed",datetime.now())
+        dbNewTools.create_sp_product(market,campaignId,asin,sku,adGroupId,adId[1],"failed",datetime.now(),"SP")
     return adId[1]
 # 新增测试
 # create_productsku('FR','284793893968513','B075SWSWHR','PAUSED','LPM17SS0035MT0300LR4','397527887041271')
@@ -49,7 +49,7 @@ def update_product(market,adId,state):
     }
     # 执行修改品
     apitoolProduct = ProductTools()
-    adIdres = apitoolProduct.update_product_api(product_info)
+    adIdres = apitoolProduct.update_product_api(product_info,market)
     print(adIdres)
     # 如果执行成功或者失败 记录到log表记录
     dbNewTools = DbNewSpTools()

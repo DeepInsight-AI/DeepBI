@@ -1,8 +1,8 @@
 import asyncio
 
-from tools_db_new_sp import DbNewSpTools
+from ai.backend.util.db.auto_process.tools_db_new_sp import DbNewSpTools
 from datetime import datetime
-from tools_sp_keyword import SPKeywordTools
+from ai.backend.util.db.auto_process.tools_sp_keyword import SPKeywordTools
 from ai.backend.util.db.db_amazon.generate_tools import ask_question
 
 
@@ -40,13 +40,40 @@ def add_keyword_toadGroup(market,campaignId,matchType,state,bid,adGroupId,keywor
         dbNewTools.add_sp_keyword_toadGroup(market,res[1],campaignId,matchType,state,bid,adGroupId,keywordText,keywordText_new,"failed",datetime.now())
     return res[1]
 
-def update_keyword_toadGroup(market,keywordId,state,bid):
+
+def add_keyword_toadGroup_v0(market,campaignId,adGroupId,keywordText,matchType,state,bid):
+    # 翻译完成进行添加
+    keyword_info={
+  "keywords": [
+    {
+      "campaignId": str(campaignId),
+      "matchType": matchType,
+      "state": state,
+      "bid": bid,
+      "adGroupId": str(adGroupId),
+      "keywordText": keywordText
+    }
+  ]
+}
+    # 新增关键词操作
+    apitool = SPKeywordTools()
+    res = apitool.create_spkeyword_api(keyword_info, market)
+
+    # 根据结果更新log
+    dbNewTools = DbNewSpTools()
+    if res[0]=="success":
+        dbNewTools.add_sp_keyword_toadGroup(market,res[1],campaignId,matchType,state,bid,adGroupId,None,keywordText,"success",datetime.now())
+    else:
+        dbNewTools.add_sp_keyword_toadGroup(market,res[1],campaignId,matchType,state,bid,adGroupId,None,keywordText,"failed",datetime.now())
+    return res[1]
+
+def update_keyword_toadGroup(market,keywordId,bid,state):
 
     # 修改广告组关键词信息
     keyword_info={
   "keywords": [
     {
-      "keywordId": keywordId,
+      "keywordId": str(keywordId),
       "state": state,
       "bid": bid
     }
@@ -54,7 +81,7 @@ def update_keyword_toadGroup(market,keywordId,state,bid):
 }
     # 修改关键词操作
     apitool = SPKeywordTools()
-    res = apitool.update_spkeyword_api(keyword_info)
+    res = apitool.update_spkeyword_api(keyword_info,market)
 
     # 根据结果更新log
     # def update_sp_keyword_toadGroup(self,market,keywordId,state,bid,operation_state,create_time):

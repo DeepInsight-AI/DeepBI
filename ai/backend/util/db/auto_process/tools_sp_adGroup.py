@@ -11,7 +11,7 @@ class AdGroupTools:
         self.credentials = self.load_credentials()
 
     def load_credentials(self):
-        credentials_path = './credentials.json'
+        credentials_path = 'C:/Users/admin/PycharmProjects/DeepBI/ai/backend/util/db/auto_process/credentials.json'
         with open(credentials_path) as f:
             config = json.load(f)
         return config['credentials']
@@ -41,7 +41,7 @@ class AdGroupTools:
             print("create adGroup success,adGroupId is:", adGroupID)
             return ["success",adGroupID]
         else:
-            print("create adGroup failed:", e)
+            print("create adGroup failed:")
             return ["failed", adGroupID]
 
 
@@ -206,7 +206,7 @@ class AdGroupTools:
         #     return ["success", negativeKeywordId]
         else:
             print("list adGroup TargetingClause failed")
-            return ["failed", ""]
+            return result.payload["targetingClauses"]
 
     def update_adGroup_TargetingC(self, adGroup_info, market):
         try:
@@ -228,6 +228,145 @@ class AdGroupTools:
         else:
             print("update adGroup TargetingClause failed")
             return ["failed", ""]
+
+    def create_adGroup_TargetingC(self, adGroup_info, market):
+        try:
+            credentials, marketplace = self.select_market(market)
+            result = sponsored_products.TargetsV3(credentials=credentials,
+                                                           marketplace=marketplace,
+                                                           debug=True).create_product_targets(
+                body=json.dumps(adGroup_info))
+        except Exception as e:
+            print("create adGroup TargetingClause failed: ", e)
+            result = None
+        if result and result.payload["targetingClauses"]["success"]:
+            print("create adGroup TargetingClause success")
+            return ["success", result.payload["targetingClauses"]["success"][0]]
+        # if result and result.payload["negativeKeywords"]["success"]:
+        #     negativeKeywordId = result.payload["negativeKeywords"]["success"][0]["negativeKeywordId"]
+        #     print("add adGroup negative keyword success,negativeKeywordId is:", negativeKeywordId)
+        #     return ["success", negativeKeywordId]
+        else:
+            print("create adGroup TargetingClause failed")
+            return ["failed", ""]
+
+
+
+    def list_adGroup_Targetingrecommendations(self, market, asins):
+        adGroup_info={
+  "asins": asins,
+  "includeAncestor": False
+}
+        try:
+            credentials, marketplace = self.select_market(market)
+
+            result = sponsored_products.TargetsV3(credentials=credentials,
+                                                           marketplace=marketplace,
+                                                           debug=True).list_products_targets_categories_recommendations(
+                body=json.dumps(adGroup_info))
+        except Exception as e:
+            print("list adGroup Targetingrecommendations failed: ", e)
+            result = None
+        if result and result.payload:
+            print("list adGroup Targetingrecommendations success")
+            return result.payload
+        # if result and result.payload["negativeKeywords"]["success"]:
+        #     negativeKeywordId = result.payload["negativeKeywords"]["success"][0]["negativeKeywordId"]
+        #     print("add adGroup negative keyword success,negativeKeywordId is:", negativeKeywordId)
+        #     return ["success", negativeKeywordId]
+        else:
+            print("list adGroup Targetingrecommendations failed")
+            return ["failed", ""]
+
+
+    def list_category_refinements(self, market, categoryId):
+        try:
+            credentials, marketplace = self.select_market(market)
+
+            result = sponsored_products.TargetsV3(credentials=credentials,
+                                                           marketplace=marketplace,
+                                                           debug=True).list_products_targets_category_refinements(
+                categoryId=categoryId)
+        except Exception as e:
+            print("list category_refinements failed: ", e)
+            result = None
+        if result and result.payload:
+            print("list category_refinements success")
+            return result.payload
+        # if result and result.payload["negativeKeywords"]["success"]:
+        #     negativeKeywordId = result.payload["negativeKeywords"]["success"][0]["negativeKeywordId"]
+        #     print("add adGroup negative keyword success,negativeKeywordId is:", negativeKeywordId)
+        #     return ["success", negativeKeywordId]
+        else:
+            print("list category_refinements failed")
+            return ["failed", ""]
+
+
+    def list_category_bid_recommendations(self, market, categoryId,new_campaign_id,new_adgroup_id):
+        adGroup_info={
+  "targetingExpressions": [
+    {
+      "type": "PAT_CATEGORY",
+      "value": str(categoryId)
+    }
+  ],
+  "campaignId": new_campaign_id,
+  "recommendationType": "BIDS_FOR_EXISTING_AD_GROUP",
+  "adGroupId": new_adgroup_id
+}
+        try:
+            credentials, marketplace = self.select_market(market)
+
+            result = sponsored_products.BidRecommendationsV3(credentials=credentials,
+                                                           marketplace=marketplace,
+                                                           debug=True).get_bid_recommendations(
+                body=json.dumps(adGroup_info))
+        except Exception as e:
+            print("list category_bid failed: ", e)
+            result = None
+        if result and result.payload:
+            print("list category_bid success")
+            return result.payload
+        # if result and result.payload["negativeKeywords"]["success"]:
+        #     negativeKeywordId = result.payload["negativeKeywords"]["success"][0]["negativeKeywordId"]
+        #     print("add adGroup negative keyword success,negativeKeywordId is:", negativeKeywordId)
+        #     return ["success", negativeKeywordId]
+        else:
+            print("list category_bid failed")
+            return ["failed", ""]
+
+    def list_product_bid_recommendations(self, market, asin,new_campaign_id,new_adgroup_id):
+        adGroup_info={
+  "targetingExpressions": [
+    {
+      "type": "PAT_ASIN",
+      "value": asin
+    }
+  ],
+  "campaignId": new_campaign_id,
+  "recommendationType": "BIDS_FOR_EXISTING_AD_GROUP",
+  "adGroupId": new_adgroup_id
+}
+        try:
+            credentials, marketplace = self.select_market(market)
+
+            result = sponsored_products.BidRecommendationsV3(credentials=credentials,
+                                                           marketplace=marketplace,
+                                                           debug=True).get_bid_recommendations(
+                body=json.dumps(adGroup_info))
+        except Exception as e:
+            print("list product_bid failed: ", e)
+            result = None
+        if result and result.payload:
+            print("list product_bid success")
+            return result.payload
+        # if result and result.payload["negativeKeywords"]["success"]:
+        #     negativeKeywordId = result.payload["negativeKeywords"]["success"][0]["negativeKeywordId"]
+        #     print("add adGroup negative keyword success,negativeKeywordId is:", negativeKeywordId)
+        #     return ["success", negativeKeywordId]
+        else:
+            print("list product_bid failed")
+            return ["failed", ""]
 # 广告组更新否定关键词测试
 # adGroup_negativekw_info = {
 # "negativeKeywords": [
@@ -237,7 +376,7 @@ class AdGroupTools:
 # }
 # ]
 # }
-# agt=AdGroupTools()
+# agt=AdGroupTools_SD()
 # res = agt.get_adGroup_negativekw('FR',306913253726907)
 # print(type(res))
 # print(res)
@@ -254,8 +393,10 @@ class AdGroupTools:
 #     }
 #   ]
 # }
-# agt=AdGroupTools()
-# res = agt.list_adGroup_TargetingClause(397527887041271,'FR')
+
+
+# agt = AdGroupTools()
+# res = agt.list_adGroup_TargetingClause(48743010222967,'DE')
 # # print(type(res))
 # print(res)
 
@@ -273,6 +414,12 @@ class AdGroupTools:
 #
 # agt=AdGroupTools()
 # # 测试更新广告系列信息
-# res = agt.get_adGroup_api('US','311043566627712')
+# res = agt.get_adGroup_api('FR','397527887041271')
+# #res = agt.list_adGroup_Targetingrecommendations('FR',['B08NDYCFVG','B0CHRX765S','B0CHRYCWPG','B08NDY9F91','B08NDR42XX','B0CHRTK8LZ'])
+# #res = agt.list_category_refinements('FR',464943031)464867031
+# #res = agt.list_product_bid_recommendations('FR','B07L8GX9YY',332826141768516,366375831366135)
+# res = agt.list_category_bid_recommendations('FR',464867031,19768705031,332826141768516,366375831366135)
+# #res = agt.list_adGroup_TargetingClause(366375831366135,'FR')
 # print(type(res))
 # print(res)
+

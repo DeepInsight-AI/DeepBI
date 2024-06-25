@@ -5,19 +5,13 @@ import json
 import datetime
 from decimal import Decimal
 
-my_credentials = dict(
-        refresh_token='****',
-        client_id='****',
-        client_secret='****',
-        profile_id='****',
-    )
 
 class ProductTools:
     def __init__(self):
         self.credentials = self.load_credentials()
 
     def load_credentials(self):
-        credentials_path = './credentials.json'
+        credentials_path = 'C:/Users/admin/PycharmProjects/DeepBI/ai/backend/util/db/auto_process/credentials.json'
         with open(credentials_path) as f:
             config = json.load(f)
         return config['credentials']
@@ -51,11 +45,12 @@ class ProductTools:
 
 
 
-    def update_product_api(self,product_info):
+    def update_product_api(self,product_info,market):
 
         try:
-            result = sponsored_products.ProductAdsV3(credentials=my_credentials,
-                                                                 marketplace=Marketplaces.NA,
+            credentials, marketplace = self.select_market(market)
+            result = sponsored_products.ProductAdsV3(credentials=credentials,
+                                                                 marketplace=marketplace,
                                                                  debug=True).edit_product_ads(
                     body=json.dumps(product_info))
             print(result)
@@ -107,7 +102,8 @@ class ProductTools:
 # # # res = pt.update_product_api(product_info)
 # # # print(type(res))
 # # # print(res)
-# pt.get_product_api('UK',72580692054969)
+# res = pt.get_product_api('UK',72580692054969)
+# print(res)
 
 # pt=ProductTools()
 # res = pt.create_product_api(product_info)

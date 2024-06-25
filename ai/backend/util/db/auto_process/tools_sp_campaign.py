@@ -10,7 +10,7 @@ class CampaignTools:
         self.credentials = self.load_credentials()
 
     def load_credentials(self):
-        credentials_path = './credentials.json'
+        credentials_path = 'C:/Users/admin/PycharmProjects/DeepBI/ai/backend/util/db/auto_process/credentials.json'
         with open(credentials_path) as f:
             config = json.load(f)
         return config['credentials']
@@ -67,14 +67,14 @@ class CampaignTools:
         return res
 
     # 更新广告系列（调整Budget、状态、enddate）
-    def update_campaigns(self,campaign_info):
+    def update_campaigns(self,campaign_info,market):
 
         try:
-            result = sponsored_products.CampaignsV3(credentials=my_credentials,
-                                                    marketplace=Marketplaces.NA,
+            credentials, marketplace = self.select_market(str(market))
+            result = sponsored_products.CampaignsV3(credentials=credentials,
+                                                    marketplace=marketplace,
                                                     debug=True).edit_campaigns(
                 body=json.dumps(campaign_info))
-            print(result)
         except Exception as e:
             print("update campaigns failed: ", e)
             result = None

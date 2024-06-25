@@ -3,9 +3,7 @@ from datetime import datetime
 import pandas as pd
 import pymysql
 
-db_info = {'host': '****', 'user': '****', 'passwd': '****', 'port': 3306,
-               'db': '****',
-               'charset': 'utf8mb4', 'use_unicode': True, }
+
 
 def get_timestamp():
     # 获取当前时间
@@ -17,7 +15,10 @@ def get_timestamp():
     return date_timestamp_string
 
 class DbSpTools:
-    def __init__(self, db_info):
+    def __init__(self):
+        db_info = {'host': '192.168.5.114', 'user': 'test_deepdata', 'passwd': 'test123!@#', 'port': 3308,
+                   'db': 'amazon_ads',
+                   'charset': 'utf8mb4', 'use_unicode': True, }
         self.conn = self.connect(db_info)
 
     def connect(self, db_info):
@@ -113,3 +114,133 @@ from temp2
 
         except Exception as error:
             print("get_sp_adgroup_update Error while query data:", error)
+
+    def select_sd_campaign_name(self, market,product):
+        try:
+            conn = self.conn
+
+            query = """SELECT campaignName FROM amazon_campaign_reports_sd
+            WHERE market = '{}'
+            AND LOWER(campaignName) LIKE LOWER('%{}%')""".format(market, product)
+            df = pd.read_sql(query, con=conn)
+            if df.empty:
+                print("No campaign name")
+                return ["faile"]
+            else:
+                print("campaignName is already exist")
+                return ["success"]
+        except Exception as e:
+            print(f"Error occurred when select_sd_campaign_name: {e}")
+
+    def select_sp_campaign_name(self, market,product):
+        try:
+            conn = self.conn
+
+            query = """SELECT campaignName FROM amazon_campaign_reports_sp
+            WHERE market = '{}'
+            AND LOWER(campaignName) LIKE LOWER('%{}%')""".format(market, product)
+            df = pd.read_sql(query, con=conn)
+            if df.empty:
+                print("No campaign name")
+                return ["faile"]
+            else:
+                print("campaignName is already exist")
+                return ["success"]
+        except Exception as e:
+            print(f"Error occurred when select_sd_campaign_name: {e}")
+
+    def select_sd_product_sku(self, market,product):
+        try:
+            conn = self.conn
+            sku = "frsku"
+            query = """
+            SELECT {}
+FROM prod_as_product_base
+WHERE sspu = '{}'
+and base_market = 'US'
+GROUP BY {}
+            """.format(sku, product, sku)
+            df = pd.read_sql(query, con=conn)
+            if df.empty:
+                print("No product sku")
+            else:
+                print("select sd product sku success")
+                return df[sku].tolist()
+        except Exception as e:
+            print(f"Error occurred when select_sd_product_sku: {e}")
+
+    def select_sp_product_asin(self, market1,market2,asin):
+        try:
+            conn = self.conn
+            asin1 = f"{market1.lower()}asin"
+            asin2 = f"{market2.lower()}asin"
+            query = """
+           SELECT {}
+    FROM prod_as_product_base
+    WHERE {} = '{}'
+            """.format(asin1, asin2, asin)
+            df = pd.read_sql(query, con=conn)
+            isales = df.loc[0, asin1]
+            return isales
+        except Exception as e:
+            print(f"Error occurred when select_sd_product_sku: {e}")
+
+    def select_sp_product_sku(self, market1,market2,advertisedSku):
+        try:
+            conn = self.conn
+            market1_sku = "frsku"
+            market2_sku = f"{market2.lower()}sku"
+            query = """
+            SELECT {} FROM prod_as_product_base
+WHERE base_market = 'US'
+and nsspu = (
+SELECT nsspu FROM prod_as_product_base
+WHERE  base_market = 'US'
+and {} = '{}'
+GROUP BY nsspu
+)
+GROUP BY {}
+            """.format(market1_sku, market2_sku, advertisedSku,market1_sku)
+            df = pd.read_sql(query, con=conn)
+            if df.empty:
+                print("No product sku")
+            else:
+                print("select sp product sku success")
+                return df[market1_sku].tolist()
+        except Exception as e:
+            print(f"Error occurred when select_sp_product_sku: {e}")
+
+    def select_product_sku(self, market1,market2,advertisedSku):
+        try:
+            conn = self.conn
+            market1_sku = "desku"
+            market2_sku = f"{market2.lower()}sku"
+            query = """
+            SELECT {} FROM prod_as_product_base
+WHERE base_market = 'US'
+and nsspu in (
+SELECT nsspu FROM prod_as_product_base
+WHERE  base_market = 'US'
+and {} in %(column1_values1)s
+GROUP BY nsspu
+)
+GROUP BY {}
+            """.format(market1_sku, market2_sku,market1_sku)
+            df = pd.read_sql(query, con=conn, params={'column1_values1': advertisedSku})
+            if df.empty:
+                print("No product sku")
+            else:
+                print("select sp product sku success")
+                return df[market1_sku].tolist()
+        except Exception as e:
+            print(f"Error occurred when select_product_sku: {e}")
+
+
+
+# api = DbSpTools()
+# #res = api.select_sd_campaign_name("FR",'M06')
+# # #res = api.select_sp_product_asin("IT",'FR','B0CHRYCWPG')
+# # res = api.select_sp_campaign_name('FR',"DeepBI_0514_M35_ASIN")
+# res = api.select_product_sku('DE','FR',['LPK17SS00010WHI006R4'])
+# print(res)
+#L17

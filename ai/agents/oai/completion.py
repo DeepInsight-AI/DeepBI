@@ -291,6 +291,12 @@ class Completion(openai_Completion):
                             'ApiSecret': use_api_secret
                         }
                         response = AWSClaudeClient.run(api_data, data, use_model, use_url)
+                    elif "Moonshot" == use_llm_name:
+                        """
+                        The Moonshot 
+                        """
+                        from .moonshotAdapter import MoonshotClient
+                        response= MoonshotClient.run(use_api_key, data, use_model, use_url)
                     else:
                         raise Exception("No model:", use_llm_name)
                 else:

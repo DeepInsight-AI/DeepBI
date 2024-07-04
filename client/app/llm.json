@@ -52,6 +52,16 @@
             "Model"
         ]
     },
+    "Azure": {
+        "ApiKey": "",
+        "Model": "",
+        "ApiHost": "",
+        "required": [
+            "ApiKey",
+            "Model",
+            "ApiHost"
+        ]
+    },
     "Moonshot": {
         "ApiKey": "",
         "Model": "",

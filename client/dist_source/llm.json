@@ -61,5 +61,13 @@
             "Model",
             "ApiHost"
         ]
+    },
+    "Moonshot": {
+        "ApiKey": "",
+        "Model": "",
+        "ApiHost": "",
+        "required": [
+            "ApiKey"
+        ]
     }
 }

@@ -204,7 +204,7 @@ git clone http://github.com/DeepInsight-AI/DeepBI.git
     <td>单数据表分析相对可以，多表适应差，DeepBI2.0.1</td>
     <td>5k / 输入输出均为0.12元</td>
   </tr>
-    <tr>
+  <tr>
     <td>Moonshot</td>
     <td>moonshot-v1-128k</td>
     <td>支持</td>

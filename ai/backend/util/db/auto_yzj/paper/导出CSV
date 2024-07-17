@@ -1,0 +1,26 @@
+# filename: 导出CSV
+import pandas as pd
+
+# 读取CSV文件
+csv_path = r"C:\Users\admin\PycharmProjects\DeepBI\ai\backend\util\db\auto_yzj\日常优化\自动sp广告\复开SKU\预处理.csv"
+data = pd.read_csv(csv_path)
+
+# 设定筛选条件
+condition1 = (data['ACOS_30d'] > 0) & (data['ACOS_30d'] <= 0.24) & (data['ACOS_7d'] > 0) & (data['ACOS_7d'] <= 0.24)
+condition2 = (data['ACOS_30d'] > 0) & (data['ACOS_30d'] <= 0.24) & (data['total_clicks_7d'] == 0)
+
+# 筛选满足条件的SKU
+filtered_data = data[condition1 | condition2].copy()
+
+# 添加满足的定义标签
+filtered_data['definition'] = ""
+filtered_data.loc[condition1, 'definition'] = "定义一"
+filtered_data.loc[condition2, 'definition'] = "定义二"
+
+# 选择需要的列
+result_data = filtered_data[['campaignName', 'adId', 'adGroupName', 'ACOS_30d', 'ACOS_7d', 'total_clicks_7d', 'advertisedSku', 'ORDER_1m', 'definition']]
+
+# 保存结果到新的CSV文件
+output_path = r"C:\Users\admin\PycharmProjects\DeepBI\ai\backend\util\db\auto_yzj\日常优化\自动sp广告\复开SKU\提问策略\自动_复开SKU_v1_1_DE_2024-06-26.csv"
+result_data.to_csv(output_path, index=False)
+print("结果已保存到CSV文件", output_path)

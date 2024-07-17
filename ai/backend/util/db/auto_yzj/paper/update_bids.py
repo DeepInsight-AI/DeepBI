@@ -2,49 +2,61 @@
 
 import pandas as pd
 
-# 读取CSV文件
-file_path = r"C:\Users\admin\PycharmProjects\DeepBI\ai\backend\util\db\auto_yzj\日常优化\自动sp广告\自动定位组优化\预处理.csv"
+# 读取数据
+file_path = r'C:\Users\admin\PycharmProjects\DeepBI\ai\backend\util\db\auto_yzj\日常优化\手动sp广告\商品投放优化\预处理.csv'
 df = pd.read_csv(file_path)
 
-# 增加列以保存调整后的竞价
-df['New_keywordBid'] = df['keywordBid']
-
-# 定义函数来调整竞价并返回新竞价、增加金额和原因
+# 定义提价函数
 def adjust_bid(row):
-    reason = ""
-    increase = 0.00
+    if (0 < row['ACOS_7d'] <= 0.1 and 
+        0 < row['ACOS_30d'] <= 0.1 and 
+        row['ORDER_1m'] >= 2 and 
+        0 < row['ACOS_3d'] <= 0.2):
+        return 0.05, '定义一'
+    elif (0 < row['ACOS_7d'] <= 0.1 and 
+          0.1 < row['ACOS_30d'] <= 0.24 and 
+          row['ORDER_1m'] >= 2 and 
+          0 < row['ACOS_3d'] <= 0.2):
+        return 0.03, '定义二'
+    elif (0.1 < row['ACOS_7d'] <= 0.2 and 
+          0 < row['ACOS_30d'] <= 0.1 and 
+          row['ORDER_1m'] >= 2 and 
+          0 < row['ACOS_3d'] <= 0.2):
+        return 0.04, '定义三'
+    elif (0.1 < row['ACOS_7d'] <= 0.2 and 
+          0.1 < row['ACOS_30d'] <= 0.24 and 
+          row['ORDER_1m'] >= 2 and 
+          0 < row['ACOS_3d'] <= 0.2):
+        return 0.02, '定义四'
+    elif (0.2 < row['ACOS_7d'] <= 0.24 and 
+          0 < row['ACOS_30d'] <= 0.1 and 
+          row['ORDER_1m'] >= 2 and 
+          0 < row['ACOS_3d'] <= 0.2):
+        return 0.02, '定义五'
+    elif (0.2 < row['ACOS_7d'] <= 0.24 and 
+          0.1 < row['ACOS_30d'] <= 0.24 and 
+          row['ORDER_1m'] >= 2 and 
+          0 < row['ACOS_3d'] <= 0.2):
+        return 0.01, '定义六'
+    else:
+        return 0, ''
 
-    if 0 < row['ACOS_7d'] < 0.24 and row['ACOS_30d'] > 0.5:
-        increase = 0.01
-        reason = "定义一"
-    elif 0 < row['ACOS_7d'] < 0.24 and row['ACOS_30d'] > 0.5:
-        increase = 0.02
-        reason = "定义二"
-    elif 0.1 < row['ACOS_7d'] < 0.24 and 0 < row['ACOS_30d'] < 0.24:
-        increase = 0.03
-        reason = "定义三"
-    elif 0 < row['ACOS_7d'] < 0.1 and 0 < row['ACOS_30d'] < 0.24:
-        increase = 0.05
-        reason = "定义四"
+# 应用提价规则
+df['increase_bid'], df['reason'] = zip(*df.apply(adjust_bid, axis=1))
+df['New_keywordBid'] = df['keywordBid'] + df['increase_bid']
 
-    new_bid = row['keywordBid'] + increase
-    return pd.Series([new_bid, increase, reason])
+# 筛选得到表现较好商品投放
+df_good_performance = df[df['increase_bid'] > 0]
 
-# 应用调整竞价函数到每一行数据
-df[['New_keywordBid', 'Increase', 'Reason']] = df.apply(adjust_bid, axis=1)
-
-# 筛选出符合条件的关键词
-result_df = df[df['Reason'] != ""]
-
-# 选择要输出的列
+# 选择需要输出的列
 output_columns = [
-    'campaignName', 'adGroupName', 'keyword', 'keywordBid',
-    'New_keywordBid', 'ACOS_30d', 'ACOS_7d', 'total_clicks_7d', 'Increase', 'Reason'
+    'keyword', 'keywordId', 'campaignName', 'adGroupName', 'matchType', 
+    'keywordBid', 'New_keywordBid', 'targeting', 'total_cost_30d', 
+    'total_clicks_30d', 'ACOS_7d', 'ACOS_30d', 'ORDER_1m', 'increase_bid', 'reason'
 ]
-result_df = result_df[output_columns]
 
-# 保存结果到CSV文件
-output_file_path = r"C:\Users\admin\PycharmProjects\DeepBI\ai\backend\util\db\auto_yzj\日常优化\自动sp广告\自动定位组优化\提问策略\自动_优质自动定位组_v1_1_IT_2024-06-21.csv"
-result_df.to_csv(output_file_path, index=False, encoding='utf-8-sig')
+# 导出数据
+output_file_path = r'C:\Users\admin\PycharmProjects\DeepBI\ai\backend\util\db\auto_yzj\日常优化\手动sp广告\商品投放优化\提问策略\手动_ASIN_优质商品投放_v1_1_LAPASA_DE_2024-07-14.csv'
+df_good_performance.to_csv(output_file_path, index=False, columns=output_columns)
 
-print("结果已保存到", output_file_path)
+print(f"Data successfully saved to {output_file_path}")

@@ -2,66 +2,51 @@
 
 import pandas as pd
 
-# Load data from CSV
-file_path = r'C:\Users\admin\PycharmProjects\DeepBI\ai\backend\util\db\auto_yzj\日常优化\手动sp广告\广告位优化\预处理.csv'
+# 读取数据
+file_path = r'C:\Users\admin\PycharmProjects\DeepBI\ai\backend\util\db\auto_yzj\日常优化\手动sp广告\商品投放优化\预处理.csv'
 data = pd.read_csv(file_path)
 
-# Prepare empty list to store results
+# 定义判断条件
+conditions = [
+    # 定义一
+    {'condition': (data['ACOS_7d'] > 0) & (data['ACOS_7d'] <= 0.1) & (data['ACOS_30d'] > 0) & (data['ACOS_30d'] <= 0.1) & (data['ORDER_1m'] >= 2),
+     'increase': 0.05, 'reason': '定义一'},
+    # 定义二
+    {'condition': (data['ACOS_7d'] > 0) & (data['ACOS_7d'] <= 0.1) & (data['ACOS_30d'] > 0.1) & (data['ACOS_30d'] <= 0.24) & (data['ORDER_1m'] >= 2),
+     'increase': 0.03, 'reason': '定义二'},
+    # 定义三
+    {'condition': (data['ACOS_7d'] > 0.1) & (data['ACOS_7d'] <= 0.2) & (data['ACOS_30d'] > 0) & (data['ACOS_30d'] <= 0.1) & (data['ORDER_1m'] >= 2),
+     'increase': 0.04, 'reason': '定义三'},
+    # 定义四
+    {'condition': (data['ACOS_7d'] > 0.1) & (data['ACOS_7d'] <= 0.2) & (data['ACOS_30d'] > 0.1) & (data['ACOS_30d'] <= 0.24) & (data['ORDER_1m'] >= 2),
+     'increase': 0.02, 'reason': '定义四'},
+    # 定义五
+    {'condition': (data['ACOS_7d'] > 0.2) & (data['ACOS_7d'] <= 0.24) & (data['ACOS_30d'] > 0) & (data['ACOS_30d'] <= 0.1) & (data['ORDER_1m'] >= 2),
+     'increase': 0.02, 'reason': '定义五'},
+    # 定义六
+    {'condition': (data['ACOS_7d'] > 0.2) & (data['ACOS_7d'] <= 0.24) & (data['ACOS_30d'] > 0.1) & (data['ACOS_30d'] <= 0.24) & (data['ORDER_1m'] >= 2),
+     'increase': 0.01, 'reason': '定义六'},
+]
+
+# 筛选符合条件的数据并计算新的出价
 results = []
+for cond in conditions:
+    filtered_data = data[cond['condition']].copy()
+    filtered_data['New_keywordBid'] = filtered_data['keywordBid'] + cond['increase']
+    filtered_data['Increase'] = cond['increase']
+    filtered_data['Reason'] = cond['reason']
+    results.append(filtered_data)
 
-# Define function to check and record poor perfoming ads
-def check_poor_performance(row):
-    # Initialize an empty dictionary for each row to store reasons
-    result = {
-        'campaignName': row['campaignName'],
-        'placementClassification': row['placementClassification'],
-        'ACOS_7d': row['ACOS_7d'],
-        'ACOS_3d': row['ACOS_3d'],
-        'total_clicks_7d': row['total_clicks_7d'],
-        'total_clicks_3d': row['total_clicks_3d'],
-        'bid_adjustment': 0,
-        'reason': []
-    }
-    
-    # Definition One
-    if row['total_sales14d_7d'] == 0 and row['total_clicks_7d'] > 0:
-        result['bid_adjustment'] = 'Bid set to 0'
-        result['reason'].append('Definition One')
-    
-    # Definition Three
-    if row['ACOS_7d'] >= 0.5:
-        result['bid_adjustment'] = 'Bid set to 0'
-        result['reason'].append('Definition Three')
-    
-    return result
+final_results = pd.concat(results)
 
-# Definition Two Specific Functionality
-def process_definition_two(group):
-    acos_values = group['ACOS_7d']
-    
-    if acos_values.max() > 0.24 and acos_values.max() < 0.5 and (acos_values.max() - acos_values.min() >= 0.2):
-        max_acos_idx = acos_values.idxmax()
-        group.loc[max_acos_idx, 'bid_adjustment'] = 'Reduced 3%'
-        group.loc[max_acos_idx, 'reason'].append('Definition Two')
-    
-    return group
+# 选择需要输出的列
+output_columns = [
+    'keyword', 'keywordId', 'campaignName', 'adGroupName', 'matchType', 'keywordBid', 'New_keywordBid',
+    'targeting', 'total_cost_30d', 'total_clicks_30d', 'ACOS_7d', 'ACOS_30d', 'ORDER_1m', 'Increase', 'Reason'
+]
 
-# Apply check_poor_performance function to each row and store results
-for idx, row in data.iterrows():
-    result = check_poor_performance(row)
-    results.append(result)
+# 保存结果到CSV
+output_file = r'C:\Users\admin\PycharmProjects\DeepBI\ai\backend\util\db\auto_yzj\日常优化\手动sp广告\商品投放优化\提问策略\手动_ASIN_优质商品投放_v1_1_DELOMO_IT_2024-07-09.csv'
+final_results[output_columns].to_csv(output_file, index=False)
 
-# Convert results list to DataFrame
-results_df = pd.DataFrame(results)
-
-# Process for Definition Two
-grouped = results_df.groupby('campaignName').apply(process_definition_two)
-
-# Filter only rows with bid adjustments
-results_df = grouped[grouped['bid_adjustment'] != 0]
-
-# Save the results to a CSV file
-output_path = r'C:\Users\admin\PycharmProjects\DeepBI\ai\backend\util\db\auto_yzj\日常优化\手动sp广告\广告位优化\提问策略\劣质广告位_FR_2024-5-27.csv'
-results_df.to_csv(output_path, index=False)
-
-print("Analysis complete and results saved to", output_path)
+print(f"结果已保存到 {output_file}")

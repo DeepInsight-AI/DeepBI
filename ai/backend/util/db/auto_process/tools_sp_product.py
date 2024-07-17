@@ -1,27 +1,37 @@
+import os
+
 import pymysql
 from ad_api.api import sponsored_products
 from ad_api.base import Marketplaces
 import json
 import datetime
 from decimal import Decimal
+from ai.backend.util.db.configuration.path import get_config_path
 
 
 class ProductTools:
-    def __init__(self):
+    def __init__(self,brand):
         self.credentials = self.load_credentials()
+        self.brand = brand
 
     def load_credentials(self):
-        credentials_path = 'C:/Users/admin/PycharmProjects/DeepBI/ai/backend/util/db/auto_process/credentials.json'
+        credentials_path = os.path.join(get_config_path(), 'credentials.json')
+        #credentials_path = 'C:/Users/admin/PycharmProjects/DeepBI/ai/backend/util/db/auto_process/credentials.json'
         with open(credentials_path) as f:
             config = json.load(f)
         return config['credentials']
 
     def select_market(self, market):
-        credentials = self.credentials.get(market)
-        if not credentials:
+        market_credentials = self.credentials.get(market)
+        if not market_credentials:
             raise ValueError(f"Market '{market}' not found in credentials")
+
+        brand_credentials = market_credentials.get(self.brand)
+        if not brand_credentials:
+            raise ValueError(f"Brand '{self.brand}' not found in credentials for market '{market}'")
+
         # 返回相应的凭据和市场信息
-        return credentials, Marketplaces[market.upper()]
+        return brand_credentials, Marketplaces[market.upper()]
 
     def create_product_api(self,product_info,market):
         try:
@@ -71,7 +81,7 @@ class ProductTools:
     def get_product_api(self, market, adGroupID):
         credentials, marketplace = self.select_market(market)
         adGroup_info = {
-            "maxResults": 200,
+            "maxResults": 1000,
             "adGroupIdFilter": {
                 "include": [
                     str(adGroupID)
@@ -98,11 +108,11 @@ class ProductTools:
 
 #修改品测试
 
-# pt=ProductTools()
+# pt=ProductTools('LAPASA')
 # # # res = pt.update_product_api(product_info)
 # # # print(type(res))
 # # # print(res)
-# res = pt.get_product_api('UK',72580692054969)
+# res = pt.get_product_api('FR',392187134232726)
 # print(res)
 
 # pt=ProductTools()

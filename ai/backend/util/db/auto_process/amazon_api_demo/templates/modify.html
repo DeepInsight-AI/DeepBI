@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>修改页面</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            padding: 20px;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+        form {
+            margin-top: 20px;
+        }
+        label {
+            display: block;
+            margin-top: 10px;
+        }
+        select, input[type="file"] {
+            width: 100%;
+            padding: 8px;
+            margin-top: 5px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        button[type="submit"] {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        button[type="submit"]:hover {
+            background-color: #45a049;
+        }
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <h1>修改页面</h1>
+
+    <form action="/modify_function" method="POST" enctype="multipart/form-data">
+        <label for="csvFile">上传 CSV 文件:</label>
+        <input type="file" id="csvFile" name="csvFile" accept=".csv" required>
+
+        <label for="operationOption">操作选项:</label>
+        <select name="operationOption" id="operationOption" onchange="toggleFields(this.value)">
+            <option value="">--请选择一个选项--</option>
+            <option value="createCampaign">新建广告活动</option>
+            <option value="priceAdjustment">改价</option>
+        </select>
+
+        <div id="createCampaignFields" class="hidden">
+            <label for="strategy">策略:</label>
+            <select name="strategy">
+                <option value="0502">0502</option>
+                <option value="0507">0507</option>
+            </select>
+
+            <label for="brand">品牌:</label>
+            <select name="brand">
+                <option value="LAPASA">LAPASA</option>
+                <option value="DELOMO">DELOMO</option>
+                <option value="OutdoorMaster">OutdoorMaster</option>
+            </select>
+
+            <label for="country">国家:</label>
+            <select name="country">
+                <option value="IT">意大利</option>
+                <option value="ES">西班牙</option>
+                <option value="DE">德国</option>
+                <option value="FR">法国</option>
+                <option value="UK">英国</option>
+                <option value="US">美国</option>
+            </select>
+
+            <label for="templateCountry">模板国家:</label>
+            <select name="templateCountry">
+                <option value="IT">意大利</option>
+                <option value="ES">西班牙</option>
+                <option value="DE">德国</option>
+                <option value="FR">法国</option>
+                <option value="UK">英国</option>
+                <option value="US">美国</option>
+            </select>
+        </div>
+
+        <button type="submit">修改</button>
+    </form>
+
+    <script>
+        function toggleFields(value) {
+            var createFields = document.getElementById('createCampaignFields');
+            if (value === 'createCampaign') {
+                createFields.classList.remove('hidden');
+            } else {
+                createFields.classList.add('hidden');
+            }
+        }
+    </script>
+</body>
+</html>

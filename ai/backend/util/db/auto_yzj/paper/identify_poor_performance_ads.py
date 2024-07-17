@@ -1,56 +1,71 @@
 # filename: identify_poor_performance_ads.py
+
 import pandas as pd
 
-# Load the dataset
-file_path = r'C:\Users\admin\PycharmProjects\DeepBI\ai\backend\util\db\auto_yzj\日常优化\手动sp广告\广告位优化\预处理.csv'
-df = pd.read_csv(file_path)
+# 读取csv文件路径
+file_path = r"C:\Users\admin\PycharmProjects\DeepBI\ai\backend\util\db\auto_yzj\日常优化\手动sp广告\商品投放优化\预处理.csv"
 
-# Initialize a list to store the results
-results = []
+# 读取数据
+data = pd.read_csv(file_path)
 
-# Definition 1:
-def check_definition_1(row):
-    return (row['total_sales14d_7d'] == 0) and (row['total_clicks_7d'] > 0)
+# 按照定义条件筛选表现较差的商品投放
+poor_ads = []
 
-# Definition 2:
-def check_definition_2(campaign_group):
-    acoss = campaign_group['ACOS_7d']
-    if len(acoss) == 3 and (0.24 < acoss.min() < 0.5) and (0.24 < acoss.max() < 0.5) and (acoss.max() - acoss.min() >= 0.2):
-        max_acos_idx = acoss.idxmax()
-        campaign_group.at[max_acos_idx, 'bid_reduction'] = -3  # Mark for reduction by 3%
-        return campaign_group
-    return pd.DataFrame()
+for index, row in data.iterrows():
+    new_bid = row['keywordBid']  # 默认不变
+    
+    if (0.24 < row['ACOS_7d'] <= 0.5) and (0 < row['ACOS_30d'] <= 0.5):
+        new_bid = row['keywordBid'] / ((row['ACOS_7d'] - 0.24) / 0.24 + 1)
+        reason = '定义一'
+    
+    elif (row['ACOS_7d'] > 0.5) and (row['ACOS_30d'] <= 0.36):
+        new_bid = row['keywordBid'] / ((row['ACOS_7d'] - 0.24) / 0.24 + 1)
+        reason = '定义二'
 
-# Definition 3:
-def check_definition_3(row):
-    return row['ACOS_7d'] >= 0.5
+    elif (row['total_clicks_7d'] >= 10) and (row['total_sales14d_7d'] == 0) and (row['ACOS_30d'] <= 0.36):
+        new_bid = row['keywordBid'] - 0.04
+        reason = '定义三'
 
-# Process the dataset row-wise for Definition 1 and Definition 3
-for idx, row in df.iterrows():
-    if check_definition_1(row):
-        results.append([row['campaignName'], row['placementClassification'], row['ACOS_7d'], row['ACOS_3d'],
-                        row['total_clicks_7d'], row['total_clicks_3d'], 'Definition 1: Total sales last 7 days is 0'])
-    elif check_definition_3(row):
-        results.append([row['campaignName'], row['placementClassification'], row['ACOS_7d'], row['ACOS_3d'],
-                        row['total_clicks_7d'], row['total_clicks_3d'], 'Definition 3: Average ACOS last 7 days >= 0.5'])
+    elif (row['total_clicks_7d'] > 10) and (row['total_sales14d_7d'] == 0) and (row['ACOS_30d'] > 0.5):
+        new_bid = '关闭'
+        reason = '定义四'
 
-# Group by campaignName and apply Definition 2
-grouped_df = df.groupby('campaignName')
-for campaign_name, grouped_data in grouped_df:
-    updated_campaign_data = check_definition_2(grouped_data)
-    if not updated_campaign_data.empty:
-        for _, updated_row in updated_campaign_data.iterrows():
-            if 'bid_reduction' in updated_row and updated_row['bid_reduction'] == -3:
-                results.append([updated_row['campaignName'], updated_row['placementClassification'], updated_row['ACOS_7d'], 
-                                updated_row['ACOS_3d'], updated_row['total_clicks_7d'], updated_row['total_clicks_3d'], 
-                                'Definition 2: Reduced bid by 3%'])
+    elif (row['ACOS_7d'] > 0.5) and (row['ACOS_30d'] > 0.36):
+        new_bid = '关闭'
+        reason = '定义五'
 
-# Convert results to DataFrame
-results_df = pd.DataFrame(results, columns=['campaignName', 'placementClassification', 'ACOS_7d', 'ACOS_3d', 
-                                            'total_clicks_7d', 'total_clicks_3d', 'Reason'])
+    elif (row['total_sales14d_30d'] == 0) and (row['total_cost_30d'] >= 5):
+        new_bid = '关闭'
+        reason = '定义六'
 
-# Save results to a new CSV file
-output_filepath = r'C:\Users\admin\PycharmProjects\DeepBI\ai\backend\util\db\auto_yzj\日常优化\手动sp广告\广告位优化\提问策略\手动_劣质广告位_ES_2024-06-05.csv'
-results_df.to_csv(output_filepath, index=False)
+    elif (row['total_sales14d_30d'] == 0) and (row['total_clicks_30d'] >= 15) and (row['total_clicks_7d'] > 0):
+        new_bid = '关闭'
+        reason = '定义七'
 
-print("Process completed. Results have been saved to:", output_filepath)
+    else:
+        continue
+    
+    poor_ads.append({
+        'keyword': row['keyword'],
+        'keywordId': row['keywordId'],
+        'campaignName': row['campaignName'],
+        'adGroupName': row['adGroupName'],
+        'matchType': row['matchType'],
+        'keywordBid': row['keywordBid'],
+        'New_keywordBid': new_bid,
+        'targeting': row['targeting'],
+        'total_cost_30d': row['total_cost_30d'],
+        'total_clicks_30d': row['total_clicks_30d'],
+        'total_cost_7d': row['total_cost_7d'],
+        'total_sales14d_7d': row['total_sales14d_7d'],
+        'ACOS_7d': row['ACOS_7d'],
+        'ACOS_30d': row['ACOS_30d'],
+        'reason': reason
+    })
+    
+# 转换为DataFrame并保存新的CSV文件
+result_df = pd.DataFrame(poor_ads)
+result_file_path = r"C:\Users\admin\PycharmProjects\DeepBI\ai\backend\util\db\auto_yzj\日常优化\手动sp广告\商品投放优化\提问策略\手动_ASIN_劣质商品投放_v1_1_LAPASA_FR_2024-07-09.csv"
+result_df.to_csv(result_file_path, index=False)
+
+print(f"结果已保存至 {result_file_path}")

@@ -2,7 +2,7 @@ import pymysql
 import pandas as pd
 from datetime import datetime
 import warnings
-from generate_tools import ask_question,ask_question1
+from ai.backend.util.db.db_amazon.generate_tools import  ask_question,ask_question1
 import asyncio
 
 
@@ -752,12 +752,12 @@ HAVING  ACOS < (0.2 * 1.3) and (0.2 * 1.2) <ACOS
 
             query = """
                     SELECT targetingId, targetingText, SUM(clicks) AS total_clicks ,SUM(cost) as total_cost, SUM(sales) as total_sales,adGroupName,adGroupId,(SUM(cost) / SUM(sales)) as ACOS
-FROM amazon_targeting_reports_sd
-                WHERE
+                    FROM amazon_targeting_reports_sd
+                     WHERE
                     date BETWEEN '{}' AND '{}'
                     AND market = '{}'
-                GROUP BY targetingId, targetingText ,adGroupName,adGroupId
-HAVING  ACOS < (0.2 * 1.2) and (0.2 * 1.1) <ACOS
+                        GROUP BY targetingId, targetingText ,adGroupName,adGroupId
+                        HAVING  ACOS < (0.2 * 1.2) and (0.2 * 1.1) <ACOS
                             """.format(startdate, enddate, market)
             df = pd.read_sql(query, con=conn)
             print(df)
@@ -774,7 +774,30 @@ HAVING  ACOS < (0.2 * 1.2) and (0.2 * 1.1) <ACOS
         except Exception as error:
             print("325Error while inserting data:", error)
 
+    def get_sd_sku_change(self, sku):
+        try:
+            conn = self.conn
+            query = """
+                            SELECT sku
+FROM _get_fba_fulfillment_inventory_receipts_data_
+WHERE shopid = 'DE'
+AND master_sku IN (
+    SELECT master_sku
+    FROM _get_fba_fulfillment_inventory_receipts_data_
+    WHERE shopid = 'US' AND sku = '{}'
+)
+GROUP BY sku;
+                            """.format(sku)
 
+            df = pd.read_sql(query, con=conn)
+            # return df
+            sku = df.loc[0, 'sku']
+            # return df
+            return sku
+
+        except Exception as error:
+
+            print("Error while sku change:", error)
 
 # if __name__ == '__main__':
 #     print("====amazon ====")

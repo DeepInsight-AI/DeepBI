@@ -2,7 +2,7 @@ import csv
 import json
 
 from flask import render_template, Flask
-from ai.backend.util.db.db_dwx.dwx_generate_tools import generate_ecode
+#from ai.backend.util.db.db_dwx.dwx_generate_tools import generate_ecode
 from amazon_mysql_util_genarate_optimizesp import AmazonMysqlOptimizeSP
 from auto_content import REPORT_THOUGHT_SD, REPORT_ANALYST, REPORT_SP_OPTIMIZER_THOUGHT
 # -*- coding: utf-8 -*-
@@ -16,8 +16,8 @@ import os
 def auto_generate_optimize_sp(market,startdate,endate):
     """该报告针对指定market 指定时间段内的 ：SP线性优化ACOS期望和销售额期望"""
 
-    db_info = {'host': '****', 'user': '****', 'passwd': '****', 'port': 3308,
-               'db': '****',
+    db_info = {'host': '192.168.5.114', 'user': 'test_deepdata', 'passwd': 'test123!@#', 'port': 3308,
+               'db': 'amazon_ads',
                'charset': 'utf8mb4', 'use_unicode': True, }
 
     dwx = AmazonMysqlOptimizeSP(db_info)

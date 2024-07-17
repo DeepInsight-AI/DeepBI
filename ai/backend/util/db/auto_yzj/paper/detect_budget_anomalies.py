@@ -1,46 +1,53 @@
 # filename: detect_budget_anomalies.py
-
 import pandas as pd
 
 # 读取CSV文件
-file_path = r'C:\Users\admin\PycharmProjects\DeepBI\ai\backend\util\db\auto_yzj\日常优化\异常定位检测\广告活动\预处理.csv'
+file_path = 'C:\\Users\\admin\\PycharmProjects\\DeepBI\\ai\\backend\\util\\db\\auto_yzj\\日常优化\\异常定位检测\\广告活动\\预处理.csv'
 data = pd.read_csv(file_path)
 
 # 计算日均花费
-data['avg_cost_7d'] = data['total_cost_7d'] / 7
-data['avg_cost_30d'] = data['total_cost_30d'] / 30
+data['daily_cost_7d'] = data['total_cost_7d'] / 7
+data['daily_cost_30d'] = data['total_cost_30d'] / 30
 
-# 定义异常检测函数
-def detect_anomalies(row):
-    anomalies = []
+# 定义异常列表
+anomalies = []
+
+# 检查每个广告活动的异常情况
+for _, row in data.iterrows():
+    campaign_id = row['campaignId']
+    campaign_name = row['campaignName']
+    cost_yesterday = row['cost_yesterday']
+    budget = row['campaignBudgetAmount']
+    daily_cost_7d = row['daily_cost_7d']
+    daily_cost_30d = row['daily_cost_30d']
     
-    if row['cost_yesterday'] > row['campaignBudgetAmount'] and (row['avg_cost_7d'] < (row['campaignBudgetAmount'] * 0.5) and row['avg_cost_30d'] < (row['campaignBudgetAmount'] * 0.5)):
-        anomalies.append('超出预算异常')
+    # 超出预算异常检查
+    if cost_yesterday > budget and (daily_cost_7d < budget * 1.5 and daily_cost_30d < budget * 1.5):
+        anomalies.append([
+            campaign_id, campaign_name, '超出预算异常', cost_yesterday, daily_cost_7d, daily_cost_30d
+        ])
     
-    # Avoid zero division
-    if row['avg_cost_7d'] != 0 and abs(row['cost_yesterday'] - row['avg_cost_7d']) / row['avg_cost_7d'] > 0.3:
-        anomalies.append('近7天波动异常')
-    
-    if row['avg_cost_30d'] != 0 and abs(row['cost_yesterday'] - row['avg_cost_30d']) / row['avg_cost_30d'] > 0.3:
-        anomalies.append('近30天波动异常')
-    
-    return anomalies
+    # 波动异常检查
+    if daily_cost_7d > 0:
+        fluctuation_7d = abs(cost_yesterday - daily_cost_7d) / daily_cost_7d
+        if fluctuation_7d > 0.3:
+            anomalies.append([
+                campaign_id, campaign_name, '花费波动异常', cost_yesterday, daily_cost_7d, daily_cost_30d
+            ])
+    if daily_cost_30d > 0:
+        fluctuation_30d = abs(cost_yesterday - daily_cost_30d) / daily_cost_30d
+        if fluctuation_30d > 0.3:
+            anomalies.append([
+                campaign_id, campaign_name, '花费波动异常', cost_yesterday, daily_cost_7d, daily_cost_30d
+            ])
 
-# 检测所有广告活动的异常
-data['Anomalies'] = data.apply(detect_anomalies, axis=1)
+# 将异常结果转换为DataFrame
+anomalies_df = pd.DataFrame(anomalies, columns=[
+    'campaignId', 'Campaign Name', 'Anomaly Description', 'Yesterday Cost', '7-day Avg Cost', '30-day Avg Cost'
+])
 
-# 保留存在异常的广告活动数据
-anomalies_data = data[data['Anomalies'].map(len) > 0]
+# 保存到CSV文件
+output_path = 'C:\\Users\\admin\\PycharmProjects\\DeepBI\\ai\\backend\\util\\db\\auto_yzj\\日常优化\\异常定位检测\\广告活动\\提问策略\\异常检测_广告活动_预算花费异常_v1_0_LAPASA_US_2024-07-14.csv'
+anomalies_df.to_csv(output_path, index=False)
 
-# 拆分并整理异常现象
-anomalies_expanded = anomalies_data.explode('Anomalies')
-
-# 准备最终输出数据
-output_data = anomalies_expanded[['campaignId', 'campaignName', 'Anomalies', 'cost_yesterday', 'avg_cost_7d', 'avg_cost_30d']]
-output_data.columns = ['异常广告活动ID', '异常广告活动', '异常现象', '昨天的花费', '近7天日均花费', '近30天日均花费']
-
-# 输出结果到CSV文件
-output_file_path = r'C:\Users\admin\PycharmProjects\DeepBI\ai\backend\util\db\auto_yzj\日常优化\异常定位检测\广告活动\提问策略\广告活动_预算花费异常_ES_2024-06-10.csv'
-output_data.to_csv(output_file_path, index=False)
-
-print("异常检测完成，并已保存到指定文件。")
+print(f"预算花费异常检测完成，结果保存在 {output_path}")

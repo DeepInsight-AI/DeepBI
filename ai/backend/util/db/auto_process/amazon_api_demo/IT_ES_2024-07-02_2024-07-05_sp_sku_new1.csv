@@ -1,0 +1,10 @@
+﻿market,SUM(sales1d),SUM(cost),avg_acos,campaignId,campaignName,adGroupId,adGroupName,advertisedSku,new_campaignName,new_adGroupName
+ES,46.26,2.05,0.044315,462301067504011,DeepBI_0502_M131 auto 复制 1_overstock,309445169134411,DeepBI_0502_M131 auto,LPM23SS0131DOLV2XLR1,DeepBI_0502_M131 auto 复制 1_overstock,DeepBI_0502_M131 auto
+ES,41.3,0.18,0.004358,438802899213307,DeepBI_new_summer_L52B1_Auto_overstock,548365861836914,DeepBI_new_summer_L52B1_Auto,LPL19SS00520PUR0XLB1,DeepBI_0502_DeepBI_new_summer_L52B1_Auto_overstock,DeepBI_0502_DeepBI_new_summer_L52B1_Auto
+ES,41.3,3.26,0.078935,501917583703092,DeepBI_new_summer_L52A1_Auto_overstock,406360662423367,DeepBI_new_summer_L52A1_Auto,LPL19SS0052OFWH00MA1,DeepBI_0502_DeepBI_new_summer_L52A1_Auto_overstock,DeepBI_0502_DeepBI_new_summer_L52A1_Auto
+ES,28.92,0.47,0.016252,348836237600359,DeepBI_0502_M36-Manuel_overstock,344923937242893,DeepBI_0502_M36-Manuel_overstock,LPM17SS0036MUT13XLR4,DeepBI_0502_M36-Manuel_overstock,DeepBI_0502_M36-Manuel_overstock
+ES,26.44,0.36,0.013616,74640511575735,K01 - kid's t-shirt (manual),40569314729233,Ad Group 1,LPK17SS00010WHI014R4,DeepBI_0502_K01 - kid's t-shirt (manual),DeepBI_0502_Ad Group 1
+ES,26.44,0.47,0.017776,549565849731294,DeepBI_0502_K01 manu,408326706771463,DeepBI_0502_K01 manu,LPK17SS0001MUT1006R4,DeepBI_0502_K01 manu,DeepBI_0502_K01 manu
+ES,26.44,1.26,0.047655,348836237600359,DeepBI_0502_M36-Manuel_overstock,344923937242893,DeepBI_0502_M36-Manuel_overstock,LPM17SS00360NAY3XLR4,DeepBI_0502_M36-Manuel_overstock,DeepBI_0502_M36-Manuel_overstock
+ES,20.65,1.51,0.073123,435478144343148,DeepBI_new_summer_L02B1_Auto_overstock,530760607700355,DeepBI_new_summer_L02B1_Auto,LPL16SS00020NAY00LB1,DeepBI_0502_DeepBI_new_summer_L02B1_Auto_overstock,DeepBI_0502_DeepBI_new_summer_L02B1_Auto
+ES,20.65,0.43,0.020823,385026978611025,DeepBI_0502_summer_L52A1 - Manual_overstock,339100703114058,DeepBI_0502_summer_L52A1 - Manual_overstock,LPL19SS0052OFWH00MA1,DeepBI_0502_summer_L52A1 - Manual_overstock,DeepBI_0502_summer_L52A1 - Manual_overstock

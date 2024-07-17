@@ -3,40 +3,68 @@
 import pandas as pd
 
 # 读取CSV文件
-file_path = r'C:\Users\admin\PycharmProjects\DeepBI\ai\backend\util\db\auto_yzj\日常优化\自动sp广告\广告位优化\预处理.csv'
-data = pd.read_csv(file_path)
+file_path = r"C:\Users\admin\PycharmProjects\DeepBI\ai\backend\util\db\auto_yzj\日常优化\手动sp广告\商品投放优化\预处理.csv"
+df = pd.read_csv(file_path)
 
-# 定义一个新的bid初始化为原bid
-data['new_bid'] = data['bid']
-data['原因'] = ''
+# 定义要追加的列
+df['New_keywordBid'] = df['keywordBid']
+df['action_reason'] = ""
 
-# 满足定义一
-condition1 = (data['total_sales14d_7d'] == 0) & (data['total_clicks_7d'] > 0)
-data.loc[condition1, 'new_bid'] = 0
-data.loc[condition1, '原因'] = '最近7天的总sales为0，但最近7天的总点击数大于0'
+# 定义判定逻辑
+for index, row in df.iterrows():
+    ACOS_7d = row['ACOS_7d']
+    ACOS_30d = row['ACOS_30d']
+    keywordBid = row['keywordBid']
+    total_clicks_7d = row['total_clicks_7d']
+    total_sales14d_7d = row['total_sales14d_7d']
+    total_cost_7d = row['total_cost_7d']
+    total_sales14d_30d = row['total_sales14d_30d']
+    total_clicks_30d = row['total_clicks_30d']
+    total_cost_30d = row['total_cost_30d']
 
-# 满足定义三
-condition3 = data['ACOS_7d'] >= 50
-data.loc[condition3, 'new_bid'] = 0
-data.loc[condition3, '原因'] = '最近7天的平均ACOS值大于等于50%'
+    # 定义一
+    if 0.24 < ACOS_7d <= 0.5 and 0 < ACOS_30d <= 0.5:
+        new_bid = keywordBid / ((ACOS_7d - 0.24) / 0.24 + 1)
+        df.at[index, 'New_keywordBid'] = new_bid
+        df.at[index, 'action_reason'] = "定义一"
 
-# 满足定义二
-campaigns = data['campaignName'].unique()
-for campaign in campaigns:
-    campaign_data = data[data['campaignName'] == campaign]
-    if len(campaign_data['placementClassification'].unique()) >= 3:
-        acos_values = campaign_data['ACOS_7d']
-        if acos_values.between(24, 50).all() and (acos_values.max() - acos_values.min() >= 0.2):
-            max_acos_index = campaign_data['ACOS_7d'].idxmax()
-            new_bid_value = data.loc[max_acos_index, 'bid'] - 3
-            data.at[max_acos_index, 'new_bid'] = max(0, new_bid_value)
-            data.at[max_acos_index, '原因'] = '同一广告活动中，最近7天的平均ACOS值在24%至50%之间，且差值大于等于0.2'
+    # 定义二
+    if ACOS_7d > 0.5 and ACOS_30d <= 0.36:
+        new_bid = keywordBid / ((ACOS_7d - 0.24) / 0.24 + 1)
+        df.at[index, 'New_keywordBid'] = new_bid
+        df.at[index, 'action_reason'] = "定义二"
 
-# 选择需要的列
-result = data[['campaignName', 'campaignId', 'placementClassification', 'ACOS_7d', 'ACOS_3d', 'total_clicks_7d', 'total_clicks_3d', 'bid', 'new_bid', '原因']]
+    # 定义三
+    if total_clicks_7d >= 10 and total_sales14d_7d == 0 and ACOS_30d <= 0.36:
+        new_bid = max(keywordBid - 0.04, 0)  # 确保竞价不能低于0
+        df.at[index, 'New_keywordBid'] = new_bid
+        df.at[index, 'action_reason'] = "定义三"
+
+    # 定义四
+    if total_clicks_7d > 10 and total_sales14d_7d == 0 and ACOS_30d > 0.5:
+        df.at[index, 'New_keywordBid'] = "关闭"
+        df.at[index, 'action_reason'] = "定义四"
+
+    # 定义五
+    if ACOS_7d > 0.5 and ACOS_30d > 0.36:
+        df.at[index, 'New_keywordBid'] = "关闭"
+        df.at[index, 'action_reason'] = "定义五"
+
+    # 定义六
+    if total_sales14d_30d == 0 and total_cost_30d >= 5:
+        df.at[index, 'New_keywordBid'] = "关闭"
+        df.at[index, 'action_reason'] = "定义六"
+
+    # 定义七
+    if total_sales14d_30d == 0 and total_clicks_30d >= 15 and total_clicks_7d > 0:
+        df.at[index, 'New_keywordBid'] = "关闭"
+        df.at[index, 'action_reason'] = "定义七"
+
+# 筛选出需要操作的商品投放
+result_df = df[df['action_reason'] != ""]
 
 # 保存结果到CSV文件
-result_file_path = r'C:\Users\admin\PycharmProjects\DeepBI\ai\backend\util\db\auto_yzj\日常优化\自动sp广告\广告位优化\提问策略\自动_劣质广告位_v1_1_IT_2024-06-211.csv'
-result.to_csv(result_file_path, index=False)
+output_file = r"C:\Users\admin\PycharmProjects\DeepBI\ai\backend\util\db\auto_yzj\日常优化\手动sp广告\商品投放优化\提问策略\手动_ASIN_劣质商品投放_v1_1_DELOMO_ES_2024-07-09.csv"
+result_df.to_csv(output_file, index=False)
 
-print("CSV文件已成功生成。")
+print(f"结果已保存到 {output_file}")

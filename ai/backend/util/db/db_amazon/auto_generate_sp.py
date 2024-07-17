@@ -13,8 +13,8 @@ import pandas as pd
 
 def auto_generepot(market,startdate,endate):
     """该报告针对指定市场指定日期范围内的SP广告进行生成"""
-    db_info = {'host': '****', 'user': '****', 'passwd': '****', 'port': 3306,
-               'db': '****',
+    db_info = {'host': '192.168.5.114', 'user': 'test_deepdata', 'passwd': 'test123!@#', 'port': 3308,
+               'db': 'amazon_ads',
                'charset': 'utf8mb4', 'use_unicode': True, }
 
     dwx = AmazonMysqlRagUitl(db_info)

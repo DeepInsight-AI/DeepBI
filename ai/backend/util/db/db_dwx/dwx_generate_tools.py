@@ -18,8 +18,8 @@ from ai.agents.code_utils import (
     append_report_logger,
 )
 
-api_key = '***'
-api_host = "***"
+api_key = 'H131_FfEW_1a45a0dcfc03539cdc084e2bfa00e7'
+api_host = "https://apiserver.deep-thought.io/proxy"
 
 config_list_gpt4_turbo = [
     {

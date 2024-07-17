@@ -2,52 +2,91 @@
 
 import pandas as pd
 
-# 读取CSV文件
-file_path = r'C:\Users\admin\PycharmProjects\DeepBI\ai\backend\util\db\auto_yzj\日常优化\手动sp广告\关键词优化\预处理.csv'
+# 读取数据
+file_path = r'C:\Users\admin\PycharmProjects\DeepBI\ai\backend\util\db\auto_yzj\日常优化\手动sp广告\商品投放优化\预处理.csv'
 df = pd.read_csv(file_path)
 
-# 定义条件函数
-def categorize_and_update(row):
-    new_bid = None
-    reason = None
-    
-    if 0 < row['ACOS_7d'] <= 0.1 and 0 < row['ACOS_30d'] <= 0.1 and row['ORDER_1m'] >= 2:
-        new_bid = row['keywordBid'] + 0.05
-        reason = "满足定义一"
-    elif 0 < row['ACOS_7d'] <= 0.1 and 0.1 < row['ACOS_30d'] <= 0.24 and row['ORDER_1m'] >= 2:
-        new_bid = row['keywordBid'] + 0.03
-        reason = "满足定义二"
-    elif 0.1 < row['ACOS_7d'] <= 0.2 and row['ACOS_30d'] <= 0.1 and row['ORDER_1m'] >= 2:
-        new_bid = row['keywordBid'] + 0.04
-        reason = "满足定义三"
-    elif 0.1 < row['ACOS_7d'] <= 0.2 and 0.1 < row['ACOS_30d'] <= 0.24 and row['ORDER_1m'] >= 2:
-        new_bid = row['keywordBid'] + 0.02
-        reason = "满足定义四"
-    elif 0.2 < row['ACOS_7d'] <= 0.24 and row['ACOS_30d'] <= 0.1 and row['ORDER_1m'] >= 2:
-        new_bid = row['keywordBid'] + 0.02
-        reason = "满足定义五"
-    elif 0.2 < row['ACOS_7d'] <= 0.24 and 0.1 < row['ACOS_30d'] <= 0.24 and row['ORDER_1m'] >= 2:
-        new_bid = row['keywordBid'] + 0.01
-        reason = "满足定义六"
-    
-    return new_bid, reason
+# 拷贝dataframe用于操作
+df_copy = df.copy()
 
-# 应用条件函数
-df[['new_keywordBid', '提价原因']] = df.apply(lambda row: pd.Series(categorize_and_update(row)), axis=1)
+# 增加新列用于存储新的竞价、新的提价金额和提价原因
+df_copy['New_keywordBid'] = df_copy['keywordBid']
+df_copy['提价'] = 0.0
+df_copy['提价原因'] = ""
 
-# 过滤出满足条件的关键词
-filtered_df = df.dropna(subset=['new_keywordBid'])
+# 定义1
+condition1 = (
+    (df_copy['ACOS_7d'] > 0) & (df_copy['ACOS_7d'] <= 0.1) &
+    (df_copy['ACOS_30d'] > 0) & (df_copy['ACOS_30d'] <= 0.1) &
+    (df_copy['ORDER_1m'] >= 2) &
+    (df_copy['ACOS_3d'] > 0) & (df_copy['ACOS_3d'] <= 0.2)
+)
+df_copy.loc[condition1, 'New_keywordBid'] += 0.05
+df_copy.loc[condition1, '提价'] = 0.05
+df_copy.loc[condition1, '提价原因'] = "定义1"
 
-# 选择数据列
+# 定义2
+condition2 = (
+    (df_copy['ACOS_7d'] > 0) & (df_copy['ACOS_7d'] <= 0.1) &
+    (df_copy['ACOS_30d'] > 0.1) & (df_copy['ACOS_30d'] <= 0.24) &
+    (df_copy['ORDER_1m'] >= 2) &
+    (df_copy['ACOS_3d'] > 0) & (df_copy['ACOS_3d'] <= 0.2)
+)
+df_copy.loc[condition2, 'New_keywordBid'] += 0.03
+df_copy.loc[condition2, '提价'] = 0.03
+df_copy.loc[condition2, '提价原因'] = "定义2"
+
+# 定义3
+condition3 = (
+    (df_copy['ACOS_7d'] > 0.1) & (df_copy['ACOS_7d'] <= 0.2) &
+    (df_copy['ACOS_30d'] <= 0.1) &
+    (df_copy['ORDER_1m'] >= 2) &
+    (df_copy['ACOS_3d'] > 0) & (df_copy['ACOS_3d'] <= 0.2)
+)
+df_copy.loc[condition3, 'New_keywordBid'] += 0.04
+df_copy.loc[condition3, '提价'] = 0.04
+df_copy.loc[condition3, '提价原因'] = "定义3"
+
+# 定义4
+condition4 = (
+    (df_copy['ACOS_7d'] > 0.1) & (df_copy['ACOS_7d'] <= 0.2) &
+    (df_copy['ACOS_30d'] > 0.1) & (df_copy['ACOS_30d'] <= 0.24) &
+    (df_copy['ORDER_1m'] >= 2) &
+    (df_copy['ACOS_3d'] > 0) & (df_copy['ACOS_3d'] <= 0.2)
+)
+df_copy.loc[condition4, 'New_keywordBid'] += 0.02
+df_copy.loc[condition4, '提价'] = 0.02
+df_copy.loc[condition4, '提价原因'] = "定义4"
+
+# 定义5
+condition5 = (
+    (df_copy['ACOS_7d'] > 0.2) & (df_copy['ACOS_7d'] <= 0.24) &
+    (df_copy['ACOS_30d'] <= 0.1) &
+    (df_copy['ORDER_1m'] >= 2) &
+    (df_copy['ACOS_3d'] > 0) & (df_copy['ACOS_3d'] <= 0.2)
+)
+df_copy.loc[condition5, 'New_keywordBid'] += 0.02
+df_copy.loc[condition5, '提价'] = 0.02
+df_copy.loc[condition5, '提价原因'] = "定义5"
+
+# 定义6
+condition6 = (
+    (df_copy['ACOS_7d'] > 0.2) & (df_copy['ACOS_7d'] <= 0.24) &
+    (df_copy['ACOS_30d'] > 0.1) & (df_copy['ACOS_30d'] <= 0.24) &
+    (df_copy['ORDER_1m'] >= 2) &
+    (df_copy['ACOS_3d'] > 0) & (df_copy['ACOS_3d'] <= 0.2)
+)
+df_copy.loc[condition6, 'New_keywordBid'] += 0.01
+df_copy.loc[condition6, '提价'] = 0.01
+df_copy.loc[condition6, '提价原因'] = "定义6"
+
+# 筛选出需要的列并输出为新的CSV文件
 output_columns = [
     'keyword', 'keywordId', 'campaignName', 'adGroupName', 'matchType',
-    'keywordBid', 'new_keywordBid', 'targeting', 'total_cost_30d', 
-    'total_clicks_30d', 'ACOS_7d', 'ACOS_30d', 'ORDER_1m', '提价原因'
+    'keywordBid', 'New_keywordBid', 'targeting', 'total_cost_30d', 'total_clicks_30d',
+    'ACOS_7d', 'ACOS_30d', 'ORDER_1m', '提价', '提价原因'
 ]
-output_df = filtered_df[output_columns]
+output_path = r'C:\Users\admin\PycharmProjects\DeepBI\ai\backend\util\db\auto_yzj\日常优化\手动sp广告\商品投放优化\提问策略\手动_ASIN_优质商品投放_v1_1_LAPASA_US_2024-07-12.csv'
+df_copy[output_columns].to_csv(output_path, index=False)
 
-# 保存为CSV文件
-output_file_path = r'C:\Users\admin\PycharmProjects\DeepBI\ai\backend\util\db\auto_yzj\日常优化\手动sp广告\关键词优化\提问策略\手动_优质关键词_v1_1_ES_2024-06-121.csv'
-output_df.to_csv(output_file_path, index=False)
-
-print(f"输出结果已保存至 {output_file_path}")
+print("处理完成，结果已保存到CSV文件中。")

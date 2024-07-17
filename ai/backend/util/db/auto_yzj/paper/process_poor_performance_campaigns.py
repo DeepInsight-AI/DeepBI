@@ -2,68 +2,94 @@
 
 import pandas as pd
 
-# 加载数据
-file_path = r'C:\Users\admin\PycharmProjects\DeepBI\ai\backend\util\db\auto_yzj\日常优化\手动sp广告\预算优化\预处理.csv'
-data = pd.read_csv(file_path)
+# 读取数据
+file_path = r"C:\Users\admin\PycharmProjects\DeepBI\ai\backend\util\db\auto_yzj\日常优化\手动sp广告\商品投放优化\预处理.csv"
+df = pd.read_csv(file_path)
 
-# 定义今天的日期和昨天的日期
-today = pd.Timestamp('2024-05-28')
-yesterday = today - pd.Timedelta(days=1)
-yesterday_str = yesterday.strftime('%Y-%m-%d')
+# 定义函数来处理商品投放
+def process_campaigns(df):
+    results = []
 
-# 基于定义一筛选广告活动
-condition1 = (
-    (data['avg_ACOS_7d'] > 0.24) &
-    (data['ACOS'] > 0.24) &
-    (data['clicks'] >= 10) &
-    (data['avg_ACOS_1m'] > data['country_avg_ACOS_1m'])
-)
+    for index, row in df.iterrows():
+        keyword = row['keyword']
+        keywordId = row['keywordId']
+        campaignName = row['campaignName']
+        adGroupName = row['adGroupName']
+        matchType = row['matchType']
+        keywordBid = row['keywordBid']
+        targeting = row['targeting']
+        total_cost_7d = row['total_cost_7d']
+        total_sales14d_7d = row['total_sales14d_7d']
+        total_cost_30d = row['total_cost_30d']
+        avg_ACOS_7d = row['ACOS_7d']
+        avg_ACOS_30d = row['ACOS_30d']
+        total_clicks_7d = row['total_clicks_7d']
+        total_sales14d_30d = row['total_sales14d_30d']
+        total_clicks_30d = row['total_clicks_30d']
 
-# 基于定义二筛选广告活动
-condition2 = (
-    (data['avg_ACOS_7d'] > 0.24) &
-    (data['ACOS'] > 0.24) &
-    (data['cost'] > 0.8 * data['Budget']) &
-    (data['avg_ACOS_1m'] > data['country_avg_ACOS_1m'])
-)
+        new_keywordBid = None
+        reason = None
 
-# 基于定义三筛选广告活动
-condition3 = (
-    (data['avg_ACOS_1m'] > 0.24) &
-    (data['avg_ACOS_1m'] > data['country_avg_ACOS_1m']) &
-    (data['clicks_7d'] >= 15) & 
-    (data['sales_1m'] == 0)
-)
+        # 定义一
+        if 0.24 < avg_ACOS_7d <= 0.5 and 0 < avg_ACOS_30d <= 0.5:
+            new_keywordBid = keywordBid / ((avg_ACOS_7d - 0.24) / 0.24 + 1)
+            reason = '定义一'
 
-# 满足条件的广告活动
-poor_performance_campaigns = data[condition1 | condition2 | condition3].copy()
+        # 定义二
+        elif avg_ACOS_7d > 0.5 and avg_ACOS_30d <= 0.36:
+            new_keywordBid = keywordBid / ((avg_ACOS_7d - 0.24) / 0.24 + 1)
+            reason = '定义二'
+        
+        # 定义三
+        elif total_clicks_7d >= 10 and total_sales14d_7d == 0 and avg_ACOS_30d <= 0.36:
+            new_keywordBid = max(0, keywordBid - 0.04)
+            reason = '定义三'
+        
+        # 定义四
+        elif total_clicks_7d > 10 and total_sales14d_7d == 0 and avg_ACOS_30d > 0.5:
+            new_keywordBid = '关闭'
+            reason = '定义四'
 
-# 昨天的广告活动，且满足预算条件
-def adjust_budget(row):
-    if condition1[row.name]:
-        new_budget = max(row['Budget'] - 5, 8)
-        reason = '定义一'
-    elif condition2[row.name]:
-        new_budget = max(row['Budget'] - 5, 8)
-        reason = '定义二'
-    elif condition3[row.name]:
-        new_budget = max(row['Budget'] - 5, 5)
-        reason = '定义三'
-    else:
-        new_budget = row['Budget']
-        reason = ''
-    return new_budget, reason
+        # 定义五
+        elif avg_ACOS_7d > 0.5 and avg_ACOS_30d > 0.36:
+            new_keywordBid = '关闭'
+            reason = '定义五'
 
-poor_performance_campaigns['new_budget'], poor_performance_campaigns['reason'] = zip(*poor_performance_campaigns.apply(adjust_budget, axis=1))
+        # 定义六
+        elif total_sales14d_30d == 0 and total_cost_30d >= 5:
+            new_keywordBid = '关闭'
+            reason = '定义六'
 
-# 选择需要的列并保存
-columns_to_save = [
-    'date', 'campaignName', 'Budget', 'clicks', 'ACOS', 'avg_ACOS_7d', 
-    'clicks_7d', 'sales_1m', 'avg_ACOS_1m', 'clicks_1m', 'sales_1m', 'country_avg_ACOS_1m', 'new_budget', 'reason'
-]
-result = poor_performance_campaigns[columns_to_save]
+        # 定义七
+        elif total_sales14d_30d == 0 and total_clicks_30d >= 15 and total_clicks_7d > 0:
+            new_keywordBid = '关闭'
+            reason = '定义七'
 
-output_path = r'C:\Users\admin\PycharmProjects\DeepBI\ai\backend\util\db\auto_yzj\日常优化\手动sp广告\预算优化\提问策略\手动_劣质广告活动_IT_2024-06-11.csv'
-result.to_csv(output_path, index=False)
+        if reason:
+            results.append({
+                'keyword': keyword,
+                'keywordId': keywordId,
+                'campaignName': campaignName,
+                'adGroupName': adGroupName,
+                'matchType': matchType,
+                'keywordBid': keywordBid,
+                'New_keywordBid': new_keywordBid,
+                'targeting': targeting,
+                'total_cost_7d': total_cost_7d,
+                'total_sales14d_7d': total_sales14d_7d,
+                'avg_ACOS_7d': avg_ACOS_7d,
+                'avg_ACOS_30d': avg_ACOS_30d,
+                'total_clicks_30d': total_clicks_30d,
+                'reason': reason
+            })
 
-print("结果已保存到:", output_path)
+    return pd.DataFrame(results)
+
+# 处理数据并生成结果
+result_df = process_campaigns(df)
+
+# 输出结果至CSV文件
+output_file_path = r"C:\Users\admin\PycharmProjects\DeepBI\ai\backend\util\db\auto_yzj\日常优化\手动sp广告\商品投放优化\提问策略\手动_ASIN_劣质商品投放_v1_1_LAPASA_US_2024-07-09.csv"
+result_df.to_csv(output_file_path, index=False)
+
+print(f"Results saved to {output_file_path}")

@@ -7,8 +7,8 @@ import warnings
 warnings.filterwarnings("ignore", category=UserWarning)
 
 
-db_info = {'host': '****', 'user': '****', 'passwd': '****', 'port': 3308,
-               'db': '****',
+db_info = {'host': '192.168.5.114', 'user': 'test_deepdata', 'passwd': 'test123!@#', 'port': 3308,
+               'db': 'amazon_ads',
                'charset': 'utf8mb4', 'use_unicode': True, }
 
 def get_timestamp():

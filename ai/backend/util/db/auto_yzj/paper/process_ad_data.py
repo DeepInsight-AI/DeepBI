@@ -1,60 +1,69 @@
 # filename: process_ad_data.py
-
 import pandas as pd
 
+# 定义文件路径
+file_path = r'C:\Users\admin\PycharmProjects\DeepBI\ai\backend\util\db\auto_yzj\日常优化\手动sp广告\商品投放优化\预处理.csv'
+output_file_path = r'C:\Users\admin\PycharmProjects\DeepBI\ai\backend\util\db\auto_yzj\日常优化\手动sp广告\商品投放优化\提问策略\手动_ASIN_劣质商品投放_v1_1_LAPASA_US_2024-07-10.csv'
+
 # 读取CSV文件
-file_path = r'C:\Users\admin\PycharmProjects\DeepBI\ai\backend\util\db\auto_yzj\日常优化\自动sp广告\搜索词优化\预处理.csv'
 data = pd.read_csv(file_path)
 
-# 确定今天的日期并计算时间窗口
-today = pd.Timestamp('2024-05-27')
+# 定义新的DataFrame保存结果
+columns = [
+    'keyword', 'keywordId', 'campaignName', 'adGroupName', 'matchType', 'keywordBid', 'new_keywordBid', 
+    'targeting', 'total_cost_7d', 'total_sales14d_7d', 'total_cost_30d', 'ACOS_7d', 'ACOS_30d', 
+    'total_clicks_30d', 'action_reason'
+]
+result = pd.DataFrame(columns=columns)
 
-# 定义判断条件
-def reason_judgment(row):
-    try:
-        acos_30d = float(row['ACOS_30d'].strip('%')) / 100
-        acos_7d = float(row['ACOS_7d'].strip('%')) / 100
-    except:
-        acos_30d = float('inf')
-        acos_7d = float('inf')
-        
-    try:
-        cost_7d = float(row['total_cost_7d'])
-        sales_7d = float(row['total_sales14d_7d'])
-        clicks_7d = int(row['total_clicks_7d'])
-        clicks_30d = int(row['total_clicks_30d'])
-    except:
-        return None
+# 遍历每一行数据
+for index, row in data.iterrows():
+    action_reason = ""
+    new_keyword_bid = None
     
-    reasons = []
-    
-    # 定义一
-    if acos_30d >= 0.30 and clicks_7d > 5 and sales_7d < 0.01 * cost_7d:
-        reasons.append('定义一')
-    
-    # 定义二
-    if acos_30d >= 0.50 and sales_7d < 0.05 * cost_7d:
-        reasons.append('定义二')
-    
-    # 定义三
-    if clicks_30d > 10 and cost_7d > 0 and sales_7d == 0:
-        reasons.append('定义三')
-        
-    if reasons:
-        return ','.join(reasons)
-    else:
-        return None
+    if 0.24 < row['ACOS_7d'] <= 0.5 and 0 < row['ACOS_30d'] <= 0.5:
+        new_keyword_bid = row['keywordBid'] / ((row['ACOS_7d'] - 0.24) / 0.24 + 1)
+        action_reason = "定义一：调整竞价"
+    elif row['ACOS_7d'] > 0.5 and row['ACOS_30d'] <= 0.36:
+        new_keyword_bid = row['keywordBid'] / ((row['ACOS_7d'] - 0.24) / 0.24 + 1)
+        action_reason = "定义二：调整竞价"
+    elif row['total_clicks_7d'] >= 10 and row['total_sales14d_7d'] == 0 and row['ACOS_30d'] <= 0.36:
+        new_keyword_bid = row['keywordBid'] - 0.04
+        action_reason = "定义三：降低竞价"
+    elif row['total_clicks_7d'] >= 10 and row['total_sales14d_7d'] == 0 and row['ACOS_30d'] > 0.5:
+        new_keyword_bid = '关闭'
+        action_reason = "定义四：关闭关键词"
+    elif row['ACOS_7d'] > 0.5 and row['ACOS_30d'] > 0.36:
+        new_keyword_bid = '关闭'
+        action_reason = "定义五：关闭关键词"
+    elif row['total_sales14d_30d'] == 0 and row['total_cost_30d'] >= 5:
+        new_keyword_bid = '关闭'
+        action_reason = "定义六：关闭关键词"
+    elif row['total_sales14d_30d'] == 0 and row['total_clicks_30d'] >= 15 and row['total_clicks_7d'] > 0:
+        new_keyword_bid = '关闭'
+        action_reason = "定义七：关闭关键词"
 
-data['reason'] = data.apply(reason_judgment, axis=1)
+    if action_reason:
+        new_row = pd.DataFrame({
+            'keyword': [row['keyword']],
+            'keywordId': [row['keywordId']],
+            'campaignName': [row['campaignName']],
+            'adGroupName': [row['adGroupName']],
+            'matchType': [row['matchType']],
+            'keywordBid': [row['keywordBid']],
+            'new_keywordBid': [new_keyword_bid],
+            'targeting': [row['targeting']],
+            'total_cost_7d': [row['total_cost_7d']],
+            'total_sales14d_7d': [row['total_sales14d_7d']],
+            'total_cost_30d': [row['total_cost_30d']],
+            'ACOS_7d': [row['ACOS_7d']],
+            'ACOS_30d': [row['ACOS_30d']],
+            'total_clicks_30d': [row['total_clicks_30d']],
+            'action_reason': [action_reason]
+        })
+        result = pd.concat([result, new_row], ignore_index=True)
 
-# 筛选符合条件的行
-filtered_data = data.dropna(subset=['reason'])
+# 输出结果到CSV
+result.to_csv(output_file_path, index=False)
 
-selected_columns = ['campaignName', 'adGroupName', 'total_cost_7d', 'ACOS_7d', 'total_clicks_30d', 'searchTerm', 'reason']
-output_data = filtered_data[selected_columns]
-
-# 保存结果到CSV文件
-output_path = r'C:\Users\admin\PycharmProjects\DeepBI\ai\backend\util\db\auto_yzj\日常优化\自动sp广告\搜索词优化\提问策略\自动_劣质搜索词_ES_2024-06-121.csv'
-output_data.to_csv(output_path, index=False)
-
-print(f"结果已保存至 {output_path}")
+print("处理完成，结果已输出到文件。")

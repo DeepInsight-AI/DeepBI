@@ -1,0 +1,5 @@
+﻿market,SUM(sales1d),SUM(cost),avg_acos,campaignId,campaignName,adGroupId,adGroupName,advertisedSku,new_campaignName,new_adGroupName
+DE,378.0,58.38,0.154444,528525876652075,SHARK - SP - CAT - Att - Price＞100,406708194118222,Ad group - 21.5.2024 17:21:59.252,E01060,DeepBI_0502_SHARK - SP - CAT - Att - Price＞100,DeepBI_0502_Ad group - 21.5.2024 17:21:59.252
+DE,92.39,14.31,0.154887,171953768322626,The Shark - SP - PAT - OM Pumps - Def,131635436376779,Ad group - 16.3.2023 10:35:06,E01060,DeepBI_0502_The Shark - SP - PAT - OM Pumps - Def,DeepBI_0502_Ad group - 16.3.2023 10:35:06
+DE,92.39,7.53,0.081502,492154351445170,The Shark - SP - AISNs Att,479673416831272,Ad group - 19.4.2024 16:57:27.231,E01060,DeepBI_0502_The Shark - SP - AISNs Att,DeepBI_0502_Ad group - 19.4.2024 16:57:27.231
+DE,55.45,5.72,0.103156,237116378737865,The Dolphin - SP - CAT - 40EUR,240542082671166,Ad group - 28.3.2023 14:18:22,E02227,DeepBI_0502_The Dolphin - SP - CAT - 40EUR,DeepBI_0502_Ad group - 28.3.2023 14:18:22

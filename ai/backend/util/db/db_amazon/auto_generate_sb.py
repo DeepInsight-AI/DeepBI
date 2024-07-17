@@ -15,8 +15,8 @@ import os
 
 def auto_generepot(market,startdate,endate):
     """该报告针对指定市场指定日期范围内的SB广告进行生成"""
-    db_info = {'host': '****', 'user': '****', 'passwd': '****', 'port': 3308,
-               'db': '****',
+    db_info = {'host': '192.168.5.114', 'user': 'test_deepdata', 'passwd': 'test123!@#', 'port': 3308,
+               'db': 'amazon_ads',
                'charset': 'utf8mb4', 'use_unicode': True, }
     dwx = AmazonMysqlSBRagUitl(db_info)
 
@@ -434,10 +434,10 @@ def generate():
 
     print("HTML文件已生成：output_sb_US.html")
 
-# generate()
-# def main():
-#     # 在这里调用 generate() 函数
-#     generate()
-#
-# if __name__ == "__main__":
-#     main()
+generate()
+def main():
+    # 在这里调用 generate() 函数
+    generate()
+
+if __name__ == "__main__":
+    main()

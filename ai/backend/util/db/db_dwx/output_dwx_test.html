@@ -89,417 +89,133 @@
 
   <ul class="m-b-5 bg-border thought">
     <p>分析思路</p>
-    
+
       <li><strong>现状分析</strong> </li>
-    
+
       <li><strong>&nbsp;&nbsp;&nbsp;&nbsp;</strong>分析指标 </li>
-    
+
       <li><strong>&nbsp;&nbsp;&nbsp;&nbsp;</strong>日营收：每日三个渠道（抖音，美团，盈客宝）套餐营收综合 </li>
-    
+
       <li><strong>&nbsp;&nbsp;&nbsp;&nbsp;</strong>日售币数量：三个渠道售币总和 </li>
-    
+
       <li><strong>&nbsp;&nbsp;&nbsp;&nbsp;</strong>日投币：每日投币总量，入币-出币 </li>
-    
+
       <li><strong>&nbsp;&nbsp;&nbsp;&nbsp;</strong>币单价：（代币套餐日营收）/（日售币+日增币数量） </li>
-    
+
       <li><strong>&nbsp;&nbsp;&nbsp;&nbsp;</strong>日消费：日消费=币单价*当日投币数量 </li>
-    
+
       <li><strong>&nbsp;&nbsp;&nbsp;&nbsp;</strong>（当日投币数量=当日总投币-当日总出币） </li>
-    
+
       <li><strong>&nbsp;&nbsp;&nbsp;&nbsp;</strong>日成本：当日消耗成本=7寸娃娃机成本+8寸娃娃机成本+15寸娃娃机成本+彩票机成本+礼品机成本 </li>
-    
+
       <li><strong>&nbsp;&nbsp;&nbsp;&nbsp;</strong>礼品机成本=当日门店调拨出库商品明细*数量*单价 </li>
-    
+
       <li><strong>&nbsp;&nbsp;&nbsp;&nbsp;</strong>7寸娃娃成本=（出奖数量-回收数量）*2.55+回收数量*1.2 </li>
-    
+
       <li><strong>&nbsp;&nbsp;&nbsp;&nbsp;</strong>8寸娃娃成本=（出奖数量-回收数量）*5.5+回收数量*2.4 </li>
-    
+
       <li><strong>&nbsp;&nbsp;&nbsp;&nbsp;</strong>15寸娃娃成本=（出奖数量-回收数量）*20+回收数量*14.4 </li>
-    
+
       <li><strong>&nbsp;&nbsp;&nbsp;&nbsp;</strong>彩票机成本=（当日出彩票总数+当日实物票数量）/1000 </li>
-    
+
       <li><strong>套餐营收优化分析</strong> </li>
-    
+
       <li><strong>&nbsp;&nbsp;&nbsp;&nbsp;</strong>目标：找出各个代币销售渠道中江苏南通店可优化的渠道，对于可优化渠道找出滞销套餐，进而对滞销套餐加大营销力度，提高销售额 </li>
-    
+
       <li><strong>&nbsp;&nbsp;&nbsp;&nbsp;</strong>1. 分析南通店可以优化的代币套餐渠道 </li>
-    
+
       <li><strong>&nbsp;&nbsp;&nbsp;&nbsp;</strong>2. 分析可优化渠道的滞销套餐 </li>
-    
+
       <li><strong>日营收优化分析</strong> </li>
-    
+
       <li><strong>&nbsp;&nbsp;&nbsp;&nbsp;</strong>分析本周营收金额是否有异常情况 </li>
-    
+
       <li><strong>日成本优化分析</strong> </li>
-    
+
       <li><strong>&nbsp;&nbsp;&nbsp;&nbsp;</strong>1.分析本周成本是否有异常情况 </li>
-    
+
       <li><strong>&nbsp;&nbsp;&nbsp;&nbsp;</strong>2.分析异常情况原因 </li>
-    
+
       <li><strong>游戏币优化分析</strong> </li>
-    
+
       <li><strong>&nbsp;&nbsp;&nbsp;&nbsp;</strong>分析游戏币波动是否存在异常 </li>
-    
+
       <li><strong>会员优化分析</strong> </li>
-    
+
       <li><strong>&nbsp;&nbsp;&nbsp;&nbsp;</strong>对比其他店铺，分析南通店的到店会员情况和会员结构占比 </li>
-    
+
       <li><strong>机台投币量优化分析</strong> </li>
-    
+
       <li><strong>&nbsp;&nbsp;&nbsp;&nbsp;</strong>1.分析机台投币量是否存在异常 </li>
-    
+
       <li><strong>&nbsp;&nbsp;&nbsp;&nbsp;</strong>2.对比分析热门机器，分析是否有可优化的机器 </li>
-    
+
       <li><strong>机台异常</strong> </li>
-    
+
       <li><strong>&nbsp;&nbsp;&nbsp;&nbsp;</strong>分析南通店第14周投币产出异常机台，出奖异常机台，故障次数异常的机台 </li>
-    
+
   </ul>
-  
+
     <div class="question-section">
       <h2 class="m-b-5 bg-border color-white">1.套餐营收优化分析</h2>
       <li>目标：找出各个代币销售渠道中江苏南通店可优化的渠道，对于可优化渠道找出滞销套餐，进而对滞销套餐加大营销力度，提高销售额</li>
 
       <ul class="m-b-5 bg-border">
         <p>【DeepBI自动分析过程】</p>
-        
+
 <!--          <li><strong>1. 分析南通店可以优化的代币套餐渠道：</strong><br> Answer: 分四步执行 </li>-->
         <h4>1. 分析南通店可以优化的代币套餐渠道</h4>
           <li>分四步执行 </li>
-          
+
             <li style="color: green;">1.1 计算 2024-04-01 -2024-04-07这段时间，江苏南通电玩猩-南通店的各个渠道套餐销售额分别是多少？ :</li>
             <li>&nbsp;&nbsp;&nbsp;&nbsp;Answer is : 渠道名:盈客宝  - 销售额:17857.6元
 渠道名:美团大众  - 销售额:5322.6元
 渠道名:抖音团购  - 销售额:20593.1元
 </li>
-                
-    <div style="width: 80%; margin: 0 auto;">
-      <div id="chartchannel_1_1" class="chart m-b-5 bg-border"></div>
-      <script type="text/javascript">
-        var chartchannel_1_1 = echarts.init(document.getElementById('chartchannel_1_1'), "dark-blue");
-        var optionchannel_1_1 = {
-    "animation": true,
-    "animationThreshold": 2000,
-    "animationDuration": 1000,
-    "animationEasing": "cubicOut",
-    "animationDelay": 0,
-    "animationDurationUpdate": 300,
-    "animationEasingUpdate": "cubicOut",
-    "animationDelayUpdate": 0,
-    "aria": {
-        "enabled": false
-    },
-    "color": [
-        "#5470c6",
-        "#91cc75",
-        "#fac858",
-        "#ee6666",
-        "#73c0de",
-        "#3ba272",
-        "#fc8452",
-        "#9a60b4",
-        "#ea7ccc"
-    ],
-    "series": [
-        {
-            "type": "bar",
-            "name": "\u9500\u552e\u989d",
-            "legendHoverLink": true,
-            "data": [
-                17857.6,
-                5322.6,
-                20593.1
-            ],
-            "realtimeSort": false,
-            "showBackground": false,
-            "stackStrategy": "samesign",
-            "cursor": "pointer",
-            "barMinHeight": 0,
-            "barCategoryGap": "20%",
-            "barGap": "30%",
-            "large": false,
-            "largeThreshold": 400,
-            "seriesLayoutBy": "column",
-            "datasetIndex": 0,
-            "clip": true,
-            "zlevel": 0,
-            "z": 2,
-            "label": {
-                "show": true,
-                "position": "top",
-                "distance": 5,
-                "align": "center",
-                "verticalAlign": "middle",
-                "rotate": 0,
-                "formatter": "{c} \u5143",
-                "fontSize": 16,
-                "rich": {}
-            }
-        }
-    ],
-    "legend": [
-        {
-            "data": [
-                "\u9500\u552e\u989d"
-            ],
-            "selected": {},
-            "show": true,
-            "top": "10%",
-            "right": "10%",
-            "orient": "vertical",
-            "padding": 5,
-            "itemGap": 10,
-            "itemWidth": 25,
-            "itemHeight": 14,
-            "backgroundColor": "transparent",
-            "borderColor": "#ccc",
-            "borderWidth": 1,
-            "borderRadius": 0,
-            "pageButtonItemGap": 5,
-            "pageButtonPosition": "end",
-            "pageFormatter": "{current}/{total}",
-            "pageIconColor": "#2f4554",
-            "pageIconInactiveColor": "#aaa",
-            "pageIconSize": 15,
-            "animationDurationUpdate": 800,
-            "selector": false,
-            "selectorPosition": "auto",
-            "selectorItemGap": 7,
-            "selectorButtonGap": 10
-        }
-    ],
-    "tooltip": {
-        "show": true,
-        "trigger": "axis",
-        "triggerOn": "mousemove|click",
-        "axisPointer": {
-            "type": "shadow"
-        },
-        "showContent": true,
-        "alwaysShowContent": false,
-        "showDelay": 0,
-        "hideDelay": 100,
-        "enterable": false,
-        "confine": false,
-        "appendToBody": false,
-        "transitionDuration": 0.4,
-        "textStyle": {
-            "fontSize": 14
-        },
-        "formatter": "{a}<br/>{b}: {c} \u5143",
-        "borderWidth": 1,
-        "padding": 5
-    },
-    "xAxis": [
-        {
-            "type": "category",
-            "name": "\u6e20\u9053\u540d",
-            "show": true,
-            "scale": false,
-            "nameLocation": "middle",
-            "nameGap": 22,
-            "gridIndex": 0,
-            "inverse": false,
-            "offset": 0,
-            "splitNumber": 5,
-            "minInterval": 0,
-            "axisLine": {
-                "show": true,
-                "lineStyle": {
-                    "show": true,
-                    "width": 1,
-                    "type": "solid"
-                }
-            },
-            "data": [
-                "\u76ca\u5ba2\u5b9d",
-                "\u7f8e\u56e2\u5927\u4f17",
-                "\u6296\u97f3\u56e2\u8d2d"
-            ]
-        }
-    ],
-    "yAxis": [
-        {
-            "type": "value",
-            "name": "\u91d1\u989d(\u5143)",
-            "show": true,
-            "scale": false,
-            "nameLocation": "end",
-            "nameGap": 15,
-            "nameRotate": 90,
-            "gridIndex": 0,
-            "inverse": false,
-            "offset": 0,
-            "splitNumber": 5,
-            "minInterval": 0,
-            "axisLine": {
-                "show": true,
-                "lineStyle": {
-                    "show": true,
-                    "width": 1,
-                    "type": "solid"
-                }
-            },
-            "splitLine": {
-                "show": true,
-                "lineStyle": {
-                    "width": 1,
-                    "type": "dashed"
-                }
-            }
-        }
-    ],
-    "title": [
-        {
-            "text": "\u6e20\u9053\u9500\u552e\u989d\u56fe",
-            "left": "center",
-            "textStyle": {
-                "fontSize": 18,
-                "fontWeight": "bold"
-            }
-        }
-    ]
-};
-        chartchannel_1_1.setOption(optionchannel_1_1);
-      </script>
-    </div>
-    
-          
+
+
             <li style="color: green;">1.2 计算2024-04-01-2024-04-07这段时间，江苏南通电玩猩-南通店的各个渠道套餐销售额占比 :</li>
             <li>&nbsp;&nbsp;&nbsp;&nbsp;Answer is : 渠道名:盈客宝  - 销售额占比:40.8%
 渠道名:美团大众  - 销售额占比:12.16%
 渠道名:抖音团购  - 销售额占比:47.04%
 </li>
-                
-    <div style="width: 80%; margin: 0 auto;">
-      <div id="chartchannel_1_2" class="chart m-b-5 bg-border"></div>
-      <script type="text/javascript">
-        var chartchannel_1_2 = echarts.init(document.getElementById('chartchannel_1_2'), "dark-blue");
-        var optionchannel_1_2 = {
-    "animation": true,
-    "animationThreshold": 2000,
-    "animationDuration": 1000,
-    "animationEasing": "cubicOut",
-    "animationDelay": 0,
-    "animationDurationUpdate": 300,
-    "animationEasingUpdate": "cubicOut",
-    "animationDelayUpdate": 0,
-    "aria": {
-        "enabled": false
-    },
-    "color": [
-        "#5470c6",
-        "#91cc75",
-        "#fac858",
-        "#ee6666",
-        "#73c0de",
-        "#3ba272",
-        "#fc8452",
-        "#9a60b4",
-        "#ea7ccc"
-    ],
-    "series": [
-        {
-            "type": "pie",
-            "name": "\u9500\u552e\u989d\u5360\u6bd4",
-            "radius": "55%",
-            "data": [
-                { "value": 40.8, "name": "\u76ca\u5ba2\u5b9d" },
-                { "value": 12.16, "name": "\u7f8e\u56e2\u5927\u4f17" },
-                { "value": 47.04, "name": "\u6296\u97f3\u56e2\u8d2d" }
-            ],
-            "roseType": "radius",
-            "label": {
-                "formatter": "{b}: {d}%"
-            }
-        }
-    ],
-    "legend": [
-        {
-            "data": [
-                "\u76ca\u5ba2\u5b9d",
-                "\u7f8e\u56e2\u5927\u4f17",
-                "\u6296\u97f3\u56e2\u8d2d"
-            ],
-            "selected": {},
-            "show": true,
-            "orient": "vertical",
-            "right": "5%",
-            "top": "center",
-            "padding": 5,
-            "itemGap": 10,
-            "itemWidth": 25,
-            "itemHeight": 14,
-            "backgroundColor": "transparent",
-            "borderColor": "#ccc",
-            "borderWidth": 1,
-            "borderRadius": 0,
-            "pageButtonItemGap": 5,
-            "pageButtonPosition": "end",
-            "pageFormatter": "{current}/{total}",
-            "pageIconColor": "#2f4554",
-            "pageIconInactiveColor": "#aaa",
-            "pageIconSize": 15,
-            "animationDurationUpdate": 800,
-            "selector": false,
-            "selectorPosition": "auto",
-            "selectorItemGap": 7,
-            "selectorButtonGap": 10
-        }
-    ],
-    "tooltip": {
-        "show": true,
-        "trigger": "item",
-        "formatter": "{a} <br/>{b}: {c} ({d}%)"
-    },
-    "title": [
-        {
-            "text": "\u6e20\u9053\u9500\u552e\u989d\u5360\u6bd4",
-            "left": "center",
-            "top": "20"
-        }
-    ]
-};
-        chartchannel_1_2.setOption(optionchannel_1_2);
-      </script>
-    </div>
-    
-          
+
+
             <li style="color: green;">1.3 计算2024-04-01-2024-04-07这段时间，各个店铺的各渠道套餐销售额占比 :</li>
             <li>&nbsp;&nbsp;&nbsp;&nbsp;Answer is : 渠道名:盈客宝  - 销售额占比:55.82%
 渠道名:美团大众  - 销售额占比:8.94%
 渠道名:抖音团购  - 销售额占比:35.24%
 </li>
-                
-          
+
+
             <li style="color: green;">1.4 找出2024-04-01-2024-04-07这段时间，江苏南通电玩猩-南通店销售额占比（1.2结论）低于总占比（1.3结论）的80%的销售渠道 :</li>
-            <li>&nbsp;&nbsp;&nbsp;&nbsp;Answer is : 渠道名:盈客宝  
+            <li>&nbsp;&nbsp;&nbsp;&nbsp;Answer is : 渠道名:盈客宝
 </li>
-                
-          
-        
+
+
+
 <!--          <li><strong>2. 分析可优化渠道的滞销套餐：</strong><br> Answer: 分四步执行 </li>-->
         <h4>2. 分析可优化渠道的滞销套餐</h4>
           <li>分四步执行 </li>
-          
+
             <li style="color: green;">2.1 计算2024-04-01-2024-04-07这段时间内江苏南通电玩猩-南通店可优化渠道（1.4结论）的各套餐销量占比 :</li>
             <li>&nbsp;&nbsp;&nbsp;&nbsp;Answer is : 套餐名:0元=20币 签到币  - 销售额占比:0.0%
- 
+
 套餐名:195元1000游戏币  - 销售额占比:20.75%
- 
+
 套餐名:299元1600游戏币  - 销售额占比:28.46%
- 
+
 套餐名:99元500游戏币  - 销售额占比:37.7%
- 
+
 套餐名:39.9元100游戏币  - 销售额占比:4.69%
- 
+
 套餐名:1500元8000游戏币  - 销售额占比:8.4%
- 
+
 套餐名:（私域）有奖竞答福利币  - 销售额占比:0.0%
- 
+
 </li>
-                
-          
+
+
             <li style="color: green;">2.2 分析2024-04-01-2024-04-07这段时间内江苏南通电玩猩-南通店在可优化渠道（1.4结论）中各套餐销量平均占比 :</li>
             <li>&nbsp;&nbsp;&nbsp;&nbsp;Answer is : 套餐名:（私域）有奖竞答福利币  - 销售额占比:0.0
 套餐名:0元=20币 签到币  - 销售额占比:0.0
@@ -509,119 +225,41 @@
 套餐名:39.9元100游戏币  - 销售额占比:4.36186479885368
 套餐名:99元500游戏币  - 销售额占比:25.35953162475688
 </li>
-                
-    <div style="width: 80%; margin: 0 auto;">
-      <div id="chartchannel_2_2" class="chart m-b-5 bg-border"></div>
-      <script type="text/javascript">
-        var chartchannel_2_2 = echarts.init(document.getElementById('chartchannel_2_2'), "dark-blue");
-        var optionchannel_2_2 = {
-    "animation": true,
-    "animationThreshold": 2000,
-    "animationDuration": 1000,
-    "animationEasing": "cubicOut",
-    "animationDelay": 0,
-    "animationDurationUpdate": 300,
-    "animationEasingUpdate": "cubicOut",
-    "animationDelayUpdate": 0,
-    "aria": {
-        "enabled": false
-    },
-    "color": [
-        "#5470c6",
-        "#91cc75",
-        "#fac858",
-        "#ee6666",
-        "#73c0de",
-        "#3ba272",
-        "#fc8452",
-        "#9a60b4",
-        "#ea7ccc"
-    ],
-    "series": [
-        {
-            "type": "pie",
-            "name": "\u9500\u552e\u989d\u5360\u6bd4",
-            "legendHoverLink": true,
-            "data": [
-                {"value": 0.0, "name": "（\u79c1\u57df）\u6709\u5956\u7ade\u7b54\u798f\u5229\u5e01"},
-                {"value": 0.0, "name": "0\u5143=20\u5e01 \u7b7e\u5230\u5e01"},
-                {"value": 40.64914305936358, "name": "1500\u51438000\u6e38\u620f\u5e01"},
-                {"value": 12.0970392491213, "name": "195\u51431000\u6e38\u620f\u5e01"},
-                {"value": 17.53242126790456, "name": "299\u51431600\u6e38\u620f\u5e01"},
-                {"value": 4.36186479885368, "name": "39.9\u5143100\u6e38\u620f\u5e01"},
-                {"value": 25.35953162475688, "name": "99\u5143500\u6e38\u620f\u5e01"}
-            ],
-            "realtimeSort": false,
-            "selectedMode": "single",
-            "label": {
-                "show": true,
-                "formatter": "{b}: {d}%"
-            }
-        }
-    ],
-    "legend": {
-        "type": "scroll",
-        "orient": "vertical",
-        "right": 10,
-        "top": 20,
-        "bottom": 20,
-        "data": [
-            "（\u79c1\u57df）\u6709\u5956\u7ade\u7b54\u798f\u5229\u5e01",
-            "0\u5143=20\u5e01 \u7b7e\u5230\u5e01",
-            "1500\u51438000\u6e38\u620f\u5e01",
-            "195\u51431000\u6e38\u620f\u5e01",
-            "299\u51431600\u6e38\u620f\u5e01",
-            "39.9\u5143100\u6e38\u620f\u5e01",
-            "99\u5143500\u6e38\u620f\u5e01"
-        ]
-    },
-    "tooltip": {
-        "trigger": "item",
-        "formatter": "{a} <br/>{b}: {c} ({d}%)"
-    },
-    "title": {
-        "text": "\u9500\u552e\u989d\u5360\u6bd4\u5206\u5e03\u56fe",
-        "left": "center"
-    }
-};
-        chartchannel_2_2.setOption(optionchannel_2_2);
-      </script>
-    </div>
-    
-          
+
+
             <li style="color: green;">2.3 分析2024-04-01-2024-04-07这段时间内江苏南通电玩猩-南通店在可优化渠道（1.4结论）滞销套餐名（销量占比低于均值的80%） :</li>
             <li>&nbsp;&nbsp;&nbsp;&nbsp;Answer is : 滞销套餐: 1500元8000游戏币
 </li>
-                
-          
+
+
             <li style="color: green;">2.4根据1.4和2.3的问题和结论 给出建议如何优化滞销套餐 :</li>
             <li>&nbsp;&nbsp;&nbsp;&nbsp;Answer is : None</li>
-                
-          
-        
+
+
+
       </ul>
 
-<!--      <div id="chart_1714470948004"></div>-->
+<!--      <div id="chart_1715400297127"></div>-->
 
-<!--      <div id="chart1_1714470948004" class="chart m-b-5 bg-border"></div>-->
+<!--      <div id="chart1_1715400297127" class="chart m-b-5 bg-border"></div>-->
 <!--      <script type="text/javascript">-->
-<!--        var chart1_1714470948004 = echarts.init(document.getElementById('chart1_1714470948004'), "dark");-->
-<!--        var option1_1714470948004 = ;-->
-<!--        chart1_1714470948004.setOption(option1_1714470948004);-->
+<!--        var chart1_1715400297127 = echarts.init(document.getElementById('chart1_1715400297127'), "dark");-->
+<!--        var option1_1715400297127 = ;-->
+<!--        chart1_1715400297127.setOption(option1_1715400297127);-->
 <!--      </script>-->
     </div>
-  
+
     <div class="question-section">
       <h2 class="m-b-5 bg-border color-white">2.日营收优化分析</h2>
       <li>目标：分析营收金额是否有异常情况</li>
 
       <ul class="m-b-5 bg-border">
         <p>【DeepBI自动分析过程】</p>
-        
+
 <!--          <li><strong>1. 日营收优化分析：</strong><br> Answer: 三个子问题 </li>-->
         <h4>1. 日营收优化分析</h4>
           <li>三个子问题 </li>
-          
+
             <li style="color: green;">1.1 分析2024-04-01-2024-04-07这段时间内江苏南通电玩猩-南通店每日营收金额波动情况 :</li>
             <li>&nbsp;&nbsp;&nbsp;&nbsp;Answer is : 日期:2024-04-01 00:00:00  - 营收额:3048.5
 ，
@@ -638,99 +276,8 @@
 日期:2024-04-07 00:00:00  - 营收额:5984.9
 ，
 </li>
-                
-    <div style="width: 80%; margin: 0 auto;">
-      <div id="chartdaily_revenue_1_1_a_ecode" class="chart m-b-5 bg-border"></div>
-      <script type="text/javascript">
-        var chartdaily_revenue_1_1_a_ecode = echarts.init(document.getElementById('chartdaily_revenue_1_1_a_ecode'), "dark-blue");
-        var optiondaily_revenue_1_1_a_ecode = {
-    "animation": true,
-    "animationThreshold": 2000,
-    "animationDuration": 1000,
-    "animationEasing": "cubicOut",
-    "animationDelay": 0,
-    "animationDurationUpdate": 300,
-    "animationEasingUpdate": "cubicOut",
-    "animationDelayUpdate": 0,
-    "color": [
-        "#5470c6",
-        "#91cc75",
-        "#fac858",
-        "#ee6666",
-        "#73c0de",
-        "#3ba272",
-        "#fc8452",
-        "#9a60b4",
-        "#ea7ccc"
-    ],
-    "series": [
-        {
-            "type": "bar",
-            "name": "\u8425\u6536\u989d",
-            "data": [
-                3048.5,
-                2810.6,
-                2571.7,
-                11847.4,
-                11254.6,
-                8476.4,
-                5984.9
-            ],
-            "label": {
-                "show": true,
-                "position": "top"
-            }
-        }
-    ],
-    "legend": {
-        "data": ["\u8425\u6536\u989d"],
-        "orient": "horizontal",
-        "left": "right",
-        "top": 5
-    },
-    "tooltip": {
-        "show": true,
-        "trigger": "axis"
-    },
-    "xAxis": {
-        "type": "category",
-        "data": [
-            "2024-04-01",
-            "2024-04-02",
-            "2024-04-03",
-            "2024-04-04",
-            "2024-04-05",
-            "2024-04-06",
-            "2024-04-07"
-        ],
-        "axisLabel": {
-            "rotate": 45
-        }
-    },
-    "yAxis": {
-        "type": "value",
-        "name": "\u91d1\u989d",
-        "axisLabel": {
-            "formatter": "{value}"
-        }
-    },
-    "grid": {
-        "containLabel": true,
-        "left": "10%",
-        "right": "10%",
-        "bottom": "15%"
-    },
-    "title": {
-        "text": "\u8425\u6536\u989d\u8d8b\u52bf\u5206\u6790",
-        "left": "center",
-        "top": 20
-    }
-};
-        chartdaily_revenue_1_1_a_ecode.setOption(optiondaily_revenue_1_1_a_ecode);
-      </script>
-    </div>
-    
-          
+
+
             <li style="color: green;">1.2 分析2024-04-01-2024-04-07,江苏南通电玩猩-南通店这一周营收金额是否有异常情况,分析这周最低营收是否低于上周最低值的80% :</li>
             <li>&nbsp;&nbsp;&nbsp;&nbsp;Answer is : 日期:2024-04-01 00:00:00  - 异常阈值:2043.92
 ，- 异常状态:正常
@@ -754,150 +301,36 @@
 ，- 异常状态:正常
 
 </li>
-                
-    <div style="width: 80%; margin: 0 auto;">
-      <div id="chartdaily_revenue_1_2_a_ecode" class="chart m-b-5 bg-border"></div>
-      <script type="text/javascript">
-        var chartdaily_revenue_1_2_a_ecode = echarts.init(document.getElementById('chartdaily_revenue_1_2_a_ecode'), "dark-blue");
-        var optiondaily_revenue_1_2_a_ecode = {
-    "animation": true,
-    "animationThreshold": 2000,
-    "animationDuration": 1000,
-    "animationEasing": "cubicOut",
-    "animationDelay": 0,
-    "animationDurationUpdate": 300,
-    "animationEasingUpdate": "cubicOut",
-    "animationDelayUpdate": 0,
-    "aria": {
-        "enabled": false
-    },
-    "color": [
-        "#91cc75",
-        "#ee6666"
-    ],
-    "series": [
-        {
-            "type": "line",
-            "name": "\u5f02\u5e38\u9600\u503c",
-            "legendHoverLink": true,
-            "data": [
-                2043.92,
-                2043.92,
-                2043.92,
-                2043.92,
-                2043.92,
-                2043.92,
-                2043.92
-            ],
-            "markLine": {
-                "silent": true,
-                "data": [
-                    {
-                        "yAxis": 2043.92,
-                        "name": "\u5f02\u5e38\u9600\u503c"
-                    }
-                ]
-            },
-            "label": {
-                "show": true,
-                "position": "top"
-            }
-        }
-    ],
-    "legend": {
-        "data": [
-            "\u5f02\u5e38\u9600\u503c"
-        ],
-        "selected": {},
-        "show": true,
-        "right": "10%",
-        "top": "5%",
-        "orient": "vertical",
-        "padding": 5,
-        "itemGap": 10,
-        "itemWidth": 25,
-        "itemHeight": 14,
-        "backgroundColor": "transparent",
-        "borderColor": "#ccc",
-        "borderWidth": 1,
-        "borderRadius": 0
-    },
-    "tooltip": {
-        "show": true,
-        "trigger": "axis",
-        "axisPointer": {
-            "type": "line"
-        },
-        "textStyle": {
-            "fontSize": 14
-        }
-    },
-    "xAxis": {
-        "type": "category",
-        "name": "\u65e5\u671f",
-        "show": true,
-        "data": [
-            "2024-04-01 00:00:00",
-            "2024-04-02 00:00:00",
-            "2024-04-03 00:00:00",
-            "2024-04-04 00:00:00",
-            "2024-04-05 00:00:00",
-            "2024-04-06 00:00:00",
-            "2024-04-07 00:00:00"
-        ],
-        "axisLabel": {
-            "rotate": 45
-        }
-    },
-    "yAxis": {
-        "type": "value",
-        "name": "\u5e38\u89c4\u9636\u5ea6",
-        "min": 2043.92,
-        "max": 2043.92,
-        "interval": 0,
-        "axisLabel": {
-            "formatter": "{value}"
-        }
-    },
-    "title": {
-        "text": "\u5f02\u5e38\u72b6\u6001\u83b7\u53d6",
-        "left": "center",
-        "top": "5%"
-    }
-};
-        chartdaily_revenue_1_2_a_ecode.setOption(optiondaily_revenue_1_2_a_ecode);
-      </script>
-    </div>
-    
-          
+
+
             <li style="color: green;">1.3 根据1.1和1.2的结论分析可能的营收异常原因，给出优化建议  :</li>
             <li>&nbsp;&nbsp;&nbsp;&nbsp;Answer is : None</li>
-                
-          
-        
+
+
+
       </ul>
 
-<!--      <div id="chart_1714470948004"></div>-->
+<!--      <div id="chart_1715400297127"></div>-->
 
-<!--      <div id="chart2_1714470948004" class="chart m-b-5 bg-border"></div>-->
+<!--      <div id="chart2_1715400297127" class="chart m-b-5 bg-border"></div>-->
 <!--      <script type="text/javascript">-->
-<!--        var chart2_1714470948004 = echarts.init(document.getElementById('chart2_1714470948004'), "dark");-->
-<!--        var option2_1714470948004 = ;-->
-<!--        chart2_1714470948004.setOption(option2_1714470948004);-->
+<!--        var chart2_1715400297127 = echarts.init(document.getElementById('chart2_1715400297127'), "dark");-->
+<!--        var option2_1715400297127 = ;-->
+<!--        chart2_1715400297127.setOption(option2_1715400297127);-->
 <!--      </script>-->
     </div>
-  
+
     <div class="question-section">
       <h2 class="m-b-5 bg-border color-white">3.日成本优化分析</h2>
       <li>目标：根据每日的日消费与成本变化趋势，分析当日利润情况影响</li>
 
       <ul class="m-b-5 bg-border">
         <p>【DeepBI自动分析过程】</p>
-        
+
 <!--          <li><strong>1.分析本周成本是否有异常情况：</strong><br> Answer: 分三步执行 </li>-->
         <h4>1.分析本周成本是否有异常情况</h4>
           <li>分三步执行 </li>
-          
+
             <li style="color: green;">1.1 计算南通店第14周每日成本波动情况 :</li>
             <li>&nbsp;&nbsp;&nbsp;&nbsp;Answer is : 日期:2024-04-01  - 日成本:1163.6658，
 日期:2024-04-02  - 日成本:818.7116，
@@ -907,8 +340,8 @@
 日期:2024-04-06  - 日成本:2950.6292，
 日期:2024-04-07  - 日成本:919.0908，
 </li>
-                
-          
+
+
             <li style="color: green;">1.2 分析南通店第14周每日消费波动情况 :</li>
             <li>&nbsp;&nbsp;&nbsp;&nbsp;Answer is : 日期:2024-04-01  - 总投币量:29395.0，消费额:5879.0
 日期:2024-04-02  - 总投币量:14474.0，消费额:2894.8
@@ -918,129 +351,56 @@
 日期:2024-04-06  - 总投币量:38568.0，消费额:7713.6
 日期:2024-04-07  - 总投币量:19850.0，消费额:3970.0
 </li>
-                
-    <div style="width: 80%; margin: 0 auto;">
-      <div id="chartcost_1_a2_ecode" class="chart m-b-5 bg-border"></div>
-      <script type="text/javascript">
-        var chartcost_1_a2_ecode = echarts.init(document.getElementById('chartcost_1_a2_ecode'), "dark-blue");
-        var optioncost_1_a2_ecode = {
-    "title": {
-        "text": "\u603b\u6295\u5e01\u91cf\u4e0e\u6d88\u8d39\u989d\u8d8b\u52bf\u5206\u6790",
-        "left": "center"
-    },
-    "tooltip": {
-        "trigger": "axis",
-        "axisPointer": {
-            "type": "cross",
-            "label": {
-                "backgroundColor": "#6a7985"
-            }
-        }
-    },
-    "legend": {
-        "data": ["\u603b\u6295\u5e01\u91cf", "\u6d88\u8d39\u989d"],
-        "right": "10%",
-        "top": "6%"
-    },
-    "grid": {
-        "left": "3%",
-        "right": "4%",
-        "bottom": "3%",
-        "containLabel": true
-    },
-    "toolbox": {
-        "feature": {
-            "saveAsImage": {}
-        }
-    },
-    "xAxis": [
-        {
-            "type": "category",
-            "boundaryGap": false,
-            "data": ["2024-04-01", "2024-04-02", "2024-04-03", "2024-04-04", "2024-04-05", "2024-04-06", "2024-04-07"]
-        }
-    ],
-    "yAxis": [
-        {
-            "type": "value"
-        }
-    ],
-    "series": [
-        {
-            "name": "\u603b\u6295\u5e01\u91cf",
-            "type": "line",
-            "stack": "\u603b\u91cf",
-            "areaStyle": {},
-            "emphasis": {
-                "focus": "series"
-            },
-            "data": [29395.0, 14474.0, 31143.0, 54646.0, 58028.0, 38568.0, 19850.0]
-        },
-        {
-            "name": "\u6d88\u8d39\u989d",
-            "type": "line",
-            "stack": "\u603b\u91cf",
-            "areaStyle": {},
-            "emphasis": {
-                "focus": "series"
-            },
-            "data": [5879.0, 2894.8, 6228.6, 10929.2, 11605.6, 7713.6, 3970.0]
-        }
-    ]
-};
-        chartcost_1_a2_ecode.setOption(optioncost_1_a2_ecode);
-      </script>
-    </div>
-    
-          
+
+
             <li style="color: green;">1.3 分析南通店第13周和14周是否有当日成本超出当日营收50%的情况 :</li>
             <li>&nbsp;&nbsp;&nbsp;&nbsp;Answer is : 异常日期:2024-03-28  - 收入:5308.6，成本:4615.0077
 </li>
-                
-          
-        
+
+
+
 <!--          <li><strong>2. 分析异常情况原因：</strong><br> Answer: 分三步执行 </li>-->
         <h4>2. 分析异常情况原因</h4>
           <li>分三步执行 </li>
-          
+
             <li style="color: green;">2.1 分析南通店第13周一周成本均值 :</li>
-            <li>&nbsp;&nbsp;&nbsp;&nbsp;Answer is : 平均周成本:2380.6 
+            <li>&nbsp;&nbsp;&nbsp;&nbsp;Answer is : 平均周成本:2380.6
 </li>
-                
-          
+
+
             <li style="color: green;">2.2 分析南通店出现异常当日的采购礼品价格是否有超过成本均值40%的商品 :</li>
             <li>&nbsp;&nbsp;&nbsp;&nbsp;Answer is : 订单编号:CG0004000000000118  - 商品名:华为matepadair11.5英寸8+256g，数量:1.0，商品价格:2999.0
 </li>
-                
-          
+
+
             <li style="color: green;">2.3 根据1.3，2.1和2.2的结论，分析可能的成本异常原因 :</li>
             <li>&nbsp;&nbsp;&nbsp;&nbsp;Answer is : None</li>
-                
-          
-        
+
+
+
       </ul>
 
-<!--      <div id="chart_1714470948004"></div>-->
+<!--      <div id="chart_1715400297127"></div>-->
 
-<!--      <div id="chart3_1714470948004" class="chart m-b-5 bg-border"></div>-->
+<!--      <div id="chart3_1715400297127" class="chart m-b-5 bg-border"></div>-->
 <!--      <script type="text/javascript">-->
-<!--        var chart3_1714470948004 = echarts.init(document.getElementById('chart3_1714470948004'), "dark");-->
-<!--        var option3_1714470948004 = ;-->
-<!--        chart3_1714470948004.setOption(option3_1714470948004);-->
+<!--        var chart3_1715400297127 = echarts.init(document.getElementById('chart3_1715400297127'), "dark");-->
+<!--        var option3_1715400297127 = ;-->
+<!--        chart3_1715400297127.setOption(option3_1715400297127);-->
 <!--      </script>-->
     </div>
-  
+
     <div class="question-section">
       <h2 class="m-b-5 bg-border color-white">4.游戏币优化分析</h2>
       <li>目标：分析游戏币相关数据波动是否有异常</li>
 
       <ul class="m-b-5 bg-border">
         <p>【DeepBI自动分析过程】</p>
-        
+
 <!--          <li><strong>1. 分析游戏币波动是否有异常：</strong><br> Answer: 三个子问题 </li>-->
         <h4>1. 分析游戏币波动是否有异常</h4>
           <li>三个子问题 </li>
-          
+
             <li style="color: green;">1.1 计算2024-04-01-2024-04-07,江苏南通电玩猩-南通店这一周周币单价波动 :</li>
             <li>&nbsp;&nbsp;&nbsp;&nbsp;Answer is : 日期:2024-04-01 00:00:00  - 币单价:0.2
 ，
@@ -1057,8 +417,8 @@
 日期:2024-04-07 00:00:00  - 币单价:0.19
 ，
 </li>
-                
-          
+
+
             <li style="color: green;">1.2 分析2024-04-01-2024-04-07,江苏南通电玩猩-南通店这一周周日售币波动 :</li>
             <li>&nbsp;&nbsp;&nbsp;&nbsp;Answer is : 日期:2024-04-01  - 日售币:14920.0
 ，
@@ -1075,36 +435,36 @@
 日期:2024-04-07  - 日售币:31750.0
 ，
 </li>
-                
-          
+
+
             <li style="color: green;">1.3 根据1.1和1.2结论，分析这周游戏币波动是否存在异常 ，给出优化建议  :</li>
             <li>&nbsp;&nbsp;&nbsp;&nbsp;Answer is : None</li>
-                
-          
-        
+
+
+
       </ul>
 
-<!--      <div id="chart_1714470948004"></div>-->
+<!--      <div id="chart_1715400297127"></div>-->
 
-<!--      <div id="chart4_1714470948004" class="chart m-b-5 bg-border"></div>-->
+<!--      <div id="chart4_1715400297127" class="chart m-b-5 bg-border"></div>-->
 <!--      <script type="text/javascript">-->
-<!--        var chart4_1714470948004 = echarts.init(document.getElementById('chart4_1714470948004'), "dark");-->
-<!--        var option4_1714470948004 = ;-->
-<!--        chart4_1714470948004.setOption(option4_1714470948004);-->
+<!--        var chart4_1715400297127 = echarts.init(document.getElementById('chart4_1715400297127'), "dark");-->
+<!--        var option4_1715400297127 = ;-->
+<!--        chart4_1715400297127.setOption(option4_1715400297127);-->
 <!--      </script>-->
     </div>
-  
+
     <div class="question-section">
       <h2 class="m-b-5 bg-border color-white">5. 会员优化分析</h2>
       <li>目标：分析会员情况和结构占比</li>
 
       <ul class="m-b-5 bg-border">
         <p>【DeepBI自动分析过程】</p>
-        
+
 <!--          <li><strong>1. 会员优化分析：</strong><br> Answer: 四个子问题 </li>-->
         <h4>1. 会员优化分析</h4>
           <li>四个子问题 </li>
-          
+
             <li style="color: green;">1.1 分析2024-04-01-2024-04-07一周，江苏南通电玩猩-南通店到店会员数波动情况 :</li>
             <li>&nbsp;&nbsp;&nbsp;&nbsp;Answer is : 日期:2024-04-01  - 到店会员数:41
 ，
@@ -1121,84 +481,84 @@
 日期:2024-04-07  - 到店会员数:64
 ，
 </li>
-                
-          
+
+
             <li style="color: green;">1.2 分析江苏南通电玩猩-南通店的RFM会员占比情况 :</li>
-            <li>&nbsp;&nbsp;&nbsp;&nbsp;Answer is : 标签:110   - 会员数:468
-，- 会员占比:6.0543
+            <li>&nbsp;&nbsp;&nbsp;&nbsp;Answer is : 标签:110   - 会员数:521
+，- 会员占比:6.1229
 ，
-标签:011   - 会员数:164
-，- 会员占比:2.1216
+标签:111   - 会员数:549
+，- 会员占比:6.452
 ，
-标签:000   - 会员数:2968
-，- 会员占比:38.3959
+标签:000   - 会员数:3249
+，- 会员占比:38.1831
 ，
-标签:111   - 会员数:471
-，- 会员占比:6.0931
+标签:100   - 会员数:2454
+，- 会员占比:28.8401
 ，
-标签:100   - 会员数:2376
-，- 会员占比:30.7374
+标签:001   - 会员数:359
+，- 会员占比:4.2191
 ，
-标签:001   - 会员数:337
-，- 会员占比:4.3596
+标签:011   - 会员数:180
+，- 会员占比:2.1154
 ，
-标签:010   - 会员数:116
-，- 会员占比:1.5006
+标签:010   - 会员数:142
+，- 会员占比:1.6688
 ，
-标签:101   - 会员数:248
-，- 会员占比:3.2083
+标签:101   - 会员数:338
+，- 会员占比:3.9723
 ，
 </li>
-                
-          
+
+
             <li style="color: green;">1.3 分析其他店铺的RFM会员总会员占比 :</li>
-            <li>&nbsp;&nbsp;&nbsp;&nbsp;Answer is : 标签:000  - 会员占比:35.6092
+            <li>&nbsp;&nbsp;&nbsp;&nbsp;Answer is : 标签:000  - 会员占比:33.4455
 ，
-标签:110  - 会员占比:8.1171
+标签:010  - 会员占比:3.4635
 ，
-标签:111  - 会员占比:8.4942
+标签:100  - 会员占比:39.794
 ，
-标签:011  - 会员占比:4.2203
+标签:111  - 会员占比:8.2983
 ，
-标签:100  - 会员占比:37.1516
+标签:011  - 会员占比:4.1225
 ，
-标签:001  - 会员占比:1.8317
+标签:101  - 会员占比:2.087
 ，
-标签:101  - 会员占比:1.2575
+标签:110  - 会员占比:7.1793
 ，
-标签:010  - 会员占比:3.3184
+标签:001  - 会员占比:1.6099
 ，
 </li>
-                
-          
+
+
             <li style="color: green;">1.4.根据1.2和1.3问题结论，对比分析各类会员占比与总会员占比（第3问结论），给出优化建议 :</li>
             <li>&nbsp;&nbsp;&nbsp;&nbsp;Answer is : None</li>
-                
-          
-        
+
+
+
       </ul>
 
-<!--      <div id="chart_1714470948004"></div>-->
+<!--      <div id="chart_1715400297127"></div>-->
 
-<!--      <div id="chart5_1714470948004" class="chart m-b-5 bg-border"></div>-->
+<!--      <div id="chart5_1715400297127" class="chart m-b-5 bg-border"></div>-->
 <!--      <script type="text/javascript">-->
-<!--        var chart5_1714470948004 = echarts.init(document.getElementById('chart5_1714470948004'), "dark");-->
-<!--        var option5_1714470948004 = ;-->
-<!--        chart5_1714470948004.setOption(option5_1714470948004);-->
+<!--        var chart5_1715400297127 = echarts.init(document.getElementById('chart5_1715400297127'), "dark");-->
+<!--        var option5_1715400297127 = ;-->
+<!--        chart5_1715400297127.setOption(option5_1715400297127);-->
 <!--      </script>-->
     </div>
-  
+
     <div class="question-section">
       <h2 class="m-b-5 bg-border color-white">6. 机台投币量优化分析</h2>
       <li>目标：分析店铺一周的机台投币量波动和机器投币量占比，分析是否存在异常</li>
 
       <ul class="m-b-5 bg-border">
         <p>【DeepBI自动分析过程】</p>
-        
+
 <!--          <li><strong>机台投币量优化分析：</strong><br> Answer: 分三步执行 </li>-->
         <h4>机台投币量优化分析</h4>
           <li>分三步执行 </li>
-          
+
             <li style="color: green;">1.1 分析2024-04-01-2024-04-07一周，江苏南通电玩猩-南通店的日机台投币量波动 :</li>
             <li>&nbsp;&nbsp;&nbsp;&nbsp;Answer is : 日期:2024-04-01  - 投币数量:258469.0
 日期:2024-04-02  - 投币数量:107365.0
@@ -1208,8 +568,8 @@
 日期:2024-04-06  - 投币数量:97032.0
 日期:2024-04-07  - 投币数量:156608.0
 </li>
-                
-          
+
+
             <li style="color: green;">1.2 分析2024-04-01-2024-04-07一周，江苏南通电玩猩-南通店的各类机器机台投币量占比 :</li>
             <li>&nbsp;&nbsp;&nbsp;&nbsp;Answer is : 机器类型:彩票机  - 总投币量:81966.0 - 占比:8.08%
 机器类型:8寸娃娃机  - 总投币量:63030.0 - 占比:6.22%
@@ -1218,8 +578,8 @@
 机器类型:娱乐机  - 总投币量:804780.0 - 占比:79.37%
 机器类型:7寸娃娃机  - 总投币量:7784.0 - 占比:0.77%
 </li>
-                
-          
+
+
             <li style="color: green;">1.3 分析2024-04-01-2024-04-07一周，江苏南通电玩猩-南通店的各类机器机台启动次数占比 :</li>
             <li>&nbsp;&nbsp;&nbsp;&nbsp;Answer is : 机器类型:娱乐机  - 启动次数:9412.0 - 占比:12.0%
 机器类型:7寸娃娃机  - 启动次数:3892.0 - 占比:5.0%
@@ -1228,13 +588,13 @@
 机器类型:礼品机  - 启动次数:12100.52633 - 占比:15.0%
 机器类型:彩票机  - 启动次数:30253.83294 - 占比:37.0%
 </li>
-                
-          
-        
+
+
+
 <!--          <li><strong>热门机器对比分析：</strong><br> Answer: 分五步执行 </li>-->
         <h4>热门机器对比分析</h4>
           <li>分五步执行 </li>
-          
+
             <li style="color: green;">2.1 分析2024-04-01-2024-04-07一周，江苏南通电玩猩-南通店周的热门机器类型和投币量 :</li>
             <li>&nbsp;&nbsp;&nbsp;&nbsp;Answer is : 机器名称:挂件3  - 日期:2024-04-05 - 日净投币量:58028.0
 机器名称:挂件2  - 日期:2024-04-04 - 日净投币量:54646.0
@@ -1244,8 +604,8 @@
 机器名称:疯狂冰淇淋（出票器）  - 日期:2024-04-07 - 日净投币量:19850.0
 机器名称:挂件2  - 日期:2024-04-02 - 日净投币量:14474.0
 </li>
-                
-          
+
+
             <li style="color: green;">2.2 分析2024-04-01-2024-04-07一周，安徽合肥电玩猩-合肥店的热门机器类型和投币量 :</li>
             <li>&nbsp;&nbsp;&nbsp;&nbsp;Answer is : 机器名称:伽宝车神  - 日期:2024-04-04 - 日净投币量:232179.0
 机器名称:小波比（出票器）  - 日期:2024-04-05 - 日净投币量:204006.0
@@ -1255,20 +615,20 @@
 机器名称:波比Q  - 日期:2024-04-02 - 日净投币量:63716.0
 机器名称:矿山探险（出票器）  - 日期:2024-04-01 - 日净投币量:42339.0
 </li>
-                
-          
+
+
             <li style="color: green;">2.3 根据2.1和2.2的问题结论，对比分析两家店铺的最热门机器销售额和机器类型，给出优化意见 :</li>
             <li>&nbsp;&nbsp;&nbsp;&nbsp;Answer is : None</li>
-                
-          
+
+
             <li style="color: green;">2.4 计算2024-04-01-2024-04-07一周，江苏南通电玩猩-南通店热门彩票机的出奖率 :</li>
-            <li>&nbsp;&nbsp;&nbsp;&nbsp;Answer is : 机器名称:火星计划 - 机器类型:彩票机 - 出票总数:805832.0 - 投币总数:18375.0 - 中奖率:43.85%  
-机器名称:小熊保龄球 - 机器类型:彩票机 - 出票总数:20566.0 - 投币总数:1659.0 - 中奖率:12.4%  
-机器名称:神秘海域 - 机器类型:彩票机 - 出票总数:76650.0 - 投币总数:2680.0 - 中奖率:28.6%  
-机器名称:欢乐水果 - 机器类型:彩票机 - 出票总数:75053.0 - 投币总数:2352.0 - 中奖率:31.91%  
+            <li>&nbsp;&nbsp;&nbsp;&nbsp;Answer is : 机器名称:火星计划 - 机器类型:彩票机 - 出票总数:805832.0 - 投币总数:18375.0 - 中奖率:43.85%
+机器名称:小熊保龄球 - 机器类型:彩票机 - 出票总数:20566.0 - 投币总数:1659.0 - 中奖率:12.4%
+机器名称:神秘海域 - 机器类型:彩票机 - 出票总数:76650.0 - 投币总数:2680.0 - 中奖率:28.6%
+机器名称:欢乐水果 - 机器类型:彩票机 - 出票总数:75053.0 - 投币总数:2352.0 - 中奖率:31.91%
 </li>
-                
-          
+
+
             <li style="color: green;">2.5 计算2024-04-01-2024-04-07一周，江苏南通电玩猩-南通店的娃娃机启动次数，找出前十热门机器 :</li>
             <li>&nbsp;&nbsp;&nbsp;&nbsp;Answer is : 日期:2024-04-03 - 每日启动次数:422.0 - 机器名称:娃娃机011
 日期:2024-04-04 - 每日启动次数:418.0 - 机器名称:娃娃机011
@@ -1281,83 +641,83 @@
 日期:2024-04-04 - 每日启动次数:302.0 - 机器名称:娃娃机020
 日期:2024-04-04 - 每日启动次数:293.0 - 机器名称:娃娃机033
 </li>
-                
-          
-        
+
+
+
       </ul>
 
-<!--      <div id="chart_1714470948004"></div>-->
+<!--      <div id="chart_1715400297127"></div>-->
 
-<!--      <div id="chart6_1714470948004" class="chart m-b-5 bg-border"></div>-->
+<!--      <div id="chart6_1715400297127" class="chart m-b-5 bg-border"></div>-->
 <!--      <script type="text/javascript">-->
-<!--        var chart6_1714470948004 = echarts.init(document.getElementById('chart6_1714470948004'), "dark");-->
-<!--        var option6_1714470948004 = ;-->
-<!--        chart6_1714470948004.setOption(option6_1714470948004);-->
+<!--        var chart6_1715400297127 = echarts.init(document.getElementById('chart6_1715400297127'), "dark");-->
+<!--        var option6_1715400297127 = ;-->
+<!--        chart6_1715400297127.setOption(option6_1715400297127);-->
 <!--      </script>-->
     </div>
-  
+
     <div class="question-section">
       <h2 class="m-b-5 bg-border color-white">7.机台异常分析</h2>
       <li>目标：分析南通店第14周投币产出异常机台，出奖异常机台，故障次数异常的机台</li>
 
       <ul class="m-b-5 bg-border">
         <p>【DeepBI自动分析过程】</p>
-        
+
 <!--          <li><strong>1. 机台异常分析：</strong><br> Answer: 四个子问题 </li>-->
         <h4>1. 机台异常分析</h4>
           <li>四个子问题 </li>
-          
+
             <li style="color: green;">1.1 分析2024-04-01周南通店各类机器的投币产出异常(即投币为0但产出不为0) :</li>
             <li>&nbsp;&nbsp;&nbsp;&nbsp;Answer is : 机器名:咖宝车神  - 类型:彩票机  - 异常类型:投币为0
 机器名:娃娃机017  - 类型:7寸娃娃机  - 异常类型:投币为0
 机器名:咖宝车神  - 类型:彩票机  - 异常类型:投币为0
 机器名:小熊保龄球  - 类型:彩票机  - 异常类型:投币为0
 </li>
-                
-          
+
+
             <li style="color: green;">1.2 计算2024-04-01周南通店各类机器出奖异常次数 :</li>
             <li>&nbsp;&nbsp;&nbsp;&nbsp;Answer is : 异常7寸娃娃机数:57
 异常8寸娃娃机数:74
 异常彩票机数:174
 异常娱乐机数:42
 </li>
-                
-          
+
+
             <li style="color: green;">1.3 分析2024-04-01周南通店故障次数异常的机器 :</li>
             <li>&nbsp;&nbsp;&nbsp;&nbsp;Answer is : 机器名:小波比  - 机器编号:0008  - 类型:彩票机  - 故障次数:6
 机器名:小熊保龄球  - 机器编号:0020  - 类型:彩票机  - 故障次数:3
 机器名:疯狂冰淇淋  - 机器编号:0089  - 类型:娱乐机  - 故障次数:3
 机器名:元气弹  - 机器编号:0009  - 类型:彩票机  - 故障次数:1
 机器名:动物大营救  - 机器编号:0017  - 类型:彩票机  - 故障次数:1
-机器名:火星计划  - 机器编号:0016  - 类型:彩票机  - 故障次数:1
 机器名:娃娃机037  - 机器编号:0069  - 类型:8寸娃娃机  - 故障次数:1
+机器名:火星计划  - 机器编号:0016  - 类型:彩票机  - 故障次数:1
 </li>
-                
-          
+
+
             <li style="color: green;">1.4 根据1.1 1.2 和1.3的结论，分析机台异常情况，给出优化建议 :</li>
             <li>&nbsp;&nbsp;&nbsp;&nbsp;Answer is : None</li>
-                
-          
-        
+
+
+
       </ul>
 
-<!--      <div id="chart_1714470948004"></div>-->
+<!--      <div id="chart_1715400297127"></div>-->
 
-<!--      <div id="chart7_1714470948004" class="chart m-b-5 bg-border"></div>-->
+<!--      <div id="chart7_1715400297127" class="chart m-b-5 bg-border"></div>-->
 <!--      <script type="text/javascript">-->
-<!--        var chart7_1714470948004 = echarts.init(document.getElementById('chart7_1714470948004'), "dark");-->
-<!--        var option7_1714470948004 = ;-->
-<!--        chart7_1714470948004.setOption(option7_1714470948004);-->
+<!--        var chart7_1715400297127 = echarts.init(document.getElementById('chart7_1715400297127'), "dark");-->
+<!--        var option7_1715400297127 = ;-->
+<!--        chart7_1715400297127.setOption(option7_1715400297127);-->
 <!--      </script>-->
     </div>
-  
+
 
   <div class="report-summary">
     <h2 class="m-b-5 bg-border color-white">优化策略</h2>
     <ul class="m-b-5 bg-border">
-      
+
         <li><strong>优化建议：</strong>综合以上检查报告，以下为优化建议 </li>
-      
+
     </ul>
   </div>
 

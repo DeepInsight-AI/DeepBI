@@ -1,0 +1,2 @@
+﻿market,sum(sales1d),sum(cost),avg_acos,campaignId,campaignName,adGroupId,adGroupName,advertisedSku,new_campaignName,new_adGroupName
+FR,23.32,0.5,0.021441,194689133640064,B14-Auto,219065790388131,Ad group - 23/06/2022 11:43:15,LPB22SS0014MT012XLR4,DeepBI_0502_B14-Auto,DeepBI_0502_B14-Auto

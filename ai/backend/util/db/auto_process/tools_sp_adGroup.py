@@ -1,27 +1,37 @@
+import os
+
 import pymysql
 from ad_api.api import sponsored_products
 from ad_api.base import Marketplaces
 import json
 import datetime
 from decimal import Decimal
+from ai.backend.util.db.configuration.path import get_config_path
 
 
 class AdGroupTools:
-    def __init__(self):
+    def __init__(self,brand):
         self.credentials = self.load_credentials()
+        self.brand = brand
 
     def load_credentials(self):
-        credentials_path = 'C:/Users/admin/PycharmProjects/DeepBI/ai/backend/util/db/auto_process/credentials.json'
+        credentials_path = os.path.join(get_config_path(), 'credentials.json')
+        #credentials_path = 'C:/Users/admin/PycharmProjects/DeepBI/ai/backend/util/db/auto_process/credentials.json'
         with open(credentials_path) as f:
             config = json.load(f)
         return config['credentials']
 
     def select_market(self, market):
-        credentials = self.credentials.get(market)
-        if not credentials:
+        market_credentials = self.credentials.get(market)
+        if not market_credentials:
             raise ValueError(f"Market '{market}' not found in credentials")
+
+        brand_credentials = market_credentials.get(self.brand)
+        if not brand_credentials:
+            raise ValueError(f"Brand '{self.brand}' not found in credentials for market '{market}'")
+
         # 返回相应的凭据和市场信息
-        return credentials, Marketplaces[market.upper()]
+        return brand_credentials, Marketplaces[market.upper()]
 
 
     # 新建广告组
@@ -187,6 +197,34 @@ class AdGroupTools:
                 "adGroupIdFilter": {
                     "include": [
                         str(adGroupID)
+                    ]
+                }
+            }
+            result = sponsored_products.TargetsV3(credentials=credentials,
+                                                           marketplace=marketplace,
+                                                           debug=True).list_product_targets(
+                body=json.dumps(adGroup_info))
+        except Exception as e:
+            print("list adGroup TargetingClause failed: ", e)
+            result = None
+        if result and result.payload["targetingClauses"]:
+            print("list adGroup TargetingClause success")
+            return result.payload["targetingClauses"]
+        # if result and result.payload["negativeKeywords"]["success"]:
+        #     negativeKeywordId = result.payload["negativeKeywords"]["success"][0]["negativeKeywordId"]
+        #     print("add adGroup negative keyword success,negativeKeywordId is:", negativeKeywordId)
+        #     return ["success", negativeKeywordId]
+        else:
+            print("list adGroup TargetingClause failed")
+            return result.payload["targetingClauses"]
+
+    def list_adGroup_TargetingClause_by_campaignId(self, campaignId, market):
+        try:
+            credentials, marketplace = self.select_market(market)
+            adGroup_info = {
+                "campaignIdFilter": {
+                    "include": [
+                        str(campaignId)
                     ]
                 }
             }

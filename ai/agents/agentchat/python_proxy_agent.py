@@ -730,11 +730,14 @@ class PythonProxyAgent(Agent):
 
             # found code blocks, execute code and push "last_n_messages" back
             exitcode, logs = self.execute_code_blocks(code_blocks)
+            print("logs :", str(logs))
+            print("111")
             code_execution_config["last_n_messages"] = last_n_messages
             exitcode2str = "execution succeeded" if exitcode == 0 else "execution failed"
             length = 10000
             if not str(logs).__contains__('echart_name'):
-                if "html" in logs or "HTML" in logs:
+                #if "html" in logs or "HTML" in logs:
+                if "HTML" in logs:
                     return True, f"exitcode:exitcode failed\nCode output:Please do not output html files. The front end cannot display them. Please generate the correct echarts code."
                 if len(logs) > length:
                     print(' ++++++++++ Length exceeds 10000 characters limit, cropped  +++++++++++++++++')

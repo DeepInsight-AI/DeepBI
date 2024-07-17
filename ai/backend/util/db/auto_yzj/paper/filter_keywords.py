@@ -2,33 +2,44 @@
 
 import pandas as pd
 
-# 加载数据
-file_path = r'C:\Users\admin\PycharmProjects\DeepBI\ai\backend\util\db\auto_yzj\日常优化\自动sp广告\自动定位组优化\预处理.csv'
+# Load the CSV file
+file_path = "C:/Users/admin/PycharmProjects/DeepBI/ai/backend/util/db/auto_yzj/日常优化/手动sp广告/商品投放搜索词优化/预处理.csv"
 data = pd.read_csv(file_path)
 
-# 定义一：最近7天没有销售额且近7天总点击数大于0，且最近30天没有销售额，且近30天点击数大于10
-def_def_1 = (data['total_sales14d_7d'] == 0) & (data['total_clicks_7d'] > 0) & (data['total_sales14d_30d'] == 0) & (data['total_clicks_30d'] > 10)
+# Filtering conditions
+condition_1 = (data['ACOS_30d'] > 0.24) & (data['ACOS_30d'] < 0.36) & (data['ORDER_1m'] <= 5)
+condition_2 = (data['ACOS_30d'] >= 0.36) & (data['ORDER_1m'] <= 8)
+condition_3 = (data['total_clicks_30d'] > 13) & (data['ORDER_1m'] == 0)
+condition_4 = (data['ACOS_7d'] > 0.24) & (data['ACOS_7d'] < 0.36) & (data['ORDER_7d'] <= 3)
+condition_5 = (data['ACOS_7d'] >= 0.36) & (data['ORDER_7d'] <= 5)
+condition_6 = (data['total_clicks_7d'] > 10) & (data['ORDER_7d'] == 0)
 
-# 定义二：最近7天没有销售额且近7天总点击数大于0，且最近30天的ACOS值大于0.5
-def_def_2 = (data['total_sales14d_7d'] == 0) & (data['total_clicks_7d'] > 0) & (data['ACOS_30d'] > 0.5)
+# Combine all conditions
+combined_conditions = (
+    condition_1 | condition_2 | condition_3 | 
+    condition_4 | condition_5 | condition_6
+)
 
-# 定义三：最近7天ACOS值大于0.5，最近30天ACOS值大于0.24
-def_def_3 = (data['ACOS_7d'] > 0.5) & (data['ACOS_30d'] > 0.24)
+# Apply combined conditions to filter the data
+filtered_data = data[combined_conditions]
 
-# 筛选满足定义一、定义二或定义三的记录
-filtered_data = data[def_def_1 | def_def_2 | def_def_3].copy()
+# Detect reason columns
+filtered_data['reason'] = ''
+filtered_data.loc[condition_1, 'reason'] = 'Definition 1'
+filtered_data.loc[condition_2, 'reason'] = 'Definition 2'
+filtered_data.loc[condition_3, 'reason'] = 'Definition 3'
+filtered_data.loc[condition_4, 'reason'] = 'Definition 4'
+filtered_data.loc[condition_5, 'reason'] = 'Definition 5'
+filtered_data.loc[condition_6, 'reason'] = 'Definition 6'
 
-# 确定提价的原因
-filtered_data['提价的原因'] = ""
-filtered_data.loc[def_def_1, '提价的原因'] = "定义一"
-filtered_data.loc[def_def_2, '提价的原因'] = "定义二"
-filtered_data.loc[def_def_3, '提价的原因'] = "定义三"
+# Create new DataFrame with required columns
+output_data = filtered_data[[
+    'campaignName', 'adGroupName', 'total_clicks_7d', 'ACOS_7d', 
+    'ORDER_7d', 'total_clicks_30d', 'ORDER_1m', 'ACOS_30d', 'searchTerm', 'reason'
+]]
 
-# 选择需要输出的字段
-output_data = filtered_data[['campaignName', 'adGroupName', 'keyword', 'ACOS_30d', 'ACOS_7d', '提价的原因']]
+# Save to CSV
+output_file = "C:/Users/admin/PycharmProjects/DeepBI/ai/backend/util/db/auto_yzj/日常优化/手动sp广告/商品投放搜索词优化/提问策略/手动_劣质_ASIN_搜索词_v1_1_LAPASA_ITES_2024-07-02.csv"
+output_data.to_csv(output_file, index=False)
 
-# 保存到新的CSV文件
-output_file_path = r'C:\Users\admin\PycharmProjects\DeepBI\ai\backend\util\db\auto_yzj\日常优化\自动sp广告\自动定位组优化\提问策略\自动_关闭自动定位组_IT_2024-06-08.csv'
-output_data.to_csv(output_file_path, index=False)
-
-print("数据处理完成并保存至文件:", output_file_path)
+print("Filtered data has been successfully saved to:", output_file)

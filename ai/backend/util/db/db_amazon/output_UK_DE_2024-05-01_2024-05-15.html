@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>SP广告UK优化销售额期望（以DE在2024-05-01至2024-05-15为例）</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .m-b-5 {
+      margin-bottom: 5px;
+    }
+    .m-b-6 {
+        margin-bottom: 5px;
+        background-color: lightblue; /* 浅蓝色背景 */
+    }
+
+    .color-white {
+      color: #fff;
+    }
+
+    /* 样式定义 */
+    .content {
+      background: #0a1532;
+      color: #fff;
+      padding: 10px;
+      padding-bottom: 10px;
+    }
+
+    .bg-border {
+      background: #0c1d40;
+      border-radius: 5px;
+    }
+
+    .content h1 {
+      text-align: center;
+      font-family: cursive;
+      font-style: italic;
+    }
+
+    .content h5 {
+      padding: 10px;
+      text-align: center;
+      font-family: cursive;
+      font-style: italic;
+    }
+
+    .content h2 {
+      text-align: center;
+      padding: 10px;
+      font-size: 18px;
+    }
+
+    .chart {
+      width: 100%;
+      height: 400px;
+    }
+
+    .content ul {
+      padding: 10px;
+    }
+
+    .content ul p {
+      color: #3eadff;
+      font-weight: bold;
+    }
+
+    .content ul li {
+      margin: 5px 0;
+      color: #ccc;
+      font-size: 14px;
+    }
+
+    .thought li {
+      color: #d3d3d3 !important;
+      font-weight: bold;
+    }
+
+    .content strong {
+      color: #FFFF99;
+    }
+
+
+    /* 新增的表格样式 */
+.table2 {
+  border-collapse: collapse;
+  width: 60%;
+  border: 1px solid #dddddd; /* 添加表格外边框 */
+  margin: 0 auto; /* 设置左右外边距为自动，实现水平居中 */
+}
+
+.table2 th, .table2 td {
+  border: 1px solid #dddddd; /* 添加单元格边框 */
+  text-align: left;
+  padding: 8px;
+}
+
+.table2 th {
+  background-color: #f2f2f2;
+}
+.table2 tr:first-child th {
+  background-color: #ffadd8; /* 设置首行背景色为浅粉红色 */
+}
+.table2 tr:nth-child(even) {
+  background-color: transparent;
+}
+
+.table2 tr:hover {
+  background-color: #00008b;; /* 设置鼠标悬停时背景色为淡黄色 */
+}
+    .csvTable {
+        width: 100%; /* 表格宽度 */
+        border-collapse: collapse; /* 边框合并 */
+        margin: 20px 0; /* 上下外边距 */
+        font-size: 0.9em; /* 字体大小 */
+        font-family: sans-serif; /* 字体 */
+        min-width: 400px; /* 最小宽度 */
+        box-shadow: 0 0 20px rgba(0, 0, 0, 0.15); /* 阴影效果 */
+    }
+
+    /* 表头样式 */
+    .csvTable thead tr {
+        background-color: #009879; /* 背景颜色 */
+        color: #ffffff; /* 字体颜色 */
+        text-align: left; /* 文本对齐 */
+    }
+
+    /* 表格行样式，包括鼠标悬停效果 */
+    .csvTable th,
+    .csvTable td {
+        padding: 12px 15px; /* 内边距 */
+    }
+
+    .csvTable tbody tr {
+        border-bottom: 1px solid #dddddd; /* 行底部边框 */
+    }
+
+    .csvTable tbody tr:nth-of-type(even) {
+        background-color: #f3f3f3; /* 偶数行背景颜色 */
+    }
+
+    .csvTable tbody tr:last-of-type {
+        border-bottom: 2px solid #009879; /* 最后一行底部边框 */
+    }
+
+    .csvTable tbody tr:hover {
+        background-color: #f1f1f1; /* 鼠标悬停行背景颜色 */
+    }
+  </style>
+  <!-- 引入 ECharts -->
+  <script src="https://cdn.bootcdn.net/ajax/libs/echarts/5.2.2/echarts.min.js"></script>
+</head>
+<body>
+<div class="content">
+  <h1 class="color-white">SP广告UK优化销售额期望（以DE在2024-05-01至2024-05-15为例）</h1>
+  <h5 class="color-white">----Powered by DeepBI</h5>
+
+  <ul class="m-b-5 bg-border thought">
+    <p>分析思路</p>
+    
+      <li><strong>计算思路[假设前提]</strong> </li>
+    
+      <li><strong>&nbsp;&nbsp;&nbsp;&nbsp;</strong>1.关键词提价后，其clicks和CPC也按照同比例增长； </li>
+    
+      <li><strong>&nbsp;&nbsp;&nbsp;&nbsp;</strong>2.关键词的ACOS计算统一按照四舍五入来计算； </li>
+    
+      <li><strong>&nbsp;&nbsp;&nbsp;&nbsp;</strong>3.决策中clicks<3的关键词部分不进行价格调整； </li>
+    
+      <li><strong>SP广告中的调价策略</strong> </li>
+    
+      <li><strong>&nbsp;&nbsp;&nbsp;&nbsp;</strong>低于 平均ACOS 30%以上——关键词 提高出价 15% </li>
+    
+      <li><strong>&nbsp;&nbsp;&nbsp;&nbsp;</strong>低于 平均ACOS 20%，高于 30%的——关键词 提高出价 8% </li>
+    
+      <li><strong>&nbsp;&nbsp;&nbsp;&nbsp;</strong>低于 平均ACOS 10%，高于 20%的——关键词 提高出价 4% </li>
+    
+      <li><strong>&nbsp;&nbsp;&nbsp;&nbsp;</strong>  </li>
+    
+      <li><strong>&nbsp;&nbsp;&nbsp;&nbsp;</strong>高于 平均ACOS 30%的——暂停‘劣质词’投放 </li>
+    
+      <li><strong>&nbsp;&nbsp;&nbsp;&nbsp;</strong>高于 平均ACOS 20%，低于 30%的——调低出价 15% </li>
+    
+      <li><strong>&nbsp;&nbsp;&nbsp;&nbsp;</strong>高于 平均ACOS 10%，低于 20%的——调低出价 8% </li>
+    
+      <li><strong>&nbsp;&nbsp;&nbsp;&nbsp;</strong>[Notice]: sales为0，以及相对平均ACOS±10%的关键词未做价格调整 </li>
+    
+  </ul>
+  
+    <div class="question-section">
+      <h2 class="m-b-5 bg-border color-white">1.前70%商品重叠部分</h2>
+      <li class="m-b-5 bg-border"></li>
+
+      <ul class="m-b-5 bg-border">
+        <p>【DeepBI自动分析过程】</p>
+        
+<!--          <li><strong>1.找出UK所有商品与DE前70%销售重叠部分：</strong><br> Answer: 分四步执行 </li>-->
+        <h4>1.找出UK所有商品与DE前70%销售重叠部分</h4>
+          <li>分四步执行 </li>
+          
+<!--            <li>1.1 在 2024-05-01 至 2024-05-15 这段时间内，DE_SP广告的前70%销售部分的商品sku，将这些sku信息生成csv文件。 :<br> &nbsp;&nbsp;&nbsp;&nbsp;Answer is : 查询已完成，请查看文件： 2024-05-17_1715929177_top70_sku_1_1_1.csv</li>-->
+            <li style="color: green;">1.1 在 2024-05-01 至 2024-05-15 这段时间内，DE_SP广告的前70%销售部分的商品sku，将这些sku信息生成csv文件。 :</li>
+            <li>&nbsp;&nbsp;&nbsp;&nbsp;Answer is : 查询已完成，请查看文件： 2024-05-17_1715929177_top70_sku_1_1_1.csv</li>
+          
+<!--            <li>1.2 在 2024-05-01 至 2024-05-15 这段时间内，DE_SP广告的前70%销售部分的商品sku与UK投放商品重复的sku是什么，将这些sku信息生成csv文件。 :<br> &nbsp;&nbsp;&nbsp;&nbsp;Answer is : 查询已完成，请查看文件： 2024-05-17_1715929179_repeat_top70_sku_1_1_2.csv</li>-->
+            <li style="color: green;">1.2 在 2024-05-01 至 2024-05-15 这段时间内，DE_SP广告的前70%销售部分的商品sku与UK投放商品重复的sku是什么，将这些sku信息生成csv文件。 :</li>
+            <li>&nbsp;&nbsp;&nbsp;&nbsp;Answer is : 查询已完成，请查看文件： 2024-05-17_1715929179_repeat_top70_sku_1_1_2.csv</li>
+          
+<!--            <li>1.3 在 2024-05-01 至 2024-05-15 这段时间内，DE_SP广告重复的sku的总销售额 ，总广告消耗和平均ACOS是多少？ :<br> &nbsp;&nbsp;&nbsp;&nbsp;Answer is : 总销售额(sales):30609.65 - 总广告消耗(Cost):4902.31 -平均ACOS:0.160156 </li>-->
+            <li style="color: green;">1.3 在 2024-05-01 至 2024-05-15 这段时间内，DE_SP广告重复的sku的总销售额 ，总广告消耗和平均ACOS是多少？ :</li>
+            <li>&nbsp;&nbsp;&nbsp;&nbsp;Answer is : 总销售额(sales):30609.65 - 总广告消耗(Cost):4902.31 -平均ACOS:0.160156 </li>
+          
+<!--            <li>1.4 在 2024-05-01 至 2024-05-15 这段时间内，UK_SP广告重复的sku的总销售额 ，总广告消耗和平均ACOS是多少？ :<br> &nbsp;&nbsp;&nbsp;&nbsp;Answer is : 总销售额(sales):5933.15 - 总广告消耗(Cost):1117.03 -平均ACOS:0.188269 </li>-->
+            <li style="color: green;">1.4 在 2024-05-01 至 2024-05-15 这段时间内，UK_SP广告重复的sku的总销售额 ，总广告消耗和平均ACOS是多少？ :</li>
+            <li>&nbsp;&nbsp;&nbsp;&nbsp;Answer is : 总销售额(sales):5933.15 - 总广告消耗(Cost):1117.03 -平均ACOS:0.188269 </li>
+          
+        
+<!--          <li><strong>2.UK所有商品与DE前70%销售重叠部分,进行线性优化：</strong><br> Answer: 分八步执行 </li>-->
+        <h4>2.UK所有商品与DE前70%销售重叠部分,进行线性优化</h4>
+          <li>分八步执行 </li>
+          
+<!--            <li>2.1，在 2024-05-01 至 2024-05-15 这段时间内，UK_SP广告中重复的sku中低于 平均ACOS 30%以上的sku的旧总销售额 ，总广告消耗和提价后的期望是多少? :<br> &nbsp;&nbsp;&nbsp;&nbsp;Answer is : [{'total_cost_old': 304.26}, {'total_sales_old': 4718.77}, {'total_cost_new': 388.82595}, {'total_sales_new': 5837.2258}]</li>-->
+            <li style="color: green;">2.1，在 2024-05-01 至 2024-05-15 这段时间内，UK_SP广告中重复的sku中低于 平均ACOS 30%以上的sku的旧总销售额 ，总广告消耗和提价后的期望是多少? :</li>
+            <li>&nbsp;&nbsp;&nbsp;&nbsp;Answer is : [{'total_cost_old': 304.26}, {'total_sales_old': 4718.77}, {'total_cost_new': 388.82595}, {'total_sales_new': 5837.2258}]</li>
+          
+<!--            <li>2.2，在 2024-05-01 至 2024-05-15 这段时间内，UK_SP广告中重复的sku中低于 平均ACOS 20%，高于 30%的sku的旧总销售额 ，总广告消耗和提价后的期望是多少 :<br> &nbsp;&nbsp;&nbsp;&nbsp;Answer is : [{'total_cost_old': 41.66}, {'total_sales_old': 285.81}, {'total_cost_new': 48.048096}, {'total_sales_new': 329.691344}]</li>-->
+            <li style="color: green;">2.2，在 2024-05-01 至 2024-05-15 这段时间内，UK_SP广告中重复的sku中低于 平均ACOS 20%，高于 30%的sku的旧总销售额 ，总广告消耗和提价后的期望是多少 :</li>
+            <li>&nbsp;&nbsp;&nbsp;&nbsp;Answer is : [{'total_cost_old': 41.66}, {'total_sales_old': 285.81}, {'total_cost_new': 48.048096}, {'total_sales_new': 329.691344}]</li>
+          
+<!--            <li>2.3 在 2024-05-01 至 2024-05-15 这段时间内，UK_SP广告中重复的sku中低于 平均ACOS 10%，高于 20%的sku的旧总销售额 ，总广告消耗和提价后的期望是多少 :<br> &nbsp;&nbsp;&nbsp;&nbsp;Answer is : [{'total_cost_old': 12.78}, {'total_sales_old': 74.97}, {'total_cost_new': 13.822848}, {'total_sales_new': 81.087552}]</li>-->
+            <li style="color: green;">2.3 在 2024-05-01 至 2024-05-15 这段时间内，UK_SP广告中重复的sku中低于 平均ACOS 10%，高于 20%的sku的旧总销售额 ，总广告消耗和提价后的期望是多少 :</li>
+            <li>&nbsp;&nbsp;&nbsp;&nbsp;Answer is : [{'total_cost_old': 12.78}, {'total_sales_old': 74.97}, {'total_cost_new': 13.822848}, {'total_sales_new': 81.087552}]</li>
+          
+<!--            <li>2.4 在 2024-05-01 至 2024-05-15 这段时间内，UK_SP广告中重复的sku中高于 平均ACOS 20%，低于 30%的sku的旧总销售额 ，总广告消耗和降价后的期望是多少 :<br> &nbsp;&nbsp;&nbsp;&nbsp;Answer is : [{'total_cost_old': 24.8}, {'total_sales_old': 99.96}, {'total_cost_new': 17.918}, {'total_sales_new': 72.2211}]</li>-->
+            <li style="color: green;">2.4 在 2024-05-01 至 2024-05-15 这段时间内，UK_SP广告中重复的sku中高于 平均ACOS 20%，低于 30%的sku的旧总销售额 ，总广告消耗和降价后的期望是多少 :</li>
+            <li>&nbsp;&nbsp;&nbsp;&nbsp;Answer is : [{'total_cost_old': 24.8}, {'total_sales_old': 99.96}, {'total_cost_new': 17.918}, {'total_sales_new': 72.2211}]</li>
+          
+<!--            <li>2.5 在 2024-05-01 至 2024-05-15 这段时间内，UK_SP广告中重复的sku中高于 平均ACOS 10%，低于 20%的sku的旧总销售额 ，总广告消耗和降价后的期望是多少 :<br> &nbsp;&nbsp;&nbsp;&nbsp;Answer is : [{'total_cost_old': 44.65}, {'total_sales_old': 193.25}, {'total_cost_new': 37.79176}, {'total_sales_new': 163.5668}]</li>-->
+            <li style="color: green;">2.5 在 2024-05-01 至 2024-05-15 这段时间内，UK_SP广告中重复的sku中高于 平均ACOS 10%，低于 20%的sku的旧总销售额 ，总广告消耗和降价后的期望是多少 :</li>
+            <li>&nbsp;&nbsp;&nbsp;&nbsp;Answer is : [{'total_cost_old': 44.65}, {'total_sales_old': 193.25}, {'total_cost_new': 37.79176}, {'total_sales_new': 163.5668}]</li>
+          
+<!--            <li>2.6 在 2024-05-01 至 2024-05-15 这段时间内，UK_SP广告重复的介于 平均ACOS 10%的sku的总销售额 ，总广告消耗是多少？ :<br> &nbsp;&nbsp;&nbsp;&nbsp;Answer is : [{'total_cost_old': 33.29}, {'total_sales_old': 169.93}]</li>-->
+            <li style="color: green;">2.6 在 2024-05-01 至 2024-05-15 这段时间内，UK_SP广告重复的介于 平均ACOS 10%的sku的总销售额 ，总广告消耗是多少？ :</li>
+            <li>&nbsp;&nbsp;&nbsp;&nbsp;Answer is : [{'total_cost_old': 33.29}, {'total_sales_old': 169.93}]</li>
+          
+<!--            <li>2.7 在 2024-05-01 至 2024-05-15 这段时间内，UK_SP广告重复的的sku其中销售额为0的，总销售额 ，总广告消耗是多少？ :<br> &nbsp;&nbsp;&nbsp;&nbsp;Answer is : [{'total_cost_old': 504.82}, {'total_sales_old': 0.0}]</li>-->
+            <li style="color: green;">2.7 在 2024-05-01 至 2024-05-15 这段时间内，UK_SP广告重复的的sku其中销售额为0的，总销售额 ，总广告消耗是多少？ :</li>
+            <li>&nbsp;&nbsp;&nbsp;&nbsp;Answer is : [{'total_cost_old': 504.82}, {'total_sales_old': 0.0}]</li>
+          
+<!--            <li>2.8 在 2024-05-01 至 2024-05-15 这段时间内，UK_SP广告中重复的sku中高于 平均ACOS 30%以上的sku的总销售额 ，总广告消耗 :<br> &nbsp;&nbsp;&nbsp;&nbsp;Answer is : [{'total_cost_old': 150.77}, {'total_sales_old': 390.46}]</li>-->
+            <li style="color: green;">2.8 在 2024-05-01 至 2024-05-15 这段时间内，UK_SP广告中重复的sku中高于 平均ACOS 30%以上的sku的总销售额 ，总广告消耗 :</li>
+            <li>&nbsp;&nbsp;&nbsp;&nbsp;Answer is : [{'total_cost_old': 150.77}, {'total_sales_old': 390.46}]</li>
+          
+        
+      </ul>
+
+    </div>
+  
+    <div class="question-section">
+      <h2 class="m-b-5 bg-border color-white">2.预测前70%商品未投放部分，上架后的数据</h2>
+      <li class="m-b-5 bg-border"></li>
+
+      <ul class="m-b-5 bg-border">
+        <p>【DeepBI自动分析过程】</p>
+        
+<!--          <li><strong>：</strong><br> Answer: 分三步执行 </li>-->
+        <h4></h4>
+          <li>分三步执行 </li>
+          
+<!--            <li>1.1 在 2024-05-01 至 2024-05-15 这段时间内，DE_SP广告的前70%销售部分的商品sku中UK_SP广告未投放的sku是什么，将这些sku信息生成csv文件。 :<br> &nbsp;&nbsp;&nbsp;&nbsp;Answer is : 查询已完成，请查看文件： 2024-05-17_1715929192_unrepeat_top70_sku_2_1_1.csv</li>-->
+            <li style="color: green;">1.1 在 2024-05-01 至 2024-05-15 这段时间内，DE_SP广告的前70%销售部分的商品sku中UK_SP广告未投放的sku是什么，将这些sku信息生成csv文件。 :</li>
+            <li>&nbsp;&nbsp;&nbsp;&nbsp;Answer is : 查询已完成，请查看文件： 2024-05-17_1715929192_unrepeat_top70_sku_2_1_1.csv</li>
+          
+<!--            <li>1.2 在 2024-05-01 至 2024-05-15 这段时间内，DE_SP广告中UK_SP广告未投放的sku的总销售额 ，总广告消耗和平均ACOS是多少？ :<br> &nbsp;&nbsp;&nbsp;&nbsp;Answer is : 总销售额(sales):5608.19 - 总广告消耗(Cost):853.97 -平均ACOS:0.152272 </li>-->
+            <li style="color: green;">1.2 在 2024-05-01 至 2024-05-15 这段时间内，DE_SP广告中UK_SP广告未投放的sku的总销售额 ，总广告消耗和平均ACOS是多少？ :</li>
+            <li>&nbsp;&nbsp;&nbsp;&nbsp;Answer is : 总销售额(sales):5608.19 - 总广告消耗(Cost):853.97 -平均ACOS:0.152272 </li>
+          
+<!--            <li>1.3，根据在 2024-05-01 至 2024-05-15 这段时间内，UK_SP广告和DE_SP广告重叠sku的数据，预测UK_SP广告未投放sku的总销售额 ，总广告消耗是多少？ :<br> &nbsp;&nbsp;&nbsp;&nbsp;Answer is : [{'total_cost_old': 0}, {'total_sales_old': 0}, {'total_cost_new': 331.0545599508651}, {'total_sales_new': 2174.1008145143765}]</li>-->
+            <li style="color: green;">1.3，根据在 2024-05-01 至 2024-05-15 这段时间内，UK_SP广告和DE_SP广告重叠sku的数据，预测UK_SP广告未投放sku的总销售额 ，总广告消耗是多少？ :</li>
+            <li>&nbsp;&nbsp;&nbsp;&nbsp;Answer is : [{'total_cost_old': 0}, {'total_sales_old': 0}, {'total_cost_new': 331.0545599508651}, {'total_sales_new': 2174.1008145143765}]</li>
+          
+        
+      </ul>
+
+    </div>
+  
+    <div class="question-section">
+      <h2 class="m-b-5 bg-border color-white">3.UK与DE前70%销售未重叠部分的线性优化</h2>
+      <li class="m-b-5 bg-border"></li>
+
+      <ul class="m-b-5 bg-border">
+        <p>【DeepBI自动分析过程】</p>
+        
+<!--          <li><strong>1，调价部分：</strong><br> Answer: 分七步执行 </li>-->
+        <h4>1，调价部分</h4>
+          <li>分七步执行 </li>
+          
+<!--            <li>1.1 在 2024-05-01 至 2024-05-15 这段时间内，DE_SP广告的前70%销售部分的商品sku与UK在投放商品未重复的sku是什么，将这些sku信息生成csv文件。 :<br> &nbsp;&nbsp;&nbsp;&nbsp;Answer is : 查询已完成，请查看文件： 2024-05-17_1715929197_unrepeat_sku_3_1_1.csv</li>-->
+            <li style="color: green;">1.1 在 2024-05-01 至 2024-05-15 这段时间内，DE_SP广告的前70%销售部分的商品sku与UK在投放商品未重复的sku是什么，将这些sku信息生成csv文件。 :</li>
+            <li>&nbsp;&nbsp;&nbsp;&nbsp;Answer is : 查询已完成，请查看文件： 2024-05-17_1715929197_unrepeat_sku_3_1_1.csv</li>
+          
+<!--            <li>1.2 在 2024-05-01 至 2024-05-15 这段时间内，UK_SP广告未重复的sku的总销售额 ，总广告消耗和平均ACOS是多少？ :<br> &nbsp;&nbsp;&nbsp;&nbsp;Answer is : 总销售额(sales):13019.33 - 总广告消耗(Cost):2642.32 -平均ACOS:0.202954 </li>-->
+            <li style="color: green;">1.2 在 2024-05-01 至 2024-05-15 这段时间内，UK_SP广告未重复的sku的总销售额 ，总广告消耗和平均ACOS是多少？ :</li>
+            <li>&nbsp;&nbsp;&nbsp;&nbsp;Answer is : 总销售额(sales):13019.33 - 总广告消耗(Cost):2642.32 -平均ACOS:0.202954 </li>
+          
+<!--            <li>1.3 在 2024-05-01 至 2024-05-15 这段时间内，UK_SP广告中未重复的sku中低于 平均ACOS 30%以上的sku的旧总销售额 ，总广告消耗和提价后的期望是多少 :<br> &nbsp;&nbsp;&nbsp;&nbsp;Answer is : [{'total_cost_old': 463.16}, {'total_sales_old': 12059.35}, {'total_cost_new': 555.998075}, {'total_sales_new': 13415.4625}]</li>-->
+            <li style="color: green;">1.3 在 2024-05-01 至 2024-05-15 这段时间内，UK_SP广告中未重复的sku中低于 平均ACOS 30%以上的sku的旧总销售额 ，总广告消耗和提价后的期望是多少 :</li>
+            <li>&nbsp;&nbsp;&nbsp;&nbsp;Answer is : [{'total_cost_old': 463.16}, {'total_sales_old': 12059.35}, {'total_cost_new': 555.998075}, {'total_sales_new': 13415.4625}]</li>
+          
+<!--            <li>1.4 在 2024-05-01 至 2024-05-15 这段时间内，UK_SP广告中未重复的sku中低于 平均ACOS 20%，高于 30%的sku的旧总销售额 ，总广告消耗和提价后的期望是多少 :<br> &nbsp;&nbsp;&nbsp;&nbsp;Answer is : [{'total_cost_old': 32.02}, {'total_sales_old': 215.56}, {'total_cost_new': 37.348128}, {'total_sales_new': 251.429184}]</li>-->
+            <li style="color: green;">1.4 在 2024-05-01 至 2024-05-15 这段时间内，UK_SP广告中未重复的sku中低于 平均ACOS 20%，高于 30%的sku的旧总销售额 ，总广告消耗和提价后的期望是多少 :</li>
+            <li>&nbsp;&nbsp;&nbsp;&nbsp;Answer is : [{'total_cost_old': 32.02}, {'total_sales_old': 215.56}, {'total_cost_new': 37.348128}, {'total_sales_new': 251.429184}]</li>
+          
+<!--            <li>1.5 在 2024-05-01 至 2024-05-15 这段时间内，UK_SP广告中未重复的sku中低于 平均ACOS 10%，高于 20%的sku的旧总销售额 ，总广告消耗和提价后的期望是多少 :<br> &nbsp;&nbsp;&nbsp;&nbsp;Answer is : [{'total_cost_old': 34.75}, {'total_sales_old': 205.75}, {'total_cost_new': 37.5856}, {'total_sales_new': 222.5392}]</li>-->
+            <li style="color: green;">1.5 在 2024-05-01 至 2024-05-15 这段时间内，UK_SP广告中未重复的sku中低于 平均ACOS 10%，高于 20%的sku的旧总销售额 ，总广告消耗和提价后的期望是多少 :</li>
+            <li>&nbsp;&nbsp;&nbsp;&nbsp;Answer is : [{'total_cost_old': 34.75}, {'total_sales_old': 205.75}, {'total_cost_new': 37.5856}, {'total_sales_new': 222.5392}]</li>
+          
+<!--            <li>1.6 在 2024-05-01 至 2024-05-15 这段时间内，UK_SP广告中未重复的sku中高于 平均ACOS 20%，低于 30%的sku的旧总销售额 ，总广告消耗和降价后的期望是多少 :<br> &nbsp;&nbsp;&nbsp;&nbsp;Answer is : [{'total_cost_old': 0}, {'total_sales_old': 0}, {'total_cost_new': 0}, {'total_sales_new': 0}]</li>-->
+            <li style="color: green;">1.6 在 2024-05-01 至 2024-05-15 这段时间内，UK_SP广告中未重复的sku中高于 平均ACOS 20%，低于 30%的sku的旧总销售额 ，总广告消耗和降价后的期望是多少 :</li>
+            <li>&nbsp;&nbsp;&nbsp;&nbsp;Answer is : [{'total_cost_old': 0}, {'total_sales_old': 0}, {'total_cost_new': 0}, {'total_sales_new': 0}]</li>
+          
+<!--            <li>1.7 在 2024-05-01 至 2024-05-15 这段时间内，UK_SP广告中未重复的sku中高于 平均ACOS 10%，低于 20%的sku的旧总销售额 ，总广告消耗和降价后的期望是多少 :<br> &nbsp;&nbsp;&nbsp;&nbsp;Answer is : [{'total_cost_old': 9.94}, {'total_sales_old': 43.65}, {'total_cost_new': 8.413216}, {'total_sales_new': 36.94536}]</li>-->
+            <li style="color: green;">1.7 在 2024-05-01 至 2024-05-15 这段时间内，UK_SP广告中未重复的sku中高于 平均ACOS 10%，低于 20%的sku的旧总销售额 ，总广告消耗和降价后的期望是多少 :</li>
+            <li>&nbsp;&nbsp;&nbsp;&nbsp;Answer is : [{'total_cost_old': 9.94}, {'total_sales_old': 43.65}, {'total_cost_new': 8.413216}, {'total_sales_new': 36.94536}]</li>
+          
+        
+<!--          <li><strong>2，未调价部分：</strong><br> Answer: 分三步执行 </li>-->
+        <h4>2，未调价部分</h4>
+          <li>分三步执行 </li>
+          
+<!--            <li>2.1 在 2024-05-01 至 2024-05-15 这段时间内，UK_SP广告未重复的介于 平均ACOS 10%的sku的总销售额 ，总广告消耗是多少？ :<br> &nbsp;&nbsp;&nbsp;&nbsp;Answer is : [{'total_cost_old': 37.24}, {'total_sales_old': 187.65}]</li>-->
+            <li style="color: green;">2.1 在 2024-05-01 至 2024-05-15 这段时间内，UK_SP广告未重复的介于 平均ACOS 10%的sku的总销售额 ，总广告消耗是多少？ :</li>
+            <li>&nbsp;&nbsp;&nbsp;&nbsp;Answer is : [{'total_cost_old': 37.24}, {'total_sales_old': 187.65}]</li>
+          
+<!--            <li>2.2 在 2024-05-01 至 2024-05-15 这段时间内，UK_SP广告未重复的的sku其中销售额为0的，总销售额 ，总广告消耗是多少？ :<br> &nbsp;&nbsp;&nbsp;&nbsp;Answer is : [{'total_cost_old': 1958.98}, {'total_sales_old': 0.0}]</li>-->
+            <li style="color: green;">2.2 在 2024-05-01 至 2024-05-15 这段时间内，UK_SP广告未重复的的sku其中销售额为0的，总销售额 ，总广告消耗是多少？ :</li>
+            <li>&nbsp;&nbsp;&nbsp;&nbsp;Answer is : [{'total_cost_old': 1958.98}, {'total_sales_old': 0.0}]</li>
+          
+<!--            <li>2.3 在 2024-05-01 至 2024-05-15 这段时间内，UK_SP广告中未重复的sku中高于 平均ACOS 30%以上的sku的总销售额 ，总广告消耗 :<br> &nbsp;&nbsp;&nbsp;&nbsp;Answer is : [{'total_cost_old': 106.23}, {'total_sales_old': 307.37}]</li>-->
+            <li style="color: green;">2.3 在 2024-05-01 至 2024-05-15 这段时间内，UK_SP广告中未重复的sku中高于 平均ACOS 30%以上的sku的总销售额 ，总广告消耗 :</li>
+            <li>&nbsp;&nbsp;&nbsp;&nbsp;Answer is : [{'total_cost_old': 106.23}, {'total_sales_old': 307.37}]</li>
+          
+        
+      </ul>
+
+    </div>
+  
+    <div class="question-section">
+      <h2 class="m-b-5 bg-border color-white">5.总结优化前后对比</h2>
+      <li class="m-b-5 bg-border"></li>
+
+      <ul class="m-b-5 bg-border">
+        <p>【DeepBI自动分析过程】</p>
+        
+<!--          <li><strong>：</strong><br> Answer:  </li>-->
+        <h4></h4>
+          <li> </li>
+          
+<!--            <li>1.1 在 2024-05-01 至 2024-05-15 这段时间内，UK_SP广告中重复的sku总结 :<br> &nbsp;&nbsp;&nbsp;&nbsp;Answer is : 新的总销售额:6653.72,旧的总销售额:5933.15,新的总花费额:1044.52,旧的总花费额:1117.03,新的ACOS:15.7%,旧的ACOS:18.83%,销售额增长:12.14%,花费增长:-6.49%,ACOS变化:-16.62%</li>-->
+            <li style="color: green;">1.1 在 2024-05-01 至 2024-05-15 这段时间内，UK_SP广告中重复的sku总结 :</li>
+            <li>&nbsp;&nbsp;&nbsp;&nbsp;Answer is : 新的总销售额:6653.72,旧的总销售额:5933.15,新的总花费额:1044.52,旧的总花费额:1117.03,新的ACOS:15.7%,旧的ACOS:18.83%,销售额增长:12.14%,花费增长:-6.49%,ACOS变化:-16.62%</li>
+          
+<!--            <li>1.2 在 2024-05-01 至 2024-05-15 这段时间内，UK_SP广告中前70%商品未投放的sku总结 :<br> &nbsp;&nbsp;&nbsp;&nbsp;Answer is : 新的总销售额:2174.1,旧的总销售额:0,新的总花费额:331.05,旧的总花费额:0</li>-->
+            <li style="color: green;">1.2 在 2024-05-01 至 2024-05-15 这段时间内，UK_SP广告中前70%商品未投放的sku总结 :</li>
+            <li>&nbsp;&nbsp;&nbsp;&nbsp;Answer is : 新的总销售额:2174.1,旧的总销售额:0,新的总花费额:331.05,旧的总花费额:0</li>
+          
+<!--            <li>1.3 在 2024-05-01 至 2024-05-15 这段时间内，UK_SP广告中未重复的sku总结 :<br> &nbsp;&nbsp;&nbsp;&nbsp;Answer is : 新的总销售额:14114.03,旧的总销售额:13019.33,新的总花费额:2635.57,旧的总花费额:2642.32,新的ACOS:18.67%,旧的ACOS:20.3%,销售额增长:8.41%,花费增长:-0.26%,ACOS变化:-7.99%</li>-->
+            <li style="color: green;">1.3 在 2024-05-01 至 2024-05-15 这段时间内，UK_SP广告中未重复的sku总结 :</li>
+            <li>&nbsp;&nbsp;&nbsp;&nbsp;Answer is : 新的总销售额:14114.03,旧的总销售额:13019.33,新的总花费额:2635.57,旧的总花费额:2642.32,新的ACOS:18.67%,旧的ACOS:20.3%,销售额增长:8.41%,花费增长:-0.26%,ACOS变化:-7.99%</li>
+          
+<!--            <li>1.4 总结新旧对比 :<br> &nbsp;&nbsp;&nbsp;&nbsp;Answer is : 新的总销售额:22941.85,旧的总销售额:18952.48,新的总花费额:4011.14,旧的总花费额:3759.35,新的ACOS:17.48%,旧的ACOS:19.84%,销售额增长:21.05%,花费增长:6.7%,ACOS变化:-11.86%</li>-->
+            <li style="color: green;">1.4 总结新旧对比 :</li>
+            <li>&nbsp;&nbsp;&nbsp;&nbsp;Answer is : 新的总销售额:22941.85,旧的总销售额:18952.48,新的总花费额:4011.14,旧的总花费额:3759.35,新的ACOS:17.48%,旧的ACOS:19.84%,销售额增长:21.05%,花费增长:6.7%,ACOS变化:-11.86%</li>
+          
+        
+      </ul>
+
+    </div>
+  
+
+  <div class="report-summary">
+    <h2 class="m-b-5 bg-border color-white">优化策略</h2>
+    <ul class="m-b-5 bg-border">
+      
+        <li><strong>优化策略：</strong>综合以上检查报告，以下为推荐在广告后台执行的优化策略 </li>
+      
+    </ul>
+  </div>
+
+</div>
+
+ 
+
+
+
+</body>
+<style>
+    /* 整体表格样式 */
+    .csvTable {
+        width: 100%; /* 表格宽度 */
+        border-collapse: collapse; /* 边框合并 */
+        margin: 20px 0; /* 上下外边距 */
+        font-size: 0.9em; /* 字体大小 */
+        font-family: sans-serif; /* 字体 */
+        min-width: 400px; /* 最小宽度 */
+        box-shadow: 0 0 20px rgba(0, 0, 0, 0.15); /* 阴影效果 */
+    }
+
+    /* 表头样式 */
+    .csvTable thead tr {
+        background-color: #009879; /* 背景颜色 */
+        color: #ffffff; /* 字体颜色 */
+        text-align: left; /* 文本对齐 */
+    }
+
+    /* 表格行样式，包括鼠标悬停效果 */
+    .csvTable th,
+    .csvTable td {
+        padding: 12px 15px; /* 内边距 */
+    }
+
+    .csvTable tbody tr {
+        border-bottom: 1px solid #dddddd; /* 行底部边框 */
+    }
+
+    .csvTable tbody tr:nth-of-type(even) {
+        background-color: #f3f3f3; /* 偶数行背景颜色 */
+    }
+
+    .csvTable tbody tr:last-of-type {
+        border-bottom: 2px solid #009879; /* 最后一行底部边框 */
+    }
+
+    .csvTable tbody tr:hover {
+        background-color: #f1f1f1; /* 鼠标悬停行背景颜色 */
+    }
+</style>
+</html>

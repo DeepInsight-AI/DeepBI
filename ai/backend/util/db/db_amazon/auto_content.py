@@ -86,3 +86,19 @@ REPORT_SP_OPTIMIZER_THOUGHT=[{'report_name': '计算思路[假设前提]', 'desc
                                   {'report_name': '&nbsp;&nbsp;&nbsp;&nbsp;', 'description': '高于 平均ACOS 10%，低于 20%的——调低出价 10%'},
                                   {'report_name': '&nbsp;&nbsp;&nbsp;&nbsp;', 'description': '[Notice]: sales为0，以及相对平均ACOS±10%的关键词未做价格调整'},
                                   ]
+
+REPORT_SP_PREDICT_THOUGHT=[
+                                  {'report_name': '计算思路[假设前提]', 'description': ''},
+                                  {'report_name': '&nbsp;&nbsp;&nbsp;&nbsp;', 'description': '1.关键词提价后，其clicks和CPC也按照同比例增长；'},
+                                  {'report_name': '&nbsp;&nbsp;&nbsp;&nbsp;', 'description': '2.关键词的ACOS计算统一按照四舍五入来计算；'},
+                                  {'report_name': '&nbsp;&nbsp;&nbsp;&nbsp;', 'description': '3.决策中clicks<3的关键词部分不进行价格调整；'},
+                                  {'report_name': 'SP广告中的调价策略', 'description': ''},
+                                  {'report_name': '&nbsp;&nbsp;&nbsp;&nbsp;', 'description': '低于 平均ACOS 30%以上——关键词 提高出价 15%'},
+                                  {'report_name': '&nbsp;&nbsp;&nbsp;&nbsp;', 'description': '低于 平均ACOS 20%，高于 30%的——关键词 提高出价 8%'},
+                                  {'report_name': '&nbsp;&nbsp;&nbsp;&nbsp;', 'description': '低于 平均ACOS 10%，高于 20%的——关键词 提高出价 4%'},
+                                  {'report_name': '&nbsp;&nbsp;&nbsp;&nbsp;', 'description': ' '},
+                                  {'report_name': '&nbsp;&nbsp;&nbsp;&nbsp;', 'description': '高于 平均ACOS 30%的——暂停‘劣质词’投放'},
+                                  {'report_name': '&nbsp;&nbsp;&nbsp;&nbsp;', 'description': '高于 平均ACOS 20%，低于 30%的——调低出价 15%'},
+                                  {'report_name': '&nbsp;&nbsp;&nbsp;&nbsp;', 'description': '高于 平均ACOS 10%，低于 20%的——调低出价 8%'},
+                                  {'report_name': '&nbsp;&nbsp;&nbsp;&nbsp;', 'description': '[Notice]: sales为0，以及相对平均ACOS±10%的关键词未做价格调整'},
+                            ]

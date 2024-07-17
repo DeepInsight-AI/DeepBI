@@ -1,0 +1,2665 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>amazon_SP_FR体检报告_2024-04-19_2024-04-28</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .m-b-5 {
+      margin-bottom: 5px;
+    }
+    .m-b-6 {
+        margin-bottom: 5px;
+        background-color: lightblue; /* 浅蓝色背景 */
+    }
+
+    .color-white {
+      color: #fff;
+    }
+
+    /* 样式定义 */
+    .content {
+      background: #0a1532;
+      color: #fff;
+      padding: 10px;
+      padding-bottom: 10px;
+    }
+
+    .bg-border {
+      background: #0c1d40;
+      border-radius: 5px;
+    }
+
+    .content h1 {
+      text-align: center;
+      font-family: cursive;
+      font-style: italic;
+    }
+
+    .content h5 {
+      padding: 10px;
+      text-align: center;
+      font-family: cursive;
+      font-style: italic;
+    }
+
+    .content h2 {
+      text-align: center;
+      padding: 10px;
+      font-size: 18px;
+    }
+
+    .chart {
+      width: 100%;
+      height: 400px;
+    }
+
+    .content ul {
+      padding: 10px;
+    }
+
+    .content ul p {
+      color: #3eadff;
+      font-weight: bold;
+    }
+
+    .content ul li {
+      margin: 5px 0;
+      color: #ccc;
+      font-size: 14px;
+    }
+
+    .thought li {
+      color: #d3d3d3 !important;
+      font-weight: bold;
+    }
+
+    .content strong {
+      color: #FFFF99;
+    }
+
+
+    /* 新增的表格样式 */
+.table2 {
+  border-collapse: collapse;
+  width: 60%;
+  border: 1px solid #dddddd; /* 添加表格外边框 */
+  margin: 0 auto; /* 设置左右外边距为自动，实现水平居中 */
+}
+
+.table2 th, .table2 td {
+  border: 1px solid #dddddd; /* 添加单元格边框 */
+  text-align: left;
+  padding: 8px;
+}
+
+.table2 th {
+  background-color: #f2f2f2;
+}
+.table2 tr:first-child th {
+  background-color: #ffadd8; /* 设置首行背景色为浅粉红色 */
+}
+.table2 tr:nth-child(even) {
+  background-color: transparent;
+}
+
+.table2 tr:hover {
+  background-color: #00008b;; /* 设置鼠标悬停时背景色为淡黄色 */
+}
+    .csvTable {
+        width: 100%; /* 表格宽度 */
+        border-collapse: collapse; /* 边框合并 */
+        margin: 20px 0; /* 上下外边距 */
+        font-size: 0.9em; /* 字体大小 */
+        font-family: sans-serif; /* 字体 */
+        min-width: 400px; /* 最小宽度 */
+        box-shadow: 0 0 20px rgba(0, 0, 0, 0.15); /* 阴影效果 */
+    }
+
+    /* 表头样式 */
+    .csvTable thead tr {
+        background-color: #009879; /* 背景颜色 */
+        color: #ffffff; /* 字体颜色 */
+        text-align: left; /* 文本对齐 */
+    }
+
+    /* 表格行样式，包括鼠标悬停效果 */
+    .csvTable th,
+    .csvTable td {
+        padding: 12px 15px; /* 内边距 */
+    }
+
+    .csvTable tbody tr {
+        border-bottom: 1px solid #dddddd; /* 行底部边框 */
+    }
+
+    .csvTable tbody tr:nth-of-type(even) {
+        background-color: #f3f3f3; /* 偶数行背景颜色 */
+    }
+
+    .csvTable tbody tr:last-of-type {
+        border-bottom: 2px solid #009879; /* 最后一行底部边框 */
+    }
+
+    .csvTable tbody tr:hover {
+        background-color: #f1f1f1; /* 鼠标悬停行背景颜色 */
+    }
+  </style>
+  <!-- 引入 ECharts -->
+  <script src="https://cdn.bootcdn.net/ajax/libs/echarts/5.2.2/echarts.min.js"></script>
+</head>
+<body>
+<div class="content">
+  <h1 class="color-white">amazon_SP_FR体检报告_2024-04-19_2024-04-28</h1>
+  <h5 class="color-white">----Powered by DeepBI</h5>
+
+  <ul class="m-b-5 bg-border thought">
+    <p>分析思路</p>
+    
+      <li><strong>现状分析</strong> </li>
+    
+      <li><strong>&nbsp;&nbsp;&nbsp;&nbsp;</strong>走势分析 - 过去2周，按日统计，每天汇总的 ACOS，点击量，转化率，CPC，广告消耗  </li>
+    
+      <li><strong>&nbsp;&nbsp;&nbsp;&nbsp;</strong>均值分析 - 过去2周，平均的 ACOS，点击量，转化率，CPC，广告消耗 </li>
+    
+      <li><strong>统计维度解释</strong> </li>
+    
+      <li><strong>&nbsp;&nbsp;&nbsp;&nbsp;</strong>转化率： 7天转化率 </li>
+    
+      <li><strong>&nbsp;&nbsp;&nbsp;&nbsp;</strong>ACOS：7天转化率产生的ACOS </li>
+    
+      <li><strong>&nbsp;&nbsp;&nbsp;&nbsp;</strong>优质定义：低于平均 ACOS 10% 及以下 </li>
+    
+      <li><strong>&nbsp;&nbsp;&nbsp;&nbsp;</strong>劣质定义：高于平均 ACOS 10% 及以上 </li>
+    
+      <li><strong>&nbsp;&nbsp;&nbsp;&nbsp;</strong>平均ACOS计算： xx天 广告总消耗 / xx天 广告总销售额  * 100% </li>
+    
+      <li><strong>关键词优化分析</strong> </li>
+    
+      <li><strong>&nbsp;&nbsp;&nbsp;&nbsp;</strong>1，添加未在投放中的 优质 用户搜索关键词到 定向投放关键词计划中 </li>
+    
+      <li><strong>&nbsp;&nbsp;&nbsp;&nbsp;</strong>2，找出 定向投放关键词 中的 优质关键词，提价操作 </li>
+    
+      <li><strong>&nbsp;&nbsp;&nbsp;&nbsp;</strong>3，同类型产品广告计划中，相关的优秀关键词应该全覆盖 </li>
+    
+      <li><strong>&nbsp;&nbsp;&nbsp;&nbsp;</strong>4，找出 定向投放关键词 中的 劣质关键词 </li>
+    
+      <li><strong>商品优化分析</strong> </li>
+    
+      <li><strong>&nbsp;&nbsp;&nbsp;&nbsp;</strong>1，找出 sku广告 中的 优质广告 </li>
+    
+      <li><strong>&nbsp;&nbsp;&nbsp;&nbsp;</strong>2，找出 sku广告 中的 劣质广告 </li>
+    
+      <li><strong>广告计划优化分析</strong> </li>
+    
+      <li><strong>&nbsp;&nbsp;&nbsp;&nbsp;</strong>1，找出 campaign 广告活动 中的  优质 与 劣质广告活动 </li>
+    
+      <li><strong>&nbsp;&nbsp;&nbsp;&nbsp;</strong>2，找出 campaign 广告活动 中的  placement优质位置 与 劣质位置 </li>
+    
+      <li><strong>&nbsp;&nbsp;&nbsp;&nbsp;</strong>3，找出 广告 adgroup 中的  优质 与 劣质广告组 </li>
+    
+  </ul>
+  
+    <div class="question-section">
+      <h2 class="m-b-5 bg-border color-white">1.关键词优化分析</h2>
+      <li class="m-b-5 bg-border">目标：关键词的扩充机会，来自于 扩词，通过优秀关键词的共同特征，扩充关键词。  用户搜索的关键词，没有在手动投放关键词中的。扩品，优秀关键词都投放在哪些产品上，这些品的特征是什么。是否有符合特征的品，没有添加过（投放过）这些关键词？扩点击量，哪些关键词还有提价空间
+补充：按产品类型对其中的关键词分类，目标是 同类型产品广告计划中，相关的优秀关键词应该全覆盖。 哪些关键词没有在计划中，可以扩充</li>
+
+      <ul class="m-b-5 bg-border">
+        <p>【DeepBI自动分析过程】</p>
+        
+<!--          <li><strong>1.添加未在投放中的 优质 用户搜索关键词到 定向投放关键词计划中：</strong><br> Answer: 分四步执行 </li>-->
+        <h4>1.添加未在投放中的 优质 用户搜索关键词到 定向投放关键词计划中</h4>
+          <li>分四步执行 </li>
+          
+<!--            <li>1.1 在 2024-04-19 至 2024-04-28 这段时间内，FR_SP广告的 平均ACOS ，总广告消耗，去重后用户搜索关键词 数量 和 总点击量 分别是多少？ :<br> &nbsp;&nbsp;&nbsp;&nbsp;Answer is : 平均ACOS:0.236756 - 总广告消耗(Cost):1166.24 - 去重后用户搜索关键词数量:1491个 - 总点击量(Clicks):2300.0次</li>-->
+            <li style="color: green;">1.1 在 2024-04-19 至 2024-04-28 这段时间内，FR_SP广告的 平均ACOS ，总广告消耗，去重后用户搜索关键词 数量 和 总点击量 分别是多少？ :</li>
+            <li>&nbsp;&nbsp;&nbsp;&nbsp;Answer is : 平均ACOS:0.236756 - 总广告消耗(Cost):1166.24 - 去重后用户搜索关键词数量:1491个 - 总点击量(Clicks):2300.0次</li>
+          
+<!--            <li>1.2 在 2024-04-19 至 2024-04-28 这段时间内，FR_SP广告中 低于 平均ACOS值（替换为第一问结论） 10% 的 去重后用户搜索关键词 数量 和 总点击量 是多少 :<br> &nbsp;&nbsp;&nbsp;&nbsp;Answer is : {'unique_search_terms_count': 149, 'total_clicks': 351.0}</li>-->
+            <li style="color: green;">1.2 在 2024-04-19 至 2024-04-28 这段时间内，FR_SP广告中 低于 平均ACOS值（替换为第一问结论） 10% 的 去重后用户搜索关键词 数量 和 总点击量 是多少 :</li>
+            <li>&nbsp;&nbsp;&nbsp;&nbsp;Answer is : {'unique_search_terms_count': 149, 'total_clicks': 351.0}</li>
+          
+<!--            <li>1.3 在 2024-04-19 至 2024-04-28 这段时间内，FR_SP广告中 低于 平均ACOS值（替换为第一问结论） 10% 的用户搜索关键词 中， 没有在广告定向投放中出现的关键词数量 和 总点击量 是多少 :<br> &nbsp;&nbsp;&nbsp;&nbsp;Answer is : 去重后用户搜索关键词数量:2个 - 总点击量(Clicks):4.0次</li>-->
+            <li style="color: green;">1.3 在 2024-04-19 至 2024-04-28 这段时间内，FR_SP广告中 低于 平均ACOS值（替换为第一问结论） 10% 的用户搜索关键词 中， 没有在广告定向投放中出现的关键词数量 和 总点击量 是多少 :</li>
+            <li>&nbsp;&nbsp;&nbsp;&nbsp;Answer is : 去重后用户搜索关键词数量:2个 - 总点击量(Clicks):4.0次</li>
+          
+<!--            <li>1.4 找出 在 2024-04-19 至 2024-04-28 这段时间内，FR_SP广告中 低于 平均ACOS值（替换为第一问结论） 10%  ，并且 没有在广告定向投放中出现的 用户搜索关键词。 将这些关键词信息生成csv文件，里面记录这些关键词的以下信息，CPC，SKU/ASIN， ACOS, Clicks. :<br> &nbsp;&nbsp;&nbsp;&nbsp;Answer is : 查询已完成，请查看文件： 2024-05-15_1715764366_targeting_keywords_1_4.csv</li>-->
+            <li style="color: green;">1.4 找出 在 2024-04-19 至 2024-04-28 这段时间内，FR_SP广告中 低于 平均ACOS值（替换为第一问结论） 10%  ，并且 没有在广告定向投放中出现的 用户搜索关键词。 将这些关键词信息生成csv文件，里面记录这些关键词的以下信息，CPC，SKU/ASIN， ACOS, Clicks. :</li>
+            <li>&nbsp;&nbsp;&nbsp;&nbsp;Answer is : 查询已完成，请查看文件： 2024-05-15_1715764366_targeting_keywords_1_4.csv</li>
+          
+        
+<!--          <li><strong>2.找出 定向投放关键词 中的 优质关键词，提价操作：</strong><br> Answer: 分五步执行 </li>-->
+        <h4>2.找出 定向投放关键词 中的 优质关键词，提价操作</h4>
+          <li>分五步执行 </li>
+          
+<!--            <li>2.1，在 2024-04-19 至 2024-04-28 这段时间内，FR_SP广告的 平均ACOS ，总广告消耗，去重后定向投放关键词 数量 和 总点击量 分别是多少？ :<br> &nbsp;&nbsp;&nbsp;&nbsp;Answer is : 美国SP广告的 平均ACOS 为0.236975，总广告消耗:1147.11，去重后定向投放关键词数量:2262 和 总点击量是2257.0</li>-->
+            <li style="color: green;">2.1，在 2024-04-19 至 2024-04-28 这段时间内，FR_SP广告的 平均ACOS ，总广告消耗，去重后定向投放关键词 数量 和 总点击量 分别是多少？ :</li>
+            <li>&nbsp;&nbsp;&nbsp;&nbsp;Answer is : 美国SP广告的 平均ACOS 为0.236975，总广告消耗:1147.11，去重后定向投放关键词数量:2262 和 总点击量是2257.0</li>
+          
+<!--            <li>2.2，在 2024-04-19 至 2024-04-28 这段时间内，FR_SP广告中 低于 平均ACOS值（替换为第一问结论） 10% 的 去重后定向投放关键词 数量 和 总点击量 是多少 :<br> &nbsp;&nbsp;&nbsp;&nbsp;Answer is : 美国SP广告中 低于 平均ACOS值（0.236975） 10% 的 去重后定向投放关键词 数量为:2 和 总点击量 是:67.0</li>-->
+            <li style="color: green;">2.2，在 2024-04-19 至 2024-04-28 这段时间内，FR_SP广告中 低于 平均ACOS值（替换为第一问结论） 10% 的 去重后定向投放关键词 数量 和 总点击量 是多少 :</li>
+            <li>&nbsp;&nbsp;&nbsp;&nbsp;Answer is : 美国SP广告中 低于 平均ACOS值（0.236975） 10% 的 去重后定向投放关键词 数量为:2 和 总点击量 是:67.0</li>
+          
+<!--            <li>2.3，找出在 2024-04-19 至 2024-04-28 这段时间内，FR_SP广告中 低于 平均ACOS值（替换为第一问结论） 30% 以上的 定向投放关键词。将这些关键词信息生成csv文件，里面记录这些关键词的以下信息，CPC，SKU/ASIN， ACOS, Clicks，adgroupid. :<br> &nbsp;&nbsp;&nbsp;&nbsp;Answer is : [ACOS:0.236975][关键词数量：45,总点击量：509.0]查询已完成，请查看文件： 2024-05-15_1715764367_targeting_keywords_2_3.csv</li>-->
+            <li style="color: green;">2.3，找出在 2024-04-19 至 2024-04-28 这段时间内，FR_SP广告中 低于 平均ACOS值（替换为第一问结论） 30% 以上的 定向投放关键词。将这些关键词信息生成csv文件，里面记录这些关键词的以下信息，CPC，SKU/ASIN， ACOS, Clicks，adgroupid. :</li>
+            <li>&nbsp;&nbsp;&nbsp;&nbsp;Answer is : [ACOS:0.236975][关键词数量：45,总点击量：509.0]查询已完成，请查看文件： 2024-05-15_1715764367_targeting_keywords_2_3.csv</li>
+          
+<!--            <li>2.4，找出在 2024-04-19 至 2024-04-28 这段时间内，FR_SP广告中 低于 平均ACOS值（替换为第一问结论） 20% - 30% 的 定向投放关键词。将这些关键词信息生成csv文件，里面记录这些关键词的以下信息，CPC，SKU/ASIN， ACOS, Clicks，adgroupid. :<br> &nbsp;&nbsp;&nbsp;&nbsp;Answer is : [ACOS:0.236975][关键词数量：2,总点击量：1551]查询已完成，请查看文件： 2024-05-15_1715764381_targeting_keywords_2_4.csv</li>-->
+            <li style="color: green;">2.4，找出在 2024-04-19 至 2024-04-28 这段时间内，FR_SP广告中 低于 平均ACOS值（替换为第一问结论） 20% - 30% 的 定向投放关键词。将这些关键词信息生成csv文件，里面记录这些关键词的以下信息，CPC，SKU/ASIN， ACOS, Clicks，adgroupid. :</li>
+            <li>&nbsp;&nbsp;&nbsp;&nbsp;Answer is : [ACOS:0.236975][关键词数量：2,总点击量：1551]查询已完成，请查看文件： 2024-05-15_1715764381_targeting_keywords_2_4.csv</li>
+          
+<!--            <li>2.5，找出在 2024-04-19 至 2024-04-28 这段时间内，FR_SP广告中 低于 平均ACOS值（替换为第一问结论） 10% - 20% 的 定向投放关键词。将这些关键词信息生成csv文件，里面记录这些关键词的以下信息，CPC，SKU/ASIN， ACOS, Clicks，adgroupid. :<br> &nbsp;&nbsp;&nbsp;&nbsp;Answer is : [ACOS:0.236975][关键词数量：2,总点击量：1203]查询已完成，请查看文件： 2024-05-15_1715764390_targeting_keywords_2_5.csv</li>-->
+            <li style="color: green;">2.5，找出在 2024-04-19 至 2024-04-28 这段时间内，FR_SP广告中 低于 平均ACOS值（替换为第一问结论） 10% - 20% 的 定向投放关键词。将这些关键词信息生成csv文件，里面记录这些关键词的以下信息，CPC，SKU/ASIN， ACOS, Clicks，adgroupid. :</li>
+            <li>&nbsp;&nbsp;&nbsp;&nbsp;Answer is : [ACOS:0.236975][关键词数量：2,总点击量：1203]查询已完成，请查看文件： 2024-05-15_1715764390_targeting_keywords_2_5.csv</li>
+          
+        
+<!--          <li><strong>3.同类型产品广告计划中，相关的优秀关键词应该全覆盖：</strong><br> Answer: 分三步执行 </li>-->
+        <h4>3.同类型产品广告计划中，相关的优秀关键词应该全覆盖</h4>
+          <li>分三步执行 </li>
+          
+<!--            <li>3.1，将ad group 分组， 出现过同样 SKU/ASIN 的ad group  分到一组。 FR_SP广告中 ad group 可以分为多少产品类别小组？按将这些关键词信息生成csv文件，里面记录这些关键词的以下信息，CPC，SKU/ASIN， ACOS, Clicks. :<br> &nbsp;&nbsp;&nbsp;&nbsp;Answer is : 暂时无法分析关键词的类型，暂时未分析</li>-->
+            <li style="color: green;">3.1，将ad group 分组， 出现过同样 SKU/ASIN 的ad group  分到一组。 FR_SP广告中 ad group 可以分为多少产品类别小组？按将这些关键词信息生成csv文件，里面记录这些关键词的以下信息，CPC，SKU/ASIN， ACOS, Clicks. :</li>
+            <li>&nbsp;&nbsp;&nbsp;&nbsp;Answer is : 暂时无法分析关键词的类型，暂时未分析</li>
+          
+<!--            <li>3.2，在 2024-04-19 至 2024-04-28 这段时间内，FR_SP广告中 低于 平均ACOS值（替换为第一问结论） 10% 的用户搜索关键词 中，分配到各  ad group 产品类别小组 的关键词是哪些？将这些关键词信息生成csv文件，里面记录这些关键词的以下信息，CPC，SKU/ASIN， ACOS, Clicks. :<br> &nbsp;&nbsp;&nbsp;&nbsp;Answer is : 暂时无法分析关键词的类型，暂时未分析</li>-->
+            <li style="color: green;">3.2，在 2024-04-19 至 2024-04-28 这段时间内，FR_SP广告中 低于 平均ACOS值（替换为第一问结论） 10% 的用户搜索关键词 中，分配到各  ad group 产品类别小组 的关键词是哪些？将这些关键词信息生成csv文件，里面记录这些关键词的以下信息，CPC，SKU/ASIN， ACOS, Clicks. :</li>
+            <li>&nbsp;&nbsp;&nbsp;&nbsp;Answer is : 暂时无法分析关键词的类型，暂时未分析</li>
+          
+<!--            <li>3.3，同ad group 类别小组 中， 按产品类型对其中的关键词分类，是否有相关的优秀关键词没有全覆盖。 哪些关键词没有在计划中 :<br> &nbsp;&nbsp;&nbsp;&nbsp;Answer is : 暂时无法分析关键词的类型，暂时未分析</li>-->
+            <li style="color: green;">3.3，同ad group 类别小组 中， 按产品类型对其中的关键词分类，是否有相关的优秀关键词没有全覆盖。 哪些关键词没有在计划中 :</li>
+            <li>&nbsp;&nbsp;&nbsp;&nbsp;Answer is : 暂时无法分析关键词的类型，暂时未分析</li>
+          
+        
+<!--          <li><strong>4.找出 定向投放关键词 中的 劣质关键词：</strong><br> Answer: 分五步执行 </li>-->
+        <h4>4.找出 定向投放关键词 中的 劣质关键词</h4>
+          <li>分五步执行 </li>
+          
+<!--            <li>4.1，在 2024-04-19 至 2024-04-28 这段时间内，FR_SP广告的 平均ACOS ，总广告消耗，去重后定向投放关键词 数量 和 总点击量 分别是多少？ :<br> &nbsp;&nbsp;&nbsp;&nbsp;Answer is : FR SP广告的 平均ACOS 为0.202555，去重后定向投放关键词 数量为:6318 和 总点击量 分别是8617.0</li>-->
+            <li style="color: green;">4.1，在 2024-04-19 至 2024-04-28 这段时间内，FR_SP广告的 平均ACOS ，总广告消耗，去重后定向投放关键词 数量 和 总点击量 分别是多少？ :</li>
+            <li>&nbsp;&nbsp;&nbsp;&nbsp;Answer is : FR SP广告的 平均ACOS 为0.202555，去重后定向投放关键词 数量为:6318 和 总点击量 分别是8617.0</li>
+          
+<!--            <li>4.2，在 2024-04-19 至 2024-04-28 这段时间内，FR_SP广告中 高于 平均ACOS值（替换为第一问结论） 10% 的 去重后定向投放关键词 数量 和 总点击量 是多少 :<br> &nbsp;&nbsp;&nbsp;&nbsp;Answer is : [ACOS:(0.235949)]去重后定向投放关键词 数量为:2 和 总点击量 分别是414.0</li>-->
+            <li style="color: green;">4.2，在 2024-04-19 至 2024-04-28 这段时间内，FR_SP广告中 高于 平均ACOS值（替换为第一问结论） 10% 的 去重后定向投放关键词 数量 和 总点击量 是多少 :</li>
+            <li>&nbsp;&nbsp;&nbsp;&nbsp;Answer is : [ACOS:(0.235949)]去重后定向投放关键词 数量为:2 和 总点击量 分别是414.0</li>
+          
+<!--            <li>4.3，找出在 2024-04-19 至 2024-04-28 这段时间内，FR_SP广告中 高 平均ACOS值（替换为第一问结论） 30% 以上的 定向投放关键词。将这些关键词信息生成csv文件，里面记录这些关键词的以下信息，CPC，SKU/ASIN， ACOS,  Clicks，adgroupid. :<br> &nbsp;&nbsp;&nbsp;&nbsp;Answer is : [ACOS:0.235949][关键词数量：7,总点击量：544.0]查询已完成，请查看文件： 2024-05-15_1715764391_targeting_keywords_4_3.csv</li>-->
+            <li style="color: green;">4.3，找出在 2024-04-19 至 2024-04-28 这段时间内，FR_SP广告中 高 平均ACOS值（替换为第一问结论） 30% 以上的 定向投放关键词。将这些关键词信息生成csv文件，里面记录这些关键词的以下信息，CPC，SKU/ASIN， ACOS,  Clicks，adgroupid. :</li>
+            <li>&nbsp;&nbsp;&nbsp;&nbsp;Answer is : [ACOS:0.235949][关键词数量：7,总点击量：544.0]查询已完成，请查看文件： 2024-05-15_1715764391_targeting_keywords_4_3.csv</li>
+          
+<!--            <li>4.4，找出在 2024-04-19 至 2024-04-28 这段时间内，FR_SP广告中 高于 平均ACOS值（替换为第一问结论） 20% - 30% 的 定向投放关键词。将这些关键词信息生成csv文件，里面记录这些关键词的以下信息，CPC，SKU/ASIN， ACOS, Clicks，adgroupid. :<br> &nbsp;&nbsp;&nbsp;&nbsp;Answer is : [ACOS:0.235949][关键词数量：0,总点击量：0]查询已完成，请查看文件： 2024-05-15_1715764391_targeting_keywords_4_4.csv</li>-->
+            <li style="color: green;">4.4，找出在 2024-04-19 至 2024-04-28 这段时间内，FR_SP广告中 高于 平均ACOS值（替换为第一问结论） 20% - 30% 的 定向投放关键词。将这些关键词信息生成csv文件，里面记录这些关键词的以下信息，CPC，SKU/ASIN， ACOS, Clicks，adgroupid. :</li>
+            <li>&nbsp;&nbsp;&nbsp;&nbsp;Answer is : [ACOS:0.235949][关键词数量：0,总点击量：0]查询已完成，请查看文件： 2024-05-15_1715764391_targeting_keywords_4_4.csv</li>
+          
+<!--            <li>4.5，找出在 2024-04-19 至 2024-04-28 这段时间内，FR_SP广告中 高于 平均ACOS值（替换为第一问结论） 10% - 20% 的 定向投放关键词。将这些关键词信息生成csv文件，里面记录这些关键词的以下信息，CPC，SKU/ASIN， ACOS, Clicks，adgroupid. :<br> &nbsp;&nbsp;&nbsp;&nbsp;Answer is : [ACOS:0.235949][关键词数量：2,总点击量：304.0]查询已完成，请查看文件： 2024-05-15_1715764391_targeting_keywords_4_5.csv</li>-->
+            <li style="color: green;">4.5，找出在 2024-04-19 至 2024-04-28 这段时间内，FR_SP广告中 高于 平均ACOS值（替换为第一问结论） 10% - 20% 的 定向投放关键词。将这些关键词信息生成csv文件，里面记录这些关键词的以下信息，CPC，SKU/ASIN， ACOS, Clicks，adgroupid. :</li>
+            <li>&nbsp;&nbsp;&nbsp;&nbsp;Answer is : [ACOS:0.235949][关键词数量：2,总点击量：304.0]查询已完成，请查看文件： 2024-05-15_1715764391_targeting_keywords_4_5.csv</li>
+          
+        
+      </ul>
+
+    </div>
+  
+    <div class="question-section">
+      <h2 class="m-b-5 bg-border color-white">2.商品优化分析</h2>
+      <li class="m-b-5 bg-border">##补充：找出ACOS表现较好的品和ACOS表现较差的品进行调整</li>
+
+      <ul class="m-b-5 bg-border">
+        <p>【DeepBI自动分析过程】</p>
+        
+<!--          <li><strong>1，找出 sku广告 中的 优质广告：</strong><br> Answer: 分五步执行 </li>-->
+        <h4>1，找出 sku广告 中的 优质广告</h4>
+          <li>分五步执行 </li>
+          
+<!--            <li>1.1，在 2024-04-19 至 2024-04-28 这段时间内，FR_SP广告的 平均ACOS ，总广告消耗，sku广告数量 和 总点击量 分别是多少？ :<br> &nbsp;&nbsp;&nbsp;&nbsp;Answer is : 平均ACOS是：0.23697486282805585,sku广告总数（通过聚合去重） 是：2333,计算广告总点击量是：2257</li>-->
+            <li style="color: green;">1.1，在 2024-04-19 至 2024-04-28 这段时间内，FR_SP广告的 平均ACOS ，总广告消耗，sku广告数量 和 总点击量 分别是多少？ :</li>
+            <li>&nbsp;&nbsp;&nbsp;&nbsp;Answer is : 平均ACOS是：0.23697486282805585,sku广告总数（通过聚合去重） 是：2333,计算广告总点击量是：2257</li>
+          
+<!--            <li>1.2，在 2024-04-19 至 2024-04-28 这段时间内，FR_SP广告中 低于 平均ACOS值（替换为第一问结论） 10% 的 sku广告数量 数量 和 总点击量 是多少 :<br> &nbsp;&nbsp;&nbsp;&nbsp;Answer is : 低于 平均ACOS值[ACOS:(0.236975)] 10% 的 sku广告数量 :93 和 总点击量 是:514.0</li>-->
+            <li style="color: green;">1.2，在 2024-04-19 至 2024-04-28 这段时间内，FR_SP广告中 低于 平均ACOS值（替换为第一问结论） 10% 的 sku广告数量 数量 和 总点击量 是多少 :</li>
+            <li>&nbsp;&nbsp;&nbsp;&nbsp;Answer is : 低于 平均ACOS值[ACOS:(0.236975)] 10% 的 sku广告数量 :93 和 总点击量 是:514.0</li>
+          
+<!--            <li>1.3，在 2024-04-19 至 2024-04-28 这段时间内，FR_SP广告中 低于 平均ACOS值（替换为第一问结论） 30% 以上的 sku广告。将这些信息生成csv文件，里面记录这些关键词的以下信息，CPC，SKU/ASIN， ACOS,  Clicks，adgroupid. :<br> &nbsp;&nbsp;&nbsp;&nbsp;Answer is : [ACOS:0.236975][优质广告数量：88,广告的总点击量：330.0]查询已完成，请查看文件： 2024-05-15_1715764394_prodcut_1_3.csv</li>-->
+            <li style="color: green;">1.3，在 2024-04-19 至 2024-04-28 这段时间内，FR_SP广告中 低于 平均ACOS值（替换为第一问结论） 30% 以上的 sku广告。将这些信息生成csv文件，里面记录这些关键词的以下信息，CPC，SKU/ASIN， ACOS,  Clicks，adgroupid. :</li>
+            <li>&nbsp;&nbsp;&nbsp;&nbsp;Answer is : [ACOS:0.236975][优质广告数量：88,广告的总点击量：330.0]查询已完成，请查看文件： 2024-05-15_1715764394_prodcut_1_3.csv</li>
+          
+<!--            <li>1.4，找出在 2024-04-19 至 2024-04-28 这段时间内，FR_SP广告中 低于 平均ACOS值（替换为第一问结论） 20% - 30% 的 sku广告。将这些信息生成csv文件，里面记录这些关键词的以下信息，CPC，SKU/ASIN， ACOS, Clicks，adgroupid. :<br> &nbsp;&nbsp;&nbsp;&nbsp;Answer is : [ACOS:0.236975][优质广告数量：3,广告的总点击量：138.0]查询已完成，请查看文件： 2024-05-15_1715764395_prodcut_1_4.csv</li>-->
+            <li style="color: green;">1.4，找出在 2024-04-19 至 2024-04-28 这段时间内，FR_SP广告中 低于 平均ACOS值（替换为第一问结论） 20% - 30% 的 sku广告。将这些信息生成csv文件，里面记录这些关键词的以下信息，CPC，SKU/ASIN， ACOS, Clicks，adgroupid. :</li>
+            <li>&nbsp;&nbsp;&nbsp;&nbsp;Answer is : [ACOS:0.236975][优质广告数量：3,广告的总点击量：138.0]查询已完成，请查看文件： 2024-05-15_1715764395_prodcut_1_4.csv</li>
+          
+<!--            <li>1.5，找出在 2024-04-19 至 2024-04-28 这段时间内，FR_SP广告中 低于 平均ACOS值（替换为第一问结论） 10% - 20% 的 sku广告。将这些信息生成csv文件，里面记录这些关键词的以下信息，CPC，SKU/ASIN， ACOS, Clicks，adgroupid. :<br> &nbsp;&nbsp;&nbsp;&nbsp;Answer is : [ACOS:0.236975][优质广告数量：2,广告的总点击量：46.0]查询已完成，请查看文件： 2024-05-15_1715764395_prodcut_1_5.csv</li>-->
+            <li style="color: green;">1.5，找出在 2024-04-19 至 2024-04-28 这段时间内，FR_SP广告中 低于 平均ACOS值（替换为第一问结论） 10% - 20% 的 sku广告。将这些信息生成csv文件，里面记录这些关键词的以下信息，CPC，SKU/ASIN， ACOS, Clicks，adgroupid. :</li>
+            <li>&nbsp;&nbsp;&nbsp;&nbsp;Answer is : [ACOS:0.236975][优质广告数量：2,广告的总点击量：46.0]查询已完成，请查看文件： 2024-05-15_1715764395_prodcut_1_5.csv</li>
+          
+        
+<!--          <li><strong>2，找出 sku广告 中的 劣质广告：</strong><br> Answer: 分五步执行 </li>-->
+        <h4>2，找出 sku广告 中的 劣质广告</h4>
+          <li>分五步执行 </li>
+          
+<!--            <li>2.1，在 2024-04-19 至 2024-04-28 这段时间内，FR_SP广告的 平均ACOS ，总广告消耗，sku广告数量 和 总点击量 分别是多少？ :<br> &nbsp;&nbsp;&nbsp;&nbsp;Answer is : 平均ACOS是：0.23697486282805577,sku广告总数（通过聚合去重） 是：1395,计算广告总点击量是：2257.0,计算广告总花费是：1147.11</li>-->
+            <li style="color: green;">2.1，在 2024-04-19 至 2024-04-28 这段时间内，FR_SP广告的 平均ACOS ，总广告消耗，sku广告数量 和 总点击量 分别是多少？ :</li>
+            <li>&nbsp;&nbsp;&nbsp;&nbsp;Answer is : 平均ACOS是：0.23697486282805577,sku广告总数（通过聚合去重） 是：1395,计算广告总点击量是：2257.0,计算广告总花费是：1147.11</li>
+          
+<!--            <li>2.2，在 2024-04-19 至 2024-04-28 这段时间内，FR_SP广告中 高于 平均ACOS值（替换为第一问结论） 10% 的 sku广告数量 数量 和 总点击量 是多少 :<br> &nbsp;&nbsp;&nbsp;&nbsp;Answer is : 高于 平均ACOS值[0.236975] 10% 的 sku广告数量 :14 和 总点击量 是:375.0</li>-->
+            <li style="color: green;">2.2，在 2024-04-19 至 2024-04-28 这段时间内，FR_SP广告中 高于 平均ACOS值（替换为第一问结论） 10% 的 sku广告数量 数量 和 总点击量 是多少 :</li>
+            <li>&nbsp;&nbsp;&nbsp;&nbsp;Answer is : 高于 平均ACOS值[0.236975] 10% 的 sku广告数量 :14 和 总点击量 是:375.0</li>
+          
+<!--            <li>2.3，找出在 2024-04-19 至 2024-04-28 这段时间内，FR_SP广告中 高于 平均ACOS值（替换为第一问结论） 30% 以上的 sku广告。将这些信息生成csv文件，里面记录这些关键词的以下信息，CPC，SKU/ASIN， ACOS,  Clicks，adgroupid. :<br> &nbsp;&nbsp;&nbsp;&nbsp;Answer is : [ACOS:0.236975][广告数量：8,总点击量：182.0]查询已完成，请查看文件： 2024-05-15_1715764396_prodcut_2_3.csv</li>-->
+            <li style="color: green;">2.3，找出在 2024-04-19 至 2024-04-28 这段时间内，FR_SP广告中 高于 平均ACOS值（替换为第一问结论） 30% 以上的 sku广告。将这些信息生成csv文件，里面记录这些关键词的以下信息，CPC，SKU/ASIN， ACOS,  Clicks，adgroupid. :</li>
+            <li>&nbsp;&nbsp;&nbsp;&nbsp;Answer is : [ACOS:0.236975][广告数量：8,总点击量：182.0]查询已完成，请查看文件： 2024-05-15_1715764396_prodcut_2_3.csv</li>
+          
+<!--            <li>2.4，找出在 2024-04-19 至 2024-04-28 这段时间内，FR_SP广告中 高于 平均ACOS值（替换为第一问结论） 20% - 30% 的 sku广告。将这些信息生成csv文件，里面记录这些关键词的以下信息，CPC，SKU/ASIN， ACOS, Clicks，adgroupid. :<br> &nbsp;&nbsp;&nbsp;&nbsp;Answer is : [ACOS:0.236975][广告数量：2,总点击量：109.0]查询已完成，请查看文件： 2024-05-15_1715764397_prodcut_2_4.csv</li>-->
+            <li style="color: green;">2.4，找出在 2024-04-19 至 2024-04-28 这段时间内，FR_SP广告中 高于 平均ACOS值（替换为第一问结论） 20% - 30% 的 sku广告。将这些信息生成csv文件，里面记录这些关键词的以下信息，CPC，SKU/ASIN， ACOS, Clicks，adgroupid. :</li>
+            <li>&nbsp;&nbsp;&nbsp;&nbsp;Answer is : [ACOS:0.236975][广告数量：2,总点击量：109.0]查询已完成，请查看文件： 2024-05-15_1715764397_prodcut_2_4.csv</li>
+          
+<!--            <li>2.5，找出在 2024-04-19 至 2024-04-28 这段时间内，FR_SP广告中 高于 平均ACOS值（替换为第一问结论） 10% - 20% 的 sku广告。将这些信息生成csv文件，里面记录这些关键词的以下信息，CPC，SKU/ASIN， ACOS, Clicks，adgroupid. :<br> &nbsp;&nbsp;&nbsp;&nbsp;Answer is : [ACOS:0.236975][广告数量：4,总点击量：84.0]查询已完成，请查看文件： 2024-05-15_1715764397_prodcut_2_5.csv</li>-->
+            <li style="color: green;">2.5，找出在 2024-04-19 至 2024-04-28 这段时间内，FR_SP广告中 高于 平均ACOS值（替换为第一问结论） 10% - 20% 的 sku广告。将这些信息生成csv文件，里面记录这些关键词的以下信息，CPC，SKU/ASIN， ACOS, Clicks，adgroupid. :</li>
+            <li>&nbsp;&nbsp;&nbsp;&nbsp;Answer is : [ACOS:0.236975][广告数量：4,总点击量：84.0]查询已完成，请查看文件： 2024-05-15_1715764397_prodcut_2_5.csv</li>
+          
+        
+      </ul>
+
+    </div>
+  
+    <div class="question-section">
+      <h2 class="m-b-5 bg-border color-white">3.广告计划优化分析</h2>
+      <li class="m-b-5 bg-border">该报告将展示每个客户的购买情况，以了解公司的主要客户群体。</li>
+
+      <ul class="m-b-5 bg-border">
+        <p>【DeepBI自动分析过程】</p>
+        
+<!--          <li><strong>1，找出 campaign 广告活动 中的  优质 与 劣质广告活动：</strong><br> Answer: 分五步执行 </li>-->
+        <h4>1，找出 campaign 广告活动 中的  优质 与 劣质广告活动</h4>
+          <li>分五步执行 </li>
+          
+<!--            <li>1.1，在 2024-04-19 至 2024-04-28 这段时间内，FR_SP广告的 平均ACOS ，总广告消耗， campaign 广告活动数量 和 总点击量 分别是多少？ :<br> &nbsp;&nbsp;&nbsp;&nbsp;Answer is : 平均ACOS:0.235949 ，总广告消耗:1147.11， campaign 广告活动数量:70 和 总点击量是:2257.0</li>-->
+            <li style="color: green;">1.1，在 2024-04-19 至 2024-04-28 这段时间内，FR_SP广告的 平均ACOS ，总广告消耗， campaign 广告活动数量 和 总点击量 分别是多少？ :</li>
+            <li>&nbsp;&nbsp;&nbsp;&nbsp;Answer is : 平均ACOS:0.235949 ，总广告消耗:1147.11， campaign 广告活动数量:70 和 总点击量是:2257.0</li>
+          
+<!--            <li>1.2[优质广告]，在 2024-04-19 至 2024-04-28 这段时间内，FR_SP广告中 低于 平均ACOS值（替换为第一问结论） 10% 的  campaign 广告活动数量 数量 和 总点击量 是多少 :<br> &nbsp;&nbsp;&nbsp;&nbsp;Answer is : SP广告中 低于 平均ACOS值（替换为第一问结论） 10% 的  campaign 广告活动数量 :23 和 总点击量 是:756.0</li>-->
+            <li style="color: green;">1.2[优质广告]，在 2024-04-19 至 2024-04-28 这段时间内，FR_SP广告中 低于 平均ACOS值（替换为第一问结论） 10% 的  campaign 广告活动数量 数量 和 总点击量 是多少 :</li>
+            <li>&nbsp;&nbsp;&nbsp;&nbsp;Answer is : SP广告中 低于 平均ACOS值（替换为第一问结论） 10% 的  campaign 广告活动数量 :23 和 总点击量 是:756.0</li>
+          
+<!--            <li>1.3[优质广告]，找出在 2024-04-19 至 2024-04-28 这段时间内，FR_SP广告中 低于 平均ACOS值（替换为第一问结论） 30% 以上的  campaign 广告活动。将这些信息生成csv文件，里面记录这些关键词的以下信息，CPC， ACOS,  Clicks，campaignid，spend. :<br> &nbsp;&nbsp;&nbsp;&nbsp;Answer is : 查询已完成，请查看文件： 2024-05-15_1715764398_campaign_1_3.csv</li>-->
+            <li style="color: green;">1.3[优质广告]，找出在 2024-04-19 至 2024-04-28 这段时间内，FR_SP广告中 低于 平均ACOS值（替换为第一问结论） 30% 以上的  campaign 广告活动。将这些信息生成csv文件，里面记录这些关键词的以下信息，CPC， ACOS,  Clicks，campaignid，spend. :</li>
+            <li>&nbsp;&nbsp;&nbsp;&nbsp;Answer is : 查询已完成，请查看文件： 2024-05-15_1715764398_campaign_1_3.csv</li>
+          
+<!--            <li>1.4[优质广告]，找出在 2024-04-19 至 2024-04-28 这段时间内，FR_SP广告中 低于 平均ACOS值（替换为第一问结论） 20% - 30% 的 campaign 广告活动。将这些信息生成csv文件，里面记录这些关键词的以下信息，CPC， ACOS,  Clicks，campaignid，spend. :<br> &nbsp;&nbsp;&nbsp;&nbsp;Answer is : 查询已完成，请查看文件： 2024-05-15_1715764398_campaign_1_4.csv</li>-->
+            <li style="color: green;">1.4[优质广告]，找出在 2024-04-19 至 2024-04-28 这段时间内，FR_SP广告中 低于 平均ACOS值（替换为第一问结论） 20% - 30% 的 campaign 广告活动。将这些信息生成csv文件，里面记录这些关键词的以下信息，CPC， ACOS,  Clicks，campaignid，spend. :</li>
+            <li>&nbsp;&nbsp;&nbsp;&nbsp;Answer is : 查询已完成，请查看文件： 2024-05-15_1715764398_campaign_1_4.csv</li>
+          
+<!--            <li>1.5[优质广告]，找出在 2024-04-19 至 2024-04-28 这段时间内，FR_SP广告中 低于 平均ACOS值（替换为第一问结论） 10% - 20% 的 campaign 广告活动。将这些信息生成csv文件，里面记录这些关键词的以下信息，CPC， ACOS,  Clicks，campaignid，spend. :<br> &nbsp;&nbsp;&nbsp;&nbsp;Answer is : 查询已完成，请查看文件： 2024-05-15_1715764398_campaign_1_5.csv</li>-->
+            <li style="color: green;">1.5[优质广告]，找出在 2024-04-19 至 2024-04-28 这段时间内，FR_SP广告中 低于 平均ACOS值（替换为第一问结论） 10% - 20% 的 campaign 广告活动。将这些信息生成csv文件，里面记录这些关键词的以下信息，CPC， ACOS,  Clicks，campaignid，spend. :</li>
+            <li>&nbsp;&nbsp;&nbsp;&nbsp;Answer is : 查询已完成，请查看文件： 2024-05-15_1715764398_campaign_1_5.csv</li>
+          
+<!--            <li>1.6[劣质广告]，在 2024-04-19 至 2024-04-28 这段时间内，FR_SP广告中 高于 平均ACOS值（替换为第一问结论） 10% 的  campaign 广告活动数量 数量 和 总点击量 是多少 :<br> &nbsp;&nbsp;&nbsp;&nbsp;Answer is : SP广告中 高于 平均ACOS值（替换为第一问结论） 10% 的  campaign 广告活动数量 :11 和 总点击量 是:834.0</li>-->
+            <li style="color: green;">1.6[劣质广告]，在 2024-04-19 至 2024-04-28 这段时间内，FR_SP广告中 高于 平均ACOS值（替换为第一问结论） 10% 的  campaign 广告活动数量 数量 和 总点击量 是多少 :</li>
+            <li>&nbsp;&nbsp;&nbsp;&nbsp;Answer is : SP广告中 高于 平均ACOS值（替换为第一问结论） 10% 的  campaign 广告活动数量 :11 和 总点击量 是:834.0</li>
+          
+<!--            <li>1.7[劣质广告]，找出在 2024-04-19 至 2024-04-28 这段时间内，FR_SP广告中 高于 平均ACOS值（替换为第一问结论） 30% 以上的  campaign 广告活动。将这些信息生成csv文件，里面记录这些关键词的以下信息，CPC， ACOS,  Clicks，campaignid，spend. :<br> &nbsp;&nbsp;&nbsp;&nbsp;Answer is : 查询已完成，请查看文件： 2024-05-15_1715764398_campaign_1_7.csv</li>-->
+            <li style="color: green;">1.7[劣质广告]，找出在 2024-04-19 至 2024-04-28 这段时间内，FR_SP广告中 高于 平均ACOS值（替换为第一问结论） 30% 以上的  campaign 广告活动。将这些信息生成csv文件，里面记录这些关键词的以下信息，CPC， ACOS,  Clicks，campaignid，spend. :</li>
+            <li>&nbsp;&nbsp;&nbsp;&nbsp;Answer is : 查询已完成，请查看文件： 2024-05-15_1715764398_campaign_1_7.csv</li>
+          
+<!--            <li>1.8[劣质广告]，找出在 2024-04-19 至 2024-04-28 这段时间内，FR_SP广告中 高于 平均ACOS值（替换为第一问结论） 20% - 30% 的 campaign 广告活动。将这些信息生成csv文件，里面记录这些关键词的以下信息，CPC， ACOS,  Clicks，campaignid，spend. :<br> &nbsp;&nbsp;&nbsp;&nbsp;Answer is : 查询已完成，请查看文件： 2024-05-15_1715764399_campaign_1_8.csv</li>-->
+            <li style="color: green;">1.8[劣质广告]，找出在 2024-04-19 至 2024-04-28 这段时间内，FR_SP广告中 高于 平均ACOS值（替换为第一问结论） 20% - 30% 的 campaign 广告活动。将这些信息生成csv文件，里面记录这些关键词的以下信息，CPC， ACOS,  Clicks，campaignid，spend. :</li>
+            <li>&nbsp;&nbsp;&nbsp;&nbsp;Answer is : 查询已完成，请查看文件： 2024-05-15_1715764399_campaign_1_8.csv</li>
+          
+<!--            <li>1.9[劣质广告]，找出在 2024-04-19 至 2024-04-28 这段时间内，FR_SP广告中 高于 平均ACOS值（替换为第一问结论） 10% - 20% 的 campaign 广告活动。将这些信息生成csv文件，里面记录这些关键词的以下信息，CPC， ACOS,  Clicks，campaignid，spend. :<br> &nbsp;&nbsp;&nbsp;&nbsp;Answer is : 查询已完成，请查看文件： 2024-05-15_1715764399_campaign_1_9.csv</li>-->
+            <li style="color: green;">1.9[劣质广告]，找出在 2024-04-19 至 2024-04-28 这段时间内，FR_SP广告中 高于 平均ACOS值（替换为第一问结论） 10% - 20% 的 campaign 广告活动。将这些信息生成csv文件，里面记录这些关键词的以下信息，CPC， ACOS,  Clicks，campaignid，spend. :</li>
+            <li>&nbsp;&nbsp;&nbsp;&nbsp;Answer is : 查询已完成，请查看文件： 2024-05-15_1715764399_campaign_1_9.csv</li>
+          
+        
+<!--          <li><strong>2，找出 campaign 广告活动 中的  placement优质位置 与 劣质位置：</strong><br> Answer: 分五步执行 </li>-->
+        <h4>2，找出 campaign 广告活动 中的  placement优质位置 与 劣质位置</h4>
+          <li>分五步执行 </li>
+          
+<!--            <li>2.1，在 2024-04-19 至 2024-04-28 这段时间内，FR_SP广告的 平均ACOS ，总广告消耗， campaign 广告活动中 placement 数量 和 总点击量 分别是多少？ :<br> &nbsp;&nbsp;&nbsp;&nbsp;Answer is : SP广告的 平均ACOS:0.235949 ，总广告消耗:1147.11， campaign 广告活动中 placement 数量:70 和 总点击量是:2257.0</li>-->
+            <li style="color: green;">2.1，在 2024-04-19 至 2024-04-28 这段时间内，FR_SP广告的 平均ACOS ，总广告消耗， campaign 广告活动中 placement 数量 和 总点击量 分别是多少？ :</li>
+            <li>&nbsp;&nbsp;&nbsp;&nbsp;Answer is : SP广告的 平均ACOS:0.235949 ，总广告消耗:1147.11， campaign 广告活动中 placement 数量:70 和 总点击量是:2257.0</li>
+          
+<!--            <li>2.2[优质位置]，在 2024-04-19 至 2024-04-28 这段时间内，FR_SP广告中 低于 平均ACOS值（替换为第一问结论） 10% 的  campaign 广告活动中placement 数量 和 总点击量 是多少 :<br> &nbsp;&nbsp;&nbsp;&nbsp;Answer is : 低于 平均ACOS值（替换为第一问结论） 10% 的  campaign 广告活动中placement 数量:50 和 总点击量 是:872.0</li>-->
+            <li style="color: green;">2.2[优质位置]，在 2024-04-19 至 2024-04-28 这段时间内，FR_SP广告中 低于 平均ACOS值（替换为第一问结论） 10% 的  campaign 广告活动中placement 数量 和 总点击量 是多少 :</li>
+            <li>&nbsp;&nbsp;&nbsp;&nbsp;Answer is : 低于 平均ACOS值（替换为第一问结论） 10% 的  campaign 广告活动中placement 数量:50 和 总点击量 是:872.0</li>
+          
+<!--            <li>2.3[优质位置]，找出在 2024-04-19 至 2024-04-28 这段时间内，FR_SP广告中 低于 平均ACOS值（替换为第一问结论） 30% 以上的  campaign 广告活动中 placement。将这些信息生成csv文件，里面记录这些关键词的以下信息，CPC， ACOS,  Clicks，campaignid，spend， placement. :<br> &nbsp;&nbsp;&nbsp;&nbsp;Answer is : 查询已完成，请查看文件： 2024-05-15_1715764399_campaign_2_3.csv</li>-->
+            <li style="color: green;">2.3[优质位置]，找出在 2024-04-19 至 2024-04-28 这段时间内，FR_SP广告中 低于 平均ACOS值（替换为第一问结论） 30% 以上的  campaign 广告活动中 placement。将这些信息生成csv文件，里面记录这些关键词的以下信息，CPC， ACOS,  Clicks，campaignid，spend， placement. :</li>
+            <li>&nbsp;&nbsp;&nbsp;&nbsp;Answer is : 查询已完成，请查看文件： 2024-05-15_1715764399_campaign_2_3.csv</li>
+          
+<!--            <li>2.4[优质位置]，找出在 2024-04-19 至 2024-04-28 这段时间内，FR_SP广告中 低于 平均ACOS值（替换为第一问结论） 20% - 30% 的 campaign 广告活动中 placement。将这些信息生成csv文件，里面记录这些关键词的以下信息，CPC， ACOS,  Clicks，campaignid，spend， placement. :<br> &nbsp;&nbsp;&nbsp;&nbsp;Answer is : 查询已完成，请查看文件： 2024-05-15_1715764399_campaign_2_4.csv</li>-->
+            <li style="color: green;">2.4[优质位置]，找出在 2024-04-19 至 2024-04-28 这段时间内，FR_SP广告中 低于 平均ACOS值（替换为第一问结论） 20% - 30% 的 campaign 广告活动中 placement。将这些信息生成csv文件，里面记录这些关键词的以下信息，CPC， ACOS,  Clicks，campaignid，spend， placement. :</li>
+            <li>&nbsp;&nbsp;&nbsp;&nbsp;Answer is : 查询已完成，请查看文件： 2024-05-15_1715764399_campaign_2_4.csv</li>
+          
+<!--            <li>2.5[优质位置]，找出在 2024-04-19 至 2024-04-28 这段时间内，FR_SP广告中 低于 平均ACOS值（替换为第一问结论） 10% - 20% 的 campaign 广告活动中的 placement。将这些信息生成csv文件，里面记录这些关键词的以下信息，CPC， ACOS,  Clicks，campaignid，spend， placement. :<br> &nbsp;&nbsp;&nbsp;&nbsp;Answer is : 查询已完成，请查看文件： 2024-05-15_1715764399_campaign_2_5.csv</li>-->
+            <li style="color: green;">2.5[优质位置]，找出在 2024-04-19 至 2024-04-28 这段时间内，FR_SP广告中 低于 平均ACOS值（替换为第一问结论） 10% - 20% 的 campaign 广告活动中的 placement。将这些信息生成csv文件，里面记录这些关键词的以下信息，CPC， ACOS,  Clicks，campaignid，spend， placement. :</li>
+            <li>&nbsp;&nbsp;&nbsp;&nbsp;Answer is : 查询已完成，请查看文件： 2024-05-15_1715764399_campaign_2_5.csv</li>
+          
+<!--            <li>2.6[劣质位置]，在 2024-04-19 至 2024-04-28 这段时间内，FR_SP广告中 高于 平均ACOS值（替换为第一问结论） 10% 的  campaign 广告活动中placement 数量 和 总点击量 是多少 :<br> &nbsp;&nbsp;&nbsp;&nbsp;Answer is : 高于 平均ACOS值（替换为第一问结论） 10% 的  campaign 广告活动中placement 数量:14 和 总点击量 是:768.0</li>-->
+            <li style="color: green;">2.6[劣质位置]，在 2024-04-19 至 2024-04-28 这段时间内，FR_SP广告中 高于 平均ACOS值（替换为第一问结论） 10% 的  campaign 广告活动中placement 数量 和 总点击量 是多少 :</li>
+            <li>&nbsp;&nbsp;&nbsp;&nbsp;Answer is : 高于 平均ACOS值（替换为第一问结论） 10% 的  campaign 广告活动中placement 数量:14 和 总点击量 是:768.0</li>
+          
+<!--            <li>2.7[劣质位置]，找出在 2024-04-19 至 2024-04-28 这段时间内，FR_SP广告中 高于 平均ACOS值（替换为第一问结论） 30% 以上的  campaign 广告活动中 placement。将这些信息生成csv文件，里面记录这些关键词的以下信息，CPC， ACOS,  Clicks，campaignid，spend， placement. :<br> &nbsp;&nbsp;&nbsp;&nbsp;Answer is : 查询已完成，请查看文件： 2024-05-15_1715764399_campaign_2_7.csv</li>-->
+            <li style="color: green;">2.7[劣质位置]，找出在 2024-04-19 至 2024-04-28 这段时间内，FR_SP广告中 高于 平均ACOS值（替换为第一问结论） 30% 以上的  campaign 广告活动中 placement。将这些信息生成csv文件，里面记录这些关键词的以下信息，CPC， ACOS,  Clicks，campaignid，spend， placement. :</li>
+            <li>&nbsp;&nbsp;&nbsp;&nbsp;Answer is : 查询已完成，请查看文件： 2024-05-15_1715764399_campaign_2_7.csv</li>
+          
+<!--            <li>2.8[劣质位置]，找出在 2024-04-19 至 2024-04-28 这段时间内，FR_SP广告中 高于 平均ACOS值（替换为第一问结论） 20% - 30% 的 campaign 广告活动中 placement。将这些信息生成csv文件，里面记录这些关键词的以下信息，CPC， ACOS,  Clicks，campaignid，spend， placement. :<br> &nbsp;&nbsp;&nbsp;&nbsp;Answer is : 查询已完成，请查看文件： 2024-05-15_1715764399_campaign_2_8.csv</li>-->
+            <li style="color: green;">2.8[劣质位置]，找出在 2024-04-19 至 2024-04-28 这段时间内，FR_SP广告中 高于 平均ACOS值（替换为第一问结论） 20% - 30% 的 campaign 广告活动中 placement。将这些信息生成csv文件，里面记录这些关键词的以下信息，CPC， ACOS,  Clicks，campaignid，spend， placement. :</li>
+            <li>&nbsp;&nbsp;&nbsp;&nbsp;Answer is : 查询已完成，请查看文件： 2024-05-15_1715764399_campaign_2_8.csv</li>
+          
+<!--            <li>2.9[劣质位置]，找出在 2024-04-19 至 2024-04-28 这段时间内，FR_SP广告中 高于 平均ACOS值（替换为第一问结论） 10% - 20% 的 campaign 广告活动中的 placement。将这些信息生成csv文件，里面记录这些关键词的以下信息，CPC， ACOS,  Clicks，campaignid，spend， placement. :<br> &nbsp;&nbsp;&nbsp;&nbsp;Answer is : 查询已完成，请查看文件： 2024-05-15_1715764399_campaign_2_9.csv</li>-->
+            <li style="color: green;">2.9[劣质位置]，找出在 2024-04-19 至 2024-04-28 这段时间内，FR_SP广告中 高于 平均ACOS值（替换为第一问结论） 10% - 20% 的 campaign 广告活动中的 placement。将这些信息生成csv文件，里面记录这些关键词的以下信息，CPC， ACOS,  Clicks，campaignid，spend， placement. :</li>
+            <li>&nbsp;&nbsp;&nbsp;&nbsp;Answer is : 查询已完成，请查看文件： 2024-05-15_1715764399_campaign_2_9.csv</li>
+          
+        
+<!--          <li><strong>3，找出 广告 adgroup 中的  优质 与 劣质广告组：</strong><br> Answer: 分五步执行 </li>-->
+        <h4>3，找出 广告 adgroup 中的  优质 与 劣质广告组</h4>
+          <li>分五步执行 </li>
+          
+<!--            <li>3.1，在 2024-04-19 至 2024-04-28 这段时间内，FR_SP广告的 平均ACOS（sum(cost)/sum(sales14d)） ，总广告消耗， 广告 adgroup 数量 和 总点击量 分别是多少？ :<br> &nbsp;&nbsp;&nbsp;&nbsp;Answer is : 暂时无SQL</li>-->
+            <li style="color: green;">3.1，在 2024-04-19 至 2024-04-28 这段时间内，FR_SP广告的 平均ACOS（sum(cost)/sum(sales14d)） ，总广告消耗， 广告 adgroup 数量 和 总点击量 分别是多少？ :</li>
+            <li>&nbsp;&nbsp;&nbsp;&nbsp;Answer is : 暂时无SQL</li>
+          
+<!--            <li>3.2[优质广告]，在 2024-04-19 至 2024-04-28 这段时间内，FR_SP广告中 低于 平均ACOS值（20.38%） 10% 的  广告 adgroup 数量 数量 和 总点击量 是多少 :<br> &nbsp;&nbsp;&nbsp;&nbsp;Answer is : 低于 ACOS(0.2) 10% 的  广告 adgroup 数量为：25 和 总点击量 是：691.0</li>-->
+            <li style="color: green;">3.2[优质广告]，在 2024-04-19 至 2024-04-28 这段时间内，FR_SP广告中 低于 平均ACOS值（20.38%） 10% 的  广告 adgroup 数量 数量 和 总点击量 是多少 :</li>
+            <li>&nbsp;&nbsp;&nbsp;&nbsp;Answer is : 低于 ACOS(0.2) 10% 的  广告 adgroup 数量为：25 和 总点击量 是：691.0</li>
+          
+<!--            <li>3.3[优质广告]，找出在 2024-04-19 至 2024-04-28 这段时间内，FR_SP广告中 低于 平均ACOS值（20.38%） 30% 以上的  广告 adgroup。将这些信息生成csv文件，里面记录这些关键词的以下信息，CPC， ACOS,  Clicks，adgroupid，spend. :<br> &nbsp;&nbsp;&nbsp;&nbsp;Answer is : 查询已完成，请查看文件： 2024-05-15_1715764400_campaign_3_3.csv</li>-->
+            <li style="color: green;">3.3[优质广告]，找出在 2024-04-19 至 2024-04-28 这段时间内，FR_SP广告中 低于 平均ACOS值（20.38%） 30% 以上的  广告 adgroup。将这些信息生成csv文件，里面记录这些关键词的以下信息，CPC， ACOS,  Clicks，adgroupid，spend. :</li>
+            <li>&nbsp;&nbsp;&nbsp;&nbsp;Answer is : 查询已完成，请查看文件： 2024-05-15_1715764400_campaign_3_3.csv</li>
+          
+<!--            <li>3.4[优质广告]，找出在 2024-04-19 至 2024-04-28 这段时间内，FR_SP广告中 ACOS 介于 14.2% 与16.3% 之间的 广告 adgroup 。将这些信息生成csv文件，文件命名优质_4.csv，里面记录这些关键词的以下信息，CPC， ACOS, Clicks，adgroupid，spend.[ ACOS =（sum(cost)/sum(sales14d))，查找amazon_ad_group_reports_sp表] :<br> &nbsp;&nbsp;&nbsp;&nbsp;Answer is : 查询已完成，请查看文件： 2024-05-15_1715764400_campaign_3_4.csv</li>-->
+            <li style="color: green;">3.4[优质广告]，找出在 2024-04-19 至 2024-04-28 这段时间内，FR_SP广告中 ACOS 介于 14.2% 与16.3% 之间的 广告 adgroup 。将这些信息生成csv文件，文件命名优质_4.csv，里面记录这些关键词的以下信息，CPC， ACOS, Clicks，adgroupid，spend.[ ACOS =（sum(cost)/sum(sales14d))，查找amazon_ad_group_reports_sp表] :</li>
+            <li>&nbsp;&nbsp;&nbsp;&nbsp;Answer is : 查询已完成，请查看文件： 2024-05-15_1715764400_campaign_3_4.csv</li>
+          
+<!--            <li>3.5[优质广告]，找出在 2024-04-19 至 2024-04-28 这段时间内，FR_SP广告中 低于 平均ACOS值（20.38%） 10% - 20% 的 广告 adgroup。将这些信息生成csv文件，文件命名优质_5.csv，里面记录这些关键词的以下信息，CPC， ACOS,  Clicks，adgroupid，spend. :<br> &nbsp;&nbsp;&nbsp;&nbsp;Answer is : 查询已完成，请查看文件： 2024-05-15_1715764400_campaign_3_5.csv</li>-->
+            <li style="color: green;">3.5[优质广告]，找出在 2024-04-19 至 2024-04-28 这段时间内，FR_SP广告中 低于 平均ACOS值（20.38%） 10% - 20% 的 广告 adgroup。将这些信息生成csv文件，文件命名优质_5.csv，里面记录这些关键词的以下信息，CPC， ACOS,  Clicks，adgroupid，spend. :</li>
+            <li>&nbsp;&nbsp;&nbsp;&nbsp;Answer is : 查询已完成，请查看文件： 2024-05-15_1715764400_campaign_3_5.csv</li>
+          
+<!--            <li>3.1，在 2024-04-19 至 2024-04-28 这段时间内，FR_SP广告的 平均ACOS（sum(cost)/sum(sales14d)） ，总广告消耗， 广告 adgroup 数量 和 总点击量 分别是多少？ :<br> &nbsp;&nbsp;&nbsp;&nbsp;Answer is : 暂时无SQL</li>-->
+            <li style="color: green;">3.1，在 2024-04-19 至 2024-04-28 这段时间内，FR_SP广告的 平均ACOS（sum(cost)/sum(sales14d)） ，总广告消耗， 广告 adgroup 数量 和 总点击量 分别是多少？ :</li>
+            <li>&nbsp;&nbsp;&nbsp;&nbsp;Answer is : 暂时无SQL</li>
+          
+<!--            <li>3.6[劣质广告]，在 2024-04-19 至 2024-04-28 这段时间内，FR_SP广告中 高于 平均ACOS值（20.38%） 10% 的  广告 adgroup 数量 数量 和 总点击量 是多少 :<br> &nbsp;&nbsp;&nbsp;&nbsp;Answer is : 高于 ACOS(0.2) 10% 的  广告 adgroup 数量为：12 和 总点击量 是：825.0</li>-->
+            <li style="color: green;">3.6[劣质广告]，在 2024-04-19 至 2024-04-28 这段时间内，FR_SP广告中 高于 平均ACOS值（20.38%） 10% 的  广告 adgroup 数量 数量 和 总点击量 是多少 :</li>
+            <li>&nbsp;&nbsp;&nbsp;&nbsp;Answer is : 高于 ACOS(0.2) 10% 的  广告 adgroup 数量为：12 和 总点击量 是：825.0</li>
+          
+<!--            <li>3.7[劣质广告]，找出在 2024-04-19 至 2024-04-28 这段时间内，FR_SP广告中 高于 平均ACOS值（20.38%） 30% 以上的  广告 adgroup。将这些信息生成csv文件，里面记录这些关键词的以下信息，CPC， ACOS,  Clicks，adgroupid，spend. :<br> &nbsp;&nbsp;&nbsp;&nbsp;Answer is : 查询已完成，请查看文件： 2024-05-15_1715764401_campaign_3_7.csv</li>-->
+            <li style="color: green;">3.7[劣质广告]，找出在 2024-04-19 至 2024-04-28 这段时间内，FR_SP广告中 高于 平均ACOS值（20.38%） 30% 以上的  广告 adgroup。将这些信息生成csv文件，里面记录这些关键词的以下信息，CPC， ACOS,  Clicks，adgroupid，spend. :</li>
+            <li>&nbsp;&nbsp;&nbsp;&nbsp;Answer is : 查询已完成，请查看文件： 2024-05-15_1715764401_campaign_3_7.csv</li>
+          
+<!--            <li>3.8[劣质广告]，找出在 2024-04-19 至 2024-04-28 这段时间内，FR_SP广告中 高于（20-30%）ACOS 介于 14.2% 与16.3% 之间的 广告 adgroup 。将这些信息生成csv文件，文件命名优质_4.csv，里面记录这些关键词的以下信息，CPC， ACOS, Clicks，adgroupid，spend.[ ACOS =（sum(cost)/sum(sales14d))，查找amazon_ad_group_reports_sp表] :<br> &nbsp;&nbsp;&nbsp;&nbsp;Answer is : 查询已完成，请查看文件： 2024-05-15_1715764401_campaign_3_8.csv</li>-->
+            <li style="color: green;">3.8[劣质广告]，找出在 2024-04-19 至 2024-04-28 这段时间内，FR_SP广告中 高于（20-30%）ACOS 介于 14.2% 与16.3% 之间的 广告 adgroup 。将这些信息生成csv文件，文件命名优质_4.csv，里面记录这些关键词的以下信息，CPC， ACOS, Clicks，adgroupid，spend.[ ACOS =（sum(cost)/sum(sales14d))，查找amazon_ad_group_reports_sp表] :</li>
+            <li>&nbsp;&nbsp;&nbsp;&nbsp;Answer is : 查询已完成，请查看文件： 2024-05-15_1715764401_campaign_3_8.csv</li>
+          
+<!--            <li>3.9[劣质广告]，找出在 2024-04-19 至 2024-04-28 这段时间内，FR_SP广告中 高于 平均ACOS值（20.38%） 10% - 20% 的 广告 adgroup。将这些信息生成csv文件，文件命名优质_5.csv，里面记录这些关键词的以下信息，CPC， ACOS,  Clicks，adgroupid，spend. :<br> &nbsp;&nbsp;&nbsp;&nbsp;Answer is : 查询已完成，请查看文件： 2024-05-15_1715764401_campaign_3_9.csv</li>-->
+            <li style="color: green;">3.9[劣质广告]，找出在 2024-04-19 至 2024-04-28 这段时间内，FR_SP广告中 高于 平均ACOS值（20.38%） 10% - 20% 的 广告 adgroup。将这些信息生成csv文件，文件命名优质_5.csv，里面记录这些关键词的以下信息，CPC， ACOS,  Clicks，adgroupid，spend. :</li>
+            <li>&nbsp;&nbsp;&nbsp;&nbsp;Answer is : 查询已完成，请查看文件： 2024-05-15_1715764401_campaign_3_9.csv</li>
+          
+        
+      </ul>
+
+    </div>
+  
+
+  <div class="report-summary">
+    <h2 class="m-b-5 bg-border color-white">优化策略</h2>
+    <ul class="m-b-5 bg-border">
+      
+        <li><strong>优化策略：</strong>综合以上检查报告，以下为推荐在广告后台执行的优化策略 </li>
+      
+    </ul>
+  </div>
+
+</div>
+
+ 
+
+
+
+<!--<h4 class="m-b-5 bg-border color-white">1.2.3</h4>-->
+<div class="m-b-6">
+    <h4>1.2.3</h4>
+    <li>以下为 低于 平均ACOS值 30% 以上的</li>
+    <li>建议执行的操作：关键词提高出价10%</li>
+    <!--    增加下载链接-->
+    <a href="C:\Users\1\Desktop\api\generate_report\ 2024-05-15_1715764367_targeting_keywords_2_3.csv" download>DownloadFile</a>
+</div>
+<!--<table class="csvTable"  id="1.2.3">-->
+<!--    <thead>-->
+<!--    <tr></tr>-->
+<!--    </thead>-->
+<!--    <tbody>-->
+<!--    </tbody>-->
+<!--</table>-->
+<div style="overflow-x: auto;margin: 0 auto;">
+    <table class="csvTable"  id="1.2.3">
+        <thead>
+        <tr></tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+</div>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        console.log(123123)
+        fetch( "C:\Users\1\Desktop\api\generate_report\ 2024-05-15_1715764367_targeting_keywords_2_3.csv" )
+            .then(response => response.text())
+            .then(text => {
+                console.log(text)
+                const data = parseCSV(text);
+                fillTable("1.2.3", data);
+            });
+    });
+
+    function parseCSV(text) {
+        const lines = text.split('\n');
+        return lines.map(line => line.split(','));
+    }
+
+    function fillTable(csvId, data) {
+        const table = document.getElementById(csvId);
+        const thead = table.querySelector('thead tr');
+        const tbody = table.querySelector('tbody');
+
+        // Clear the table header and body
+        thead.innerHTML = '';
+        tbody.innerHTML = '';
+
+        // Fill the table header
+        data[0].forEach(header => {
+            const th = document.createElement('th');
+            th.textContent = header;
+            thead.appendChild(th);
+        });
+
+        // Fill the table data
+        data.slice(1).forEach(row => {
+            const tr = document.createElement('tr');
+            row.forEach(cell => {
+                const td = document.createElement('td');
+                td.textContent = cell;
+                tr.appendChild(td);
+            });
+            tbody.appendChild(tr);
+        });
+    }
+</script>
+
+<!--<h4 class="m-b-5 bg-border color-white">1.2.4</h4>-->
+<div class="m-b-6">
+    <h4>1.2.4</h4>
+    <li>以下为 低于 平均ACOS值 20% - 30%</li>
+    <li>建议执行的操作：关键词提高出价5%</li>
+    <!--    增加下载链接-->
+    <a href="C:\Users\1\Desktop\api\generate_report\ 2024-05-15_1715764381_targeting_keywords_2_4.csv" download>DownloadFile</a>
+</div>
+<!--<table class="csvTable"  id="1.2.4">-->
+<!--    <thead>-->
+<!--    <tr></tr>-->
+<!--    </thead>-->
+<!--    <tbody>-->
+<!--    </tbody>-->
+<!--</table>-->
+<div style="overflow-x: auto;margin: 0 auto;">
+    <table class="csvTable"  id="1.2.4">
+        <thead>
+        <tr></tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+</div>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        console.log(123123)
+        fetch( "C:\Users\1\Desktop\api\generate_report\ 2024-05-15_1715764381_targeting_keywords_2_4.csv" )
+            .then(response => response.text())
+            .then(text => {
+                console.log(text)
+                const data = parseCSV(text);
+                fillTable("1.2.4", data);
+            });
+    });
+
+    function parseCSV(text) {
+        const lines = text.split('\n');
+        return lines.map(line => line.split(','));
+    }
+
+    function fillTable(csvId, data) {
+        const table = document.getElementById(csvId);
+        const thead = table.querySelector('thead tr');
+        const tbody = table.querySelector('tbody');
+
+        // Clear the table header and body
+        thead.innerHTML = '';
+        tbody.innerHTML = '';
+
+        // Fill the table header
+        data[0].forEach(header => {
+            const th = document.createElement('th');
+            th.textContent = header;
+            thead.appendChild(th);
+        });
+
+        // Fill the table data
+        data.slice(1).forEach(row => {
+            const tr = document.createElement('tr');
+            row.forEach(cell => {
+                const td = document.createElement('td');
+                td.textContent = cell;
+                tr.appendChild(td);
+            });
+            tbody.appendChild(tr);
+        });
+    }
+</script>
+
+<!--<h4 class="m-b-5 bg-border color-white">1.2.5</h4>-->
+<div class="m-b-6">
+    <h4>1.2.5</h4>
+    <li>以下为 低于 平均ACOS值 10% - 20% 的</li>
+    <li>建议执行的操作：关键词提高出价3%</li>
+    <!--    增加下载链接-->
+    <a href="C:\Users\1\Desktop\api\generate_report\ 2024-05-15_1715764390_targeting_keywords_2_5.csv" download>DownloadFile</a>
+</div>
+<!--<table class="csvTable"  id="1.2.5">-->
+<!--    <thead>-->
+<!--    <tr></tr>-->
+<!--    </thead>-->
+<!--    <tbody>-->
+<!--    </tbody>-->
+<!--</table>-->
+<div style="overflow-x: auto;margin: 0 auto;">
+    <table class="csvTable"  id="1.2.5">
+        <thead>
+        <tr></tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+</div>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        console.log(123123)
+        fetch( "C:\Users\1\Desktop\api\generate_report\ 2024-05-15_1715764390_targeting_keywords_2_5.csv" )
+            .then(response => response.text())
+            .then(text => {
+                console.log(text)
+                const data = parseCSV(text);
+                fillTable("1.2.5", data);
+            });
+    });
+
+    function parseCSV(text) {
+        const lines = text.split('\n');
+        return lines.map(line => line.split(','));
+    }
+
+    function fillTable(csvId, data) {
+        const table = document.getElementById(csvId);
+        const thead = table.querySelector('thead tr');
+        const tbody = table.querySelector('tbody');
+
+        // Clear the table header and body
+        thead.innerHTML = '';
+        tbody.innerHTML = '';
+
+        // Fill the table header
+        data[0].forEach(header => {
+            const th = document.createElement('th');
+            th.textContent = header;
+            thead.appendChild(th);
+        });
+
+        // Fill the table data
+        data.slice(1).forEach(row => {
+            const tr = document.createElement('tr');
+            row.forEach(cell => {
+                const td = document.createElement('td');
+                td.textContent = cell;
+                tr.appendChild(td);
+            });
+            tbody.appendChild(tr);
+        });
+    }
+</script>
+
+<!--<h4 class="m-b-5 bg-border color-white">1.4.3</h4>-->
+<div class="m-b-6">
+    <h4>1.4.3</h4>
+    <li>以下为 高于 平均ACOS值 30% 以上的</li>
+    <li>建议执行的操作：关闭关键词投放</li>
+    <!--    增加下载链接-->
+    <a href="C:\Users\1\Desktop\api\generate_report\ 2024-05-15_1715764391_targeting_keywords_4_3.csv" download>DownloadFile</a>
+</div>
+<!--<table class="csvTable"  id="1.4.3">-->
+<!--    <thead>-->
+<!--    <tr></tr>-->
+<!--    </thead>-->
+<!--    <tbody>-->
+<!--    </tbody>-->
+<!--</table>-->
+<div style="overflow-x: auto;margin: 0 auto;">
+    <table class="csvTable"  id="1.4.3">
+        <thead>
+        <tr></tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+</div>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        console.log(123123)
+        fetch( "C:\Users\1\Desktop\api\generate_report\ 2024-05-15_1715764391_targeting_keywords_4_3.csv" )
+            .then(response => response.text())
+            .then(text => {
+                console.log(text)
+                const data = parseCSV(text);
+                fillTable("1.4.3", data);
+            });
+    });
+
+    function parseCSV(text) {
+        const lines = text.split('\n');
+        return lines.map(line => line.split(','));
+    }
+
+    function fillTable(csvId, data) {
+        const table = document.getElementById(csvId);
+        const thead = table.querySelector('thead tr');
+        const tbody = table.querySelector('tbody');
+
+        // Clear the table header and body
+        thead.innerHTML = '';
+        tbody.innerHTML = '';
+
+        // Fill the table header
+        data[0].forEach(header => {
+            const th = document.createElement('th');
+            th.textContent = header;
+            thead.appendChild(th);
+        });
+
+        // Fill the table data
+        data.slice(1).forEach(row => {
+            const tr = document.createElement('tr');
+            row.forEach(cell => {
+                const td = document.createElement('td');
+                td.textContent = cell;
+                tr.appendChild(td);
+            });
+            tbody.appendChild(tr);
+        });
+    }
+</script>
+
+<!--<h4 class="m-b-5 bg-border color-white">1.4.4</h4>-->
+<div class="m-b-6">
+    <h4>1.4.4</h4>
+    <li>以下为 高于 平均ACOS值 20% - 30% 的</li>
+    <li>建议执行的操作：降低出价 20%</li>
+    <!--    增加下载链接-->
+    <a href="C:\Users\1\Desktop\api\generate_report\ 2024-05-15_1715764391_targeting_keywords_4_4.csv" download>DownloadFile</a>
+</div>
+<!--<table class="csvTable"  id="1.4.4">-->
+<!--    <thead>-->
+<!--    <tr></tr>-->
+<!--    </thead>-->
+<!--    <tbody>-->
+<!--    </tbody>-->
+<!--</table>-->
+<div style="overflow-x: auto;margin: 0 auto;">
+    <table class="csvTable"  id="1.4.4">
+        <thead>
+        <tr></tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+</div>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        console.log(123123)
+        fetch( "C:\Users\1\Desktop\api\generate_report\ 2024-05-15_1715764391_targeting_keywords_4_4.csv" )
+            .then(response => response.text())
+            .then(text => {
+                console.log(text)
+                const data = parseCSV(text);
+                fillTable("1.4.4", data);
+            });
+    });
+
+    function parseCSV(text) {
+        const lines = text.split('\n');
+        return lines.map(line => line.split(','));
+    }
+
+    function fillTable(csvId, data) {
+        const table = document.getElementById(csvId);
+        const thead = table.querySelector('thead tr');
+        const tbody = table.querySelector('tbody');
+
+        // Clear the table header and body
+        thead.innerHTML = '';
+        tbody.innerHTML = '';
+
+        // Fill the table header
+        data[0].forEach(header => {
+            const th = document.createElement('th');
+            th.textContent = header;
+            thead.appendChild(th);
+        });
+
+        // Fill the table data
+        data.slice(1).forEach(row => {
+            const tr = document.createElement('tr');
+            row.forEach(cell => {
+                const td = document.createElement('td');
+                td.textContent = cell;
+                tr.appendChild(td);
+            });
+            tbody.appendChild(tr);
+        });
+    }
+</script>
+
+<!--<h4 class="m-b-5 bg-border color-white">1.4.5</h4>-->
+<div class="m-b-6">
+    <h4>1.4.5</h4>
+    <li>以下为 高于 平均ACOS值 10% - 20% 的</li>
+    <li>建议执行的操作：降低出价 10%</li>
+    <!--    增加下载链接-->
+    <a href="C:\Users\1\Desktop\api\generate_report\ 2024-05-15_1715764391_targeting_keywords_4_5.csv" download>DownloadFile</a>
+</div>
+<!--<table class="csvTable"  id="1.4.5">-->
+<!--    <thead>-->
+<!--    <tr></tr>-->
+<!--    </thead>-->
+<!--    <tbody>-->
+<!--    </tbody>-->
+<!--</table>-->
+<div style="overflow-x: auto;margin: 0 auto;">
+    <table class="csvTable"  id="1.4.5">
+        <thead>
+        <tr></tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+</div>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        console.log(123123)
+        fetch( "C:\Users\1\Desktop\api\generate_report\ 2024-05-15_1715764391_targeting_keywords_4_5.csv" )
+            .then(response => response.text())
+            .then(text => {
+                console.log(text)
+                const data = parseCSV(text);
+                fillTable("1.4.5", data);
+            });
+    });
+
+    function parseCSV(text) {
+        const lines = text.split('\n');
+        return lines.map(line => line.split(','));
+    }
+
+    function fillTable(csvId, data) {
+        const table = document.getElementById(csvId);
+        const thead = table.querySelector('thead tr');
+        const tbody = table.querySelector('tbody');
+
+        // Clear the table header and body
+        thead.innerHTML = '';
+        tbody.innerHTML = '';
+
+        // Fill the table header
+        data[0].forEach(header => {
+            const th = document.createElement('th');
+            th.textContent = header;
+            thead.appendChild(th);
+        });
+
+        // Fill the table data
+        data.slice(1).forEach(row => {
+            const tr = document.createElement('tr');
+            row.forEach(cell => {
+                const td = document.createElement('td');
+                td.textContent = cell;
+                tr.appendChild(td);
+            });
+            tbody.appendChild(tr);
+        });
+    }
+</script>
+
+<!--<h4 class="m-b-5 bg-border color-white">2.1.3</h4>-->
+<div class="m-b-6">
+    <h4>2.1.3</h4>
+    <li>以下为 低于 平均ACOS值 30%以上的 sku广告</li>
+    <li>建议执行的操作：新开计划（关键词和原计划一样），预算增加30%，关键词价格上调10%。 </li>
+    <!--    增加下载链接-->
+    <a href="C:\Users\1\Desktop\api\generate_report\ 2024-05-15_1715764394_prodcut_1_3.csv" download>DownloadFile</a>
+</div>
+<!--<table class="csvTable"  id="2.1.3">-->
+<!--    <thead>-->
+<!--    <tr></tr>-->
+<!--    </thead>-->
+<!--    <tbody>-->
+<!--    </tbody>-->
+<!--</table>-->
+<div style="overflow-x: auto;margin: 0 auto;">
+    <table class="csvTable"  id="2.1.3">
+        <thead>
+        <tr></tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+</div>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        console.log(123123)
+        fetch( "C:\Users\1\Desktop\api\generate_report\ 2024-05-15_1715764394_prodcut_1_3.csv" )
+            .then(response => response.text())
+            .then(text => {
+                console.log(text)
+                const data = parseCSV(text);
+                fillTable("2.1.3", data);
+            });
+    });
+
+    function parseCSV(text) {
+        const lines = text.split('\n');
+        return lines.map(line => line.split(','));
+    }
+
+    function fillTable(csvId, data) {
+        const table = document.getElementById(csvId);
+        const thead = table.querySelector('thead tr');
+        const tbody = table.querySelector('tbody');
+
+        // Clear the table header and body
+        thead.innerHTML = '';
+        tbody.innerHTML = '';
+
+        // Fill the table header
+        data[0].forEach(header => {
+            const th = document.createElement('th');
+            th.textContent = header;
+            thead.appendChild(th);
+        });
+
+        // Fill the table data
+        data.slice(1).forEach(row => {
+            const tr = document.createElement('tr');
+            row.forEach(cell => {
+                const td = document.createElement('td');
+                td.textContent = cell;
+                tr.appendChild(td);
+            });
+            tbody.appendChild(tr);
+        });
+    }
+</script>
+
+<!--<h4 class="m-b-5 bg-border color-white">2.1.4</h4>-->
+<div class="m-b-6">
+    <h4>2.1.4</h4>
+    <li>以下为 低于 平均ACOS值 20% - 30% 的 sku广告</li>
+    <li>建议执行的操作：暂不操作</li>
+    <!--    增加下载链接-->
+    <a href="C:\Users\1\Desktop\api\generate_report\ 2024-05-15_1715764395_prodcut_1_4.csv" download>DownloadFile</a>
+</div>
+<!--<table class="csvTable"  id="2.1.4">-->
+<!--    <thead>-->
+<!--    <tr></tr>-->
+<!--    </thead>-->
+<!--    <tbody>-->
+<!--    </tbody>-->
+<!--</table>-->
+<div style="overflow-x: auto;margin: 0 auto;">
+    <table class="csvTable"  id="2.1.4">
+        <thead>
+        <tr></tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+</div>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        console.log(123123)
+        fetch( "C:\Users\1\Desktop\api\generate_report\ 2024-05-15_1715764395_prodcut_1_4.csv" )
+            .then(response => response.text())
+            .then(text => {
+                console.log(text)
+                const data = parseCSV(text);
+                fillTable("2.1.4", data);
+            });
+    });
+
+    function parseCSV(text) {
+        const lines = text.split('\n');
+        return lines.map(line => line.split(','));
+    }
+
+    function fillTable(csvId, data) {
+        const table = document.getElementById(csvId);
+        const thead = table.querySelector('thead tr');
+        const tbody = table.querySelector('tbody');
+
+        // Clear the table header and body
+        thead.innerHTML = '';
+        tbody.innerHTML = '';
+
+        // Fill the table header
+        data[0].forEach(header => {
+            const th = document.createElement('th');
+            th.textContent = header;
+            thead.appendChild(th);
+        });
+
+        // Fill the table data
+        data.slice(1).forEach(row => {
+            const tr = document.createElement('tr');
+            row.forEach(cell => {
+                const td = document.createElement('td');
+                td.textContent = cell;
+                tr.appendChild(td);
+            });
+            tbody.appendChild(tr);
+        });
+    }
+</script>
+
+<!--<h4 class="m-b-5 bg-border color-white">2.1.5</h4>-->
+<div class="m-b-6">
+    <h4>2.1.5</h4>
+    <li>以下为 低于 平均ACOS值 10% - 20% 的 sku广告</li>
+    <li>建议执行的操作：暂不操作</li>
+    <!--    增加下载链接-->
+    <a href="C:\Users\1\Desktop\api\generate_report\ 2024-05-15_1715764395_prodcut_1_5.csv" download>DownloadFile</a>
+</div>
+<!--<table class="csvTable"  id="2.1.5">-->
+<!--    <thead>-->
+<!--    <tr></tr>-->
+<!--    </thead>-->
+<!--    <tbody>-->
+<!--    </tbody>-->
+<!--</table>-->
+<div style="overflow-x: auto;margin: 0 auto;">
+    <table class="csvTable"  id="2.1.5">
+        <thead>
+        <tr></tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+</div>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        console.log(123123)
+        fetch( "C:\Users\1\Desktop\api\generate_report\ 2024-05-15_1715764395_prodcut_1_5.csv" )
+            .then(response => response.text())
+            .then(text => {
+                console.log(text)
+                const data = parseCSV(text);
+                fillTable("2.1.5", data);
+            });
+    });
+
+    function parseCSV(text) {
+        const lines = text.split('\n');
+        return lines.map(line => line.split(','));
+    }
+
+    function fillTable(csvId, data) {
+        const table = document.getElementById(csvId);
+        const thead = table.querySelector('thead tr');
+        const tbody = table.querySelector('tbody');
+
+        // Clear the table header and body
+        thead.innerHTML = '';
+        tbody.innerHTML = '';
+
+        // Fill the table header
+        data[0].forEach(header => {
+            const th = document.createElement('th');
+            th.textContent = header;
+            thead.appendChild(th);
+        });
+
+        // Fill the table data
+        data.slice(1).forEach(row => {
+            const tr = document.createElement('tr');
+            row.forEach(cell => {
+                const td = document.createElement('td');
+                td.textContent = cell;
+                tr.appendChild(td);
+            });
+            tbody.appendChild(tr);
+        });
+    }
+</script>
+
+<!--<h4 class="m-b-5 bg-border color-white">2.2.3</h4>-->
+<div class="m-b-6">
+    <h4>2.2.3</h4>
+    <li>以下为 高于 平均ACOS值 30%以上的 sku广告</li>
+    <li>建议执行的操作：暂不操作</li>
+    <!--    增加下载链接-->
+    <a href="C:\Users\1\Desktop\api\generate_report\ 2024-05-15_1715764396_prodcut_2_3.csv" download>DownloadFile</a>
+</div>
+<!--<table class="csvTable"  id="2.2.3">-->
+<!--    <thead>-->
+<!--    <tr></tr>-->
+<!--    </thead>-->
+<!--    <tbody>-->
+<!--    </tbody>-->
+<!--</table>-->
+<div style="overflow-x: auto;margin: 0 auto;">
+    <table class="csvTable"  id="2.2.3">
+        <thead>
+        <tr></tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+</div>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        console.log(123123)
+        fetch( "C:\Users\1\Desktop\api\generate_report\ 2024-05-15_1715764396_prodcut_2_3.csv" )
+            .then(response => response.text())
+            .then(text => {
+                console.log(text)
+                const data = parseCSV(text);
+                fillTable("2.2.3", data);
+            });
+    });
+
+    function parseCSV(text) {
+        const lines = text.split('\n');
+        return lines.map(line => line.split(','));
+    }
+
+    function fillTable(csvId, data) {
+        const table = document.getElementById(csvId);
+        const thead = table.querySelector('thead tr');
+        const tbody = table.querySelector('tbody');
+
+        // Clear the table header and body
+        thead.innerHTML = '';
+        tbody.innerHTML = '';
+
+        // Fill the table header
+        data[0].forEach(header => {
+            const th = document.createElement('th');
+            th.textContent = header;
+            thead.appendChild(th);
+        });
+
+        // Fill the table data
+        data.slice(1).forEach(row => {
+            const tr = document.createElement('tr');
+            row.forEach(cell => {
+                const td = document.createElement('td');
+                td.textContent = cell;
+                tr.appendChild(td);
+            });
+            tbody.appendChild(tr);
+        });
+    }
+</script>
+
+<!--<h4 class="m-b-5 bg-border color-white">2.2.4</h4>-->
+<div class="m-b-6">
+    <h4>2.2.4</h4>
+    <li>以下为 高于 平均ACOS值 20% - 30% 的 sku广告</li>
+    <li>建议执行的操作：暂不操作</li>
+    <!--    增加下载链接-->
+    <a href="C:\Users\1\Desktop\api\generate_report\ 2024-05-15_1715764397_prodcut_2_4.csv" download>DownloadFile</a>
+</div>
+<!--<table class="csvTable"  id="2.2.4">-->
+<!--    <thead>-->
+<!--    <tr></tr>-->
+<!--    </thead>-->
+<!--    <tbody>-->
+<!--    </tbody>-->
+<!--</table>-->
+<div style="overflow-x: auto;margin: 0 auto;">
+    <table class="csvTable"  id="2.2.4">
+        <thead>
+        <tr></tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+</div>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        console.log(123123)
+        fetch( "C:\Users\1\Desktop\api\generate_report\ 2024-05-15_1715764397_prodcut_2_4.csv" )
+            .then(response => response.text())
+            .then(text => {
+                console.log(text)
+                const data = parseCSV(text);
+                fillTable("2.2.4", data);
+            });
+    });
+
+    function parseCSV(text) {
+        const lines = text.split('\n');
+        return lines.map(line => line.split(','));
+    }
+
+    function fillTable(csvId, data) {
+        const table = document.getElementById(csvId);
+        const thead = table.querySelector('thead tr');
+        const tbody = table.querySelector('tbody');
+
+        // Clear the table header and body
+        thead.innerHTML = '';
+        tbody.innerHTML = '';
+
+        // Fill the table header
+        data[0].forEach(header => {
+            const th = document.createElement('th');
+            th.textContent = header;
+            thead.appendChild(th);
+        });
+
+        // Fill the table data
+        data.slice(1).forEach(row => {
+            const tr = document.createElement('tr');
+            row.forEach(cell => {
+                const td = document.createElement('td');
+                td.textContent = cell;
+                tr.appendChild(td);
+            });
+            tbody.appendChild(tr);
+        });
+    }
+</script>
+
+<!--<h4 class="m-b-5 bg-border color-white">2.2.5</h4>-->
+<div class="m-b-6">
+    <h4>2.2.5</h4>
+    <li>以下为 高于 平均ACOS值 10% - 20% 的 sku广告</li>
+    <li>建议执行的操作：暂不操作</li>
+    <!--    增加下载链接-->
+    <a href="C:\Users\1\Desktop\api\generate_report\ 2024-05-15_1715764397_prodcut_2_5.csv" download>DownloadFile</a>
+</div>
+<!--<table class="csvTable"  id="2.2.5">-->
+<!--    <thead>-->
+<!--    <tr></tr>-->
+<!--    </thead>-->
+<!--    <tbody>-->
+<!--    </tbody>-->
+<!--</table>-->
+<div style="overflow-x: auto;margin: 0 auto;">
+    <table class="csvTable"  id="2.2.5">
+        <thead>
+        <tr></tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+</div>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        console.log(123123)
+        fetch( "C:\Users\1\Desktop\api\generate_report\ 2024-05-15_1715764397_prodcut_2_5.csv" )
+            .then(response => response.text())
+            .then(text => {
+                console.log(text)
+                const data = parseCSV(text);
+                fillTable("2.2.5", data);
+            });
+    });
+
+    function parseCSV(text) {
+        const lines = text.split('\n');
+        return lines.map(line => line.split(','));
+    }
+
+    function fillTable(csvId, data) {
+        const table = document.getElementById(csvId);
+        const thead = table.querySelector('thead tr');
+        const tbody = table.querySelector('tbody');
+
+        // Clear the table header and body
+        thead.innerHTML = '';
+        tbody.innerHTML = '';
+
+        // Fill the table header
+        data[0].forEach(header => {
+            const th = document.createElement('th');
+            th.textContent = header;
+            thead.appendChild(th);
+        });
+
+        // Fill the table data
+        data.slice(1).forEach(row => {
+            const tr = document.createElement('tr');
+            row.forEach(cell => {
+                const td = document.createElement('td');
+                td.textContent = cell;
+                tr.appendChild(td);
+            });
+            tbody.appendChild(tr);
+        });
+    }
+</script>
+
+<!--<h4 class="m-b-5 bg-border color-white">3.1.3</h4>-->
+<div class="m-b-6">
+    <h4>3.1.3</h4>
+    <li>以下为 低于 平均ACOS值30% 以上的 campaign 广告活动</li>
+    <li>建议执行的操作：预算提升30%</li>
+    <!--    增加下载链接-->
+    <a href="C:\Users\1\Desktop\api\generate_report\ 2024-05-15_1715764398_campaign_1_3.csv" download>DownloadFile</a>
+</div>
+<!--<table class="csvTable"  id="3.1.3">-->
+<!--    <thead>-->
+<!--    <tr></tr>-->
+<!--    </thead>-->
+<!--    <tbody>-->
+<!--    </tbody>-->
+<!--</table>-->
+<div style="overflow-x: auto;margin: 0 auto;">
+    <table class="csvTable"  id="3.1.3">
+        <thead>
+        <tr></tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+</div>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        console.log(123123)
+        fetch( "C:\Users\1\Desktop\api\generate_report\ 2024-05-15_1715764398_campaign_1_3.csv" )
+            .then(response => response.text())
+            .then(text => {
+                console.log(text)
+                const data = parseCSV(text);
+                fillTable("3.1.3", data);
+            });
+    });
+
+    function parseCSV(text) {
+        const lines = text.split('\n');
+        return lines.map(line => line.split(','));
+    }
+
+    function fillTable(csvId, data) {
+        const table = document.getElementById(csvId);
+        const thead = table.querySelector('thead tr');
+        const tbody = table.querySelector('tbody');
+
+        // Clear the table header and body
+        thead.innerHTML = '';
+        tbody.innerHTML = '';
+
+        // Fill the table header
+        data[0].forEach(header => {
+            const th = document.createElement('th');
+            th.textContent = header;
+            thead.appendChild(th);
+        });
+
+        // Fill the table data
+        data.slice(1).forEach(row => {
+            const tr = document.createElement('tr');
+            row.forEach(cell => {
+                const td = document.createElement('td');
+                td.textContent = cell;
+                tr.appendChild(td);
+            });
+            tbody.appendChild(tr);
+        });
+    }
+</script>
+
+<!--<h4 class="m-b-5 bg-border color-white">3.1.4</h4>-->
+<div class="m-b-6">
+    <h4>3.1.4</h4>
+    <li>以下为 低于 平均ACOS值 20% - 30% 的 campaign 广告活动</li>
+    <li>建议执行的操作：预算提升20%</li>
+    <!--    增加下载链接-->
+    <a href="C:\Users\1\Desktop\api\generate_report\ 2024-05-15_1715764398_campaign_1_4.csv" download>DownloadFile</a>
+</div>
+<!--<table class="csvTable"  id="3.1.4">-->
+<!--    <thead>-->
+<!--    <tr></tr>-->
+<!--    </thead>-->
+<!--    <tbody>-->
+<!--    </tbody>-->
+<!--</table>-->
+<div style="overflow-x: auto;margin: 0 auto;">
+    <table class="csvTable"  id="3.1.4">
+        <thead>
+        <tr></tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+</div>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        console.log(123123)
+        fetch( "C:\Users\1\Desktop\api\generate_report\ 2024-05-15_1715764398_campaign_1_4.csv" )
+            .then(response => response.text())
+            .then(text => {
+                console.log(text)
+                const data = parseCSV(text);
+                fillTable("3.1.4", data);
+            });
+    });
+
+    function parseCSV(text) {
+        const lines = text.split('\n');
+        return lines.map(line => line.split(','));
+    }
+
+    function fillTable(csvId, data) {
+        const table = document.getElementById(csvId);
+        const thead = table.querySelector('thead tr');
+        const tbody = table.querySelector('tbody');
+
+        // Clear the table header and body
+        thead.innerHTML = '';
+        tbody.innerHTML = '';
+
+        // Fill the table header
+        data[0].forEach(header => {
+            const th = document.createElement('th');
+            th.textContent = header;
+            thead.appendChild(th);
+        });
+
+        // Fill the table data
+        data.slice(1).forEach(row => {
+            const tr = document.createElement('tr');
+            row.forEach(cell => {
+                const td = document.createElement('td');
+                td.textContent = cell;
+                tr.appendChild(td);
+            });
+            tbody.appendChild(tr);
+        });
+    }
+</script>
+
+<!--<h4 class="m-b-5 bg-border color-white">3.1.5</h4>-->
+<div class="m-b-6">
+    <h4>3.1.5</h4>
+    <li>以下为 低于 平均ACOS值 10% - 20% 的 campaign 广告活动</li>
+    <li>建议执行的操作：预算提升10%</li>
+    <!--    增加下载链接-->
+    <a href="C:\Users\1\Desktop\api\generate_report\ 2024-05-15_1715764398_campaign_1_5.csv" download>DownloadFile</a>
+</div>
+<!--<table class="csvTable"  id="3.1.5">-->
+<!--    <thead>-->
+<!--    <tr></tr>-->
+<!--    </thead>-->
+<!--    <tbody>-->
+<!--    </tbody>-->
+<!--</table>-->
+<div style="overflow-x: auto;margin: 0 auto;">
+    <table class="csvTable"  id="3.1.5">
+        <thead>
+        <tr></tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+</div>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        console.log(123123)
+        fetch( "C:\Users\1\Desktop\api\generate_report\ 2024-05-15_1715764398_campaign_1_5.csv" )
+            .then(response => response.text())
+            .then(text => {
+                console.log(text)
+                const data = parseCSV(text);
+                fillTable("3.1.5", data);
+            });
+    });
+
+    function parseCSV(text) {
+        const lines = text.split('\n');
+        return lines.map(line => line.split(','));
+    }
+
+    function fillTable(csvId, data) {
+        const table = document.getElementById(csvId);
+        const thead = table.querySelector('thead tr');
+        const tbody = table.querySelector('tbody');
+
+        // Clear the table header and body
+        thead.innerHTML = '';
+        tbody.innerHTML = '';
+
+        // Fill the table header
+        data[0].forEach(header => {
+            const th = document.createElement('th');
+            th.textContent = header;
+            thead.appendChild(th);
+        });
+
+        // Fill the table data
+        data.slice(1).forEach(row => {
+            const tr = document.createElement('tr');
+            row.forEach(cell => {
+                const td = document.createElement('td');
+                td.textContent = cell;
+                tr.appendChild(td);
+            });
+            tbody.appendChild(tr);
+        });
+    }
+</script>
+
+<!--<h4 class="m-b-5 bg-border color-white">3.1.7</h4>-->
+<div class="m-b-6">
+    <h4>3.1.7</h4>
+    <li>以下为 高于 平均ACOS值30% 以上的 campaign 广告活动</li>
+    <li>建议执行的操作：预算降低30%</li>
+    <!--    增加下载链接-->
+    <a href="C:\Users\1\Desktop\api\generate_report\ 2024-05-15_1715764398_campaign_1_7.csv" download>DownloadFile</a>
+</div>
+<!--<table class="csvTable"  id="3.1.7">-->
+<!--    <thead>-->
+<!--    <tr></tr>-->
+<!--    </thead>-->
+<!--    <tbody>-->
+<!--    </tbody>-->
+<!--</table>-->
+<div style="overflow-x: auto;margin: 0 auto;">
+    <table class="csvTable"  id="3.1.7">
+        <thead>
+        <tr></tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+</div>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        console.log(123123)
+        fetch( "C:\Users\1\Desktop\api\generate_report\ 2024-05-15_1715764398_campaign_1_7.csv" )
+            .then(response => response.text())
+            .then(text => {
+                console.log(text)
+                const data = parseCSV(text);
+                fillTable("3.1.7", data);
+            });
+    });
+
+    function parseCSV(text) {
+        const lines = text.split('\n');
+        return lines.map(line => line.split(','));
+    }
+
+    function fillTable(csvId, data) {
+        const table = document.getElementById(csvId);
+        const thead = table.querySelector('thead tr');
+        const tbody = table.querySelector('tbody');
+
+        // Clear the table header and body
+        thead.innerHTML = '';
+        tbody.innerHTML = '';
+
+        // Fill the table header
+        data[0].forEach(header => {
+            const th = document.createElement('th');
+            th.textContent = header;
+            thead.appendChild(th);
+        });
+
+        // Fill the table data
+        data.slice(1).forEach(row => {
+            const tr = document.createElement('tr');
+            row.forEach(cell => {
+                const td = document.createElement('td');
+                td.textContent = cell;
+                tr.appendChild(td);
+            });
+            tbody.appendChild(tr);
+        });
+    }
+</script>
+
+<!--<h4 class="m-b-5 bg-border color-white">3.1.8</h4>-->
+<div class="m-b-6">
+    <h4>3.1.8</h4>
+    <li>以下为 高于 平均ACOS值 20% - 30% 的 campaign 广告活动</li>
+    <li>建议执行的操作：预算降低20%</li>
+    <!--    增加下载链接-->
+    <a href="C:\Users\1\Desktop\api\generate_report\ 2024-05-15_1715764399_campaign_1_8.csv" download>DownloadFile</a>
+</div>
+<!--<table class="csvTable"  id="3.1.8">-->
+<!--    <thead>-->
+<!--    <tr></tr>-->
+<!--    </thead>-->
+<!--    <tbody>-->
+<!--    </tbody>-->
+<!--</table>-->
+<div style="overflow-x: auto;margin: 0 auto;">
+    <table class="csvTable"  id="3.1.8">
+        <thead>
+        <tr></tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+</div>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        console.log(123123)
+        fetch( "C:\Users\1\Desktop\api\generate_report\ 2024-05-15_1715764399_campaign_1_8.csv" )
+            .then(response => response.text())
+            .then(text => {
+                console.log(text)
+                const data = parseCSV(text);
+                fillTable("3.1.8", data);
+            });
+    });
+
+    function parseCSV(text) {
+        const lines = text.split('\n');
+        return lines.map(line => line.split(','));
+    }
+
+    function fillTable(csvId, data) {
+        const table = document.getElementById(csvId);
+        const thead = table.querySelector('thead tr');
+        const tbody = table.querySelector('tbody');
+
+        // Clear the table header and body
+        thead.innerHTML = '';
+        tbody.innerHTML = '';
+
+        // Fill the table header
+        data[0].forEach(header => {
+            const th = document.createElement('th');
+            th.textContent = header;
+            thead.appendChild(th);
+        });
+
+        // Fill the table data
+        data.slice(1).forEach(row => {
+            const tr = document.createElement('tr');
+            row.forEach(cell => {
+                const td = document.createElement('td');
+                td.textContent = cell;
+                tr.appendChild(td);
+            });
+            tbody.appendChild(tr);
+        });
+    }
+</script>
+
+<!--<h4 class="m-b-5 bg-border color-white">3.1.9</h4>-->
+<div class="m-b-6">
+    <h4>3.1.9</h4>
+    <li>以下为 高于 平均ACOS值 10% - 20% 的 campaign 广告活动</li>
+    <li>建议执行的操作：预算降低10%</li>
+    <!--    增加下载链接-->
+    <a href="C:\Users\1\Desktop\api\generate_report\ 2024-05-15_1715764399_campaign_1_9.csv" download>DownloadFile</a>
+</div>
+<!--<table class="csvTable"  id="3.1.9">-->
+<!--    <thead>-->
+<!--    <tr></tr>-->
+<!--    </thead>-->
+<!--    <tbody>-->
+<!--    </tbody>-->
+<!--</table>-->
+<div style="overflow-x: auto;margin: 0 auto;">
+    <table class="csvTable"  id="3.1.9">
+        <thead>
+        <tr></tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+</div>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        console.log(123123)
+        fetch( "C:\Users\1\Desktop\api\generate_report\ 2024-05-15_1715764399_campaign_1_9.csv" )
+            .then(response => response.text())
+            .then(text => {
+                console.log(text)
+                const data = parseCSV(text);
+                fillTable("3.1.9", data);
+            });
+    });
+
+    function parseCSV(text) {
+        const lines = text.split('\n');
+        return lines.map(line => line.split(','));
+    }
+
+    function fillTable(csvId, data) {
+        const table = document.getElementById(csvId);
+        const thead = table.querySelector('thead tr');
+        const tbody = table.querySelector('tbody');
+
+        // Clear the table header and body
+        thead.innerHTML = '';
+        tbody.innerHTML = '';
+
+        // Fill the table header
+        data[0].forEach(header => {
+            const th = document.createElement('th');
+            th.textContent = header;
+            thead.appendChild(th);
+        });
+
+        // Fill the table data
+        data.slice(1).forEach(row => {
+            const tr = document.createElement('tr');
+            row.forEach(cell => {
+                const td = document.createElement('td');
+                td.textContent = cell;
+                tr.appendChild(td);
+            });
+            tbody.appendChild(tr);
+        });
+    }
+</script>
+
+<!--<h4 class="m-b-5 bg-border color-white">3.2.3</h4>-->
+<div class="m-b-6">
+    <h4>3.2.3</h4>
+    <li>以下为 低于 平均ACOS值30% 以上的 campaign 广告活动placement</li>
+    <li>建议执行的操作：溢价提升10%, （增加）</li>
+    <!--    增加下载链接-->
+    <a href="C:\Users\1\Desktop\api\generate_report\ 2024-05-15_1715764399_campaign_2_3.csv" download>DownloadFile</a>
+</div>
+<!--<table class="csvTable"  id="3.2.3">-->
+<!--    <thead>-->
+<!--    <tr></tr>-->
+<!--    </thead>-->
+<!--    <tbody>-->
+<!--    </tbody>-->
+<!--</table>-->
+<div style="overflow-x: auto;margin: 0 auto;">
+    <table class="csvTable"  id="3.2.3">
+        <thead>
+        <tr></tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+</div>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        console.log(123123)
+        fetch( "C:\Users\1\Desktop\api\generate_report\ 2024-05-15_1715764399_campaign_2_3.csv" )
+            .then(response => response.text())
+            .then(text => {
+                console.log(text)
+                const data = parseCSV(text);
+                fillTable("3.2.3", data);
+            });
+    });
+
+    function parseCSV(text) {
+        const lines = text.split('\n');
+        return lines.map(line => line.split(','));
+    }
+
+    function fillTable(csvId, data) {
+        const table = document.getElementById(csvId);
+        const thead = table.querySelector('thead tr');
+        const tbody = table.querySelector('tbody');
+
+        // Clear the table header and body
+        thead.innerHTML = '';
+        tbody.innerHTML = '';
+
+        // Fill the table header
+        data[0].forEach(header => {
+            const th = document.createElement('th');
+            th.textContent = header;
+            thead.appendChild(th);
+        });
+
+        // Fill the table data
+        data.slice(1).forEach(row => {
+            const tr = document.createElement('tr');
+            row.forEach(cell => {
+                const td = document.createElement('td');
+                td.textContent = cell;
+                tr.appendChild(td);
+            });
+            tbody.appendChild(tr);
+        });
+    }
+</script>
+
+<!--<h4 class="m-b-5 bg-border color-white">3.2.4</h4>-->
+<div class="m-b-6">
+    <h4>3.2.4</h4>
+    <li>以下为 低于 平均ACOS值 20% - 30% 的 campaign 广告活动placement</li>
+    <li>建议执行的操作：溢价提升5%</li>
+    <!--    增加下载链接-->
+    <a href="C:\Users\1\Desktop\api\generate_report\ 2024-05-15_1715764399_campaign_2_4.csv" download>DownloadFile</a>
+</div>
+<!--<table class="csvTable"  id="3.2.4">-->
+<!--    <thead>-->
+<!--    <tr></tr>-->
+<!--    </thead>-->
+<!--    <tbody>-->
+<!--    </tbody>-->
+<!--</table>-->
+<div style="overflow-x: auto;margin: 0 auto;">
+    <table class="csvTable"  id="3.2.4">
+        <thead>
+        <tr></tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+</div>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        console.log(123123)
+        fetch( "C:\Users\1\Desktop\api\generate_report\ 2024-05-15_1715764399_campaign_2_4.csv" )
+            .then(response => response.text())
+            .then(text => {
+                console.log(text)
+                const data = parseCSV(text);
+                fillTable("3.2.4", data);
+            });
+    });
+
+    function parseCSV(text) {
+        const lines = text.split('\n');
+        return lines.map(line => line.split(','));
+    }
+
+    function fillTable(csvId, data) {
+        const table = document.getElementById(csvId);
+        const thead = table.querySelector('thead tr');
+        const tbody = table.querySelector('tbody');
+
+        // Clear the table header and body
+        thead.innerHTML = '';
+        tbody.innerHTML = '';
+
+        // Fill the table header
+        data[0].forEach(header => {
+            const th = document.createElement('th');
+            th.textContent = header;
+            thead.appendChild(th);
+        });
+
+        // Fill the table data
+        data.slice(1).forEach(row => {
+            const tr = document.createElement('tr');
+            row.forEach(cell => {
+                const td = document.createElement('td');
+                td.textContent = cell;
+                tr.appendChild(td);
+            });
+            tbody.appendChild(tr);
+        });
+    }
+</script>
+
+<!--<h4 class="m-b-5 bg-border color-white">3.2.5</h4>-->
+<div class="m-b-6">
+    <h4>3.2.5</h4>
+    <li>以下为 低于 平均ACOS值 10% - 20% 的 campaign 广告活动placement</li>
+    <li>建议执行的操作：溢价提升3%</li>
+    <!--    增加下载链接-->
+    <a href="C:\Users\1\Desktop\api\generate_report\ 2024-05-15_1715764399_campaign_2_5.csv" download>DownloadFile</a>
+</div>
+<!--<table class="csvTable"  id="3.2.5">-->
+<!--    <thead>-->
+<!--    <tr></tr>-->
+<!--    </thead>-->
+<!--    <tbody>-->
+<!--    </tbody>-->
+<!--</table>-->
+<div style="overflow-x: auto;margin: 0 auto;">
+    <table class="csvTable"  id="3.2.5">
+        <thead>
+        <tr></tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+</div>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        console.log(123123)
+        fetch( "C:\Users\1\Desktop\api\generate_report\ 2024-05-15_1715764399_campaign_2_5.csv" )
+            .then(response => response.text())
+            .then(text => {
+                console.log(text)
+                const data = parseCSV(text);
+                fillTable("3.2.5", data);
+            });
+    });
+
+    function parseCSV(text) {
+        const lines = text.split('\n');
+        return lines.map(line => line.split(','));
+    }
+
+    function fillTable(csvId, data) {
+        const table = document.getElementById(csvId);
+        const thead = table.querySelector('thead tr');
+        const tbody = table.querySelector('tbody');
+
+        // Clear the table header and body
+        thead.innerHTML = '';
+        tbody.innerHTML = '';
+
+        // Fill the table header
+        data[0].forEach(header => {
+            const th = document.createElement('th');
+            th.textContent = header;
+            thead.appendChild(th);
+        });
+
+        // Fill the table data
+        data.slice(1).forEach(row => {
+            const tr = document.createElement('tr');
+            row.forEach(cell => {
+                const td = document.createElement('td');
+                td.textContent = cell;
+                tr.appendChild(td);
+            });
+            tbody.appendChild(tr);
+        });
+    }
+</script>
+
+<!--<h4 class="m-b-5 bg-border color-white">3.2.7</h4>-->
+<div class="m-b-6">
+    <h4>3.2.7</h4>
+    <li>以下为 高于 平均ACOS值30% 以上的 campaign 广告活动placement</li>
+    <li>建议执行的操作：溢价清零，归到0%的溢价。</li>
+    <!--    增加下载链接-->
+    <a href="C:\Users\1\Desktop\api\generate_report\ 2024-05-15_1715764399_campaign_2_7.csv" download>DownloadFile</a>
+</div>
+<!--<table class="csvTable"  id="3.2.7">-->
+<!--    <thead>-->
+<!--    <tr></tr>-->
+<!--    </thead>-->
+<!--    <tbody>-->
+<!--    </tbody>-->
+<!--</table>-->
+<div style="overflow-x: auto;margin: 0 auto;">
+    <table class="csvTable"  id="3.2.7">
+        <thead>
+        <tr></tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+</div>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        console.log(123123)
+        fetch( "C:\Users\1\Desktop\api\generate_report\ 2024-05-15_1715764399_campaign_2_7.csv" )
+            .then(response => response.text())
+            .then(text => {
+                console.log(text)
+                const data = parseCSV(text);
+                fillTable("3.2.7", data);
+            });
+    });
+
+    function parseCSV(text) {
+        const lines = text.split('\n');
+        return lines.map(line => line.split(','));
+    }
+
+    function fillTable(csvId, data) {
+        const table = document.getElementById(csvId);
+        const thead = table.querySelector('thead tr');
+        const tbody = table.querySelector('tbody');
+
+        // Clear the table header and body
+        thead.innerHTML = '';
+        tbody.innerHTML = '';
+
+        // Fill the table header
+        data[0].forEach(header => {
+            const th = document.createElement('th');
+            th.textContent = header;
+            thead.appendChild(th);
+        });
+
+        // Fill the table data
+        data.slice(1).forEach(row => {
+            const tr = document.createElement('tr');
+            row.forEach(cell => {
+                const td = document.createElement('td');
+                td.textContent = cell;
+                tr.appendChild(td);
+            });
+            tbody.appendChild(tr);
+        });
+    }
+</script>
+
+<!--<h4 class="m-b-5 bg-border color-white">3.2.8</h4>-->
+<div class="m-b-6">
+    <h4>3.2.8</h4>
+    <li>以下为 高于 平均ACOS值 20% - 30% 的 campaign 广告活动placement</li>
+    <li>建议执行的操作：溢价下调10%，直到0%</li>
+    <!--    增加下载链接-->
+    <a href="C:\Users\1\Desktop\api\generate_report\ 2024-05-15_1715764399_campaign_2_8.csv" download>DownloadFile</a>
+</div>
+<!--<table class="csvTable"  id="3.2.8">-->
+<!--    <thead>-->
+<!--    <tr></tr>-->
+<!--    </thead>-->
+<!--    <tbody>-->
+<!--    </tbody>-->
+<!--</table>-->
+<div style="overflow-x: auto;margin: 0 auto;">
+    <table class="csvTable"  id="3.2.8">
+        <thead>
+        <tr></tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+</div>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        console.log(123123)
+        fetch( "C:\Users\1\Desktop\api\generate_report\ 2024-05-15_1715764399_campaign_2_8.csv" )
+            .then(response => response.text())
+            .then(text => {
+                console.log(text)
+                const data = parseCSV(text);
+                fillTable("3.2.8", data);
+            });
+    });
+
+    function parseCSV(text) {
+        const lines = text.split('\n');
+        return lines.map(line => line.split(','));
+    }
+
+    function fillTable(csvId, data) {
+        const table = document.getElementById(csvId);
+        const thead = table.querySelector('thead tr');
+        const tbody = table.querySelector('tbody');
+
+        // Clear the table header and body
+        thead.innerHTML = '';
+        tbody.innerHTML = '';
+
+        // Fill the table header
+        data[0].forEach(header => {
+            const th = document.createElement('th');
+            th.textContent = header;
+            thead.appendChild(th);
+        });
+
+        // Fill the table data
+        data.slice(1).forEach(row => {
+            const tr = document.createElement('tr');
+            row.forEach(cell => {
+                const td = document.createElement('td');
+                td.textContent = cell;
+                tr.appendChild(td);
+            });
+            tbody.appendChild(tr);
+        });
+    }
+</script>
+
+<!--<h4 class="m-b-5 bg-border color-white">3.2.9</h4>-->
+<div class="m-b-6">
+    <h4>3.2.9</h4>
+    <li>以下为 高于 平均ACOS值 10% - 20% 的 campaign 广告活动placement</li>
+    <li>建议执行的操作：溢价下调5%，直到0%</li>
+    <!--    增加下载链接-->
+    <a href="C:\Users\1\Desktop\api\generate_report\ 2024-05-15_1715764399_campaign_2_9.csv" download>DownloadFile</a>
+</div>
+<!--<table class="csvTable"  id="3.2.9">-->
+<!--    <thead>-->
+<!--    <tr></tr>-->
+<!--    </thead>-->
+<!--    <tbody>-->
+<!--    </tbody>-->
+<!--</table>-->
+<div style="overflow-x: auto;margin: 0 auto;">
+    <table class="csvTable"  id="3.2.9">
+        <thead>
+        <tr></tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+</div>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        console.log(123123)
+        fetch( "C:\Users\1\Desktop\api\generate_report\ 2024-05-15_1715764399_campaign_2_9.csv" )
+            .then(response => response.text())
+            .then(text => {
+                console.log(text)
+                const data = parseCSV(text);
+                fillTable("3.2.9", data);
+            });
+    });
+
+    function parseCSV(text) {
+        const lines = text.split('\n');
+        return lines.map(line => line.split(','));
+    }
+
+    function fillTable(csvId, data) {
+        const table = document.getElementById(csvId);
+        const thead = table.querySelector('thead tr');
+        const tbody = table.querySelector('tbody');
+
+        // Clear the table header and body
+        thead.innerHTML = '';
+        tbody.innerHTML = '';
+
+        // Fill the table header
+        data[0].forEach(header => {
+            const th = document.createElement('th');
+            th.textContent = header;
+            thead.appendChild(th);
+        });
+
+        // Fill the table data
+        data.slice(1).forEach(row => {
+            const tr = document.createElement('tr');
+            row.forEach(cell => {
+                const td = document.createElement('td');
+                td.textContent = cell;
+                tr.appendChild(td);
+            });
+            tbody.appendChild(tr);
+        });
+    }
+</script>
+
+<!--<h4 class="m-b-5 bg-border color-white">3.3.3</h4>-->
+<div class="m-b-6">
+    <h4>3.3.3</h4>
+    <li>以下为 低于 平均ACOS值30% 以上的 campaign 广告 adgroup</li>
+    <li>建议执行的操作：基础出价提升10%， 自动广告组的基础出价</li>
+    <!--    增加下载链接-->
+    <a href="C:\Users\1\Desktop\api\generate_report\ 2024-05-15_1715764400_campaign_3_3.csv" download>DownloadFile</a>
+</div>
+<!--<table class="csvTable"  id="3.3.3">-->
+<!--    <thead>-->
+<!--    <tr></tr>-->
+<!--    </thead>-->
+<!--    <tbody>-->
+<!--    </tbody>-->
+<!--</table>-->
+<div style="overflow-x: auto;margin: 0 auto;">
+    <table class="csvTable"  id="3.3.3">
+        <thead>
+        <tr></tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+</div>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        console.log(123123)
+        fetch( "C:\Users\1\Desktop\api\generate_report\ 2024-05-15_1715764400_campaign_3_3.csv" )
+            .then(response => response.text())
+            .then(text => {
+                console.log(text)
+                const data = parseCSV(text);
+                fillTable("3.3.3", data);
+            });
+    });
+
+    function parseCSV(text) {
+        const lines = text.split('\n');
+        return lines.map(line => line.split(','));
+    }
+
+    function fillTable(csvId, data) {
+        const table = document.getElementById(csvId);
+        const thead = table.querySelector('thead tr');
+        const tbody = table.querySelector('tbody');
+
+        // Clear the table header and body
+        thead.innerHTML = '';
+        tbody.innerHTML = '';
+
+        // Fill the table header
+        data[0].forEach(header => {
+            const th = document.createElement('th');
+            th.textContent = header;
+            thead.appendChild(th);
+        });
+
+        // Fill the table data
+        data.slice(1).forEach(row => {
+            const tr = document.createElement('tr');
+            row.forEach(cell => {
+                const td = document.createElement('td');
+                td.textContent = cell;
+                tr.appendChild(td);
+            });
+            tbody.appendChild(tr);
+        });
+    }
+</script>
+
+<!--<h4 class="m-b-5 bg-border color-white">3.3.4</h4>-->
+<div class="m-b-6">
+    <h4>3.3.4</h4>
+    <li>以下为 低于 平均ACOS值 20% - 30% 的 campaign 广告 adgroup</li>
+    <li>建议执行的操作：基础出价提升5%</li>
+    <!--    增加下载链接-->
+    <a href="C:\Users\1\Desktop\api\generate_report\ 2024-05-15_1715764400_campaign_3_4.csv" download>DownloadFile</a>
+</div>
+<!--<table class="csvTable"  id="3.3.4">-->
+<!--    <thead>-->
+<!--    <tr></tr>-->
+<!--    </thead>-->
+<!--    <tbody>-->
+<!--    </tbody>-->
+<!--</table>-->
+<div style="overflow-x: auto;margin: 0 auto;">
+    <table class="csvTable"  id="3.3.4">
+        <thead>
+        <tr></tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+</div>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        console.log(123123)
+        fetch( "C:\Users\1\Desktop\api\generate_report\ 2024-05-15_1715764400_campaign_3_4.csv" )
+            .then(response => response.text())
+            .then(text => {
+                console.log(text)
+                const data = parseCSV(text);
+                fillTable("3.3.4", data);
+            });
+    });
+
+    function parseCSV(text) {
+        const lines = text.split('\n');
+        return lines.map(line => line.split(','));
+    }
+
+    function fillTable(csvId, data) {
+        const table = document.getElementById(csvId);
+        const thead = table.querySelector('thead tr');
+        const tbody = table.querySelector('tbody');
+
+        // Clear the table header and body
+        thead.innerHTML = '';
+        tbody.innerHTML = '';
+
+        // Fill the table header
+        data[0].forEach(header => {
+            const th = document.createElement('th');
+            th.textContent = header;
+            thead.appendChild(th);
+        });
+
+        // Fill the table data
+        data.slice(1).forEach(row => {
+            const tr = document.createElement('tr');
+            row.forEach(cell => {
+                const td = document.createElement('td');
+                td.textContent = cell;
+                tr.appendChild(td);
+            });
+            tbody.appendChild(tr);
+        });
+    }
+</script>
+
+<!--<h4 class="m-b-5 bg-border color-white">3.3.5</h4>-->
+<div class="m-b-6">
+    <h4>3.3.5</h4>
+    <li>以下为 低于 平均ACOS值 10% - 20% 的 campaign 广告 adgroup</li>
+    <li>建议执行的操作：基础出价提升3%</li>
+    <!--    增加下载链接-->
+    <a href="C:\Users\1\Desktop\api\generate_report\ 2024-05-15_1715764400_campaign_3_5.csv" download>DownloadFile</a>
+</div>
+<!--<table class="csvTable"  id="3.3.5">-->
+<!--    <thead>-->
+<!--    <tr></tr>-->
+<!--    </thead>-->
+<!--    <tbody>-->
+<!--    </tbody>-->
+<!--</table>-->
+<div style="overflow-x: auto;margin: 0 auto;">
+    <table class="csvTable"  id="3.3.5">
+        <thead>
+        <tr></tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+</div>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        console.log(123123)
+        fetch( "C:\Users\1\Desktop\api\generate_report\ 2024-05-15_1715764400_campaign_3_5.csv" )
+            .then(response => response.text())
+            .then(text => {
+                console.log(text)
+                const data = parseCSV(text);
+                fillTable("3.3.5", data);
+            });
+    });
+
+    function parseCSV(text) {
+        const lines = text.split('\n');
+        return lines.map(line => line.split(','));
+    }
+
+    function fillTable(csvId, data) {
+        const table = document.getElementById(csvId);
+        const thead = table.querySelector('thead tr');
+        const tbody = table.querySelector('tbody');
+
+        // Clear the table header and body
+        thead.innerHTML = '';
+        tbody.innerHTML = '';
+
+        // Fill the table header
+        data[0].forEach(header => {
+            const th = document.createElement('th');
+            th.textContent = header;
+            thead.appendChild(th);
+        });
+
+        // Fill the table data
+        data.slice(1).forEach(row => {
+            const tr = document.createElement('tr');
+            row.forEach(cell => {
+                const td = document.createElement('td');
+                td.textContent = cell;
+                tr.appendChild(td);
+            });
+            tbody.appendChild(tr);
+        });
+    }
+</script>
+
+<!--<h4 class="m-b-5 bg-border color-white">3.3.7</h4>-->
+<div class="m-b-6">
+    <h4>3.3.7</h4>
+    <li>以下为 高于 平均ACOS值30% 以上的 campaign 广告 adgroup</li>
+    <li>建议执行的操作：基础出价降低15%</li>
+    <!--    增加下载链接-->
+    <a href="C:\Users\1\Desktop\api\generate_report\ 2024-05-15_1715764401_campaign_3_7.csv" download>DownloadFile</a>
+</div>
+<!--<table class="csvTable"  id="3.3.7">-->
+<!--    <thead>-->
+<!--    <tr></tr>-->
+<!--    </thead>-->
+<!--    <tbody>-->
+<!--    </tbody>-->
+<!--</table>-->
+<div style="overflow-x: auto;margin: 0 auto;">
+    <table class="csvTable"  id="3.3.7">
+        <thead>
+        <tr></tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+</div>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        console.log(123123)
+        fetch( "C:\Users\1\Desktop\api\generate_report\ 2024-05-15_1715764401_campaign_3_7.csv" )
+            .then(response => response.text())
+            .then(text => {
+                console.log(text)
+                const data = parseCSV(text);
+                fillTable("3.3.7", data);
+            });
+    });
+
+    function parseCSV(text) {
+        const lines = text.split('\n');
+        return lines.map(line => line.split(','));
+    }
+
+    function fillTable(csvId, data) {
+        const table = document.getElementById(csvId);
+        const thead = table.querySelector('thead tr');
+        const tbody = table.querySelector('tbody');
+
+        // Clear the table header and body
+        thead.innerHTML = '';
+        tbody.innerHTML = '';
+
+        // Fill the table header
+        data[0].forEach(header => {
+            const th = document.createElement('th');
+            th.textContent = header;
+            thead.appendChild(th);
+        });
+
+        // Fill the table data
+        data.slice(1).forEach(row => {
+            const tr = document.createElement('tr');
+            row.forEach(cell => {
+                const td = document.createElement('td');
+                td.textContent = cell;
+                tr.appendChild(td);
+            });
+            tbody.appendChild(tr);
+        });
+    }
+</script>
+
+<!--<h4 class="m-b-5 bg-border color-white">3.3.8</h4>-->
+<div class="m-b-6">
+    <h4>3.3.8</h4>
+    <li>以下为 高于 平均ACOS值 20% - 30% 的 campaign 广告 adgroup</li>
+    <li>建议执行的操作：基础出价降低10%</li>
+    <!--    增加下载链接-->
+    <a href="C:\Users\1\Desktop\api\generate_report\ 2024-05-15_1715764401_campaign_3_8.csv" download>DownloadFile</a>
+</div>
+<!--<table class="csvTable"  id="3.3.8">-->
+<!--    <thead>-->
+<!--    <tr></tr>-->
+<!--    </thead>-->
+<!--    <tbody>-->
+<!--    </tbody>-->
+<!--</table>-->
+<div style="overflow-x: auto;margin: 0 auto;">
+    <table class="csvTable"  id="3.3.8">
+        <thead>
+        <tr></tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+</div>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        console.log(123123)
+        fetch( "C:\Users\1\Desktop\api\generate_report\ 2024-05-15_1715764401_campaign_3_8.csv" )
+            .then(response => response.text())
+            .then(text => {
+                console.log(text)
+                const data = parseCSV(text);
+                fillTable("3.3.8", data);
+            });
+    });
+
+    function parseCSV(text) {
+        const lines = text.split('\n');
+        return lines.map(line => line.split(','));
+    }
+
+    function fillTable(csvId, data) {
+        const table = document.getElementById(csvId);
+        const thead = table.querySelector('thead tr');
+        const tbody = table.querySelector('tbody');
+
+        // Clear the table header and body
+        thead.innerHTML = '';
+        tbody.innerHTML = '';
+
+        // Fill the table header
+        data[0].forEach(header => {
+            const th = document.createElement('th');
+            th.textContent = header;
+            thead.appendChild(th);
+        });
+
+        // Fill the table data
+        data.slice(1).forEach(row => {
+            const tr = document.createElement('tr');
+            row.forEach(cell => {
+                const td = document.createElement('td');
+                td.textContent = cell;
+                tr.appendChild(td);
+            });
+            tbody.appendChild(tr);
+        });
+    }
+</script>
+
+<!--<h4 class="m-b-5 bg-border color-white">3.3.9</h4>-->
+<div class="m-b-6">
+    <h4>3.3.9</h4>
+    <li>以下为 高于 平均ACOS值 10% - 20% 的 campaign 广告 adgroup</li>
+    <li>建议执行的操作：基础出价降低5%</li>
+    <!--    增加下载链接-->
+    <a href="C:\Users\1\Desktop\api\generate_report\ 2024-05-15_1715764401_campaign_3_9.csv" download>DownloadFile</a>
+</div>
+<!--<table class="csvTable"  id="3.3.9">-->
+<!--    <thead>-->
+<!--    <tr></tr>-->
+<!--    </thead>-->
+<!--    <tbody>-->
+<!--    </tbody>-->
+<!--</table>-->
+<div style="overflow-x: auto;margin: 0 auto;">
+    <table class="csvTable"  id="3.3.9">
+        <thead>
+        <tr></tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+</div>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        console.log(123123)
+        fetch( "C:\Users\1\Desktop\api\generate_report\ 2024-05-15_1715764401_campaign_3_9.csv" )
+            .then(response => response.text())
+            .then(text => {
+                console.log(text)
+                const data = parseCSV(text);
+                fillTable("3.3.9", data);
+            });
+    });
+
+    function parseCSV(text) {
+        const lines = text.split('\n');
+        return lines.map(line => line.split(','));
+    }
+
+    function fillTable(csvId, data) {
+        const table = document.getElementById(csvId);
+        const thead = table.querySelector('thead tr');
+        const tbody = table.querySelector('tbody');
+
+        // Clear the table header and body
+        thead.innerHTML = '';
+        tbody.innerHTML = '';
+
+        // Fill the table header
+        data[0].forEach(header => {
+            const th = document.createElement('th');
+            th.textContent = header;
+            thead.appendChild(th);
+        });
+
+        // Fill the table data
+        data.slice(1).forEach(row => {
+            const tr = document.createElement('tr');
+            row.forEach(cell => {
+                const td = document.createElement('td');
+                td.textContent = cell;
+                tr.appendChild(td);
+            });
+            tbody.appendChild(tr);
+        });
+    }
+</script>
+
+</body>
+<style>
+    /* 整体表格样式 */
+    .csvTable {
+        width: 100%; /* 表格宽度 */
+        border-collapse: collapse; /* 边框合并 */
+        margin: 20px 0; /* 上下外边距 */
+        font-size: 0.9em; /* 字体大小 */
+        font-family: sans-serif; /* 字体 */
+        min-width: 400px; /* 最小宽度 */
+        box-shadow: 0 0 20px rgba(0, 0, 0, 0.15); /* 阴影效果 */
+    }
+
+    /* 表头样式 */
+    .csvTable thead tr {
+        background-color: #009879; /* 背景颜色 */
+        color: #ffffff; /* 字体颜色 */
+        text-align: left; /* 文本对齐 */
+    }
+
+    /* 表格行样式，包括鼠标悬停效果 */
+    .csvTable th,
+    .csvTable td {
+        padding: 12px 15px; /* 内边距 */
+    }
+
+    .csvTable tbody tr {
+        border-bottom: 1px solid #dddddd; /* 行底部边框 */
+    }
+
+    .csvTable tbody tr:nth-of-type(even) {
+        background-color: #f3f3f3; /* 偶数行背景颜色 */
+    }
+
+    .csvTable tbody tr:last-of-type {
+        border-bottom: 2px solid #009879; /* 最后一行底部边框 */
+    }
+
+    .csvTable tbody tr:hover {
+        background-color: #f1f1f1; /* 鼠标悬停行背景颜色 */
+    }
+</style>
+</html>

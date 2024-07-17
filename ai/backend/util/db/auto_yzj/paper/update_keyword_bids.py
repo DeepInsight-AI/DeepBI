@@ -1,39 +1,62 @@
 # filename: update_keyword_bids.py
+
 import pandas as pd
 
-# 读取CSV文件
-file_path = r'C:\Users\admin\PycharmProjects\DeepBI\ai\backend\util\db\auto_yzj\日常优化\自动sp广告\自动定位组优化\预处理.csv'
+# 读取数据文件
+file_path = r'C:\Users\admin\PycharmProjects\DeepBI\ai\backend\util\db\auto_yzj\日常优化\手动sp广告\商品投放优化\预处理.csv'
 df = pd.read_csv(file_path)
 
-# 定义提价的条件和原因标注
+# 计算辅助字段
+df['avg_ACOS_7d'] = df['ACOS_7d']
+df['avg_ACOS_3d'] = df['ACOS_3d']
+df['avg_ACOS_30d'] = df['ACOS_30d']
+df['new_keywordBid'] = df['keywordBid']
+
+# 定义降价函数
+def adjust_bid(bid, condition):
+    new_bid = bid / ((condition - 0.24) / 0.24 + 1)
+    return max(new_bid, 0.05)
+
+# 应用不同的定义条件来过滤数据并调整竞价
 conditions = [
-    ((df['ACOS_7d'] > 0) & (df['ACOS_7d'] < 0.24) & (df['ACOS_30d'] > 0.5)),
-    ((df['ACOS_7d'] > 0) & (df['ACOS_7d'] < 0.24) & (df['ACOS_30d'] > 0.5)),
-    ((df['ACOS_7d'] > 0.1) & (df['ACOS_7d'] < 0.24) & (df['ACOS_30d'] > 0) & (df['ACOS_30d'] < 0.24)),
-    ((df['ACOS_7d'] > 0) & (df['ACOS_7d'] < 0.1) & (df['ACOS_30d'] > 0) & (df['ACOS_30d'] < 0.24)),
+    # 定义条件一
+    (df['avg_ACOS_7d'] > 0.24) & (df['avg_ACOS_7d'] <= 0.5) & 
+    (df['avg_ACOS_30d'] > 0) & (df['avg_ACOS_30d'] <= 0.5) & 
+    (df['ORDER_1m'] < 5) & (df['avg_ACOS_3d'] >= 0.24),
+    
+    # 定义条件二
+    (df['avg_ACOS_7d'] > 0.5) & 
+    (df['avg_ACOS_30d'] <= 0.36) & 
+    (df['avg_ACOS_3d'] >= 0.24),
+    
+    # 定义条件三
+    (df['total_clicks_7d'] >= 10) & 
+    (df['total_sales14d_7d'] == 0) & 
+    (df['total_cost_7d'] <= 5) & 
+    (df['avg_ACOS_30d'] <= 0.36)
+    # 定义其他条件依次添加...
 ]
 
-choices = [
-    '提价0.01, 原因:定义一',
-    '提价0.02, 原因:定义二',
-    '提价0.03, 原因:定义三',
-    '提价0.05, 原因:定义四',
+actions = [
+    lambda row: adjust_bid(row['keywordBid'], row['avg_ACOS_7d']),
+    lambda row: adjust_bid(row['keywordBid'], row['avg_ACOS_7d']),
+    lambda row: max(row['keywordBid'] - 0.03, 0.05)
+    # 对应其他条件的actions 依次添加...
 ]
 
-# 创建一个新列 '原因'，其中包含符合条件的原因
-df['原因'] = None
-for condition, choice in zip(conditions, choices):
-    df.loc[condition, '原因'] = choice
+# 遍历所有条件并应用
+for condition, action in zip(conditions, actions):
+    df.loc[condition, 'new_keywordBid'] = df.loc[condition].apply(action, axis=1)
 
-# 过滤出符合条件的项
-filtered_df = df[df['原因'].notnull()]
+# 生成输出文件
+output_columns = [
+    'keyword', 'keywordId', 'campaignName', 'adGroupName', 'matchType', 
+    'keywordBid', 'new_keywordBid', 'targeting', 'total_cost_7d', 'total_clicks_7d', 
+    'total_sales14d_7d', 'avg_ACOS_7d', 'avg_ACOS_30d', 'avg_ACOS_3d', 'ORDER_1m'
+    # 添加其他需要的列...
+]
 
-# 选择需要的列并且输出到新的CSV文件
-output_columns = ['campaignName', 'adGroupName', 'keyword', 'ACOS_30d', 'ACOS_7d', 'total_clicks_7d', '原因']
-result_df = filtered_df[output_columns]
+output_file = r'C:\Users\admin\PycharmProjects\DeepBI\ai\backend\util\db\auto_yzj\日常优化\手动sp广告\商品投放优化\提问策略\手动_ASIN_劣质商品投放_v1_1_LAPASA_UK_2024-07-15.csv'
+df[output_columns].to_csv(output_file, index=False)
 
-# 保存输出结果到指定路径
-output_path = r'C:\Users\admin\PycharmProjects\DeepBI\ai\backend\util\db\auto_yzj\日常优化\自动sp广告\自动定位组优化\提问策略\自动_优质自动定位组_ES_2024-06-121.csv'
-result_df.to_csv(output_path, index=False)
-
-print("任务完成，结果已保存到指定路径。")
+print("处理完成，输出文件保存在:", output_file)

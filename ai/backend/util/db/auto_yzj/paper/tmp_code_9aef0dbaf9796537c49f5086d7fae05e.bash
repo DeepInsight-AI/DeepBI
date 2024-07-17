@@ -1,0 +1,1 @@
+python adjust_ad_bid.py

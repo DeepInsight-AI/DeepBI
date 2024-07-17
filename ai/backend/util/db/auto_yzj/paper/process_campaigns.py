@@ -1,44 +1,73 @@
 # filename: process_campaigns.py
+
 import pandas as pd
-from datetime import datetime, timedelta
 
-# 设置文件路径
-csv_file = r'C:\Users\admin\PycharmProjects\DeepBI\ai\backend\util\db\auto_yzj\日常优化\自动sp广告\预算优化\预处理.csv'
-output_file = r'C:\Users\admin\PycharmProjects\DeepBI\ai\backend\util\db\auto_yzj\日常优化\自动sp广告\预算优化\提问策略\优质广告活动_ES_2024-6-02.csv'
+# Load Data
+csv_path = r'C:\Users\admin\PycharmProjects\DeepBI\ai\backend\util\db\auto_yzj\日常优化\sd广告\预算优化\预处理.csv'
+data = pd.read_csv(csv_path)
 
-# 读取CSV文件
-df = pd.read_csv(csv_file)
-
-# 模拟当前时间
-current_date = datetime.strptime("2024-05-28", "%Y-%m-%d")
-previous_date = current_date - timedelta(days=1)
-
-# 筛选昨天的数据
-df['date'] = pd.to_datetime(df['date'])
-df_yesterday = df[df['date'] == previous_date]
-
-# 过滤符合条件的广告活动
-filtered_campaigns = df_yesterday[
-    (df_yesterday['ACOS'] < 0.24) &
-    (df_yesterday['avg_ACOS_7d'] < 0.24) &
-    (df_yesterday['cost'] > 0.8 * df_yesterday['Budget'])
+# Filter data based on Definition 1
+definition_1 = data[
+    (data['ACOS7d'] > 0.24) &
+    (data['ACOSYesterday'] > 0.24) &
+    (data['costYesterday'] > 5.5) &
+    (data['ACOS30d'] > data['countryAvgACOS1m'])
 ]
 
-# 增加预算
-def update_budget(budget):
-    new_budget = min(budget * 1.2, 50)
-    return new_budget
+# Filter data based on Definition 2
+definition_2 = data[
+    (data['ACOS30d'] > 0.24) &
+    (data['ACOS30d'] > data['countryAvgACOS1m']) &
+    (data['totalSales7d'] == 0) &
+    (data['totalCost7d'] > 10)
+]
 
-filtered_campaigns['Updated_Budget'] = filtered_campaigns['Budget'].apply(update_budget)
+# Columns to output
+output_columns = [
+    'campaignId', 'campaignName', 'campaignBudget', 'costYesterday', 
+    'clicksYesterday', 'salesYesterday', 'totalCost7d', 
+    'totalSales7d', 'totalClicks7d', 'totalCost30d', 
+    'totalSales30d', 'totalClicks30d', 'ACOS30d', 
+    'ACOS7d', 'ACOSYesterday', 'countryAvgACOS1m'
+]
 
-# 合并所需信息
-final_df = filtered_campaigns[['date', 'campaignName', 'Budget', 'cost', 'clicks', 'ACOS',
-                               'avg_ACOS_7d', 'avg_ACOS_1m', 'clicks_1m', 'sales_1m']]
+# Function to Adjust Budget and add Reason
+def adjust_budget(row, definition):
+    if definition == 1:
+        reason = "Definition 1"
+        if row['campaignBudget'] > 13:
+            new_budget = max(row['campaignBudget'] - 5, 8)
+        else:
+            new_budget = row['campaignBudget']
+    elif definition == 2:
+        reason = "Definition 2"
+        new_budget = max(row['campaignBudget'] - 5, 5)
+    return new_budget, reason
 
-# 增加原因列
-final_df['原因'] = "广告活动满足条件，增加预算了20%"
+# Apply budget rules and collect the results
+results = []
 
-# 保存结果至CSV文件
-final_df.to_csv(output_file, index=False)
+for _, row in definition_1.iterrows():
+    new_budget, reason = adjust_budget(row, 1)
+    results.append({
+        **row[output_columns].to_dict(),
+        'New Budget': new_budget,
+        'Reason': reason
+    })
 
-print(f"处理完成，结果已保存至 {output_file}")
+for _, row in definition_2.iterrows():
+    new_budget, reason = adjust_budget(row, 2)
+    results.append({
+        **row[output_columns].to_dict(),
+        'New Budget': new_budget,
+        'Reason': reason
+    })
+
+# Create a DataFrame of results
+results_df = pd.DataFrame(results)
+
+# Save results to CSV
+output_csv_path = r'C:\Users\admin\PycharmProjects\DeepBI\ai\backend\util\db\auto_yzj\日常优化\sd广告\预算优化\提问策略\SD_劣质sd广告活动_v1_1_LAPASA_US_2024-07-16.csv'
+results_df.to_csv(output_csv_path, index=False)
+
+print(f"Results saved to {output_csv_path}")

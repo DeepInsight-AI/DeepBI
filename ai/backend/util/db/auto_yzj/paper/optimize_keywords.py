@@ -1,87 +1,108 @@
 # filename: optimize_keywords.py
+import os
 import pandas as pd
+import numpy as np
+from ai.backend.util.db.auto_process.tools_db_new_sp import DbNewSpTools
+from datetime import datetime
 
-# 读取数据
-file_path = r'C:\Users\admin\PycharmProjects\DeepBI\ai\backend\util\db\auto_yzj\日常优化\自动sp广告\自动定位组优化\预处理.csv'
-data = pd.read_csv(file_path)
 
-# 定义降价和原因字典
-results = {
-    'campaignName': [],
-    'adGroupName': [],
-    'keyword': [],
-    'keywordBid': [],
-    'New_keywordBid': [],
-    'ACOS_30d': [],
-    'ACOS_7d': [],
-    'clicks_7d': [],
-    '降价': [],
-    '原因': []
-}
+def main(path, brand, cur_time, country, version: int = 1):
+    # 读取数据
+    file_path = r'C:\Users\admin\PycharmProjects\DeepBI\ai\backend\util\db\auto_yzj\日常优化\手动sp广告\商品投放优化\预处理.csv'
+    file_name = "手动_ASIN_劣质商品投放" + '_' + brand + '_' + country + '_' + cur_time + '.csv'
+    output_file_path = os.path.join(path, file_name)
+    data = pd.read_csv(file_path)
 
-# 遍历每一行数据进行处理
-for index, row in data.iterrows():
-    campaignName = row['campaignName']
-    adGroupName = row['adGroupName']
-    keyword = row['keyword']
-    keywordBid = row['keywordBid']
-    ACOS_30d = row['ACOS_30d']
-    ACOS_7d = row['ACOS_7d']
-    clicks_7d = row['total_clicks_7d']
-    total_sales_7d = row['total_sales14d_7d']
-    total_sales_30d = row['total_sales14d_30d']
-    ORDER_1m = row['ORDER_1m']
-  
-    new_bid = keywordBid
-    reason = []
+    # 定义函数来调整关键词竞价
+    def adjust_bid(row, cause):
+        avg_ACOS_7d = row['ACOS_7d']
+        keywordBid = row['keywordBid']
+        new_bid = keywordBid / ((avg_ACOS_7d - 0.24) / 0.24 + 1)
 
-    if 0.24 < ACOS_7d < 0.5 and 0 < ACOS_30d < 0.24:
-        new_bid -= 0.03
-        reason.append('定义一')
+        if new_bid < 0.05:
+            new_bid = max(keywordBid, 0.05)
 
-    if 0.24 < ACOS_7d < 0.5 and 0.24 < ACOS_30d < 0.5:
-        new_bid -= 0.04
-        reason.append('定义二')
+        return round(new_bid, 2), cause
 
-    if total_sales_7d == 0 and clicks_7d > 0 and 0.24 < ACOS_30d < 0.5:
-        new_bid -= 0.04
-        reason.append('定义三')
+    # 遍历数据并进行判断
+    results = []
 
-    if 0.24 < ACOS_7d < 0.5 and ACOS_30d > 0.5:
-        new_bid -= 0.05
-        reason.append('定义四')
+    for idx, row in data.iterrows():
+        keyword_bid = row['keywordBid']
+        avg_ACOS_7d = row['ACOS_7d']
+        avg_ACOS_30d = row['ACOS_30d']
+        avg_ACOS_3d = row['ACOS_3d']
+        total_clicks_7d = row['total_clicks_7d']
+        total_sales14d_7d = row['total_sales14d_7d']
+        total_cost_7d = row['total_cost_7d']
+        total_cost_30d = row['total_cost_30d']
+        order_1m = row['ORDER_1m']
+        total_clicks_30d = row['total_clicks_30d']
+        total_sales14d_3d = row['total_sales14d_3d']
+        total_sales14d_30d = row['total_sales14d_30d']
+        total_cost_3d = row['total_cost_3d']
 
-    if ACOS_7d > 0.5 and 0 < ACOS_30d < 0.24:
-        new_bid -= 0.05
-        reason.append('定义五')
+        new_bid = keyword_bid
+        cause = ""
 
-    if total_sales_7d == 0 and clicks_7d > 0 and ORDER_1m == 0 and row['total_clicks_30d'] > 10:
-        new_bid = '关闭'
-        reason.append('定义六')
+        if 0.24 < avg_ACOS_7d <= 0.5 and 0 < avg_ACOS_30d <= 0.5 and order_1m < 5 and avg_ACOS_3d >= 0.24:
+            new_bid, cause = adjust_bid(row, "定义一")
+        elif avg_ACOS_7d > 0.5 and avg_ACOS_30d <= 0.36 and avg_ACOS_3d > 0.24:
+            new_bid, cause = adjust_bid(row, "定义二")
+        elif total_clicks_7d >= 10 and total_sales14d_7d == 0 and total_cost_7d <= 5 and avg_ACOS_30d <= 0.36:
+            new_bid = max(keyword_bid - 0.03, 0.05)
+            cause = "定义三"
+        elif total_clicks_7d > 10 and total_sales14d_7d == 0 and total_cost_7d > 7 and avg_ACOS_30d > 0.5:
+            new_bid = 0.05
+            cause = "定义四"
+        elif avg_ACOS_7d > 0.5 and avg_ACOS_3d > 0.24 and avg_ACOS_30d > 0.36:
+            new_bid = 0.05
+            cause = "定义五"
+        elif total_sales14d_30d == 0 and total_cost_30d >= 10 and total_clicks_30d >= 15:
+            new_bid = 0.05
+            cause = "定义六"
+        elif 0.24 < avg_ACOS_7d <= 0.5 and 0 < avg_ACOS_30d <= 0.5 and order_1m < 5 and total_sales14d_3d == 0:
+            new_bid, cause = adjust_bid(row, "定义七")
+        elif avg_ACOS_7d > 0.5 and avg_ACOS_30d <= 0.36 and total_sales14d_3d == 0:
+            new_bid, cause = adjust_bid(row, "定义八")
+        elif avg_ACOS_7d > 0.5 and total_sales14d_3d == 0 and avg_ACOS_30d > 0.36:
+            new_bid = 0.05
+            cause = "定义九"
+        elif 0.24 < avg_ACOS_7d <= 0.5 and avg_ACOS_30d > 0.5 and order_1m < 5 and avg_ACOS_3d >= 0.24:
+            new_bid, cause = adjust_bid(row, "定义十")
+        elif 0.24 < avg_ACOS_7d <= 0.5 and total_sales14d_3d == 0 and avg_ACOS_30d > 0.5:
+            new_bid, cause = adjust_bid(row, "定义十一")
+        elif avg_ACOS_7d <= 0.24 and total_sales14d_3d == 0 and 3 < total_cost_3d < 5:
+            new_bid = max(keyword_bid - 0.01, 0.05)
+            cause = "定义十二"
+        elif avg_ACOS_7d <= 0.24 and 0.24 < avg_ACOS_3d < 0.36:
+            new_bid = max(keyword_bid - 0.02, 0.05)
+            cause = "定义十三"
+        elif avg_ACOS_7d <= 0.24 and avg_ACOS_3d > 0.36:
+            new_bid = max(keyword_bid - 0.03, 0.05)
+            cause = "定义十四"
+        elif total_clicks_7d >= 10 and total_sales14d_7d == 0 and total_cost_7d >= 10 and avg_ACOS_30d <= 0.36:
+            new_bid = 0.05
+            cause = "定义十五"
+        elif total_clicks_7d >= 10 and total_sales14d_7d == 0 and 5 < total_cost_7d < 10 and avg_ACOS_30d <= 0.36:
+            new_bid = max(keyword_bid - 0.07, 0.05)
+            cause = "定义十六"
 
-    if total_sales_7d == 0 and clicks_7d > 0 and ACOS_30d > 0.5:
-        new_bid = '关闭'
-        reason.append('定义七')
+        if cause:
+            results.append([
+                row['keyword'], row['keywordId'], row['campaignName'], row['adGroupName'], row['matchType'], keyword_bid,
+                new_bid, row['targeting'], avg_ACOS_30d,order_1m,total_clicks_30d,total_sales14d_30d,total_cost_30d,avg_ACOS_7d,
+                total_clicks_7d,total_sales14d_7d,total_cost_7d,avg_ACOS_3d,total_sales14d_3d,total_cost_3d, cause
+            ])
 
-    if ACOS_7d > 0.5 and ACOS_30d > 0.24:
-        new_bid = '关闭'
-        reason.append('定义八')
+    # 生成结果CSV文件
+    results_df = pd.DataFrame(results, columns=[
+        'keyword', 'keywordId', 'campaignName', 'adGroupName', 'matchType', 'keywordBid', 'new_keywordBid', 'targeting',
+        'ACOS_30d', 'ORDER_1m', 'total_clicks_30d', 'total_sales14d_30d', 'total_cost_30d', 'ACOS_7d', 'total_clicks_7d',
+        'total_sales14d_7d', 'total_cost_7d', 'ACOS_3d', 'total_sales14d_3d', 'total_cost_3d', 'cause'
+    ])
 
-    if reason:
-        results['campaignName'].append(campaignName)
-        results['adGroupName'].append(adGroupName)
-        results['keyword'].append(keyword)
-        results['keywordBid'].append(keywordBid)
-        results['New_keywordBid'].append(new_bid)
-        results['ACOS_30d'].append(ACOS_30d)
-        results['ACOS_7d'].append(ACOS_7d)
-        results['clicks_7d'].append(clicks_7d)
-        results['降价'].append(keywordBid - new_bid if new_bid != '关闭' else 0)
-        results['原因'].append(';'.join(reason))
 
-# 生成新的DataFrame并保存
-result_df = pd.DataFrame(results)
-output_path = r'C:\Users\admin\PycharmProjects\DeepBI\ai\backend\util\db\auto_yzj\日常优化\自动sp广告\自动定位组优化\提问策略\自动_劣质自动定位组_v1_11_ES_2024-06-20.csv'
-result_df.to_csv(output_path, index=False)
+    results_df.to_csv(output_file_path, index=False)
 
-print("处理完成，结果已保存到文件：", output_path)
+    print("CSV 文件已经生成并保存在: ", output_file_path)

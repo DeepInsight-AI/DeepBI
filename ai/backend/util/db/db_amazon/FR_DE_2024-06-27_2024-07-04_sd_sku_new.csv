@@ -1,0 +1,5 @@
+﻿market,sum( sales ),sum( cost ),avg_acos,campaignId,campaignName,adGroupId,adGroupName,promotedSku,new_campaignName,new_adGroupName
+DE,2463.13,111.23,0.045158,316590828366265,The Whale - SD - CT - VPCM - ASIN Att,330096110343674,Ad group - 19.7.2023 09:54:23.612,E02157,DeepBI_0507_The Whale - SD - CT - VPCM - ASIN Att,DeepBI_0507_Ad group - 19.7.2023 09:54:23.612
+DE,488.22,78.33,0.16044,432212504965404,速降盔-SD-VCPM-CAT-IMG-ATT,340502817975110,速降盔-SD-VCPM-CAT-IMG-ATT,803922-EU,DeepBI_0507_速降盔-SD-VCPM-CAT-IMG-ATT,DeepBI_0507_速降盔-SD-VCPM-CAT-IMG-ATT
+DE,126.0,8.45,0.067063,560866826524483,女款滑雪袜 - SD - skisocken Herren category - VPCM,287925900307567,Ad group - 24.10.2023 15:53:04.241,E03284,DeepBI_0507_女款滑雪袜 - SD - skisocken Herren category - VPCM,DeepBI_0507_Ad group - 24.10.2023 15:53:04.241
+DE,0.0,3.62,,193010982760523,女款滑雪袜 - SD - skisocken damen category - VPCM,126831014590760,广告组 - 7.12.2022 14:56:31,E03284,DeepBI_0507_女款滑雪袜 - SD - skisocken damen category - VPCM,DeepBI_0507_广告组 - 7.12.2022 14:56:31

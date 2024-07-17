@@ -2,50 +2,36 @@
 
 import pandas as pd
 
-# 读取CSV文件
-data = pd.read_csv(r'C:\Users\admin\PycharmProjects\DeepBI\ai\backend\util\db\auto_yzj\日常优化\手动sp广告\搜索词优化\预处理.csv')
+# 定义文件路径
+file_path = "C:\\Users\\admin\\PycharmProjects\\DeepBI\\ai\\backend\\util\\db\\auto_yzj\\日常优化\\手动sp广告\\商品投放搜索词优化\\预处理.csv"
+output_path = "C:\\Users\\admin\\PycharmProjects\\DeepBI\\ai\\backend\\util\\db\\auto_yzj\\日常优化\\手动sp广告\\商品投放搜索词优化\\提问策略\\手动_劣质_ASIN_搜索词_v1_1_LAPASA_FR_2024-07-15.csv"
 
-# 定义筛选条件
-conditions = (
-    ((data['ACOS_30d'] > 0.24) & (data['ACOS_30d'] < 0.36) & (data['ORDER_1m'] <= 5)) |  # 定义一
-    ((data['ACOS_30d'] >= 0.36) & (data['ORDER_1m'] <= 8)) |                           # 定义二
-    ((data['total_clicks_30d'] > 13) & (data['ORDER_1m'] == 0)) |                       # 定义三
-    ((data['ACOS_7d'] > 0.24) & (data['ACOS_7d'] < 0.36) & (data['ORDER_7d'] <= 3)) |   # 定义四
-    ((data['ACOS_7d'] >= 0.36) & (data['ORDER_7d'] <= 5)) |                             # 定义五
-    ((data['total_clicks_7d'] > 10) & (data['ORDER_7d'] == 0))                          # 定义六
-)
+# 读取数据集
+df = pd.read_csv(file_path)
 
-# 筛选数据
-filtered_data = data[conditions].copy()
+# 过滤数据：定义一
+def1 = df[(df['total_clicks_30d'] > 13) & (df['total_cost_30d'] > 7) & (df['ORDER_1m'] == 0)]
+def1['reason'] = '定义一'
 
-# 确定满足的定义原因
-reasons = []
-for idx, row in filtered_data.iterrows():
-    reason = []
-    if (0.24 < row['ACOS_30d'] < 0.36) and (row['ORDER_1m'] <= 5):
-        reason.append('定义一')
-    if (row['ACOS_30d'] >= 0.36) and (row['ORDER_1m'] <= 8):
-        reason.append('定义二')
-    if (row['total_clicks_30d'] > 13) and (row['ORDER_1m'] == 0):
-        reason.append('定义三')
-    if (0.24 < row['ACOS_7d'] < 0.36) and (row['ORDER_7d'] <= 3):
-        reason.append('定义四')
-    if (row['ACOS_7d'] >= 0.36) and (row['ORDER_7d'] <= 5):
-        reason.append('定义五')
-    if (row['total_clicks_7d'] > 10) and (row['ORDER_7d'] == 0):
-        reason.append('定义六')
-    reasons.append(','.join(reason))
+# 过滤数据：定义二
+def2 = df[(df['total_clicks_7d'] > 10) & (df['ORDER_7d'] == 0) & (df['total_cost_7d'] > 5)]
+def2['reason'] = '定义二'
 
-# 添加原因列
-filtered_data['reason'] = reasons
+# 合并过滤结果
+result_df = pd.concat([def1, def2])
 
-# 选择需要的列
-output_cols = ['campaignName', 'campaignId', 'adGroupName', 'adGroupId', 'total_clicks_7d', 
-               'ACOS_7d', 'ORDER_7d', 'total_clicks_30d', 'ORDER_1m', 'ACOS_30d', 'searchTerm', 'reason']
-output_data = filtered_data[output_cols]
+# 选择所需的列，并重命名
+result_df = result_df[[
+    'campaignName', 'adGroupName', 'total_clicks_7d', 'ACOS_7d', 'ORDER_7d', 'total_cost_7d', 
+    'total_clicks_30d', 'total_cost_30d', 'ORDER_1m', 'ACOS_30d', 'searchTerm', 'reason'
+]]
 
-# 保存结果到新的CSV文件
-output_path = r'C:\Users\admin\PycharmProjects\DeepBI\ai\backend\util\db\auto_yzj\日常优化\手动sp广告\搜索词优化\提问策略\手动_劣质搜索词_v1_1_ES_2024-06-20.csv'
-output_data.to_csv(output_path, index=False)
+result_df.columns = [
+    'Campaign Name', 'adGroupName', '近七天的点击次数', '近七天的acos值', '近七天的订单数', '近七天的总花费', 
+    '近一个月的总点击数', '近一个月的总花费', '近一个月的订单数', '近一个月的acos值', '搜索词', '满足的定义'
+]
+
+# 保存结果到CSV文件
+result_df.to_csv(output_path, index=False, encoding='utf-8-sig')
 
 print(f"结果已保存到 {output_path}")

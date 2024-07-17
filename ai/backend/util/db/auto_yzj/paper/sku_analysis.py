@@ -2,42 +2,29 @@
 
 import pandas as pd
 
-# Load the dataset
-file_path = r'C:\Users\admin\PycharmProjects\DeepBI\ai\backend\util\db\auto_yzj\日常优化\自动sp广告\SKU优化\预处理.csv'
-data = pd.read_csv(file_path)
+# 读取数据
+file_path = r'C:\Users\admin\PycharmProjects\DeepBI\ai\backend\util\db\auto_yzj\滞销品优化\自动sp广告\复开SKU\预处理.csv'
+df = pd.read_csv(file_path)
 
-# Define conditions based on given definitions
-def1 = (data['total_clicks_7d'] > 10) & (data['ACOS_7d'] > 0.24)
-def2 = (data['ACOS_30d'] > 0.24) & (data['total_sales14d_7d'] == 0) & (data['total_clicks_7d'] > 10)
-def3 = (data['ACOS_7d'].between(0.24, 0.5)) & (data['ACOS_30d'].between(0, 0.24)) & (data['total_clicks_7d'] > 13)
-def4 = (data['ACOS_7d'] > 0.24) & (data['ACOS_30d'] > 0.24)
-def5 = (data['ACOS_7d'] > 0.5)
-def6 = (data['total_clicks_30d'] > 13) & (data['total_sales14d_30d'] == 0)
+# 筛选满足条件的数据
+criteria1 = (df['ACOS_30d'] > 0) & (df['ACOS_30d'] <= 0.27) & (df['ACOS_7d'] > 0) & (df['ACOS_7d'] <= 0.27)
+criteria2 = (df['ACOS_30d'] > 0) & (df['ACOS_30d'] <= 0.27) & (df['total_clicks_7d'] == 0)
 
-# Combine all conditions
-combined_cond = def1 | def2 | def3 | def4 | def5 | def6
+filtered_df_definition1 = df[criteria1].copy()
+filtered_df_definition1['definition_met'] = 'Definition 1'
 
-# Apply the conditions to filter data
-filtered_data = data[combined_cond].copy()
+filtered_df_definition2 = df[criteria2].copy()
+filtered_df_definition2['definition_met'] = 'Definition 2'
 
-# Determine the reason for closure for each filtered SKU
-filtered_data['closure_reason'] = ''
-filtered_data.loc[def1, 'closure_reason'] = '近7天总点击数大于10，近7天的平均acos值在0.24以上'
-filtered_data.loc[def2, 'closure_reason'] = '近30天的平均acos值大于0.24，近七天没有销售额，且近7天总点击数大于10'
-filtered_data.loc[def3, 'closure_reason'] = '近7天的平均acos值在大于0.24小于0.5，近30天的平均acos值大于0小于0.24，且近7天的点击数大于13'
-filtered_data.loc[def4, 'closure_reason'] = '近7天的平均acos值大于0.24，且近30天的平均acos值大于0.24'
-filtered_data.loc[def5, 'closure_reason'] = '近7天的平均acos值大于0.5'
-filtered_data.loc[def6, 'closure_reason'] = '近30天的总点击数大于13，并且没有销售额'
+# 合并满足条件的数据
+final_df = pd.concat([filtered_df_definition1, filtered_df_definition2])
 
-# Select relevant columns for the final output
-output_columns = [
-    'campaignName', 'adGroupName', 'ACOS_30d', 'ACOS_7d',
-    'total_clicks_7d', 'advertisedSku', 'closure_reason'
-]
-final_output = filtered_data[output_columns]
+# 筛选需要的字段
+output_columns = ['campaignName', 'adId', 'adGroupName', 'ACOS_30d', 'ACOS_7d', 'total_clicks_7d', 'advertisedSku', 'ORDER_1m', 'definition_met']
+final_output = final_df[output_columns]
 
-# Save to CSV
-output_path = r'C:\Users\admin\PycharmProjects\DeepBI\ai\backend\util\db\auto_yzj\日常优化\自动sp广告\SKU优化\提问策略\关闭SKU_FR.csv'
-final_output.to_csv(output_path, index=False)
+# 保存结果到新的csv文件
+output_file_path = r'C:\Users\admin\PycharmProjects\DeepBI\ai\backend\util\db\auto_yzj\滞销品优化\自动sp广告\复开SKU\提问策略\自动_复开SKU_v1_1_LAPASA_DE_2024-07-03.csv'
+final_output.to_csv(output_file_path, index=False)
 
-print("CSV file has been created successfully.")
+print(f"输出文件已保存至：{output_file_path}")

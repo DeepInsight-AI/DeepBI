@@ -1,0 +1,36 @@
+{
+    "field_desc": [
+        {
+            "name": "campaignName",
+            "comment": "商品投放所在的广告活动"
+        },
+        {
+            "name": "adGroupName",
+            "comment": "商品投放所在的广告组"
+        },
+        {
+            "name": "total_sales_15d",
+            "comment": "商品投放最近15天的总销售额"
+        },
+        {
+            "name": "total_clicks_7d",
+            "comment": "商品投放的最近7天的总点击次数"
+        },
+        {
+            "name": "keyword",
+            "comment": "商品投放"
+        },
+        {
+            "name": "matchType",
+            "comment": "匹配类型"
+        },
+        {
+            "name": "keywordBid",
+            "comment": "商品投放竞价"
+        },
+        {
+            "name": "keywordId",
+            "comment": "商品投放id"
+        }
+    ]
+}

@@ -1,50 +1,65 @@
 # filename: analyze_and_adjust_bids.py
-import pandas as pd
-from datetime import datetime, timedelta
 
-# Load data from CSV
+import pandas as pd
+
+# Load the CSV file into a DataFrame
 file_path = r'C:\Users\admin\PycharmProjects\DeepBI\ai\backend\util\db\auto_yzj\日常优化\手动sp广告\广告位优化\预处理.csv'
 df = pd.read_csv(file_path)
 
-# Define the output columns
-output_cols = ['date', 'campaignName', 'placementClassification', 'ACOS_7d', 'ACOS_3d', 
-               'total_clicks_7d', 'total_clicks_3d', '竞价调整', '原因']
+# Identifying Ad Slots satisfying Definition 1 and Definition 2
+def identify_good_performance_slots(df):
+    result = []
 
-# Today's date and yesterday's date
-today_date = datetime(2024, 5, 27)
-yesterday_date = today_date - timedelta(days=1)
-yesterday_str = yesterday_date.strftime("%Y-%m-%d")
+    # Group by campaignId to process each campaign separately
+    grouped = df.groupby('campaignId')
 
-# Initialize an empty DataFrame for output
-output_df = pd.DataFrame(columns=output_cols)
+    for campaignId, group in grouped:
+        for placement in ['Top of Search on-Amazon', 'Detail Page on-Amazon', 'Other on-Amazon']:
+            subset = group[group['placementClassification'] == placement]
 
-# Function to log the result
-def log_result(row, reason, adjustment):
-    return pd.Series([yesterday_str, row['campaignName'], row['placementClassification'], row['ACOS_7d'], 
-                      row['ACOS_3d'], row['total_clicks_7d'], row['total_clicks_3d'], adjustment, reason], index=output_cols)
+            # Definition 1 criteria
+            def1_condition = (
+                (subset['ACOS_7d'] > 0.00) & (subset['ACOS_7d'] <= 0.24) &
+                (subset['total_clicks_7d'] != subset['total_clicks_7d'].max()) &
+                (subset['ACOS_3d'] > 0.00) & (subset['ACOS_3d'] <= 0.24) & 
+                (subset['total_clicks_3d'] != subset['total_clicks_3d'].max())
+            )
 
-# Process Definition One
-cond1 = (df['total_sales14d_7d'] == 0) & (df['total_clicks_7d'] > 0)
-for _, row in df[cond1].iterrows():
-    output_df = pd.concat([output_df, log_result(row, '最近7天sales为0且总点击数大于0', '竞价变为0').to_frame().T], ignore_index=True)
+            # Definition 2 criteria
+            def2_condition = (
+                (subset['ACOS_7d'] > 0.00) & (subset['ACOS_7d'] <= 0.24) &
+                (subset['total_clicks_7d'] != subset['total_clicks_7d'].max()) &
+                (subset['total_cost_3d'] < 4) &
+                (subset['total_clicks_3d'] != subset['total_clicks_3d'].max())
+            )
 
-# Process Definition Two
-campaign_groups = df.groupby('campaignName')
-for campaign_name, group in campaign_groups:
-    if len(group) == 3:
-        acos_7d_min = group['ACOS_7d'].min()
-        acos_7d_max = group['ACOS_7d'].max()
-        if all((group['ACOS_7d'] > 0.24) & (group['ACOS_7d'] < 0.5)) and (acos_7d_max - acos_7d_min >= 0.2):
-            max_acos_row = group.loc[group['ACOS_7d'].idxmax()]
-            output_df = pd.concat([output_df, log_result(max_acos_row, '最近7天平均ACOS最大值和最小值相差>=0.2的广告位降低竞价3%', '降低竞价3%').to_frame().T], ignore_index=True)
+            if def1_condition.any() or def2_condition.any():
+                subset_valid = subset[(subset['ACOS_7d'] > 0.00) & (subset['ACOS_7d'] <= 0.24) & (subset['total_clicks_7d'] != subset['total_clicks_7d'].max())]
 
-# Process Definition Three
-for campaign_name, group in campaign_groups:
-    if len(group) == 3 and all(group['ACOS_7d'] >= 0.5):
-        for _, row in group.iterrows():
-            output_df = pd.concat([output_df, log_result(row, '最近7天平均ACOS值>=0.5的广告位', '竞价变为0').to_frame().T], ignore_index=True)
+                for index, row in subset_valid.iterrows():
+                    new_bid = min(row['bid'] + 5, 50)
+                    reason = "Definition 1" if def1_condition.any() else "Definition 2"
+                    result.append({
+                        'campaignName': row['campaignName'],
+                        'campaignId': row['campaignId'],
+                        '广告位': row['placementClassification'],
+                        '最近7天的平均ACOS值': row['ACOS_7d'],
+                        '最近3天的平均ACOS值': row['ACOS_3d'],
+                        '最近7天的总点击次数': row['total_clicks_7d'],
+                        '最近3天的总点击次数': row['total_clicks_3d'],
+                        'bid(竞价)': row['bid'],
+                        '调整后的竞价': new_bid,
+                        '调整原因': reason
+                    })
 
-# Save the results to a new CSV file
-output_path = r'C:\Users\admin\PycharmProjects\DeepBI\ai\backend\util\db\auto_yzj\日常优化\手动sp广告\广告位优化\提问策略\劣质广告位_FR.csv'
-output_df.to_csv(output_path, index=False, encoding='utf-8')
-print(f"Results saved to {output_path}")
+    return result
+
+# Identify good performance ad slots
+good_performance_slots = identify_good_performance_slots(df)
+
+# Convert the result to DataFrame and save to CSV
+output_df = pd.DataFrame(good_performance_slots)
+output_file_path = r'C:\Users\admin\PycharmProjects\DeepBI\ai\backend\util\db\auto_yzj\日常优化\手动sp广告\广告位优化\提问策略\手动_优质广告位_v1_1_LAPASA_DE_2024-07-12.csv'
+output_df.to_csv(output_file_path, index=False)
+
+print("Analysis complete. The results are saved to:", output_file_path)

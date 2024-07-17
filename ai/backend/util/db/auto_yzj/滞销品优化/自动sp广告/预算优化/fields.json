@@ -1,0 +1,72 @@
+{
+    "field_desc": [
+        {
+            "name": "campaignId",
+            "comment": "campaignId"
+        },
+        {
+            "name": "campaignName",
+            "comment": "campaignName"
+        },
+        {
+            "name": "Budget",
+            "comment": "Budget"
+        },
+        {
+            "name": "market",
+            "comment": "market"
+        },
+        {
+            "name": "cost_yesterday",
+            "comment": "cost_yesterday"
+        },
+        {
+            "name": "clicks_yesterday",
+            "comment": "clicks_yesterday"
+        },
+        {
+            "name": "sales_yesterday",
+            "comment": "sales_yesterday"
+        },
+        {
+            "name": "total_cost_7d",
+            "comment": "total_cost_7d"
+        },
+        {
+            "name": "total_sales14d_7d",
+            "comment": "total_sales14d_7d"
+        },
+        {
+            "name": "total_cost_30d",
+            "comment": "total_cost_30d"
+        },
+        {
+            "name": "total_sales14d_30d",
+            "comment": "total_sales14d_30d"
+        },
+        {
+            "name": "total_clicks_30d",
+            "comment": "total_clicks_30d"
+        },
+        {
+            "name": "total_clicks_7d",
+            "comment": "total_clicks_7d"
+        },
+        {
+            "name": "ACOS_30d",
+            "comment": "ACOS_30d"
+        },
+        {
+            "name": "ACOS_7d",
+            "comment": "ACOS_7d"
+        },
+        {
+            "name": "ACOS_yesterday",
+            "comment": "ACOS_yesterday"
+        },
+        {
+            "name": "country_avg_ACOS_1m",
+            "comment": "country_avg_ACOS_1m"
+        }
+    ]
+}

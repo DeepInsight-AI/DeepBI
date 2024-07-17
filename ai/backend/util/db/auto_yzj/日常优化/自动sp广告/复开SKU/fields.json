@@ -1,0 +1,80 @@
+{
+    "field_desc": [
+        {
+            "name": "adGroupName",
+            "comment": "广告组名称"
+        },
+        {
+            "name": "adId",
+            "comment": "sku的Id"
+        },
+        {
+            "name": "campaignId",
+            "comment": "广告活动ID"
+        },
+        {
+            "name": "campaignName",
+            "comment": "广告活动名称"
+        },
+        {
+            "name": "advertisedSku",
+            "comment": "sku"
+        },
+        {
+            "name": "ORDER_1m",
+            "comment": "sku最近30天的总订单数"
+        },
+        {
+            "name": "ORDER_7d",
+            "comment": "sku最近7天的总订单数"
+        },
+        {
+            "name": "total_clicks_30d",
+            "comment": "sku最近30天的总点击数"
+        },
+        {
+            "name": "total_clicks_7d",
+            "comment": "sku最近7天的总点击数"
+        },
+        {
+            "name": "total_clicks_yesterday",
+            "comment": "sku昨天的点击数"
+        },
+        {
+            "name": "total_sales14d_30d",
+            "comment": "sku最近30天的总销售额"
+        },
+        {
+            "name": "total_sales14d_7d",
+            "comment": "sku最近7天的总销售额"
+        },
+        {
+            "name": "total_sales14d_yesterday",
+            "comment": "sku昨天的销售额"
+        },
+        {
+            "name": "total_cost_30d",
+            "comment": "sku最近30天的总花费"
+        },
+        {
+            "name": "total_cost_7d",
+            "comment": "sku最近7天的总花费"
+        },
+        {
+            "name": "total_cost_yesterday",
+            "comment": "sku昨天的花费"
+        },
+        {
+            "name": "ACOS_30d",
+            "comment": "sku最近30天的平均ACOS值"
+        },
+        {
+            "name": "ACOS_7d",
+            "comment": "sku最近7天的平均ACOS值"
+        },
+        {
+            "name": "ACOS_yesterday",
+            "comment": "sku昨天的ACOS值"
+        }
+    ]
+}

@@ -2,48 +2,63 @@
 
 import pandas as pd
 
-# 读取 CSV 文件
-file_path = r"C:\Users\admin\PycharmProjects\DeepBI\ai\backend\util\db\auto_yzj\日常优化\自动sp广告\广告位优化\预处理.csv"
+# Step 1: 读取CSV文件
+file_path = r'C:\Users\admin\PycharmProjects\DeepBI\ai\backend\util\db\auto_yzj\日常优化\自动sp广告\广告位优化\预处理.csv'
 data = pd.read_csv(file_path)
 
-# 强制将列转换为数值类型，并在遇到错误时将值设置为 NaN
-data['ACOS_7d'] = pd.to_numeric(data['ACOS_7d'], errors='coerce')
-data['ACOS_3d'] = pd.to_numeric(data['ACOS_3d'], errors='coerce')
-data['total_clicks_7d'] = pd.to_numeric(data['total_clicks_7d'], errors='coerce')
-data['total_clicks_3d'] = pd.to_numeric(data['total_clicks_3d'], errors='coerce')
+# Step 2: 筛选广告位
+good_placements = []
 
-# 条件1和条件2的过滤
-condition1 = (
-    (data['ACOS_7d'] > 0) & (data['ACOS_7d'] <= 24) &
-    (data.groupby('campaignName')['ACOS_7d'].transform('min') == data['ACOS_7d']) &
-    (data.groupby('campaignName')['total_clicks_7d'].transform('max') != data['total_clicks_7d'])
-)
+# 对于每个广告活动
+for campaign_id, group in data.groupby('campaignId'):
+    # 计算需要的各项指标
+    group['avg_ACOS_3d'] = group['ACOS_3d']
+    group['avg_ACOS_7d'] = group['ACOS_7d']
+    
+    # 定义1 过滤条件
+    condition1 = (
+        (group['avg_ACOS_7d'] > 0) & (group['avg_ACOS_7d'] <= 0.24) &
+        (group['avg_ACOS_3d'] > 0) & (group['avg_ACOS_3d'] <= 0.24) &
+        (group['total_cost_3d'] > 4) &
+        (group['total_clicks_7d'] != group['total_clicks_7d'].max()) &
+        (group['total_clicks_3d'] != group['total_clicks_3d'].max())
+    )
+    
+    # 定义2 过滤条件
+    condition2 = (
+        (group['avg_ACOS_7d'] > 0) & (group['avg_ACOS_7d'] <= 0.24) &
+        (group['total_cost_3d'] < 4) &
+        (group['total_clicks_7d'] != group['total_clicks_7d'].max()) &
+        (group['total_clicks_3d'] != group['total_clicks_3d'].max())
+    )
 
-condition2 = (
-    condition1 &
-    (data['ACOS_3d'] > 0) & (data['ACOS_3d'] <= 24) &
-    (data.groupby('campaignName')['ACOS_3d'].transform('min') == data['ACOS_3d']) &
-    (data.groupby('campaignName')['total_clicks_3d'].transform('max') != data['total_clicks_3d'])
-)
+    # 筛选符合条件的广告位
+    selected = group[condition1 | condition2]
+    
+    for idx, row in selected.iterrows():
+        reason = '满足定义一' if condition1[idx] else '满足定义二'
+        adjusted_bid = min(row['bid'] + 5, 50)
+        good_placements.append([
+            row['campaignName'],
+            row['campaignId'],
+            row['placementClassification'],
+            row['avg_ACOS_7d'],
+            row['avg_ACOS_3d'],
+            row['total_clicks_7d'],
+            row['total_clicks_3d'],
+            row['bid'],
+            adjusted_bid,
+            reason
+        ])
 
-# 得到符合条件的广告位
-qualified_data = data[condition2].copy()
+# Step 3: 创建新的DataFrame并保存CSV
+columns = [
+    'campaignName', 'campaignId', 'placementClassification', 'avg_ACOS_7d', 
+    'avg_ACOS_3d', 'total_clicks_7d', 'total_clicks_3d', 'bid', 'adjusted_bid', 'reason'
+]
 
-# 添加新的列以显示竞价操作和原因
-qualified_data['竞价操作'] = '提高竞价 5%'
-qualified_data['对广告位进行竞价操作的原因'] = '满足定义一的所有条件'
+result_df = pd.DataFrame(good_placements, columns=columns)
+output_path = r'C:\Users\admin\PycharmProjects\DeepBI\ai\backend\util\db\auto_yzj\日常优化\自动sp广告\广告位优化\提问策略\自动_优质广告位_v1_1_LAPASA_US_2024-07-14.csv'
+result_df.to_csv(output_path, index=False)
 
-# 选择所需列
-output_data = qualified_data[[
-    'campaignName', 'placementClassification',
-    'ACOS_7d', 'ACOS_3d', 'total_clicks_7d',
-    'total_clicks_3d', '竞价操作', '对广告位进行竞价操作的原因'
-]]
-
-# 保存到新的 CSV 文件
-output_file_path = r"C:\Users\admin\PycharmProjects\DeepBI\ai\backend\util\db\auto_yzj\日常优化\自动sp广告\广告位优化\提问策略\优质广告位_FR.csv"
-output_data.to_csv(output_file_path, index=False)
-
-# 打印成功消息和输出的数据
-print("符合条件的广告位已保存到 CSV 文件:", output_file_path)
-print(output_data.head())
+print(f"生成的CSV文件已保存到: {output_path}")

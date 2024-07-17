@@ -1,11 +1,83 @@
 from ai.backend.util.db.auto_yzj.utils.find import find_files,find_file_by_name
-from ai.backend.util.db.auto_process.update_sp_ad_auto import update_sp_ad_keyword,update_sp_ad_budget,update_sp_ad_placement,add_sp_ad_searchTerm_keyword,add_sp_ad_searchTerm_negative_keyword,update_sp_ad_sku,update_sp_ad_automatic_targeting
+from ai.backend.util.db.auto_process.update_sp_ad_auto import auto_api  #update_sp_ad_keyword,update_sp_ad_budget,update_sp_ad_placement,add_sp_ad_searchTerm_keyword,add_sp_ad_searchTerm_negative_keyword,update_sp_ad_sku,update_sp_ad_automatic_targeting
 
 
-def auto_execute(cur_time: str, country: str, version: int = 1):
-    suffix = country + '_' + cur_time + '.csv'
+def auto_execute(cur_time: str, country: str,brand: str, strategy: str, version: int = 1):
+    if strategy == 'daily':
+        directory = "./日常优化/输出结果/"
+    elif strategy == 'overstock':
+        directory = "./滞销品优化/输出结果/"
+    else:
+        raise ValueError("Invalid strategy provided.")
+    suffix = brand + '_' + country + '_' + cur_time + '.csv'
     #suffix = '自动_劣质广告活动_IT_2024-06-19.csv'
-    mds = find_files(directory="./日常优化/", suffix=suffix)
+    mds = find_files(directory=directory, suffix=suffix)
+    api = auto_api(brand)
+    print(mds)
+    if len(mds) > 0:
+        for md in mds:
+            budget = "优质广告活动"
+            targeting_group = "优质广告位"
+            search_term_good = "优质搜索词"
+            search_term_bad = "劣质搜索词"
+            sku = "SKU"
+            keyword = "优质关键词"
+            automatic_targeting = "优质定位组"
+            product_targets = "优质商品投放"
+            product_targets_search_term_good = '优质_ASIN_搜索词'
+            # aaa = '特殊关键词'
+            # aaaa = '特殊商品投放'
+            # aaaaa = '特殊定位组'
+            if budget in md:
+                print(f"{md} 包含了'{budget}'")
+                #api.update_sp_ad_budget(country, md)
+            elif targeting_group in md:
+                print(f"{md} 包含了'{targeting_group}'")
+                api.update_sp_ad_placement(country, md)
+            elif search_term_good in md:
+                print(f"{md} 包含了'{search_term_good}'")
+                api.add_sp_ad_searchTerm_keyword(country, md)
+            elif search_term_bad in md:
+                print(f"{md} 包含了'{search_term_bad}'")
+                #api.add_sp_ad_searchTerm_negative_keyword(country, md)
+            elif sku in md:
+                print(f"{md} 包含了'{sku}'")
+                #api.update_sp_ad_sku(country, md)
+            elif keyword in md:
+                print(f"{md} 包含了'{keyword}'")
+                api.update_sp_ad_keyword(country, md)
+            elif automatic_targeting in md:
+                print(f"{md} 包含了'{automatic_targeting}'")
+                api.update_sp_ad_automatic_targeting(country, md)
+            elif product_targets in md:
+                print(f"{md} 包含了'{product_targets}'")
+                api.update_sp_ad_automatic_targeting(country, md)
+            elif product_targets_search_term_good in md:
+                print(f"{md} 包含了'{product_targets_search_term_good}'")
+                api.add_sp_ad_searchTerm_product(country, md)
+            # elif aaa in md:
+            #     print(f"{md} 包含了'{aaa}'")
+            #     api.update_sp_ad_keyword(country, md)
+            # elif aaaa in md:
+            #     print(f"{md} 包含了'{aaaa}'")
+            #     api.update_sp_ad_keyword(country, md)
+            # elif aaaaa in md:
+            #     print(f"{md} 包含了'{aaaaa}'")
+            #     api.update_sp_ad_automatic_targeting(country, md)
+        pass
+
+
+def auto_execute1(cur_time: str, country: str,brand: str, strategy: str, version: int = 1):
+    if strategy == 'daily':
+        directory = "./日常优化/输出结果/"
+    elif strategy == 'overstock':
+        directory = "./滞销品优化/输出结果/"
+    else:
+        raise ValueError("Invalid strategy provided.")
+    suffix = brand + '_' + country + '_' + cur_time + '.csv'
+    #suffix = '自动_劣质广告活动_IT_2024-06-19.csv'
+    mds = find_files(directory=directory, suffix=suffix)
+    api = auto_api(brand)
     print(mds)
     if len(mds) > 0:
         for md in mds:
@@ -13,31 +85,162 @@ def auto_execute(cur_time: str, country: str, version: int = 1):
             targeting_group = "广告位"
             search_term_good = "优质搜索词"
             search_term_bad = "劣质搜索词"
-            sku = "SKU"
+            sku = "关闭SKU"
             keyword = "关键词"
-            automatic_targeting = "自动定位组"
+            automatic_targeting = "定位组"
+            product_targets = "商品投放"
+            product_targets_search_term_good = 'ASIN_搜索词'
             if budget in md:
                 print(f"{md} 包含了'{budget}'")
-                update_sp_ad_budget(country, md)
+                api.update_sp_ad_budget(country, md)
             elif targeting_group in md:
                 print(f"{md} 包含了'{targeting_group}'")
-                pass
-                update_sp_ad_placement(country, md)
+                api.update_sp_ad_placement(country, md)
             elif search_term_good in md:
                 print(f"{md} 包含了'{search_term_good}'")
-                add_sp_ad_searchTerm_keyword(country, md)
+                api.add_sp_ad_searchTerm_keyword(country, md)
             elif search_term_bad in md:
                 print(f"{md} 包含了'{search_term_bad}'")
-                add_sp_ad_searchTerm_negative_keyword(country, md)
+                api.add_sp_ad_searchTerm_negative_keyword(country, md)
             elif sku in md:
                 print(f"{md} 包含了'{sku}'")
-                update_sp_ad_sku(country, md)
+                api.update_sp_ad_sku(country, md)
             elif keyword in md:
                 print(f"{md} 包含了'{keyword}'")
-                update_sp_ad_keyword(country, md)
+                api.update_sp_ad_keyword(country, md)
             elif automatic_targeting in md:
                 print(f"{md} 包含了'{automatic_targeting}'")
-                #update_sp_ad_automatic_targeting(country, md)
+                api.update_sp_ad_automatic_targeting(country, md)
+            elif product_targets in md:
+                print(f"{md} 包含了'{product_targets}'")
+                api.update_sp_ad_automatic_targeting(country, md)
+            elif product_targets_search_term_good in md:
+                print(f"{md} 包含了'{product_targets_search_term_good}'")
+                api.add_sp_ad_searchTerm_product(country, md)
         pass
 
-#自动劣质搜索词
+def auto_execute2(cur_time: str, country: str,brand: str, strategy: str, version: int = 1):
+    if strategy == 'daily':
+        directory = "./日常优化/输出结果/"
+    elif strategy == 'overstock':
+        directory = "./滞销品优化/输出结果/"
+    else:
+        raise ValueError("Invalid strategy provided.")
+    suffix = brand + '_' + country + '_' + cur_time + '.csv'
+    #suffix = '自动_劣质广告活动_IT_2024-06-19.csv'
+    mds = find_files(directory=directory, suffix=suffix)
+    api = auto_api(brand)
+    print(mds)
+    if len(mds) > 0:
+        for md in mds:
+            budget = "优质广告活动"
+            targeting_group = "优质广告位"
+            search_term_good = "优质搜索词"
+            search_term_bad = "劣质搜索词"
+            sku = "关闭SKU"
+            keyword = "优质关键词"
+            automatic_targeting = "优质定位组"
+            product_targets = "优质商品投放"
+            product_targets_search_term_good = '优质_ASIN_搜索词'
+            aaa = '特殊关键词'
+            aaaa = '特殊商品投放'
+            aaaaa = '特殊定位组'
+            if budget in md:
+                print(f"{md} 包含了'{budget}'")
+                api.update_sp_ad_budget(country, md)
+            elif targeting_group in md:
+                print(f"{md} 包含了'{targeting_group}'")
+                api.update_sp_ad_placement(country, md)
+            elif search_term_good in md:
+                print(f"{md} 包含了'{search_term_good}'")
+                api.add_sp_ad_searchTerm_keyword(country, md)
+            elif search_term_bad in md:
+                print(f"{md} 包含了'{search_term_bad}'")
+                api.add_sp_ad_searchTerm_negative_keyword(country, md)
+            elif sku in md:
+                print(f"{md} 包含了'{sku}'")
+                api.update_sp_ad_sku(country, md)
+            elif keyword in md:
+                print(f"{md} 包含了'{keyword}'")
+                api.update_sp_ad_keyword(country, md)
+            elif automatic_targeting in md:
+                print(f"{md} 包含了'{automatic_targeting}'")
+                api.update_sp_ad_automatic_targeting(country, md)
+            elif product_targets in md:
+                print(f"{md} 包含了'{product_targets}'")
+                api.update_sp_ad_automatic_targeting(country, md)
+            elif product_targets_search_term_good in md:
+                print(f"{md} 包含了'{product_targets_search_term_good}'")
+                api.add_sp_ad_searchTerm_product(country, md)
+            elif aaa in md:
+                print(f"{md} 包含了'{aaa}'")
+                api.update_sp_ad_keyword(country, md)
+            elif aaaa in md:
+                print(f"{md} 包含了'{aaaa}'")
+                api.update_sp_ad_keyword(country, md)
+            elif aaaaa in md:
+                print(f"{md} 包含了'{aaaaa}'")
+                api.update_sp_ad_automatic_targeting(country, md)
+        pass
+
+def auto_execute_rollback(cur_time: str, country: str,brand: str, strategy: str, version: int = 1):
+    if strategy == 'daily':
+        directory = "./日常优化/输出结果/"
+    elif strategy == 'overstock':
+        directory = "./滞销品优化/输出结果/"
+    else:
+        raise ValueError("Invalid strategy provided.")
+    suffix = brand + '_' + country + '_' + cur_time + '.csv'
+    #suffix = '自动_劣质广告活动_IT_2024-06-19.csv'
+    mds = find_files(directory=directory, suffix=suffix)
+    api = auto_api(brand)
+    print(mds)
+    if len(mds) > 0:
+        for md in mds:
+            budget = "优质广告活动"
+            targeting_group = "优质广告位"
+            search_term_good = "优质搜索词"
+            search_term_bad = "劣质搜索词"
+            sku = "SKU"
+            keyword = "优质关键词"
+            automatic_targeting = "优质定位组"
+            product_targets = "优质商品投放"
+            product_targets_search_term_good = '优质_ASIN_搜索词'
+            aaa = '特殊关键词'
+            aaaa = '特殊商品投放'
+            aaaaa = '特殊定位组'
+            if budget in md:
+                print(f"{md} 包含了'{budget}'")
+                api.rollback_sp_ad_budget(country, md)
+            elif targeting_group in md:
+                print(f"{md} 包含了'{targeting_group}'")
+                api.rollback_sp_ad_placement(country, md)
+            elif search_term_good in md:
+                print(f"{md} 包含了'{search_term_good}'")
+            elif search_term_bad in md:
+                print(f"{md} 包含了'{search_term_bad}'")
+                #api.add_sp_ad_searchTerm_negative_keyword(country, md)
+            elif sku in md:
+                print(f"{md} 包含了'{sku}'")
+                #api.update_sp_ad_sku(country, md)
+            elif keyword in md:
+                print(f"{md} 包含了'{keyword}'")
+                api.rollback_sp_ad_keyword(country, md)
+            elif automatic_targeting in md:
+                print(f"{md} 包含了'{automatic_targeting}'")
+                api.rollback_sp_ad_automatic_targeting(country, md)
+            elif product_targets in md:
+                print(f"{md} 包含了'{product_targets}'")
+                api.rollback_sp_ad_automatic_targeting(country, md)
+            elif product_targets_search_term_good in md:
+                print(f"{md} 包含了'{product_targets_search_term_good}'")
+            elif aaa in md:
+                print(f"{md} 包含了'{aaa}'")
+                api.rollback_sp_ad_keyword(country, md)
+            elif aaaa in md:
+                print(f"{md} 包含了'{aaaa}'")
+                api.rollback_sp_ad_automatic_targeting(country, md)
+            elif aaaaa in md:
+                print(f"{md} 包含了'{aaaaa}'")
+                api.rollback_sp_ad_automatic_targeting(country, md)
+        pass

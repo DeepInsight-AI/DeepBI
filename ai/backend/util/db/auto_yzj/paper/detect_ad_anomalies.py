@@ -1,57 +1,40 @@
 # filename: detect_ad_anomalies.py
-
 import pandas as pd
 
-def main():
-    # 读取CSV文件路径
-    file_path = r"C:\Users\admin\PycharmProjects\DeepBI\ai\backend\util\db\auto_yzj\日常优化\异常定位检测\广告位\预处理.csv"
-    
-    # 读取CSV文件
-    try:
-        df = pd.read_csv(file_path)
-    except Exception as e:
-        print(f"Error reading the file: {e}")
-        return
+# 读取数据
+file_path = "C:\\Users\\admin\\PycharmProjects\\DeepBI\\ai\\backend\\util\\db\\auto_yzj\\日常优化\\异常定位检测\\投放词\\预处理1.csv"
+data = pd.read_csv(file_path)
 
-    # 计算日均点击量
-    try:
-        df['daily_clicks_7d'] = df['total_clicks_7d'] / 7
-        df['daily_clicks_30d'] = df['total_clicks_30d'] / 30
-    except KeyError as e:
-        print(f"Missing expected column: {e}")
-        return
+# 数据准备
+data['近七天日均点击量'] = data['total_clicks_7d'] / 7
+data['近30天日均点击量'] = data['total_clicks_30d'] / 30
 
-    # 判断点击量是否存在波动异常
-    anomaly_thresh = 0.30
-    df['clicks_anomaly_7d'] = (abs(df['clicks_yesterday'] - df['daily_clicks_7d']) / df['daily_clicks_7d']) > anomaly_thresh
-    df['clicks_anomaly_30d'] = (abs(df['clicks_yesterday'] - df['daily_clicks_30d']) / df['daily_clicks_30d']) > anomaly_thresh
+# 计算昨天CPC与近七天CPC和近30天CPC的相对变化百分比
+data['CPC_相对于近7天变化'] = (data['CPC_yesterday'] - data['CPC_7d']) / data['CPC_7d']
+data['CPC_相对于近30天变化'] = (data['CPC_yesterday'] - data['CPC_30d']) / data['CPC_30d']
 
-    # 找出异常广告活动并描述异常现象
-    anomalies = df[(df['clicks_anomaly_7d'] | df['clicks_anomaly_30d'])]
+# 计算昨天点击量与近七天日均点击量和近30天日均点击量的相对变化百分比
+data['点击量_相对于近7天日均变化'] = (data['clicks_yesterday'] - data['近七天日均点击量']) / data['近七天日均点击量']
+data['点击量_相对于近30天日均变化'] = (data['clicks_yesterday'] - data['近30天日均点击量']) / data['近30天日均点击量']
 
-    def describe_anomaly(row):
-        descriptions = []
-        if row['clicks_anomaly_7d']:
-            descriptions.append("点击量比近7天日均点击量变化超过30%")
-        if row['clicks_anomaly_30d']:
-            descriptions.append("点击量比近30天日均点击量变化超过30%")
-        return ", ".join(descriptions)
+# 选择CPC不为空的行
+filtered_data = data.dropna(subset=['CPC_yesterday', 'CPC_7d', 'CPC_30d'])
 
-    anomalies['Anomaly_Description'] = anomalies.apply(describe_anomaly, axis=1)
-    output_columns = ['campaignId', 'campaignName', 'placementClassification', 'Anomaly_Description', 'clicks_yesterday', 'daily_clicks_7d', 'daily_clicks_30d']
-    anomalies = anomalies[output_columns]
+# 判断异常
+anomalies = filtered_data[
+    ((filtered_data['CPC_相对于近7天变化'] > 0.3) & (filtered_data['点击量_相对于近7天日均变化'] < -0.3)) |
+    ((filtered_data['CPC_相对于近30天变化'] > 0.3) & (filtered_data['点击量_相对于近30天日均变化'] < -0.3))
+]
 
-    # 输出结果到CSV文件路径
-    output_path = r"C:\Users\admin\PycharmProjects\DeepBI\ai\backend\util\db\auto_yzj\日常优化\异常定位检测\广告位\提问策略\广告位_点击量异常_ES_2024-06-10.csv"
-    
-    # 将结果保存到CSV文件
-    try:
-        anomalies.to_csv(output_path, index=False)
-    except Exception as e:
-        print(f"Error writing the file: {e}")
-        return
+anomalies['Anomaly Description'] = 'CPC高但clicks少'
 
-    print("Anomalies detection and export completed successfully!")
+# 输出到CSV
+output_columns = [
+    'campaignName', 'adGroupName', 'targeting', 'matchType', 'Anomaly Description',
+    'clicks_yesterday', '近七天日均点击量', '近30天日均点击量', 'CPC_yesterday', 'CPC_7d', 'CPC_30d'
+]
 
-if __name__ == "__main__":
-    main()
+output_file_path = "C:\\Users\\admin\\PycharmProjects\\DeepBI\\ai\\backend\\util\\db\\auto_yzj\\日常优化\\异常定位检测\\投放词\\提问策略\\异常检测_投放词_CPC高但clicks少1_v1_0_LAPASA_US_2024-07-09.csv"
+anomalies.to_csv(output_file_path, columns=output_columns, index=False)
+
+print("异常检测完成，结果已保存至指定文件。")

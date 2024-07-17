@@ -1,7 +1,10 @@
+import json
+import os
 from datetime import datetime
 
 import pandas as pd
 import pymysql
+from ai.backend.util.db.configuration.path import get_config_path
 
 
 
@@ -15,11 +18,20 @@ def get_timestamp():
     return date_timestamp_string
 
 class DbSpTools:
-    def __init__(self):
-        db_info = {'host': '192.168.5.114', 'user': 'test_deepdata', 'passwd': 'test123!@#', 'port': 3308,
-                   'db': 'amazon_ads',
-                   'charset': 'utf8mb4', 'use_unicode': True, }
-        self.conn = self.connect(db_info)
+    def __init__(self, brand):
+        self.db_info = self.load_db_info(brand)
+        self.conn = self.connect(self.db_info)
+
+    def load_db_info(self, brand):
+        # 从 JSON 文件加载数据库信息
+        db_info_path = os.path.join(get_config_path(), 'db_info.json')
+        with open(db_info_path, 'r') as f:
+            db_info_json = json.load(f)
+
+        if brand in db_info_json:
+            return db_info_json[brand]
+        else:
+            raise ValueError(f"Unknown brand '{brand}'")
 
     def connect(self, db_info):
         try:
@@ -213,7 +225,7 @@ GROUP BY {}
     def select_product_sku(self, market1,market2,advertisedSku):
         try:
             conn = self.conn
-            market1_sku = "desku"
+            market1_sku = f"{market1.lower()}sku"
             market2_sku = f"{market2.lower()}sku"
             query = """
             SELECT {} FROM prod_as_product_base
@@ -235,8 +247,278 @@ GROUP BY {}
         except Exception as e:
             print(f"Error occurred when select_product_sku: {e}")
 
+    def select_product_sku_by_asin(self, market1,market2,advertisedSku):
+        try:
+            conn = self.conn
+            query = """
+            SELECT DISTINCT
+	amazon_product_info.sku
+FROM
+	amazon_product_info
+	LEFT JOIN amazon_product_info_extended ON amazon_product_info_extended.asin = amazon_product_info.asin
+WHERE
+	amazon_product_info.market = 'DE'
+	AND amazon_product_info_extended.market = 'DE'
+	AND amazon_product_info_extended.parent_asins IN (
+	SELECT
+		amazon_product_info_extended.parent_asins AS nsspu
+	FROM
+		amazon_product_info
+		LEFT JOIN amazon_product_info_extended ON amazon_product_info_extended.asin = amazon_product_info.asin
+	WHERE
+		amazon_product_info.market = '{}'
+		AND amazon_product_info_extended.market = 'DE'
+	AND amazon_product_info.sku IN %(column1_values1)s
+	)
+            """.format(market2)
+            df = pd.read_sql(query, con=conn, params={'column1_values1': advertisedSku})
+            if df.empty:
+                print("No product sku")
+            else:
+                print("select product sku success")
+                return df['sku'].tolist()
+        except Exception as e:
+            print(f"Error occurred when select_product_sku_by_asin: {e}")
+
+    def select_product_sku_by_deasin(self, parent_asins):
+        try:
+            conn = self.conn
+            query = """
+            SELECT DISTINCT
+	amazon_product_info.sku
+FROM
+	amazon_product_info
+	LEFT JOIN amazon_product_info_extended ON amazon_product_info_extended.asin = amazon_product_info.asin
+WHERE
+	amazon_product_info.market = 'DE'
+	AND amazon_product_info_extended.market = 'DE'
+	AND amazon_product_info_extended.parent_asins = '{}'
+            """.format(parent_asins)
+            df = pd.read_sql(query, con=conn)
+            if df.empty:
+                print("No product sku")
+            else:
+                print("select product sku success")
+                return df['sku'].tolist()
+        except Exception as e:
+            print(f"Error occurred when select_product_sku_by_asin: {e}")
+    def select_sp_sspu_name(self,market,sspu):
+        try:
+            conn = self.conn
+            sspu1 = sspu.lower()
+            query = """
+SELECT DISTINCT campaign_name,campaignId FROM amazon_campaigns_list_sp
+WHERE market = '{}'
+AND state != 'ARCHIVED'
+AND (campaign_name LIKE '%{}%' OR campaign_name LIKE '%{}%')
+                    """.format(market,sspu,sspu1)
+            df = pd.read_sql(query, con=conn)
+            if df.empty:
+                print("No campaignName")
+                return None, None
+            else:
+                print("select campaignName success")
+                return df['campaign_name'].tolist(), df['campaignId'].tolist()
+        except Exception as e:
+            print(f"Error occurred when select_product_sku_by_asin: {e}")
+
+    def select_sd_sspu_name(self,market,sspu):
+        try:
+            conn = self.conn
+            sspu1 = sspu.lower()
+            query = """
+SELECT DISTINCT campaignName,campaignId FROM amazon_campaigns_list_sd
+WHERE market = '{}'
+AND state != 'archived'
+AND (campaignName LIKE '%{}%' OR campaignName LIKE '%{}%')
+                    """.format(market,sspu,sspu1)
+            df = pd.read_sql(query, con=conn)
+            if df.empty:
+                print("No campaignName")
+                return None, None
+            else:
+                print("select campaignName success")
+                return df['campaignName'].tolist(), df['campaignId'].tolist()
+        except Exception as e:
+            print(f"Error occurred when select_sd_sspu_name: {e}")
+
+    def select_sp_sspu_name_overstock(self,market,sspu):
+        try:
+            conn = self.conn
+            sspu1 = sspu.lower()
+            query = """
+SELECT DISTINCT campaign_name, campaignId
+FROM amazon_campaigns_list_sp
+WHERE
+    market = '{}' AND
+    campaign_name LIKE '%_overstock' AND
+    (
+        campaign_name LIKE '%{}%' OR
+        campaign_name LIKE '%{}%'
+    )
+                    """.format(market,sspu,sspu1)
+            df = pd.read_sql(query, con=conn)
+            if df.empty:
+                print("No campaignName")
+                return None, None
+            else:
+                print("select campaignName success")
+                return df['campaign_name'].tolist(), df['campaignId'].tolist()
+        except Exception as e:
+            print(f"Error occurred when select_product_sku_by_asin: {e}")
+
+    def select_sd_sspu_name_overstock(self,market,sspu):
+        try:
+            conn = self.conn
+            sspu1 = sspu.lower()
+            query = """
+SELECT DISTINCT campaignName, campaignId
+FROM amazon_campaigns_list_sd
+WHERE
+    market = '{}' AND
+    campaignName LIKE '%_overstock' AND
+    (
+        campaignName LIKE '%{}%' OR
+        campaignName LIKE '%{}%'
+    )
+                    """.format(market,sspu,sspu1)
+            df = pd.read_sql(query, con=conn)
+            if df.empty:
+                print("No campaignName")
+                return None, None
+            else:
+                print("select campaignName success")
+                return df['campaignName'].tolist(), df['campaignId'].tolist()
+        except Exception as e:
+            print(f"Error occurred when select_sd_sspu_name: {e}")
+
+    def select_sp_campaign(self,market):
+        try:
+            conn = self.conn
+            query = """
+SELECT DISTINCT campaignId FROM amazon_campaigns_list_sp
+WHERE market = '{}'
+AND state = 'ENABLED'
+                    """.format(market)
+            df = pd.read_sql(query, con=conn)
+            if df.empty:
+                print("No campaignId")
+                return None
+            else:
+                print("select campaignId success")
+                return df['campaignId'].tolist()
+        except Exception as e:
+            print(f"Error occurred when select_product_sku_by_asin: {e}")
 
 
+    def select_sp_campaignid_search_term(self,market,curtime,campaignid):
+        try:
+            conn = self.conn
+            query = """
+WITH Campaign_Stats AS (
+    SELECT
+        acr.campaignId,
+        acr.campaignName,
+        acr.campaignBudgetAmount AS Budget,
+        acr.market,
+        SUM(CASE WHEN acr.date = DATE_SUB('{}', INTERVAL 2 DAY) THEN acr.cost ELSE 0 END) AS cost_yesterday,
+        SUM(CASE WHEN acr.date = DATE_SUB('{}', INTERVAL 2 DAY) THEN acr.clicks ELSE 0 END) AS clicks_yesterday,
+        SUM(CASE WHEN acr.date = DATE_SUB('{}', INTERVAL 2 DAY) THEN acr.sales14d ELSE 0 END) AS sales_yesterday,
+        SUM(CASE WHEN acr.date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 6 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN acr.cost ELSE 0 END) AS total_cost_7d,
+        SUM(CASE WHEN acr.date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 6 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN acr.sales14d ELSE 0 END) AS total_sales14d_7d,
+        SUM(CASE WHEN acr.date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 29 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN acr.cost ELSE 0 END) AS total_cost_30d,
+        SUM(CASE WHEN acr.date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 29 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN acr.sales14d ELSE 0 END) AS total_sales14d_30d,
+        SUM(CASE WHEN acr.date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 29 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN acr.clicks ELSE 0 END) AS total_clicks_30d,
+        SUM(CASE WHEN acr.date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 6 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN acr.clicks ELSE 0 END) AS total_clicks_7d,
+        SUM(CASE WHEN acr.date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 29 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN acr.cost ELSE 0 END) / NULLIF(SUM(CASE WHEN acr.date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 29 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN acr.sales14d ELSE 0 END), 0) AS ACOS_30d,
+        SUM(CASE WHEN acr.date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 6 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN acr.cost ELSE 0 END) / NULLIF(SUM(CASE WHEN acr.date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 6 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN acr.sales14d ELSE 0 END), 0) AS ACOS_7d,
+        SUM(CASE WHEN acr.date = '{}' - INTERVAL 2 DAY THEN acr.cost ELSE 0 END) / NULLIF(SUM(CASE WHEN acr.date = '{}' - INTERVAL 2 DAY THEN acr.sales14d ELSE 0 END), 0)  AS ACOS_yesterday
+    FROM
+        amazon_campaign_reports_sp acr
+    JOIN amazon_campaigns_list_sp acl ON acr.campaignId = acl.campaignId
+    WHERE
+        acr.date BETWEEN DATE_SUB('{}', INTERVAL 30 DAY)
+        AND ('{}' - INTERVAL 1 DAY)
+        AND acr.campaignId IN (SELECT campaignId FROM amazon_campaign_reports_sp WHERE campaignStatus = 'ENABLED' AND date = '{}' - INTERVAL 1 DAY )
+        AND acr.market = '{}'
+    GROUP BY
+        acr.campaignName
+),
+b AS (
+    SELECT
+        SUM(reports.cost) / SUM(reports.sales14d) AS country_avg_ACOS_1m,
+        reports.market
+    FROM
+        amazon_campaign_reports_sp AS reports
+    INNER JOIN amazon_campaigns_list_sp AS campaigns ON reports.campaignId = campaigns.campaignId
+    WHERE
+        reports.date BETWEEN DATE_SUB('{}', INTERVAL 30 DAY)
+        AND ('{}' - INTERVAL 1 DAY)
+        AND campaigns.campaignId IN (SELECT campaignId FROM amazon_campaign_reports_sp WHERE campaignStatus = 'ENABLED' AND date = '{}' - INTERVAL 1 DAY)
+        AND reports.market = '{}'
+    GROUP BY
+        reports.market
+),
+TargetCampaignIds AS (
+    SELECT DISTINCT campaignId
+    FROM amazon_sp_productads_list AS T1
+    WHERE EXISTS (
+        SELECT 1
+        FROM amazon_sp_productads_list AS T2
+        WHERE T2.campaignId = {}
+          AND T2.market = '{}'
+          AND T2.asin = T1.asin
+      )
+      AND EXISTS (
+        SELECT 1
+        FROM amazon_keywords_list_sp AS T4
+        WHERE T4.campaignId = T1.campaignId
+          AND T4.market = '{}'
+          AND T4.keywordText != '(_targeting_auto_)'
+          AND T4.extendedData_servingStatus ='TARGETING_CLAUSE_STATUS_LIVE'
+      )
+    GROUP BY T1.campaignId
+    HAVING COUNT(DISTINCT CASE WHEN T1.campaignId = {} THEN T1.asin ELSE NULL END) * 1.0 / COUNT(DISTINCT T1.asin) <= 0.5
+),
+CampaignStatsResult AS (
+  SELECT
+    cs.*,
+    b.country_avg_ACOS_1m
+FROM
+    Campaign_Stats cs
+JOIN b ON cs.market = b.market
+WHERE
+  cs.campaignId IN (SELECT campaignId FROM TargetCampaignIds)
+  AND (SELECT COUNT(DISTINCT campaignId) FROM TargetCampaignIds) = 1
+UNION ALL
+SELECT
+    cs.*,
+    b.country_avg_ACOS_1m
+FROM
+    Campaign_Stats cs
+JOIN b ON cs.market = b.market
+JOIN TargetCampaignIds tci ON cs.campaignId = tci.campaignId
+WHERE (SELECT COUNT(DISTINCT campaignId) FROM TargetCampaignIds) > 1 AND (cs.ACOS_30d <= 0.36 OR cs.ACOS_30d IS NULL)
+)
+SELECT
+    *
+FROM
+    CampaignStatsResult
+ORDER BY
+    total_sales14d_30d DESC
+LIMIT 1
+                    """.format(curtime,curtime,curtime,curtime,curtime,curtime,curtime,curtime,curtime,curtime,
+                               curtime,curtime,curtime,curtime,curtime,curtime,curtime,curtime,curtime,curtime,
+                               curtime,curtime,curtime,curtime,curtime,curtime,curtime,curtime,market,curtime,curtime,curtime,market,campaignid,market,market,campaignid)
+            df = pd.read_sql(query, con=conn)
+            if df.empty:
+                print("No campaignId")
+                return None,None
+            else:
+                print("select campaignId success")
+                return df.loc[0,'campaignId'],df.loc[0,'campaignName']
+        except Exception as e:
+            print(f"Error occurred when select_product_sku_by_asin: {e}")
 # api = DbSpTools()
 # #res = api.select_sd_campaign_name("FR",'M06')
 # # #res = api.select_sp_product_asin("IT",'FR','B0CHRYCWPG')

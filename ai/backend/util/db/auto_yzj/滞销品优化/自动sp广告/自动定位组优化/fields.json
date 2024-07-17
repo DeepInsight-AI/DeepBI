@@ -1,0 +1,80 @@
+{
+    "field_desc": [
+        {
+            "name": "keywordId",
+            "comment": "keywordId"
+        },
+        {
+            "name": "keyword",
+            "comment": "keyword"
+        },
+        {
+            "name": "adGroupName",
+            "comment": "adGroupName"
+        },
+        {
+            "name": "campaignName",
+            "comment": "campaignName"
+        },
+        {
+            "name": "ORDER_1m",
+            "comment": "ORDER_1m"
+        },
+        {
+            "name": "total_clicks_30d",
+            "comment": "total_clicks_30d"
+        },
+        {
+            "name": "total_clicks_7d",
+            "comment": "total_clicks_7d"
+        },
+        {
+            "name": "total_clicks_yesterday",
+            "comment": "total_clicks_yesterday"
+        },
+        {
+            "name": "total_sales14d_30d",
+            "comment": "total_sales14d_30d"
+        },
+        {
+            "name": "total_sales14d_7d",
+            "comment": "total_sales14d_7d"
+        },
+        {
+            "name": "total_sales14d_yesterday",
+            "comment": "total_sales14d_yesterday"
+        },
+        {
+            "name": "total_cost_30d",
+            "comment": "total_cost_30d"
+        },
+        {
+            "name": "total_cost_7d",
+            "comment": "total_cost_7d"
+        },
+        {
+            "name": "total_cost_4d",
+            "comment": "total_cost_4d"
+        },
+        {
+            "name": "total_cost_yesterday",
+            "comment": "total_cost_yesterday"
+        },
+        {
+            "name": "ACOS_30d",
+            "comment": "ACOS_30d"
+        },
+        {
+            "name": "ACOS_7d",
+            "comment": "ACOS_7d"
+        },
+        {
+            "name": "ACOS_yesterday",
+            "comment": "ACOS_yesterday"
+        },
+        {
+            "name": "keywordBid",
+            "comment": "keywordBid"
+        }
+    ]
+}

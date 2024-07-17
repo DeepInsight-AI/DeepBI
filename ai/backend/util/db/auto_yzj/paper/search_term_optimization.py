@@ -1,30 +1,33 @@
 # filename: search_term_optimization.py
+
 import pandas as pd
 
-# 读取数据
-file_path = r"C:\Users\admin\PycharmProjects\DeepBI\ai\backend\util\db\auto_yzj\日常优化\手动sp广告\搜索词优化\预处理.csv"
-df = pd.read_csv(file_path)
+# Load the dataset
+file_path = r"C:\Users\admin\PycharmProjects\DeepBI\ai\backend\util\db\auto_yzj\日常优化\手动sp广告\商品投放搜索词优化\预处理.csv"
+data = pd.read_csv(file_path)
 
-# 定义原因
-def find_reason(row):
-    reasons = []
-    if row['ACOS_30d'] > 0.5 and row['total_clicks_30d'] > 10 and row['total_sales14d_30d'] < 0.1 * row['total_cost_30d']:
-        reasons.append("定义一：高ACOS但点击多，销售额少")
-    if row['ACOS_30d'] > 0.5 and row['total_sales14d_30d'] < 0.1 * row['total_cost_30d']:
-        reasons.append("定义二：极高ACOS，销售额少")
-    if row['total_clicks_30d'] > 10 and row['total_cost_30d'] > 0 and row['total_sales14d_30d'] == 0:
-        reasons.append("定义三：点击多，有花费，但没销售额")
-    return "; ".join(reasons) if reasons else None
+# Apply the conditions for Definition 1 and Definition 2
+condition_1 = (data['total_clicks_30d'] > 13) & (data['total_cost_30d'] > 7) & (data['ORDER_1m'] == 0)
+condition_2 = (data['total_clicks_7d'] > 10) & (data['total_cost_7d'] > 5) & (data['ORDER_7d'] == 0)
 
-# 筛选符合条件的搜索词
-df['reason'] = df.apply(find_reason, axis=1)
-filtered_df = df[df['reason'].notnull()]
+# Filter the DataFrame based on the conditions
+filtered_data_1 = data[condition_1].copy()
+filtered_data_1['reason'] = 'Definition 1'
 
-# 选择需要输出的列
-output_df = filtered_df[['campaignName', 'campaignId', 'adGroupName', 'total_cost_7d', 'ACOS_7d', 'total_clicks_30d', 'searchTerm', 'matchType', 'reason']]
+filtered_data_2 = data[condition_2].copy()
+filtered_data_2['reason'] = 'Definition 2'
 
-# 保存结果到CSV
-output_path = r"C:\Users\admin\PycharmProjects\DeepBI\ai\backend\util\db\auto_yzj\日常优化\手动sp广告\搜索词优化\提问策略\手动_劣质搜索词_v1_1_ES_2024-06-12.csv"
-output_df.to_csv(output_path, index=False)
+# Combine the filtered results
+filtered_data = pd.concat([filtered_data_1, filtered_data_2])
 
-print("结果已保存到", output_path)
+# Select relevant columns
+output_data = filtered_data[[
+    'campaignName', 'adGroupName', 'total_clicks_7d', 'ACOS_7d', 'ORDER_7d', 'total_cost_7d',
+    'total_clicks_30d', 'total_cost_30d', 'ORDER_1m', 'ACOS_30d', 'searchTerm', 'reason'
+]]
+
+# Save the result to a CSV file
+output_file_path = r"C:\Users\admin\PycharmProjects\DeepBI\ai\backend\util\db\auto_yzj\日常优化\手动sp广告\商品投放搜索词优化\提问策略\手动_劣质_ASIN_搜索词_v1_1_LAPASA_FR_2024-07-14.csv"
+output_data.to_csv(output_file_path, index=False)
+
+print("Filtered data has been saved to:", output_file_path)

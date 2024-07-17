@@ -17,13 +17,9 @@ import json
 
 def auto_generepot(BusinessName, startdate, endate,BusinessName2,last_start,last_end):
     """该报告针对电玩猩江苏南通店财务数据进行生成"""
-    db_info = {'host': '****',
-               'user': '****',
-               'passwd': '****',
-               'port': 3306,
-               'db': '****',
-               'charset': 'utf8mb4',
-               'use_unicode': True, }
+    db_info = {'host': '192.168.5.114', 'user': 'test_deepdata', 'passwd': 'test123!@#', 'port': 3308,
+               'db': 'test_dwx_all',
+               'charset': 'utf8mb4', 'use_unicode': True, }
     dwx = DwxMysqlRagUitl(db_info)
 
     last_answer = {}
@@ -253,7 +249,10 @@ def auto_generepot(BusinessName, startdate, endate,BusinessName2,last_start,last
 
     game_coins_1_2_q = "1.2 分析{}-{},{}这一周周日售币波动".format(startdate,endate, BusinessName)
     game_coins_1_2_a = dwx.analyze_daily_coin_sales(startdate,endate, BusinessName)
-    game_coins_analysis_process_1.append({"question": game_coins_1_2_q, "answer": game_coins_1_2_a})
+    game_coins_1_2_a_ecode = generate_ecode(game_coins_1_2_a)
+    game_coins_analysis_process_1.append({"question": game_coins_1_2_q, "answer": game_coins_1_2_a, "echart_id": "game_coins_1_2",
+                                       "echart_code": game_coins_1_2_a_ecode})
+
 
     # 4 1.3 主观问题
     game_coins_1_3_q = "1.3 根据1.1和1.2结论，分析这周游戏币波动是否存在异常 ，给出优化建议 "
@@ -524,3 +523,4 @@ def generate():
     print("HTML文件已生成：output_dwx_test.html")
 
 generate()
+

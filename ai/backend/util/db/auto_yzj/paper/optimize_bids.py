@@ -1,38 +1,52 @@
 # filename: optimize_bids.py
-
 import pandas as pd
 
-# 读取数据
-file_path = r'C:\Users\admin\PycharmProjects\DeepBI\ai\backend\util\db\auto_yzj\日常优化\手动sp广告\广告位优化\预处理.csv'
-data = pd.read_csv(file_path)
+# 读取CSV文件
+csv_path = r'C:\Users\admin\PycharmProjects\DeepBI\ai\backend\util\db\auto_yzj\日常优化\手动sp广告\商品投放优化\预处理.csv'
+df = pd.read_csv(csv_path, encoding='utf-8')
 
-# 计算各项指标
-data['ACOS_3d'] = data['total_cost_3d'] / data['total_sales14d_3d']
-data['ACOS_7d'] = data['total_cost_7d'] / data['total_sales14d_7d']
+# 定义筛选条件和提价
+def get_bid_increase_and_reason(row):
+    if (0 < row['ACOS_7d'] <= 0.1 and 0 < row['ACOS_30d'] <= 0.1 and
+            row['ORDER_1m'] >= 2 and 0 < row['ACOS_3d'] <= 0.2):
+        return 0.05, "符合定义一"
+    elif (0 < row['ACOS_7d'] <= 0.1 and 0.1 < row['ACOS_30d'] <= 0.24 and
+          row['ORDER_1m'] >= 2 and 0 < row['ACOS_3d'] <= 0.2):
+        return 0.03, "符合定义二"
+    elif (0.1 < row['ACOS_7d'] <= 0.2 and row['ACOS_30d'] <= 0.1 and
+          row['ORDER_1m'] >= 2 and 0 < row['ACOS_3d'] <= 0.2):
+        return 0.04, "符合定义三"
+    elif (0.1 < row['ACOS_7d'] <= 0.2 and 0.1 < row['ACOS_30d'] <= 0.24 and
+          row['ORDER_1m'] >= 2 and 0 < row['ACOS_3d'] <= 0.2):
+        return 0.02, "符合定义四"
+    elif (0.2 < row['ACOS_7d'] <= 0.24 and row['ACOS_30d'] <= 0.1 and
+          row['ORDER_1m'] >= 2 and 0 < row['ACOS_3d'] <= 0.2):
+        return 0.02, "符合定义五"
+    elif (0.2 < row['ACOS_7d'] <= 0.24 and 0.1 < row['ACOS_30d'] <= 0.24 and
+          row['ORDER_1m'] >= 2 and 0 < row['ACOS_3d'] <= 0.2):
+        return 0.01, "符合定义六"
+    else:
+        return 0, ""
 
-# 找出表现较好的广告位
-conditions = (
-    (data['ACOS_7d'] <= 0.24) & (data['ACOS_7d'] > 0) &
-    (data.groupby('campaignId')['total_clicks_7d'].transform('max') != data['total_clicks_7d']) & 
-    (data.groupby('campaignId')['ACOS_7d'].transform('min') == data['ACOS_7d']) &
-    (data['ACOS_3d'] <= 0.24) & (data['ACOS_3d'] > 0) & 
-    (data.groupby('campaignId')['total_clicks_3d'].transform('max') != data['total_clicks_3d']) & 
-    (data.groupby('campaignId')['ACOS_3d'].transform('min') == data['ACOS_3d'])
-)
+# 筛选符合条件的行
+df['bid_increase'], df['reason'] = zip(*df.apply(get_bid_increase_and_reason, axis=1))
 
-good_placements = data[conditions]
+# 筛选出表现较好的商品投放
+good_performers = df[df['bid_increase'] > 0].copy()
 
 # 调整竞价
-good_placements['bid_adjustment'] = 5  # 假设初始竞价调整为5%
-good_placements['reason'] = '最小ACOS广告位，调整竞价5％，直至到达50％'
+good_performers['New_keywordBid'] = good_performers['keywordBid'] + good_performers['bid_increase']
 
-# 输出结果
-output_file_path = r'C:\Users\admin\PycharmProjects\DeepBI\ai\backend\util\db\auto_yzj\日常优化\手动sp广告\广告位优化\提问策略\手动_优质广告位_v1_1_ES_2024-06-12.csv'
-columns_to_save = [
-    'campaignName', 'campaignId', 'placementClassification', 
-    'ACOS_7d', 'ACOS_3d', 'total_clicks_7d', 'total_clicks_3d', 
-    'bid_adjustment', 'reason'
+# 选择输出的列
+output_columns = [
+    'keyword', 'keywordId', 'campaignName', 'adGroupName', 'matchType',
+    'keywordBid', 'New_keywordBid', 'targeting', 'total_cost_7d', 'total_clicks_7d',
+    'ACOS_7d', 'ACOS_30d', 'ORDER_1m', 'bid_increase', 'reason'
 ]
+output_df = good_performers[output_columns]
 
-good_placements.to_csv(output_file_path, columns=columns_to_save, index=False)
-print("结果已保存到：", output_file_path)
+# 保存结果到新的CSV文件
+output_path = r'C:\Users\admin\PycharmProjects\DeepBI\ai\backend\util\db\auto_yzj\日常优化\手动sp广告\商品投放优化\提问策略\手动_ASIN_优质商品投放_v1_1_LAPASA_US_2024-07-14.csv'
+output_df.to_csv(output_path, index=False, encoding='utf-8')
+
+print("优化后的商品投放信息已保存到:", output_path)

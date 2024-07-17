@@ -2,55 +2,41 @@
 
 import pandas as pd
 
-# 读取数据
-file_path = r'C:\Users\admin\PycharmProjects\DeepBI\ai\backend\util\db\auto_yzj\日常优化\异常定位检测\广告位\预处理.csv'
-df = pd.read_csv(file_path)
+# Load the data
+file_path = r'C:\Users\admin\PycharmProjects\DeepBI\ai\backend\util\db\auto_yzj\日常优化\异常定位检测\投放词\预处理1.csv'
+data = pd.read_csv(file_path)
 
-# 确保数据集包含必要的字段
-required_columns = [
-    'campaignId', 'campaignName', 'placementClassification', 'clicks_yesterday',
-    'total_clicks_7d', 'total_clicks_30d'
-]
-df = df[required_columns]
+# Calculate daily averages for clicks
+data['daily_avg_clicks_7d'] = data['total_clicks_7d'] / 7
+data['daily_avg_clicks_30d'] = data['total_clicks_30d'] / 30
 
-# 计算日均点击量，同时处理零值情况
-df['avg_clicks_7d'] = df['total_clicks_7d'].apply(lambda x: x / 7 if x != 0 else 0)
-df['avg_clicks_30d'] = df['total_clicks_30d'].apply(lambda x: x / 30 if x != 0 else 0)
+# Function to identify anomalies
+def detect_anomalies(row):
+    if pd.isna(row['CPC_yesterday']):
+        return False
+    cpc_7d_increase = (row['CPC_yesterday'] > row['CPC_7d'] * 1.3)
+    cpc_30d_increase = (row['CPC_yesterday'] > row['CPC_30d'] * 1.3)
+    clicks_7d_drop = (row['clicks_yesterday'] < row['daily_avg_clicks_7d'] * 0.7)
+    clicks_30d_drop = (row['clicks_yesterday'] < row['daily_avg_clicks_30d'] * 0.7)
+    if (cpc_7d_increase or cpc_30d_increase) and (clicks_7d_drop or clicks_30d_drop):
+        return True
+    return False
 
-# 定义异常检测函数
-def detect_anomaly(row):
-    clicks_yesterday = row['clicks_yesterday']
-    avg_clicks_7d = row['avg_clicks_7d']
-    avg_clicks_30d = row['avg_clicks_30d']
-    
-    anomaly_desc = []
-    
-    # 波动异常检查
-    if avg_clicks_7d != 0 and (abs(clicks_yesterday - avg_clicks_7d) / avg_clicks_7d > 0.3):
-        anomaly_desc.append("Clicks deviation from 7d average")
-    
-    if avg_clicks_30d != 0 and (abs(clicks_yesterday - avg_clicks_30d) / avg_clicks_30d > 0.3):
-        anomaly_desc.append("Clicks deviation from 30d average")
-    
-    # 返回异常描述
-    return ', '.join(anomaly_desc)
+# Apply the anomaly detection function
+anomalies = data[data.apply(detect_anomalies, axis=1)]
 
-# 检查异常
-df['Anomaly Description'] = df.apply(detect_anomaly, axis=1)
+# Add a description for the detected anomalies
+anomalies['Anomaly Description'] = 'CPC high but clicks low'
 
-# 过滤有异常的广告活动
-df_anomalies = df[df['Anomaly Description'] != '']
+# Select and rename the necessary columns for output
+output_columns = ['campaignName', 'adGroupName', 'targeting', 'matchType', 'Anomaly Description', 
+                  'clicks_yesterday', 'daily_avg_clicks_7d', 'daily_avg_clicks_30d',
+                  'CPC_yesterday', 'CPC_7d', 'CPC_30d']
 
-# 选择要保存的列
-output_columns = [
-    'campaignId', 'campaignName', 'placementClassification', 'Anomaly Description',
-    'clicks_yesterday', 'avg_clicks_7d', 'avg_clicks_30d'
-]
+anomalies = anomalies[output_columns]
 
-df_anomalies = df_anomalies[output_columns]
+# Output the result to a CSV file
+output_file_path = r'C:\Users\admin\PycharmProjects\DeepBI\ai\backend\util\db\auto_yzj\日常优化\异常定位检测\投放词\提问策略\异常检测_投放词_CPC高但clicks少1_v1_0_LAPASA_US_2024-07-14.csv'
+anomalies.to_csv(output_file_path, index=False)
 
-# 保存结果到CSV文件
-output_file_path = r'C:\Users\admin\PycharmProjects\DeepBI\ai\backend\util\db\auto_yzj\日常优化\异常定位检测\广告位\提问策略\广告位_点击量异常_ES_2024-06-12.csv'
-df_anomalies.to_csv(output_file_path, index=False)
-
-print("Anomalies detection completed and saved.")
+print("Anomaly detection completed and saved to CSV.")

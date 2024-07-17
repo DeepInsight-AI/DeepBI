@@ -50,7 +50,6 @@ class AmazonMysqlRagUitl:
         try:
             conn = self.conn
 
-            # 暂时忽略了market转化 US
             query = """
             SELECT
             SUM(cost)/SUM(sales7d) as ACOS,
@@ -2076,8 +2075,5 @@ HAVING
             # return df
         except Exception as error:
             print("3-3.9Error while inserting data:", error)
-
-#
-
 
 

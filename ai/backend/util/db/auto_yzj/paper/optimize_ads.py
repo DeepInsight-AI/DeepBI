@@ -1,58 +1,55 @@
 # filename: optimize_ads.py
+
 import pandas as pd
 
-# 读取CSV文件
-file_path = r"C:\Users\admin\PycharmProjects\DeepBI\ai\backend\util\db\auto_yzj\日常优化\手动sp广告\广告位优化\预处理.csv"
-data = pd.read_csv(file_path)
+# Step 1: Load the Data
+file_path = r"C:\Users\admin\PycharmProjects\DeepBI\ai\backend\util\db\auto_yzj\日常优化\手动sp广告\商品投放优化\预处理.csv"
+df = pd.read_csv(file_path)
 
-# 定义条件
-condition_7d = (data['ACOS_7d'] > 0) & (data['ACOS_7d'] <= 0.24)
-condition_3d = (data['ACOS_3d'] > 0) & (data['ACOS_3d'] <= 0.24)
+# Step 2: Process Data
+def get_new_bid(row):
+    if (row['ACOS_7d'] > 0) & (row['ACOS_7d'] <= 0.1) & (row['ACOS_30d'] > 0) & (row['ACOS_30d'] <= 0.1) & (row['ORDER_1m'] >= 2) & (row['ACOS_3d'] > 0) & (row['ACOS_3d'] <= 0.2):
+        return row['keywordBid'] + 0.05, "定义一"
+    elif (row['ACOS_7d'] > 0) & (row['ACOS_7d'] <= 0.1) & (row['ACOS_30d'] > 0.1) & (row['ACOS_30d'] <= 0.24) & (row['ORDER_1m'] >= 2) & (row['ACOS_3d'] > 0) & (row['ACOS_3d'] <= 0.2):
+        return row['keywordBid'] + 0.03, "定义二"
+    elif (row['ACOS_7d'] > 0.1) & (row['ACOS_7d'] <= 0.2) & (row['ACOS_30d'] <= 0.1) & (row['ORDER_1m'] >= 2) & (row['ACOS_3d'] > 0) & (row['ACOS_3d'] <= 0.2):
+        return row['keywordBid'] + 0.04, "定义三"
+    elif (row['ACOS_7d'] > 0.1) & (row['ACOS_7d'] <= 0.2) & (row['ACOS_30d'] > 0.1) & (row['ACOS_30d'] <= 0.24) & (row['ORDER_1m'] >= 2) & (row['ACOS_3d'] > 0) & (row['ACOS_3d'] <= 0.2):
+        return row['keywordBid'] + 0.02, "定义四"
+    elif (row['ACOS_7d'] > 0.2) & (row['ACOS_7d'] <= 0.24) & (row['ACOS_30d'] <= 0.1) & (row['ORDER_1m'] >= 2) & (row['ACOS_3d'] > 0) & (row['ACOS_3d'] <= 0.2):
+        return row['keywordBid'] + 0.02, "定义五"
+    elif (row['ACOS_7d'] > 0.2) & (row['ACOS_7d'] <= 0.24) & (row['ACOS_30d'] > 0.1) & (row['ACOS_30d'] <= 0.24) & (row['ORDER_1m'] >= 2) & (row['ACOS_3d'] > 0) & (row['ACOS_3d'] <= 0.2):
+        return row['keywordBid'] + 0.01, "定义六"
+    else:
+        return row['keywordBid'], None
 
-# 分组按广告活动
-grouped = data.groupby('campaignId')
+df[['New_keywordBid', '原因']] = df.apply(get_new_bid, axis=1, result_type='expand')
 
-result = []
-for name, group in grouped:
-    # 最近7天的最小ACOS广告位，排除NaN值来寻找最小值
-    group_7d_clean = group.dropna(subset=['ACOS_7d'])
-    group_3d_clean = group.dropna(subset=['ACOS_3d'])
-    
-    if group_7d_clean.empty or group_3d_clean.empty:
-        continue
-    
-    min_acos_7d_row = group_7d_clean.loc[group_7d_clean['ACOS_7d'].idxmin()]
-    min_acos_3d_row = group_3d_clean.loc[group_3d_clean['ACOS_3d'].idxmin()]
-    
-    if (condition_7d[min_acos_7d_row.name] and condition_3d[min_acos_3d_row.name]):
-        max_clicks_7d = group['total_clicks_7d'].max()
-        max_clicks_3d = group['total_clicks_3d'].max()
-        
-        if (min_acos_7d_row['total_clicks_7d'] != max_clicks_7d and 
-            min_acos_3d_row['total_clicks_3d'] != max_clicks_3d):
-            
-            reason = "ACOS符合条件，平均ACOS值最低, 并且最近总点击次数不是最大"
-            new_bid = min(min_acos_7d_row['bid'] + 5, 50)
-            
-            # 把需要的数据收集起来
-            result.append({
-                'campaignName': min_acos_7d_row['campaignName'],
-                'campaignId': name,
-                'placementClassification': min_acos_7d_row['placementClassification'],
-                'ACOS_7d': min_acos_7d_row['ACOS_7d'],
-                'ACOS_3d': min_acos_7d_row['ACOS_3d'],
-                'total_clicks_7d': min_acos_7d_row['total_clicks_7d'],
-                'total_clicks_3d': min_acos_7d_row['total_clicks_3d'],
-                'bid': min_acos_7d_row['bid'],
-                'new_bid': new_bid,
-                'reason': reason
-            })
+# Filter rows with a reason
+result_df = df[df['原因'].notnull()]
 
-# 转换为DataFrame
-result_df = pd.DataFrame(result)
+# Select and rename columns
+output_columns = [
+    'keyword',
+    'keywordId',
+    'campaignName',
+    'adGroupName',
+    'matchType',              # Assuming the column is named 'matchType'
+    'keywordBid',
+    'New_keywordBid',
+    'targeting',
+    'total_cost_30d',
+    'total_clicks_30d',       # Assuming this is `clicks` as per user's query
+    'ACOS_7d',                # 最近7天的平均ACOS值
+    'ACOS_30d',               # 最近一个月的平均ACOS值
+    'ORDER_1m',               # 最近一个月的订单数
+    '原因'
+]
 
-# 保存结果到CSV
-output_file_path = r"C:\Users\admin\PycharmProjects\DeepBI\ai\backend\util\db\auto_yzj\日常优化\手动sp广告\广告位优化\提问策略\手动_优质广告位_v1_1_IT_2024-06-21.csv"
-result_df.to_csv(output_file_path, index=False)
+output_df = result_df[output_columns]
 
-print(f"Result saved to {output_file_path}")
+# Step 4: Save the Output
+output_file_path = r"C:\Users\admin\PycharmProjects\DeepBI\ai\backend\util\db\auto_yzj\日常优化\手动sp广告\商品投放优化\提问策略\手动_ASIN_优质商品投放_v1_1_LAPASA_UK_2024-07-15.csv"
+output_df.to_csv(output_file_path, index=False, encoding='utf-8-sig')
+
+print(f"Output saved to {output_file_path}")

@@ -1,37 +1,36 @@
 # filename: find_click_anomalies.py
-
 import pandas as pd
 
 # 读取数据
-file_path = r'C:\Users\admin\PycharmProjects\DeepBI\ai\backend\util\db\auto_yzj\日常优化\异常定位检测\广告位\预处理.csv'
-df = pd.read_csv(file_path)
+file_path = r'C:\Users\admin\PycharmProjects\DeepBI\ai\backend\util\db\auto_yzj\日常优化\异常定位检测\投放词\预处理1.csv'
+data = pd.read_csv(file_path)
 
 # 计算近7天和近30天的日均点击量
-df['avg_clicks_7d'] = df['total_clicks_7d'] / 7
-df['avg_clicks_30d'] = df['total_clicks_30d'] / 30
+data['daily_clicks_7d'] = data['total_clicks_7d'] / 7
+data['daily_clicks_30d'] = data['total_clicks_30d'] / 30
 
-# 定义异常描述函数
-def anomaly_description(row):
-    changes = []
-    if row['avg_clicks_7d'] > 0:
-        if abs(row['clicks_yesterday'] - row['avg_clicks_7d']) / row['avg_clicks_7d'] > 0.3:
-            changes.append("7-day click change > 30%")
-    if row['avg_clicks_30d'] > 0:
-        if abs(row['clicks_yesterday'] - row['avg_clicks_30d']) / row['avg_clicks_30d'] > 0.3:
-            changes.append("30-day click change > 30%")
-    return ', '.join(changes) if changes else None
+# 查找异常点击量的关键词
+anomalies = data[
+    ((data['CPC_yesterday'] > data['CPC_7d'] * 1.3) |
+     (data['CPC_yesterday'] > data['CPC_30d'] * 1.3)) &
+    ((data['clicks_yesterday'] < data['daily_clicks_7d'] * 0.7) |
+     (data['clicks_yesterday'] < data['daily_clicks_30d'] * 0.7)) &
+    data['CPC_yesterday'].notna()
+]
 
-# 判断异常现象
-df['anomaly_description'] = df.apply(anomaly_description, axis=1)
+# 添加异常现象描述
+anomalies['Anomaly Description'] = 'CPC高但clicks少'
 
-# 筛选出存在异常的广告活动
-anomalies_df = df[df['anomaly_description'].notnull()][[
-    'campaignId', 'campaignName', 'placementClassification',
-    'anomaly_description', 'clicks_yesterday', 'avg_clicks_7d', 'avg_clicks_30d'
-]]
+# 选择要输出的列
+output_columns = [
+    'campaignName', 'adGroupName', 'targeting', 'matchType', 'Anomaly Description',
+    'clicks_yesterday', 'daily_clicks_7d', 'daily_clicks_30d', 
+    'CPC_yesterday', 'CPC_7d', 'CPC_30d'
+]
+anomalies_output = anomalies[output_columns]
 
-# 保存结果到CSV文件
-output_file_path = r'C:\Users\admin\PycharmProjects\DeepBI\ai\backend\util\db\auto_yzj\日常优化\异常定位检测\广告位\提问策略\广告位_点击量异常_FR_2024-05-18.csv'
-anomalies_df.to_csv(output_file_path, index=False)
+# 输出结果到CSV文件
+output_file_path = r'C:\Users\admin\PycharmProjects\DeepBI\ai\backend\util\db\auto_yzj\日常优化\异常定位检测\投放词\提问策略\投放词_CPC高但clicks少1_v1_0_IT_2024-06-23.csv'
+anomalies_output.to_csv(output_file_path, index=False)
 
-print(f"Anomalies saved to {output_file_path}")
+print(f"异常关键词已经保存到 {output_file_path}")

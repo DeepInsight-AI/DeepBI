@@ -1,0 +1,29 @@
+{
+  "LAPASA": {
+    "host": "192.168.5.114",
+    "user": "root",
+    "passwd": "duozhuan888",
+    "port": 3308,
+    "db": "test_amazon_log",
+    "charset": "utf8mb4",
+    "use_unicode": true
+  },
+  "DELOMO": {
+    "host": "192.168.5.114",
+    "user": "root",
+    "passwd": "duozhuan888",
+    "port": 3308,
+    "db": "amazon_log_bdzx",
+    "charset": "utf8mb4",
+    "use_unicode": true
+  },
+  "OutdoorMaster": {
+    "host": "192.168.5.114",
+    "user": "root",
+    "passwd": "duozhuan888",
+    "port": 3308,
+    "db": "amazon_log_outdoormaster",
+    "charset": "utf8mb4",
+    "use_unicode": true
+  }
+}

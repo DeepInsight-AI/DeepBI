@@ -1,32 +1,46 @@
 # filename: analyze_campaigns.py
 
 import pandas as pd
-from datetime import datetime, timedelta
 
-# Load the CSV file
-file_path = r'C:\Users\admin\PycharmProjects\DeepBI\ai\backend\util\db\auto_yzj\日常优化\手动sp广告\预算优化\预处理.csv'
+# 读取数据
+file_path = r"C:\Users\admin\PycharmProjects\DeepBI\ai\backend\util\db\auto_yzj\日常优化\sd广告\预算优化\预处理.csv"
 data = pd.read_csv(file_path)
 
-# Define today's date and calculate yesterday's date
-today_date = datetime(2024, 5, 28)
-yesterday_date = today_date - timedelta(days=1)
-yesterday_str = yesterday_date.strftime('%Y-%m-%d')
+# 筛选定义一中的广告活动
+def1_campaigns = data[(data['ACOS7d'] > 0.24) & (data['ACOSYesterday'] > 0.24) & 
+                      (data['costYesterday'] > 5.5) & 
+                      (data['ACOS30d'] > data['countryAvgACOS1m'])]
 
-# Filter data for poor performing campaigns
-poor_performing = data[(data['sales_1m'] == 0) & (data['clicks_1m'] >= 75)]
+# 对定义一中的广告活动进行预算调整
+def1_campaigns['New Budget'] = def1_campaigns['campaignBudget'].apply(
+    lambda x: max(x - 5, 8) if x > 13 else x
+)
 
-# Add a closed reason column
-poor_performing['关闭原因'] = '最近一个月的总sales为0且总点击次数大于等于75'
+# 筛选定义二中的广告活动
+def2_campaigns = data[(data['ACOS30d'] > 0.24) & (data['ACOS30d'] > data['countryAvgACOS1m']) & 
+                      (data['totalSales7d'] == 0) & (data['totalCost7d'] > 10)]
 
-# Select relevant columns for the final output
+# 对定义二中的广告活动进行预算调整
+def2_campaigns['New Budget'] = def2_campaigns['campaignBudget'].apply(
+    lambda x: max(x - 5, 5) if x > 5 else x
+)
+
+# 合并筛选结果
+result_campaigns = pd.concat([def1_campaigns, def2_campaigns])
+result_campaigns['原因'] = result_campaigns.apply(
+    lambda row: '定义一' if row.name in def1_campaigns.index else '定义二', axis=1
+)
+
+# 选择所需的列
 output_columns = [
-    'date', 'campaignName', 'Budget', 'clicks', 'ACOS', 
-    'avg_ACOS_7d', 'avg_ACOS_1m', 'clicks_1m', 'sales_1m', '关闭原因'
+    'campaignId', 'campaignName', 'campaignBudget', 'New Budget', 'clicksYesterday', 
+    'ACOSYesterday', 'ACOS7d', 'totalClicks7d', 'totalSales7d', 'ACOS30d', 
+    'totalClicks30d', 'totalSales30d', 'countryAvgACOS1m', '原因'
 ]
-poor_performing = poor_performing[output_columns]
+output_df = result_campaigns[output_columns]
 
-# Save the result to a new CSV file
-output_path = r'C:\Users\admin\PycharmProjects\DeepBI\ai\backend\util\db\auto_yzj\日常优化\手动sp广告\预算优化\提问策略\关闭的广告活动_FR_2024-5-28.csv'
-poor_performing.to_csv(output_path, index=False)
+# 保存结果
+output_file_path = r"C:\Users\admin\PycharmProjects\DeepBI\ai\backend\util\db\auto_yzj\日常优化\sd广告\预算优化\提问策略\SD_劣质sd广告活动_v1_1_LAPASA_DE_2024-07-14.csv"
+output_df.to_csv(output_file_path, index=False)
 
-print(f"Filtered data saved to {output_path}")
+print(f"结果已保存到 {output_file_path}")

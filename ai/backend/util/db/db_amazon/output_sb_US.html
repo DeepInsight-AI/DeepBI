@@ -1,0 +1,1276 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>amazon_SB_US体检报告_2024-04-01_2024-04-14</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .m-b-5 {
+      margin-bottom: 5px;
+    }
+    .m-b-6 {
+        margin-bottom: 5px;
+        background-color: lightblue; /* 浅蓝色背景 */
+    }
+
+    .color-white {
+      color: #fff;
+    }
+
+    /* 样式定义 */
+    .content {
+      background: #0a1532;
+      color: #fff;
+      padding: 10px;
+      padding-bottom: 10px;
+    }
+
+    .bg-border {
+      background: #0c1d40;
+      border-radius: 5px;
+    }
+
+    .content h1 {
+      text-align: center;
+      font-family: cursive;
+      font-style: italic;
+    }
+
+    .content h5 {
+      padding: 10px;
+      text-align: center;
+      font-family: cursive;
+      font-style: italic;
+    }
+
+    .content h2 {
+      text-align: center;
+      padding: 10px;
+      font-size: 18px;
+    }
+
+    .chart {
+      width: 100%;
+      height: 400px;
+    }
+
+    .content ul {
+      padding: 10px;
+    }
+
+    .content ul p {
+      color: #3eadff;
+      font-weight: bold;
+    }
+
+    .content ul li {
+      margin: 5px 0;
+      color: #ccc;
+      font-size: 14px;
+    }
+
+    .thought li {
+      color: #d3d3d3 !important;
+      font-weight: bold;
+    }
+
+    .content strong {
+      color: #FFFF99;
+    }
+
+
+    /* 新增的表格样式 */
+.table2 {
+  border-collapse: collapse;
+  width: 60%;
+  border: 1px solid #dddddd; /* 添加表格外边框 */
+  margin: 0 auto; /* 设置左右外边距为自动，实现水平居中 */
+}
+
+.table2 th, .table2 td {
+  border: 1px solid #dddddd; /* 添加单元格边框 */
+  text-align: left;
+  padding: 8px;
+}
+
+.table2 th {
+  background-color: #f2f2f2;
+}
+.table2 tr:first-child th {
+  background-color: #ffadd8; /* 设置首行背景色为浅粉红色 */
+}
+.table2 tr:nth-child(even) {
+  background-color: transparent;
+}
+
+.table2 tr:hover {
+  background-color: #00008b;; /* 设置鼠标悬停时背景色为淡黄色 */
+}
+    .csvTable {
+        width: 100%; /* 表格宽度 */
+        border-collapse: collapse; /* 边框合并 */
+        margin: 20px 0; /* 上下外边距 */
+        font-size: 0.9em; /* 字体大小 */
+        font-family: sans-serif; /* 字体 */
+        min-width: 400px; /* 最小宽度 */
+        box-shadow: 0 0 20px rgba(0, 0, 0, 0.15); /* 阴影效果 */
+    }
+
+    /* 表头样式 */
+    .csvTable thead tr {
+        background-color: #009879; /* 背景颜色 */
+        color: #ffffff; /* 字体颜色 */
+        text-align: left; /* 文本对齐 */
+    }
+
+    /* 表格行样式，包括鼠标悬停效果 */
+    .csvTable th,
+    .csvTable td {
+        padding: 12px 15px; /* 内边距 */
+    }
+
+    .csvTable tbody tr {
+        border-bottom: 1px solid #dddddd; /* 行底部边框 */
+    }
+
+    .csvTable tbody tr:nth-of-type(even) {
+        background-color: #f3f3f3; /* 偶数行背景颜色 */
+    }
+
+    .csvTable tbody tr:last-of-type {
+        border-bottom: 2px solid #009879; /* 最后一行底部边框 */
+    }
+
+    .csvTable tbody tr:hover {
+        background-color: #f1f1f1; /* 鼠标悬停行背景颜色 */
+    }
+  </style>
+  <!-- 引入 ECharts -->
+  <script src="https://cdn.bootcdn.net/ajax/libs/echarts/5.2.2/echarts.min.js"></script>
+</head>
+<body>
+<div class="content">
+  <h1 class="color-white">amazon_SB_US体检报告_2024-04-01_2024-04-14</h1>
+  <h5 class="color-white">----Powered by DeepBI</h5>
+
+  <ul class="m-b-5 bg-border thought">
+    <p>分析思路</p>
+    
+      <li><strong>现状分析</strong> </li>
+    
+      <li><strong>&nbsp;&nbsp;&nbsp;&nbsp;</strong>走势分析 - 过去2周，按日统计，每天汇总的 ACOS，点击量，转化率，CPC，广告消耗  </li>
+    
+      <li><strong>&nbsp;&nbsp;&nbsp;&nbsp;</strong>均值分析 - 过去2周，平均的 ACOS，点击量，转化率，CPC，广告消耗 </li>
+    
+      <li><strong>统计维度解释</strong> </li>
+    
+      <li><strong>&nbsp;&nbsp;&nbsp;&nbsp;</strong>转化率： 7天转化率 </li>
+    
+      <li><strong>&nbsp;&nbsp;&nbsp;&nbsp;</strong>ACOS：7天转化率产生的ACOS </li>
+    
+      <li><strong>&nbsp;&nbsp;&nbsp;&nbsp;</strong>优质定义：低于平均 ACOS 10% 及以下 </li>
+    
+      <li><strong>&nbsp;&nbsp;&nbsp;&nbsp;</strong>劣质定义：高于平均 ACOS 10% 及以上 </li>
+    
+      <li><strong>&nbsp;&nbsp;&nbsp;&nbsp;</strong>平均ACOS计算： xx天 广告总消耗 / xx天 广告总销售额  * 100% </li>
+    
+      <li><strong>关键词优化分析</strong> </li>
+    
+      <li><strong>&nbsp;&nbsp;&nbsp;&nbsp;</strong>1，添加未在投放中的 优质 用户搜索关键词到 定向投放关键词计划中 </li>
+    
+      <li><strong>&nbsp;&nbsp;&nbsp;&nbsp;</strong>2，找出 定向投放关键词 中的 优质关键词，提价操作 </li>
+    
+      <li><strong>&nbsp;&nbsp;&nbsp;&nbsp;</strong>3，同类型产品广告计划中，相关的优秀关键词应该全覆盖 </li>
+    
+      <li><strong>&nbsp;&nbsp;&nbsp;&nbsp;</strong>4，找出 定向投放关键词 中的 劣质关键词 </li>
+    
+      <li><strong>商品优化分析</strong> </li>
+    
+      <li><strong>&nbsp;&nbsp;&nbsp;&nbsp;</strong>1，找出 sku广告 中的 优质广告 </li>
+    
+      <li><strong>&nbsp;&nbsp;&nbsp;&nbsp;</strong>2，找出 sku广告 中的 劣质广告 </li>
+    
+      <li><strong>广告计划优化分析</strong> </li>
+    
+      <li><strong>&nbsp;&nbsp;&nbsp;&nbsp;</strong>1，找出 campaign 广告活动 中的  优质 与 劣质广告活动 </li>
+    
+      <li><strong>&nbsp;&nbsp;&nbsp;&nbsp;</strong>2，找出 campaign 广告活动 中的  placement优质位置 与 劣质位置 </li>
+    
+      <li><strong>&nbsp;&nbsp;&nbsp;&nbsp;</strong>3，找出 广告 adgroup 中的  优质 与 劣质广告组 </li>
+    
+  </ul>
+  
+    <div class="question-section">
+      <h2 class="m-b-5 bg-border color-white">1.关键词优化分析</h2>
+      <li class="m-b-5 bg-border">目标：关键词的扩充机会，来自于 扩词，通过优秀关键词的共同特征，扩充关键词。  用户搜索的关键词，没有在手动投放关键词中的。扩品，优秀关键词都投放在哪些产品上，这些品的特征是什么。是否有符合特征的品，没有添加过（投放过）这些关键词？扩点击量，哪些关键词还有提价空间
+补充：按产品类型对其中的关键词分类，目标是 同类型产品广告计划中，相关的优秀关键词应该全覆盖。 哪些关键词没有在计划中，可以扩充</li>
+
+      <ul class="m-b-5 bg-border">
+        <p>【DeepBI自动分析过程】</p>
+        
+<!--          <li><strong>1，添加未在投放中的 优质 用户搜索关键词到 定向投放关键词计划中：</strong><br> Answer: 分析过程如下 </li>-->
+        <h4>1，添加未在投放中的 优质 用户搜索关键词到 定向投放关键词计划中</h4>
+          <li>分析过程如下 </li>
+          
+<!--            <li>1.1 在2024-04-01 至 2024-04-14 这段时间内，  US_SB广告中ACOS值低于18%  ，并且没有在广告定向投放中出现的用户搜索关键词。 将这些关键词信息生成csv文件，里面记录这些关键词的以下信息，CPC，SKU/ASIN， ACOS, Clicks. :<br> &nbsp;&nbsp;&nbsp;&nbsp;Answer is : [ACOS取值为0.2][关键词数量：0]生成文件为：2024-05-10_1715312101_SB_keyword_1_1.csv</li>-->
+            <li style="color: green;">1.1 在2024-04-01 至 2024-04-14 这段时间内，  US_SB广告中ACOS值低于18%  ，并且没有在广告定向投放中出现的用户搜索关键词。 将这些关键词信息生成csv文件，里面记录这些关键词的以下信息，CPC，SKU/ASIN， ACOS, Clicks. :</li>
+            <li>&nbsp;&nbsp;&nbsp;&nbsp;Answer is : [ACOS取值为0.2][关键词数量：0]生成文件为：2024-05-10_1715312101_SB_keyword_1_1.csv</li>
+          
+        
+<!--          <li><strong>2，找出 定向投放关键词 中的 优质关键词，提价操作：</strong><br> Answer: 执行过程如下 </li>-->
+        <h4>2，找出 定向投放关键词 中的 优质关键词，提价操作</h4>
+          <li>执行过程如下 </li>
+          
+<!--            <li>2.1，在 2024-04-01 至 2024-04-14 这段时间内，  US_SB广告中ACOS值低于14%的定向投放关键词。将这些关键词信息生成csv文件，里面记录这些关键词的以下信息，CPC，SKU/ASIN， ACOS, Clicks，adgroupid.(ACOS20%的-30%) :<br> &nbsp;&nbsp;&nbsp;&nbsp;Answer is : [ACOS取值为0.2][关键词数量：22]生成文件为：2024-05-10_1715312101_SB_keyword_2_1.csv</li>-->
+            <li style="color: green;">2.1，在 2024-04-01 至 2024-04-14 这段时间内，  US_SB广告中ACOS值低于14%的定向投放关键词。将这些关键词信息生成csv文件，里面记录这些关键词的以下信息，CPC，SKU/ASIN， ACOS, Clicks，adgroupid.(ACOS20%的-30%) :</li>
+            <li>&nbsp;&nbsp;&nbsp;&nbsp;Answer is : [ACOS取值为0.2][关键词数量：22]生成文件为：2024-05-10_1715312101_SB_keyword_2_1.csv</li>
+          
+<!--            <li>2.2，在 2024-04-01 至 2024-04-14 这段时间内，  US_SB广告中ACOS值在14%到16% 的 定向投放关键词，将这些关键词信息生成csv文件，里面记录这些关键词的以下信息，CPC，SKU/ASIN， ACOS, Clicks，adgroupid.(ACOS20%的-20%-30%) :<br> &nbsp;&nbsp;&nbsp;&nbsp;Answer is : [ACOS取值为0.2][关键词数量：0]生成文件为：2024-05-10_1715312101_SB_keyword_2_2.csv</li>-->
+            <li style="color: green;">2.2，在 2024-04-01 至 2024-04-14 这段时间内，  US_SB广告中ACOS值在14%到16% 的 定向投放关键词，将这些关键词信息生成csv文件，里面记录这些关键词的以下信息，CPC，SKU/ASIN， ACOS, Clicks，adgroupid.(ACOS20%的-20%-30%) :</li>
+            <li>&nbsp;&nbsp;&nbsp;&nbsp;Answer is : [ACOS取值为0.2][关键词数量：0]生成文件为：2024-05-10_1715312101_SB_keyword_2_2.csv</li>
+          
+<!--            <li>2.3，在 2024-04-01 至 2024-04-14 这段时间内，  US_SB广告中ACOS值在16%到18%的定向投放关键词。将这些关键词信息生成csv文件，里面记录这些关键词的以下信息，CPC，SKU/ASIN， ACOS, Clicks，adgroupid.(ACOS20%的-10%-20%) :<br> &nbsp;&nbsp;&nbsp;&nbsp;Answer is : [ACOS取值为0.2][关键词数量：0]生成文件为：2024-05-10_1715312101_SB_keyword_2_3.csv</li>-->
+            <li style="color: green;">2.3，在 2024-04-01 至 2024-04-14 这段时间内，  US_SB广告中ACOS值在16%到18%的定向投放关键词。将这些关键词信息生成csv文件，里面记录这些关键词的以下信息，CPC，SKU/ASIN， ACOS, Clicks，adgroupid.(ACOS20%的-10%-20%) :</li>
+            <li>&nbsp;&nbsp;&nbsp;&nbsp;Answer is : [ACOS取值为0.2][关键词数量：0]生成文件为：2024-05-10_1715312101_SB_keyword_2_3.csv</li>
+          
+        
+<!--          <li><strong>3，找出 定向投放关键词 中的 劣质关键词，降价操作：</strong><br> Answer: 执行过程如下 </li>-->
+        <h4>3，找出 定向投放关键词 中的 劣质关键词，降价操作</h4>
+          <li>执行过程如下 </li>
+          
+<!--            <li>3.1，在 2024-04-01 至 2024-04-14 这段时间内，  US_SB广告中ACOS值大于26%的 定向投放关键词。将这些关键词信息生成csv文件，里面记录这些关键词的以下信息，CPC，SKU/ASIN， ACOS,  Clicks，adgroupid.(ACOS20%的+30%) :<br> &nbsp;&nbsp;&nbsp;&nbsp;Answer is : [ACOS取值为0.2][关键词数量：1]生成文件为：2024-05-10_1715312101_SB_keyword_3_1.csv</li>-->
+            <li style="color: green;">3.1，在 2024-04-01 至 2024-04-14 这段时间内，  US_SB广告中ACOS值大于26%的 定向投放关键词。将这些关键词信息生成csv文件，里面记录这些关键词的以下信息，CPC，SKU/ASIN， ACOS,  Clicks，adgroupid.(ACOS20%的+30%) :</li>
+            <li>&nbsp;&nbsp;&nbsp;&nbsp;Answer is : [ACOS取值为0.2][关键词数量：1]生成文件为：2024-05-10_1715312101_SB_keyword_3_1.csv</li>
+          
+<!--            <li>3.2，在 2024-04-01 至 2024-04-14 这段时间内，  US_SP广告中ACOS值在24%到26% 区间的 定向投放关键词。将这些关键词信息生成csv文件，里面记录这些关键词的以下信息，CPC，SKU/ASIN， ACOS, Clicks，adgroupid.（ACOS20%的+20%+30%) :<br> &nbsp;&nbsp;&nbsp;&nbsp;Answer is : [ACOS取值为0.2][关键词数量：0]生成文件为：2024-05-10_1715312101_SB_keyword_3_2.csv</li>-->
+            <li style="color: green;">3.2，在 2024-04-01 至 2024-04-14 这段时间内，  US_SP广告中ACOS值在24%到26% 区间的 定向投放关键词。将这些关键词信息生成csv文件，里面记录这些关键词的以下信息，CPC，SKU/ASIN， ACOS, Clicks，adgroupid.（ACOS20%的+20%+30%) :</li>
+            <li>&nbsp;&nbsp;&nbsp;&nbsp;Answer is : [ACOS取值为0.2][关键词数量：0]生成文件为：2024-05-10_1715312101_SB_keyword_3_2.csv</li>
+          
+<!--            <li>3.3，在 2024-04-01 至 2024-04-14 这段时间内，  US_SB广告中 ACOS值在22%到24%区间 的 定向投放关键词。将这些关键词信息生成csv文件，里面记录这些关键词的以下信息，CPC，SKU/ASIN， ACOS, Clicks，adgroupid.（ACOS20%的+10%+20%) :<br> &nbsp;&nbsp;&nbsp;&nbsp;Answer is : [ACOS取值为0.2][关键词数量：0]生成文件为：2024-05-10_1715312101_SB_keyword_3_3.csv</li>-->
+            <li style="color: green;">3.3，在 2024-04-01 至 2024-04-14 这段时间内，  US_SB广告中 ACOS值在22%到24%区间 的 定向投放关键词。将这些关键词信息生成csv文件，里面记录这些关键词的以下信息，CPC，SKU/ASIN， ACOS, Clicks，adgroupid.（ACOS20%的+10%+20%) :</li>
+            <li>&nbsp;&nbsp;&nbsp;&nbsp;Answer is : [ACOS取值为0.2][关键词数量：0]生成文件为：2024-05-10_1715312101_SB_keyword_3_3.csv</li>
+          
+        
+      </ul>
+
+    </div>
+  
+    <div class="question-section">
+      <h2 class="m-b-5 bg-border color-white">2.广告优化分析</h2>
+      <li class="m-b-5 bg-border">该报告将展示每个客户的购买情况，以了解公司的主要客户群体。</li>
+
+      <ul class="m-b-5 bg-border">
+        <p>【DeepBI自动分析过程】</p>
+        
+<!--          <li><strong>1，找出 campaign 广告活动 中的 优质广告活动，提升预算：</strong><br> Answer: 按以下步骤执行 </li>-->
+        <h4>1，找出 campaign 广告活动 中的 优质广告活动，提升预算</h4>
+          <li>按以下步骤执行 </li>
+          
+<!--            <li>1.1，在 2024-04-01 至 2024-04-14 这段时间内，  US_SB广告中ACOS值低于14%的  campaign 广告活动。将这些信息生成csv文件，里面记录这些关键词的以下信息，CPC， ACOS,  Clicks，campaignid，spend.（-30%） :<br> &nbsp;&nbsp;&nbsp;&nbsp;Answer is : [ACOS取值为0.2][关键词数量：2]生成文件为：2024-05-10_1715312101_SB_advertise_1_1.csv</li>-->
+            <li style="color: green;">1.1，在 2024-04-01 至 2024-04-14 这段时间内，  US_SB广告中ACOS值低于14%的  campaign 广告活动。将这些信息生成csv文件，里面记录这些关键词的以下信息，CPC， ACOS,  Clicks，campaignid，spend.（-30%） :</li>
+            <li>&nbsp;&nbsp;&nbsp;&nbsp;Answer is : [ACOS取值为0.2][关键词数量：2]生成文件为：2024-05-10_1715312101_SB_advertise_1_1.csv</li>
+          
+<!--            <li>1.2，.在 2024.04.01 至 2024.04.14 这段时间内，  法国SB广告中 ACOS值在14%到16% 区间的 campaign 广告活动。将这些信息生成csv文件，里面记录这些关键词的以下信息，CPC， ACOS,  Clicks，campaignid，spend.（-20-30） :<br> &nbsp;&nbsp;&nbsp;&nbsp;Answer is : [ACOS取值为0.2][关键词数量：1]生成文件为：2024-05-10_1715312101_SB_advertise_1_2.csv</li>-->
+            <li style="color: green;">1.2，.在 2024.04.01 至 2024.04.14 这段时间内，  法国SB广告中 ACOS值在14%到16% 区间的 campaign 广告活动。将这些信息生成csv文件，里面记录这些关键词的以下信息，CPC， ACOS,  Clicks，campaignid，spend.（-20-30） :</li>
+            <li>&nbsp;&nbsp;&nbsp;&nbsp;Answer is : [ACOS取值为0.2][关键词数量：1]生成文件为：2024-05-10_1715312101_SB_advertise_1_2.csv</li>
+          
+<!--            <li>1.3，在 2024.04.01 至 2024.04.14 这段时间内，  法国SB广告中ACOS值在16%到18%区间 的 campaign 广告活动。将这些信息生成csv文件，里面记录这些关键词的以下信息，CPC， ACOS,  Clicks，campaignid，spend.（-10%-20%） :<br> &nbsp;&nbsp;&nbsp;&nbsp;Answer is : [ACOS取值为0.2][关键词数量：0]生成文件为：2024-05-10_1715312101_SB_advertise_1_3.csv</li>-->
+            <li style="color: green;">1.3，在 2024.04.01 至 2024.04.14 这段时间内，  法国SB广告中ACOS值在16%到18%区间 的 campaign 广告活动。将这些信息生成csv文件，里面记录这些关键词的以下信息，CPC， ACOS,  Clicks，campaignid，spend.（-10%-20%） :</li>
+            <li>&nbsp;&nbsp;&nbsp;&nbsp;Answer is : [ACOS取值为0.2][关键词数量：0]生成文件为：2024-05-10_1715312101_SB_advertise_1_3.csv</li>
+          
+        
+<!--          <li><strong>2，找出 campaign 广告活动 中的 劣质广告活动，降低预算：</strong><br> Answer: 按照以下步骤执行 </li>-->
+        <h4>2，找出 campaign 广告活动 中的 劣质广告活动，降低预算</h4>
+          <li>按照以下步骤执行 </li>
+          
+<!--            <li>2.1，在 2024-04-01 至 2024-04-14 这段时间内，  US_SB广告中ACOS值 大于26%的  campaign 广告活动。将这些信息生成csv文件，里面记录这些关键词的以下信息，CPC， ACOS,  Clicks，campaignid，spend.（+30%） :<br> &nbsp;&nbsp;&nbsp;&nbsp;Answer is : [ACOS取值为0.2][关键词数量：2]生成文件为：2024-05-10_1715312101_SB_advertise_2_1.csv</li>-->
+            <li style="color: green;">2.1，在 2024-04-01 至 2024-04-14 这段时间内，  US_SB广告中ACOS值 大于26%的  campaign 广告活动。将这些信息生成csv文件，里面记录这些关键词的以下信息，CPC， ACOS,  Clicks，campaignid，spend.（+30%） :</li>
+            <li>&nbsp;&nbsp;&nbsp;&nbsp;Answer is : [ACOS取值为0.2][关键词数量：2]生成文件为：2024-05-10_1715312101_SB_advertise_2_1.csv</li>
+          
+<!--            <li>2.2.在 2024-04-01 至 2024-04-14 这段时间内，  US_SB广告中ACOS值在24%到26%区间的 campaign 广告活动。将这些信息生成csv文件，里面记录这些关键词的以下信息，CPC， ACOS,  Clicks，campaignid，spend.（+20% +30%） :<br> &nbsp;&nbsp;&nbsp;&nbsp;Answer is : [ACOS取值为0.2][关键词数量：0]生成文件为：2024-05-10_1715312101_SB_advertise_2_2.csv</li>-->
+            <li style="color: green;">2.2.在 2024-04-01 至 2024-04-14 这段时间内，  US_SB广告中ACOS值在24%到26%区间的 campaign 广告活动。将这些信息生成csv文件，里面记录这些关键词的以下信息，CPC， ACOS,  Clicks，campaignid，spend.（+20% +30%） :</li>
+            <li>&nbsp;&nbsp;&nbsp;&nbsp;Answer is : [ACOS取值为0.2][关键词数量：0]生成文件为：2024-05-10_1715312101_SB_advertise_2_2.csv</li>
+          
+<!--            <li>2.3在 2024-04-01 至 2024-04-14 这段时间内，  US_SB广告中ACOS值在22%到24%区间的 campaign 广告活动。将这些信息生成csv文件，里面记录这些关键词的以下信息，CPC， ACOS,  Clicks，campaignid，spend.（+10% +20%） :<br> &nbsp;&nbsp;&nbsp;&nbsp;Answer is : [ACOS取值为0.2][关键词数量：0]生成文件为：2024-05-10_1715312101_SB_advertise_2_3.csv</li>-->
+            <li style="color: green;">2.3在 2024-04-01 至 2024-04-14 这段时间内，  US_SB广告中ACOS值在22%到24%区间的 campaign 广告活动。将这些信息生成csv文件，里面记录这些关键词的以下信息，CPC， ACOS,  Clicks，campaignid，spend.（+10% +20%） :</li>
+            <li>&nbsp;&nbsp;&nbsp;&nbsp;Answer is : [ACOS取值为0.2][关键词数量：0]生成文件为：2024-05-10_1715312101_SB_advertise_2_3.csv</li>
+          
+        
+      </ul>
+
+    </div>
+  
+
+  <div class="report-summary">
+    <h2 class="m-b-5 bg-border color-white">优化策略</h2>
+    <ul class="m-b-5 bg-border">
+      
+        <li><strong>优化策略：</strong>综合以上检查报告，以下为推荐在广告后台执行的优化策略 </li>
+      
+    </ul>
+  </div>
+
+</div>
+
+ 
+
+
+
+<!--<h4 class="m-b-5 bg-border color-white">1.1</h4>-->
+<div class="m-b-6">
+    <h4>1.1</h4>
+    <li>没有在广告定向投放中出现的用户搜索关键词</li>
+    <li>建议执行的操作：添加以下用户搜索关键词</li>
+    <!--    增加下载链接-->
+    <a href="http://192.168.5.191:5173/src/assets/csv/2024-05-10_1715312101_SB_keyword_1_1.csv" download>DownloadFile</a>
+</div>
+<!--<table class="csvTable"  id="1.1">-->
+<!--    <thead>-->
+<!--    <tr></tr>-->
+<!--    </thead>-->
+<!--    <tbody>-->
+<!--    </tbody>-->
+<!--</table>-->
+<div style="overflow-x: auto;margin: 0 auto;">
+    <table class="csvTable"  id="1.1">
+        <thead>
+        <tr></tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+</div>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        console.log(123123)
+        fetch( "http://192.168.5.191:5173/src/assets/csv/2024-05-10_1715312101_SB_keyword_1_1.csv" )
+            .then(response => response.text())
+            .then(text => {
+                console.log(text)
+                const data = parseCSV(text);
+                fillTable("1.1", data);
+            });
+    });
+
+    function parseCSV(text) {
+        const lines = text.split('\n');
+        return lines.map(line => line.split(','));
+    }
+
+    function fillTable(csvId, data) {
+        const table = document.getElementById(csvId);
+        const thead = table.querySelector('thead tr');
+        const tbody = table.querySelector('tbody');
+
+        // Clear the table header and body
+        thead.innerHTML = '';
+        tbody.innerHTML = '';
+
+        // Fill the table header
+        data[0].forEach(header => {
+            const th = document.createElement('th');
+            th.textContent = header;
+            thead.appendChild(th);
+        });
+
+        // Fill the table data
+        data.slice(1).forEach(row => {
+            const tr = document.createElement('tr');
+            row.forEach(cell => {
+                const td = document.createElement('td');
+                td.textContent = cell;
+                tr.appendChild(td);
+            });
+            tbody.appendChild(tr);
+        });
+    }
+</script>
+
+<!--<h4 class="m-b-5 bg-border color-white">1.2.1</h4>-->
+<div class="m-b-6">
+    <h4>1.2.1</h4>
+    <li>以下为SB广告中ACOS值低于14%的定向投放关键词</li>
+    <li>建议执行的操作：关键词 提高出价 10%</li>
+    <!--    增加下载链接-->
+    <a href="http://192.168.5.191:5173/src/assets/csv/2024-05-10_1715312101_SB_keyword_2_1.csv" download>DownloadFile</a>
+</div>
+<!--<table class="csvTable"  id="1.2.1">-->
+<!--    <thead>-->
+<!--    <tr></tr>-->
+<!--    </thead>-->
+<!--    <tbody>-->
+<!--    </tbody>-->
+<!--</table>-->
+<div style="overflow-x: auto;margin: 0 auto;">
+    <table class="csvTable"  id="1.2.1">
+        <thead>
+        <tr></tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+</div>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        console.log(123123)
+        fetch( "http://192.168.5.191:5173/src/assets/csv/2024-05-10_1715312101_SB_keyword_2_1.csv" )
+            .then(response => response.text())
+            .then(text => {
+                console.log(text)
+                const data = parseCSV(text);
+                fillTable("1.2.1", data);
+            });
+    });
+
+    function parseCSV(text) {
+        const lines = text.split('\n');
+        return lines.map(line => line.split(','));
+    }
+
+    function fillTable(csvId, data) {
+        const table = document.getElementById(csvId);
+        const thead = table.querySelector('thead tr');
+        const tbody = table.querySelector('tbody');
+
+        // Clear the table header and body
+        thead.innerHTML = '';
+        tbody.innerHTML = '';
+
+        // Fill the table header
+        data[0].forEach(header => {
+            const th = document.createElement('th');
+            th.textContent = header;
+            thead.appendChild(th);
+        });
+
+        // Fill the table data
+        data.slice(1).forEach(row => {
+            const tr = document.createElement('tr');
+            row.forEach(cell => {
+                const td = document.createElement('td');
+                td.textContent = cell;
+                tr.appendChild(td);
+            });
+            tbody.appendChild(tr);
+        });
+    }
+</script>
+
+<!--<h4 class="m-b-5 bg-border color-white">1.2.2</h4>-->
+<div class="m-b-6">
+    <h4>1.2.2</h4>
+    <li>以下为SB广告中ACOS值在14%到16% 的 定向投放关键词</li>
+    <li>建议执行的操作：关键词 提高出价 5%</li>
+    <!--    增加下载链接-->
+    <a href="http://192.168.5.191:5173/src/assets/csv/2024-05-10_1715312101_SB_keyword_2_2.csv" download>DownloadFile</a>
+</div>
+<!--<table class="csvTable"  id="1.2.2">-->
+<!--    <thead>-->
+<!--    <tr></tr>-->
+<!--    </thead>-->
+<!--    <tbody>-->
+<!--    </tbody>-->
+<!--</table>-->
+<div style="overflow-x: auto;margin: 0 auto;">
+    <table class="csvTable"  id="1.2.2">
+        <thead>
+        <tr></tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+</div>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        console.log(123123)
+        fetch( "http://192.168.5.191:5173/src/assets/csv/2024-05-10_1715312101_SB_keyword_2_2.csv" )
+            .then(response => response.text())
+            .then(text => {
+                console.log(text)
+                const data = parseCSV(text);
+                fillTable("1.2.2", data);
+            });
+    });
+
+    function parseCSV(text) {
+        const lines = text.split('\n');
+        return lines.map(line => line.split(','));
+    }
+
+    function fillTable(csvId, data) {
+        const table = document.getElementById(csvId);
+        const thead = table.querySelector('thead tr');
+        const tbody = table.querySelector('tbody');
+
+        // Clear the table header and body
+        thead.innerHTML = '';
+        tbody.innerHTML = '';
+
+        // Fill the table header
+        data[0].forEach(header => {
+            const th = document.createElement('th');
+            th.textContent = header;
+            thead.appendChild(th);
+        });
+
+        // Fill the table data
+        data.slice(1).forEach(row => {
+            const tr = document.createElement('tr');
+            row.forEach(cell => {
+                const td = document.createElement('td');
+                td.textContent = cell;
+                tr.appendChild(td);
+            });
+            tbody.appendChild(tr);
+        });
+    }
+</script>
+
+<!--<h4 class="m-b-5 bg-border color-white">1.2.3</h4>-->
+<div class="m-b-6">
+    <h4>1.2.3</h4>
+    <li>以下为SB广告中ACOS值在16%到18%的定向投放关键词</li>
+    <li>建议执行的操作：关键词 提高出价 3%</li>
+    <!--    增加下载链接-->
+    <a href="http://192.168.5.191:5173/src/assets/csv/2024-05-10_1715312101_SB_keyword_2_3.csv" download>DownloadFile</a>
+</div>
+<!--<table class="csvTable"  id="1.2.3">-->
+<!--    <thead>-->
+<!--    <tr></tr>-->
+<!--    </thead>-->
+<!--    <tbody>-->
+<!--    </tbody>-->
+<!--</table>-->
+<div style="overflow-x: auto;margin: 0 auto;">
+    <table class="csvTable"  id="1.2.3">
+        <thead>
+        <tr></tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+</div>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        console.log(123123)
+        fetch( "http://192.168.5.191:5173/src/assets/csv/2024-05-10_1715312101_SB_keyword_2_3.csv" )
+            .then(response => response.text())
+            .then(text => {
+                console.log(text)
+                const data = parseCSV(text);
+                fillTable("1.2.3", data);
+            });
+    });
+
+    function parseCSV(text) {
+        const lines = text.split('\n');
+        return lines.map(line => line.split(','));
+    }
+
+    function fillTable(csvId, data) {
+        const table = document.getElementById(csvId);
+        const thead = table.querySelector('thead tr');
+        const tbody = table.querySelector('tbody');
+
+        // Clear the table header and body
+        thead.innerHTML = '';
+        tbody.innerHTML = '';
+
+        // Fill the table header
+        data[0].forEach(header => {
+            const th = document.createElement('th');
+            th.textContent = header;
+            thead.appendChild(th);
+        });
+
+        // Fill the table data
+        data.slice(1).forEach(row => {
+            const tr = document.createElement('tr');
+            row.forEach(cell => {
+                const td = document.createElement('td');
+                td.textContent = cell;
+                tr.appendChild(td);
+            });
+            tbody.appendChild(tr);
+        });
+    }
+</script>
+
+<!--<h4 class="m-b-5 bg-border color-white">1.3.1</h4>-->
+<div class="m-b-6">
+    <h4>1.3.1</h4>
+    <li>以下为SB广告中ACOS值大于26%的 定向投放关键词</li>
+    <li>建议执行的操作：暂停‘劣质词’投放</li>
+    <!--    增加下载链接-->
+    <a href="http://192.168.5.191:5173/src/assets/csv/2024-05-10_1715312101_SB_keyword_3_1.csv" download>DownloadFile</a>
+</div>
+<!--<table class="csvTable"  id="1.3.1">-->
+<!--    <thead>-->
+<!--    <tr></tr>-->
+<!--    </thead>-->
+<!--    <tbody>-->
+<!--    </tbody>-->
+<!--</table>-->
+<div style="overflow-x: auto;margin: 0 auto;">
+    <table class="csvTable"  id="1.3.1">
+        <thead>
+        <tr></tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+</div>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        console.log(123123)
+        fetch( "http://192.168.5.191:5173/src/assets/csv/2024-05-10_1715312101_SB_keyword_3_1.csv" )
+            .then(response => response.text())
+            .then(text => {
+                console.log(text)
+                const data = parseCSV(text);
+                fillTable("1.3.1", data);
+            });
+    });
+
+    function parseCSV(text) {
+        const lines = text.split('\n');
+        return lines.map(line => line.split(','));
+    }
+
+    function fillTable(csvId, data) {
+        const table = document.getElementById(csvId);
+        const thead = table.querySelector('thead tr');
+        const tbody = table.querySelector('tbody');
+
+        // Clear the table header and body
+        thead.innerHTML = '';
+        tbody.innerHTML = '';
+
+        // Fill the table header
+        data[0].forEach(header => {
+            const th = document.createElement('th');
+            th.textContent = header;
+            thead.appendChild(th);
+        });
+
+        // Fill the table data
+        data.slice(1).forEach(row => {
+            const tr = document.createElement('tr');
+            row.forEach(cell => {
+                const td = document.createElement('td');
+                td.textContent = cell;
+                tr.appendChild(td);
+            });
+            tbody.appendChild(tr);
+        });
+    }
+</script>
+
+<!--<h4 class="m-b-5 bg-border color-white">1.3.2</h4>-->
+<div class="m-b-6">
+    <h4>1.3.2</h4>
+    <li>以下为SB广告中ACOS值在24%到26% 区间的 定向投放关键词</li>
+    <li>建议执行的操作：调低出价 20%</li>
+    <!--    增加下载链接-->
+    <a href="http://192.168.5.191:5173/src/assets/csv/2024-05-10_1715312101_SB_keyword_3_2.csv" download>DownloadFile</a>
+</div>
+<!--<table class="csvTable"  id="1.3.2">-->
+<!--    <thead>-->
+<!--    <tr></tr>-->
+<!--    </thead>-->
+<!--    <tbody>-->
+<!--    </tbody>-->
+<!--</table>-->
+<div style="overflow-x: auto;margin: 0 auto;">
+    <table class="csvTable"  id="1.3.2">
+        <thead>
+        <tr></tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+</div>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        console.log(123123)
+        fetch( "http://192.168.5.191:5173/src/assets/csv/2024-05-10_1715312101_SB_keyword_3_2.csv" )
+            .then(response => response.text())
+            .then(text => {
+                console.log(text)
+                const data = parseCSV(text);
+                fillTable("1.3.2", data);
+            });
+    });
+
+    function parseCSV(text) {
+        const lines = text.split('\n');
+        return lines.map(line => line.split(','));
+    }
+
+    function fillTable(csvId, data) {
+        const table = document.getElementById(csvId);
+        const thead = table.querySelector('thead tr');
+        const tbody = table.querySelector('tbody');
+
+        // Clear the table header and body
+        thead.innerHTML = '';
+        tbody.innerHTML = '';
+
+        // Fill the table header
+        data[0].forEach(header => {
+            const th = document.createElement('th');
+            th.textContent = header;
+            thead.appendChild(th);
+        });
+
+        // Fill the table data
+        data.slice(1).forEach(row => {
+            const tr = document.createElement('tr');
+            row.forEach(cell => {
+                const td = document.createElement('td');
+                td.textContent = cell;
+                tr.appendChild(td);
+            });
+            tbody.appendChild(tr);
+        });
+    }
+</script>
+
+<!--<h4 class="m-b-5 bg-border color-white">1.3.3</h4>-->
+<div class="m-b-6">
+    <h4>1.3.3</h4>
+    <li>以下为SB广告中 ACOS值在22%到24%区间 的 定向投放关键词</li>
+    <li>建议执行的操作：调低出价 10%</li>
+    <!--    增加下载链接-->
+    <a href="http://192.168.5.191:5173/src/assets/csv/2024-05-10_1715312101_SB_keyword_3_3.csv" download>DownloadFile</a>
+</div>
+<!--<table class="csvTable"  id="1.3.3">-->
+<!--    <thead>-->
+<!--    <tr></tr>-->
+<!--    </thead>-->
+<!--    <tbody>-->
+<!--    </tbody>-->
+<!--</table>-->
+<div style="overflow-x: auto;margin: 0 auto;">
+    <table class="csvTable"  id="1.3.3">
+        <thead>
+        <tr></tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+</div>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        console.log(123123)
+        fetch( "http://192.168.5.191:5173/src/assets/csv/2024-05-10_1715312101_SB_keyword_3_3.csv" )
+            .then(response => response.text())
+            .then(text => {
+                console.log(text)
+                const data = parseCSV(text);
+                fillTable("1.3.3", data);
+            });
+    });
+
+    function parseCSV(text) {
+        const lines = text.split('\n');
+        return lines.map(line => line.split(','));
+    }
+
+    function fillTable(csvId, data) {
+        const table = document.getElementById(csvId);
+        const thead = table.querySelector('thead tr');
+        const tbody = table.querySelector('tbody');
+
+        // Clear the table header and body
+        thead.innerHTML = '';
+        tbody.innerHTML = '';
+
+        // Fill the table header
+        data[0].forEach(header => {
+            const th = document.createElement('th');
+            th.textContent = header;
+            thead.appendChild(th);
+        });
+
+        // Fill the table data
+        data.slice(1).forEach(row => {
+            const tr = document.createElement('tr');
+            row.forEach(cell => {
+                const td = document.createElement('td');
+                td.textContent = cell;
+                tr.appendChild(td);
+            });
+            tbody.appendChild(tr);
+        });
+    }
+</script>
+
+<!--<h4 class="m-b-5 bg-border color-white">2.1.1</h4>-->
+<div class="m-b-6">
+    <h4>2.1.1</h4>
+    <li>以下为SB广告中ACOS值低于14%的  campaign 广告活动</li>
+    <li>建议执行的操作：预算提升30%</li>
+    <!--    增加下载链接-->
+    <a href="http://192.168.5.191:5173/src/assets/csv/2024-05-10_1715312101_SB_advertise_1_1.csv" download>DownloadFile</a>
+</div>
+<!--<table class="csvTable"  id="2.1.1">-->
+<!--    <thead>-->
+<!--    <tr></tr>-->
+<!--    </thead>-->
+<!--    <tbody>-->
+<!--    </tbody>-->
+<!--</table>-->
+<div style="overflow-x: auto;margin: 0 auto;">
+    <table class="csvTable"  id="2.1.1">
+        <thead>
+        <tr></tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+</div>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        console.log(123123)
+        fetch( "http://192.168.5.191:5173/src/assets/csv/2024-05-10_1715312101_SB_advertise_1_1.csv" )
+            .then(response => response.text())
+            .then(text => {
+                console.log(text)
+                const data = parseCSV(text);
+                fillTable("2.1.1", data);
+            });
+    });
+
+    function parseCSV(text) {
+        const lines = text.split('\n');
+        return lines.map(line => line.split(','));
+    }
+
+    function fillTable(csvId, data) {
+        const table = document.getElementById(csvId);
+        const thead = table.querySelector('thead tr');
+        const tbody = table.querySelector('tbody');
+
+        // Clear the table header and body
+        thead.innerHTML = '';
+        tbody.innerHTML = '';
+
+        // Fill the table header
+        data[0].forEach(header => {
+            const th = document.createElement('th');
+            th.textContent = header;
+            thead.appendChild(th);
+        });
+
+        // Fill the table data
+        data.slice(1).forEach(row => {
+            const tr = document.createElement('tr');
+            row.forEach(cell => {
+                const td = document.createElement('td');
+                td.textContent = cell;
+                tr.appendChild(td);
+            });
+            tbody.appendChild(tr);
+        });
+    }
+</script>
+
+<!--<h4 class="m-b-5 bg-border color-white">2.1.2</h4>-->
+<div class="m-b-6">
+    <h4>2.1.2</h4>
+    <li>以下为SB广告中 ACOS值在14%到16% 区间的 campaign 广告活动</li>
+    <li>建议执行的操作：预算提升20%</li>
+    <!--    增加下载链接-->
+    <a href="http://192.168.5.191:5173/src/assets/csv/2024-05-10_1715312101_SB_advertise_1_2.csv" download>DownloadFile</a>
+</div>
+<!--<table class="csvTable"  id="2.1.2">-->
+<!--    <thead>-->
+<!--    <tr></tr>-->
+<!--    </thead>-->
+<!--    <tbody>-->
+<!--    </tbody>-->
+<!--</table>-->
+<div style="overflow-x: auto;margin: 0 auto;">
+    <table class="csvTable"  id="2.1.2">
+        <thead>
+        <tr></tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+</div>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        console.log(123123)
+        fetch( "http://192.168.5.191:5173/src/assets/csv/2024-05-10_1715312101_SB_advertise_1_2.csv" )
+            .then(response => response.text())
+            .then(text => {
+                console.log(text)
+                const data = parseCSV(text);
+                fillTable("2.1.2", data);
+            });
+    });
+
+    function parseCSV(text) {
+        const lines = text.split('\n');
+        return lines.map(line => line.split(','));
+    }
+
+    function fillTable(csvId, data) {
+        const table = document.getElementById(csvId);
+        const thead = table.querySelector('thead tr');
+        const tbody = table.querySelector('tbody');
+
+        // Clear the table header and body
+        thead.innerHTML = '';
+        tbody.innerHTML = '';
+
+        // Fill the table header
+        data[0].forEach(header => {
+            const th = document.createElement('th');
+            th.textContent = header;
+            thead.appendChild(th);
+        });
+
+        // Fill the table data
+        data.slice(1).forEach(row => {
+            const tr = document.createElement('tr');
+            row.forEach(cell => {
+                const td = document.createElement('td');
+                td.textContent = cell;
+                tr.appendChild(td);
+            });
+            tbody.appendChild(tr);
+        });
+    }
+</script>
+
+<!--<h4 class="m-b-5 bg-border color-white">2.1.3</h4>-->
+<div class="m-b-6">
+    <h4>2.1.3</h4>
+    <li>以下为SB广告中ACOS值在16%到18%区间 的 campaign 广告活动</li>
+    <li>建议执行的操作：预算提升10%</li>
+    <!--    增加下载链接-->
+    <a href="http://192.168.5.191:5173/src/assets/csv/2024-05-10_1715312101_SB_advertise_1_3.csv" download>DownloadFile</a>
+</div>
+<!--<table class="csvTable"  id="2.1.3">-->
+<!--    <thead>-->
+<!--    <tr></tr>-->
+<!--    </thead>-->
+<!--    <tbody>-->
+<!--    </tbody>-->
+<!--</table>-->
+<div style="overflow-x: auto;margin: 0 auto;">
+    <table class="csvTable"  id="2.1.3">
+        <thead>
+        <tr></tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+</div>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        console.log(123123)
+        fetch( "http://192.168.5.191:5173/src/assets/csv/2024-05-10_1715312101_SB_advertise_1_3.csv" )
+            .then(response => response.text())
+            .then(text => {
+                console.log(text)
+                const data = parseCSV(text);
+                fillTable("2.1.3", data);
+            });
+    });
+
+    function parseCSV(text) {
+        const lines = text.split('\n');
+        return lines.map(line => line.split(','));
+    }
+
+    function fillTable(csvId, data) {
+        const table = document.getElementById(csvId);
+        const thead = table.querySelector('thead tr');
+        const tbody = table.querySelector('tbody');
+
+        // Clear the table header and body
+        thead.innerHTML = '';
+        tbody.innerHTML = '';
+
+        // Fill the table header
+        data[0].forEach(header => {
+            const th = document.createElement('th');
+            th.textContent = header;
+            thead.appendChild(th);
+        });
+
+        // Fill the table data
+        data.slice(1).forEach(row => {
+            const tr = document.createElement('tr');
+            row.forEach(cell => {
+                const td = document.createElement('td');
+                td.textContent = cell;
+                tr.appendChild(td);
+            });
+            tbody.appendChild(tr);
+        });
+    }
+</script>
+
+<!--<h4 class="m-b-5 bg-border color-white">2.2.1</h4>-->
+<div class="m-b-6">
+    <h4>2.2.1</h4>
+    <li>以下为SB广告中ACOS值 大于26%的  campaign 广告活动</li>
+    <li>建议执行的操作：预算降低30%</li>
+    <!--    增加下载链接-->
+    <a href="http://192.168.5.191:5173/src/assets/csv/2024-05-10_1715312101_SB_advertise_2_1.csv" download>DownloadFile</a>
+</div>
+<!--<table class="csvTable"  id="2.2.1">-->
+<!--    <thead>-->
+<!--    <tr></tr>-->
+<!--    </thead>-->
+<!--    <tbody>-->
+<!--    </tbody>-->
+<!--</table>-->
+<div style="overflow-x: auto;margin: 0 auto;">
+    <table class="csvTable"  id="2.2.1">
+        <thead>
+        <tr></tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+</div>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        console.log(123123)
+        fetch( "http://192.168.5.191:5173/src/assets/csv/2024-05-10_1715312101_SB_advertise_2_1.csv" )
+            .then(response => response.text())
+            .then(text => {
+                console.log(text)
+                const data = parseCSV(text);
+                fillTable("2.2.1", data);
+            });
+    });
+
+    function parseCSV(text) {
+        const lines = text.split('\n');
+        return lines.map(line => line.split(','));
+    }
+
+    function fillTable(csvId, data) {
+        const table = document.getElementById(csvId);
+        const thead = table.querySelector('thead tr');
+        const tbody = table.querySelector('tbody');
+
+        // Clear the table header and body
+        thead.innerHTML = '';
+        tbody.innerHTML = '';
+
+        // Fill the table header
+        data[0].forEach(header => {
+            const th = document.createElement('th');
+            th.textContent = header;
+            thead.appendChild(th);
+        });
+
+        // Fill the table data
+        data.slice(1).forEach(row => {
+            const tr = document.createElement('tr');
+            row.forEach(cell => {
+                const td = document.createElement('td');
+                td.textContent = cell;
+                tr.appendChild(td);
+            });
+            tbody.appendChild(tr);
+        });
+    }
+</script>
+
+<!--<h4 class="m-b-5 bg-border color-white">2.2.2</h4>-->
+<div class="m-b-6">
+    <h4>2.2.2</h4>
+    <li>以下为SB广告中ACOS值在24%到26%区间的 campaign 广告活动</li>
+    <li>建议执行的操作：预算降低20%</li>
+    <!--    增加下载链接-->
+    <a href="http://192.168.5.191:5173/src/assets/csv/2024-05-10_1715312101_SB_advertise_2_2.csv" download>DownloadFile</a>
+</div>
+<!--<table class="csvTable"  id="2.2.2">-->
+<!--    <thead>-->
+<!--    <tr></tr>-->
+<!--    </thead>-->
+<!--    <tbody>-->
+<!--    </tbody>-->
+<!--</table>-->
+<div style="overflow-x: auto;margin: 0 auto;">
+    <table class="csvTable"  id="2.2.2">
+        <thead>
+        <tr></tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+</div>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        console.log(123123)
+        fetch( "http://192.168.5.191:5173/src/assets/csv/2024-05-10_1715312101_SB_advertise_2_2.csv" )
+            .then(response => response.text())
+            .then(text => {
+                console.log(text)
+                const data = parseCSV(text);
+                fillTable("2.2.2", data);
+            });
+    });
+
+    function parseCSV(text) {
+        const lines = text.split('\n');
+        return lines.map(line => line.split(','));
+    }
+
+    function fillTable(csvId, data) {
+        const table = document.getElementById(csvId);
+        const thead = table.querySelector('thead tr');
+        const tbody = table.querySelector('tbody');
+
+        // Clear the table header and body
+        thead.innerHTML = '';
+        tbody.innerHTML = '';
+
+        // Fill the table header
+        data[0].forEach(header => {
+            const th = document.createElement('th');
+            th.textContent = header;
+            thead.appendChild(th);
+        });
+
+        // Fill the table data
+        data.slice(1).forEach(row => {
+            const tr = document.createElement('tr');
+            row.forEach(cell => {
+                const td = document.createElement('td');
+                td.textContent = cell;
+                tr.appendChild(td);
+            });
+            tbody.appendChild(tr);
+        });
+    }
+</script>
+
+<!--<h4 class="m-b-5 bg-border color-white">2.2.3</h4>-->
+<div class="m-b-6">
+    <h4>2.2.3</h4>
+    <li>以下为SB广告中ACOS值在22%到24%区间的 campaign 广告活动</li>
+    <li>建议执行的操作：预算降低10%</li>
+    <!--    增加下载链接-->
+    <a href="http://192.168.5.191:5173/src/assets/csv/2024-05-10_1715312101_SB_advertise_2_3.csv" download>DownloadFile</a>
+</div>
+<!--<table class="csvTable"  id="2.2.3">-->
+<!--    <thead>-->
+<!--    <tr></tr>-->
+<!--    </thead>-->
+<!--    <tbody>-->
+<!--    </tbody>-->
+<!--</table>-->
+<div style="overflow-x: auto;margin: 0 auto;">
+    <table class="csvTable"  id="2.2.3">
+        <thead>
+        <tr></tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+</div>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        console.log(123123)
+        fetch( "http://192.168.5.191:5173/src/assets/csv/2024-05-10_1715312101_SB_advertise_2_3.csv" )
+            .then(response => response.text())
+            .then(text => {
+                console.log(text)
+                const data = parseCSV(text);
+                fillTable("2.2.3", data);
+            });
+    });
+
+    function parseCSV(text) {
+        const lines = text.split('\n');
+        return lines.map(line => line.split(','));
+    }
+
+    function fillTable(csvId, data) {
+        const table = document.getElementById(csvId);
+        const thead = table.querySelector('thead tr');
+        const tbody = table.querySelector('tbody');
+
+        // Clear the table header and body
+        thead.innerHTML = '';
+        tbody.innerHTML = '';
+
+        // Fill the table header
+        data[0].forEach(header => {
+            const th = document.createElement('th');
+            th.textContent = header;
+            thead.appendChild(th);
+        });
+
+        // Fill the table data
+        data.slice(1).forEach(row => {
+            const tr = document.createElement('tr');
+            row.forEach(cell => {
+                const td = document.createElement('td');
+                td.textContent = cell;
+                tr.appendChild(td);
+            });
+            tbody.appendChild(tr);
+        });
+    }
+</script>
+
+</body>
+<style>
+    /* 整体表格样式 */
+    .csvTable {
+        width: 100%; /* 表格宽度 */
+        border-collapse: collapse; /* 边框合并 */
+        margin: 20px 0; /* 上下外边距 */
+        font-size: 0.9em; /* 字体大小 */
+        font-family: sans-serif; /* 字体 */
+        min-width: 400px; /* 最小宽度 */
+        box-shadow: 0 0 20px rgba(0, 0, 0, 0.15); /* 阴影效果 */
+    }
+
+    /* 表头样式 */
+    .csvTable thead tr {
+        background-color: #009879; /* 背景颜色 */
+        color: #ffffff; /* 字体颜色 */
+        text-align: left; /* 文本对齐 */
+    }
+
+    /* 表格行样式，包括鼠标悬停效果 */
+    .csvTable th,
+    .csvTable td {
+        padding: 12px 15px; /* 内边距 */
+    }
+
+    .csvTable tbody tr {
+        border-bottom: 1px solid #dddddd; /* 行底部边框 */
+    }
+
+    .csvTable tbody tr:nth-of-type(even) {
+        background-color: #f3f3f3; /* 偶数行背景颜色 */
+    }
+
+    .csvTable tbody tr:last-of-type {
+        border-bottom: 2px solid #009879; /* 最后一行底部边框 */
+    }
+
+    .csvTable tbody tr:hover {
+        background-color: #f1f1f1; /* 鼠标悬停行背景颜色 */
+    }
+</style>
+</html>

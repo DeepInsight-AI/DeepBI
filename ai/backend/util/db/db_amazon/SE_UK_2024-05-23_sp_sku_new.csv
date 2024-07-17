@@ -1,0 +1,5 @@
+market,sum(sales1d),sum(cost),avg_acos,campaignId,campaignName,adGroupId,adGroupName,advertisedSku,new_campaignName,new_adGroupName
+UK,94.96,0.98,0.01032,3.6434E+14,K01G - Auto,3.74E+14,Ad group - 11/03/2024 14:18:40.920,LPK17SS0001MT152XLR4,DeepBI_0502_K01G - Auto,DeepBI_0502_K01G - Auto
+FR,66.95,1.2,0.017924,3.04E+14,DeepBI_0502_M131 auto,4.46E+14,DeepBI_0502_M131 auto,LPM23SS0131DOLV2XLR1,DeepBI_0502_M131 auto,DeepBI_0502_M131 auto
+FR,55.82,0.95,0.017019,2.36E+14,M05/M06-Auto,1.81E+14,Ad group 1,LPM16SS00060BLK00LR3,DeepBI_0502_M05/M06-Auto,DeepBI_0502_M05/M06-Auto
+DE,25.2,0.43,0.017063,1.55E+14,m35 auto,6.07E+13,Ad group 1,LPM17SS00350WHI00MR4V3,DeepBI_0502_m35 auto,DeepBI_0502_m35 auto

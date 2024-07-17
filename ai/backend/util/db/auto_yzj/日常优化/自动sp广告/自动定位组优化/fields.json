@@ -2,79 +2,87 @@
     "field_desc": [
         {
             "name": "keywordId",
-            "comment": "自动定位词id"
+            "comment": "keywordId"
         },
         {
             "name": "keyword",
-            "comment": "自动定位词"
+            "comment": "keyword"
         },
         {
             "name": "adGroupName",
-            "comment": "自动定位词所在的广告组"
+            "comment": "adGroupName"
         },
         {
             "name": "campaignName",
-            "comment": "自动定位词所在的广告活动"
+            "comment": "campaignName"
         },
         {
             "name": "ORDER_1m",
-            "comment": "自动定位词最近一个月的订单数"
+            "comment": "ORDER_1m"
         },
         {
             "name": "total_clicks_30d",
-            "comment": "自动定位词最近30天的总点击数"
+            "comment": "total_clicks_30d"
         },
         {
             "name": "total_clicks_7d",
-            "comment": "自动定位词最近7天的总点击数"
+            "comment": "total_clicks_7d"
         },
         {
             "name": "total_clicks_yesterday",
-            "comment": "自动定位词昨天的点击数"
+            "comment": "total_clicks_yesterday"
         },
         {
             "name": "total_sales14d_30d",
-            "comment": "自动定位词最近30天的总销售额"
+            "comment": "total_sales14d_30d"
         },
         {
             "name": "total_sales14d_7d",
-            "comment": "自动定位词最近7天的总销售额"
+            "comment": "total_sales14d_7d"
+        },
+        {
+            "name": "total_sales14d_3d",
+            "comment": "total_sales14d_3d"
         },
         {
             "name": "total_sales14d_yesterday",
-            "comment": "自动定位词昨天的销售额"
+            "comment": "total_sales14d_yesterday"
         },
         {
             "name": "total_cost_30d",
-            "comment": "自动定位词最近30天的总花费"
+            "comment": "total_cost_30d"
         },
         {
             "name": "total_cost_7d",
-            "comment": "自动定位词最近7天的总花费"
+            "comment": "total_cost_7d"
         },
         {
-            "name": "total_cost_4d",
-            "comment": "自动定位词最近4天的花费"
+            "name": "total_cost_3d",
+            "comment": "total_cost_3d"
         },
         {
             "name": "total_cost_yesterday",
-            "comment": "自动定位词昨天的花费"
+            "comment": "total_cost_yesterday"
         },
         {
             "name": "ACOS_30d",
-            "comment": "自动定位词最近30天的平均ACOS值"
+            "comment": "ACOS_30d"
         },
         {
             "name": "ACOS_7d",
-            "comment": "自动定位词最近7天的平均ACOS值"
+            "comment": "ACOS_7d"
+        },
+        {
+            "name": "ACOS_3d",
+            "comment": "ACOS_3d"
         },
         {
             "name": "ACOS_yesterday",
-            "comment": "自动定位词昨天的ACOS值"
+            "comment": "ACOS_yesterday"
         },
         {
             "name": "keywordBid",
-            "comment": "自动定位词竞价"
+            "comment": "keywordBid"
         }
     ]
 }

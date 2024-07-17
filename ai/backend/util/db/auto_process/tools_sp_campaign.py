@@ -1,27 +1,36 @@
+import os
+
 import pymysql
 from ad_api.api import sponsored_products
 from ad_api.base import Marketplaces
 import json
 import datetime
 from decimal import Decimal
+from ai.backend.util.db.configuration.path import get_config_path
 
 class CampaignTools:
-    def __init__(self):
+    def __init__(self,brand):
         self.credentials = self.load_credentials()
+        self.brand = brand
 
     def load_credentials(self):
-        credentials_path = 'C:/Users/admin/PycharmProjects/DeepBI/ai/backend/util/db/auto_process/credentials.json'
+        credentials_path = os.path.join(get_config_path(), 'credentials.json')
+        #credentials_path = 'C:/Users/admin/PycharmProjects/DeepBI/ai/backend/util/db/auto_process/credentials.json'
         with open(credentials_path) as f:
             config = json.load(f)
         return config['credentials']
 
     def select_market(self, market):
-        credentials = self.credentials.get(market)
-        if not credentials:
+        market_credentials = self.credentials.get(market)
+        if not market_credentials:
             raise ValueError(f"Market '{market}' not found in credentials")
-        # 返回相应的凭据和市场信息
-        return credentials, Marketplaces[market.upper()]
 
+        brand_credentials = market_credentials.get(self.brand)
+        if not brand_credentials:
+            raise ValueError(f"Brand '{self.brand}' not found in credentials for market '{market}'")
+
+        # 返回相应的凭据和市场信息
+        return brand_credentials, Marketplaces[market.upper()]
 
     def list_campaigns_api(self,campaign_info,market):
         try:

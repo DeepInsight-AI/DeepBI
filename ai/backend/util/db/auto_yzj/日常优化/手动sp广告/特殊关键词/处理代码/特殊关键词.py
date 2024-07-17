@@ -3,10 +3,10 @@ import os
 import pandas as pd
 
 
-def main(path, cur_time, country):
+def main(path, brand, cur_time, country):
     # 加载数据
     file_path = r'C:\Users\admin\PycharmProjects\DeepBI\ai\backend\util\db\auto_yzj\日常优化\手动sp广告\特殊关键词\预处理.csv'
-    file_name = "手动_特殊关键词" + '_' + country + '_' + cur_time + '.csv'
+    file_name = "手动_特殊关键词" + '_' + brand + '_' + country + '_' + cur_time + '.csv'
     output_file_path = os.path.join(path, file_name)
     data = pd.read_csv(file_path)
 

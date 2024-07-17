@@ -2,42 +2,43 @@
 
 import pandas as pd
 
-# 读取数据
-file_path = r'C:\Users\admin\PycharmProjects\DeepBI\ai\backend\util\db\auto_yzj\日常优化\手动sp广告\预算优化\预处理.csv'
+# Load the CSV file
+file_path = 'C:/Users/admin/PycharmProjects/DeepBI/ai/backend/util/db/auto_yzj/日常优化/sd广告/预算优化/预处理.csv'
 df = pd.read_csv(file_path)
 
-# 过滤符合条件的广告活动
-filtered_df = df[
-    (df['ACOS_7d'] < 0.24) & 
-    (df['ACOS_yesterday'] < 0.24) &
-    (df['total_cost_7d'] > 0.8 * df['total_cost_7d'] / 7)
+# Filter campaigns based on the criteria
+good_campaigns = df[
+    (df['ACOS7d'] < 0.24) & 
+    (df['ACOSYesterday'] < 0.24) & 
+    (df['costYesterday'] > 0.8 * df['campaignBudget'])
 ]
 
-# 计算新的预算
-filtered_df['New_Budget'] = filtered_df['total_cost_7d'] * 1.2
-filtered_df.loc[filtered_df['New_Budget'] > 50, 'New_Budget'] = 50
+# Adjust the budget
+def adjust_budget(row):
+    new_budget = row['campaignBudget'] * 1.2
+    return min(new_budget, 50)
 
-# 添加原因列
-filtered_df['Reason'] = "ACOS_7d < 0.24, ACOS_yesterday < 0.24, cost > 80% of budget"
+good_campaigns['New Budget'] = good_campaigns.apply(adjust_budget, axis=1)
 
-# 输出需要的列
-output_df = filtered_df[[
-    'campaignId', 
-    'campaignName', 
-    'total_cost_7d', 
-    'New_Budget', 
-    'total_cost_7d', 
-    'total_clicks_7d', 
-    'ACOS_yesterday', 
-    'ACOS_7d', 
-    'country_avg_ACOS_1m', 
-    'total_clicks_30d', 
-    'total_sales14d_30d', 
-    'Reason'
+# Extract relevant fields and reasons for adjustment
+output_df = good_campaigns[[
+    'campaignId',
+    'campaignName',
+    'campaignBudget',
+    'New Budget',
+    'costYesterday',
+    'clicksYesterday',
+    'ACOSYesterday',
+    'ACOS7d',
+    'ACOS30d',
+    'totalClicks30d',
+    'totalSales30d'
 ]]
 
-# 保存结果到 CSV 文件
-output_path = r'C:\Users\admin\PycharmProjects\DeepBI\ai\backend\util\db\auto_yzj\日常优化\手动sp广告\预算优化\提问策略\手动_优质广告活动_v1_1_ES_2024-06-121.csv'
-output_df.to_csv(output_path, index=False)
+output_df['Reason for Adjustment'] = 'High performance campaign based on defined criteria'
 
-print(f"输出结果保存在 {output_path}")
+# Save results to a new CSV file
+output_file_path = 'C:/Users/admin/PycharmProjects/DeepBI/ai/backend/util/db/auto_yzj/日常优化/sd广告/预算优化/提问策略/SD_优质sd广告活动_v1_1_LAPASA_FR_2024-07-14.csv'
+output_df.to_csv(output_file_path, index=False)
+
+print(f"Results have been saved to {output_file_path}")

@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>创建页面</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            background-color: #f2f2f2;
+            padding: 20px;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+        form {
+            background-color: white;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            text-align: center;
+        }
+        select, input[type="text"] {
+            width: 50%;
+            padding: 8px;
+            margin-bottom: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+            display: block;
+            margin: 0 auto;
+        }
+        button {
+            background-color: #007bff;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            display: block;
+            margin: 0 auto;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .strategy {
+            display: none;
+        }
+        .extra-params {
+            display: none;
+        }
+    </style>
+    <script>
+        // 根据选择的品牌动态更新国家选项
+        function updateCountryOptions() {
+            var brand = document.getElementById('brand').value;
+            var countrySelect = document.getElementById('country');
+            countrySelect.innerHTML = ''; // 清空当前选项
+
+            var countries = [];
+            if (brand === 'DELOMO') {
+                countries = ['IT', 'ES', 'DE', 'FR'];
+            } else if (brand === 'OutdoorMaster') {
+                countries = ['IT', 'ES', 'SE', 'FR'];
+            } else {
+                // 默认情况下，可以设置一个通用的国家选项
+                countries = ['IT', 'ES', 'DE', 'FR', 'UK', 'US'];
+            }
+
+            // 添加新的选项到国家选择框
+            for (var i = 0; i < countries.length; i++) {
+                var option = document.createElement('option');
+                option.value = countries[i];
+                option.textContent = getCountryName(countries[i]);
+                countrySelect.appendChild(option);
+            }
+        }
+
+        // 辅助函数，根据国家代码返回显示名称
+        function getCountryName(code) {
+            switch (code) {
+                case 'IT':
+                    return '意大利 (IT)';
+                case 'ES':
+                    return '西班牙 (ES)';
+                case 'DE':
+                    return '德国 (DE)';
+                case 'FR':
+                    return '法国 (FR)';
+                case 'UK':
+                    return '英国 (UK)';
+                case 'US':
+                    return '美国 (US)';
+                case 'SE':
+                    return '瑞典 (SE)';
+                default:
+                    return code;
+            }
+        }
+
+        // 在页面加载完成后，初始化国家选项
+        document.addEventListener('DOMContentLoaded', function() {
+            updateCountryOptions(); // 初始化时根据默认品牌更新国家选项
+        });
+
+        // 品牌选择框改变时更新国家选项
+        document.getElementById('brand').addEventListener('change', function() {
+            updateCountryOptions();
+        });
+
+        // 根据创建方式显示或隐藏策略下拉菜单和额外参数
+        function showStrategyDropdown() {
+            var createMethod = document.getElementById('create_method').value;
+            var strategyDropdown = document.getElementById('strategy_dropdown');
+            var extraParamsSection = document.getElementById('extra_params_section');
+            var productInfoSection = document.getElementById('product_info_section');
+            var templateCountrySelect = document.getElementById('template_country');
+            var startDateInput = document.getElementById('startdate');
+            var endDateInput = document.getElementById('enddate');
+
+            if (createMethod === '横向复刻') {
+                strategyDropdown.style.display = 'block';
+                extraParamsSection.style.display = 'none';
+                productInfoSection.style.display = 'none';
+                templateCountrySelect.style.display = 'block';
+                startDateInput.style.display = 'block';
+                endDateInput.style.display = 'block';
+
+                var strategySelect = document.getElementById('strategy');
+                strategySelect.innerHTML = '';
+                var defaultOption = document.createElement('option');
+                defaultOption.value = '';
+                defaultOption.textContent = '选择策略';
+                strategySelect.appendChild(defaultOption);
+                var option1 = document.createElement('option');
+                option1.value = '0502';
+                option1.textContent = '0502';
+                var option2 = document.createElement('option');
+                option2.value = '0507';
+                option2.textContent = '0507';
+                strategySelect.appendChild(option1);
+                strategySelect.appendChild(option2);
+            } else if (createMethod === '新建') {
+                strategyDropdown.style.display = 'block';
+                extraParamsSection.style.display = 'none';
+                productInfoSection.style.display = 'none';
+                templateCountrySelect.style.display = 'none';
+                startDateInput.style.display = 'none';
+                endDateInput.style.display = 'none';
+
+                var strategySelect = document.getElementById('strategy');
+                strategySelect.innerHTML = '';
+                var defaultOption = document.createElement('option');
+                defaultOption.value = '';
+                defaultOption.textContent = '选择策略';
+                strategySelect.appendChild(defaultOption);
+                var option1 = document.createElement('option');
+                option1.value = '0509';
+                option1.textContent = '0509';
+                var option2 = document.createElement('option');
+                option2.value = '0514';
+                option2.textContent = '0514';
+                strategySelect.appendChild(option1);
+                strategySelect.appendChild(option2);
+            } else {
+                strategyDropdown.style.display = 'none';
+                extraParamsSection.style.display = 'none';
+                productInfoSection.style.display = 'none';
+                templateCountrySelect.style.display = 'none';
+                startDateInput.style.display = 'none';
+                endDateInput.style.display = 'none';
+            }
+        }
+
+        // 根据策略选择显示或隐藏额外参数输入框和产品信息输入框
+        function showExtraParams() {
+            var strategy = document.getElementById('strategy').value;
+            var extraParamsSection = document.getElementById('extra_params_section');
+            var productInfoSection = document.getElementById('product_info_section');
+
+            if (strategy === '0502' || strategy === '0507') {
+                extraParamsSection.style.display = 'block';
+                productInfoSection.style.display = 'none';
+            } else if (strategy === '0509' || strategy === '0514') {
+                extraParamsSection.style.display = 'none';
+                productInfoSection.style.display = 'block';
+            } else {
+                extraParamsSection.style.display = 'none';
+                productInfoSection.style.display = 'none';
+            }
+        }
+
+        // 表单提交处理
+        document.getElementById('createForm').addEventListener('submit', function(event) {
+            event.preventDefault(); // 阻止默认的表单提交行为
+
+            // 显示执行状态
+            document.getElementById('statusMessage').style.display = 'block';
+            document.getElementById('statusText').innerText = '执行中...';
+
+            // 发送异步请求
+            var formData = new FormData(this);
+            fetch('/process_create', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => {
+                if (response.ok) {
+                    document.getElementById('statusText').innerText = '执行完成';
+                    // 设置下载链接
+                    document.getElementById('downloadLink').style.display = 'inline';
+                    response.blob().then(blob => {
+                        var url = window.URL.createObjectURL(blob);
+                        var a = document.getElementById('downloadLink');
+                        a.href = url;
+                        a.download = 'result.csv';
+                    });
+                } else {
+                    document.getElementById('statusText').innerText = '执行失败';
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                document.getElementById('statusText').innerText = '执行出错';
+            });
+        });
+    </script>
+</head>
+<body>
+    <h1>创建页面</h1>
+    <form id="createForm" action="/process_create" method="POST">
+        <label for="brand">品牌:</label>
+        <select id="brand" name="brand" onchange="updateCountryOptions()">
+            <option value="DELOMO">DELOMO</option>
+        </select><br>
+
+        <label for="country">国家:</label>
+        <select id="country" name="country">
+            <!-- 国家选项由 JavaScript 动态生成 -->
+        </select><br>
+
+        <label for="create_method">创建方式:</label>
+        <select id="create_method" name="create_method" onchange="showStrategyDropdown()" style="display: block; margin: 0 auto;">
+            <option value="">选择创建方式</option>
+            <option value="横向复刻">横向复刻</option>
+            <option value="新建">新建</option>
+        </select><br>
+
+        <!-- 策略下拉菜单，初始时隐藏 -->
+        <div id="strategy_dropdown" class="strategy">
+            <label for="strategy">策略:</label>
+            <select id="strategy" name="strategy" onchange="showExtraParams()" style="width: 50%; display: block; margin: 0 auto;">
+                <!-- 策略选项根据创建方式动态更新 -->
+            </select><br>
+        </div>
+
+        <!-- 额外参数，包括模板国家、开始日期和结束日期 -->
+        <div id="extra_params_section" class="extra-params" style="display: none;">
+            <div id="extra_params_div">
+                <label for="template_country">模板国家:</label>
+                <select id="template_country" name="template_country">
+                    <option value="IT">意大利 (IT)</option>
+                    <option value="ES">西班牙 (ES)</option>
+                    <option value="DE">德国 (DE)</option>
+                    <option value="FR">法国 (FR)</option>
+                    <option value="UK">英国 (UK)</option>
+                    <option value="US">美国 (US)</option>
+                    <option value="SE">瑞典 (SE)</option>
+                </select><br><br>
+
+                <label for="startdate">开始日期:</label>
+                <input type="text" id="startdate" name="startdate"><br><br>
+
+                <label for="enddate">结束日期:</label>
+                <input type="text" id="enddate" name="enddate"><br><br>
+            </div>
+        </div>
+
+        <!-- 独立的产品信息 -->
+        <div id="product_info_section" class="extra-params" style="display: none;">
+            <label for="product_info">产品信息:</label>
+            <input type="text" id="product_info" name="product_info"><br><br>
+        </div>
+
+        <button type="submit" style="display: block; margin: 0 auto;">提交</button>
+    </form>
+
+    <!-- 用于显示执行状态 -->
+    <div id="statusMessage" style="display: none;">
+        <p id="statusText"></p>
+        <a id="downloadLink" href="#" style="display: none;">下载 CSV 文件</a>
+    </div>
+</body>
+</html>

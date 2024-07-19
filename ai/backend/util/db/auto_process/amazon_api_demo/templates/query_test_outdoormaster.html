@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>api自动化操作</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            padding: 20px;
+            text-align: center;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            color: #333;
+        }
+        form {
+            margin-top: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #555;
+        }
+        select, input[type="text"], input[type="number"] {
+            width: calc(50% - 4px); /* 两个元素平分父容器的宽度，减去间隙 */
+            padding: 8px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+            display: inline-block; /* 转换为行内块级元素 */
+            vertical-align: top; /* 垂直对齐方式 */
+        }
+        .input-group {
+            margin-bottom: 15px;
+        }
+        .input-group label {
+            width: 30%; /* 调整label宽度 */
+            display: inline-block; /* 转换为行内块级元素 */
+            text-align: right; /* 文字右对齐 */
+            margin-right: 2%; /* 间隙 */
+            vertical-align: top; /* 垂直对齐方式 */
+        }
+        .input-group select,
+        .input-group input[type="number"] {
+            width: 65%; /* 调整下拉菜单和输入框的宽度 */
+            margin-right: 0; /* 修正右边距 */
+        }
+        input[type="submit"] {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        input[type="submit"]:hover {
+            background-color: #45a049;
+        }
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>api自动化操作</h1>
+        <form action="/run_function" method="post" id="apiForm">
+            <label for="country">选择国家：</label>
+            <select id="country" name="country" required>
+                <option value="">请选择国家</option>
+                <option value="IT">意大利 (IT)</option>
+                <option value="ES">西班牙 (ES)</option>
+                <option value="DE">德国 (DE)</option>
+                <option value="FR">法国 (FR)</option>
+            </select><br>
+            <label for="brand">品牌:</label>
+            <select name="brand">
+                <option value="OutdoorMaster">OutdoorMaster</option>
+            </select>
+            <label for="ad_type">选择广告类型：</label>
+            <select id="ad_type" name="ad_type" required onchange="showOptions()">
+                <option value="">请选择广告类型</option>
+                <option value="SP-自动">SP-自动</option>
+                <option value="SP-手动">SP-手动</option>
+                <option value="SP-ASIN">SP-ASIN</option>
+                <option value="SD">SD</option>
+            </select><br>
+            <label for="ad_options">选择广告选项：</label>
+            <select id="ad_options" name="ad_options" required onchange="showAdditionalParams()">
+                <option value="">请选择广告选项</option>
+            </select><br>
+            <div id="additional_params" class="hidden">
+                <label for="filter_type">选择筛选类型：</label>
+                <select id="filter_type" name="filter_type" onchange="showFilterParams()">
+                    <option value="">请选择筛选类型</option>
+                    <option value="广告活动筛选">广告活动筛选</option>
+                    <option value="关键词筛选">直接筛选</option>
+                </select><br>
+                <div id="price_adjustment_params" class="hidden input-group">
+                    <label for="price_adjustment_operation">价格调整：</label>
+                    <select id="price_adjustment_operation" name="price_adjustment_operation">
+                        <option value="无">无</option>
+                        <option value="增加">增加</option>
+                        <option value="减少">减少</option>
+                    </select>
+                    <input type="number" id="price_adjustment" name="price_adjustment" step="0.01"><br>
+                </div>
+                <div id="order_count_params" class="hidden input-group">
+                    <label for="order_count_operation">订单数：</label>
+                    <select id="order_count_operation" name="order_count_operation">
+                        <option value="无">无</option>
+                        <option value="大于">大于</option>
+                        <option value="小于">小于</option>
+                    </select>
+                    <input type="number" id="order_count" name="order_count"><br>
+                </div>
+                <div id="click_count_params" class="hidden input-group">
+                    <label for="click_count_operation">点击次数：</label>
+                    <select id="click_count_operation" name="click_count_operation">
+                        <option value="无">无</option>
+                        <option value="大于">大于</option>
+                        <option value="小于">小于</option>
+                    </select>
+                    <input type="number" id="click_count" name="click_count"><br>
+                </div>
+                <div id="period_params" class="hidden input-group">
+                    <label for="period">周期：</label>
+                    <select id="period" name="period" required>
+                        <option value="无">无</option>
+                        <option value="3">3天</option>
+                        <option value="7">7天</option>
+                        <option value="30">30天</option>
+                    </select><br>
+                </div>
+                <!-- 曝光量参数 -->
+                <div id="impression_params" class="hidden input-group">
+                    <label for="impression_operation">曝光量：</label>
+                    <select id="impression_operation" name="impression_operation">
+                        <option value="无">无</option>
+                        <option value="大于">大于</option>
+                        <option value="小于">小于</option>
+                    </select>
+                    <input type="number" id="impression_count" name="impression_count">
+                </div>
+
+                <!-- 查询字段参数 -->
+                <div id="query_field_params" class="hidden input-group">
+                    <label for="query_field_operation">查询字段：</label>
+                    <select id="query_field_operation" name="query_field_operation">
+                        <option value="无">无</option>
+                        <option value="LIKE">LIKE</option>
+                        <option value="NOT LIKE">NOT LIKE</option>
+                    </select>
+                    <input type="text" id="query_field_value" name="query_field_value">
+                </div>
+            </div>
+            <input type="submit" value="运行功能">
+        </form>
+
+        <!-- 展示生成的 CSV 文件 -->
+        <div id="csvContainer" class="hidden">
+            <h2>生成的 CSV 文件</h2>
+            <p>点击下方按钮下载文件：</p>
+            <a id="downloadLink" href="#" download><button>下载 CSV</button></a>
+            <br><br>
+            <button id="startModificationButton">开始修改</button>
+            <p id="modificationStatus" class="hidden">修改完成！</p>
+        </div>
+    </div>
+
+    <script>
+        function showOptions() {
+            var ad_type = document.getElementById("ad_type").value;
+            var ad_options_select = document.getElementById("ad_options");
+            ad_options_select.innerHTML = ""; // 清空现有选项
+
+            var options = [];
+            if (ad_type === "SP-自动") {
+                options = ["请选择广告选项", "预算", "广告位", "自动定位组"];
+            } else if (ad_type === "SP-手动") {
+                options = ["请选择广告选项", "预算", "广告位", "关键词"];
+            } else if (ad_type === "SP-ASIN") {
+                options = ["请选择广告选项", "预算", "广告位", "商品投放"];
+            } else if (ad_type === "SD") {
+                options = ["请选择广告选项", "预算", "内容投放"];
+            }
+
+            // 添加新选项
+            for (var i = 0; i < options.length; i++) {
+                var option = document.createElement("option");
+                option.text = options[i];
+                option.value = options[i];
+                ad_options_select.add(option);
+            }
+
+            // 隐藏额外参数
+            var additional_params_div = document.getElementById("additional_params");
+            additional_params_div.classList.add("hidden");
+
+            // 隐藏筛选参数
+            var price_adjustment_params_div = document.getElementById("price_adjustment_params");
+            price_adjustment_params_div.classList.add("hidden");
+
+            var order_count_params_div = document.getElementById("order_count_params");
+            order_count_params_div.classList.add("hidden");
+
+            var click_count_params_div = document.getElementById("click_count_params");
+            click_count_params_div.classList.add("hidden");
+
+            var period_params_div = document.getElementById("period_params");
+            period_params_div.classList.add("hidden");
+
+            var impression_params_div = document.getElementById("impression_params");
+            impression_params_div.classList.add("hidden");
+
+            var query_field_div = document.getElementById("query_field_params");
+            query_field_div.classList.add("hidden");
+        }
+
+        function showAdditionalParams() {
+            var ad_options = document.getElementById("ad_options").value;
+            var additional_params_div = document.getElementById("additional_params");
+
+
+
+            // 根据选择的广告选项显示或隐藏额外参数
+            if (ad_options === "关键词"|| ad_options === "自动定位组" || ad_options === "商品投放" || ad_options === "预算" || ad_options === "广告位") {
+                additional_params_div.classList.remove("hidden");
+            } else {
+                additional_params_div.classList.add("hidden");
+            }
+
+            // 隐藏筛选参数
+            var price_adjustment_params_div = document.getElementById("price_adjustment_params");
+            price_adjustment_params_div.classList.add("hidden");
+
+            var order_count_params_div = document.getElementById("order_count_params");
+            order_count_params_div.classList.add("hidden");
+
+            var click_count_params_div = document.getElementById("click_count_params");
+            click_count_params_div.classList.add("hidden");
+
+            var period_params_div = document.getElementById("period_params");
+            period_params_div.classList.add("hidden");
+
+            var impression_params_div = document.getElementById("impression_params");
+            impression_params_div.classList.add("hidden");
+
+            var query_field_div = document.getElementById("query_field_params");
+            query_field_div.classList.add("hidden");
+
+
+        }
+
+        function showFilterParams() {
+            var filter_type = document.getElementById("filter_type").value;
+            var price_adjustment_params_div = document.getElementById("price_adjustment_params");
+            var order_count_params_div = document.getElementById("order_count_params");
+            var click_count_params_div = document.getElementById("click_count_params");
+            var period_params_div = document.getElementById("period_params");
+            var impression_params_div = document.getElementById("impression_params"); // 曝光量参数
+            var query_field_params_div = document.getElementById("query_field_params"); // 查询字段参数
+
+            // 隐藏所有筛选参数输入框
+            price_adjustment_params_div.classList.add("hidden");
+            order_count_params_div.classList.add("hidden");
+            click_count_params_div.classList.add("hidden");
+            period_params_div.classList.add("hidden");
+            impression_params_div.classList.add("hidden"); // 隐藏曝光量参数
+            query_field_params_div.classList.add("hidden"); // 隐藏查询字段参数
+
+            // 根据选择的筛选类型显示相应的筛选参数
+            if (filter_type === "广告活动筛选") {
+                price_adjustment_params_div.classList.remove("hidden");
+                period_params_div.classList.remove("hidden");
+                order_count_params_div.classList.remove("hidden");
+                click_count_params_div.classList.remove("hidden");
+                impression_params_div.classList.remove("hidden"); // 显示曝光量参数
+                query_field_params_div.classList.remove("hidden"); // 显示查询字段参数
+            } else if (filter_type === "直接筛选") {
+
+            }
+        }
+
+        // 处理下载 CSV 文件
+        document.getElementById("apiForm").addEventListener("submit", function(event) {
+            event.preventDefault(); // 阻止默认提交行为
+
+            var formData = new FormData(this);
+
+            fetch('/run_function', {
+                method: 'POST',
+                body: formData,
+            })
+            .then(response => response.blob())
+            .then(blob => {
+                // 创建一个临时的URL来下载文件
+                var url = window.URL.createObjectURL(blob);
+
+                // 更新下载链接
+                var downloadLink = document.getElementById('downloadLink');
+                downloadLink.href = url;
+                downloadLink.classList.remove('hidden');
+
+                // 显示生成的 CSV 文件部分
+                var csvContainer = document.getElementById('csvContainer');
+                csvContainer.classList.remove('hidden');
+            })
+            .catch(error => console.error('Error downloading file:', error));
+        });
+                // 处理点击“开始修改”按钮
+        document.getElementById("startModificationButton").addEventListener("click", function(event) {
+            event.preventDefault(); // 阻止默认行为
+            // 显示“修改中”状态
+            var modificationStatus = document.getElementById('modificationStatus');
+            modificationStatus.textContent = '修改中...';
+            modificationStatus.classList.remove('hidden');
+
+            // 发送请求到后端执行修改操作
+            fetch('/query_function', {
+                method: 'POST',
+                body: {}, // 可以根据需要传递参数
+            })
+            .then(response => response.json())
+            .then(data => {
+                // 操作完成后更新状态消息
+                modificationStatus.textContent = '修改完成！';
+
+                // 可以根据需要执行其他操作，比如更新界面或显示其他消息
+            })
+            .catch(error => {
+                console.error('Error modifying data:', error);
+                modificationStatus.textContent = '修改失败，请重试！';
+            });
+        });
+    </script>
+</body>
+</html>

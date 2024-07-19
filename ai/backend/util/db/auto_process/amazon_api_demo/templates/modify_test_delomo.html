@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>修改页面</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            padding: 20px;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+        form {
+            margin-top: 20px;
+        }
+        label {
+            display: block;
+            margin-top: 10px;
+        }
+        select, input[type="file"] {
+            width: 100%;
+            padding: 8px;
+            margin-top: 5px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        button[type="submit"] {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        button[type="submit"]:hover {
+            background-color: #45a049;
+        }
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <h1>修改页面</h1>
+
+    <form action="/modify_function" method="POST" enctype="multipart/form-data">
+        <label for="csvFile">上传 CSV 文件:</label>
+        <input type="file" id="csvFile" name="csvFile" accept=".csv" required>
+
+        <label for="operationOption">操作选项:</label>
+        <select name="operationOption" id="operationOption" onchange="toggleFields(this.value)">
+            <option value="">--请选择一个选项--</option>
+            <option value="createCampaign">新建广告活动</option>
+            <option value="priceAdjustment">改价</option>
+        </select>
+
+        <div id="createCampaignFields" class="hidden">
+            <label for="strategy">策略:</label>
+            <select name="strategy">
+                <option value="0502">0502</option>
+                <option value="0507">0507</option>
+            </select>
+
+            <label for="brand">品牌:</label>
+            <select id="brand" name="brand" onchange="updateCountryOptions()">
+                <option value="DELOMO">DELOMO</option>
+            </select>
+
+            <label for="country">国家:</label>
+            <select id="country" name="country">
+                <!-- 国家选项由 JavaScript 动态生成 -->
+            </select>
+
+            <label for="templateCountry">模板国家:</label>
+            <select name="templateCountry">
+                <option value="IT">意大利</option>
+                <option value="ES">西班牙</option>
+                <option value="DE">德国</option>
+                <option value="FR">法国</option>
+                <option value="UK">英国</option>
+                <option value="US">美国</option>
+            </select>
+        </div>
+
+        <button type="submit">修改</button>
+    </form>
+
+    <script>
+        // 根据选择的品牌动态更新国家选项
+        function updateCountryOptions() {
+            var brand = document.getElementById('brand').value;
+            var countrySelect = document.getElementById('country');
+            countrySelect.innerHTML = ''; // 清空当前选项
+
+            var countries = [];
+            if (brand === 'DELOMO') {
+                countries = ['IT', 'ES', 'DE', 'FR'];
+            } else if (brand === 'OutdoorMaster') {
+                countries = ['IT', 'ES', 'SE', 'FR'];
+            } else {
+                // 默认情况下，可以设置一个通用的国家选项
+                countries = ['IT', 'ES', 'DE', 'FR', 'UK', 'US'];
+            }
+
+            // 添加新的选项到国家选择框
+            for (var i = 0; i < countries.length; i++) {
+                var option = document.createElement('option');
+                option.value = countries[i];
+                option.textContent = getCountryName(countries[i]);
+                countrySelect.appendChild(option);
+            }
+        }
+
+        // 辅助函数，根据国家代码返回显示名称
+        function getCountryName(code) {
+            switch (code) {
+                case 'IT':
+                    return '意大利';
+                case 'ES':
+                    return '西班牙';
+                case 'DE':
+                    return '德国';
+                case 'FR':
+                    return '法国';
+                case 'UK':
+                    return '英国';
+                case 'US':
+                    return '美国';
+                case 'SE':
+                    return '瑞典';
+                default:
+                    return code;
+            }
+        }
+
+        // 初始时根据默认品牌更新国家选项
+        updateCountryOptions();
+
+        // 根据操作选项显示或隐藏相关字段
+        function toggleFields(value) {
+            var createFields = document.getElementById('createCampaignFields');
+            if (value === 'createCampaign') {
+                createFields.classList.remove('hidden');
+            } else {
+                createFields.classList.add('hidden');
+            }
+        }
+    </script>
+</body>
+</html>

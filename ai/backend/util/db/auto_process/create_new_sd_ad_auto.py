@@ -233,6 +233,8 @@ class Ceate_new_sd:
     def create_new_sd_no_template(self,market,info,brand_name):
         if market == 'SE':
             exchange_rate = 11.6
+        elif market == 'JP':
+            exchange_rate = 170
         else:
             exchange_rate = 1
         for i in info:
@@ -402,6 +404,8 @@ class Ceate_new_sd:
     def create_new_sd_no_template2(self,market,info,brand_name):
         if market == 'SE':
             exchange_rate = 11.6
+        elif market == 'JP':
+            exchange_rate = 170
         else:
             exchange_rate = 1
         for i in info:

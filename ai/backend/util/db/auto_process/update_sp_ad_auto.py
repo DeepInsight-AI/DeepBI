@@ -23,24 +23,6 @@ class auto_api:
             # 将DataFrame转换为一个列表，每个元素是一个字典表示一行数据
             df_data = json.loads(df.to_json(orient='records'))
             print(df_data)
-        #     df_data={
-        # "data": [
-        # {
-        #   "market": "FR",
-        #   "sum( sales )": 60.62,
-        #   "sum( cost )": 0.38,
-        #   "Budget": 10,
-        #   "campaignId": 323158262143023,
-        #   "campaignName": "DeepBI_0509_m19",
-        #   "adGroupId": 438024412988838,
-        #   "adGroupName": "DeepBI_0509_m19",
-        #   "advertised_sku": "LPK17SS0001MT102XLR4",
-        #   "new_campaignName": "DeepBI_0514_k01_ASIN",
-        #   "new_adGroupName": "DeepBI_0514_k01_ASIN",
-        #   "new_Budget": 15
-        # }
-        # ]
-        # }
 
             for item in df_data:
                 campaign_id = item["campaignId"]
@@ -178,6 +160,43 @@ class auto_api:
                 api.add_keyword_toadGroup_v0(market, str(campaign_id), str(adGroupId), searchTerm, matchType="PHRASE", state="ENABLED", bid=0.5)
                 api.add_keyword_toadGroup_v0(market, str(campaign_id), str(adGroupId), searchTerm, matchType="BROAD",
                                              state="ENABLED", bid=0.5)
+
+    def add_sp_ad_auto_searchTerm_keyword(self,market, path):
+        uploaded_file = path
+        if os.stat(uploaded_file).st_size > 2:
+            df = pd.read_csv(uploaded_file)
+            # 打印 DataFrame 的前几行，以确保成功读取
+            print(df.head())
+            # 将DataFrame转换为一个列表，每个元素是一个字典表示一行数据
+            df_data = json.loads(df.to_json(orient='records'))
+            print(df_data)
+        #     df_data={
+        # "data": [
+        # {
+        #   "market": "FR",
+        #   "sum( sales )": 60.62,
+        #   "sum( cost )": 0.38,
+        #   "Budget": 8,
+        #   "campaignId": 323158262143023,
+        #   "campaignName": "DeepBI_0509_m19",
+        #   "adGroupId": 438024412988838,
+        #   "adGroupName": "DeepBI_0509_m19",
+        #   "placementClassification": "Top of Search on-Amazon",
+        #   "new_campaignName": "DeepBI_0514_k01_ASIN",
+        #   "new_adGroupName": "DeepBI_0514_k01_ASIN",
+        #   "new_Budget": 10
+        # }
+        # ]
+        # }
+            api = Gen_keyword(self.brand)
+            for item in df_data:
+                if "new_campaignId" in item and item["new_campaignId"]:
+                    campaign_id = item["new_campaignId"]
+                    adGroupId = item["new_adGroupId"]
+                    searchTerm = item["searchTerm"]
+                    api.add_keyword_toadGroup_v0(market, str(int(campaign_id)), str(int(adGroupId)), searchTerm, matchType="EXACT", state="ENABLED", bid=0.5)
+                    api.add_keyword_toadGroup_v0(market, str(int(campaign_id)), str(int(adGroupId)), searchTerm, matchType="PHRASE", state="ENABLED", bid=0.5)
+                    api.add_keyword_toadGroup_v0(market, str(int(campaign_id)), str(int(adGroupId)), searchTerm, matchType="BROAD", state="ENABLED", bid=0.5)
 
 
     def rollback_sp_ad_searchTerm_keyword(self,market, info):

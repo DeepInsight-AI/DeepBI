@@ -7,36 +7,23 @@ import json
 import datetime
 from decimal import Decimal
 from ai.backend.util.db.configuration.path import get_config_path
+from ai.backend.util.db.util.common import get_ad_my_credentials,get_proxies
 
 class CampaignTools:
     def __init__(self,brand):
-        self.credentials = self.load_credentials()
         self.brand = brand
 
-    def load_credentials(self):
-        credentials_path = os.path.join(get_config_path(), 'credentials.json')
-        #credentials_path = 'C:/Users/admin/PycharmProjects/DeepBI/ai/backend/util/db/auto_process/credentials.json'
-        with open(credentials_path) as f:
-            config = json.load(f)
-        return config['credentials']
-
-    def select_market(self, market):
-        market_credentials = self.credentials.get(market)
-        if not market_credentials:
-            raise ValueError(f"Market '{market}' not found in credentials")
-
-        brand_credentials = market_credentials.get(self.brand)
-        if not brand_credentials:
-            raise ValueError(f"Brand '{self.brand}' not found in credentials for market '{market}'")
-
-        # 返回相应的凭据和市场信息
-        return brand_credentials, Marketplaces[market.upper()]
+    def load_credentials(self,market):
+        my_credentials,access_token = get_ad_my_credentials(market,self.brand)
+        return my_credentials,access_token
 
     def list_campaigns_api(self,campaign_info,market):
         try:
-            credentials, marketplace = self.select_market(market)
+            credentials, access_token = self.load_credentials(market)
             result = sponsored_products.CampaignsV3(credentials=credentials,
-                                                    marketplace=marketplace,
+                                                    marketplace=Marketplaces[market.upper()],
+                                                    access_token=access_token,
+                                                    proxies=get_proxies(market),
                                                     debug=True).list_campaigns(
                 body=json.dumps(campaign_info))
         except Exception as e:
@@ -56,9 +43,11 @@ class CampaignTools:
     # 新建广告活动/系列
     def create_campaigns_api(self,campaign_info,market):
         try:
-            credentials, marketplace = self.select_market(str(market))
+            credentials, access_token = self.load_credentials(market)
             result = sponsored_products.CampaignsV3(credentials=credentials,
-                                                    marketplace=marketplace,
+                                                    marketplace=Marketplaces[market.upper()],
+                                                    access_token=access_token,
+                                                    proxies=get_proxies(market),
                                                     debug=True).create_campaigns(
                 body=json.dumps(campaign_info))
         except Exception as e:
@@ -79,9 +68,11 @@ class CampaignTools:
     def update_campaigns(self,campaign_info,market):
 
         try:
-            credentials, marketplace = self.select_market(str(market))
+            credentials, access_token = self.load_credentials(market)
             result = sponsored_products.CampaignsV3(credentials=credentials,
-                                                    marketplace=marketplace,
+                                                    marketplace=Marketplaces[market.upper()],
+                                                    access_token=access_token,
+                                                    proxies=get_proxies(market),
                                                     debug=True).edit_campaigns(
                 body=json.dumps(campaign_info))
         except Exception as e:
@@ -182,7 +173,7 @@ class CampaignTools:
 
     def delete_campaigns_api(self,campaign_id,market):
         try:
-            credentials, marketplace = self.select_market(market)
+            credentials, access_token = self.load_credentials(market)
             campaign_info={
   "campaignIdFilter": {
     "include": [
@@ -191,7 +182,9 @@ class CampaignTools:
   }
 }
             result = sponsored_products.CampaignsV3(credentials=credentials,
-                                                    marketplace=marketplace,
+                                                    marketplace=Marketplaces[market.upper()],
+                                                    access_token=access_token,
+                                                    proxies=get_proxies(market),
                                                     debug=True).delete_campaigns(
                 body=json.dumps(campaign_info))
         except Exception as e:

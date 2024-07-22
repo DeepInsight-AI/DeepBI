@@ -250,8 +250,24 @@ GROUP BY {}
     def select_product_sku_by_asin(self, market1,market2,advertisedSku):
         try:
             conn = self.conn
-            query = """
-            SELECT DISTINCT
+            query1 = f"""
+    SELECT
+		amazon_product_info_extended.parent_asins AS nsspu
+	FROM
+		amazon_product_info
+		LEFT JOIN amazon_product_info_extended ON amazon_product_info_extended.asin = amazon_product_info.asin
+	WHERE
+		amazon_product_info.market = '{market2}'
+		AND amazon_product_info_extended.market = 'DE'
+	AND amazon_product_info.sku IN %(column1_values1)s
+            """
+            df1 = pd.read_sql(query1, con=conn, params={'column1_values1': advertisedSku})
+            column1_values2 = df1['nsspu'].tolist()
+            if column1_values2:
+                print("No product")
+                return advertisedSku
+            query2 = """
+SELECT DISTINCT
 	amazon_product_info.sku
 FROM
 	amazon_product_info
@@ -259,19 +275,9 @@ FROM
 WHERE
 	amazon_product_info.market = 'DE'
 	AND amazon_product_info_extended.market = 'DE'
-	AND amazon_product_info_extended.parent_asins IN (
-	SELECT
-		amazon_product_info_extended.parent_asins AS nsspu
-	FROM
-		amazon_product_info
-		LEFT JOIN amazon_product_info_extended ON amazon_product_info_extended.asin = amazon_product_info.asin
-	WHERE
-		amazon_product_info.market = '{}'
-		AND amazon_product_info_extended.market = 'DE'
-	AND amazon_product_info.sku IN %(column1_values1)s
-	)
+	AND amazon_product_info_extended.parent_asins IN %(column1_values2)s
             """.format(market2)
-            df = pd.read_sql(query, con=conn, params={'column1_values1': advertisedSku})
+            df = pd.read_sql(query2, con=conn, params={'column1_values2': column1_values2})
             if df.empty:
                 print("No product sku")
             else:
@@ -460,7 +466,7 @@ b AS (
         reports.market
 ),
 TargetCampaignIds AS (
-    SELECT DISTINCT campaignId
+    SELECT DISTINCT campaignId, adGroupId
     FROM amazon_sp_productads_list AS T1
     WHERE EXISTS (
         SELECT 1
@@ -477,21 +483,24 @@ TargetCampaignIds AS (
           AND T4.keywordText != '(_targeting_auto_)'
           AND T4.extendedData_servingStatus ='TARGETING_CLAUSE_STATUS_LIVE'
       )
-    GROUP BY T1.campaignId
+    GROUP BY T1.campaignId, T1.adGroupId
     HAVING COUNT(DISTINCT CASE WHEN T1.campaignId = {} THEN T1.asin ELSE NULL END) * 1.0 / COUNT(DISTINCT T1.asin) <= 0.5
 ),
 CampaignStatsResult AS (
   SELECT
+    tci.adGroupId,
     cs.*,
     b.country_avg_ACOS_1m
 FROM
     Campaign_Stats cs
 JOIN b ON cs.market = b.market
+JOIN TargetCampaignIds tci ON cs.campaignId = tci.campaignId
 WHERE
   cs.campaignId IN (SELECT campaignId FROM TargetCampaignIds)
   AND (SELECT COUNT(DISTINCT campaignId) FROM TargetCampaignIds) = 1
 UNION ALL
 SELECT
+    tci.adGroupId,
     cs.*,
     b.country_avg_ACOS_1m
 FROM
@@ -513,16 +522,16 @@ LIMIT 1
             df = pd.read_sql(query, con=conn)
             if df.empty:
                 print("No campaignId")
-                return None,None
+                return None,None,None
             else:
                 print("select campaignId success")
-                return df.loc[0,'campaignId'],df.loc[0,'campaignName']
+                return df.loc[0,'campaignId'],df.loc[0,'campaignName'],df.loc[0,'adGroupId']
         except Exception as e:
             print(f"Error occurred when select_product_sku_by_asin: {e}")
-# api = DbSpTools()
+# api = DbSpTools('OutdoorMaster')
 # #res = api.select_sd_campaign_name("FR",'M06')
 # # #res = api.select_sp_product_asin("IT",'FR','B0CHRYCWPG')
 # # res = api.select_sp_campaign_name('FR',"DeepBI_0514_M35_ASIN")
-# res = api.select_product_sku('DE','FR',['LPK17SS00010WHI006R4'])
+# res = api.select_product_sku_by_asin('DE','FR',['804903-EU'])
 # print(res)
 #L17

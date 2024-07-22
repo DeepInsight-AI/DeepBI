@@ -7,38 +7,25 @@ import json
 import datetime
 from decimal import Decimal
 from ai.backend.util.db.configuration.path import get_config_path
+from ai.backend.util.db.util.common import get_ad_my_credentials,get_proxies
 
 
 class CampaignTools:
     def __init__(self,brand):
-        self.credentials = self.load_credentials()
         self.brand = brand
 
-    def load_credentials(self):
-        credentials_path = os.path.join(get_config_path(), 'credentials.json')
-        #credentials_path = 'C:/Users/admin/PycharmProjects/DeepBI/ai/backend/util/db/auto_process/credentials.json'
-        with open(credentials_path) as f:
-            config = json.load(f)
-        return config['credentials']
-
-    def select_market(self, market):
-        market_credentials = self.credentials.get(market)
-        if not market_credentials:
-            raise ValueError(f"Market '{market}' not found in credentials")
-
-        brand_credentials = market_credentials.get(self.brand)
-        if not brand_credentials:
-            raise ValueError(f"Brand '{self.brand}' not found in credentials for market '{market}'")
-
-        # 返回相应的凭据和市场信息
-        return brand_credentials, Marketplaces[market.upper()]
+    def load_credentials(self,market):
+        my_credentials,access_token = get_ad_my_credentials(market,self.brand)
+        return my_credentials,access_token
 
     def list_campaigns_api(self,campaignId,market):
         try:
-            credentials, marketplace = self.select_market(market)
+            credentials, access_token = self.load_credentials(market)
             result = sponsored_display.Campaigns(credentials=credentials,
-                                                  marketplace=marketplace,
-                                                  debug=True).get_campaign(
+                                                 marketplace=Marketplaces[market.upper()],
+                                                 access_token=access_token,
+                                                 proxies=get_proxies(market),
+                                                 debug=True).get_campaign(
               str(campaignId))
         except Exception as e:
             print("list campaign failed: ", e)
@@ -58,10 +45,12 @@ class CampaignTools:
     # 新建广告活动/系列
     def create_campaigns_api(self,campaign_info,market):
         try:
-            credentials, marketplace = self.select_market(str(market))
+            credentials, access_token = self.load_credentials(market)
             result = sponsored_display.Campaigns(credentials=credentials,
-                                                    marketplace=marketplace,
-                                                    debug=True).create_campaigns(
+                                                 marketplace=Marketplaces[market.upper()],
+                                                 access_token=access_token,
+                                                 proxies=get_proxies(market),
+                                                 debug=True).create_campaigns(
                 body=json.dumps(campaign_info))
         except Exception as e:
             print("create campaign failed: ", e)
@@ -81,10 +70,12 @@ class CampaignTools:
     def update_campaigns(self,campaign_info,market):
 
         try:
-            credentials, marketplace = self.select_market(str(market))
+            credentials, access_token = self.load_credentials(market)
             result = sponsored_display.Campaigns(credentials=credentials,
-                                                    marketplace=marketplace,
-                                                    debug=True).edit_campaigns(
+                                                 marketplace=Marketplaces[market.upper()],
+                                                 access_token=access_token,
+                                                 proxies=get_proxies(market),
+                                                 debug=True).edit_campaigns(
                 body=json.dumps(campaign_info))
             print(result)
         except Exception as e:
@@ -185,7 +176,7 @@ class CampaignTools:
 
     def delete_campaigns_api(self,campaign_id,market):
         try:
-            credentials, marketplace = self.select_market(market)
+            credentials, access_token = self.load_credentials(market)
             campaign_info={
   "campaignIdFilter": {
     "include": [
@@ -194,8 +185,10 @@ class CampaignTools:
   }
 }
             result = sponsored_display.CampaignsV4(credentials=credentials,
-                                                    marketplace=marketplace,
-                                                    debug=True).delete_campaigns(
+                                                   marketplace=Marketplaces[market.upper()],
+                                                   access_token=access_token,
+                                                   proxies=get_proxies(market),
+                                                   debug=True).delete_campaigns(
                 body=json.dumps(campaign_info))
         except Exception as e:
             print("delete campaign failed: ", e)
@@ -214,10 +207,12 @@ class CampaignTools:
 
     def list_all_campaigns_api(self,market):
         try:
-            credentials, marketplace = self.select_market(market)
+            credentials, access_token = self.load_credentials(market)
             result = sponsored_display.Campaigns(credentials=credentials,
-                                                  marketplace=marketplace,
-                                                  debug=True).list_campaigns(
+                                                 marketplace=Marketplaces[market.upper()],
+                                                 access_token=access_token,
+                                                 proxies=get_proxies(market),
+                                                 debug=True).list_campaigns(
               )
         except Exception as e:
             print("list campaign failed: ", e)
@@ -234,10 +229,10 @@ class CampaignTools:
         # 返回创建的 compaignID
         return res
 
-# ct=CampaignTools('DELOMO')
+# ct=CampaignTools('LAPASA')
 # #测试更新广告系列信息
 # #res = ct.list_campaigns_api(None,'FR')
-# res = ct.list_all_campaigns_api('IT')
+# res = ct.list_campaigns_api(289851750658803,'FR')
 # # #print(type(res))
 # print(res)
 
@@ -252,6 +247,6 @@ class CampaignTools:
 #     }
 #   ]
 # }
-# ct=CampaignTools()
-# res = ct.update_campaigns_negative_keywords(campaign_negativekv_info)
+# ct=CampaignTools('LAPASA')
+# res = ct.list_all_campaigns_api('FR')
 # print(res)

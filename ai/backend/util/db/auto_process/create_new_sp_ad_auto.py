@@ -348,6 +348,8 @@ class Ceate_new_sku:
     def create_new_sp_asin_no_template(self,market,info,brand_name):
         if market == 'SE':
             exchange_rate = 11.6
+        elif market == 'JP':
+            exchange_rate = 170
         else:
             exchange_rate = 1
         for i in info:
@@ -448,6 +450,8 @@ class Ceate_new_sku:
         print(result)
         if market == 'SE':
             exchange_rate = 11.6
+        elif market == 'JP':
+            exchange_rate = 170
         else:
             exchange_rate = 1
         for nsspu, skus in result.items():
@@ -528,6 +532,8 @@ class Ceate_new_sku:
     def create_new_sp_asin_no_template_2(self,market,info,brand_name):
         if market == 'SE':
             exchange_rate = 11.6
+        elif market == 'JP':
+            exchange_rate = 170
         else:
             exchange_rate = 1
         for i in info:
@@ -610,6 +616,8 @@ class Ceate_new_sku:
     def create_new_sp_auto_no_template(self,market,info,brand_name):
         if market == 'SE':
             exchange_rate = 11.6
+        elif market == 'JP':
+            exchange_rate = 170
         else:
             exchange_rate = 1
         for i in info:
@@ -648,6 +656,8 @@ class Ceate_new_sku:
     def create_new_sp_auto_no_template1(self,market,info,brand_name):
         if market == 'SE':
             exchange_rate = 11.6
+        elif market == 'JP':
+            exchange_rate = 170
         else:
             exchange_rate = 1
         for i in info:
@@ -686,6 +696,8 @@ class Ceate_new_sku:
     def create_new_sp_manual_no_template(self,market,info,brand_name):
         if market == 'SE':
             exchange_rate = 11.6
+        elif market == 'JP':
+            exchange_rate = 170
         else:
             exchange_rate = 1
         for i in info:

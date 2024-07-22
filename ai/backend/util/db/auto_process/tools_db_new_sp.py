@@ -232,18 +232,18 @@ class DbNewSpTools:
         except Exception as e:
             print(f"Error occurred when into amazon_targeting_update: {e}")
 
-    def create_budget_info(self, market, brand, strategy, type1, campaignId, campaignName, Budget, New_Budget, cost_yesterday, clicks_yesterday, ACOS_yesterday, total_clicks_7d, total_sales14d_7d, ACOS_7d, ACOS_30d, total_clicks_30d, total_sales14d_30d, Reason, country_avg_ACOS_1m, date, create_time, Operational_Status):
+    def create_budget_info(self, market, brand, strategy, type1, campaignId, campaignName, Budget, New_Budget, cost_yesterday, clicks_yesterday, ACOS_yesterday, total_clicks_7d, total_sales14d_7d, ACOS_7d, ACOS_30d, total_clicks_30d, total_sales14d_30d, Reason, country_avg_ACOS_1m, bid_adjust, date, create_time, Operational_Status):
         try:
             conn = self.conn
             cursor = conn.cursor()
             # 注意：确保查询中的列顺序与您的表中列的顺序相匹配
             query = """
             INSERT INTO budget_info
-            (market, brand, strategy, type, campaignId, campaignName, Budget, New_Budget, cost_yesterday, clicks_yesterday, ACOS_yesterday, total_clicks_7d, total_sales14d_7d, ACOS_7d, ACOS_30d, total_clicks_30d, total_sales14d_30d, Reason, country_avg_ACOS_1m, date, create_time, Operational_Status)
-            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+            (market, brand, strategy, type, campaignId, campaignName, Budget, New_Budget, cost_yesterday, clicks_yesterday, ACOS_yesterday, total_clicks_7d, total_sales14d_7d, ACOS_7d, ACOS_30d, total_clicks_30d, total_sales14d_30d, Reason, country_avg_ACOS_1m, bid_adjust, date, create_time, Operational_Status)
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
             """
             values = (
-                market, brand, strategy, type1, campaignId, campaignName, Budget, New_Budget, cost_yesterday, clicks_yesterday, ACOS_yesterday, total_clicks_7d, total_sales14d_7d, ACOS_7d, ACOS_30d, total_clicks_30d, total_sales14d_30d, Reason, country_avg_ACOS_1m, date, create_time, Operational_Status
+                market, brand, strategy, type1, campaignId, campaignName, Budget, New_Budget, cost_yesterday, clicks_yesterday, ACOS_yesterday, total_clicks_7d, total_sales14d_7d, ACOS_7d, ACOS_30d, total_clicks_30d, total_sales14d_30d, Reason, country_avg_ACOS_1m, bid_adjust, date, create_time, Operational_Status
             )
             cursor.execute(query, values)
             conn.commit()
@@ -270,18 +270,18 @@ class DbNewSpTools:
         except Exception as e:
             print(f"插入数据到 sku_info 表时出错: {e}")
 
-    def create_campaign_placement_info(self, market, brand, strategy, type1, campaignName, campaignId, placementClassification, bid, new_bid, ACOS_7d, total_clicks_7d, total_sales14d_7d, ACOS_3d, total_sales14d_3d, total_cost_3d, reason, date, create_time, Operational_Status):
+    def create_campaign_placement_info(self, market, brand, strategy, type1, campaignName, campaignId, placementClassification, bid, new_bid, ACOS_7d, total_clicks_7d, total_sales14d_7d, ACOS_3d, total_sales14d_3d, total_cost_3d, reason, bid_adjust, date, create_time, Operational_Status):
         try:
             conn = self.conn
             cursor = conn.cursor()
             # 确保查询中的列顺序与表结构中的列顺序一致
             query = """
             INSERT INTO campaign_placement_info
-            (market, brand, strategy, type, campaignName, campaignId, placementClassification, bid, new_bid, ACOS_7d, total_clicks_7d, total_sales14d_7d, ACOS_3d, total_sales14d_3d, total_cost_3d, reason, date, create_time, Operational_Status)
-            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+            (market, brand, strategy, type, campaignName, campaignId, placementClassification, bid, new_bid, ACOS_7d, total_clicks_7d, total_sales14d_7d, ACOS_3d, total_sales14d_3d, total_cost_3d, reason, bid_adjust, date, create_time, Operational_Status)
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
             """
             values = (
-                market, brand, strategy, type1, campaignName, campaignId, placementClassification, bid, new_bid, ACOS_7d, total_clicks_7d, total_sales14d_7d, ACOS_3d, total_sales14d_3d, total_cost_3d, reason, date, create_time, Operational_Status
+                market, brand, strategy, type1, campaignName, campaignId, placementClassification, bid, new_bid, ACOS_7d, total_clicks_7d, total_sales14d_7d, ACOS_3d, total_sales14d_3d, total_cost_3d, reason, bid_adjust, date, create_time, Operational_Status
             )
             cursor.execute(query, values)
             conn.commit()
@@ -311,7 +311,7 @@ class DbNewSpTools:
     def create_keyword_info(self, market, brand, strategy, type1, keyword, keywordId, campaignName, adGroupName,
                             matchType, keywordBid, new_keywordBid, ACOS_30d, ORDER_1m, total_clicks_30d,
                             total_sales14d_30d, total_cost_30d, ACOS_7d, total_clicks_7d, total_sales14d_7d,
-                            total_cost_7d, ACOS_3d, total_sales14d_3d, total_cost_3d, reason, date, create_time,
+                            total_cost_7d, ACOS_3d, total_sales14d_3d, total_cost_3d, reason, bid_adjust, date, create_time,
                             Operational_Status):
         try:
             conn = self.conn
@@ -319,13 +319,13 @@ class DbNewSpTools:
             # 确保查询中的列顺序与表结构中的列顺序一致
             query = """
             INSERT INTO keyword_info
-            (market, brand, strategy, type, keyword, keywordId, campaignName, adGroupName, matchType, keywordBid, new_keywordBid, ACOS_30d, ORDER_1m, total_clicks_30d, total_sales14d_30d, total_cost_30d, ACOS_7d, total_clicks_7d, total_sales14d_7d, total_cost_7d, ACOS_3d, total_sales14d_3d, total_cost_3d, reason, date, create_time, Operational_Status)
-            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+            (market, brand, strategy, type, keyword, keywordId, campaignName, adGroupName, matchType, keywordBid, new_keywordBid, ACOS_30d, ORDER_1m, total_clicks_30d, total_sales14d_30d, total_cost_30d, ACOS_7d, total_clicks_7d, total_sales14d_7d, total_cost_7d, ACOS_3d, total_sales14d_3d, total_cost_3d, reason, bid_adjust, date, create_time, Operational_Status)
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
             """
             values = (
                 market, brand, strategy, type1, keyword, keywordId, campaignName, adGroupName, matchType, keywordBid,
                 new_keywordBid, ACOS_30d, ORDER_1m, total_clicks_30d, total_sales14d_30d, total_cost_30d, ACOS_7d,
-                total_clicks_7d, total_sales14d_7d, total_cost_7d, ACOS_3d, total_sales14d_3d, total_cost_3d, reason,
+                total_clicks_7d, total_sales14d_7d, total_cost_7d, ACOS_3d, total_sales14d_3d, total_cost_3d, reason, bid_adjust,
                 date, create_time, Operational_Status
             )
             cursor.execute(query, values)
@@ -337,7 +337,7 @@ class DbNewSpTools:
     def create_automatic_targeting_info(self, market, brand, strategy, type1, keyword, keywordId, campaignName, adGroupName,
                              keywordBid, new_keywordBid, ACOS_30d, total_clicks_30d,
                             total_sales14d_30d, total_cost_30d, ACOS_7d, total_clicks_7d, total_sales14d_7d,
-                            total_cost_7d, ACOS_3d, total_sales14d_3d, total_cost_3d, reason, date, create_time,
+                            total_cost_7d, ACOS_3d, total_sales14d_3d, total_cost_3d, reason, bid_adjust, date, create_time,
                             Operational_Status):
         try:
             conn = self.conn
@@ -345,13 +345,13 @@ class DbNewSpTools:
             # 确保查询中的列顺序与表结构中的列顺序一致
             query = """
             INSERT INTO automatic_targeting_info
-            (market, brand, strategy, type, keyword, keywordId, campaignName, adGroupName, keywordBid, new_keywordBid, ACOS_30d, total_clicks_30d, total_sales14d_30d, total_cost_30d, ACOS_7d, total_clicks_7d, total_sales14d_7d, total_cost_7d, ACOS_3d, total_sales14d_3d, total_cost_3d, reason, date, create_time, Operational_Status)
-            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+            (market, brand, strategy, type, keyword, keywordId, campaignName, adGroupName, keywordBid, new_keywordBid, ACOS_30d, total_clicks_30d, total_sales14d_30d, total_cost_30d, ACOS_7d, total_clicks_7d, total_sales14d_7d, total_cost_7d, ACOS_3d, total_sales14d_3d, total_cost_3d, reason, bid_adjust, date, create_time, Operational_Status)
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
             """
             values = (
                 market, brand, strategy, type1, keyword, keywordId, campaignName, adGroupName, keywordBid,
                 new_keywordBid, ACOS_30d, total_clicks_30d, total_sales14d_30d, total_cost_30d, ACOS_7d,
-                total_clicks_7d, total_sales14d_7d, total_cost_7d, ACOS_3d, total_sales14d_3d, total_cost_3d, reason,
+                total_clicks_7d, total_sales14d_7d, total_cost_7d, ACOS_3d, total_sales14d_3d, total_cost_3d, reason, bid_adjust,
                 date, create_time, Operational_Status
             )
             cursor.execute(query, values)
@@ -363,7 +363,7 @@ class DbNewSpTools:
     def create_product_targets_info(self, market, brand, strategy, type1, keyword, keywordId, campaignName, adGroupName,
                             matchType, keywordBid, new_keywordBid, ACOS_30d, ORDER_1m, total_clicks_30d,
                             total_sales14d_30d, total_cost_30d, ACOS_7d, total_clicks_7d, total_sales14d_7d,
-                            total_cost_7d, ACOS_3d, total_sales14d_3d, total_cost_3d, reason, date, create_time,
+                            total_cost_7d, ACOS_3d, total_sales14d_3d, total_cost_3d, reason, bid_adjust, date, create_time,
                             Operational_Status):
         try:
             conn = self.conn
@@ -374,15 +374,15 @@ class DbNewSpTools:
             INSERT INTO product_targets_info
             (market, brand, strategy, type, keyword, keywordId, campaignName, adGroupName, matchType, keywordBid, New_keywordBid,
              ACOS_30d, ORDER_1m, total_clicks_30d, total_sales14d_30d, total_cost_30d, ACOS_7d, total_clicks_7d,
-             total_sales14d_7d, total_cost_7d, ACOS_3d, total_sales14d_3d, total_cost_3d, reason, date, create_time,
+             total_sales14d_7d, total_cost_7d, ACOS_3d, total_sales14d_3d, total_cost_3d, reason, bid_adjust, date, create_time,
              Operational_Status)
-            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
             """
 
             values = (
                 market, brand, strategy, type1, keyword, keywordId, campaignName, adGroupName, matchType, keywordBid,
                 new_keywordBid, ACOS_30d, ORDER_1m, total_clicks_30d, total_sales14d_30d, total_cost_30d, ACOS_7d,
-                total_clicks_7d, total_sales14d_7d, total_cost_7d, ACOS_3d, total_sales14d_3d, total_cost_3d, reason,
+                total_clicks_7d, total_sales14d_7d, total_cost_7d, ACOS_3d, total_sales14d_3d, total_cost_3d, reason, bid_adjust,
                 date, create_time, Operational_Status
             )
 

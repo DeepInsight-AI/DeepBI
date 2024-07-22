@@ -88,6 +88,7 @@
                 <option value="FR">法国</option>
                 <option value="UK">英国</option>
                 <option value="US">美国</option>
+                <option value="JP">日本</option>
             </select>
         </div>
 
@@ -108,7 +109,7 @@
                 countries = ['IT', 'ES', 'SE', 'FR'];
             } else {
                 // 默认情况下，可以设置一个通用的国家选项
-                countries = ['IT', 'ES', 'DE', 'FR', 'UK', 'US'];
+                countries = ['IT', 'ES', 'DE', 'FR', 'UK', 'US', 'JP'];
             }
 
             // 添加新的选项到国家选择框
@@ -137,6 +138,8 @@
                     return '美国';
                 case 'SE':
                     return '瑞典';
+                case 'JP':
+                    return '日本 (JP)';
                 default:
                     return code;
             }

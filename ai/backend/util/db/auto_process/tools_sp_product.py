@@ -6,39 +6,25 @@ from ad_api.base import Marketplaces
 import json
 import datetime
 from decimal import Decimal
-from ai.backend.util.db.configuration.path import get_config_path
+from ai.backend.util.db.util.common import get_ad_my_credentials,get_proxies
 
 
 class ProductTools:
     def __init__(self,brand):
-        self.credentials = self.load_credentials()
         self.brand = brand
 
-    def load_credentials(self):
-        credentials_path = os.path.join(get_config_path(), 'credentials.json')
-        #credentials_path = 'C:/Users/admin/PycharmProjects/DeepBI/ai/backend/util/db/auto_process/credentials.json'
-        with open(credentials_path) as f:
-            config = json.load(f)
-        return config['credentials']
-
-    def select_market(self, market):
-        market_credentials = self.credentials.get(market)
-        if not market_credentials:
-            raise ValueError(f"Market '{market}' not found in credentials")
-
-        brand_credentials = market_credentials.get(self.brand)
-        if not brand_credentials:
-            raise ValueError(f"Brand '{self.brand}' not found in credentials for market '{market}'")
-
-        # 返回相应的凭据和市场信息
-        return brand_credentials, Marketplaces[market.upper()]
+    def load_credentials(self,market):
+        my_credentials,access_token = get_ad_my_credentials(market,self.brand)
+        return my_credentials,access_token
 
     def create_product_api(self,product_info,market):
         try:
-            credentials, marketplace = self.select_market(market)
+            credentials, access_token = self.load_credentials(market)
             result = sponsored_products.ProductAdsV3(credentials=credentials,
-                                                                 marketplace=marketplace,
-                                                                 debug=True).create_product_ads(
+                                                     marketplace=Marketplaces[market.upper()],
+                                                     access_token=access_token,
+                                                     proxies=get_proxies(market),
+                                                     debug=True).create_product_ads(
                     body=json.dumps(product_info))
         except Exception as e:
             print("add product failed: ", e)
@@ -58,10 +44,12 @@ class ProductTools:
     def update_product_api(self,product_info,market):
 
         try:
-            credentials, marketplace = self.select_market(market)
+            credentials, access_token = self.load_credentials(market)
             result = sponsored_products.ProductAdsV3(credentials=credentials,
-                                                                 marketplace=marketplace,
-                                                                 debug=True).edit_product_ads(
+                                                     marketplace=Marketplaces[market.upper()],
+                                                     access_token=access_token,
+                                                     proxies=get_proxies(market),
+                                                     debug=True).edit_product_ads(
                     body=json.dumps(product_info))
             print(result)
         except Exception as e:
@@ -79,7 +67,7 @@ class ProductTools:
         return res
 
     def get_product_api(self, market, adGroupID):
-        credentials, marketplace = self.select_market(market)
+        credentials, access_token = self.load_credentials(market)
         adGroup_info = {
             "maxResults": 1000,
             "adGroupIdFilter": {
@@ -91,8 +79,10 @@ class ProductTools:
         }
         try:
             result = sponsored_products.ProductAdsV3(credentials=credentials,
-                                                   marketplace=marketplace,
-                                                   debug=True).list_product_ads(
+                                                     marketplace=Marketplaces[market.upper()],
+                                                     access_token=access_token,
+                                                     proxies=get_proxies(market),
+                                                     debug=True).list_product_ads(
                 body=json.dumps(adGroup_info))
         except Exception as e:
             print("查找商品失败: ", e)
@@ -115,7 +105,7 @@ class ProductTools:
 # res = pt.get_product_api('FR',392187134232726)
 # print(res)
 
-# pt=ProductTools()
-# res = pt.create_product_api(product_info)
+# pt=ProductTools('LAPASA')
+# res = pt.get_product_api('FR','386959248314006')
 # print(type(res))
 # print(res)

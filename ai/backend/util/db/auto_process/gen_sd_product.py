@@ -91,6 +91,10 @@ class Gen_product:
                 assetId = 'AWTp8HtljX_6uu4JfZcR'
                 width = 1667
                 height = 1667
+            elif market == 'JP':
+                assetId = 'amzn1.assetlibrary.asset1.72c3584093a109f03036ac406aa7f47c'
+                width = 945
+                height = 945
         elif self.brand == 'DELOMO':
             if market == 'US':
                 assetId = None

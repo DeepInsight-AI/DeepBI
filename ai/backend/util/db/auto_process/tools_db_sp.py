@@ -262,10 +262,10 @@ GROUP BY {}
 	AND amazon_product_info.sku IN %(column1_values1)s
             """
             df1 = pd.read_sql(query1, con=conn, params={'column1_values1': advertisedSku})
-            column1_values2 = df1['nsspu'].tolist()
-            if column1_values2:
+            if df1.empty or (df1['nsspu'].str.strip() == '').all():
                 print("No product")
                 return advertisedSku
+            column1_values2 = df1['nsspu'].tolist()
             query2 = """
 SELECT DISTINCT
 	amazon_product_info.sku
@@ -528,10 +528,97 @@ LIMIT 1
                 return df.loc[0,'campaignId'],df.loc[0,'campaignName'],df.loc[0,'adGroupId']
         except Exception as e:
             print(f"Error occurred when select_product_sku_by_asin: {e}")
+
+    def select_sp_campaign_search_term(self,market,sspu):
+        try:
+            conn = self.conn
+            query = f"""
+SELECT
+    b.sspu,
+    a.searchTerm,
+    a.keyword,
+    a.keywordBid,
+    a.adGroupName,
+    a.adGroupId,
+    a.matchType,
+    a.campaignName,
+    a.campaignId,
+    SUM(CASE WHEN a.date BETWEEN DATE_SUB(CURDATE()- INTERVAL 1 DAY - INTERVAL 1 DAY, INTERVAL 29 day) AND DATE_SUB(CURDATE()- INTERVAL 1 DAY, INTERVAL 1 DAY) THEN a.clicks ELSE 0 END) AS total_clicks_30d,
+    SUM(CASE WHEN a.date BETWEEN DATE_SUB(CURDATE()- INTERVAL 1 DAY - INTERVAL 1 DAY, INTERVAL 6 DAY) AND DATE_SUB(CURDATE()- INTERVAL 1 DAY, INTERVAL 1 DAY) THEN a.clicks ELSE 0 END) AS total_clicks_7d,
+    SUM(CASE WHEN a.date = CURDATE()- INTERVAL 1 DAY - INTERVAL 2 DAY THEN a.clicks ELSE 0 END) AS total_clicks_yesterday,
+    SUM(CASE WHEN a.date BETWEEN DATE_SUB(CURDATE()- INTERVAL 1 DAY - INTERVAL 1 DAY, INTERVAL 29 day) AND DATE_SUB(CURDATE()- INTERVAL 1 DAY, INTERVAL 1 DAY) THEN a.sales14d ELSE 0 END) AS total_sales14d_30d,
+    SUM(CASE WHEN a.date BETWEEN DATE_SUB(CURDATE()- INTERVAL 1 DAY - INTERVAL 1 DAY, INTERVAL 6 DAY) AND DATE_SUB(CURDATE()- INTERVAL 1 DAY, INTERVAL 1 DAY) THEN a.sales14d ELSE 0 END) AS total_sales14d_7d,
+    SUM(CASE WHEN a.date = CURDATE()- INTERVAL 1 DAY - INTERVAL 2 DAY THEN a.sales14d ELSE 0 END) AS total_sales14d_yesterday,
+    SUM(CASE WHEN a.date BETWEEN DATE_SUB(CURDATE()- INTERVAL 1 DAY - INTERVAL 1 DAY, INTERVAL 29 day) AND DATE_SUB(CURDATE()- INTERVAL 1 DAY, INTERVAL 1 DAY) THEN a.cost ELSE 0 END) AS total_cost_30d,
+    SUM(CASE WHEN a.date BETWEEN DATE_SUB(CURDATE()- INTERVAL 1 DAY - INTERVAL 1 DAY, INTERVAL 6 DAY) AND DATE_SUB(CURDATE()- INTERVAL 1 DAY, INTERVAL 1 DAY) THEN a.cost ELSE 0 END) AS total_cost_7d,
+    SUM(CASE WHEN a.date = CURDATE()- INTERVAL 1 DAY - INTERVAL 2 DAY THEN a.cost ELSE 0 END) AS total_cost_yesterday,
+    SUM(CASE WHEN a.date BETWEEN DATE_SUB(CURDATE()- INTERVAL 1 DAY - INTERVAL 1 DAY, INTERVAL 29 day) AND DATE_SUB(CURDATE()- INTERVAL 1 DAY, INTERVAL 1 DAY) THEN a.cost ELSE 0 END) / SUM(CASE WHEN a.date BETWEEN DATE_SUB(CURDATE()- INTERVAL 1 DAY - INTERVAL 1 DAY, INTERVAL 29 day) AND DATE_SUB(CURDATE()- INTERVAL 1 DAY, INTERVAL 1 DAY) THEN a.sales14d ELSE 0 END) AS ACOS_30d,
+    SUM(CASE WHEN a.date BETWEEN DATE_SUB(CURDATE()- INTERVAL 1 DAY - INTERVAL 1 DAY, INTERVAL 6 DAY) AND DATE_SUB(CURDATE()- INTERVAL 1 DAY, INTERVAL 1 DAY) THEN a.cost ELSE 0 END) / SUM(CASE WHEN a.date BETWEEN DATE_SUB(CURDATE()- INTERVAL 1 DAY - INTERVAL 1 DAY, INTERVAL 6 DAY) AND DATE_SUB(CURDATE()- INTERVAL 1 DAY, INTERVAL 1 DAY) THEN a.sales14d ELSE 0 END) AS ACOS_7d,
+    SUM(CASE WHEN a.date = CURDATE()- INTERVAL 1 DAY - INTERVAL 2 DAY THEN a.cost ELSE 0 END) / SUM(CASE WHEN a.date = CURDATE()- INTERVAL 1 DAY - INTERVAL 2 DAY THEN a.sales14d ELSE 0 END)  AS ACOS_yesterday,
+    SUM(CASE WHEN a.date BETWEEN DATE_SUB(CURDATE()- INTERVAL 1 DAY - INTERVAL 1 DAY, INTERVAL 29 day) AND DATE_SUB(CURDATE()- INTERVAL 1 DAY, INTERVAL 1 DAY) THEN a.purchases7d ELSE 0 END) AS ORDER_1m,
+    SUM(CASE WHEN a.date BETWEEN DATE_SUB(CURDATE()- INTERVAL 1 DAY - INTERVAL 1 DAY, INTERVAL 6 day) AND DATE_SUB(CURDATE()- INTERVAL 1 DAY, INTERVAL 1 DAY) THEN a.purchases7d ELSE 0 END) AS ORDER_7d
+
+FROM
+    amazon_search_term_reports_sp a
+JOIN
+    amazon_campaigns_list_sp c ON a.campaignId = c.campaignId
+JOIN
+    (select sspu,campaignId
+    from amazon_advertised_product_reports_sp t1
+    join
+        prod_as_product_base t2 ON t2.sku = t1.advertisedSku
+    where market = '{market}'
+    group by
+        campaignId
+    ) b ON c.campaignId = b.campaignId
+WHERE
+    a.date BETWEEN DATE_SUB(CURDATE()- INTERVAL 1 DAY, INTERVAL 30 DAY) AND CURDATE()- INTERVAL 1 DAY- INTERVAL 1 DAY
+    AND a.market = '{market}'
+    AND b.sspu = '{sspu}'
+    AND c.state = 'ENABLED'
+    AND c.targetingType LIKE '%AUT%'
+    AND NOT (a.searchTerm LIKE 'b0%' AND LENGTH(a.searchTerm) = 10) -- 添加排除条件
+GROUP BY
+    a.adGroupName,
+    a.campaignName,
+    a.keyword,
+    a.searchTerm,
+    a.matchType
+ORDER BY
+    a.adGroupName,
+    a.campaignName,
+    a.keyword,
+    a.searchTerm;
+                    """.format(market)
+            df = pd.read_sql(query, con=conn)
+            if df.empty:
+                print("No search_term")
+                return None
+            else:
+                # Define criteria for filtering
+                # Criteria 1: Sales in the last 7 days > 0 and ACOS in the last 7 days <= 0.24
+                criteria1 = (df['total_sales14d_7d'] > 0) & (df['ACOS_7d'] <= 0.24)
+
+                # Criteria 2: Orders in the last 30 days >= 2 and average ACOS in the last 30 days <= 0.24
+                criteria2 = (df['ORDER_1m'] >= 2) & (df['ACOS_30d'] <= 0.24)
+
+                # Apply filters
+                filtered_df = df[criteria1 | criteria2]
+
+                if filtered_df.empty:
+                    print("No search_term matching the criteria")
+                    return None
+                else:
+                    print("select campaignId success")
+                    return filtered_df['searchTerm'].tolist()
+
+        except Exception as e:
+            print(f"Error occurred when selecting campaign search term: {e}")
 # api = DbSpTools('OutdoorMaster')
 # #res = api.select_sd_campaign_name("FR",'M06')
 # # #res = api.select_sp_product_asin("IT",'FR','B0CHRYCWPG')
 # # res = api.select_sp_campaign_name('FR',"DeepBI_0514_M35_ASIN")
-# res = api.select_product_sku_by_asin('DE','FR',['804903-EU'])
+# res = api.select_product_sku_by_asin('FR','DE',['800810-EU'])
+# #res = api.select_sp_campaign_search_term('US','M100')
 # print(res)
 #L17

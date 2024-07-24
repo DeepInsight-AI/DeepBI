@@ -11,7 +11,7 @@
 }
 .select-content {
   position: relative;
-  max-width: 850px;
+  max-width: 400px;
   margin: auto;
   height: auto;
   display: flex;
@@ -109,6 +109,8 @@
   border: none;
 }
 .table-columns {
+  display: flex;
+  flex-direction: column; /* 改为 column，使子元素垂直排列 */
   margin-left: 20px;
   position: relative;
   border: 1px solid #ccc;

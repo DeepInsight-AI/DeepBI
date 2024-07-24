@@ -39,7 +39,7 @@
 }
 .chat-content {
   animation: bot-item 0.3s ease-in-out;
-  margin: 0 100px;
+  margin: 0 10px;
 }
 @keyframes bot-item {
   0% {

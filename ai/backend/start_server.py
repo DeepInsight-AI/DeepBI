@@ -13,7 +13,7 @@ class WSServer:
         loop = asyncio.new_event_loop()
         asyncio.set_event_loop(loop)
         server_ip = "0.0.0.0"
-        # server_port = 5001
+        server_port = 8338
         server_port = self.server_port
         start_server = websockets.serve(self.handler, server_ip, server_port, ping_interval=None)
 

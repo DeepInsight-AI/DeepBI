@@ -34,10 +34,10 @@ const DialogueTop = (props) => {
     <div className="dialogue-top-flex">
          <div>{chat_type==="chat"?window.W_L.data_analysis:chat_type==="report"?window.W_L.query_builder:chat_type==="autopilot"?window.W_L.auto_pilot:""}</div>
      </div>
-     <div className="dialogue-top-flex">
+     {/* <div className="dialogue-top-flex">
          <div>{window.W_L.data_source}:</div>
          <span>{CharttableItem.label}</span>
-     </div>
+     </div> */}
      {
         chat_type!=="viewConversation"&&
         (

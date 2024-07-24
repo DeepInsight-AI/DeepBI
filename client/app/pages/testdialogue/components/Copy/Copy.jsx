@@ -28,10 +28,10 @@ const Copy = props => {
   // }
   return (
     <div className={`copy${sender}`}>
-      <div className="copt-item" onClick={copyCentent}>
+      {/* <div className="copt-item" onClick={copyCentent}>
         <img src={copy} alt="copy" />
         <div className="copy-text">{window.W_L.copy}</div>
-      </div>
+      </div> */}
       {/* {
             sender=="bot"?
             <div className="copt-item" onClick={retryCentent}>

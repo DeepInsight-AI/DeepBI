@@ -1,6 +1,6 @@
 # DeepBI User Manual
 
-## 1，Configure API KEY
+## 1，Configure API KEYfuck you!
 
 - [Setting]-[API KEY]
 

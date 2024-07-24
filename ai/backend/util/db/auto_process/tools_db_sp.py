@@ -247,7 +247,7 @@ GROUP BY {}
         except Exception as e:
             print(f"Error occurred when select_product_sku: {e}")
 
-    def select_product_sku_by_asin(self, market1,market2,advertisedSku):
+    def select_product_sku_by_asin(self, market1,market2,advertisedSku,depository):
         try:
             conn = self.conn
             query1 = f"""
@@ -258,7 +258,7 @@ GROUP BY {}
 		LEFT JOIN amazon_product_info_extended ON amazon_product_info_extended.asin = amazon_product_info.asin
 	WHERE
 		amazon_product_info.market = '{market2}'
-		AND amazon_product_info_extended.market = 'DE'
+		AND amazon_product_info_extended.market = '{depository}'
 	AND amazon_product_info.sku IN %(column1_values1)s
             """
             df1 = pd.read_sql(query1, con=conn, params={'column1_values1': advertisedSku})
@@ -266,17 +266,17 @@ GROUP BY {}
                 print("No product")
                 return advertisedSku
             column1_values2 = df1['nsspu'].tolist()
-            query2 = """
+            query2 = f"""
 SELECT DISTINCT
 	amazon_product_info.sku
 FROM
 	amazon_product_info
 	LEFT JOIN amazon_product_info_extended ON amazon_product_info_extended.asin = amazon_product_info.asin
 WHERE
-	amazon_product_info.market = 'DE'
-	AND amazon_product_info_extended.market = 'DE'
+	amazon_product_info.market = '{depository}'
+	AND amazon_product_info_extended.market = '{depository}'
 	AND amazon_product_info_extended.parent_asins IN %(column1_values2)s
-            """.format(market2)
+            """
             df = pd.read_sql(query2, con=conn, params={'column1_values2': column1_values2})
             if df.empty:
                 print("No product sku")
@@ -286,20 +286,20 @@ WHERE
         except Exception as e:
             print(f"Error occurred when select_product_sku_by_asin: {e}")
 
-    def select_product_sku_by_deasin(self, parent_asins):
+    def select_product_sku_by_parent_asin(self, parent_asins, depository):
         try:
             conn = self.conn
-            query = """
+            query = f"""
             SELECT DISTINCT
 	amazon_product_info.sku
 FROM
 	amazon_product_info
 	LEFT JOIN amazon_product_info_extended ON amazon_product_info_extended.asin = amazon_product_info.asin
 WHERE
-	amazon_product_info.market = 'DE'
-	AND amazon_product_info_extended.market = 'DE'
-	AND amazon_product_info_extended.parent_asins = '{}'
-            """.format(parent_asins)
+	amazon_product_info.market = '{depository}'
+	AND amazon_product_info_extended.market = '{depository}'
+	AND amazon_product_info_extended.parent_asins = '{parent_asins}'
+            """
             df = pd.read_sql(query, con=conn)
             if df.empty:
                 print("No product sku")

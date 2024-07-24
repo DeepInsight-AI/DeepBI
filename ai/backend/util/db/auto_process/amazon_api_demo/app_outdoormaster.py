@@ -69,6 +69,13 @@ def process_create():
                         api2.create_new_sp_asin_no_template_2(params_create['country'], info, params_create['brand'])
                     else:
                         api2.create_new_sp_asin_no_template(params_create['country'], info, params_create['brand'])
+                elif params_create['strategy'] == "0502_auto":
+                    if params_create['brand'] == 'LAPASA':
+                        api2.create_new_sp_auto_no_template1(params_create['country'], info, params_create['brand'])
+                    else:
+                        api2.create_new_sp_auto_no_template(params_create['country'], info, params_create['brand'])
+                elif params_create['strategy'] == "0502_manual":
+                    api2.create_new_sp_manual_no_template(params_create['country'], info, params_create['brand'])
                 return jsonify({"status": "success", "message": "处理完成，未生成 CSV 文件。"})
             elif params_create['create_method'] == '横向复刻':
                 additional_params_create = {

@@ -310,7 +310,7 @@ class DbNewSpTools:
 
     def create_keyword_info(self, market, brand, strategy, type1, keyword, keywordId, campaignName, adGroupName,
                             matchType, keywordBid, new_keywordBid, ACOS_30d, ORDER_1m, total_clicks_30d,
-                            total_sales14d_30d, total_cost_30d, ACOS_7d, total_clicks_7d, total_sales14d_7d,
+                            total_sales14d_30d, total_cost_30d, ORDER_15d, ACOS_7d, total_clicks_7d, total_sales14d_7d,
                             total_cost_7d, ACOS_3d, total_sales14d_3d, total_cost_3d, reason, bid_adjust, date, create_time,
                             Operational_Status):
         try:
@@ -319,12 +319,12 @@ class DbNewSpTools:
             # 确保查询中的列顺序与表结构中的列顺序一致
             query = """
             INSERT INTO keyword_info
-            (market, brand, strategy, type, keyword, keywordId, campaignName, adGroupName, matchType, keywordBid, new_keywordBid, ACOS_30d, ORDER_1m, total_clicks_30d, total_sales14d_30d, total_cost_30d, ACOS_7d, total_clicks_7d, total_sales14d_7d, total_cost_7d, ACOS_3d, total_sales14d_3d, total_cost_3d, reason, bid_adjust, date, create_time, Operational_Status)
-            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+            (market, brand, strategy, type, keyword, keywordId, campaignName, adGroupName, matchType, keywordBid, new_keywordBid, ACOS_30d, ORDER_1m, total_clicks_30d, total_sales14d_30d, total_cost_30d, ORDER_15d, ACOS_7d, total_clicks_7d, total_sales14d_7d, total_cost_7d, ACOS_3d, total_sales14d_3d, total_cost_3d, reason, bid_adjust, date, create_time, Operational_Status)
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
             """
             values = (
                 market, brand, strategy, type1, keyword, keywordId, campaignName, adGroupName, matchType, keywordBid,
-                new_keywordBid, ACOS_30d, ORDER_1m, total_clicks_30d, total_sales14d_30d, total_cost_30d, ACOS_7d,
+                new_keywordBid, ACOS_30d, ORDER_1m, total_clicks_30d, total_sales14d_30d, total_cost_30d, ORDER_15d, ACOS_7d,
                 total_clicks_7d, total_sales14d_7d, total_cost_7d, ACOS_3d, total_sales14d_3d, total_cost_3d, reason, bid_adjust,
                 date, create_time, Operational_Status
             )
@@ -336,7 +336,7 @@ class DbNewSpTools:
 
     def create_automatic_targeting_info(self, market, brand, strategy, type1, keyword, keywordId, campaignName, adGroupName,
                              keywordBid, new_keywordBid, ACOS_30d, total_clicks_30d,
-                            total_sales14d_30d, total_cost_30d, ACOS_7d, total_clicks_7d, total_sales14d_7d,
+                            total_sales14d_30d, total_cost_30d, ORDER_15d, ACOS_7d, total_clicks_7d, total_sales14d_7d,
                             total_cost_7d, ACOS_3d, total_sales14d_3d, total_cost_3d, reason, bid_adjust, date, create_time,
                             Operational_Status):
         try:
@@ -345,12 +345,12 @@ class DbNewSpTools:
             # 确保查询中的列顺序与表结构中的列顺序一致
             query = """
             INSERT INTO automatic_targeting_info
-            (market, brand, strategy, type, keyword, keywordId, campaignName, adGroupName, keywordBid, new_keywordBid, ACOS_30d, total_clicks_30d, total_sales14d_30d, total_cost_30d, ACOS_7d, total_clicks_7d, total_sales14d_7d, total_cost_7d, ACOS_3d, total_sales14d_3d, total_cost_3d, reason, bid_adjust, date, create_time, Operational_Status)
-            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+            (market, brand, strategy, type, keyword, keywordId, campaignName, adGroupName, keywordBid, new_keywordBid, ACOS_30d, total_clicks_30d, total_sales14d_30d, total_cost_30d, ORDER_15d, ACOS_7d, total_clicks_7d, total_sales14d_7d, total_cost_7d, ACOS_3d, total_sales14d_3d, total_cost_3d, reason, bid_adjust, date, create_time, Operational_Status)
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
             """
             values = (
                 market, brand, strategy, type1, keyword, keywordId, campaignName, adGroupName, keywordBid,
-                new_keywordBid, ACOS_30d, total_clicks_30d, total_sales14d_30d, total_cost_30d, ACOS_7d,
+                new_keywordBid, ACOS_30d, total_clicks_30d, total_sales14d_30d, total_cost_30d, ORDER_15d, ACOS_7d,
                 total_clicks_7d, total_sales14d_7d, total_cost_7d, ACOS_3d, total_sales14d_3d, total_cost_3d, reason, bid_adjust,
                 date, create_time, Operational_Status
             )
@@ -362,7 +362,7 @@ class DbNewSpTools:
 
     def create_product_targets_info(self, market, brand, strategy, type1, keyword, keywordId, campaignName, adGroupName,
                             matchType, keywordBid, new_keywordBid, ACOS_30d, ORDER_1m, total_clicks_30d,
-                            total_sales14d_30d, total_cost_30d, ACOS_7d, total_clicks_7d, total_sales14d_7d,
+                            total_sales14d_30d, total_cost_30d, ORDER_15d, ACOS_7d, total_clicks_7d, total_sales14d_7d,
                             total_cost_7d, ACOS_3d, total_sales14d_3d, total_cost_3d, reason, bid_adjust, date, create_time,
                             Operational_Status):
         try:
@@ -373,15 +373,15 @@ class DbNewSpTools:
             query = """
             INSERT INTO product_targets_info
             (market, brand, strategy, type, keyword, keywordId, campaignName, adGroupName, matchType, keywordBid, New_keywordBid,
-             ACOS_30d, ORDER_1m, total_clicks_30d, total_sales14d_30d, total_cost_30d, ACOS_7d, total_clicks_7d,
+             ACOS_30d, ORDER_1m, total_clicks_30d, total_sales14d_30d, total_cost_30d, ORDER_15d, ACOS_7d, total_clicks_7d,
              total_sales14d_7d, total_cost_7d, ACOS_3d, total_sales14d_3d, total_cost_3d, reason, bid_adjust, date, create_time,
              Operational_Status)
-            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
             """
 
             values = (
                 market, brand, strategy, type1, keyword, keywordId, campaignName, adGroupName, matchType, keywordBid,
-                new_keywordBid, ACOS_30d, ORDER_1m, total_clicks_30d, total_sales14d_30d, total_cost_30d, ACOS_7d,
+                new_keywordBid, ACOS_30d, ORDER_1m, total_clicks_30d, total_sales14d_30d, total_cost_30d, ORDER_15d, ACOS_7d,
                 total_clicks_7d, total_sales14d_7d, total_cost_7d, ACOS_3d, total_sales14d_3d, total_cost_3d, reason, bid_adjust,
                 date, create_time, Operational_Status
             )

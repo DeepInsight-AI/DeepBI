@@ -25,5 +25,32 @@
     "db": "amazon_outdoormaster",
     "charset": "utf8mb4",
     "use_unicode": true
+  },
+  "MUDEELA": {
+    "host": "192.168.5.114",
+    "user": "root",
+    "passwd": "duozhuan888",
+    "port": 3308,
+    "db": "amazon_bdzx_mudeela",
+    "charset": "utf8mb4",
+    "use_unicode": true
+  },
+  "Rossny": {
+    "host": "192.168.5.114",
+    "user": "root",
+    "passwd": "duozhuan888",
+    "port": 3308,
+    "db": "amazon_bdzx_rossny",
+    "charset": "utf8mb4",
+    "use_unicode": true
+  },
+  "ZEN CAVE": {
+    "host": "192.168.5.114",
+    "user": "root",
+    "passwd": "duozhuan888",
+    "port": 3308,
+    "db": "amazon_bdzx_zen_cave",
+    "charset": "utf8mb4",
+    "use_unicode": true
   }
 }

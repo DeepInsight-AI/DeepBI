@@ -7,16 +7,20 @@ from ai.backend.util.db.auto_process.gen_sd_campaign import Gen_campaign
 from ai.backend.util.db.auto_process.tools_sd_campaign import CampaignTools
 from ai.backend.util.db.auto_process.gen_sp_keyword import Gen_keyword  #add_keyword_toadGroup_v0,update_keyword_toadGroup
 from ai.backend.util.db.auto_process.gen_sp_adgroup import Gen_adgroup  #add_adGroup_negative_keyword_v0,update_adGroup_TargetingClause
-from ai.backend.util.db.auto_process.gen_sp_product import Gen_product
+from ai.backend.util.db.auto_process.gen_sd_product import Gen_product
 from ai.backend.util.db.auto_process.tools_db_new_sp import DbNewSpTools
 from ai.backend.util.db.auto_process.tools_sp_adGroup import AdGroupTools
 from ai.backend.util.db.auto_process.tools_sp_keyword import SPKeywordTools
+from ai.backend.util.db.auto_process.create_new_sp_ad_auto import load_config
 
 
 
-class auto_api:
-    def __init__(self,brand):
+class auto_api_sd:
+    def __init__(self,brand,market):
         self.brand = brand
+        self.market = market
+        self.exchange_rate = load_config('exchange_rate.json').get('exchange_rate', {}).get("DE", {}).get(self.market)
+
 
     def update_sd_ad_budget(self,market, path):
         uploaded_file = path
@@ -33,145 +37,23 @@ class auto_api:
                 campaign_name = item["campaignName"]
                 bid_adjust = item["bid_adjust"]
                 api1 = CampaignTools(self.brand)
+                api2 = Gen_campaign(self.brand)
                 campaign_info = api1.list_campaigns_api(campaign_id, market)
                 if campaign_info is not None:
                     campaignId = item['campaignId']
                     name = item['name']
-                    bid1 = item['budget']['budget']
+                    bid1 = item['budget']
                     if bid1 is not None:  # 检查是否存在有效的bid值
                         if bid_adjust == 0:
-                            api1.update_camapign_v0(market, str(campaign_id), campaign_name, float(bid1),
-                                                    budget_new=float(bid1), state="PAUSED")
+                            api2.update_camapign_v0(market, str(campaign_id), campaign_name, "paused","daily", float(bid1))
                         else:
-                            bid = max(5, bid1 + float(bid_adjust))
+                            bid = max(5, bid1 + float(bid_adjust) * self.exchange_rate)
                             try:
-                                api1.update_camapign_v0(market, str(campaignId), name, float(bid1), float(bid),
-                                                        state="ENABLED")
+                                api2.update_camapign_v0(market, str(campaignId), name, "enabled", "daily", float(bid), float(bid1))
                             except Exception as e:
                                 print(e)
 
-
-    def update_sp_ad_placement(self,market, path):
-        uploaded_file = path
-        if os.stat(uploaded_file).st_size > 2:
-            df = pd.read_csv(uploaded_file)
-            # 打印 DataFrame 的前几行，以确保成功读取
-            print(df.head())
-            # 将DataFrame转换为一个列表，每个元素是一个字典表示一行数据
-            df_data = json.loads(df.to_json(orient='records'))
-            print(df_data)
-
-            for item in df_data:
-                campaign_id = item["campaignId"]
-                bid_adjust = item["bid_adjust"]
-                placementClassification = item["placementClassification"]
-                if placementClassification == "Top of Search on-Amazon":
-                    placementClassification = "PLACEMENT_TOP"
-                elif placementClassification == "Detail Page on-Amazon":
-                    placementClassification = "PLACEMENT_PRODUCT_PAGE"
-                elif placementClassification == "Other on-Amazon":
-                    placementClassification = "PLACEMENT_REST_OF_SEARCH"
-                api1 = Gen_campaign(self.brand)
-                campaign_info = api1.list_camapign(campaign_id, market)
-                if campaign_info is not None:
-                    for item in campaign_info:
-                        # 获取 dynamicBidding 中的 placementBidding 列表
-                        placement_bidding = item['dynamicBidding']['placementBidding']
-
-                        # 定义可能的 placement 类型列表
-                        possible_placements = ['PLACEMENT_REST_OF_SEARCH', 'PLACEMENT_PRODUCT_PAGE', 'PLACEMENT_TOP']
-
-                        # 定义一个字典来存储各个 placement 的 percentage，默认设置为 0
-                        placement_percentages = {placement: 0 for placement in possible_placements}
-
-                        # 遍历 placementBidding 列表，更新 placement_percentages 中存在的项
-                        for item1 in placement_bidding:
-                            placement = item1['placement']
-                            percentage = item1['percentage']
-
-                            # 只更新存在于 possible_placements 中的 placement
-                            if placement in possible_placements:
-                                placement_percentages[placement] = percentage
-
-                        campaignId = item['campaignId']
-                        # 遍历字典，打印每个 placement 和对应的 percentage
-                        for placement, percentage in placement_percentages.items():
-                            if placement == placementClassification:
-                                print(f'Placement: {placement}, Percentage: {percentage}')
-                                bid1 = percentage
-                                if bid1 is not None:  # 检查是否存在有效的bid值
-                                    if bid_adjust == 0:
-                                        bid = 0
-                                    else:
-                                        bid = max(5, min(bid1 + float(bid_adjust), 50))
-                                    try:
-                                        api1.update_campaign_placement(market, str(campaignId), bid1, bid, placement)
-                                    except Exception as e:
-                                        print(e)
-
-    def add_sp_ad_searchTerm_keyword(self, market, path):
-        uploaded_file = path
-        if os.stat(uploaded_file).st_size > 2:
-            df = pd.read_csv(uploaded_file)
-            # 打印 DataFrame 的前几行，以确保成功读取
-            print(df.head())
-            # 将DataFrame转换为一个列表，每个元素是一个字典表示一行数据
-            df_data = json.loads(df.to_json(orient='records'))
-            print(df_data)
-            api = Gen_keyword(self.brand)
-            for item in df_data:
-                campaign_id = item["campaignId"]
-                adGroupId = item["adGroupId"]
-                searchTerm = item["searchTerm"]
-                api.add_keyword_toadGroup_v0(market, str(campaign_id), str(adGroupId), searchTerm, matchType="EXACT", state="ENABLED", bid=0.5)
-                api.add_keyword_toadGroup_v0(market, str(campaign_id), str(adGroupId), searchTerm, matchType="PHRASE", state="ENABLED", bid=0.5)
-                api.add_keyword_toadGroup_v0(market, str(campaign_id), str(adGroupId), searchTerm, matchType="BROAD",
-                                             state="ENABLED", bid=0.5)
-
-    def add_sp_ad_auto_searchTerm_keyword(self,market, path):
-        uploaded_file = path
-        if os.stat(uploaded_file).st_size > 2:
-            df = pd.read_csv(uploaded_file)
-            # 打印 DataFrame 的前几行，以确保成功读取
-            print(df.head())
-            # 将DataFrame转换为一个列表，每个元素是一个字典表示一行数据
-            df_data = json.loads(df.to_json(orient='records'))
-            print(df_data)
-            api = Gen_keyword(self.brand)
-            for item in df_data:
-                if "new_campaignId" in item and item["new_campaignId"]:
-                    campaign_id = item["new_campaignId"]
-                    adGroupId = item["new_adGroupId"]
-                    searchTerm = item["searchTerm"]
-                    api.add_keyword_toadGroup_v0(market, str(int(campaign_id)), str(int(adGroupId)), searchTerm, matchType="EXACT", state="ENABLED", bid=0.5)
-                    api.add_keyword_toadGroup_v0(market, str(int(campaign_id)), str(int(adGroupId)), searchTerm, matchType="PHRASE", state="ENABLED", bid=0.5)
-                    api.add_keyword_toadGroup_v0(market, str(int(campaign_id)), str(int(adGroupId)), searchTerm, matchType="BROAD", state="ENABLED", bid=0.5)
-
-    def add_sp_ad_searchTerm_negative_keyword(self,market, path):
-        uploaded_file = path
-        if os.stat(uploaded_file).st_size > 2:
-            df = pd.read_csv(uploaded_file)
-            # 打印 DataFrame 的前几行，以确保成功读取
-            print(df.head())
-            # 将DataFrame转换为一个列表，每个元素是一个字典表示一行数据
-            df_data = json.loads(df.to_json(orient='records'))
-            print(df_data)
-
-            api1 = Gen_adgroup(self.brand)
-            for item in df_data:
-                campaign_id = item["campaignId"]
-                adGroupId = item["adGroupId"]
-                searchTerm = item["searchTerm"]
-                try:
-                    api1.add_adGroup_negative_keyword_v0(market, str(campaign_id), str(adGroupId), searchTerm, matchType="NEGATIVE_EXACT", state="ENABLED")
-                except Exception as e:
-                    print("An error occurred:", e)
-                    newdbtool = DbNewSpTools(self.brand)
-                    newdbtool.add_sp_adGroup_negativeKeyword(market, None, adGroupId, campaign_id, None,"NEGATIVE_EXACT",
-                                                             "ENABLED", searchTerm, "failed",datetime.now()
-                                                             ,None ,None )
-
-    def update_sp_ad_sku(self,market, path):
+    def update_sd_ad_sku(self,market, path):
         uploaded_file = path
         if os.stat(uploaded_file).st_size > 2:
             df = pd.read_csv(uploaded_file)
@@ -183,69 +65,8 @@ class auto_api:
             api = Gen_product(self.brand)
             for item in df_data:
                 adId = item["adId"]
-                api.update_product(market, str(adId), state="PAUSED")
+                api.update_product(market, str(adId), state="paused")
 
-    def update_sp_ad_keyword(self,market,path):
-        uploaded_file = path
-        if os.stat(uploaded_file).st_size > 2:
-            df = pd.read_csv(uploaded_file)
-            # 打印 DataFrame 的前几行，以确保成功读取
-            print(df.head())
-            # 将DataFrame转换为一个列表，每个元素是一个字典表示一行数据
-            df_data = json.loads(df.to_json(orient='records'))
-            print(df_data)
-
-            api = Gen_keyword(self.brand)
-            api1 = SPKeywordTools(self.brand)
-            for item in df_data:
-                keywordId = item["keywordId"]
-                ACOS_7d = item["ACOS_7d"]
-                bid_adjust = item["bid_adjust"]
-                spkeyword_info = api1.get_spkeyword_api_by_keywordId(market, keywordId)
-                if spkeyword_info is not None:
-                    for item in spkeyword_info:
-                        bid1 = item.get('bid')
-                        if bid1 is not None:  # 检查是否存在有效的bid值
-                            if bid_adjust == 0:
-                                bid = bid1/[(ACOS_7d-0.24)/0.24+1]
-                            elif bid_adjust == -1:
-                                bid = 0.05
-                            else:
-                                bid = max(bid1 + float(bid_adjust), 0.05)
-                            try:
-                                api.update_keyword_toadGroup(market, str(keywordId), bid1, bid, state="ENABLED")
-                            except Exception as e:
-                                print(e)
-
-    def update_sp_ad_automatic_targeting(self,market, path):
-        uploaded_file = path
-        if os.stat(uploaded_file).st_size > 2:
-            df = pd.read_csv(uploaded_file)
-            # 打印 DataFrame 的前几行，以确保成功读取
-            print(df.head())
-            # 将DataFrame转换为一个列表，每个元素是一个字典表示一行数据
-            df_data = json.loads(df.to_json(orient='records'))
-            print(df_data)
-
-            api1 = Gen_adgroup(self.brand)
-            api2 = AdGroupTools(self.brand)
-            for item in df_data:
-                keywordId = item["keywordId"]
-                bid_adjust = item["bid_adjust"]
-                automatic_targeting_info = api2.list_adGroup_TargetingClause_by_targetId(keywordId, market)
-                if automatic_targeting_info is not None:
-                    for item in automatic_targeting_info:
-                        targetId = item['targetId']
-                        bid1 = item.get('bid')
-                        if bid1 is not None:  # 检查是否存在有效的bid值
-                            if bid_adjust == -1:
-                                bid = 0.05
-                            else:
-                                bid = max(bid1 + float(bid_adjust), 0.05)
-                            try:
-                                api1.update_adGroup_TargetingClause(market, str(targetId), float(bid), state="ENABLED")
-                            except Exception as e:
-                                print(e)
 
     def update_sp_ad_product_targets(self,market, path):
         uploaded_file = path

@@ -10,12 +10,14 @@ from ai.backend.util.db.auto_process.gen_sp_product import Gen_product
 from ai.backend.util.db.auto_process.tools_db_new_sp import DbNewSpTools
 from ai.backend.util.db.auto_process.tools_sp_adGroup import AdGroupTools
 from ai.backend.util.db.auto_process.tools_sp_keyword import SPKeywordTools
-
+from ai.backend.util.db.auto_process.create_new_sp_ad_auto import load_config
 
 
 class auto_api:
-    def __init__(self,brand):
+    def __init__(self,brand,market):
         self.brand = brand
+        self.market = market
+        self.exchange_rate = load_config('exchange_rate.json').get('exchange_rate', {}).get("DE", {}).get(self.market)
 
     def update_sp_ad_budget(self,market, path):
         uploaded_file = path
@@ -43,7 +45,7 @@ class auto_api:
                                 api1.update_camapign_v0(market, str(campaign_id), campaign_name, float(bid1),
                                                         budget_new=float(bid1), state="PAUSED")
                             else:
-                                bid = max(5, bid1 + float(bid_adjust))
+                                bid = max(5, bid1 + float(bid_adjust) * self.exchange_rate)
                                 try:
                                     api1.update_camapign_v0(market, str(campaignId), name, float(bid1), float(bid),
                                                             state="ENABLED")
@@ -103,7 +105,7 @@ class auto_api:
                                     if bid_adjust == 0:
                                         bid = 0
                                     else:
-                                        bid = max(5, min(bid1 + float(bid_adjust), 50))
+                                        bid = max(5, min(bid1 + float(bid_adjust) * self.exchange_rate, 50))
                                     try:
                                         api1.update_campaign_placement(market, str(campaignId), bid1, bid, placement)
                                     except Exception as e:
@@ -123,10 +125,10 @@ class auto_api:
                 campaign_id = item["campaignId"]
                 adGroupId = item["adGroupId"]
                 searchTerm = item["searchTerm"]
-                api.add_keyword_toadGroup_v0(market, str(campaign_id), str(adGroupId), searchTerm, matchType="EXACT", state="ENABLED", bid=0.5)
-                api.add_keyword_toadGroup_v0(market, str(campaign_id), str(adGroupId), searchTerm, matchType="PHRASE", state="ENABLED", bid=0.5)
+                api.add_keyword_toadGroup_v0(market, str(campaign_id), str(adGroupId), searchTerm, matchType="EXACT", state="ENABLED", bid=0.5 * self.exchange_rate)
+                api.add_keyword_toadGroup_v0(market, str(campaign_id), str(adGroupId), searchTerm, matchType="PHRASE", state="ENABLED", bid=0.5 * self.exchange_rate)
                 api.add_keyword_toadGroup_v0(market, str(campaign_id), str(adGroupId), searchTerm, matchType="BROAD",
-                                             state="ENABLED", bid=0.5)
+                                             state="ENABLED", bid=0.5 * self.exchange_rate)
 
     def add_sp_ad_auto_searchTerm_keyword(self,market, path):
         uploaded_file = path
@@ -143,9 +145,9 @@ class auto_api:
                     campaign_id = item["new_campaignId"]
                     adGroupId = item["new_adGroupId"]
                     searchTerm = item["searchTerm"]
-                    api.add_keyword_toadGroup_v0(market, str(int(campaign_id)), str(int(adGroupId)), searchTerm, matchType="EXACT", state="ENABLED", bid=0.5)
-                    api.add_keyword_toadGroup_v0(market, str(int(campaign_id)), str(int(adGroupId)), searchTerm, matchType="PHRASE", state="ENABLED", bid=0.5)
-                    api.add_keyword_toadGroup_v0(market, str(int(campaign_id)), str(int(adGroupId)), searchTerm, matchType="BROAD", state="ENABLED", bid=0.5)
+                    api.add_keyword_toadGroup_v0(market, str(int(campaign_id)), str(int(adGroupId)), searchTerm, matchType="EXACT", state="ENABLED", bid=0.5 * self.exchange_rate)
+                    api.add_keyword_toadGroup_v0(market, str(int(campaign_id)), str(int(adGroupId)), searchTerm, matchType="PHRASE", state="ENABLED", bid=0.5 * self.exchange_rate)
+                    api.add_keyword_toadGroup_v0(market, str(int(campaign_id)), str(int(adGroupId)), searchTerm, matchType="BROAD", state="ENABLED", bid=0.5 * self.exchange_rate)
 
     def add_sp_ad_searchTerm_negative_keyword(self,market, path):
         uploaded_file = path
@@ -213,9 +215,9 @@ class auto_api:
                                 print(type(ACOS_7d))
                                 bid = bid1 / ((ACOS_7d - 0.24) / 0.24 + 1)
                             elif bid_adjust == -1:
-                                bid = 0.05
+                                bid = 0.05 * self.exchange_rate
                             else:
-                                bid = max(bid1 + float(bid_adjust), 0.05)
+                                bid = max(bid1 + float(bid_adjust) * self.exchange_rate, 0.05)
                             try:
                                 api.update_keyword_toadGroup(market, str(keywordId), bid1, bid, state="ENABLED")
                             except Exception as e:
@@ -243,9 +245,9 @@ class auto_api:
                         bid1 = item.get('bid')
                         if bid1 is not None:  # 检查是否存在有效的bid值
                             if bid_adjust == -1:
-                                bid = 0.05
+                                bid = 0.05 * self.exchange_rate
                             else:
-                                bid = max(bid1 + float(bid_adjust), 0.05)
+                                bid = max(bid1 + float(bid_adjust) * self.exchange_rate, 0.05 * self.exchange_rate)
                             try:
                                 api1.update_adGroup_TargetingClause(market, str(targetId), float(bid), state="ENABLED")
                             except Exception as e:
@@ -276,7 +278,7 @@ class auto_api:
                             if bid_adjust == 0:
                                 bid = bid1 / ((ACOS_7d - 0.24) / 0.24 + 1)
                             else:
-                                bid = max(bid1 + float(bid_adjust), 0.05)
+                                bid = max(bid1 + float(bid_adjust) * self.exchange_rate, 0.05)
                             try:
                                 api1.update_adGroup_TargetingClause(market, str(targetId), float(bid), state="ENABLED")
                             except Exception as e:
@@ -305,7 +307,7 @@ class auto_api:
                     bid = bid_info['bidRecommendations'][0]['bidRecommendationsForTargetingExpressions'][0]['bidValues'][1]['suggestedBid']
                 except Exception as e:
                     print(e)
-                    bid = 0.25
+                    bid = 0.25 * self.exchange_rate
                 try:
                     api1.create_adGroup_Targeting1(market,str(campaignId),str(adGroupId),searchTerm.upper(),bid,state='ENABLED',type='ASIN_SAME_AS')
                 except Exception as e:

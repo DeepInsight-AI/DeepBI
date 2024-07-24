@@ -3,6 +3,9 @@ import time
 
 import pandas as pd
 import json
+
+import yaml
+
 from ai.backend.util.db.auto_process.tools_sd_campaign import CampaignTools
 from ai.backend.util.db.auto_process.gen_sd_campaign import Gen_campaign
 from datetime import datetime
@@ -17,22 +20,23 @@ from ai.backend.util.db.db_amazon.amazon_mysql_rag_util_new_sd import AmazonMysq
 from ai.backend.util.db.auto_process.tools_sp_adGroup import AdGroupTools
 
 
+def load_config(config_file):
+    config_path = os.path.join(get_config_path(), config_file)
+    with open(config_path) as f:
+        return json.load(f) if config_file.endswith('.json') else yaml.safe_load(f)
 
 
 class Ceate_new_sd:
 
     def __init__(self):
-        self.config = self.load_config()
-
-    def load_config(self):
-        exchange_rate_path = os.path.join(get_config_path(), 'exchange_rate.json')
-        #exchange_rate_path = 'C:/Users/admin/PycharmProjects/DeepBI/ai/backend/util/db/auto_process/exchange_rate.json'
-        with open(exchange_rate_path) as f:
-            return json.load(f)
+        self.exchange_rate = load_config('exchange_rate.json')
+        self.depository = load_config('Brand.yml')
 
     def get_exchange_rate(self, market1, market2):
-        return self.config['exchange_rate'].get(market2, {}).get(market1)
+        return self.exchange_rate.get('exchange_rate', {}).get(market2, {}).get(market1)
 
+    def select_depository(self, brand):
+        return self.depository.get(brand).get('depository')
 
     def create_new_sd_template(self,market1,market2,brand_name,uploaded_file):
         #uploaded_file = 'C:/Users/admin/PycharmProjects/DeepBI/ai/backend/util/db/db_amazon/SE_DE_2024-06-27_2024-07-04_sd_sku_new.csv'
@@ -147,7 +151,7 @@ class Ceate_new_sd:
         if market1 == 'US' or market2 == 'US':
             sku_info = apitool3.select_product_sku(market1, market2, promotedSku)
         else:
-            sku_info = apitool3.select_product_sku_by_asin(market1, market2, promotedSku)
+            sku_info = apitool3.select_product_sku_by_asin(market1, market2, promotedSku,self.select_depository(brand_name))
         api4 = Gen_product(brand_name)
         for sku in sku_info:
             try:
@@ -231,12 +235,7 @@ class Ceate_new_sd:
         pass
 
     def create_new_sd_no_template(self,market,info,brand_name):
-        if market == 'SE':
-            exchange_rate = 11.6
-        elif market == 'JP':
-            exchange_rate = 170
-        else:
-            exchange_rate = 1
+        exchange_rate = self.get_exchange_rate(market,'DE')
         for i in info:
             name1 = f"DeepBI_0509_{i}"
             ct = CampaignTools(brand_name)
@@ -264,7 +263,7 @@ class Ceate_new_sd:
                 new_adgroup_id = api3.create_adgroup(market, new_campaign_id, name, bidOptimization='reach',
                                                 creativeType='IMAGE', state='paused', defaultBid=2.49*exchange_rate)
                 # new_adgroup_id = 301828066664478
-                sku_info = api1.select_product_sku_by_deasin(i)
+                sku_info = api1.select_product_sku_by_parent_asin(i,self.select_depository(brand_name))
                 api4 = Gen_product(brand_name)
                 for sku in sku_info:
                     try:
@@ -402,12 +401,7 @@ class Ceate_new_sd:
         pass
 
     def create_new_sd_no_template2(self,market,info,brand_name):
-        if market == 'SE':
-            exchange_rate = 11.6
-        elif market == 'JP':
-            exchange_rate = 170
-        else:
-            exchange_rate = 1
+        exchange_rate = self.get_exchange_rate(market,'DE')
         for i in info:
             name1 = f"DeepBI_0509_{i}"
             ct = CampaignTools(brand_name)

@@ -42,12 +42,15 @@ class ProductTools:
 
 
 
-    def update_product_api(self,product_info):
+    def update_product_api(self,product_info,market):
 
         try:
-            result = sponsored_display.ProductAds(credentials=my_credentials,
-                                                                 marketplace=Marketplaces.NA,
-                                                                 debug=True).edit_product_ads(
+            credentials, access_token = self.load_credentials(market)
+            result = sponsored_display.ProductAds(credentials=credentials,
+                                                  marketplace=Marketplaces[market.upper()],
+                                                  access_token=access_token,
+                                                  proxies=get_proxies(market),
+                                                  debug=True).edit_product_ads(
                     body=json.dumps(product_info))
             print(result)
         except Exception as e:

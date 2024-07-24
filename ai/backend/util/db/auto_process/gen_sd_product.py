@@ -35,17 +35,15 @@ class Gen_product:
 
     # 修改品的信息  - 暂时只能修改品的状态
     def update_product(self,market,adId,state):
-        product_info = {
-            "productAds": [
-                {
-                    "adId": adId,
-                    "state": state
-                }
-            ]
-        }
+        product_info = [
+  {
+    "state": state,
+    "adId": adId
+  }
+]
         # 执行修改品
         apitoolProduct = ProductTools(self.brand)
-        adIdres = apitoolProduct.update_product_api(product_info)
+        adIdres = apitoolProduct.update_product_api(product_info,market)
         print(adIdres)
         # 如果执行成功或者失败 记录到log表记录
         dbNewTools = DbNewSpTools(self.brand)

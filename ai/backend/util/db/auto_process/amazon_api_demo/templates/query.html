@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>查询</title>
+    <title>api自动化操作</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -56,7 +56,7 @@
             margin-right: 0; /* 修正右边距 */
         }
         input[type="submit"] {
-            background-color: #007bff;
+            background-color: #4CAF50;
             color: white;
             padding: 10px 20px;
             border: none;
@@ -65,7 +65,7 @@
             font-size: 16px;
         }
         input[type="submit"]:hover {
-            background-color: #0056b3;
+            background-color: #45a049;
         }
         .hidden {
             display: none;
@@ -74,22 +74,22 @@
 </head>
 <body>
     <div class="container">
-        <h1>查询</h1>
+        <h1>api自动化操作</h1>
         <form action="/run_function" method="post" id="apiForm">
-            <label for="brand">品牌:</label>
-            <select id="brand" name="brand" required>
-                <option value="">请选择品牌</option>
-                {% for brand, countries in permissions.brands.items() %}
-                    <option value="{{ brand }}">{{ brand }}</option>
-                {% endfor %}
-            </select><br>
-
             <label for="country">选择国家：</label>
             <select id="country" name="country" required>
                 <option value="">请选择国家</option>
-                <!-- 国家选项会根据品牌选择动态生成 -->
+                <option value="IT">意大利 (IT)</option>
+                <option value="ES">西班牙 (ES)</option>
+                <option value="DE">德国 (DE)</option>
+                <option value="FR">法国 (FR)</option>
             </select><br>
-            </select><br>
+            <label for="brand">品牌:</label>
+            <select name="brand">
+                <option value="LAPASA">LAPASA</option>
+                <option value="DELOMO">DELOMO</option>
+                <option value="OutdoorMaster">OutdoorMaster</option>
+            </select>
             <label for="ad_type">选择广告类型：</label>
             <select id="ad_type" name="ad_type" required onchange="showOptions()">
                 <option value="">请选择广告类型</option>
@@ -107,7 +107,7 @@
                 <select id="filter_type" name="filter_type" onchange="showFilterParams()">
                     <option value="">请选择筛选类型</option>
                     <option value="广告活动筛选">广告活动筛选</option>
-                    <option value="直接筛选">直接筛选</option>
+                    <option value="关键词筛选">直接筛选</option>
                 </select><br>
                 <div id="price_adjustment_params" class="hidden input-group">
                     <label for="price_adjustment_operation">价格调整：</label>
@@ -175,9 +175,9 @@
             <h2>生成的 CSV 文件</h2>
             <p>点击下方按钮下载文件：</p>
             <a id="downloadLink" href="#" download><button>下载 CSV</button></a>
-{#            <br><br>#}
-{#            <button id="startModificationButton">开始修改</button>#}
-{#            <p id="modificationStatus" class="hidden">修改完成！</p>#}
+            <br><br>
+            <button id="startModificationButton">开始修改</button>
+            <p id="modificationStatus" class="hidden">修改完成！</p>
         </div>
     </div>
 
@@ -291,12 +291,7 @@
                 impression_params_div.classList.remove("hidden"); // 显示曝光量参数
                 query_field_params_div.classList.remove("hidden"); // 显示查询字段参数
             } else if (filter_type === "直接筛选") {
-                price_adjustment_params_div.classList.remove("hidden");
-                period_params_div.classList.remove("hidden");
-                order_count_params_div.classList.remove("hidden");
-                click_count_params_div.classList.remove("hidden");
-                impression_params_div.classList.remove("hidden"); // 显示曝光量参数
-                query_field_params_div.classList.remove("hidden"); // 显示查询字段参数
+
             }
         }
 
@@ -326,7 +321,6 @@
             })
             .catch(error => console.error('Error downloading file:', error));
         });
-        /*
                 // 处理点击“开始修改”按钮
         document.getElementById("startModificationButton").addEventListener("click", function(event) {
             event.preventDefault(); // 阻止默认行为
@@ -351,30 +345,6 @@
                 console.error('Error modifying data:', error);
                 modificationStatus.textContent = '修改失败，请重试！';
             });
-        });
-        */
-    </script>
-    <script>
-        // 从后端获取用户权限数据
-        const permissions = {{ permissions | tojson }};
-
-        // 监听品牌下拉框的变化事件
-        document.getElementById('brand').addEventListener('change', function() {
-            const brand = this.value;
-            const countrySelect = document.getElementById('country');
-
-            // 清空国家下拉框
-            countrySelect.innerHTML = '<option value="">请选择国家</option>';
-
-            // 根据选中的品牌动态加载国家选项
-            if (brand && permissions.brands[brand]) {
-                permissions.brands[brand].forEach(function(country) {
-                    const option = document.createElement('option');
-                    option.value = country;
-                    option.textContent = country;
-                    countrySelect.appendChild(option);
-                });
-            }
         });
     </script>
 </body>

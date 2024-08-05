@@ -1,9 +1,11 @@
 import json
+import os
 
 import pymysql
 import pandas as pd
 from datetime import datetime
 import warnings
+from ai.backend.util.db.configuration.path import get_config_path
 
 # 忽略特定类型的警告
 warnings.filterwarnings("ignore", category=UserWarning)
@@ -26,7 +28,8 @@ class AmazonMysqlRagUitl:
 
     def load_db_info(self, brand):
         # 从 JSON 文件加载数据库信息
-        with open('C:/Users/admin/PycharmProjects/DeepBI/ai/backend/util/db/db_info_log.json', 'r') as f:
+        db_info_log_path = os.path.join(get_config_path(), 'db_info_log.json')
+        with open(db_info_log_path, 'r') as f:
             db_info_json = json.load(f)
 
         if brand in db_info_json:
@@ -212,9 +215,211 @@ WHERE status = 'success'
         except Exception as e:
             print("Error while get_operated_campaign_placement:", e)
 
+    def get_data_campaign(self, market, date):
+        """查找广告活动预算的中间信息上传线上数据库"""
+        try:
+            conn = self.conn
 
+            query1 = f"""
+SELECT
+	campaignName,
+	bid_adjust
+FROM
+	budget_info
+WHERE
+	date = '{date}'
+    AND market = '{market}'
+GROUP BY
+	market,
+	brand,
+	strategy,
+	type,
+	campaignId,
+	campaignName,
+	Reason,
+	date
+HAVING
+	bid_adjust IS NOT NULL
+                    """
+            df1 = pd.read_sql(query1, con=conn)
+            # return df
+            return df1['campaignName'].tolist(), df1['bid_adjust'].tolist()
+        except Exception as e:
+            print("Error while get_data_campaign:", e)
 
+    def get_data_sku(self, market, date):
+        """查找广告活动预算的中间信息上传线上数据库"""
+        try:
+            conn = self.conn
 
+            query1 = f"""
+SELECT
+	campaignName,
+	advertisedSku,
+	type
+FROM
+	sku_info
+WHERE
+	date = '{date}'
+    AND market = '{market}'
+GROUP BY
+	market,
+	brand,
+	strategy,
+	type,
+	campaignName,
+	adGroupName,
+	adId,
+	Reason,
+	date
+                    """
+            df1 = pd.read_sql(query1, con=conn)
+            # return df
+            return df1['campaignName'].tolist(), df1['advertisedSku'].tolist(), df1['type'].tolist()
+        except Exception as e:
+            print("Error while get_data_sku:", e)
+
+    def get_data_campaign_placement(self, market, date):
+        """查找广告活动预算的中间信息上传线上数据库"""
+        try:
+            conn = self.conn
+
+            query1 = f"""
+SELECT
+	campaignName,
+	placementClassification,
+	bid_adjust
+FROM
+	campaign_placement_info
+WHERE
+	date = '{date}'
+    AND market = '{market}'
+GROUP BY
+	market,
+	brand,
+	strategy,
+	type,
+	campaignName,
+	campaignId,
+	placementClassification,
+	Reason,
+	date
+	HAVING
+	bid_adjust IS NOT NULL
+                    """
+            df1 = pd.read_sql(query1, con=conn)
+            # return df
+            return df1['campaignName'].tolist(), df1['placementClassification'].tolist(), df1['bid_adjust'].tolist()
+        except Exception as e:
+            print("Error while get_data_campaign_placement:", e)
+
+    def get_data_keyword(self, market, date):
+        """查找广告活动预算的中间信息上传线上数据库"""
+        try:
+            conn = self.conn
+
+            query1 = f"""
+SELECT
+	campaignName,
+	matchType,
+	keyword,
+	bid_adjust
+FROM
+	keyword_info
+WHERE
+	date = '{date}'
+    AND market = '{market}'
+GROUP BY
+	market,
+	brand,
+	strategy,
+	type,
+	keyword,
+	keywordId,
+	campaignName,
+	adGroupName,
+	matchType,
+	reason,
+	date
+	HAVING
+	bid_adjust IS NOT NULL
+                    """
+            df1 = pd.read_sql(query1, con=conn)
+            # return df
+            return df1['campaignName'].tolist(), df1['matchType'].tolist(), df1['keyword'].tolist(), df1['bid_adjust'].tolist()
+        except Exception as e:
+            print("Error while get_data_keyword:", e)
+
+    def get_data_automatic_targeting(self, market, date):
+        """查找广告活动预算的中间信息上传线上数据库"""
+        try:
+            conn = self.conn
+
+            query1 = f"""
+SELECT
+	campaignName,
+	keyword,
+	bid_adjust
+FROM
+	automatic_targeting_info
+WHERE
+	date = '{date}'
+    AND market = '{market}'
+GROUP BY
+	market,
+	brand,
+	strategy,
+	type,
+	keyword,
+	keywordId,
+	campaignName,
+	adGroupName,
+	reason,
+	date
+	HAVING
+	bid_adjust IS NOT NULL
+                    """
+            df1 = pd.read_sql(query1, con=conn)
+            # return df
+            return df1['campaignName'].tolist(), df1['keyword'].tolist(), df1['bid_adjust'].tolist()
+        except Exception as e:
+            print("Error while get_data_automatic_targeting:", e)
+
+    def get_data_product_targets(self, market, date):
+        """查找广告活动预算的中间信息上传线上数据库"""
+        try:
+            conn = self.conn
+
+            query1 = f"""
+SELECT
+	campaignName,
+	keyword,
+	bid_adjust
+FROM
+	product_targets_info
+WHERE
+	date = '{date}'
+    AND market = '{market}'
+GROUP BY
+	market,
+	brand,
+	strategy,
+	type,
+	keyword,
+	keywordId,
+	campaignName,
+	adGroupName,
+	reason,
+	date
+	HAVING
+	bid_adjust IS NOT NULL AND
+	campaignName IS NOT NULL
+                    """
+            df1 = pd.read_sql(query1, con=conn)
+            # return df
+            return df1['campaignName'].tolist(), df1['keyword'].tolist(), df1['bid_adjust'].tolist()
+        except Exception as e:
+            print("Error while get_data_product_targets:", e)
 
 
 
@@ -225,7 +430,7 @@ WHERE status = 'success'
 # #result = util.get_new_create_campaign('2024-06-24')
 # #result = util.get_update_keyword('JP','2024-06-25')
 # #result = util.get_new_sspu(market1, market2, startdate, enddate)
-# result = util.get_operated_campaign('FR','2024-07-15')
+# result = util.get_data_campaign('FR','2024-07-25')
 #
 # # 打印结果
 # print(result)

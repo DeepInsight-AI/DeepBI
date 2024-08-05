@@ -446,6 +446,29 @@ class AdGroupTools:
         else:
             print("list product_bid failed")
             return ["failed", ""]
+
+    def create_adGroup_Negative_TargetingClauses(self, adGroup_info, market):
+        try:
+            credentials, access_token = self.load_credentials(market)
+            result = sponsored_products.NegativeTargetsV3(credentials=credentials,
+                                                  marketplace=Marketplaces[market.upper()],
+                                                  access_token=access_token,
+                                                  proxies=get_proxies(market),
+                                                  debug=True).create_negative_product_targets(
+                body=json.dumps(adGroup_info))
+        except Exception as e:
+            print("create adGroup Negative TargetingClauses failed: ", e)
+            result = None
+        if result and result.payload["negativeTargetingClauses"]["success"]:
+            print("create adGroup Negative TargetingClauses success")
+            return ["success", result.payload["negativeTargetingClauses"]["success"][0]]
+        # if result and result.payload["negativeKeywords"]["success"]:
+        #     negativeKeywordId = result.payload["negativeKeywords"]["success"][0]["negativeKeywordId"]
+        #     print("add adGroup negative keyword success,negativeKeywordId is:", negativeKeywordId)
+        #     return ["success", negativeKeywordId]
+        else:
+            print("create adGroup Negative TargetingClause failed")
+            return ["failed", ""]
 # 广告组更新否定关键词测试
 # adGroup_negativekw_info = {
 # "negativeKeywords": [

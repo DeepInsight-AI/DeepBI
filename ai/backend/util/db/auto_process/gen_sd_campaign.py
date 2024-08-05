@@ -46,19 +46,16 @@ class Gen_campaign:
 
     # 更新广告系列 简单数据更新
     def update_camapign_v0(self,market,campaignId,campaignName,state,budgetType,budget_new,budget_old=None):
-        campaign_info = {
-            "campaigns": [
-                {
-                    "campaignId": campaignId,
-                    "name": campaignName,
-                    "state": state,
-                    "budget": {
-                        "budgetType": budgetType,
-                        "budget": budget_new
-                    },
-                }
-            ]
-        }
+        campaign_info = [
+  {
+    "name": campaignName,
+    "budgetType": budgetType,
+    "budget": budget_new,
+    "state": state,
+    "campaignId": campaignId
+  }
+]
+
         #调用api
         apitool = CampaignTools(self.brand)
         apires = apitool.update_campaigns(campaign_info,market)
@@ -68,10 +65,10 @@ class Gen_campaign:
         newdbtool = DbNewSpTools(self.brand)
         if apires[0] == "success":
             print("api update success")
-            newdbtool.update_sp_campaign(market, campaignName, campaignId, 'budget', budget_old, budget_new,None,None,"","success",datetime.now())
+            newdbtool.update_sp_campaign(market, campaignName, campaignId, 'budget', budget_old, budget_new,None,None,"SD","success",datetime.now())
         else:
             print("api update failed")
-            newdbtool.update_sp_campaign(market, campaignName, campaignId, 'budget', budget_old, budget_new, None, None, "", "failed",
+            newdbtool.update_sp_campaign(market, campaignName, campaignId, 'budget', budget_old, budget_new, None, None, "SD", "failed",
                                          datetime.now())
 
 
@@ -91,10 +88,10 @@ class Gen_campaign:
         newdbtool = DbNewSpTools(self.brand)
         if apires[0] == "success":
             print("api update success")
-            newdbtool.update_sp_campaign(market, campaignName, campaignId, 'campaignName', campaignName, campaignName_new,None,None,"","success",datetime.now())
+            newdbtool.update_sp_campaign(market, campaignName, campaignId, 'campaignName', campaignName, campaignName_new,None,None,"SD","success",datetime.now())
         else:
             print("api update failed")
-            newdbtool.update_sp_campaign(market, campaignName, campaignId, 'campaignName', campaignName, campaignName_new, None, None, "", "failed",
+            newdbtool.update_sp_campaign(market, campaignName, campaignId, 'campaignName', campaignName, campaignName_new, None, None, "SD", "failed",
                                          datetime.now())
 
     # update v0 测试

@@ -63,6 +63,27 @@ class SPKeywordTools:
             print("update sp keyword failed:")
             return ["failed", keywordId]
 
+    def delete_spkeyword_api(self, keyword_info,market):
+        try:
+            credentials, access_token = self.load_credentials(market)
+            result = sponsored_products.KeywordsV3(credentials=credentials,
+                                                   marketplace=Marketplaces[market.upper()],
+                                                   access_token=access_token,
+                                                   proxies=get_proxies(market),
+                                                   debug=True).delete_keywords(
+                body=json.dumps(keyword_info))
+        except Exception as e:
+            print("delete sp keyword failed: ", e)
+            result = None
+        keywordId = ""
+        if result and result.payload["keywords"]["success"]:
+            spkeywordid = result.payload["keywords"]["success"][0]["keywordId"]
+            print("delete sp keyword success,sp keywordid is:", spkeywordid)
+            return ["success", spkeywordid]
+        else:
+            print("delete sp keyword failed")
+            return ["failed", keywordId]
+
     def get_spkeyword_api(self, market, adGroupID):
         credentials, access_token = self.load_credentials(market)
         adGroup_info = {
@@ -181,6 +202,6 @@ class SPKeywordTools:
 
 
 # sp = SPKeywordTools('LAPASA')
-# res = sp.get_spkeyword_api_by_keywordId('UK',144863127843687)
+# res = sp.get_spkeyword_api_by_keywordId('IT',177235977989981)
 # #res = sp.get_spkeyword_recommendations_api('SE',548980770113799,421510724316832)
 # print(res)

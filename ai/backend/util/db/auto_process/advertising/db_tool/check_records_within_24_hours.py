@@ -20,7 +20,8 @@ def get_timestamp():
     date_timestamp_string = f"{date_string}_{timestamp}"
     return date_timestamp_string
 
-class AmazonMysqlRagUitl:
+
+class CheckRecordsWithin24Hours:
 
     def __init__(self, brand):
         self.db_info = self.load_db_info(brand)
@@ -28,8 +29,8 @@ class AmazonMysqlRagUitl:
 
     def load_db_info(self, brand):
         # 从 JSON 文件加载数据库信息
-        db_info_path = os.path.join(get_config_path(), 'db_info.json')
-        with open(db_info_path, 'r') as f:
+        db_info_log_path = os.path.join(get_config_path(), 'db_info_log.json')
+        with open(db_info_log_path, 'r') as f:
             db_info_json = json.load(f)
 
         if brand in db_info_json:
@@ -53,56 +54,69 @@ class AmazonMysqlRagUitl:
             print("Error while connecting to amazon_mysql:", error)
             return None
 
-    def get_scan_campaign_sp(self, market, date):
+    def check_campaign(self):
         try:
             conn = self.conn
 
             query1 = """
-SELECT COUNT(*) as count
-FROM amazon_campaign_reports_sp
-WHERE date = '{}'- INTERVAL 1 DAY
-AND campaignStatus = 'ENABLED'
-AND market = '{}';
-                    """.format(date, market)
+SELECT DISTINCT campaign_id
+FROM amazon_campaign_update
+WHERE change_type = 'budget'
+AND update_time >= NOW() - INTERVAL 1 DAY
+AND update_time <= NOW()
+AND status = 'success'
+                    """
             df1 = pd.read_sql(query1, con=conn)
-            count = df1.loc[0, 'count']
             # return df
-            return count
+            return df1["campaign_id"].tolist()
         except Exception as e:
-            print("Error while get_new_create_campaign:", e)
+            print("Error while check_campaign:", e)
 
-    def get_scan_campaign_sd(self, market, date):
+    def check_campaign_placement(self):
         try:
             conn = self.conn
 
             query1 = """
-SELECT COUNT(*) as count
-FROM amazon_campaign_reports_sd
-WHERE date = '{}'- INTERVAL 1 DAY
-AND campaignStatus = 'ENABLED'
-AND market = '{}';
-                    """.format(date, market)
+SELECT DISTINCT campaignId,placement
+FROM amazon_campaign_placement_update
+WHERE update_time >= NOW() - INTERVAL 1 DAY
+AND update_time <= NOW()
+AND status = 'success'
+                    """
             df1 = pd.read_sql(query1, con=conn)
-            count = df1.loc[0, 'count']
             # return df
-            return count
+            return df1["campaignId"].tolist(), df1["placement"].tolist()
         except Exception as e:
-            print("Error while get_new_create_campaign:", e)
+            print("Error while check_campaign_placement:", e)
 
-    def get_scan_campaign_sb(self, market, date):
+    def check_keyword(self):
         try:
             conn = self.conn
 
             query1 = """
-SELECT COUNT(*) as count
-FROM amazon_campaign_reports_sb
-WHERE date = '{}'- INTERVAL 1 DAY
-AND campaignStatus = 'ENABLED'
-AND market = '{}';
-                    """.format(date, market)
+SELECT DISTINCT keywordId FROM amazon_keyword_update
+WHERE create_time >= NOW() - INTERVAL 1 DAY
+AND create_time <= NOW()
+AND operation_state = 'success'
+                    """
             df1 = pd.read_sql(query1, con=conn)
-            count = df1.loc[0, 'count']
             # return df
-            return count
+            return df1["keywordId"].tolist()
         except Exception as e:
-            print("Error while get_new_create_campaign:", e)
+            print("Error while check_keyword:", e)
+
+    def check_targeting(self):
+        try:
+            conn = self.conn
+
+            query1 = """
+SELECT DISTINCT expression FROM amazon_targeting_update
+WHERE update_time >= NOW() - INTERVAL 1 DAY
+AND update_time <= NOW()
+AND targetingState = 'success'
+                    """
+            df1 = pd.read_sql(query1, con=conn)
+            # return df
+            return df1["expression"].tolist()
+        except Exception as e:
+            print("Error while check_targeting:", e)

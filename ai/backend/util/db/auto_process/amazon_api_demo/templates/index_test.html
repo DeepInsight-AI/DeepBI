@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Main Page</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            background-color: #f2f2f2;
+            padding: 20px;
+            max-width: 600px;
+            margin: 0 auto;
+
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+        ul {
+            list-style-type: none;
+            padding: 0;
+            text-align: center;
+        }
+        li {
+            margin-bottom: 10px;
+        }
+        a {
+            display: block; /* Inline-block for normal link styling */
+            padding: 10px;
+            background-color: #007bff;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            transition: background-color 0.3s ease;
+        }
+        a:hover {
+            background-color: #0056b3;
+        }
+        .logout {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            font-size: 0.9em; /* Smaller font size */
+            color: #007bff; /* Link color */
+            text-decoration: none; /* Remove underline */
+            padding: 0; /* Remove padding to look like a text link */
+            background: none; /* Remove background */
+            border: none; /* Remove border if any */
+        }
+        .logout:hover {
+            color: #0056b3; /* Darker color on hover */
+        }
+    </style>
+</head>
+<body>
+    <a href="/logout" class="logout">退出登录</a> <!-- Positioned and styled link -->
+    <h1>ATLAS自动化系统</h1>
+    <ul>
+        <li><a href="/query">查询</a></li>
+        <li><a href="/strategy">策略</a></li>
+        <li><a href="/create">新建广告活动</a></li>
+        <li><a href="/modify">自动化操作</a></li>
+    </ul>
+</body>
+</html>

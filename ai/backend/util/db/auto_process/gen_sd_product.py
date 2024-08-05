@@ -47,7 +47,7 @@ class Gen_product:
         print(adIdres)
         # 如果执行成功或者失败 记录到log表记录
         dbNewTools = DbNewSpTools(self.brand)
-        if adIdres[0] == "success":
+        if not adIdres:
             dbNewTools.update_sp_product(market, adId, state, "success", datetime.now())
         else:
             dbNewTools.update_sp_product(market, adId, state, "failed", datetime.now())

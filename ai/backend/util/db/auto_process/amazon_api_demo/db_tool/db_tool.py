@@ -1,8 +1,11 @@
 import json
+import os
+
 import pymysql
 import pandas as pd
 from datetime import datetime
 import warnings
+from ai.backend.util.db.configuration.path import get_config_path
 
 # 忽略特定类型的警告
 warnings.filterwarnings("ignore", category=UserWarning)
@@ -25,7 +28,8 @@ class AmazonMysqlRagUitl:
 
     def load_db_info(self, brand):
         # 从 JSON 文件加载数据库信息
-        with open('C:/Users/admin/PycharmProjects/DeepBI/ai/backend/util/db/db_info.json', 'r') as f:
+        db_info_path = os.path.join(get_config_path(), 'db_info.json')
+        with open(db_info_path, 'r') as f:
             db_info_json = json.load(f)
 
         if brand in db_info_json:
@@ -49,10 +53,11 @@ class AmazonMysqlRagUitl:
             print("Error while connecting to amazon_mysql:", error)
             return None
 
-    def get_select_campaign(self, query, date):
+    def get_select_campaign(self, query, date, bid_adjust):
         try:
             conn = self.conn
             df3 = pd.read_sql(query, con=conn)
+            df3['bid_adjust'] = bid_adjust
             output_filename = f'{date}_select_campaign.csv'
             df3.to_csv(output_filename, index=False, encoding='utf-8-sig')
             # return df

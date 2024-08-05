@@ -91,8 +91,32 @@ class Gen_keyword:
         else:
             dbNewTools.update_sp_keyword_toadGroup(market,keywordId,state,bid_old,bid_new,"failed",datetime.now())
 
+    def delete_keyword_toadGroup(self,market,keywordId):
+
+        # 修改广告组关键词信息
+        keyword_info = {
+  "keywordIdFilter": {
+    "include": [
+      str(keywordId)
+    ]
+  }
+}
+        # 修改关键词操作
+        apitool = SPKeywordTools(self.brand)
+        res = apitool.delete_spkeyword_api(keyword_info,market)
+
+        # 根据结果更新log
+        # def update_sp_keyword_toadGroup(self,market,keywordId,state,bid,operation_state,create_time):
+        dbNewTools = DbNewSpTools(self.brand)
+        if res[0]=="success":
+            dbNewTools.update_sp_keyword_toadGroup(market,keywordId,'delete',None,None,"success",datetime.now())
+        else:
+            dbNewTools.update_sp_keyword_toadGroup(market,keywordId,'delete',None,None,"failed",datetime.now())
+
 
     # 新增测试
     # add_keyword_toadGroup('US','513987903939456','EXACT','PAUSED',0.9,'484189822427360','thermal underwear')
     # 修改测试
     # update_keyword_toadGroup('US','405003352192308','PAUSED',0.3)
+# Gen_keyword('LAPASA').add_keyword_toadGroup_v0('IT','153630823947693','235290135936438','pigiama pile uomo','EXACT','ENABLED',None)
+# 177235977989981

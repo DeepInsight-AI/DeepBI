@@ -71,20 +71,15 @@
             </select>
 
             <label for="brand">品牌:</label>
-            <select name="brand">
+            <select id="brand" name="brand" onchange="updateCountryOptions()">
                 <option value="LAPASA">LAPASA</option>
                 <option value="DELOMO">DELOMO</option>
                 <option value="OutdoorMaster">OutdoorMaster</option>
             </select>
 
             <label for="country">国家:</label>
-            <select name="country">
-                <option value="IT">意大利</option>
-                <option value="ES">西班牙</option>
-                <option value="DE">德国</option>
-                <option value="FR">法国</option>
-                <option value="UK">英国</option>
-                <option value="US">美国</option>
+            <select id="country" name="country">
+                <!-- 国家选项由 JavaScript 动态生成 -->
             </select>
 
             <label for="templateCountry">模板国家:</label>
@@ -102,6 +97,57 @@
     </form>
 
     <script>
+        // 根据选择的品牌动态更新国家选项
+        function updateCountryOptions() {
+            var brand = document.getElementById('brand').value;
+            var countrySelect = document.getElementById('country');
+            countrySelect.innerHTML = ''; // 清空当前选项
+
+            var countries = [];
+            if (brand === 'DELOMO') {
+                countries = ['IT', 'ES', 'DE', 'FR'];
+            } else if (brand === 'OutdoorMaster') {
+                countries = ['IT', 'ES', 'SE', 'FR'];
+            } else {
+                // 默认情况下，可以设置一个通用的国家选项
+                countries = ['IT', 'ES', 'DE', 'FR', 'UK', 'US'];
+            }
+
+            // 添加新的选项到国家选择框
+            for (var i = 0; i < countries.length; i++) {
+                var option = document.createElement('option');
+                option.value = countries[i];
+                option.textContent = getCountryName(countries[i]);
+                countrySelect.appendChild(option);
+            }
+        }
+
+        // 辅助函数，根据国家代码返回显示名称
+        function getCountryName(code) {
+            switch (code) {
+                case 'IT':
+                    return '意大利';
+                case 'ES':
+                    return '西班牙';
+                case 'DE':
+                    return '德国';
+                case 'FR':
+                    return '法国';
+                case 'UK':
+                    return '英国';
+                case 'US':
+                    return '美国';
+                case 'SE':
+                    return '瑞典';
+                default:
+                    return code;
+            }
+        }
+
+        // 初始时根据默认品牌更新国家选项
+        updateCountryOptions();
+
+        // 根据操作选项显示或隐藏相关字段
         function toggleFields(value) {
             var createFields = document.getElementById('createCampaignFields');
             if (value === 'createCampaign') {

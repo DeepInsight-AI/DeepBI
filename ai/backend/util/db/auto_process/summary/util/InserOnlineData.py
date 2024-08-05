@@ -121,10 +121,10 @@ class ProcessShowData():
 #         "ShowData": "{Bthisi is other data}",
 #         "Other": "B其他"
 #     }
-#     delete_data = {
-#         "ID": "6",
-#         "UID": "1"
-#     }
+# delete_data = {
+#     "ID": "8729",
+#     "UID": "1"
+# }
 # #     # ProcessShowData.insert(add_data)
 # #     ProcessShowData.update(update_data)
-#     ProcessShowData.delete(delete_data)
+# ProcessShowData.delete(delete_data)

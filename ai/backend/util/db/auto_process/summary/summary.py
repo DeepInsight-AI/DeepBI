@@ -5,9 +5,9 @@ from datetime import datetime, timedelta
 import time
 import numpy as np
 
-from util.InserOnlineData import ProcessShowData
-from db_tool.tools_db import AmazonMysqlRagUitl
-from db_tool.ads_db import AmazonMysqlRagUitl as api
+from ai.backend.util.db.auto_process.summary.util.InserOnlineData import ProcessShowData
+from ai.backend.util.db.auto_process.summary.db_tool.tools_db import AmazonMysqlRagUitl
+from ai.backend.util.db.auto_process.summary.db_tool.ads_db import AmazonMysqlRagUitl as api
 
 
 def default_dump(obj):
@@ -32,6 +32,12 @@ def get_request_data(CountryCode, StartDate, report_type, all_table, data_id, br
         UID = "4"
     elif brand == 'OutdoorMaster':
         UID = "3"
+    elif brand == 'MUDEELA':
+        UID = "7"
+    elif brand == 'Rossny':
+        UID = "15"
+    elif brand == 'ZEN CAVE':
+        UID = "14"
     else:
         UID = None
     try:
@@ -88,7 +94,7 @@ def get_data(market,brand):
     today = datetime.today()
     yesterday = today - timedelta(days=1)
     cur_time = yesterday.strftime('%Y-%m-%d')
-    cur_time = '2024-07-16'
+    # cur_time = '2024-08-04'
     api2 = api(brand)
     sp_count = api2.get_scan_campaign_sp(market, cur_time)
     sd_count = api2.get_scan_campaign_sd(market, cur_time)
@@ -117,16 +123,139 @@ def get_data(market,brand):
     get_request_data(market,cur_time,"D-CALL",all_table2,0,brand)
     #print(json.dumps(all_table2,ensure_ascii=False, default=default_dump))
 
-# time.sleep(60 * 60 * 4)
+def get_data_period(market,brand):
+    today = datetime.today()
+    for i in range(30):
+        cur_time = (today - timedelta(days=i+7)).strftime('%Y-%m-%d')
+        # yesterday = today - timedelta(days=1)
+        # cur_time = yesterday.strftime('%Y-%m-%d')
+        # cur_time = '2024-07-27'
+        api2 = api(brand)
+        sp_count = api2.get_scan_campaign_sp(market, cur_time)
+        sd_count = api2.get_scan_campaign_sd(market, cur_time)
+        sb_count = api2.get_scan_campaign_sb(market, cur_time)
+        all_count = sp_count + sd_count + sb_count
+        api1 = AmazonMysqlRagUitl(brand)
+        new_create = api1.get_new_create_campaign(market, cur_time)
+        budget = api1.get_update_budget(market, cur_time)
+        targeting_group = api1.get_update_targeting_group(market, cur_time)
+        keyword = api1.get_update_keyword(market, cur_time)
+        SKU = api1.get_update_sku(market, cur_time)
+        # print(budget)
+        # print(targeting_group)
+        # print(keyword)
+        # print(SKU)
+        all_table = [[cur_time,  "预算优化", budget],
+                     [cur_time, "广告位置优化", targeting_group],
+                     [cur_time, "关键词优化", keyword],
+                     [cur_time, "SKU优化", SKU]
+                     ]
+        #print(json.dumps(all_table,ensure_ascii=False, default=default_dump))
+        get_request_data(market,cur_time,"D-Trim",all_table,0,brand)
+        all_table2 = [[cur_time,"量化广告分析",all_count],
+                      [cur_time,"新建广告活动",new_create]
+                      ]
+        get_request_data(market,cur_time,"D-CALL",all_table2,0,brand)
+        #print(json.dumps(all_table2,ensure_ascii=False, default=default_dump))
+
+
+def update_data_period(market,brand):
+    """将历史操作数据csv上传到线上数据库"""
+    today = datetime.today()
+    for i in range(30):
+        cur_time = (today - timedelta(days=i+4)).strftime('%Y-%m-%d')
+        api1 = AmazonMysqlRagUitl(brand)
+        campaignName_info,bid_adjust_info = api1.get_data_campaign(market, cur_time)
+        if campaignName_info and bid_adjust_info:
+            for campaignName, bid_adjust in zip(campaignName_info, bid_adjust_info):
+                table2 = [[market, cur_time, "广告活动预算", campaignName, "", "关闭" if bid_adjust == 0 else bid_adjust]]
+                get_request_data(market, cur_time, "D-LOG", table2, 0, brand)
+        campaignName_info, advertisedSku_info,type_info = api1.get_data_sku(market, cur_time)
+        if campaignName_info and advertisedSku_info and type_info:
+            for campaignName, advertisedSku, type1 in zip(campaignName_info, advertisedSku_info, type_info):
+                if type1 == "手动_关闭":
+                    sku_status = "关闭"
+                elif type1 == "自动_关闭":
+                    sku_status = "关闭"
+                elif type1 == "手动_复开":
+                    sku_status = "复开"
+                elif type1 == "自动_复开":
+                    sku_status = "复开"
+                elif type1 == "SD_关闭":
+                    sku_status = "关闭"
+                elif type1 == "SD_复开":
+                    sku_status = "复开"
+                else:
+                    sku_status = "关闭"
+                table2 = [[market, cur_time, "SKU状态", campaignName, advertisedSku, sku_status]]
+                get_request_data(market, cur_time, "D-LOG", table2, 0, brand)
+        campaignName_info, placementClassification_info,bid_adjust_info = api1.get_data_campaign_placement(market, cur_time)
+        if campaignName_info and placementClassification_info and bid_adjust_info:
+            for campaignName, placementClassification, bid_adjust in zip(campaignName_info, placementClassification_info, bid_adjust_info):
+                table2 = [[market, cur_time, "广告位竞价", campaignName, placementClassification,
+                           "将广告位竞价设置为0" if bid_adjust == 0 else bid_adjust]]
+                get_request_data(market, cur_time, "D-LOG", table2, 0, brand)
+        campaignName_info, matchType_info, keyword_info, bid_adjust_info = api1.get_data_keyword(market, cur_time)
+        if campaignName_info and matchType_info and keyword_info and bid_adjust_info:
+            for campaignName, matchType, keyword, bid_adjust in zip(campaignName_info, matchType_info, keyword_info, bid_adjust_info):
+                if matchType == "BROAD":
+                    keyword_type = "关键词_广泛匹配"
+                elif matchType == "PHRASE":
+                    keyword_type = "关键词_短语匹配"
+                elif matchType == "EXACT":
+                    keyword_type = "关键词_精准匹配"
+                else:
+                    keyword_type = None  # 或者设置为其他默认值，或者不赋值
+
+                if keyword_type is not None:
+                    if bid_adjust == -1:
+                        bid_adjust_desc = "设置竞价为0.05"
+                    else:
+                        bid_adjust_desc = "根据ACOS值降价" if bid_adjust == 0 else bid_adjust
+                    table2 = [[market, cur_time, keyword_type, campaignName, keyword, bid_adjust_desc]]
+                    get_request_data(market, cur_time, "D-LOG", table2, 0, brand)
+        campaignName_info, keyword_info, bid_adjust_info = api1.get_data_automatic_targeting(market, cur_time)
+        if campaignName_info and keyword_info and bid_adjust_info:
+            for campaignName, keyword, bid_adjust in zip(campaignName_info, keyword_info, bid_adjust_info):
+                table2 = [[market, cur_time, "自动定位组竞价", campaignName, keyword, "设置竞价为0.05" if bid_adjust == -1 else bid_adjust]]
+                get_request_data(market, cur_time, "D-LOG", table2, 0, brand)
+        campaignName_info, keyword_info, bid_adjust_info = api1.get_data_product_targets(market, cur_time)
+        if campaignName_info and keyword_info and bid_adjust_info:
+            for campaignName, keyword, bid_adjust in zip(campaignName_info, keyword_info, bid_adjust_info):
+                if bid_adjust == -1 or bid_adjust == -10:
+                    bid_adjust_desc = "设置竞价为0.05"
+                else:
+                    bid_adjust_desc = "根据ACOS值降价" if bid_adjust == 0 else bid_adjust
+                table2 = [[market, cur_time, "商品投放竞价", campaignName, keyword, bid_adjust_desc]]
+                get_request_data(market, cur_time, "D-LOG", table2, 0, brand)
+
+
+
+
+
+# time.sleep(60 * 60 * 5)
+# brands_and_countries = {
+#     'LAPASA': ["US", "FR", "IT", "DE", "NL", "SE", "ES", "UK", "JP"],
+#     'DELOMO': ['IT', 'ES', 'DE', 'FR'],
+#     'OutdoorMaster': ['IT', 'ES', 'FR', 'SE'],
+#     'MUDEELA': ['US'],
+#     'Rossny': ['US'],
+#     'ZEN CAVE': ['US']
+# }
 brands_and_countries = {
     'LAPASA': ["US", "FR", "IT", "DE", "NL", "SE", "ES", "UK", "JP"],
     'DELOMO': ['IT', 'ES', 'DE', 'FR'],
-    'OutdoorMaster': ['IT', 'ES', 'FR']
+    'OutdoorMaster': ['IT', 'ES', 'FR', 'SE']
 }
+# brands_and_countries = {
+#     'LAPASA': ["ES"],
+# }
 while True:
     for brand, countries in brands_and_countries.items():
         for country in countries:
-            get_data(country, brand)
+            update_data_period(country, brand)
     print('done')
     time.sleep(60 * 60 * 24)
 #4-1 2-12
+# table2 = [["FR","2024-07-29","关键词_短语匹配","DeepBI_0502_M35 manu_overstock","débardeur homme","根据ACOS值降价"]]
+# get_request_data('FR','2024-07-29',"D-LOG",table2,0,'LAPASA')

@@ -57,8 +57,8 @@ class ProductTools:
             print("update product failed: ", e)
             result = None
         compaignID = ""
-        if result and result.payload["productAds"]["success"]:
-            campaignID = result.payload["productAds"]["success"][0]["adId"]
+        if result and result.payload:
+            campaignID = result.payload
             print("update product success", compaignID)
             res = ["success", campaignID]
         else:

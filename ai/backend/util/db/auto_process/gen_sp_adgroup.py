@@ -237,10 +237,12 @@ class Gen_adgroup:
         if apires[0] == "success":
             newdbtool.update_sd_adGroup_Targeting(market, None, bid, state, target_id, "SP",
                                                "success", datetime.now())
+            return apires[1]["targetId"]
         else:
             newdbtool.update_sd_adGroup_Targeting(market, None, bid, state, target_id, "SP",
                                                "failed", datetime.now())
-        return apires[1]["targetId"]
+            return None
+
 
 
     def create_adGroup_Targeting1(self,market,new_campaign_id,new_adgroup_id,asin,bid,state,type):
@@ -309,17 +311,37 @@ class Gen_adgroup:
             newdbtool.add_sd_adGroup_Targeting(market, new_adgroup_id, bid, "MANUAL", "ENABLED", expression, "SP",
                                                "failed", datetime.now())
         return apires[1]["targetId"]
-#update_adGroup_TargetingClause('FR',50905748319531,'ENABLED',0.15)
-# 广告组更新否定关键词测试
-# update_adGroup_negative_keyword('US','426879824500654','PAUSED')
 
-# 广告组新增否定关键词测试
-# add_adGroup_negative_keyword('FR','284793893968513','397527887041271','NEGATIVE_EXACT',"ENABLED",'5xl')
+    def create_adGroup_Negative_Targeting_by_asin(self,market,new_campaign_id,new_adgroup_id,asin):
+        adGroup_info = {
+  "negativeTargetingClauses": [
+    {
+      "expression": [
+        {
+          "type": "ASIN_SAME_AS",
+          "value": asin
+        }
+      ],
+      "campaignId": str(new_campaign_id),
+      "state": "ENABLED",
+      "adGroupId": str(new_adgroup_id)
+    }
+  ]
+}
+        # api更新
+        apitool = AdGroupTools(self.brand)
+        apires = apitool.create_adGroup_Negative_TargetingClauses(adGroup_info,market)
+        #结果写入日志
+        newdbtool = DbNewSpTools(self.brand)
+        expression = f"asin={asin}"
+        if apires[0]=="success":
+            newdbtool.add_sd_adGroup_Targeting(market, new_adgroup_id, None, "Negative", "ENABLED", expression, "SP",
+                                               "success", datetime.now())
+        else:
+            newdbtool.add_sd_adGroup_Targeting(market, new_adgroup_id, None, "Negative", "ENABLED", expression, "SP",
+                                               "failed", datetime.now())
+        return apires[1]["targetId"]
 
-# 更新测试以下为出价规则
-# update_adgroup('US','2024-03-01','2024-03-31',-0.99,-0.3,0.1) # ACOS值低于基础值30%的：基础出价提升10%
-# update_adgroup('US','2024-03-01','2024-03-31',-0.3,-0.2,0.05) # ACOS值低于基础值20%-30%的：基础出价提升5%
-# update_adgroup('US','2024-03-01','2024-03-31',-0.2,-0.1,0.03) # ACOS值低于基础值10%-20%的：基础出价提升3%
-# update_adgroup('US','2024-03-01','2024-03-31',0.3,100,-0.15) # ACOS值高于基础值30%的：基础出价降低15%
-# update_adgroup('US','2024-03-01','2024-03-31',0.2,0.3,-0.1) # ACOS值高于基础值20%-30%的：基础出价降低10%
-# update_adgroup('US','2024-03-01','2024-03-31',0.1,0.2,-0.05) # ACOS值高于基础值10%-20%的：基础出价降低5%
+# ASIN = 'b00eea9zks'
+# Gen_adgroup('LAPASA').create_adGroup_Negative_Targeting_by_asin('FR',370475500006660,516468538668241,ASIN.upper())
+

@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>策略</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            padding: 20px;
+            text-align: center;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            color: #333;
+        }
+        form {
+            margin-top: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #555;
+        }
+        select, input[type="text"], input[type="number"] {
+            width: calc(50% - 4px); /* 两个元素平分父容器的宽度，减去间隙 */
+            padding: 8px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+            display: inline-block; /* 转换为行内块级元素 */
+            vertical-align: top; /* 垂直对齐方式 */
+        }
+        .input-group {
+            margin-bottom: 15px;
+        }
+        .input-group label {
+            width: 30%; /* 调整label宽度 */
+            display: inline-block; /* 转换为行内块级元素 */
+            text-align: right; /* 文字右对齐 */
+            margin-right: 2%; /* 间隙 */
+            vertical-align: top; /* 垂直对齐方式 */
+        }
+        .input-group select,
+        .input-group input[type="number"] {
+            width: 65%; /* 调整下拉菜单和输入框的宽度 */
+            margin-right: 0; /* 修正右边距 */
+        }
+        input[type="submit"] {
+            background-color: #007bff;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        input[type="submit"]:hover {
+            background-color: #0056b3;
+        }
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>策略</h1>
+        <form action="/strategy_function" method="post" id="apiForm">
+            <label for="brand">品牌:</label>
+            <select id="brand" name="brand" required>
+                <option value="">请选择品牌</option>
+                {% for brand, countries in permissions.brands.items() %}
+                    <option value="{{ brand }}">{{ brand }}</option>
+                {% endfor %}
+            </select><br>
+
+            <label for="country">选择国家：</label>
+            <select id="country" name="country" required>
+                <option value="">请选择国家</option>
+                <!-- 国家选项会根据品牌选择动态生成 -->
+            </select><br>
+
+            <label for="strategy_type">选择策略：</label>
+            <select id="strategy_type" name="strategy_type" required>
+                <option value="">请选择策略</option>
+                <option value="type1">有销售无广告消耗开启广告活动计划</option>
+                <option value="type2">给定sku以及相应国家新建SP-手动广告活动</option>
+                <option value="type3">给定sku以及相应国家新建SP-ASIN广告活动</option>
+                <option value="type4">给定sku以及相应国家新建SP-自动广告活动</option>
+                <option value="type5">给定sku以及相应国家新建SD广告活动</option>
+                <option value="type6">0511策略</option>
+                <option value="type7">德国SD-ASIN衍生策略</option>
+            </select><br>
+
+            <div id="parameters"></div> <!-- 用于放置参数输入框 -->
+
+            <input type="submit" value="运行功能">
+        </form>
+
+        <!-- 展示生成的 CSV 文件 -->
+        <div id="csvContainer" class="hidden">
+            <h2>生成的 CSV 文件</h2>
+            <p>点击下方按钮下载文件：</p>
+            <a id="downloadLink" href="#" download><button>下载 CSV</button></a>
+        </div>
+    </div>
+
+    <script>
+
+
+        // 监听策略类型下拉框的变化事件
+        document.getElementById('strategy_type').addEventListener('change', function() {
+            const strategy = this.value;
+            const parametersDiv = document.getElementById('parameters');
+            parametersDiv.innerHTML = ''; // 清空之前可能存在的参数输入框
+
+            switch (strategy) {
+                case 'type1':
+                case 'type7':
+                    // 有销售无广告消耗开启广告活动计划 或 德国SD-ASIN衍生策略，显示日期输入框
+                    addInputField('日期:', 'date', 'text', parametersDiv);
+                    break;
+                case 'type6':
+                    // 0511策略，显示开始日期和结束日期输入框
+                    addInputField('开始日期:', 'start_date', 'text', parametersDiv);
+                    addInputField('结束日期:', 'end_date', 'text', parametersDiv);
+                    break;
+                case 'type2':
+                case 'type3':
+                case 'type4':
+                case 'type5':
+                    // 给定sku以及相应国家新建广告活动，显示SKU信息输入框
+                    addInputField('SKU信息:', 'sku', 'text', parametersDiv);
+                    break;
+                default:
+                    break;
+            }
+        });
+
+        // 辅助函数：动态添加输入框
+        function addInputField(labelText, id, type, parentElement) {
+            const label = document.createElement('label');
+            label.textContent = labelText;
+            const input = document.createElement('input');
+            input.setAttribute('type', type);
+            input.setAttribute('id', id);
+            input.setAttribute('name', id);
+            input.setAttribute('required', 'true');
+            parentElement.appendChild(label);
+            parentElement.appendChild(input);
+            parentElement.appendChild(document.createElement('br')); // 添加换行
+        }
+        // 处理下载 CSV 文件
+        document.getElementById("apiForm").addEventListener("submit", function(event) {
+            event.preventDefault(); // 阻止默认提交行为
+
+            var formData = new FormData(this);
+
+            fetch('/strategy_function', {
+                method: 'POST',
+                body: formData,
+            })
+            .then(response => response.blob())
+            .then(blob => {
+                // 创建一个临时的URL来下载文件
+                var url = window.URL.createObjectURL(blob);
+
+                // 更新下载链接
+                var downloadLink = document.getElementById('downloadLink');
+                downloadLink.href = url;
+                downloadLink.classList.remove('hidden');
+
+                // 显示生成的 CSV 文件部分
+                var csvContainer = document.getElementById('csvContainer');
+                csvContainer.classList.remove('hidden');
+            })
+            .catch(error => console.error('Error downloading file:', error));
+        });
+    </script>
+    <script>
+        // 从后端获取用户权限数据
+        const permissions = {{ permissions | tojson }};
+
+        // 监听品牌下拉框的变化事件
+        document.getElementById('brand').addEventListener('change', function() {
+            const brand = this.value;
+            const countrySelect = document.getElementById('country');
+
+            // 清空国家下拉框
+            countrySelect.innerHTML = '<option value="">请选择国家</option>';
+
+            // 根据选中的品牌动态加载国家选项
+            if (brand && permissions.brands[brand]) {
+                permissions.brands[brand].forEach(function(country) {
+                    const option = document.createElement('option');
+                    option.value = country;
+                    option.textContent = country;
+                    countrySelect.appendChild(option);
+                });
+            }
+        });
+    </script>
+</body>
+</html>

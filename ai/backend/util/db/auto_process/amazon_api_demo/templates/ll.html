@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>登录</title>
+    <link rel="stylesheet" href="https://cdn.linearicons.com/free/1.0.0/icon-font.min.css">
+</head>
+<style type="text/css">
+    *{
+        margin: 0;
+        padding: 0;
+    }
+    div#all {
+        width: 100%;
+        height: 100%;
+        position: fixed;
+        background-repeat: no-repeat;
+        background-position: 0px 0px;
+        background-size: 100% 100%;
+        font-size: 30px;
+        /*background-image: url(/static/img/7.jpg);*/
+        margin: 0;
+        padding: 0;
+        /*filter: blur(5px);*/
+        z-index: -1;
+    }
+    input.info{
+        width: 320px;
+        height: 45px;
+        margin: 0px 8px;
+        border: 0;
+        text-indent: 10px; /*里面隐形的字体首行缩进*/
+        margin: 10px auto;
+        border-bottom-color: #666666;
+        border-bottom-style: solid;
+        border-bottom-width: 3px;
+    }
+    input.bu{
+        width: 320px;
+        height: 45px;
+        margin: 0px 8px;
+        border: 0;
+        margin: 10px auto;
+        background-color: #04B4AE;
+        color: #f9f9f9;
+        font-size: 1.5em;
+        font-weight: bold;
+    }
+</style>
+<body>
+<div id="all">
+</div>
+<div id="title" style="color: white;font-size: 2em;font-weight: bolder;position: absolute;top: 20%;left: 60%">
+    审核系统
+</div>
+<div id="pic" style="width: 30%;height: 35%;top: 30%;left: 60%;position: absolute;">
+    {% if get_flashed_messages() %}
+        {%for message in get_flashed_messages() %}
+            <p style="color: darkred">{{message}}</p>
+        {% endfor %}
+    {% endif %}
+	<form action="/login" method="post">
+	    <input type="text" name="uname" class="info" placeholder="输入用户名">
+        <input type="password" name="upwd" class="info" placeholder="输入密码">
+	    <p style="color: #666666;font-size: 0.8em;">记住密码：<input type="checkbox" name="isSaved"></p>
+	    <input type="submit" class="bu" value="登录">
+	</form>
+</div>
+
+</body>
+</html>

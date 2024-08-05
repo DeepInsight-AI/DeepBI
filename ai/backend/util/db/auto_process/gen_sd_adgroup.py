@@ -288,17 +288,28 @@ class Gen_adgroup:
         else:
             newdbtool.add_sd_adGroup_Targeting(market,adGroupId,bid,expression_type,state,expression,"SD","failed",datetime.now())
         return apires[1]
-    #create_adGroup_Targeting('FR',508515278499011,'manual','enabled',1)
-    # 广告组更新否定关键词测试
-    # update_adGroup_negative_keyword('US','426879824500654','PAUSED')
 
-    # 广告组新增否定关键词测试
-    # add_adGroup_negative_keyword('FR','284793893968513','397527887041271','NEGATIVE_EXACT',"ENABLED",'5xl')
+    def update_adGroup_Targeting(self,market,target_id,bid,state):
 
-    # 更新测试以下为出价规则
-    # update_adgroup('US','2024-03-01','2024-03-31',-0.99,-0.3,0.1) # ACOS值低于基础值30%的：基础出价提升10%
-    # update_adgroup('US','2024-03-01','2024-03-31',-0.3,-0.2,0.05) # ACOS值低于基础值20%-30%的：基础出价提升5%
-    # update_adgroup('US','2024-03-01','2024-03-31',-0.2,-0.1,0.03) # ACOS值低于基础值10%-20%的：基础出价提升3%
-    # update_adgroup('US','2024-03-01','2024-03-31',0.3,100,-0.15) # ACOS值高于基础值30%的：基础出价降低15%
-    # update_adgroup('US','2024-03-01','2024-03-31',0.2,0.3,-0.1) # ACOS值高于基础值20%-30%的：基础出价降低10%
-    # update_adgroup('US','2024-03-01','2024-03-31',0.1,0.2,-0.05) # ACOS值高于基础值10%-20%的：基础出价降低5%
+        adGroup_info = [
+  {
+    "state": state,
+    "bid": bid,
+    "targetId": target_id
+  }
+]
+        # api更新
+        apitool = AdGroupTools_SD(self.brand)
+        apires = apitool.update_adGroup_Targeting(adGroup_info,market)
+        # 结果写入日志
+        newdbtool = DbNewSpTools(self.brand)
+        if apires[0] == "success":
+            newdbtool.update_sd_adGroup_Targeting(market, None, bid, state, target_id, "SD",
+                                                  "success", datetime.now())
+            return apires[1]["targetId"]
+        else:
+            newdbtool.update_sd_adGroup_Targeting(market, None, bid, state, target_id, "SD",
+                                                  "failed", datetime.now())
+            return None
+
+#Gen_adgroup('LAPASA').update_adGroup_Targeting('FR',68570274746219,10,"enabled")

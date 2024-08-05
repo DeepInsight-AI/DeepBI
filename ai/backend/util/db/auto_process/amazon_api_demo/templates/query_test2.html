@@ -1,76 +1,100 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>查询</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f0f0f0;
-            padding: 20px;
-            text-align: center;
-        }
-        .container {
-            max-width: 600px;
-            margin: 0 auto;
-            background-color: #fff;
-            padding: 30px;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        }
-        h1 {
-            color: #333;
-        }
-        form {
-            margin-top: 20px;
-        }
-        label {
-            display: block;
-            margin-bottom: 8px;
-            color: #555;
-        }
-        select, input[type="text"], input[type="number"] {
-            width: calc(50% - 4px); /* 两个元素平分父容器的宽度，减去间隙 */
-            padding: 8px;
-            margin-bottom: 15px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            box-sizing: border-box;
-            display: inline-block; /* 转换为行内块级元素 */
-            vertical-align: top; /* 垂直对齐方式 */
-        }
-        .input-group {
-            margin-bottom: 15px;
-        }
-        .input-group label {
-            width: 30%; /* 调整label宽度 */
-            display: inline-block; /* 转换为行内块级元素 */
-            text-align: right; /* 文字右对齐 */
-            margin-right: 2%; /* 间隙 */
-            vertical-align: top; /* 垂直对齐方式 */
-        }
-        .input-group select,
-        .input-group input[type="number"] {
-            width: 65%; /* 调整下拉菜单和输入框的宽度 */
-            margin-right: 0; /* 修正右边距 */
-        }
-        input[type="submit"] {
-            background-color: #007bff;
-            color: white;
-            padding: 10px 20px;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 16px;
-        }
-        input[type="submit"]:hover {
-            background-color: #0056b3;
-        }
-        .hidden {
-            display: none;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>查询</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f0f0f0;
+      padding: 20px;
+      text-align: center;
+    }
+
+    .container {
+      max-width: 600px;
+      margin: 0 auto;
+      background-color: #fff;
+      padding: 30px;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+
+    h1 {
+      color: #333;
+      margin-bottom: 20px;
+    }
+
+    form {
+      margin-top: 20px;
+    }
+
+    label {
+      display: inline-block;
+      width: 150px;
+      text-align: right;
+      margin-right: 20px;
+      color: #555;
+    }
+
+    select,
+    input[type="text"],
+    input[type="number"] {
+      width: calc(100% - 180px); /* 150px (label width) + 20px (margin-right) + 10px (extra margin) */
+      padding: 8px;
+      margin-bottom: 15px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      box-sizing: border-box;
+    }
+
+    .input-group {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 15px;
+    }
+
+    input[type="submit"] {
+      background-color: #007bff;
+      color: white;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 16px;
+      text-align: center;
+      width: 100%;
+      box-sizing: border-box;
+    }
+
+    input[type="submit"]:hover {
+      background-color: #0056b3;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    #csvContainer {
+      margin-top: 20px;
+    }
+
+    #csvContainer h2 {
+      margin-bottom: 10px;
+    }
+
+    #csvContainer p {
+      margin-bottom: 10px;
+    }
+
+    #csvContainer a {
+      display: block;
+      margin-bottom: 10px;
+    }
+  </style>
 </head>
 <body>
     <div class="container">

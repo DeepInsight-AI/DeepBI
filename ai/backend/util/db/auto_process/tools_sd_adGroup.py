@@ -223,6 +223,30 @@ class AdGroupTools_SD:
             print("list adGroup TargetingClause failed")
             return ["failed", ""]
 
+    def list_adGroup_Targeting_by_targetId(self, market, targetId):
+        try:
+            credentials, access_token = self.load_credentials(market)
+
+            result = sponsored_display.Targets(credentials=credentials,
+                                               marketplace=Marketplaces[market.upper()],
+                                               access_token=access_token,
+                                               proxies=get_proxies(market),
+                                               debug=True).get_products_target(
+                targetId=targetId)
+            if result and result.payload:
+                print("list adGroup Targeting success")
+                return result.payload
+            # if result and result.payload["negativeKeywords"]["success"]:
+            #     negativeKeywordId = result.payload["negativeKeywords"]["success"][0]["negativeKeywordId"]
+            #     print("add adGroup negative keyword success,negativeKeywordId is:", negativeKeywordId)
+            #     return ["success", negativeKeywordId]
+            else:
+                print("list adGroup TargetingClause failed")
+                return ["failed", ""]
+        except Exception as e:
+            print("list adGroup Targeting failed: ", e)
+            return ["failed", ""]
+
     def create_adGroup_Targeting(self, adGroup_info, market):
         try:
             credentials, access_token = self.load_credentials(market)
@@ -244,6 +268,30 @@ class AdGroupTools_SD:
         #     return ["success", negativeKeywordId]
         else:
             print("create adGroup TargetingClause failed")
+            return ["failed", ""]
+
+    def update_adGroup_Targeting(self, adGroup_info, market):
+        try:
+            credentials, access_token = self.load_credentials(market)
+            result = sponsored_display.Targets(credentials=credentials,
+                                               marketplace=Marketplaces[market.upper()],
+                                               access_token=access_token,
+                                               proxies=get_proxies(market),
+                                               debug=True).edit_products_targets(
+                body=json.dumps(adGroup_info))
+
+            if result and result.payload[0]["targetId"]:
+                print("update adGroup TargetingClause success")
+                return ["success", result.payload[0]["targetId"] ]
+            # if result and result.payload["negativeKeywords"]["success"]:
+            #     negativeKeywordId = result.payload["negativeKeywords"]["success"][0]["negativeKeywordId"]
+            #     print("add adGroup negative keyword success,negativeKeywordId is:", negativeKeywordId)
+            #     return ["success", negativeKeywordId]
+            else:
+                print("update adGroup TargetingClause failed")
+                return ["failed", ""]
+        except Exception as e:
+            print("update adGroup TargetingClause failed: ", e)
             return ["failed", ""]
 
     def list_adGroup_Targetingrecommendations(self, market, adGroupID,products):
@@ -321,6 +369,6 @@ class AdGroupTools_SD:
 #
 # agt=AdGroupTools_SD('LAPASA')
 # # 测试更新广告系列信息
-# res = agt.get_adGroup_bycampaignid_api('JP','558886245085229')
+# res = agt.list_adGroup_Targeting_by_targetId('FR','68570274746219')
 # print(type(res))
 # print(res)

@@ -59,64 +59,8 @@
             display: none;
         }
     </style>
+
     <script>
-        // 根据选择的品牌动态更新国家选项
-        function updateCountryOptions() {
-            var brand = document.getElementById('brand').value;
-            var countrySelect = document.getElementById('country');
-            countrySelect.innerHTML = ''; // 清空当前选项
-
-            var countries = [];
-            if (brand === 'DELOMO') {
-                countries = ['IT', 'ES', 'DE', 'FR'];
-            } else if (brand === 'OutdoorMaster') {
-                countries = ['IT', 'ES', 'SE', 'FR'];
-            } else {
-                // 默认情况下，可以设置一个通用的国家选项
-                countries = ['IT', 'ES', 'DE', 'FR', 'UK', 'US'];
-            }
-
-            // 添加新的选项到国家选择框
-            for (var i = 0; i < countries.length; i++) {
-                var option = document.createElement('option');
-                option.value = countries[i];
-                option.textContent = getCountryName(countries[i]);
-                countrySelect.appendChild(option);
-            }
-        }
-
-        // 辅助函数，根据国家代码返回显示名称
-        function getCountryName(code) {
-            switch (code) {
-                case 'IT':
-                    return '意大利 (IT)';
-                case 'ES':
-                    return '西班牙 (ES)';
-                case 'DE':
-                    return '德国 (DE)';
-                case 'FR':
-                    return '法国 (FR)';
-                case 'UK':
-                    return '英国 (UK)';
-                case 'US':
-                    return '美国 (US)';
-                case 'SE':
-                    return '瑞典 (SE)';
-                default:
-                    return code;
-            }
-        }
-
-        // 在页面加载完成后，初始化国家选项
-        document.addEventListener('DOMContentLoaded', function() {
-            updateCountryOptions(); // 初始化时根据默认品牌更新国家选项
-        });
-
-        // 品牌选择框改变时更新国家选项
-        document.getElementById('brand').addEventListener('change', function() {
-            updateCountryOptions();
-        });
-
         // 根据创建方式显示或隐藏策略下拉菜单和额外参数
         function showStrategyDropdown() {
             var createMethod = document.getElementById('create_method').value;
@@ -247,14 +191,16 @@
     <h1>创建页面</h1>
     <form id="createForm" action="/process_create" method="POST">
         <label for="brand">品牌:</label>
-        <select id="brand" name="brand" onchange="updateCountryOptions()">
-            <option value="LAPASA">LAPASA</option>
-            <option value="DELOMO">DELOMO</option>
-            <option value="OutdoorMaster">OutdoorMaster</option>
+        <select id="brand" name="brand" required>
+           <option value="">请选择品牌</option>
+                {% for brand, countries in permissions.brands.items() %}
+                    <option value="{{ brand }}">{{ brand }}</option>
+                {% endfor %}
         </select><br>
 
-        <label for="country">国家:</label>
-        <select id="country" name="country">
+        <label for="country">选择国家：</label>
+            <select id="country" name="country" required>
+                <option value="">请选择国家</option>
             <!-- 国家选项由 JavaScript 动态生成 -->
         </select><br>
 
@@ -309,5 +255,28 @@
         <p id="statusText"></p>
         <a id="downloadLink" href="#" style="display: none;">下载 CSV 文件</a>
     </div>
+    <script>
+        // 从后端获取用户权限数据
+        const permissions = {{ permissions | tojson }};
+
+        // 监听品牌下拉框的变化事件
+        document.getElementById('brand').addEventListener('change', function() {
+            const brand = this.value;
+            const countrySelect = document.getElementById('country');
+
+            // 清空国家下拉框
+            countrySelect.innerHTML = '<option value="">请选择国家</option>';
+
+            // 根据选中的品牌动态加载国家选项
+            if (brand && permissions.brands[brand]) {
+                permissions.brands[brand].forEach(function(country) {
+                    const option = document.createElement('option');
+                    option.value = country;
+                    option.textContent = country;
+                    countrySelect.appendChild(option);
+                });
+            }
+        });
+    </script>
 </body>
 </html>

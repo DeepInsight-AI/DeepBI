@@ -57,7 +57,7 @@
         <input type="file" id="csvFile" name="csvFile" accept=".csv" required>
 
         <label for="operationOption">操作选项:</label>
-        <select name="operationOption" id="operationOption" onchange="toggleFields(this.value)">
+        <select name="operationOption" id="operationOption" onchange="toggleFields(this.value)" required>
             <option value="">--请选择一个选项--</option>
             <option value="createCampaign">新建广告活动</option>
             <option value="priceAdjustment">改价</option>
@@ -65,33 +65,72 @@
 
         <div id="createCampaignFields" class="hidden">
             <label for="strategy">策略:</label>
-            <select name="strategy">
+            <select name="strategy" id="strategy">
                 <option value="0502">0502</option>
                 <option value="0507">0507</option>
             </select>
 
             <label for="brand">品牌:</label>
-            <select id="brand" name="brand" required>
+            <select id="brand" name="brand" >
                 <option value="">请选择品牌</option>
                 {% for brand, countries in permissions.brands.items() %}
                     <option value="{{ brand }}">{{ brand }}</option>
                 {% endfor %}
             </select><br>
 
+
             <label for="country">选择国家：</label>
-            <select id="country" name="country" required>
+            <select id="country" name="country" >
                 <option value="">请选择国家</option>
                 <!-- 国家选项会根据品牌选择动态生成 -->
             </select><br>
 
             <label for="templateCountry">模板国家:</label>
-            <select name="templateCountry">
+            <select name="templateCountry" id="templateCountry">
                 <option value="IT">意大利</option>
                 <option value="ES">西班牙</option>
                 <option value="DE">德国</option>
                 <option value="FR">法国</option>
                 <option value="UK">英国</option>
                 <option value="US">美国</option>
+            </select>
+        </div>
+
+        <div id="priceAdjustmentFields" class="hidden">
+
+            <label for="adjustmentBrand">品牌:</label>
+            <select id="adjustmentBrand" name="adjustmentBrand" >
+                <option value="">请选择品牌</option>
+                {% for brand, countries in permissions.brands.items() %}
+                    <option value="{{ brand }}">{{ brand }}</option>
+                {% endfor %}
+            </select><br>
+
+            <label for="adjustmentCountry">选择国家：</label>
+            <select id="adjustmentCountry" name="adjustmentCountry" >
+                <option value="">请选择国家</option>
+                <!-- 国家选项会根据品牌选择动态生成 -->
+            </select><br>
+
+            <label for="adType">广告类型:</label>
+            <select name="adType" id="adType">
+                <option value="SP">SP</option>
+                <option value="SD">SD</option>
+            </select>
+
+            <label for="adjustmentPosition">改价位置:</label>
+            <select name="adjustmentPosition" id="adjustmentPosition">
+                <option value="budget">预算</option>
+                <option value="adPlacement">广告位</option>
+                <option value="keywords">关键词</option>
+                <option value="productTargeting">商品投放</option>
+                <option value="autoTargeting">自动定位组</option>
+            </select>
+
+            <label for="adjustmentMethod">修改方式:</label>
+            <select name="adjustmentMethod" id="adjustmentMethod">
+                <option value="byCampaign">根据广告活动修改</option>
+                <option value="direct">直接修改</option>
             </select>
         </div>
 
@@ -103,10 +142,17 @@
         // 根据操作选项显示或隐藏相关字段
         function toggleFields(value) {
             var createFields = document.getElementById('createCampaignFields');
+            var priceFields = document.getElementById('priceAdjustmentFields');
+
             if (value === 'createCampaign') {
                 createFields.classList.remove('hidden');
+                priceFields.classList.add('hidden');
+            } else if (value === 'priceAdjustment') {
+                createFields.classList.add('hidden');
+                priceFields.classList.remove('hidden');
             } else {
                 createFields.classList.add('hidden');
+                priceFields.classList.add('hidden');
             }
         }
     </script>
@@ -118,6 +164,25 @@
         document.getElementById('brand').addEventListener('change', function() {
             const brand = this.value;
             const countrySelect = document.getElementById('country');
+
+            // 清空国家下拉框
+            countrySelect.innerHTML = '<option value="">请选择国家</option>';
+
+            // 根据选中的品牌动态加载国家选项
+            if (brand && permissions.brands[brand]) {
+                permissions.brands[brand].forEach(function(country) {
+                    const option = document.createElement('option');
+                    option.value = country;
+                    option.textContent = country;
+                    countrySelect.appendChild(option);
+                });
+            }
+        });
+
+        // 监听改价品牌下拉框的变化事件
+        document.getElementById('adjustmentBrand').addEventListener('change', function() {
+            const brand = this.value;
+            const countrySelect = document.getElementById('adjustmentCountry');
 
             // 清空国家下拉框
             countrySelect.innerHTML = '<option value="">请选择国家</option>';

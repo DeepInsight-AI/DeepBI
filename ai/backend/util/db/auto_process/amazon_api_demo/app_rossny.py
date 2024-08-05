@@ -8,7 +8,7 @@ from datetime import datetime
 from util.access_param import access_param
 import pandas as pd
 import os
-from util.api_auto import auto_api
+from util.api_auto_sp import auto_api
 from ai.backend.util.db.auto_process.create_new_sd_ad_auto import Ceate_new_sd
 from ai.backend.util.db.auto_process.create_new_sp_ad_auto import Ceate_new_sku
 from ai.backend.util.db.db_amazon.auto_generate_new_sku_sp import AmazonMysqlRagUitl as sp
@@ -238,5 +238,5 @@ def modify_function():
 
 
 if __name__ == '__main__':
-    app.run(debug=False, host='0.0.0.0',port=4009, threaded=True)
+    app.run(debug=False, host='0.0.0.0',port=4006, threaded=True)
 

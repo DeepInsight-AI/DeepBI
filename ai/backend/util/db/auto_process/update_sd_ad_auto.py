@@ -6,10 +6,10 @@ import json
 from ai.backend.util.db.auto_process.gen_sd_campaign import Gen_campaign
 from ai.backend.util.db.auto_process.tools_sd_campaign import CampaignTools
 from ai.backend.util.db.auto_process.gen_sp_keyword import Gen_keyword  #add_keyword_toadGroup_v0,update_keyword_toadGroup
-from ai.backend.util.db.auto_process.gen_sp_adgroup import Gen_adgroup  #add_adGroup_negative_keyword_v0,update_adGroup_TargetingClause
+from ai.backend.util.db.auto_process.gen_sd_adgroup import Gen_adgroup  #add_adGroup_negative_keyword_v0,update_adGroup_TargetingClause
 from ai.backend.util.db.auto_process.gen_sd_product import Gen_product
 from ai.backend.util.db.auto_process.tools_db_new_sp import DbNewSpTools
-from ai.backend.util.db.auto_process.tools_sp_adGroup import AdGroupTools
+from ai.backend.util.db.auto_process.tools_sd_adGroup import AdGroupTools_SD
 from ai.backend.util.db.auto_process.tools_sp_keyword import SPKeywordTools
 from ai.backend.util.db.auto_process.create_new_sp_ad_auto import load_config
 
@@ -40,14 +40,14 @@ class auto_api_sd:
                 api2 = Gen_campaign(self.brand)
                 campaign_info = api1.list_campaigns_api(campaign_id, market)
                 if campaign_info is not None:
-                    campaignId = item['campaignId']
-                    name = item['name']
-                    bid1 = item['budget']
+                    campaignId = campaign_info['campaignId']
+                    name = campaign_info['name']
+                    bid1 = campaign_info['budget']
                     if bid1 is not None:  # 检查是否存在有效的bid值
                         if bid_adjust == 0:
                             api2.update_camapign_v0(market, str(campaign_id), campaign_name, "paused","daily", float(bid1))
                         else:
-                            bid = max(5, bid1 + float(bid_adjust) * self.exchange_rate)
+                            bid = max(5 * self.exchange_rate, bid1 + float(bid_adjust) * self.exchange_rate)
                             try:
                                 api2.update_camapign_v0(market, str(campaignId), name, "enabled", "daily", float(bid), float(bid1))
                             except Exception as e:
@@ -68,7 +68,7 @@ class auto_api_sd:
                 api.update_product(market, str(adId), state="paused")
 
 
-    def update_sp_ad_product_targets(self,market, path):
+    def update_sd_ad_product_targets(self,market, path):
         uploaded_file = path
         if os.stat(uploaded_file).st_size > 2:
             df = pd.read_csv(uploaded_file)
@@ -79,56 +79,42 @@ class auto_api_sd:
             print(df_data)
 
             api1 = Gen_adgroup(self.brand)
-            api2 = AdGroupTools(self.brand)
+            api2 = AdGroupTools_SD(self.brand)
             for item in df_data:
                 keywordId = item["keywordId"]
-                ACOS_7d = item["ACOS_7d"]
+                campaign_id = item["campaignId"]
                 bid_adjust = item["bid_adjust"]
-                automatic_targeting_info = api2.list_adGroup_TargetingClause_by_targetId(keywordId, market)
+                automatic_targeting_info = api2.list_adGroup_Targeting_by_targetId(market, keywordId)
                 if automatic_targeting_info is not None:
-                    for item in automatic_targeting_info:
-                        targetId = item['targetId']
-                        bid1 = item.get('bid')
-                        if bid1 is not None:  # 检查是否存在有效的bid值
-                            if bid_adjust == 0:
-                                bid = bid1/[(ACOS_7d-0.24)/0.24+1]
-                            else:
-                                bid = max(bid1 + float(bid_adjust), 0.05)
-                            try:
-                                api1.update_adGroup_TargetingClause(market, str(targetId), float(bid), state="ENABLED")
-                            except Exception as e:
-                                print(e)
-
-    def add_sp_ad_searchTerm_product(self,market, path):
-        uploaded_file = path
-        if os.stat(uploaded_file).st_size > 2:
-            df = pd.read_csv(uploaded_file)
-            # 打印 DataFrame 的前几行，以确保成功读取
-            print(df.head())
-            # 将DataFrame转换为一个列表，每个元素是一个字典表示一行数据
-            df_data = json.loads(df.to_json(orient='records'))
-            print(df_data)
-
-            apitool1 = AdGroupTools(self.brand)
-            api1 = Gen_adgroup(self.brand)
-            for item in df_data:
-                campaignId = item["campaignId"]
-                adGroupId = item["adGroupId"]
-                searchTerm = item["searchTerm"]
-
-                try:
-                    bid_info = apitool1.list_product_bid_recommendations(market, searchTerm.upper(), campaignId,
-                                                                         adGroupId)
-                    bid = bid_info['bidRecommendations'][0]['bidRecommendationsForTargetingExpressions'][0]['bidValues'][1]['suggestedBid']
-                except Exception as e:
-                    print(e)
-                    bid = 0.25
-                try:
-                    api1.create_adGroup_Targeting1(market,str(campaignId),str(adGroupId),searchTerm.upper(),bid,state='ENABLED',type='ASIN_SAME_AS')
-                except Exception as e:
-                    print(e)
-
-
+                    targetId = automatic_targeting_info['targetId']
+                    bid1 = automatic_targeting_info.get('bid')
+                    if bid1 is not None:  # 检查是否存在有效的bid值
+                        if bid_adjust == -10:
+                            bid = 1 * self.exchange_rate
+                        else:
+                            bid = max(bid1 + float(bid_adjust), 1 * self.exchange_rate)
+                        api3 = CampaignTools(self.brand)
+                        api4 = Gen_campaign(self.brand)
+                        campaign_info = api3.list_campaigns_api(campaign_id, market)
+                        if campaign_info is not None:
+                            campaignId = campaign_info['campaignId']
+                            name = campaign_info['name']
+                            campaign_bid1 = campaign_info['budget']
+                            if bid1 is not None:  # 检查是否存在有效的bid值
+                                try:
+                                    api4.update_camapign_v0(market, str(campaignId), name, "enabled", "daily",
+                                                            25 * self.exchange_rate, float(campaign_bid1))
+                                except Exception as e:
+                                    print(e)
+                                try:
+                                    api1.update_adGroup_Targeting(market, str(targetId), float(bid), state="enabled")
+                                except Exception as e:
+                                    print(e)
+                                try:
+                                    api4.update_camapign_v0(market, str(campaignId), name, "enabled", "daily",
+                                                            float(campaign_bid1), 25 * self.exchange_rate)
+                                except Exception as e:
+                                    print(e)
 
 # uploaded_file = 'C:/Users/admin/PycharmProjects/DeepBI/ai/backend/util/db/auto_yzj/滞销品优化/输出结果/LAPASA_US_2024-07-17/自动_劣质广告活动_LAPASA_US_2024-07-17.csv'
 #     #print(os.stat(uploaded_file).st_size)

@@ -289,7 +289,7 @@ WHERE
         except Exception as e:
             print(f"Error occurred when select_product_sku_by_asin: {e}")
 
-    def select_product_sku_by_parent_asin(self, parent_asins, depository):
+    def select_product_sku_by_parent_asin(self, parent_asins, depository, market):
         try:
             conn = self.conn
             query = f"""
@@ -305,8 +305,14 @@ WHERE
             """
             df = pd.read_sql(query, con=conn)
             if df.empty:
-                print("No product sku")
-                return [asin.strip() for asin in parent_asins.split(',')]
+                query1 = f"""
+                            SELECT DISTINCT sku
+                            FROM amazon_product_info
+                            WHERE asin = '{parent_asins}'
+                            AND market = '{market}'
+                            """
+                df1 = pd.read_sql(query1, con=conn)
+                return df1['sku'].tolist()
             else:
                 print("select product sku success")
                 return df['sku'].tolist()

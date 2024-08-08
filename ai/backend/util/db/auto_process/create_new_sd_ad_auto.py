@@ -266,7 +266,7 @@ class Ceate_new_sd:
                 if brand_name == 'LAPASA':
                     sku_info = api1.select_sd_product_sku(market, i)
                 else:
-                    sku_info = api1.select_product_sku_by_parent_asin(i, self.select_depository(brand_name))
+                    sku_info = api1.select_product_sku_by_parent_asin(i, self.select_depository(brand_name), market)
                 api4 = Gen_product(brand_name)
                 for sku in sku_info:
                     try:
@@ -469,7 +469,7 @@ class Ceate_new_sd:
                 if brand_name == 'LAPASA':
                     sku_info = api1.select_sd_product_sku(market,i)
                 else:
-                    sku_info = api1.select_product_sku_by_parent_asin(i,self.select_depository(brand_name))
+                    sku_info = api1.select_product_sku_by_parent_asin(i,self.select_depository(brand_name), market)
                 api4 = Gen_product(brand_name)
                 for sku in sku_info:
                     try:

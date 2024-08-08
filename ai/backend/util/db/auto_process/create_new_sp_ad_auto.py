@@ -359,7 +359,7 @@ class Ceate_new_sku:
                 if brand_name == 'LAPASA':
                     sku_info = api1.select_sd_product_sku(market, i)
                 else:
-                    sku_info = api1.select_product_sku_by_parent_asin(i, self.select_depository(brand_name))
+                    sku_info = api1.select_product_sku_by_parent_asin(i, self.select_depository(brand_name), market)
                 for sku in sku_info:
                     try:
                         new_sku = api3.create_productsku(market, new_campaign_id, new_adgroup_id, sku,asin=None, state="ENABLED")
@@ -533,7 +533,7 @@ class Ceate_new_sku:
                 if brand_name == 'LAPASA':
                     sku_info = api1.select_sd_product_sku(market, i)
                 else:
-                    sku_info = api1.select_product_sku_by_parent_asin(i, self.select_depository(brand_name))
+                    sku_info = api1.select_product_sku_by_parent_asin(i, self.select_depository(brand_name), market)
                 for sku in sku_info:
                     try:
                         new_sku = api3.create_productsku(market, new_campaign_id, new_adgroup_id, sku,asin=None, state="ENABLED")
@@ -576,7 +576,7 @@ class Ceate_new_sku:
             if brand_name == 'LAPASA':
                 sku_info = api1.select_sd_product_sku(market, i)
             else:
-                sku_info = api1.select_product_sku_by_parent_asin(i,self.select_depository(brand_name))
+                sku_info = api1.select_product_sku_by_parent_asin(i,self.select_depository(brand_name), market)
             for sku in sku_info:
                 try:
                     new_sku = api3.create_productsku(market, new_campaign_id, new_adgroup_id, sku,asin=None, state="ENABLED")

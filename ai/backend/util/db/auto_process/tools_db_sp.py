@@ -164,7 +164,10 @@ from temp2
     def select_sd_product_sku(self, market,product):
         try:
             conn = self.conn
-            sku = "frsku"
+            if market in ('US', 'JP', 'UK'):
+                sku = f"{market.lower()}sku"
+            else:
+                sku = "frsku"
             query = """
             SELECT {}
 FROM prod_as_product_base
@@ -303,6 +306,7 @@ WHERE
             df = pd.read_sql(query, con=conn)
             if df.empty:
                 print("No product sku")
+                return [asin.strip() for asin in parent_asins.split(',')]
             else:
                 print("select product sku success")
                 return df['sku'].tolist()
@@ -692,6 +696,97 @@ ORDER BY
     a.campaignName,
     a.keyword,
     a.searchTerm;
+                    """.format(market)
+            df = pd.read_sql(query, con=conn)
+            if df.empty:
+                print("No search_term")
+                return None
+            else:
+                # Define criteria for filtering
+                # Criteria 1: Sales in the last 7 days > 0 and ACOS in the last 7 days <= 0.24
+                criteria1 = (df['total_sales14d_7d'] > 0) & (df['ACOS_7d'] <= 0.24)
+
+                # Criteria 2: Orders in the last 30 days >= 2 and average ACOS in the last 30 days <= 0.24
+                criteria2 = (df['ORDER_1m'] >= 2) & (df['ACOS_30d'] <= 0.24)
+
+                # Apply filters
+                filtered_df = df[criteria1 | criteria2]
+
+                if filtered_df.empty:
+                    print("No search_term matching the criteria")
+                    return None
+                else:
+                    print("select campaignId success")
+                    return filtered_df['searchTerm'].tolist()
+
+        except Exception as e:
+            print(f"Error occurred when selecting campaign search term: {e}")
+
+    def select_sp_campaign_search_term_by_parent_asin(self, market, parent_asin,depository):
+        try:
+            conn = self.conn
+            query = f"""
+SELECT
+    b.parent_asins,
+    a.searchTerm,
+    a.keyword,
+    a.keywordBid,
+    a.adGroupName,
+    a.adGroupId,
+    a.matchType,
+    a.campaignName,
+    a.campaignId,
+    SUM(CASE WHEN a.date BETWEEN DATE_SUB(CURDATE()- INTERVAL 1 DAY - INTERVAL 1 DAY, INTERVAL 29 day) AND DATE_SUB(CURDATE()- INTERVAL 1 DAY, INTERVAL 1 DAY) THEN a.clicks ELSE 0 END) AS total_clicks_30d,
+    SUM(CASE WHEN a.date BETWEEN DATE_SUB(CURDATE()- INTERVAL 1 DAY - INTERVAL 1 DAY, INTERVAL 6 DAY) AND DATE_SUB(CURDATE()- INTERVAL 1 DAY, INTERVAL 1 DAY) THEN a.clicks ELSE 0 END) AS total_clicks_7d,
+    SUM(CASE WHEN a.date = CURDATE()- INTERVAL 1 DAY - INTERVAL 2 DAY THEN a.clicks ELSE 0 END) AS total_clicks_yesterday,
+    SUM(CASE WHEN a.date BETWEEN DATE_SUB(CURDATE()- INTERVAL 1 DAY - INTERVAL 1 DAY, INTERVAL 29 day) AND DATE_SUB(CURDATE()- INTERVAL 1 DAY, INTERVAL 1 DAY) THEN a.sales14d ELSE 0 END) AS total_sales14d_30d,
+    SUM(CASE WHEN a.date BETWEEN DATE_SUB(CURDATE()- INTERVAL 1 DAY - INTERVAL 1 DAY, INTERVAL 6 DAY) AND DATE_SUB(CURDATE()- INTERVAL 1 DAY, INTERVAL 1 DAY) THEN a.sales14d ELSE 0 END) AS total_sales14d_7d,
+    SUM(CASE WHEN a.date = CURDATE()- INTERVAL 1 DAY - INTERVAL 2 DAY THEN a.sales14d ELSE 0 END) AS total_sales14d_yesterday,
+    SUM(CASE WHEN a.date BETWEEN DATE_SUB(CURDATE()- INTERVAL 1 DAY - INTERVAL 1 DAY, INTERVAL 29 day) AND DATE_SUB(CURDATE()- INTERVAL 1 DAY, INTERVAL 1 DAY) THEN a.cost ELSE 0 END) AS total_cost_30d,
+    SUM(CASE WHEN a.date BETWEEN DATE_SUB(CURDATE()- INTERVAL 1 DAY - INTERVAL 1 DAY, INTERVAL 6 DAY) AND DATE_SUB(CURDATE()- INTERVAL 1 DAY, INTERVAL 1 DAY) THEN a.cost ELSE 0 END) AS total_cost_7d,
+    SUM(CASE WHEN a.date = CURDATE()- INTERVAL 1 DAY - INTERVAL 2 DAY THEN a.cost ELSE 0 END) AS total_cost_yesterday,
+    SUM(CASE WHEN a.date BETWEEN DATE_SUB(CURDATE()- INTERVAL 1 DAY - INTERVAL 1 DAY, INTERVAL 29 day) AND DATE_SUB(CURDATE()- INTERVAL 1 DAY, INTERVAL 1 DAY) THEN a.cost ELSE 0 END) / SUM(CASE WHEN a.date BETWEEN DATE_SUB(CURDATE()- INTERVAL 1 DAY - INTERVAL 1 DAY, INTERVAL 29 day) AND DATE_SUB(CURDATE()- INTERVAL 1 DAY, INTERVAL 1 DAY) THEN a.sales14d ELSE 0 END) AS ACOS_30d,
+    SUM(CASE WHEN a.date BETWEEN DATE_SUB(CURDATE()- INTERVAL 1 DAY - INTERVAL 1 DAY, INTERVAL 6 DAY) AND DATE_SUB(CURDATE()- INTERVAL 1 DAY, INTERVAL 1 DAY) THEN a.cost ELSE 0 END) / SUM(CASE WHEN a.date BETWEEN DATE_SUB(CURDATE()- INTERVAL 1 DAY - INTERVAL 1 DAY, INTERVAL 6 DAY) AND DATE_SUB(CURDATE()- INTERVAL 1 DAY, INTERVAL 1 DAY) THEN a.sales14d ELSE 0 END) AS ACOS_7d,
+    SUM(CASE WHEN a.date = CURDATE()- INTERVAL 1 DAY - INTERVAL 2 DAY THEN a.cost ELSE 0 END) / SUM(CASE WHEN a.date = CURDATE()- INTERVAL 1 DAY - INTERVAL 2 DAY THEN a.sales14d ELSE 0 END)  AS ACOS_yesterday,
+    SUM(CASE WHEN a.date BETWEEN DATE_SUB(CURDATE()- INTERVAL 1 DAY - INTERVAL 1 DAY, INTERVAL 29 day) AND DATE_SUB(CURDATE()- INTERVAL 1 DAY, INTERVAL 1 DAY) THEN a.purchases7d ELSE 0 END) AS ORDER_1m,
+    SUM(CASE WHEN a.date BETWEEN DATE_SUB(CURDATE()- INTERVAL 1 DAY - INTERVAL 1 DAY, INTERVAL 6 day) AND DATE_SUB(CURDATE()- INTERVAL 1 DAY, INTERVAL 1 DAY) THEN a.purchases7d ELSE 0 END) AS ORDER_7d
+
+FROM
+    amazon_search_term_reports_sp a
+JOIN
+    (	SELECT
+	parent_asins,
+	campaignId
+FROM
+	amazon_advertised_product_reports_sp t1
+	JOIN amazon_product_info_extended t2 ON t2.asin = t1.advertisedAsin
+WHERE
+	t1.market = '{market}'
+	AND t2.market = '{depository}'
+GROUP BY
+	campaignId
+HAVING
+	TRIM(parent_asins) <> ''
+	AND parent_asins IS NOT NULL
+    ) b ON a.campaignId = b.campaignId
+WHERE
+    a.date BETWEEN DATE_SUB(CURDATE()- INTERVAL 1 DAY, INTERVAL 30 DAY) AND CURDATE()- INTERVAL 1 DAY- INTERVAL 1 DAY
+    AND a.market = '{market}'
+    AND b.parent_asins = '{parent_asin}'
+    AND NOT (a.searchTerm LIKE 'b0%' AND LENGTH(a.searchTerm) = 10) -- 添加排除条件
+		AND a.matchType IN ('TARGETING_EXPRESSION_PREDEFINED')
+GROUP BY
+    a.adGroupName,
+    a.campaignName,
+    a.keyword,
+    a.searchTerm,
+    a.matchType
+ORDER BY
+    a.adGroupName,
+    a.campaignName,
+    a.keyword,
+    a.searchTerm;
+
                     """.format(market)
             df = pd.read_sql(query, con=conn)
             if df.empty:

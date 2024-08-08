@@ -6,6 +6,7 @@ from ai.backend.util.db.auto_process.gen_sp_keyword import Gen_keyword
 from ai.backend.util.db.auto_process.tools_sp_adGroup import AdGroupTools
 from ai.backend.util.db.auto_process.gen_sp_adgroup import Gen_adgroup
 from ai.backend.util.db.auto_process.gen_sp_campaign import Gen_campaign
+from backend.util.db.auto_process.gen_sp_product import Gen_product
 
 
 class auto_api_sp:
@@ -177,6 +178,72 @@ class auto_api_sp:
                                     api1.update_campaign_placement(market, str(campaignId), bid1, bid, placement)
                                 except Exception as e:
                                     print(e)
+
+    def auto_campaign_status(self,market,path,status):
+        uploaded_file = path
+        if os.stat(uploaded_file).st_size > 2:
+            df = pd.read_csv(uploaded_file)
+            # 打印 DataFrame 的前几行，以确保成功读取
+            print(df.head())
+            # 将DataFrame转换为一个列表，每个元素是一个字典表示一行数据
+            df_data = json.loads(df.to_json(orient='records'))
+            print(df_data)
+            api1 = Gen_campaign(self.brand)
+            for item in df_data:
+                campaignId = item["campaignId"]
+                campaign_info = api1.list_camapign(campaignId,market)
+                print(campaign_info)
+                if campaign_info is not None:
+                    for item in campaign_info:
+                        campaignId = item['campaignId']
+                        name = item['name']
+                        state = item['state']
+                        try:
+                            api1.update_camapign_status(market, str(campaignId), name, state, status)
+                        except Exception as e:
+                            print(e)
+
+    def auto_sku_status(self,market,path,status):
+        uploaded_file = path
+        if os.stat(uploaded_file).st_size > 2:
+            df = pd.read_csv(uploaded_file)
+            # 打印 DataFrame 的前几行，以确保成功读取
+            print(df.head())
+            # 将DataFrame转换为一个列表，每个元素是一个字典表示一行数据
+            df_data = json.loads(df.to_json(orient='records'))
+            print(df_data)
+            api = Gen_product(self.brand)
+            for item in df_data:
+                adId = item["adId"]
+                api.update_product(market, str(adId), state=status)
+
+    def auto_keyword_status(self,market,path,status):
+        uploaded_file = path
+        if os.stat(uploaded_file).st_size > 2:
+            df = pd.read_csv(uploaded_file)
+            # 打印 DataFrame 的前几行，以确保成功读取
+            print(df.head())
+            # 将DataFrame转换为一个列表，每个元素是一个字典表示一行数据
+            df_data = json.loads(df.to_json(orient='records'))
+            print(df_data)
+            api = Gen_keyword(self.brand)
+            for item in df_data:
+                keywordId = item["keywordId"]
+                api.update_keyword_toadGroup(market, str(keywordId), None, bid_new=None, state=status)
+
+    def auto_targeting_status(self,market,path,status):
+        uploaded_file = path
+        if os.stat(uploaded_file).st_size > 2:
+            df = pd.read_csv(uploaded_file)
+            # 打印 DataFrame 的前几行，以确保成功读取
+            print(df.head())
+            # 将DataFrame转换为一个列表，每个元素是一个字典表示一行数据
+            df_data = json.loads(df.to_json(orient='records'))
+            print(df_data)
+            api1 = Gen_adgroup(self.brand)
+            for item in df_data:
+                keywordId = item["keywordId"]
+                api1.update_adGroup_TargetingClause(market, str(keywordId), bid=None, state=status)
 
 
 # api = auto_api('LAPASA')

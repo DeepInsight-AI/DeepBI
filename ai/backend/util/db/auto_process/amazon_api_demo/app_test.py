@@ -8,12 +8,14 @@ from datetime import datetime
 from util.access_param import access_param,access_param_self
 import pandas as pd
 import os
-from util.api_auto_sp import auto_api_sp
+from ai.backend.util.db.auto_process.amazon_api_demo.util.api_auto_sp import auto_api_sp
+from ai.backend.util.db.auto_process.amazon_api_demo.util.api_auto_sd import auto_api_sd
 from ai.backend.util.db.auto_process.create_new_sd_ad_auto import Ceate_new_sd
 from ai.backend.util.db.auto_process.create_new_sp_ad_auto import Ceate_new_sku
 from ai.backend.util.db.db_amazon.auto_generate_new_sku_sp import AmazonMysqlRagUitl as sp
 from ai.backend.util.db.db_amazon.auto_generate_new_sku_sd import AmazonMysqlRagUitl as sd
 from ai.backend.util.db.auto_process.update_sp_ad_auto_new import auto_api
+from ai.backend.util.db.auto_process.update_sd_ad_auto import auto_api_sd as auto_api_sd2
 from ai.backend.util.db.db_amazon.sales_with_no_ad_spend_sku import SalesWithNoAdSpendSku
 from ai.backend.util.db.db_amazon.sku_and_country_linked_four_ads_creation import SkuAndCountryLinkedFourAdsCreation
 from ai.backend.util.db.db_amazon.SD_0511_Recommended_Product_Ad_Strategy import SdRecommendedProductAdStrategy
@@ -207,22 +209,15 @@ def process_create():
                 params_create.update(additional_params_create)
                 info = product_info_list = [item.strip(" '") for item in params_create['product_info'].strip('[]').split(', ')]
                 if params_create['strategy'] == "0509":
-                    if params_create['brand'] == 'LAPASA':
-                        api1.create_new_sd_no_template2(params_create['country'], info, params_create['brand'])
-                    else:
-                        api1.create_new_sd_no_template(params_create['country'], info, params_create['brand'])
+                    api1.create_new_sd_no_template(params_create['country'], info, params_create['brand'])
                 elif params_create['strategy'] == "0514":
-                    if params_create['brand'] == 'LAPASA':
-                        api2.create_new_sp_asin_no_template_2(params_create['country'], info, params_create['brand'])
-                    else:
-                        api2.create_new_sp_asin_no_template(params_create['country'], info, params_create['brand'])
+                    api2.create_new_sp_asin_no_template(params_create['country'], info, params_create['brand'])
                 elif params_create['strategy'] == "0502_auto":
-                    if params_create['brand'] == 'LAPASA':
-                        api2.create_new_sp_auto_no_template1(params_create['country'], info, params_create['brand'])
-                    else:
-                        api2.create_new_sp_auto_no_template(params_create['country'], info, params_create['brand'])
+                    api2.create_new_sp_auto_no_template(params_create['country'], info, params_create['brand'])
                 elif params_create['strategy'] == "0502_manual":
                     api2.create_new_sp_manual_no_template(params_create['country'], info, params_create['brand'])
+                elif params_create['strategy'] == "0511":
+                    api1.create_new_sd_0511(params_create['country'], info, params_create['brand'])
                 return jsonify({"status": "success", "message": "处理完成，未生成 CSV 文件。"})
             elif params_create['create_method'] == '横向复刻':
                 additional_params_create = {
@@ -472,7 +467,60 @@ def modify_function():
                         elif params_modify['adjustmentPosition'] == 'autoTargeting':
                             print('执行修改操作...')
                             api2.update_sp_ad_automatic_targeting(params_modify['country'], csv_path)
-                        pass
+                elif params_modify['adType'] == 'SD':
+                    api1 = auto_api_sd(params_modify['brand'])
+                    if params_modify['adjustmentMethod'] == 'byCampaign':
+                        if params_modify['adjustmentPosition'] == 'budget':
+                            print('执行修改操作...')
+                            api1.auto_campaign_budget(params_modify['country'], csv_path)
+                        elif params_modify['adjustmentPosition'] == 'productTargeting':
+                            print('执行修改操作...')
+                            api1.auto_campaign_product_targets(params_modify['country'], csv_path)
+                    elif params_modify['adjustmentMethod'] == 'direct':
+                        api2 = auto_api_sd2(params_modify['brand'], params_modify['country'])
+                        if params_modify['adjustmentPosition'] == 'budget':
+                            print('执行修改操作...')
+                            api1.auto_campaign_budget(params_modify['country'], csv_path)
+                        elif params_modify['adjustmentPosition'] == 'productTargeting':
+                            print('执行修改操作...')
+                            api2.update_sd_ad_product_targets(params_modify['country'], csv_path)
+                return f'修改完成'
+            elif params['operationOption'] == 'modifyStatus':
+                params_modify = {
+                    'brand': request.form.get('modifyBrand'),
+                    'country': request.form.get('modifyCountry'),
+                    'adType': request.form.get('modifyAdType'),
+                    'modifyPosition': request.form.get('modifyPosition'),
+                    'status': request.form.get('status'),
+                }
+                if params_modify['adType'] == 'SP':
+                    api1 = auto_api_sp(params_modify['brand'])
+                    if params_modify['modifyPosition'] == 'campaign':
+                        print('执行修改操作...')
+                        api1.auto_campaign_status(params_modify['country'], csv_path, params_modify['status'])
+                    elif params_modify['modifyPosition'] == 'SKU':
+                        print('执行修改操作...')
+                        api1.auto_sku_status(params_modify['country'], csv_path, params_modify['status'])
+                    elif params_modify['modifyPosition'] == 'keywords':
+                        print('执行修改操作...')
+                        api1.auto_keyword_status(params_modify['country'], csv_path, params_modify['status'])
+                    elif params_modify['modifyPosition'] == 'productTargeting':
+                        print('执行修改操作...')
+                        api1.auto_targeting_status(params_modify['country'], csv_path, params_modify['status'])
+                    elif params_modify['modifyPosition'] == 'autoTargeting':
+                        print('执行修改操作...')
+                        api1.auto_targeting_status(params_modify['country'], csv_path, params_modify['status'])
+                elif params_modify['adType'] == 'SD':
+                    api1 = auto_api_sd(params_modify['brand'])
+                    if params_modify['modifyPosition'] == 'campaign':
+                        print('执行修改操作...')
+                        api1.auto_campaign_status(params_modify['country'], csv_path, params_modify['status'])
+                    elif params_modify['modifyPosition'] == 'SKU':
+                        print('执行修改操作...')
+                        api1.auto_sku_status(params_modify['country'], csv_path, params_modify['status'])
+                    elif params_modify['modifyPosition'] == 'productTargeting':
+                        print('执行修改操作...')
+                        api1.auto_targeting_status(params_modify['country'], csv_path, params_modify['status'])
                 return f'修改完成'
         except Exception as e:
             print(e)

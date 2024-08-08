@@ -146,6 +146,29 @@ class Gen_campaign:
             newdbtool.update_sp_campaign(market, campaignName, campaignId,'campaignName', campaignName, campaignName_new, None, None, "", "failed",
                                          datetime.now())
 
+    def update_camapign_status(self,market,campaignId,campaignName,state,state_new):
+        campaign_info = {
+            "campaigns": [
+                {
+                    "campaignId": str(campaignId),
+                    "state": state_new
+                }
+            ]
+        }
+        #调用api
+        apitool = CampaignTools(self.brand)
+        apires = apitool.update_campaigns(campaign_info,market)
+
+        # 更新log
+        #     def update_sp_campaign(self,market,campaign_name,campaign_id,budget_old,budget_new,standards_acos,acos,beizhu,status,update_time):
+        newdbtool = DbNewSpTools(self.brand)
+        if apires[0] == "success":
+            print("api update success")
+            newdbtool.update_sp_campaign(market, campaignName, campaignId,'campaignStatus',state,state_new,None,None,"","success",datetime.now())
+        else:
+            print("api update failed")
+            newdbtool.update_sp_campaign(market, campaignName, campaignId,'campaignStatus', state, state_new, None, None, "", "failed",
+                                         datetime.now())
 
     def update_camapign_Bidding_strategy(self,market,campaignId):
         campaign_info = {

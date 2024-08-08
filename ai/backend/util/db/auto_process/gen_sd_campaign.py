@@ -97,6 +97,29 @@ class Gen_campaign:
     # update v0 测试
     # update_camapign_v0('US','531571979684792','B09ZQLY99J-2024-03-29','PAUSED','DAILY',2)
 
+    def update_camapign_status(self, market, campaignId, campaignName,state,state_new):
+        campaign_info = [
+            {
+                "state": state_new,
+                "campaignId": campaignId
+            }
+        ]
+        # 调用api
+        apitool = CampaignTools(self.brand)
+        apires = apitool.update_campaigns(campaign_info, market)
+
+        # 更新log
+        #     def update_sp_campaign(self,market,campaign_name,campaign_id,budget_old,budget_new,standards_acos,acos,beizhu,status,update_time):
+        newdbtool = DbNewSpTools(self.brand)
+        if apires[0] == "success":
+            print("api update success")
+            newdbtool.update_sp_campaign(market, campaignName, campaignId, 'state', state,
+                                         state_new, None, None, "SD", "success", datetime.now())
+        else:
+            print("api update failed")
+            newdbtool.update_sp_campaign(market, campaignName, campaignId, 'state', state,
+                                         state_new, None, None, "SD", "failed",
+                                         datetime.now())
 
     # 更新 根据要求自动批量更新
     def update_camapign(self,market,startdate,enddate,start_acos,end_acos,adjuest):

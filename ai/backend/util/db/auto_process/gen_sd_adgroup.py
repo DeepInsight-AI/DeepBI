@@ -306,7 +306,7 @@ class Gen_adgroup:
         if apires[0] == "success":
             newdbtool.update_sd_adGroup_Targeting(market, None, bid, state, target_id, "SD",
                                                   "success", datetime.now())
-            return apires[1]["targetId"]
+            return apires[1]
         else:
             newdbtool.update_sd_adGroup_Targeting(market, None, bid, state, target_id, "SD",
                                                   "failed", datetime.now())

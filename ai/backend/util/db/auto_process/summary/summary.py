@@ -51,7 +51,7 @@ def get_request_data(CountryCode, StartDate, report_type, all_table, data_id, br
             "ShowData": json.dumps(all_table,ensure_ascii=False, default=default_dump),
             "Other": ""
         }
-
+        print(add_data)
         # logger.info(f"发送数据请求: {add_data}")
         if data_id > 0:
             print(f"发送数据请求: 正在更新 {report_type} 的ID为 {id}")
@@ -242,20 +242,20 @@ def update_data_period(market,brand):
 #     'Rossny': ['US'],
 #     'ZEN CAVE': ['US']
 # }
-brands_and_countries = {
-    'LAPASA': ["US", "FR", "IT", "DE", "NL", "SE", "ES", "UK", "JP"],
-    'DELOMO': ['IT', 'ES', 'DE', 'FR'],
-    'OutdoorMaster': ['IT', 'ES', 'FR', 'SE']
-}
+# brands_and_countries = {
+#     'LAPASA': ["US", "FR", "IT", "DE", "NL", "SE", "ES", "UK", "JP"],
+#     'DELOMO': ['IT', 'ES', 'DE', 'FR'],
+#     'OutdoorMaster': ['IT', 'ES', 'FR', 'SE']
+# }
 # brands_and_countries = {
 #     'LAPASA': ["ES"],
 # }
-while True:
-    for brand, countries in brands_and_countries.items():
-        for country in countries:
-            update_data_period(country, brand)
-    print('done')
-    time.sleep(60 * 60 * 24)
+# while True:
+#     for brand, countries in brands_and_countries.items():
+#         for country in countries:
+#             update_data_period(country, brand)
+#     print('done')
+#     time.sleep(60 * 60 * 24)
 #4-1 2-12
-# table2 = [["FR","2024-07-29","关键词_短语匹配","DeepBI_0502_M35 manu_overstock","débardeur homme","根据ACOS值降价"]]
-# get_request_data('FR','2024-07-29',"D-LOG",table2,0,'LAPASA')
+# table2 = [["DE","2024-08-07","关键词_短语匹配","DeepBI_0502_M35 manu_overstock","débardeur homme","根据ACOS值降价"]]
+# get_request_data('DE','2024-08-07',"D-LOG",table2,0,'LAPASA')

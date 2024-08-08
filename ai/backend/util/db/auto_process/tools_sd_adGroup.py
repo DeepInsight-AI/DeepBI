@@ -247,6 +247,30 @@ class AdGroupTools_SD:
             print("list adGroup Targeting failed: ", e)
             return ["failed", ""]
 
+    def list_adGroup_Targeting_by_campaignId(self, market, campaignId):
+        try:
+            credentials, access_token = self.load_credentials(market)
+
+            result = sponsored_display.Targets(credentials=credentials,
+                                               marketplace=Marketplaces[market.upper()],
+                                               access_token=access_token,
+                                               proxies=get_proxies(market),
+                                               debug=True).list_products_targets(
+                campaignIdFilter=campaignId)
+            if result and result.payload:
+                print("list adGroup Targeting success")
+                return result.payload
+            # if result and result.payload["negativeKeywords"]["success"]:
+            #     negativeKeywordId = result.payload["negativeKeywords"]["success"][0]["negativeKeywordId"]
+            #     print("add adGroup negative keyword success,negativeKeywordId is:", negativeKeywordId)
+            #     return ["success", negativeKeywordId]
+            else:
+                print("list adGroup TargetingClause failed")
+                return ["failed", ""]
+        except Exception as e:
+            print("list adGroup Targeting failed: ", e)
+            return ["failed", ""]
+
     def create_adGroup_Targeting(self, adGroup_info, market):
         try:
             credentials, access_token = self.load_credentials(market)
@@ -369,6 +393,6 @@ class AdGroupTools_SD:
 #
 # agt=AdGroupTools_SD('LAPASA')
 # # 测试更新广告系列信息
-# res = agt.list_adGroup_Targeting_by_targetId('FR','68570274746219')
+# res = agt.list_adGroup_Targeting_by_campaignId('FR','366836223007357')
 # print(type(res))
 # print(res)

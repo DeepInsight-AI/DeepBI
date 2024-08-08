@@ -213,13 +213,13 @@
 
             var options = [];
             if (ad_type === "SP-自动") {
-                options = ["请选择广告选项", "预算", "广告位", "自动定位组"];
+                options = ["请选择广告选项", "预算", "广告位", "自动定位组", "SKU", "搜索词"];
             } else if (ad_type === "SP-手动") {
-                options = ["请选择广告选项", "预算", "广告位", "关键词"];
+                options = ["请选择广告选项", "预算", "广告位", "关键词", "SKU", "搜索词"];
             } else if (ad_type === "SP-ASIN") {
-                options = ["请选择广告选项", "预算", "广告位", "商品投放"];
+                options = ["请选择广告选项", "预算", "广告位", "商品投放", "SKU", "搜索词"];
             } else if (ad_type === "SD") {
-                options = ["请选择广告选项", "预算", "内容投放"];
+                options = ["请选择广告选项", "预算", "内容投放", "SKU"];
             }
 
             // 添加新选项
@@ -261,7 +261,7 @@
 
 
             // 根据选择的广告选项显示或隐藏额外参数
-            if (ad_options === "关键词"|| ad_options === "自动定位组" || ad_options === "商品投放" || ad_options === "预算" || ad_options === "广告位") {
+            if (ad_options === "关键词"|| ad_options === "自动定位组" || ad_options === "商品投放" || ad_options === "预算" || ad_options === "广告位" || ad_options === "内容投放" || ad_options === "SKU" || ad_options === "搜索词") {
                 additional_params_div.classList.remove("hidden");
             } else {
                 additional_params_div.classList.add("hidden");

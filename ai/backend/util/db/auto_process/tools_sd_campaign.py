@@ -232,7 +232,7 @@ class CampaignTools:
 # ct=CampaignTools('LAPASA')
 # #测试更新广告系列信息
 # #res = ct.list_campaigns_api(None,'FR')
-# res = ct.list_campaigns_api(289851750658803,'FR')
+# res = ct.list_campaigns_api(498971857900272,'FR')
 # # #print(type(res))
 # print(res)
 
@@ -248,5 +248,5 @@ class CampaignTools:
 #   ]
 # }
 # ct=CampaignTools('LAPASA')
-# res = ct.list_all_campaigns_api('FR')
+# res = ct.list_campaigns_api('366836223007357','FR')
 # print(res)

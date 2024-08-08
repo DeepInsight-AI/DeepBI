@@ -85,6 +85,7 @@ market = '{queries['country']}'
 
     return query
 
+
 def data_aggregation_table_spasin(queries=None):
     # SQL查询模板
     query = f"""
@@ -173,6 +174,7 @@ market = '{queries['country']}'
 
     return query
 
+
 def data_aggregation_table_spauto(queries=None):
     # SQL查询模板
     query = f"""
@@ -253,6 +255,82 @@ d AS (
 	c
 	GROUP BY
 	campaignId
+)
+SELECT * FROM d
+WHERE
+market = '{queries['country']}'
+    """
+
+    return query
+
+
+def data_aggregation_table_sd(queries=None):
+    # SQL查询模板
+    query = f"""
+WITH a AS (
+        SELECT
+                campaignId,
+                campaignName,
+                market,
+                date,
+                campaignBudgetAmount,
+                clicks,
+                purchases,
+                impressions,
+                cost,
+                sales
+FROM
+amazon_campaign_reports_sd
+WHERE
+market = '{queries['country']}'
+AND date BETWEEN DATE_SUB( CURRENT_DATE, INTERVAL 30 DAY ) AND ( CURRENT_DATE - INTERVAL 1 DAY )
+),
+b AS(
+        SELECT
+                campaignId,
+                campaignName,
+                market,
+                CURRENT_DATE - INTERVAL 1 DAY AS date,
+                budget AS campaignBudgetAmount,
+                0 AS clicks,
+                0 AS purchases,
+                0 AS impressions,
+                0 AS cost,
+                0 AS sales
+        FROM
+        amazon_campaigns_list_sd
+        WHERE
+        market = '{queries['country']}'
+        AND state = 'enabled'
+        AND campaignId NOT IN ( SELECT DISTINCT campaignId FROM a
+        )
+),
+c AS (
+SELECT * FROM a
+UNION
+SELECT * FROM b
+),
+d AS (
+        SELECT
+                campaignId,
+                campaignName,
+                market,
+                SUM( CASE WHEN date = DATE_SUB( CURRENT_DATE, INTERVAL 1 DAY ) THEN campaignBudgetAmount ELSE 0 END ) AS Budget,
+                SUM(CASE WHEN date BETWEEN DATE_SUB(CURRENT_DATE - INTERVAL 1 DAY, INTERVAL 2 DAY) AND DATE_SUB(CURRENT_DATE, INTERVAL 1 DAY) THEN clicks ELSE 0 END) AS total_clicks_3d,
+                SUM(CASE WHEN date BETWEEN DATE_SUB(CURRENT_DATE - INTERVAL 1 DAY, INTERVAL 2 DAY) AND DATE_SUB(CURRENT_DATE, INTERVAL 1 DAY) THEN purchases ELSE 0 END) AS total_order_3d,
+                SUM(CASE WHEN date BETWEEN DATE_SUB(CURRENT_DATE - INTERVAL 1 DAY, INTERVAL 2 DAY) AND DATE_SUB(CURRENT_DATE, INTERVAL 1 DAY) THEN impressions ELSE 0 END) AS total_impressions_3d,
+                SUM(CASE WHEN date BETWEEN DATE_SUB(CURRENT_DATE - INTERVAL 1 DAY, INTERVAL 6 DAY) AND DATE_SUB(CURRENT_DATE, INTERVAL 1 DAY) THEN clicks ELSE 0 END) AS total_clicks_7d,
+                SUM(CASE WHEN date BETWEEN DATE_SUB(CURRENT_DATE - INTERVAL 1 DAY, INTERVAL 6 DAY) AND DATE_SUB(CURRENT_DATE, INTERVAL 1 DAY) THEN purchases ELSE 0 END) AS total_order_7d,
+                SUM(CASE WHEN date BETWEEN DATE_SUB(CURRENT_DATE - INTERVAL 1 DAY, INTERVAL 6 DAY) AND DATE_SUB(CURRENT_DATE, INTERVAL 1 DAY) THEN impressions ELSE 0 END) AS total_impressions_7d,
+                SUM(CASE WHEN date BETWEEN DATE_SUB(CURRENT_DATE - INTERVAL 1 DAY, INTERVAL 29 DAY) AND DATE_SUB(CURRENT_DATE, INTERVAL 1 DAY) THEN purchases ELSE 0 END) AS total_order_30d,
+                SUM(CASE WHEN date BETWEEN DATE_SUB(CURRENT_DATE - INTERVAL 1 DAY, INTERVAL 29 DAY) AND DATE_SUB(CURRENT_DATE, INTERVAL 1 DAY) THEN impressions ELSE 0 END) AS total_impressions_30d,
+                SUM(CASE WHEN date BETWEEN DATE_SUB(CURRENT_DATE - INTERVAL 1 DAY, INTERVAL 29 DAY) AND DATE_SUB(CURRENT_DATE, INTERVAL 1 DAY) THEN clicks ELSE 0 END) AS total_clicks_30d,
+                SUM(CASE WHEN date BETWEEN DATE_SUB(CURRENT_DATE - INTERVAL 1 DAY, INTERVAL 29 DAY) AND DATE_SUB(CURRENT_DATE, INTERVAL 1 DAY) THEN cost ELSE 0 END) / NULLIF(SUM(CASE WHEN date BETWEEN DATE_SUB(CURRENT_DATE - INTERVAL 1 DAY, INTERVAL 29 DAY) AND DATE_SUB(CURRENT_DATE, INTERVAL 1 DAY) THEN sales ELSE 0 END), 0) AS ACOS_30d,
+                SUM(CASE WHEN date BETWEEN DATE_SUB(CURRENT_DATE - INTERVAL 1 DAY, INTERVAL 6 DAY) AND DATE_SUB(CURRENT_DATE, INTERVAL 1 DAY) THEN cost ELSE 0 END) / NULLIF(SUM(CASE WHEN date BETWEEN DATE_SUB(CURRENT_DATE - INTERVAL 1 DAY, INTERVAL 6 DAY) AND DATE_SUB(CURRENT_DATE, INTERVAL 1 DAY) THEN sales ELSE 0 END), 0) AS ACOS_7d
+        FROM
+        c
+        GROUP BY
+        campaignId
 )
 SELECT * FROM d
 WHERE
@@ -767,7 +845,7 @@ FROM
         JOIN amazon_keywords_list_sp c ON b.keywordId = c.keywordId
 WHERE
         b.market = '{queries['country']}'
-        AND b.date BETWEEN DATE_SUB( CURRENT_DATE, INTERVAL 15 DAY )
+        AND b.date BETWEEN DATE_SUB( CURRENT_DATE, INTERVAL 30 DAY )
         AND DATE_SUB( CURRENT_DATE, INTERVAL 1 DAY )
                                 ),
 b AS (
@@ -861,7 +939,7 @@ WITH a AS (
         JOIN amazon_targets_list_sp c ON b.keywordId = c.targetId
     WHERE
         b.market = '{queries['country']}'
-        AND b.date BETWEEN DATE_SUB(CURRENT_DATE, INTERVAL 15 DAY)
+        AND b.date BETWEEN DATE_SUB(CURRENT_DATE, INTERVAL 30 DAY)
         AND DATE_SUB(CURRENT_DATE, INTERVAL 1 DAY)
         AND expressionType = 'MANUAL'
 ),
@@ -967,7 +1045,7 @@ FROM
         JOIN amazon_targets_list_sp c ON b.keywordId = c.targetId
 WHERE
         b.market = '{queries['country']}'
-        AND b.date BETWEEN DATE_SUB( CURRENT_DATE, INTERVAL 15 DAY )
+        AND b.date BETWEEN DATE_SUB( CURRENT_DATE, INTERVAL 30 DAY )
         AND DATE_SUB( CURRENT_DATE, INTERVAL 1 DAY )
                                 AND expressionType='AUTO'
  ),
@@ -1044,6 +1122,726 @@ SELECT * FROM d
 WHERE
 market = '{queries['country']}'
     """
+    return query
+
+
+def data_aggregation_table_sd_product_targets(queries=None):
+    # SQL查询模板
+    query = f"""
+WITH a AS (
+    SELECT
+        b.campaignName,
+        b.campaignId,
+        b.adGroupName,
+        b.adGroupId,
+        b.targetingText,
+        b.targetingId as keywordId,
+        b.market,
+        date,
+        clicks,
+        purchases,
+        impressions,
+        cost,
+        sales,
+        bid
+    FROM
+        amazon_targeting_reports_sd b
+                JOIN amazon_targets_list_sd c ON b.targetingId = c.targetId
+    WHERE
+        b.market = '{queries['country']}'
+        AND b.date BETWEEN DATE_SUB(CURRENT_DATE, INTERVAL 30 DAY)
+        AND DATE_SUB(CURRENT_DATE, INTERVAL 1 DAY)
+),
+b AS (
+    SELECT
+        NULL AS campaignName,
+        akl.campaignId,
+        NULL AS adGroupName,
+        akl.adGroupId,
+            CASE
+        WHEN expression LIKE "%'type': 'asinSameAs', 'value': %" THEN CONCAT('asin="', TRIM(SUBSTRING_INDEX(SUBSTRING_INDEX(expression, "'", -2), "'", 1)), '"')
+        WHEN expression LIKE "%'type': 'ASIN_EXPANDED_FROM', 'value': %" THEN CONCAT('asin-expanded="', TRIM(SUBSTRING_INDEX(SUBSTRING_INDEX(expression, "'", -2), "'", 1)), '"')
+        WHEN expression LIKE "%'type': 'ASIN_CATEGORY_SAME_AS', 'value': %" THEN CONCAT('category="', TRIM(SUBSTRING_INDEX(SUBSTRING_INDEX(expression, "'", -2), "'", 1)), '"')
+        WHEN expression LIKE "%'type': 'asinCategorySameAs', 'value': %" AND expression LIKE "%'type': 'asinBrandSameAs', 'value': %" THEN
+            CONCAT('category="', TRIM(SUBSTRING_INDEX(SUBSTRING_INDEX(expression, "'", -10), "'", 1)), '" ',
+                   'brand="', TRIM(SUBSTRING_INDEX(SUBSTRING_INDEX(expression, "'", -2), "'", 1)), '"')
+        ELSE expression
+    END AS targetingText,
+        akl.targetId AS keywordId,
+                                market,
+        DATE_SUB( CURRENT_DATE, INTERVAL 1 DAY ) AS date,
+                                0 AS clicks,
+        0 AS purchases,
+        0 AS impressions,
+                                0 AS cost,
+                                0 AS sales,
+        bid
+    FROM
+        amazon_targets_list_sd akl
+    WHERE
+        akl.market = '{queries['country']}'
+        AND akl.state = 'enabled'
+                                AND akl.servingStatus NOT IN ('CAMPAIGN_PAUSED', 'AD_GROUP_PAUSED', 'TARGETING_CLAUSE_PAUSED', 'CAMPAIGN_ARCHIVED')
+                AND akl.targetId NOT IN (
+                        SELECT
+                                keywordId
+                        FROM
+                        a)
+),
+c AS (
+SELECT * FROM a
+UNION
+SELECT * FROM b
+),
+d AS (
+    SELECT
+        campaignName,
+        campaignId,
+        adGroupName,
+        adGroupId,
+        targetingText,
+                                keywordId,
+                                market,
+                                bid,
+        SUM(CASE WHEN date BETWEEN DATE_SUB(CURRENT_DATE - INTERVAL 1 DAY, INTERVAL 2 DAY) AND DATE_SUB(CURRENT_DATE, INTERVAL 1 DAY) THEN clicks ELSE 0 END) AS total_clicks_3d,
+                SUM(CASE WHEN date BETWEEN DATE_SUB(CURRENT_DATE - INTERVAL 1 DAY, INTERVAL 2 DAY) AND DATE_SUB(CURRENT_DATE, INTERVAL 1 DAY) THEN purchases ELSE 0 END) AS total_order_3d,
+                SUM(CASE WHEN date BETWEEN DATE_SUB(CURRENT_DATE - INTERVAL 1 DAY, INTERVAL 2 DAY) AND DATE_SUB(CURRENT_DATE, INTERVAL 1 DAY) THEN impressions ELSE 0 END) AS total_impressions_3d,
+                SUM(CASE WHEN date BETWEEN DATE_SUB(CURRENT_DATE - INTERVAL 1 DAY, INTERVAL 6 DAY) AND DATE_SUB(CURRENT_DATE, INTERVAL 1 DAY) THEN clicks ELSE 0 END) AS total_clicks_7d,
+                SUM(CASE WHEN date BETWEEN DATE_SUB(CURRENT_DATE - INTERVAL 1 DAY, INTERVAL 6 DAY) AND DATE_SUB(CURRENT_DATE, INTERVAL 1 DAY) THEN purchases ELSE 0 END) AS total_order_7d,
+                SUM(CASE WHEN date BETWEEN DATE_SUB(CURRENT_DATE - INTERVAL 1 DAY, INTERVAL 6 DAY) AND DATE_SUB(CURRENT_DATE, INTERVAL 1 DAY) THEN impressions ELSE 0 END) AS total_impressions_7d,
+                SUM(CASE WHEN date BETWEEN DATE_SUB(CURRENT_DATE - INTERVAL 1 DAY, INTERVAL 29 DAY) AND DATE_SUB(CURRENT_DATE, INTERVAL 1 DAY) THEN purchases ELSE 0 END) AS total_order_30d,
+                SUM(CASE WHEN date BETWEEN DATE_SUB(CURRENT_DATE - INTERVAL 1 DAY, INTERVAL 29 DAY) AND DATE_SUB(CURRENT_DATE, INTERVAL 1 DAY) THEN impressions ELSE 0 END) AS total_impressions_30d,
+                SUM(CASE WHEN date BETWEEN DATE_SUB(CURRENT_DATE - INTERVAL 1 DAY, INTERVAL 29 DAY) AND DATE_SUB(CURRENT_DATE, INTERVAL 1 DAY) THEN clicks ELSE 0 END) AS total_clicks_30d,
+                SUM(CASE WHEN date BETWEEN DATE_SUB(CURRENT_DATE - INTERVAL 1 DAY, INTERVAL 29 DAY) AND DATE_SUB(CURRENT_DATE, INTERVAL 1 DAY) THEN cost ELSE 0 END) / NULLIF(SUM(CASE WHEN date BETWEEN DATE_SUB(CURRENT_DATE - INTERVAL 1 DAY, INTERVAL 29 DAY) AND DATE_SUB(CURRENT_DATE, INTERVAL 1 DAY) THEN sales ELSE 0 END), 0) AS ACOS_30d,
+                SUM(CASE WHEN date BETWEEN DATE_SUB(CURRENT_DATE - INTERVAL 1 DAY, INTERVAL 6 DAY) AND DATE_SUB(CURRENT_DATE, INTERVAL 1 DAY) THEN cost ELSE 0 END) / NULLIF(SUM(CASE WHEN date BETWEEN DATE_SUB(CURRENT_DATE - INTERVAL 1 DAY, INTERVAL 6 DAY) AND DATE_SUB(CURRENT_DATE, INTERVAL 1 DAY) THEN sales ELSE 0 END), 0) AS ACOS_7d
+        FROM
+        c
+        GROUP BY
+        keywordId
+        ORDER BY
+        campaignId,
+        adGroupId
+)
+SELECT * FROM d
+WHERE
+market = '{queries['country']}'
+    """
+    return query
+
+
+def data_aggregation_table_sd_sku(queries=None):
+    # SQL查询模板
+    query = f"""
+WITH a AS (
+SELECT
+        b.campaignName,
+        b.campaignId,
+        b.adGroupName,
+        b.adGroupId,
+        b.adId,
+        b.promotedSku,
+        b.market,
+        date,
+        clicks,
+        purchases,
+        impressions,
+        cost,
+        sales
+        FROM amazon_advertised_product_reports_sd b
+         WHERE
+        b.market = '{queries['country']}'
+        AND b.date BETWEEN DATE_SUB(CURRENT_DATE, INTERVAL 30 DAY)
+        AND DATE_SUB(CURRENT_DATE, INTERVAL 1 DAY)
+),
+b AS (
+        SELECT
+                NULL AS campaignName,
+                akl.campaignId,
+                NULL AS adGroupName,
+                akl.adGroupId,
+                akl.adId,
+                sku AS promotedSku,
+                market,
+                DATE_SUB( CURRENT_DATE, INTERVAL 1 DAY ) AS date,
+                0 AS clicks,
+                0 AS purchases,
+                0 AS impressions,
+                0 AS cost,
+                0 AS sales
+                FROM
+                amazon_productads_list_sd akl
+                WHERE
+        akl.market = '{queries['country']}'
+        AND akl.state = 'enabled'
+                                AND akl.servingStatus NOT IN ('CAMPAIGN_PAUSED', 'AD_GROUP_PAUSED', 'AD_POLICING_SUSPENDED', 'CAMPAIGN_ARCHIVED', 'INELIGIBLE','MISSING_DECORATION')
+                AND akl.sku NOT IN (
+                        SELECT
+                                promotedSku
+                        FROM
+                        a)
+),
+c AS (
+SELECT * FROM a
+UNION
+SELECT * FROM b
+),
+d AS (
+    SELECT
+        campaignName,
+        campaignId,
+        adGroupName,
+        adGroupId,
+        adId,
+                                promotedSku,
+                                market,
+        SUM(CASE WHEN date BETWEEN DATE_SUB(CURRENT_DATE - INTERVAL 1 DAY, INTERVAL 2 DAY) AND DATE_SUB(CURRENT_DATE, INTERVAL 1 DAY) THEN clicks ELSE 0 END) AS total_clicks_3d,
+                SUM(CASE WHEN date BETWEEN DATE_SUB(CURRENT_DATE - INTERVAL 1 DAY, INTERVAL 2 DAY) AND DATE_SUB(CURRENT_DATE, INTERVAL 1 DAY) THEN purchases ELSE 0 END) AS total_order_3d,
+                SUM(CASE WHEN date BETWEEN DATE_SUB(CURRENT_DATE - INTERVAL 1 DAY, INTERVAL 2 DAY) AND DATE_SUB(CURRENT_DATE, INTERVAL 1 DAY) THEN impressions ELSE 0 END) AS total_impressions_3d,
+                SUM(CASE WHEN date BETWEEN DATE_SUB(CURRENT_DATE - INTERVAL 1 DAY, INTERVAL 6 DAY) AND DATE_SUB(CURRENT_DATE, INTERVAL 1 DAY) THEN clicks ELSE 0 END) AS total_clicks_7d,
+                SUM(CASE WHEN date BETWEEN DATE_SUB(CURRENT_DATE - INTERVAL 1 DAY, INTERVAL 6 DAY) AND DATE_SUB(CURRENT_DATE, INTERVAL 1 DAY) THEN purchases ELSE 0 END) AS total_order_7d,
+                SUM(CASE WHEN date BETWEEN DATE_SUB(CURRENT_DATE - INTERVAL 1 DAY, INTERVAL 6 DAY) AND DATE_SUB(CURRENT_DATE, INTERVAL 1 DAY) THEN impressions ELSE 0 END) AS total_impressions_7d,
+                SUM(CASE WHEN date BETWEEN DATE_SUB(CURRENT_DATE - INTERVAL 1 DAY, INTERVAL 29 DAY) AND DATE_SUB(CURRENT_DATE, INTERVAL 1 DAY) THEN purchases ELSE 0 END) AS total_order_30d,
+                SUM(CASE WHEN date BETWEEN DATE_SUB(CURRENT_DATE - INTERVAL 1 DAY, INTERVAL 29 DAY) AND DATE_SUB(CURRENT_DATE, INTERVAL 1 DAY) THEN impressions ELSE 0 END) AS total_impressions_30d,
+                SUM(CASE WHEN date BETWEEN DATE_SUB(CURRENT_DATE - INTERVAL 1 DAY, INTERVAL 29 DAY) AND DATE_SUB(CURRENT_DATE, INTERVAL 1 DAY) THEN clicks ELSE 0 END) AS total_clicks_30d,
+                SUM(CASE WHEN date BETWEEN DATE_SUB(CURRENT_DATE - INTERVAL 1 DAY, INTERVAL 29 DAY) AND DATE_SUB(CURRENT_DATE, INTERVAL 1 DAY) THEN cost ELSE 0 END) / NULLIF(SUM(CASE WHEN date BETWEEN DATE_SUB(CURRENT_DATE - INTERVAL 1 DAY, INTERVAL 29 DAY) AND DATE_SUB(CURRENT_DATE, INTERVAL 1 DAY) THEN sales ELSE 0 END), 0) AS ACOS_30d,
+                SUM(CASE WHEN date BETWEEN DATE_SUB(CURRENT_DATE - INTERVAL 1 DAY, INTERVAL 6 DAY) AND DATE_SUB(CURRENT_DATE, INTERVAL 1 DAY) THEN cost ELSE 0 END) / NULLIF(SUM(CASE WHEN date BETWEEN DATE_SUB(CURRENT_DATE - INTERVAL 1 DAY, INTERVAL 6 DAY) AND DATE_SUB(CURRENT_DATE, INTERVAL 1 DAY) THEN sales ELSE 0 END), 0) AS ACOS_7d
+        FROM
+        c
+        GROUP BY
+        adId
+        ORDER BY
+        campaignId,
+        adGroupId
+)
+SELECT * FROM d
+WHERE
+market = '{queries['country']}'
+    """
+
+    return query
+
+
+def data_aggregation_table_spmanual_sku(queries=None):
+    # SQL查询模板
+    query = f"""
+WITH a AS (
+        SELECT
+                b.campaignName,
+                b.campaignId,
+                b.adGroupName,
+                b.adGroupId,
+                b.adId,
+                b.advertisedSku,
+                b.market,
+                date,
+                clicks,
+                purchases7d,
+                impressions,
+                cost,
+                sales14d
+        FROM
+                amazon_advertised_product_reports_sp b
+        WHERE
+                b.market = '{queries['country']}'
+                AND b.date BETWEEN DATE_SUB( CURRENT_DATE, INTERVAL 30 DAY )
+                AND DATE_SUB( CURRENT_DATE, INTERVAL 1 DAY )
+                AND b.campaignId IN (
+                SELECT DISTINCT
+                        campaignId
+                FROM
+                        amazon_keywords_list_sp
+                WHERE
+                        market = '{queries['country']}'
+                        AND keywordText NOT IN ( '(_targeting_auto_)' )
+                        AND extendedData_servingStatus NOT IN ( 'CAMPAIGN_PAUSED', 'AD_GROUP_PAUSED', 'TARGETING_CLAUSE_PAUSED' )
+                )
+),
+b AS (
+        SELECT
+                NULL AS campaignName,
+                akl.campaignId,
+                NULL AS adGroupName,
+                akl.adGroupId,
+                akl.adId,
+                sku AS advertisedSku,
+                market,
+                DATE_SUB( CURRENT_DATE, INTERVAL 1 DAY ) AS date,
+                0 AS clicks,
+                0 AS purchases7d,
+                0 AS impressions,
+                0 AS cost,
+                0 AS sales14d
+        FROM
+                amazon_sp_productads_list akl
+        WHERE
+                akl.market = '{queries['country']}'
+                AND akl.state = 'ENABLED'
+                AND akl.update_time = DATE_SUB( CURRENT_DATE, INTERVAL 1 DAY )
+                AND akl.servingStatus NOT IN ( 'CAMPAIGN_PAUSED', 'AD_GROUP_PAUSED', 'AD_POLICING_SUSPENDED', 'CAMPAIGN_ARCHIVED', 'INELIGIBLE', 'MISSING_DECORATION', 'AD_ARCHIVED', 'AD_POLICING_PENDING_REVIEW', 'MISSING_IMAGE', 'CAMPAIGN_INCOMPLETE', 'ADVERTISER_PAYMENT_FAILURE' )
+                AND akl.campaignId IN (
+                SELECT DISTINCT
+                        campaignId
+                FROM
+                        amazon_keywords_list_sp
+                WHERE
+                        market = '{queries['country']}'
+                        AND keywordText NOT IN ( '(_targeting_auto_)' )
+                        AND extendedData_servingStatus NOT IN ( 'CAMPAIGN_PAUSED', 'AD_GROUP_PAUSED', 'TARGETING_CLAUSE_PAUSED' )
+                )
+                AND akl.sku NOT IN (
+                SELECT DISTINCT
+                        advertisedSku
+                FROM
+                a)
+),
+c AS (
+SELECT * FROM a
+UNION
+SELECT * FROM b
+),
+d AS (
+    SELECT
+        campaignName,
+        campaignId,
+        adGroupName,
+        adGroupId,
+        adId,
+                                advertisedSku,
+                                market,
+        SUM(CASE WHEN date BETWEEN DATE_SUB(CURRENT_DATE - INTERVAL 1 DAY, INTERVAL 2 DAY) AND DATE_SUB(CURRENT_DATE, INTERVAL 1 DAY) THEN clicks ELSE 0 END) AS total_clicks_3d,
+                                SUM(CASE WHEN date BETWEEN DATE_SUB(CURRENT_DATE - INTERVAL 1 DAY, INTERVAL 2 DAY) AND DATE_SUB(CURRENT_DATE, INTERVAL 1 DAY) THEN purchases7d ELSE 0 END) AS total_order_3d,
+                                SUM(CASE WHEN date BETWEEN DATE_SUB(CURRENT_DATE - INTERVAL 1 DAY, INTERVAL 2 DAY) AND DATE_SUB(CURRENT_DATE, INTERVAL 1 DAY) THEN impressions ELSE 0 END) AS total_impressions_3d,
+                                SUM(CASE WHEN date BETWEEN DATE_SUB(CURRENT_DATE - INTERVAL 1 DAY, INTERVAL 6 DAY) AND DATE_SUB(CURRENT_DATE, INTERVAL 1 DAY) THEN clicks ELSE 0 END) AS total_clicks_7d,
+                                SUM(CASE WHEN date BETWEEN DATE_SUB(CURRENT_DATE - INTERVAL 1 DAY, INTERVAL 6 DAY) AND DATE_SUB(CURRENT_DATE, INTERVAL 1 DAY) THEN purchases7d ELSE 0 END) AS total_order_7d,
+                                SUM(CASE WHEN date BETWEEN DATE_SUB(CURRENT_DATE - INTERVAL 1 DAY, INTERVAL 6 DAY) AND DATE_SUB(CURRENT_DATE, INTERVAL 1 DAY) THEN impressions ELSE 0 END) AS total_impressions_7d,
+                                SUM(CASE WHEN date BETWEEN DATE_SUB(CURRENT_DATE - INTERVAL 1 DAY, INTERVAL 29 DAY) AND DATE_SUB(CURRENT_DATE, INTERVAL 1 DAY) THEN purchases7d ELSE 0 END) AS total_order_30d,
+                                SUM(CASE WHEN date BETWEEN DATE_SUB(CURRENT_DATE - INTERVAL 1 DAY, INTERVAL 29 DAY) AND DATE_SUB(CURRENT_DATE, INTERVAL 1 DAY) THEN impressions ELSE 0 END) AS total_impressions_30d,
+                                SUM(CASE WHEN date BETWEEN DATE_SUB(CURRENT_DATE - INTERVAL 1 DAY, INTERVAL 29 DAY) AND DATE_SUB(CURRENT_DATE, INTERVAL 1 DAY) THEN clicks ELSE 0 END) AS total_clicks_30d,
+                                SUM(CASE WHEN date BETWEEN DATE_SUB(CURRENT_DATE - INTERVAL 1 DAY, INTERVAL 29 DAY) AND DATE_SUB(CURRENT_DATE, INTERVAL 1 DAY) THEN cost ELSE 0 END) / NULLIF(SUM(CASE WHEN date BETWEEN DATE_SUB(CURRENT_DATE - INTERVAL 1 DAY, INTERVAL 29 DAY) AND DATE_SUB(CURRENT_DATE, INTERVAL 1 DAY) THEN sales14d ELSE 0 END), 0) AS ACOS_30d,
+                                SUM(CASE WHEN date BETWEEN DATE_SUB(CURRENT_DATE - INTERVAL 1 DAY, INTERVAL 6 DAY) AND DATE_SUB(CURRENT_DATE, INTERVAL 1 DAY) THEN cost ELSE 0 END) / NULLIF(SUM(CASE WHEN date BETWEEN DATE_SUB(CURRENT_DATE - INTERVAL 1 DAY, INTERVAL 6 DAY) AND DATE_SUB(CURRENT_DATE, INTERVAL 1 DAY) THEN sales14d ELSE 0 END), 0) AS ACOS_7d
+        FROM
+        c
+        GROUP BY
+        adId
+        ORDER BY
+        campaignId,
+        adGroupId
+)
+SELECT * FROM d
+WHERE
+market = '{queries['country']}'
+    """
+
+    return query
+
+
+def data_aggregation_table_spasin_sku(queries=None):
+    # SQL查询模板
+    query = f"""
+WITH a AS (
+        SELECT
+                b.campaignName,
+                b.campaignId,
+                b.adGroupName,
+                b.adGroupId,
+                b.adId,
+                b.advertisedSku,
+                b.market,
+                date,
+                clicks,
+                purchases7d,
+                impressions,
+                cost,
+                sales14d
+        FROM
+                amazon_advertised_product_reports_sp b
+        WHERE
+                b.market = '{queries['country']}'
+                AND b.date BETWEEN DATE_SUB( CURRENT_DATE, INTERVAL 30 DAY )
+                AND DATE_SUB( CURRENT_DATE, INTERVAL 1 DAY )
+                AND b.campaignId IN (
+SELECT DISTINCT campaignId FROM amazon_targets_list_sp
+WHERE market = '{queries['country']}'
+AND expressionType = 'MANUAL'
+AND servingStatus NOT IN ('CAMPAIGN_PAUSED','CAMPAIGN_ARCHIVED','AD_GROUP_ARCHIVED', 'AD_GROUP_PAUSED', 'TARGETING_CLAUSE_PAUSED','TARGETING_CLAUSE_ARCHIVED')
+)
+),
+b AS (
+        SELECT
+                NULL AS campaignName,
+                akl.campaignId,
+                NULL AS adGroupName,
+                akl.adGroupId,
+                akl.adId,
+                sku AS advertisedSku,
+                market,
+                DATE_SUB( CURRENT_DATE, INTERVAL 1 DAY ) AS date,
+                0 AS clicks,
+                0 AS purchases7d,
+                0 AS impressions,
+                0 AS cost,
+                0 AS sales14d
+        FROM
+                amazon_sp_productads_list akl
+        WHERE
+                akl.market = '{queries['country']}'
+                AND akl.state = 'ENABLED'
+                AND akl.update_time = DATE_SUB( CURRENT_DATE, INTERVAL 1 DAY )
+                AND akl.servingStatus NOT IN ( 'CAMPAIGN_PAUSED', 'AD_GROUP_PAUSED', 'AD_POLICING_SUSPENDED', 'CAMPAIGN_ARCHIVED', 'INELIGIBLE', 'MISSING_DECORATION', 'AD_ARCHIVED', 'AD_POLICING_PENDING_REVIEW', 'MISSING_IMAGE', 'CAMPAIGN_INCOMPLETE', 'ADVERTISER_PAYMENT_FAILURE' )
+                AND akl.campaignId IN (
+SELECT DISTINCT campaignId FROM amazon_targets_list_sp
+WHERE market = '{queries['country']}'
+AND expressionType = 'MANUAL'
+AND servingStatus NOT IN ('CAMPAIGN_PAUSED','CAMPAIGN_ARCHIVED','AD_GROUP_ARCHIVED', 'AD_GROUP_PAUSED', 'TARGETING_CLAUSE_PAUSED','TARGETING_CLAUSE_ARCHIVED')
+)
+                AND akl.sku NOT IN (
+                SELECT DISTINCT
+                        advertisedSku
+                FROM
+                a)
+),
+c AS (
+SELECT * FROM a
+UNION
+SELECT * FROM b
+),
+d AS (
+    SELECT
+        campaignName,
+        campaignId,
+        adGroupName,
+        adGroupId,
+        adId,
+                                advertisedSku,
+                                market,
+        SUM(CASE WHEN date BETWEEN DATE_SUB(CURRENT_DATE - INTERVAL 1 DAY, INTERVAL 2 DAY) AND DATE_SUB(CURRENT_DATE, INTERVAL 1 DAY) THEN clicks ELSE 0 END) AS total_clicks_3d,
+                                SUM(CASE WHEN date BETWEEN DATE_SUB(CURRENT_DATE - INTERVAL 1 DAY, INTERVAL 2 DAY) AND DATE_SUB(CURRENT_DATE, INTERVAL 1 DAY) THEN purchases7d ELSE 0 END) AS total_order_3d,
+                                SUM(CASE WHEN date BETWEEN DATE_SUB(CURRENT_DATE - INTERVAL 1 DAY, INTERVAL 2 DAY) AND DATE_SUB(CURRENT_DATE, INTERVAL 1 DAY) THEN impressions ELSE 0 END) AS total_impressions_3d,
+                                SUM(CASE WHEN date BETWEEN DATE_SUB(CURRENT_DATE - INTERVAL 1 DAY, INTERVAL 6 DAY) AND DATE_SUB(CURRENT_DATE, INTERVAL 1 DAY) THEN clicks ELSE 0 END) AS total_clicks_7d,
+                                SUM(CASE WHEN date BETWEEN DATE_SUB(CURRENT_DATE - INTERVAL 1 DAY, INTERVAL 6 DAY) AND DATE_SUB(CURRENT_DATE, INTERVAL 1 DAY) THEN purchases7d ELSE 0 END) AS total_order_7d,
+                                SUM(CASE WHEN date BETWEEN DATE_SUB(CURRENT_DATE - INTERVAL 1 DAY, INTERVAL 6 DAY) AND DATE_SUB(CURRENT_DATE, INTERVAL 1 DAY) THEN impressions ELSE 0 END) AS total_impressions_7d,
+                                SUM(CASE WHEN date BETWEEN DATE_SUB(CURRENT_DATE - INTERVAL 1 DAY, INTERVAL 29 DAY) AND DATE_SUB(CURRENT_DATE, INTERVAL 1 DAY) THEN purchases7d ELSE 0 END) AS total_order_30d,
+                                SUM(CASE WHEN date BETWEEN DATE_SUB(CURRENT_DATE - INTERVAL 1 DAY, INTERVAL 29 DAY) AND DATE_SUB(CURRENT_DATE, INTERVAL 1 DAY) THEN impressions ELSE 0 END) AS total_impressions_30d,
+                                SUM(CASE WHEN date BETWEEN DATE_SUB(CURRENT_DATE - INTERVAL 1 DAY, INTERVAL 29 DAY) AND DATE_SUB(CURRENT_DATE, INTERVAL 1 DAY) THEN clicks ELSE 0 END) AS total_clicks_30d,
+                                SUM(CASE WHEN date BETWEEN DATE_SUB(CURRENT_DATE - INTERVAL 1 DAY, INTERVAL 29 DAY) AND DATE_SUB(CURRENT_DATE, INTERVAL 1 DAY) THEN cost ELSE 0 END) / NULLIF(SUM(CASE WHEN date BETWEEN DATE_SUB(CURRENT_DATE - INTERVAL 1 DAY, INTERVAL 29 DAY) AND DATE_SUB(CURRENT_DATE, INTERVAL 1 DAY) THEN sales14d ELSE 0 END), 0) AS ACOS_30d,
+                                SUM(CASE WHEN date BETWEEN DATE_SUB(CURRENT_DATE - INTERVAL 1 DAY, INTERVAL 6 DAY) AND DATE_SUB(CURRENT_DATE, INTERVAL 1 DAY) THEN cost ELSE 0 END) / NULLIF(SUM(CASE WHEN date BETWEEN DATE_SUB(CURRENT_DATE - INTERVAL 1 DAY, INTERVAL 6 DAY) AND DATE_SUB(CURRENT_DATE, INTERVAL 1 DAY) THEN sales14d ELSE 0 END), 0) AS ACOS_7d
+        FROM
+        c
+        GROUP BY
+        adId
+        ORDER BY
+        campaignId,
+        adGroupId
+)
+SELECT * FROM d
+WHERE
+market = '{queries['country']}'
+    """
+
+    return query
+
+
+def data_aggregation_table_spauto_sku(queries=None):
+    # SQL查询模板
+    query = f"""
+WITH a AS (
+        SELECT
+                b.campaignName,
+                b.campaignId,
+                b.adGroupName,
+                b.adGroupId,
+                b.adId,
+                b.advertisedSku,
+                b.market,
+                date,
+                clicks,
+                purchases7d,
+                impressions,
+                cost,
+                sales14d
+        FROM
+                amazon_advertised_product_reports_sp b
+        WHERE
+                b.market = '{queries['country']}'
+                AND b.date BETWEEN DATE_SUB( CURRENT_DATE, INTERVAL 30 DAY )
+                AND DATE_SUB( CURRENT_DATE, INTERVAL 1 DAY )
+                AND b.campaignId IN (
+SELECT DISTINCT campaignId FROM amazon_targets_list_sp
+WHERE market = '{queries['country']}'
+AND expressionType = 'AUTO'
+AND servingStatus NOT IN ('CAMPAIGN_PAUSED','CAMPAIGN_ARCHIVED','AD_GROUP_ARCHIVED', 'AD_GROUP_PAUSED', 'TARGETING_CLAUSE_PAUSED','TARGETING_CLAUSE_ARCHIVED')
+)
+),
+b AS (
+        SELECT
+                NULL AS campaignName,
+                akl.campaignId,
+                NULL AS adGroupName,
+                akl.adGroupId,
+                akl.adId,
+                sku AS advertisedSku,
+                market,
+                DATE_SUB( CURRENT_DATE, INTERVAL 1 DAY ) AS date,
+                0 AS clicks,
+                0 AS purchases7d,
+                0 AS impressions,
+                0 AS cost,
+                0 AS sales14d
+        FROM
+                amazon_sp_productads_list akl
+        WHERE
+                akl.market = '{queries['country']}'
+                AND akl.state = 'ENABLED'
+                AND akl.update_time = DATE_SUB( CURRENT_DATE, INTERVAL 1 DAY )
+                AND akl.servingStatus NOT IN ( 'CAMPAIGN_PAUSED', 'AD_GROUP_PAUSED', 'AD_POLICING_SUSPENDED', 'CAMPAIGN_ARCHIVED', 'INELIGIBLE', 'MISSING_DECORATION', 'AD_ARCHIVED', 'AD_POLICING_PENDING_REVIEW', 'MISSING_IMAGE', 'CAMPAIGN_INCOMPLETE', 'ADVERTISER_PAYMENT_FAILURE' )
+                AND akl.campaignId IN (
+SELECT DISTINCT campaignId FROM amazon_targets_list_sp
+WHERE market = '{queries['country']}'
+AND expressionType = 'AUTO'
+AND servingStatus NOT IN ('CAMPAIGN_PAUSED','CAMPAIGN_ARCHIVED','AD_GROUP_ARCHIVED', 'AD_GROUP_PAUSED', 'TARGETING_CLAUSE_PAUSED','TARGETING_CLAUSE_ARCHIVED')
+)
+                AND akl.sku NOT IN (
+                SELECT DISTINCT
+                        advertisedSku
+                FROM
+                a)
+),
+c AS (
+SELECT * FROM a
+UNION
+SELECT * FROM b
+),
+d AS (
+    SELECT
+        campaignName,
+        campaignId,
+        adGroupName,
+        adGroupId,
+        adId,
+                                advertisedSku,
+                                market,
+        SUM(CASE WHEN date BETWEEN DATE_SUB(CURRENT_DATE - INTERVAL 1 DAY, INTERVAL 2 DAY) AND DATE_SUB(CURRENT_DATE, INTERVAL 1 DAY) THEN clicks ELSE 0 END) AS total_clicks_3d,
+                                SUM(CASE WHEN date BETWEEN DATE_SUB(CURRENT_DATE - INTERVAL 1 DAY, INTERVAL 2 DAY) AND DATE_SUB(CURRENT_DATE, INTERVAL 1 DAY) THEN purchases7d ELSE 0 END) AS total_order_3d,
+                                SUM(CASE WHEN date BETWEEN DATE_SUB(CURRENT_DATE - INTERVAL 1 DAY, INTERVAL 2 DAY) AND DATE_SUB(CURRENT_DATE, INTERVAL 1 DAY) THEN impressions ELSE 0 END) AS total_impressions_3d,
+                                SUM(CASE WHEN date BETWEEN DATE_SUB(CURRENT_DATE - INTERVAL 1 DAY, INTERVAL 6 DAY) AND DATE_SUB(CURRENT_DATE, INTERVAL 1 DAY) THEN clicks ELSE 0 END) AS total_clicks_7d,
+                                SUM(CASE WHEN date BETWEEN DATE_SUB(CURRENT_DATE - INTERVAL 1 DAY, INTERVAL 6 DAY) AND DATE_SUB(CURRENT_DATE, INTERVAL 1 DAY) THEN purchases7d ELSE 0 END) AS total_order_7d,
+                                SUM(CASE WHEN date BETWEEN DATE_SUB(CURRENT_DATE - INTERVAL 1 DAY, INTERVAL 6 DAY) AND DATE_SUB(CURRENT_DATE, INTERVAL 1 DAY) THEN impressions ELSE 0 END) AS total_impressions_7d,
+                                SUM(CASE WHEN date BETWEEN DATE_SUB(CURRENT_DATE - INTERVAL 1 DAY, INTERVAL 29 DAY) AND DATE_SUB(CURRENT_DATE, INTERVAL 1 DAY) THEN purchases7d ELSE 0 END) AS total_order_30d,
+                                SUM(CASE WHEN date BETWEEN DATE_SUB(CURRENT_DATE - INTERVAL 1 DAY, INTERVAL 29 DAY) AND DATE_SUB(CURRENT_DATE, INTERVAL 1 DAY) THEN impressions ELSE 0 END) AS total_impressions_30d,
+                                SUM(CASE WHEN date BETWEEN DATE_SUB(CURRENT_DATE - INTERVAL 1 DAY, INTERVAL 29 DAY) AND DATE_SUB(CURRENT_DATE, INTERVAL 1 DAY) THEN clicks ELSE 0 END) AS total_clicks_30d,
+                                SUM(CASE WHEN date BETWEEN DATE_SUB(CURRENT_DATE - INTERVAL 1 DAY, INTERVAL 29 DAY) AND DATE_SUB(CURRENT_DATE, INTERVAL 1 DAY) THEN cost ELSE 0 END) / NULLIF(SUM(CASE WHEN date BETWEEN DATE_SUB(CURRENT_DATE - INTERVAL 1 DAY, INTERVAL 29 DAY) AND DATE_SUB(CURRENT_DATE, INTERVAL 1 DAY) THEN sales14d ELSE 0 END), 0) AS ACOS_30d,
+                                SUM(CASE WHEN date BETWEEN DATE_SUB(CURRENT_DATE - INTERVAL 1 DAY, INTERVAL 6 DAY) AND DATE_SUB(CURRENT_DATE, INTERVAL 1 DAY) THEN cost ELSE 0 END) / NULLIF(SUM(CASE WHEN date BETWEEN DATE_SUB(CURRENT_DATE - INTERVAL 1 DAY, INTERVAL 6 DAY) AND DATE_SUB(CURRENT_DATE, INTERVAL 1 DAY) THEN sales14d ELSE 0 END), 0) AS ACOS_7d
+        FROM
+        c
+        GROUP BY
+        adId
+        ORDER BY
+        campaignId,
+        adGroupId
+)
+SELECT * FROM d
+WHERE
+market = '{queries['country']}'
+    """
+
+    return query
+
+
+def data_aggregation_table_spmanual_search_term(queries=None):
+    # SQL查询模板
+    query = f"""
+WITH a AS (
+SELECT
+        b.campaignName,
+        b.campaignId,
+        b.adGroupName,
+        b.adGroupId,
+        b.searchTerm,
+                                matchType,
+        market,
+        date,
+        clicks,
+        purchases7d,
+        impressions,
+        cost,
+        sales14d
+        FROM amazon_search_term_reports_sp b
+         WHERE
+        b.market = '{queries['country']}'
+        AND b.date BETWEEN DATE_SUB(CURRENT_DATE, INTERVAL 30 DAY)
+        AND DATE_SUB(CURRENT_DATE, INTERVAL 1 DAY)
+                                AND matchType IN ('EXACT','BROAD','PHRASE')
+),
+d AS (
+    SELECT
+        campaignName,
+        campaignId,
+        adGroupName,
+        adGroupId,
+        searchTerm,
+                                matchType,
+                                market,
+        SUM(CASE WHEN date BETWEEN DATE_SUB(CURRENT_DATE - INTERVAL 1 DAY, INTERVAL 2 DAY) AND DATE_SUB(CURRENT_DATE, INTERVAL 1 DAY) THEN clicks ELSE 0 END) AS total_clicks_3d,
+                                SUM(CASE WHEN date BETWEEN DATE_SUB(CURRENT_DATE - INTERVAL 1 DAY, INTERVAL 2 DAY) AND DATE_SUB(CURRENT_DATE, INTERVAL 1 DAY) THEN purchases7d ELSE 0 END) AS total_order_3d,
+                                SUM(CASE WHEN date BETWEEN DATE_SUB(CURRENT_DATE - INTERVAL 1 DAY, INTERVAL 2 DAY) AND DATE_SUB(CURRENT_DATE, INTERVAL 1 DAY) THEN impressions ELSE 0 END) AS total_impressions_3d,
+                                SUM(CASE WHEN date BETWEEN DATE_SUB(CURRENT_DATE - INTERVAL 1 DAY, INTERVAL 6 DAY) AND DATE_SUB(CURRENT_DATE, INTERVAL 1 DAY) THEN clicks ELSE 0 END) AS total_clicks_7d,
+                                SUM(CASE WHEN date BETWEEN DATE_SUB(CURRENT_DATE - INTERVAL 1 DAY, INTERVAL 6 DAY) AND DATE_SUB(CURRENT_DATE, INTERVAL 1 DAY) THEN purchases7d ELSE 0 END) AS total_order_7d,
+                                SUM(CASE WHEN date BETWEEN DATE_SUB(CURRENT_DATE - INTERVAL 1 DAY, INTERVAL 6 DAY) AND DATE_SUB(CURRENT_DATE, INTERVAL 1 DAY) THEN impressions ELSE 0 END) AS total_impressions_7d,
+                                SUM(CASE WHEN date BETWEEN DATE_SUB(CURRENT_DATE - INTERVAL 1 DAY, INTERVAL 29 DAY) AND DATE_SUB(CURRENT_DATE, INTERVAL 1 DAY) THEN purchases7d ELSE 0 END) AS total_order_30d,
+                                SUM(CASE WHEN date BETWEEN DATE_SUB(CURRENT_DATE - INTERVAL 1 DAY, INTERVAL 29 DAY) AND DATE_SUB(CURRENT_DATE, INTERVAL 1 DAY) THEN impressions ELSE 0 END) AS total_impressions_30d,
+                                SUM(CASE WHEN date BETWEEN DATE_SUB(CURRENT_DATE - INTERVAL 1 DAY, INTERVAL 29 DAY) AND DATE_SUB(CURRENT_DATE, INTERVAL 1 DAY) THEN clicks ELSE 0 END) AS total_clicks_30d,
+                                SUM(CASE WHEN date BETWEEN DATE_SUB(CURRENT_DATE - INTERVAL 1 DAY, INTERVAL 29 DAY) AND DATE_SUB(CURRENT_DATE, INTERVAL 1 DAY) THEN cost ELSE 0 END) / NULLIF(SUM(CASE WHEN date BETWEEN DATE_SUB(CURRENT_DATE - INTERVAL 1 DAY, INTERVAL 29 DAY) AND DATE_SUB(CURRENT_DATE, INTERVAL 1 DAY) THEN sales14d ELSE 0 END), 0) AS ACOS_30d,
+                                SUM(CASE WHEN date BETWEEN DATE_SUB(CURRENT_DATE - INTERVAL 1 DAY, INTERVAL 6 DAY) AND DATE_SUB(CURRENT_DATE, INTERVAL 1 DAY) THEN cost ELSE 0 END) / NULLIF(SUM(CASE WHEN date BETWEEN DATE_SUB(CURRENT_DATE - INTERVAL 1 DAY, INTERVAL 6 DAY) AND DATE_SUB(CURRENT_DATE, INTERVAL 1 DAY) THEN sales14d ELSE 0 END), 0) AS ACOS_7d
+        FROM
+        a
+        GROUP BY
+        campaignId,
+                                adGroupId,
+                                searchTerm,
+                                matchType
+        ORDER BY
+        campaignId,
+        adGroupId,
+                                searchTerm,
+                                matchType
+)
+SELECT * FROM d
+WHERE
+market = '{queries['country']}'
+    """
+
+    return query
+
+
+def data_aggregation_table_spasin_search_term(queries=None):
+    # SQL查询模板
+    query = f"""
+WITH a AS (
+SELECT
+        b.campaignName,
+        b.campaignId,
+        b.adGroupName,
+        b.adGroupId,
+        b.searchTerm,
+        matchType,
+        market,
+        date,
+        clicks,
+        purchases7d,
+        impressions,
+        cost,
+        sales14d
+        FROM amazon_search_term_reports_sp b
+         WHERE
+        b.market = '{queries['country']}'
+        AND b.date BETWEEN DATE_SUB(CURRENT_DATE, INTERVAL 30 DAY)
+        AND DATE_SUB(CURRENT_DATE, INTERVAL 1 DAY)
+                                AND matchType IN ('TARGETING_EXPRESSION')
+),
+d AS (
+    SELECT
+        campaignName,
+        campaignId,
+        adGroupName,
+        adGroupId,
+        searchTerm,
+                                matchType,
+                                market,
+        SUM(CASE WHEN date BETWEEN DATE_SUB(CURRENT_DATE - INTERVAL 1 DAY, INTERVAL 2 DAY) AND DATE_SUB(CURRENT_DATE, INTERVAL 1 DAY) THEN clicks ELSE 0 END) AS total_clicks_3d,
+                                SUM(CASE WHEN date BETWEEN DATE_SUB(CURRENT_DATE - INTERVAL 1 DAY, INTERVAL 2 DAY) AND DATE_SUB(CURRENT_DATE, INTERVAL 1 DAY) THEN purchases7d ELSE 0 END) AS total_order_3d,
+                                SUM(CASE WHEN date BETWEEN DATE_SUB(CURRENT_DATE - INTERVAL 1 DAY, INTERVAL 2 DAY) AND DATE_SUB(CURRENT_DATE, INTERVAL 1 DAY) THEN impressions ELSE 0 END) AS total_impressions_3d,
+                                SUM(CASE WHEN date BETWEEN DATE_SUB(CURRENT_DATE - INTERVAL 1 DAY, INTERVAL 6 DAY) AND DATE_SUB(CURRENT_DATE, INTERVAL 1 DAY) THEN clicks ELSE 0 END) AS total_clicks_7d,
+                                SUM(CASE WHEN date BETWEEN DATE_SUB(CURRENT_DATE - INTERVAL 1 DAY, INTERVAL 6 DAY) AND DATE_SUB(CURRENT_DATE, INTERVAL 1 DAY) THEN purchases7d ELSE 0 END) AS total_order_7d,
+                                SUM(CASE WHEN date BETWEEN DATE_SUB(CURRENT_DATE - INTERVAL 1 DAY, INTERVAL 6 DAY) AND DATE_SUB(CURRENT_DATE, INTERVAL 1 DAY) THEN impressions ELSE 0 END) AS total_impressions_7d,
+                                SUM(CASE WHEN date BETWEEN DATE_SUB(CURRENT_DATE - INTERVAL 1 DAY, INTERVAL 29 DAY) AND DATE_SUB(CURRENT_DATE, INTERVAL 1 DAY) THEN purchases7d ELSE 0 END) AS total_order_30d,
+                                SUM(CASE WHEN date BETWEEN DATE_SUB(CURRENT_DATE - INTERVAL 1 DAY, INTERVAL 29 DAY) AND DATE_SUB(CURRENT_DATE, INTERVAL 1 DAY) THEN impressions ELSE 0 END) AS total_impressions_30d,
+                                SUM(CASE WHEN date BETWEEN DATE_SUB(CURRENT_DATE - INTERVAL 1 DAY, INTERVAL 29 DAY) AND DATE_SUB(CURRENT_DATE, INTERVAL 1 DAY) THEN clicks ELSE 0 END) AS total_clicks_30d,
+                                SUM(CASE WHEN date BETWEEN DATE_SUB(CURRENT_DATE - INTERVAL 1 DAY, INTERVAL 29 DAY) AND DATE_SUB(CURRENT_DATE, INTERVAL 1 DAY) THEN cost ELSE 0 END) / NULLIF(SUM(CASE WHEN date BETWEEN DATE_SUB(CURRENT_DATE - INTERVAL 1 DAY, INTERVAL 29 DAY) AND DATE_SUB(CURRENT_DATE, INTERVAL 1 DAY) THEN sales14d ELSE 0 END), 0) AS ACOS_30d,
+                                SUM(CASE WHEN date BETWEEN DATE_SUB(CURRENT_DATE - INTERVAL 1 DAY, INTERVAL 6 DAY) AND DATE_SUB(CURRENT_DATE, INTERVAL 1 DAY) THEN cost ELSE 0 END) / NULLIF(SUM(CASE WHEN date BETWEEN DATE_SUB(CURRENT_DATE - INTERVAL 1 DAY, INTERVAL 6 DAY) AND DATE_SUB(CURRENT_DATE, INTERVAL 1 DAY) THEN sales14d ELSE 0 END), 0) AS ACOS_7d
+        FROM
+        a
+        GROUP BY
+        campaignId,
+                                adGroupId,
+                                searchTerm,
+                                matchType
+        ORDER BY
+        campaignId,
+        adGroupId,
+                                searchTerm,
+                                matchType
+)
+SELECT * FROM d
+WHERE
+market = '{queries['country']}'
+    """
+
+    return query
+
+
+def data_aggregation_table_spauto_search_term(queries=None):
+    # SQL查询模板
+    query = f"""
+WITH a AS (
+SELECT
+        b.campaignName,
+        b.campaignId,
+        b.adGroupName,
+        b.adGroupId,
+        b.searchTerm,
+        matchType,
+        market,
+        date,
+        clicks,
+        purchases7d,
+        impressions,
+        cost,
+        sales14d
+        FROM amazon_search_term_reports_sp b
+         WHERE
+        b.market = '{queries['country']}'
+        AND b.date BETWEEN DATE_SUB(CURRENT_DATE, INTERVAL 30 DAY)
+        AND DATE_SUB(CURRENT_DATE, INTERVAL 1 DAY)
+                                AND matchType IN ('TARGETING_EXPRESSION_PREDEFINED')
+),
+d AS (
+    SELECT
+        campaignName,
+        campaignId,
+        adGroupName,
+        adGroupId,
+        searchTerm,
+                                matchType,
+                                market,
+        SUM(CASE WHEN date BETWEEN DATE_SUB(CURRENT_DATE - INTERVAL 1 DAY, INTERVAL 2 DAY) AND DATE_SUB(CURRENT_DATE, INTERVAL 1 DAY) THEN clicks ELSE 0 END) AS total_clicks_3d,
+                                SUM(CASE WHEN date BETWEEN DATE_SUB(CURRENT_DATE - INTERVAL 1 DAY, INTERVAL 2 DAY) AND DATE_SUB(CURRENT_DATE, INTERVAL 1 DAY) THEN purchases7d ELSE 0 END) AS total_order_3d,
+                                SUM(CASE WHEN date BETWEEN DATE_SUB(CURRENT_DATE - INTERVAL 1 DAY, INTERVAL 2 DAY) AND DATE_SUB(CURRENT_DATE, INTERVAL 1 DAY) THEN impressions ELSE 0 END) AS total_impressions_3d,
+                                SUM(CASE WHEN date BETWEEN DATE_SUB(CURRENT_DATE - INTERVAL 1 DAY, INTERVAL 6 DAY) AND DATE_SUB(CURRENT_DATE, INTERVAL 1 DAY) THEN clicks ELSE 0 END) AS total_clicks_7d,
+                                SUM(CASE WHEN date BETWEEN DATE_SUB(CURRENT_DATE - INTERVAL 1 DAY, INTERVAL 6 DAY) AND DATE_SUB(CURRENT_DATE, INTERVAL 1 DAY) THEN purchases7d ELSE 0 END) AS total_order_7d,
+                                SUM(CASE WHEN date BETWEEN DATE_SUB(CURRENT_DATE - INTERVAL 1 DAY, INTERVAL 6 DAY) AND DATE_SUB(CURRENT_DATE, INTERVAL 1 DAY) THEN impressions ELSE 0 END) AS total_impressions_7d,
+                                SUM(CASE WHEN date BETWEEN DATE_SUB(CURRENT_DATE - INTERVAL 1 DAY, INTERVAL 29 DAY) AND DATE_SUB(CURRENT_DATE, INTERVAL 1 DAY) THEN purchases7d ELSE 0 END) AS total_order_30d,
+                                SUM(CASE WHEN date BETWEEN DATE_SUB(CURRENT_DATE - INTERVAL 1 DAY, INTERVAL 29 DAY) AND DATE_SUB(CURRENT_DATE, INTERVAL 1 DAY) THEN impressions ELSE 0 END) AS total_impressions_30d,
+                                SUM(CASE WHEN date BETWEEN DATE_SUB(CURRENT_DATE - INTERVAL 1 DAY, INTERVAL 29 DAY) AND DATE_SUB(CURRENT_DATE, INTERVAL 1 DAY) THEN clicks ELSE 0 END) AS total_clicks_30d,
+                                SUM(CASE WHEN date BETWEEN DATE_SUB(CURRENT_DATE - INTERVAL 1 DAY, INTERVAL 29 DAY) AND DATE_SUB(CURRENT_DATE, INTERVAL 1 DAY) THEN cost ELSE 0 END) / NULLIF(SUM(CASE WHEN date BETWEEN DATE_SUB(CURRENT_DATE - INTERVAL 1 DAY, INTERVAL 29 DAY) AND DATE_SUB(CURRENT_DATE, INTERVAL 1 DAY) THEN sales14d ELSE 0 END), 0) AS ACOS_30d,
+                                SUM(CASE WHEN date BETWEEN DATE_SUB(CURRENT_DATE - INTERVAL 1 DAY, INTERVAL 6 DAY) AND DATE_SUB(CURRENT_DATE, INTERVAL 1 DAY) THEN cost ELSE 0 END) / NULLIF(SUM(CASE WHEN date BETWEEN DATE_SUB(CURRENT_DATE - INTERVAL 1 DAY, INTERVAL 6 DAY) AND DATE_SUB(CURRENT_DATE, INTERVAL 1 DAY) THEN sales14d ELSE 0 END), 0) AS ACOS_7d
+        FROM
+        a
+        GROUP BY
+        campaignId,
+                                adGroupId,
+                                searchTerm,
+                                matchType
+        ORDER BY
+        campaignId,
+        adGroupId,
+                                searchTerm,
+                                matchType
+)
+SELECT * FROM d
+WHERE
+market = '{queries['country']}'
+    """
+
     return query
 
 

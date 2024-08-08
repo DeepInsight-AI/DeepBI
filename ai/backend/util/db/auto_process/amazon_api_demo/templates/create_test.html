@@ -119,10 +119,14 @@
                 var option4 = document.createElement('option');
                 option4.value = '0502_manual';
                 option4.textContent = '0502_manual';
+                var option5 = document.createElement('option');
+                option5.value = '0511';
+                option5.textContent = '0511';
                 strategySelect.appendChild(option1);
                 strategySelect.appendChild(option2);
                 strategySelect.appendChild(option3);
                 strategySelect.appendChild(option4);
+                strategySelect.appendChild(option5);
             } else {
                 strategyDropdown.style.display = 'none';
                 extraParamsSection.style.display = 'none';
@@ -142,7 +146,7 @@
             if (strategy === '0502' || strategy === '0507') {
                 extraParamsSection.style.display = 'block';
                 productInfoSection.style.display = 'none';
-            } else if (strategy === '0509' || strategy === '0514' || strategy === '0502_auto' || strategy === '0502_manual') {
+            } else if (strategy === '0509' || strategy === '0514' || strategy === '0502_auto' || strategy === '0502_manual' || strategy === '0511') {
                 extraParamsSection.style.display = 'none';
                 productInfoSection.style.display = 'block';
             } else {

@@ -26,6 +26,10 @@ class ProcessShowData():
             'INSERT_SECRATE': "10470c3b4b1fed12c3baac014be15fac67c6e815",
             'ONLINE_URL': "http://192.168.2.152:8000/api/data/"
         },
+        'test_pre': {
+            'INSERT_SECRATE': '69c5fcebaa65b560eaf06c3fbeb481ae44b8dpre',
+            "ONLINE_URL": "https://pre_atlas.deepbi.com/api/data/"
+        },
         'pre': {
             'INSERT_SECRATE': "69c5fcebaa65b560eaf06c3fbeb481ae44b8d618",
             'ONLINE_URL': "https://atlas.deepbi.com/api/data/"
@@ -122,7 +126,7 @@ class ProcessShowData():
 #         "Other": "B其他"
 #     }
 # delete_data = {
-#     "ID": "8729",
+#     "ID": "28149",
 #     "UID": "1"
 # }
 # #     # ProcessShowData.insert(add_data)

@@ -41,7 +41,8 @@ users = {
     'Uuoeebb': 'Uuoeebb',
     'syndesmos': 'syndesmos',
     'Gonbouyoku': 'Gonbouyoku',
-    'gmrpwnage': 'gmrpwnage'
+    'gmrpwnage': 'gmrpwnage',
+    'suihuooo': 'suihuooo'
 }
 user_permissions = {
     'admin': {
@@ -58,7 +59,8 @@ user_permissions = {
             'Uuoeebb': ['US'],
             'syndesmos': ['DE', 'IT'],
             'Gonbouyoku': ['JP'],
-            'gmrpwnage': ['JP']
+            'gmrpwnage': ['JP'],
+            'suihuooo': ['US']
         }
     },
     'LAPASA': {
@@ -124,6 +126,11 @@ user_permissions = {
     'gmrpwnage': {
         'brands': {
             'gmrpwnage': ['JP']
+        }
+    },
+    'suihuooo': {
+        'brands': {
+            'suihuooo': ['US']
         }
     }
 }

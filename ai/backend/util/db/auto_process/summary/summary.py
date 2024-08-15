@@ -69,6 +69,8 @@ def get_request_data(CountryCode, StartDate, report_type, all_table, data_id, br
         UID = "18"
     elif brand == 'gmrpwnage':
         UID = "18"
+    elif brand == 'suihuooo':
+        UID = "26"
     else:
         UID = None
     try:

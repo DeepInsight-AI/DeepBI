@@ -16,6 +16,7 @@ def run():
         'Uuoeebb': ['US'],
         'Gonbouyoku': ['JP'],
         'syndesmos': ['DE', 'IT'],
+        'suihuooo': ['US']
     }
     # brands_and_countries = {
     #     'KAPEYDESI': ['SA'],

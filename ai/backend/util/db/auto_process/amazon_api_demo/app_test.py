@@ -20,6 +20,7 @@ from ai.backend.util.db.db_amazon.sales_with_no_ad_spend_sku import SalesWithNoA
 from ai.backend.util.db.db_amazon.sku_and_country_linked_four_ads_creation import SkuAndCountryLinkedFourAdsCreation
 from ai.backend.util.db.db_amazon.SD_0511_Recommended_Product_Ad_Strategy import SdRecommendedProductAdStrategy
 from ai.backend.util.db.db_amazon.SD_ASIN_Derivative_Strategy_Query import SdAsinDerivativeStrategyQuery
+from ai.backend.util.db.db_amazon.SD_0808_Strategy import Sd0808Strategy
 
 
 app = Flask(__name__)
@@ -33,7 +34,14 @@ users = {
     'DELOMO': 'DELOMO',
     'MUDEELA': 'MUDEELA',
     'Rossny': 'Rossny',
-    'ZEN CAVE': 'ZEN CAVE'
+    'ZEN CAVE': 'ZEN CAVE',
+    'Veement': 'Veement',
+    'KAPEYDESI': 'KAPEYDESI',
+    'Gvyugke': 'Gvyugke',
+    'Uuoeebb': 'Uuoeebb',
+    'syndesmos': 'syndesmos',
+    'Gonbouyoku': 'Gonbouyoku',
+    'gmrpwnage': 'gmrpwnage'
 }
 user_permissions = {
     'admin': {
@@ -43,7 +51,14 @@ user_permissions = {
             'OutdoorMaster': ['IT', 'ES', 'FR', 'SE'],
             'MUDEELA': ['US'],
             'Rossny': ['US'],
-            'ZEN CAVE': ['US']
+            'ZEN CAVE': ['US'],
+            'Veement': ['UK'],
+            'KAPEYDESI': ['UK', 'DE', 'FR', 'SA'],
+            'Gvyugke': ['UK', 'DE', 'FR', 'IT', 'AU'],
+            'Uuoeebb': ['US'],
+            'syndesmos': ['DE', 'IT'],
+            'Gonbouyoku': ['JP'],
+            'gmrpwnage': ['JP']
         }
     },
     'LAPASA': {
@@ -74,6 +89,41 @@ user_permissions = {
     'ZEN CAVE': {
         'brands': {
             'ZEN CAVE': ['US']
+        }
+    },
+    'Veement': {
+        'brands': {
+            'Veement': ['UK']
+        }
+    },
+    'KAPEYDESI': {
+        'brands': {
+            'KAPEYDESI': ['UK', 'DE', 'FR', 'SA']
+        }
+    },
+    'Gvyugke': {
+        'brands': {
+            'Gvyugke': ['UK', 'DE', 'FR', 'IT', 'AU']
+        }
+    },
+    'Uuoeebb': {
+        'brands': {
+            'Uuoeebb': ['US']
+        }
+    },
+    'syndesmos': {
+        'brands': {
+            'syndesmos': ['DE', 'IT']
+        }
+    },
+    'Gonbouyoku': {
+        'brands': {
+            'Gonbouyoku': ['JP']
+        }
+    },
+    'gmrpwnage': {
+        'brands': {
+            'gmrpwnage': ['JP']
         }
     }
 }
@@ -172,7 +222,7 @@ def create():
     username = session['uname']
     permissions = user_permissions.get(username, {'brands': {}})
 
-    return render_template('create_test.html', permissions=permissions)
+    return render_template('create_test2.html', permissions=permissions)
 
 
 @app.route('/modify')
@@ -199,25 +249,31 @@ def process_create():
             }
             api1 = Ceate_new_sd()
             api2 = Ceate_new_sku()
-            api3 = sp(params_create['brand'])
-            api4 = sd(params_create['brand'])
+            api3 = sp(params_create['brand'], params_create['country'])
+            api4 = sd(params_create['brand'], params_create['country'])
             if params_create['create_method'] == '新建':
                 additional_params_create = {
-                    'product_info': request.form.get('product_info', '')
+                    'product_info': request.form.get('product_info', ''),
+                    'budget': request.form.get('budget', '')
 
                 }
                 params_create.update(additional_params_create)
                 info = product_info_list = [item.strip(" '") for item in params_create['product_info'].strip('[]').split(', ')]
                 if params_create['strategy'] == "0509":
-                    api1.create_new_sd_no_template(params_create['country'], info, params_create['brand'])
+                    api1.create_new_sd_no_template(params_create['country'], info, params_create['brand'], params_create['budget'])
                 elif params_create['strategy'] == "0514":
-                    api2.create_new_sp_asin_no_template(params_create['country'], info, params_create['brand'])
+                    api2.create_new_sp_asin_no_template(params_create['country'], info, params_create['brand'], params_create['budget'])
                 elif params_create['strategy'] == "0502_auto":
-                    api2.create_new_sp_auto_no_template(params_create['country'], info, params_create['brand'])
+                    if params_create['brand'] == "Veement" or params_create['brand'] == "KAPEYDESI" or params_create['brand'] == "Gvyugke" or params_create['brand'] == "Uuoeebb" or params_create['brand'] == "syndesmos" or params_create['brand'] == "Gonbouyoku" or params_create['brand'] == "gmrpwnage":
+                        api2.create_new_sp_auto_no_template_jiutong(params_create['country'], info, params_create['brand'], params_create['budget'])
+                    else:
+                        api2.create_new_sp_auto_no_template(params_create['country'], info, params_create['brand'], params_create['budget'])
                 elif params_create['strategy'] == "0502_manual":
-                    api2.create_new_sp_manual_no_template(params_create['country'], info, params_create['brand'])
+                    api2.create_new_sp_manual_no_template(params_create['country'], info, params_create['brand'], params_create['budget'])
                 elif params_create['strategy'] == "0511":
-                    api1.create_new_sd_0511(params_create['country'], info, params_create['brand'])
+                    api1.create_new_sd_0511(params_create['country'], info, params_create['brand'], params_create['budget'])
+                elif params_create['strategy'] == "0731":
+                    api1.create_new_sd_no_template_0731(params_create['country'], info, params_create['brand'], params_create['budget'])
                 return jsonify({"status": "success", "message": "处理完成，未生成 CSV 文件。"})
             elif params_create['create_method'] == '横向复刻':
                 additional_params_create = {
@@ -248,30 +304,40 @@ def strategy_function():
             # 根据策略类型处理不同的参数
             if strategy_type == 'type1':
                 date = request.form['date']
-                csv_filepath = SalesWithNoAdSpendSku(brand).get_sales_with_no_ad_spend_sku(country,date)
+                csv_filepath = SalesWithNoAdSpendSku(brand,country).get_sales_with_no_ad_spend_sku(country,date)
             elif strategy_type == 'type7':
                 date = request.form['date']
-                csv_filepath = SdAsinDerivativeStrategyQuery(brand).get_SD_ASIN_Derivative_Strategy_Query(country, date)
+                csv_filepath = SdAsinDerivativeStrategyQuery(brand,country).get_SD_ASIN_Derivative_Strategy_Query(country, date)
             elif strategy_type == 'type6':
                 start_date = request.form['start_date']
                 end_date = request.form['end_date']
-                csv_filepath = SdRecommendedProductAdStrategy(brand).get_0511_sd_recommended_product_ad(country, start_date, end_date)
+                csv_filepath = SdRecommendedProductAdStrategy(brand,country).get_0511_sd_recommended_product_ad(country, start_date, end_date)
             elif strategy_type == 'type2':
                 sku = request.form['sku']
                 sku_info = [item.strip(" '") for item in sku.strip('[]').split(', ')]
-                csv_filepath = SkuAndCountryLinkedFourAdsCreation(brand).get_sku_and_country_sp_manual_creation(sku_info)
+                csv_filepath = SkuAndCountryLinkedFourAdsCreation(brand,country).get_sku_and_country_sp_manual_creation(sku_info)
             elif strategy_type == 'type3':
                 sku = request.form['sku']
                 sku_info = [item.strip(" '") for item in sku.strip('[]').split(', ')]
-                csv_filepath = SkuAndCountryLinkedFourAdsCreation(brand).get_sku_and_country_sp_asin_creation(sku_info)
+                csv_filepath = SkuAndCountryLinkedFourAdsCreation(brand,country).get_sku_and_country_sp_asin_creation(sku_info)
             elif strategy_type == 'type4':
                 sku = request.form['sku']
                 sku_info = [item.strip(" '") for item in sku.strip('[]').split(', ')]
-                csv_filepath = SkuAndCountryLinkedFourAdsCreation(brand).get_sku_and_country_sp_auto_creation(sku_info)
+                csv_filepath = SkuAndCountryLinkedFourAdsCreation(brand,country).get_sku_and_country_sp_auto_creation(sku_info)
             elif strategy_type == 'type5':
                 sku = request.form['sku']
                 sku_info = [item.strip(" '") for item in sku.strip('[]').split(', ')]
-                csv_filepath = SkuAndCountryLinkedFourAdsCreation(brand).get_sku_and_country_sd_creation(sku_info)
+                csv_filepath = SkuAndCountryLinkedFourAdsCreation(brand,country).get_sku_and_country_sd_creation(sku_info)
+            elif strategy_type == 'type8':
+                product = request.form['product']
+                product_type = request.form['product_type']
+                product_info = [item.strip(" '") for item in product.strip('[]').split(', ')]
+                if product_type == 'asin':
+                    csv_filepath = Sd0808Strategy(brand,country).get_0808_sd_ad(country,product_info)
+                elif product_type == 'parent_asin':
+                    csv_filepath = Sd0808Strategy(brand, country).get_0808_sd_ad(country, product_info,1)
+                elif product_type == 'sspu':
+                    csv_filepath = Sd0808Strategy(brand, country).get_0808_sd_ad(country, product_info,2)
             else:
                 return 'Invalid strategy type'
     #     # 将额外参数添加到params字典中
@@ -403,25 +469,30 @@ def modify_function():
                     'country': request.form.get('country'),
                     'templateCountry': request.form.get('templateCountry'),
                     'strategy': request.form.get('strategy'),
+                    'budget': request.form.get('budget')
                 }
                 # params_modify.update(params)
                 api1 = Ceate_new_sd()
                 api2 = Ceate_new_sku()
                 if params_modify['strategy'] == "0502":
-                    def run_async_operation():
-                        loop = asyncio.new_event_loop()
-                        asyncio.set_event_loop(loop)
-                        try:
-                            loop.run_until_complete(api2.create_new_sku(params_modify['country'], params_modify['templateCountry'], params_modify['brand'], csv_path))
-                        finally:
-                            loop.close()
+                    if params_modify['brand'] == "Veement" or params_modify['brand'] == "KAPEYDESI" or params_modify['brand'] == "Gvyugke" or params_modify['brand'] == "Uuoeebb" or params_modify['brand'] == "syndesmos" or params_modify['brand'] == "Gonbouyoku" or params_modify['brand'] == "gmrpwnage":
+                        api2.create_new_sp_manual_no_template_jiutong(params_modify['country'],params_modify['brand'],csv_path,params_modify['budget'])
+                    else:
+                        def run_async_operation():
+                            loop = asyncio.new_event_loop()
+                            asyncio.set_event_loop(loop)
+                            try:
+                                loop.run_until_complete(api2.create_new_sku(params_modify['country'], params_modify['templateCountry'], params_modify['brand'], csv_path, params_modify['budget']))
+                            finally:
+                                loop.close()
 
-                    thread = threading.Thread(target=run_async_operation)
-                    thread.start()
-                    thread.join()  # 等待子线程完成
+                        thread = threading.Thread(target=run_async_operation)
+                        thread.start()
+                        thread.join()  # 等待子线程完成
                 elif params_modify['strategy'] == "0507":
-                    api1.create_new_sd_template(params_modify['country'], params_modify['templateCountry'], params_modify['brand'], csv_path)
-
+                    api1.create_new_sd_template(params_modify['country'], params_modify['templateCountry'], params_modify['brand'], csv_path, params_modify['budget'])
+                elif params_modify['strategy'] == "0808":
+                    api1.create_new_sd_0808(params_modify['country'], csv_path, params_modify['brand'], params_modify['budget'])
                 # Return a response if needed
                 return f'创建完成'
             elif params['operationOption'] == 'priceAdjustment':
@@ -521,6 +592,42 @@ def modify_function():
                     elif params_modify['modifyPosition'] == 'productTargeting':
                         print('执行修改操作...')
                         api1.auto_targeting_status(params_modify['country'], csv_path, params_modify['status'])
+                return f'修改完成'
+            elif params['operationOption'] == 'createTargeting':
+                params_modify = {
+                    'brand': request.form.get('targetingBrand'),
+                    'country': request.form.get('targetingCountry'),
+                    'adType': request.form.get('targetingAdType'),
+                    'targetingPosition': request.form.get('targetingPosition')
+                }
+                if params_modify['adType'] == 'SP':
+                    api1 = auto_api_sp(params_modify['brand'])
+                    if params_modify['targetingPosition'] == 'productTargeting1':
+                        print('执行修改操作...')
+                        api1.auto_create_targeting_category(params_modify['country'], csv_path)
+                    elif params_modify['targetingPosition'] == 'productTargeting2':
+                        print('执行修改操作...')
+                        api1.auto_create_targeting_product(params_modify['country'], csv_path)
+                    elif params_modify['targetingPosition'] == 'keywords':
+                        print('执行修改操作...')
+                        api1.auto_create_keyword(params_modify['country'], csv_path)
+                    elif params_modify['targetingPosition'] == 'negativeProductTargeting':
+                        print('执行修改操作...')
+                        api1.auto_create_negative_targeting(params_modify['country'], csv_path)
+                    elif params_modify['targetingPosition'] == 'negativeKeywords':
+                        print('执行修改操作...')
+                        api1.auto_create_negative_keyword(params_modify['country'], csv_path)
+                elif params_modify['adType'] == 'SD':
+                    api1 = auto_api_sd(params_modify['brand'])
+                    if params_modify['targetingPosition'] == 'productTargeting1':
+                        print('执行修改操作...')
+                        api1.auto_create_targeting_category(params_modify['country'], csv_path)
+                    elif params_modify['targetingPosition'] == 'productTargeting2':
+                        print('执行修改操作...')
+                        api1.auto_create_targeting_product(params_modify['country'], csv_path)
+                    elif params_modify['targetingPosition'] == 'negativeProductTargeting':
+                        print('执行修改操作...')
+                        api1.auto_create_negative_targeting_product(params_modify['country'], csv_path)
                 return f'修改完成'
         except Exception as e:
             print(e)

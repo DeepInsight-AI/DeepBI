@@ -28,7 +28,7 @@ def access_param(params,brand):
     query_query = query_query_method(params)
     final_query = query + (order_query or "") + (click_query or "") + (impression_query or "") + (query_query or "")
     print(final_query)
-    api1 = AmazonMysqlRagUitl(brand)
+    api1 = AmazonMysqlRagUitl(brand,params['country'])
     if params['price_adjustment_operation'] == '增加':
         bid_adjust = float(params['price_adjustment'])
     elif params['price_adjustment_operation'] == '减少':
@@ -88,7 +88,7 @@ def access_param_self(params,brand):
     query_query = query_query_method(params)
     final_query = query + (order_query or "") + (click_query or "") + (impression_query or "") + (query_query or "")
     print(final_query)
-    api1 = AmazonMysqlRagUitl(brand)
+    api1 = AmazonMysqlRagUitl(brand,params['country'])
     if params['price_adjustment_operation'] == '增加':
         bid_adjust = float(params['price_adjustment'])
     elif params['price_adjustment_operation'] == '减少':

@@ -126,7 +126,8 @@ class ProcessShowData():
 #         "Other": "B其他"
 #     }
 # delete_data = {
-#     "ID": "28149",
+#     "ID": "69466",
+#     "DataType": "D-LOG",
 #     "UID": "1"
 # }
 # #     # ProcessShowData.insert(add_data)

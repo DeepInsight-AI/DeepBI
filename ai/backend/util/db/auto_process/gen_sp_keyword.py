@@ -33,7 +33,7 @@ class Gen_keyword:
         res = apitool.create_spkeyword_api(keyword_info, market)
 
         # 根据结果更新log
-        dbNewTools = DbNewSpTools(self.brand)
+        dbNewTools = DbNewSpTools(self.brand,market)
         if res[0]=="success":
             dbNewTools.add_sp_keyword_toadGroup(market,res[1],campaignId,matchType,state,bid,adGroupId,keywordText,keywordText_new,"success",datetime.now())
         else:
@@ -60,7 +60,7 @@ class Gen_keyword:
         res = apitool.create_spkeyword_api(keyword_info, market)
 
         # 根据结果更新log
-        dbNewTools = DbNewSpTools(self.brand)
+        dbNewTools = DbNewSpTools(self.brand,market)
         if res[0]=="success":
             dbNewTools.add_sp_keyword_toadGroup(market,res[1],campaignId,matchType,state,bid,adGroupId,None,keywordText,"success",datetime.now())
         else:
@@ -85,7 +85,7 @@ class Gen_keyword:
 
         # 根据结果更新log
         # def update_sp_keyword_toadGroup(self,market,keywordId,state,bid,operation_state,create_time):
-        dbNewTools = DbNewSpTools(self.brand)
+        dbNewTools = DbNewSpTools(self.brand,market)
         if res[0]=="success":
             dbNewTools.update_sp_keyword_toadGroup(market,keywordId,state,bid_old,bid_new,"success",datetime.now())
         else:
@@ -107,7 +107,7 @@ class Gen_keyword:
 
         # 根据结果更新log
         # def update_sp_keyword_toadGroup(self,market,keywordId,state,bid,operation_state,create_time):
-        dbNewTools = DbNewSpTools(self.brand)
+        dbNewTools = DbNewSpTools(self.brand,market)
         if res[0]=="success":
             dbNewTools.update_sp_keyword_toadGroup(market,keywordId,'delete',None,None,"success",datetime.now())
         else:

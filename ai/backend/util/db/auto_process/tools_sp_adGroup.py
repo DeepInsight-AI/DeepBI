@@ -43,12 +43,14 @@ class AdGroupTools:
 
 
     # 更新广告组
-    def update_adGroup_api(self,adGroup_info):
-
+    def update_adGroup_api(self,adGroup_info,market):
+        credentials, access_token = self.load_credentials(market)
         try:
-            result = sponsored_products.AdGroupsV3(credentials=my_credentials,
-                                                            marketplace=Marketplaces.NA,
-                                                            debug=True).edit_ad_groups(
+            result = sponsored_products.AdGroupsV3(credentials=credentials,
+                                                   marketplace=Marketplaces[market.upper()],
+                                                   access_token=access_token,
+                                                   proxies=get_proxies(market),
+                                                   debug=True).edit_ad_groups(
                 body=json.dumps(adGroup_info))
         except Exception as e:
             print("update adGroup failed: ", e)
@@ -188,6 +190,8 @@ class AdGroupTools:
     def list_adGroup_TargetingClause(self, adGroupID, market):
         try:
             credentials, access_token = self.load_credentials(market)
+            # print(f'credentials:{credentials}')
+            # print(f'access_token:{access_token}')
             adGroup_info = {
                 "adGroupIdFilter": {
                     "include": [
@@ -447,6 +451,49 @@ class AdGroupTools:
             print("list product_bid failed")
             return ["failed", ""]
 
+    def list_automatic_targeting_bid_recommendations(self, market, new_campaign_id, new_adgroup_id):
+        adGroup_info = {
+            "targetingExpressions": [
+                {
+                "type": "CLOSE_MATCH"
+                },
+                {
+                "type": "LOOSE_MATCH"
+                },
+                {
+                "type": "SUBSTITUTES"
+                },
+                {
+                "type": "COMPLEMENTS"
+                }
+            ],
+            "campaignId": new_campaign_id,
+            "recommendationType": "BIDS_FOR_EXISTING_AD_GROUP",
+            "adGroupId": new_adgroup_id
+        }
+        try:
+            credentials, access_token = self.load_credentials(market)
+
+            result = sponsored_products.BidRecommendationsV3(credentials=credentials,
+                                                             marketplace=Marketplaces[market.upper()],
+                                                             access_token=access_token,
+                                                             proxies=get_proxies(market),
+                                                             debug=True).get_bid_recommendations(
+                body=json.dumps(adGroup_info))
+        except Exception as e:
+            print("list product_bid failed: ", e)
+            result = None
+        if result and result.payload:
+            print("list product_bid success")
+            return result.payload
+        # if result and result.payload["negativeKeywords"]["success"]:
+        #     negativeKeywordId = result.payload["negativeKeywords"]["success"][0]["negativeKeywordId"]
+        #     print("add adGroup negative keyword success,negativeKeywordId is:", negativeKeywordId)
+        #     return ["success", negativeKeywordId]
+        else:
+            print("list product_bid failed")
+            return ["failed", ""]
+
     def create_adGroup_Negative_TargetingClauses(self, adGroup_info, market):
         try:
             credentials, access_token = self.load_credentials(market)
@@ -468,6 +515,31 @@ class AdGroupTools:
         #     return ["success", negativeKeywordId]
         else:
             print("create adGroup Negative TargetingClause failed")
+            return ["failed", ""]
+
+    def list_category(self, market):
+        try:
+            credentials, access_token = self.load_credentials(market)
+
+            result = sponsored_products.TargetsV3(credentials=credentials,
+                                                  marketplace=Marketplaces[market.upper()],
+                                                  access_token=access_token,
+                                                  proxies=get_proxies(market),
+                                                  debug=True).list_targets_categories(
+
+            )
+        except Exception as e:
+            print("list category failed: ", e)
+            result = None
+        if result and result.payload:
+            print("list category success")
+            return result.payload['CategoryTree']
+        # if result and result.payload["negativeKeywords"]["success"]:
+        #     negativeKeywordId = result.payload["negativeKeywords"]["success"][0]["negativeKeywordId"]
+        #     print("add adGroup negative keyword success,negativeKeywordId is:", negativeKeywordId)
+        #     return ["success", negativeKeywordId]
+        else:
+            print("list category_refinements failed")
             return ["failed", ""]
 # 广告组更新否定关键词测试
 # adGroup_negativekw_info = {
@@ -513,15 +585,20 @@ class AdGroupTools:
 #     }
 #   ]
 # }
-#
-# agt=AdGroupTools('LAPASA')
+# #
+# agt=AdGroupTools('KAPEYDESI')
 # # 测试更新广告系列信息
-# res = agt.list_adGroup_TargetingClause_by_targetId('257212108313816','UK')
+# res = agt.get_adGroup_api('UK','560403892575481')
+# #res = agt.list_adGroup_TargetingClause('479266699513385','UK')
 # #res = agt.list_adGroup_Targetingrecommendations('FR',['B08NDYCFVG','B0CHRX765S','B0CHRYCWPG','B08NDY9F91','B08NDR42XX','B0CHRTK8LZ'])
 # #res = agt.list_category_refinements('FR',464943031)464867031
 # #res = agt.list_product_bid_recommendations('FR','B07L8GX9YY',332826141768516,366375831366135)
 # #res = agt.list_category_bid_recommendations('FR',464867031,19768705031,332826141768516,366375831366135)
 # #res = agt.list_adGroup_TargetingClause(366375831366135,'FR')
-# print(type(res))
+# # print(type(res))
 # print(res)
-
+# with open('output.txt', 'w', encoding='utf-8') as file:
+#     # 将 res 转换为字符串并写入文件
+#     file.write(str(res))
+#
+# print('结果已保存到 output.txt')

@@ -22,20 +22,25 @@ def get_timestamp():
 
 class AmazonMysqlRagUitl:
 
-    def __init__(self, brand):
-        self.db_info = self.load_db_info(brand)
+    def __init__(self, brand,market):
+        self.db_info = self.load_db_info(brand,market)
         self.conn = self.connect(self.db_info)
 
-    def load_db_info(self, brand):
+    def load_db_info(self, brand, country=None):
         # 从 JSON 文件加载数据库信息
-        db_info_log_path = os.path.join(get_config_path(), 'db_info_log.json')
-        with open(db_info_log_path, 'r') as f:
+        db_info_path = os.path.join(get_config_path(), 'db_info_log.json')
+        with open(db_info_path, 'r') as f:
             db_info_json = json.load(f)
 
-        if brand in db_info_json:
-            return db_info_json[brand]
-        else:
+        if brand not in db_info_json:
             raise ValueError(f"Unknown brand '{brand}'")
+
+        brand_info = db_info_json[brand]
+
+        if country and country in brand_info:
+            return brand_info[country]
+
+        return brand_info.get('default', {})
 
     def connect(self, db_info):
         try:
@@ -421,8 +426,119 @@ GROUP BY
         except Exception as e:
             print("Error while get_data_product_targets:", e)
 
+    def get_create_campaign(self, market, date):
+        """查找广告活动创建的信息上传线上数据库"""
+        try:
+            conn = self.conn
 
+            query1 = f"""
+SELECT campaign_name,campaign_type,budget FROM amazon_campaign_create
+WHERE DATE(create_time) = '{date}'
+AND operation_state = 'success'
+AND market = '{market}'
+                    """
+            df1 = pd.read_sql(query1, con=conn)
+            # return df
+            return df1['campaign_name'].tolist(), df1['campaign_type'].tolist(), df1['budget'].tolist()
+        except Exception as e:
+            print("Error while get_create_campaign:", e)
 
+    def get_create_adgroup(self, market, date):
+        """查找广告活动创建的信息上传线上数据库"""
+        try:
+            conn = self.conn
+
+            query1 = f"""
+SELECT
+	amazon_campaign_create.campaign_name,
+	adGroupName,
+	defaultBid
+FROM
+	amazon_adgroups_create
+	LEFT JOIN amazon_campaign_create ON amazon_adgroups_create.campaignId = amazon_campaign_create.campaign_id
+WHERE
+	DATE( update_time ) = '{date}'
+	AND adGroupState = 'success'
+	AND amazon_adgroups_create.market = '{market}'
+                    """
+            df1 = pd.read_sql(query1, con=conn)
+            # return df
+            return df1['campaign_name'].tolist(), df1['adGroupName'].tolist(), df1['defaultBid'].tolist()
+        except Exception as e:
+            print("Error while get_create_adgroup:", e)
+
+    def get_create_sku(self, market, date):
+        """查找广告活动创建的信息上传线上数据库"""
+        try:
+            conn = self.conn
+
+            query1 = f"""
+SELECT
+	amazon_campaign_create.campaign_name,
+	sku
+FROM
+	amazon_product_create
+	LEFT JOIN amazon_campaign_create ON amazon_product_create.campaignId = amazon_campaign_create.campaign_id
+WHERE
+	DATE( update_time ) = '{date}'
+	AND amazon_product_create.status = 'success'
+	AND amazon_product_create.market = '{market}'
+                    """
+            df1 = pd.read_sql(query1, con=conn)
+            # return df
+            return df1['campaign_name'].tolist(), df1['sku'].tolist()
+        except Exception as e:
+            print("Error while get_create_sku:", e)
+
+    def get_create_keyword(self, market, date):
+        """查找广告活动创建的信息上传线上数据库"""
+        try:
+            conn = self.conn
+
+            query1 = f"""
+SELECT
+	amazon_campaign_create.campaign_name,
+	keywordText_new,
+	matchType,
+	bid
+FROM
+	amazon_keyword_create
+	LEFT JOIN amazon_campaign_create ON amazon_keyword_create.campaignId = amazon_campaign_create.campaign_id
+WHERE
+	DATE( amazon_keyword_create.create_time ) = '{date}'
+	AND amazon_keyword_create.operation_state = 'success'
+	AND amazon_keyword_create.market = '{market}'
+                    """
+            df1 = pd.read_sql(query1, con=conn)
+            # return df
+            return df1['campaign_name'].tolist(), df1['matchType'].tolist(), df1['keywordText_new'].tolist(), df1['bid'].tolist()
+        except Exception as e:
+            print("Error while get_create_keyword:", e)
+
+    def get_create_product_targets(self, market, date):
+        """查找广告活动创建的信息上传线上数据库"""
+        try:
+            conn = self.conn
+
+            query1 = f"""
+SELECT
+	amazon_campaign_create.campaign_name,
+	expression,
+	bid
+FROM
+	amazon_targeting_create
+	LEFT JOIN amazon_adgroups_create ON amazon_targeting_create.adGroupId = amazon_adgroups_create.adGroupId
+	LEFT JOIN amazon_campaign_create ON amazon_adgroups_create.campaignId = amazon_campaign_create.campaign_id
+WHERE
+	DATE( amazon_targeting_create.update_time ) = '{date}'
+	AND amazon_targeting_create.targetingState = 'success'
+	AND amazon_targeting_create.market = '{market}'
+                    """
+            df1 = pd.read_sql(query1, con=conn)
+            # return df
+            return df1['campaign_name'].tolist(), df1['expression'].tolist(), df1['bid'].tolist()
+        except Exception as e:
+            print("Error while get_create_product_targets:", e)
 # # 实例化AmazonMysqlRagUitl类
 # util = AmazonMysqlRagUitl('LAPASA')
 #

@@ -3,7 +3,7 @@ from ai.backend.util.db.auto_process.gen_sp_campaign import Gen_campaign as sp
 
 
 def change_campaign_Bidding_strategy(market,brand_name):
-    api1 = DbSpTools(brand_name)
+    api1 = DbSpTools(brand_name,market)
     campaignId_info = api1.select_sp_campaign(market)
     if campaignId_info:
         for campaignId in campaignId_info:

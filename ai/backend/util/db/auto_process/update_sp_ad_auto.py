@@ -242,7 +242,7 @@ class auto_api:
                     api1.add_adGroup_negative_keyword_v0(market, str(campaign_id), str(adGroupId), searchTerm, matchType="NEGATIVE_EXACT", state="ENABLED")
                 except Exception as e:
                     print("An error occurred:", e)
-                    newdbtool = DbNewSpTools(self.brand)
+                    newdbtool = DbNewSpTools(self.brand,market)
                     newdbtool.add_sp_adGroup_negativeKeyword(market, None, adGroupId, campaign_id, None,"NEGATIVE_EXACT",
                                                              "ENABLED", searchTerm, "failed",datetime.now()
                                                              ,None ,None )

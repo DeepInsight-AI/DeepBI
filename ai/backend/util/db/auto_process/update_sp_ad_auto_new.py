@@ -29,7 +29,7 @@ class auto_api:
             # 将DataFrame转换为一个列表，每个元素是一个字典表示一行数据
             df_data = json.loads(df.to_json(orient='records'))
             print(df_data)
-            operated_campaign = CheckRecordsWithin24Hours(self.brand).check_campaign()
+            operated_campaign = CheckRecordsWithin24Hours(self.brand,market).check_campaign()
             for item in df_data:
                 campaign_id = item["campaignId"]
                 campaign_name = item["campaignName"]
@@ -65,7 +65,7 @@ class auto_api:
             # 将DataFrame转换为一个列表，每个元素是一个字典表示一行数据
             df_data = json.loads(df.to_json(orient='records'))
             print(df_data)
-            operated_campaign,operated_campaign_placement = CheckRecordsWithin24Hours(self.brand).check_campaign_placement()
+            operated_campaign,operated_campaign_placement = CheckRecordsWithin24Hours(self.brand,market).check_campaign_placement()
             operated_pairs = set((campaign, placement) for campaign, placement in zip(operated_campaign, operated_campaign_placement))
             for item in df_data:
                 campaign_id = item["campaignId"]
@@ -205,7 +205,7 @@ class auto_api:
                         api1.add_adGroup_negative_keyword_v0(market, str(campaign_id), str(adGroupId), searchTerm, matchType="NEGATIVE_EXACT", state="ENABLED")
                     except Exception as e:
                         print("An error occurred:", e)
-                        newdbtool = DbNewSpTools(self.brand)
+                        newdbtool = DbNewSpTools(self.brand,market)
                         newdbtool.add_sp_adGroup_negativeKeyword(market, None, adGroupId, campaign_id, None,"NEGATIVE_EXACT",
                                                                  "ENABLED", searchTerm, "failed",datetime.now()
                                                                  ,None ,None )
@@ -233,7 +233,7 @@ class auto_api:
             # 将DataFrame转换为一个列表，每个元素是一个字典表示一行数据
             df_data = json.loads(df.to_json(orient='records'))
             print(df_data)
-            operated_keyword = CheckRecordsWithin24Hours(self.brand).check_keyword()
+            operated_keyword = CheckRecordsWithin24Hours(self.brand,market).check_keyword()
 
             api = Gen_keyword(self.brand)
             api1 = SPKeywordTools(self.brand)
@@ -269,7 +269,7 @@ class auto_api:
             # 将DataFrame转换为一个列表，每个元素是一个字典表示一行数据
             df_data = json.loads(df.to_json(orient='records'))
             print(df_data)
-            operated_targeting = CheckRecordsWithin24Hours(self.brand).check_targeting()
+            operated_targeting = CheckRecordsWithin24Hours(self.brand,market).check_targeting()
 
             api1 = Gen_adgroup(self.brand)
             api2 = AdGroupTools(self.brand)
@@ -302,7 +302,7 @@ class auto_api:
             # 将DataFrame转换为一个列表，每个元素是一个字典表示一行数据
             df_data = json.loads(df.to_json(orient='records'))
             print(df_data)
-            operated_targeting = CheckRecordsWithin24Hours(self.brand).check_targeting()
+            operated_targeting = CheckRecordsWithin24Hours(self.brand,market).check_targeting()
 
             api1 = Gen_adgroup(self.brand)
             api2 = AdGroupTools(self.brand)

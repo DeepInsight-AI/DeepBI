@@ -100,6 +100,7 @@
                 <option value="type5">给定sku以及相应国家新建SD广告活动</option>
                 <option value="type6">0511策略</option>
                 <option value="type7">德国SD-ASIN衍生策略</option>
+                <option value="type8">0808策略</option>
             </select><br>
 
             <div id="parameters"></div> <!-- 用于放置参数输入框 -->
@@ -142,11 +143,33 @@
                     // 给定sku以及相应国家新建广告活动，显示SKU信息输入框
                     addInputField('SKU信息:', 'sku', 'text', parametersDiv);
                     break;
+                case 'type8':
+                    // 有销售无广告消耗开启广告活动计划 或 德国SD-ASIN衍生策略，显示日期输入框
+                    addInputField('产品信息:', 'product', 'text', parametersDiv);
+                    // 添加产品类型下拉菜单
+                    addSelectField('产品类型:', 'product_type', ['parent_asin', 'asin', 'sspu'], parametersDiv);
+                    break;
                 default:
                     break;
             }
         });
-
+        // 辅助函数：动态添加下拉菜单
+        function addSelectField(labelText, id, options, parentElement) {
+            const label = document.createElement('label');
+            label.textContent = labelText;
+            const select = document.createElement('select');
+            select.setAttribute('id', id);
+            select.setAttribute('name', id);
+            options.forEach(optionValue => {
+                const option = document.createElement('option');
+                option.value = optionValue;
+                option.textContent = optionValue;
+                select.appendChild(option);
+            });
+            parentElement.appendChild(label);
+            parentElement.appendChild(select);
+            parentElement.appendChild(document.createElement('br')); // 添加换行
+        }
         // 辅助函数：动态添加输入框
         function addInputField(labelText, id, type, parentElement) {
             const label = document.createElement('label');

@@ -137,24 +137,24 @@ class AdGroupTools_SD:
         return negativeKeywords
 
     # 广告组增加否定定向关键词
-    def add_adGroup_negativekw(self,adGroup_negativekw_info,market):
+    def create_adGroup_negative_targeting(self,adGroup_negativekw_info,market):
         try:
             credentials, access_token = self.load_credentials(market)
-            result = sponsored_products.NegativeKeywordsV3(credentials=credentials,
-                                                           marketplace=Marketplaces[market.upper()],
-                                                           access_token=access_token,
-                                                           proxies=get_proxies(market),
-                                                           debug=True).create_negative_keyword(
+            result = sponsored_display.NegativeTargets(credentials=credentials,
+                                                marketplace=Marketplaces[market.upper()],
+                                                access_token=access_token,
+                                                proxies=get_proxies(market),
+                                                debug=True).create_negative_targets(
                 body=json.dumps(adGroup_negativekw_info))
         except Exception as e:
             print("add adGroup negative keyword failed: ", e)
             result = None
-        if result and result.payload["negativeKeywords"]["success"][0]["negativeKeywordId"]:
-            negativeKeywordId = result.payload["negativeKeywords"]["success"][0]["negativeKeywordId"]
-            print("add adGroup negative keyword success,negativeKeywordId is:", negativeKeywordId)
+        if result and result.payload[0]["targetId"]:
+            negativeKeywordId = result.payload[0]["targetId"]
+            print("add adGroup negative targeting success,targetId is:", negativeKeywordId)
             return ["success",negativeKeywordId]
         else:
-            print("add adGroup negative keyword failed:")
+            print("add adGroup negative targeting failed:")
             return ["failed", ""]
 
     # 广告组修改否定定向关键词
@@ -391,8 +391,8 @@ class AdGroupTools_SD:
 #   ]
 # }
 #
-# agt=AdGroupTools_SD('LAPASA')
+# agt=AdGroupTools_SD('KAPEYDESI')
 # # 测试更新广告系列信息
-# res = agt.list_adGroup_Targeting_by_campaignId('FR','366836223007357')
+# res = agt.get_adGroup_bycampaignid_api('AE','411899272320403')
 # print(type(res))
 # print(res)

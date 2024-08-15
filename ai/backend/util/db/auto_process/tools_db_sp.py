@@ -18,20 +18,25 @@ def get_timestamp():
     return date_timestamp_string
 
 class DbSpTools:
-    def __init__(self, brand):
-        self.db_info = self.load_db_info(brand)
+    def __init__(self, brand,market):
+        self.db_info = self.load_db_info(brand,market)
         self.conn = self.connect(self.db_info)
 
-    def load_db_info(self, brand):
+    def load_db_info(self, brand, country=None):
         # 从 JSON 文件加载数据库信息
         db_info_path = os.path.join(get_config_path(), 'db_info.json')
         with open(db_info_path, 'r') as f:
             db_info_json = json.load(f)
 
-        if brand in db_info_json:
-            return db_info_json[brand]
-        else:
+        if brand not in db_info_json:
             raise ValueError(f"Unknown brand '{brand}'")
+
+        brand_info = db_info_json[brand]
+
+        if country and country in brand_info:
+            return brand_info[country]
+
+        return brand_info.get('default', {})
 
     def connect(self, db_info):
         try:

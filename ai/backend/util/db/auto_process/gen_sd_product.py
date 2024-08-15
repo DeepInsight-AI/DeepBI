@@ -23,7 +23,7 @@ class Gen_product:
         print(adId)
 
         # 如果执行成功或者失败 记录到log表记录
-        dbNewTools = DbNewSpTools(self.brand)
+        dbNewTools = DbNewSpTools(self.brand,market)
         if adId[0]=="success":
             dbNewTools.create_sp_product(market,campaignId,None,sku,adGroupId,adId[1],"success",datetime.now(),"SD")
         else:
@@ -46,7 +46,7 @@ class Gen_product:
         adIdres = apitoolProduct.update_product_api(product_info,market)
         print(adIdres)
         # 如果执行成功或者失败 记录到log表记录
-        dbNewTools = DbNewSpTools(self.brand)
+        dbNewTools = DbNewSpTools(self.brand,market)
         if not adIdres:
             dbNewTools.update_sp_product(market, adId, state, "success", datetime.now())
         else:

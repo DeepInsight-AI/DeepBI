@@ -19,7 +19,8 @@ class SkuTools:
             'BE': 'EU',
             'SE': 'EU',
             'UK': 'EU',
-            'US': 'NA'
+            'US': 'NA',
+            'JP': 'FE'
             # 添加更多的市场到地区映射
         }
         # 返回对应市场的地区，如果没有匹配到默认返回None

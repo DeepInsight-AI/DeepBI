@@ -1,5 +1,5 @@
 import time
-from ai.backend.util.db.auto_process.summary.summary import get_data
+from ai.backend.util.db.auto_process.summary.summary import get_data,update_create_data_period,update_create_data
 
 def run():
     # time.sleep(60 * 60 * 5)
@@ -9,12 +9,39 @@ def run():
         'OutdoorMaster': ['IT', 'ES', 'FR', 'SE'],
         'MUDEELA': ['US'],
         'Rossny': ['US'],
-        'ZEN CAVE': ['US']
+        'ZEN CAVE': ['US'],
+        'Veement': ['UK'],
+        'KAPEYDESI': ['SA'],
+        'Gvyugke': ['DE', 'FR', 'IT', 'AU'],
+        'Uuoeebb': ['US'],
+        'Gonbouyoku': ['JP'],
+        'syndesmos': ['DE', 'IT'],
     }
+    # brands_and_countries = {
+    #     'KAPEYDESI': ['SA'],
+    #     'Gvyugke': ['AU'],
+    #     'Gonbouyoku': ['JP'],
+    #     'syndesmos': ['DE', 'IT'],
+    # }
     while True:
         for brand, countries in brands_and_countries.items():
             for country in countries:
                 get_data(country, brand)
+                update_create_data(country, brand)
+        print('done')
+        time.sleep(60 * 60 * 24)
+
+def run1():
+    # time.sleep(60 * 60 * 5)
+    brands_and_countries = {
+        # 'Veement': ['UK']
+        # 'KAPEYDESI': ['UK', 'DE', 'FR'],
+        'Gvyugke': ['DE', 'FR', 'IT']
+    }
+    while True:
+        for brand, countries in brands_and_countries.items():
+            for country in countries:
+                update_create_data_period(country, brand)
         print('done')
         time.sleep(60 * 60 * 24)
 

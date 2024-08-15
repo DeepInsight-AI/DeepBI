@@ -5,7 +5,7 @@ from ai.backend.util.db.auto_process.gen_sd_campaign import Gen_campaign as sd
 
 def overstock_change_name(market,info,brand_name):
     for sspu in info:
-        api1 = DbSpTools(brand_name)
+        api1 = DbSpTools(brand_name,market)
         name_info_sp,id_info_sp = api1.select_sp_sspu_name(market, sspu)
         if name_info_sp and id_info_sp:
             for campaignName, campaignId in zip(name_info_sp, id_info_sp):
@@ -26,7 +26,7 @@ def overstock_change_name(market,info,brand_name):
 
 def overstock_rechange_name(market,info,brand_name):
     for sspu in info:
-        api1 = DbSpTools(brand_name)
+        api1 = DbSpTools(brand_name,market)
         name_info_sp,id_info_sp = api1.select_sp_sspu_name_overstock(market, sspu)
         if name_info_sp and id_info_sp:
             for campaignName, campaignId in zip(name_info_sp, id_info_sp):

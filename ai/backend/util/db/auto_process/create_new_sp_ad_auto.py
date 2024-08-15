@@ -34,10 +34,14 @@ class Ceate_new_sku:
     def get_exchange_rate(self, market1, market2):
         return self.exchange_rate.get('exchange_rate', {}).get(market2, {}).get(market1)
 
-    def select_depository(self, brand):
-        return self.depository.get(brand).get('depository')
+    def select_depository(self, brand, country=None):
+        brand_info = self.depository.get(brand, {})
+        if country:
+            country_info = brand_info.get(country, {})
+            return country_info.get('depository', brand_info.get('default', {}).get('depository'))
+        return brand_info.get('depository', brand_info.get('default', {}).get('depository'))
 
-    def create_new_sku(self,market1,market2,brand_name,uploaded_file):
+    def create_new_sku(self,market1,market2,brand_name,uploaded_file,budget):
         #uploaded_file = 'C:/Users/admin/PycharmProjects/DeepBI/ai/backend/util/db/db_amazon/法国复刻德国M0708_手动.csv'
         uploaded_file = uploaded_file
         df = pd.read_csv(uploaded_file)
@@ -64,11 +68,11 @@ class Ceate_new_sku:
                 for item in res:
                     if isinstance(item, dict):
                         if item.get('targetingType') == 'AUTO':
-                            answer_message = self.auto_targeting(res, market1, market2, new_campaign_name, ad_group_id, new_ad_group_name, exchange_rate,advertised_skus_list,brand_name)
+                            answer_message = self.auto_targeting(res, market1, market2, new_campaign_name, ad_group_id, new_ad_group_name, exchange_rate,advertised_skus_list,brand_name,budget)
                             print(answer_message)
                             continue
                         else:
-                            answer_message = self.manual_targeting(res, market1, market2, new_campaign_name, ad_group_id, new_ad_group_name, exchange_rate,advertised_skus_list,brand_name)
+                            answer_message = self.manual_targeting(res, market1, market2, new_campaign_name, ad_group_id, new_ad_group_name, exchange_rate,advertised_skus_list,brand_name,budget)
                             print(answer_message)
                             continue
 
@@ -88,7 +92,7 @@ class Ceate_new_sku:
 
 
 
-    def auto_targeting(self, res, market1,market2, new_campaign_name, ad_group_id, new_ad_group_name, exchange_rate,advertisedSku,brand_name):
+    def auto_targeting(self, res, market1,market2, new_campaign_name, ad_group_id, new_ad_group_name, exchange_rate,advertisedSku,brand_name,budget):
         dynamicBidding = res[0]['dynamicBidding']
         # 获取当前日期
         today = datetime.today()
@@ -97,7 +101,7 @@ class Ceate_new_sku:
         # name = 'DeepBI_AUTO_test'
         name = new_campaign_name
         apitool = Gen_campaign(brand_name)
-        new_campaign_id = apitool.create_camapign(market1, name, startDate, dynamicBidding, portfolioId=None, endDate=None, targetingType='AUTO', state='PAUSED', budgetType='DAILY', budget=5*exchange_rate)
+        new_campaign_id = apitool.create_camapign(market1, name, startDate, dynamicBidding, portfolioId=None, endDate=None, targetingType='AUTO', state='PAUSED', budgetType='DAILY', budget=float(budget))
         #new_campaign_id ='333199332378491'
         if new_campaign_id == "":
             return "No new campaign"
@@ -141,7 +145,7 @@ class Ceate_new_sku:
                 except Exception as e:
                 # 处理异常，可以打印异常信息或者进行其他操作
                     print("An error occurred:", e)
-                    newdbtool = DbNewSpTools(brand_name)
+                    newdbtool = DbNewSpTools(brand_name,market1)
                     newdbtool.add_sp_adGroup_negativeKeyword(market1, None, new_adgroup_id, new_campaign_id, None,
                                                              match_type,
                                                              state, keyword_text, None,
@@ -162,12 +166,12 @@ class Ceate_new_sku:
         #         sku = item['sku']
         #         new_sku = create_productsku(market1, new_campaign_id,new_adgroup_id,sku,asin=None,state='ENABLED')
 
-        apitool3 = DbSpTools(brand_name)
+        apitool3 = DbSpTools(brand_name,market1)
         apitool4 = ProductTools(brand_name)
         if market1 == 'US' or market2 == 'US':
             sku_info = apitool3.select_product_sku(market1, market2, advertisedSku)
         else:
-            sku_info = apitool3.select_product_sku_by_asin(market1, market2, advertisedSku,self.select_depository(brand_name))
+            sku_info = apitool3.select_product_sku_by_asin(market1, market2, advertisedSku,self.select_depository(brand_name,market1))
         api3 = Gen_product(brand_name)
         for sku in sku_info:
             try:
@@ -175,12 +179,12 @@ class Ceate_new_sku:
             except Exception as e:
                 # 处理异常，可以打印异常信息或者进行其他操作
                 print("An error occurred create_productsku:", e)
-                newdbtool = DbNewSpTools(brand_name)
+                newdbtool = DbNewSpTools(brand_name,market1)
                 newdbtool.create_sp_product(market1, new_campaign_id, None, sku, new_adgroup_id, None, "failed",
                                             datetime.now(), "SP")
         return f"{new_campaign_name} create successfully"
 
-    def manual_targeting(self, res, market1, market2, new_campaign_name, ad_group_id, new_ad_group_name, exchange_rate, advertisedSku, brand_name):
+    def manual_targeting(self, res, market1, market2, new_campaign_name, ad_group_id, new_ad_group_name, exchange_rate, advertisedSku, brand_name,budget):
         dynamicBidding = res[0]['dynamicBidding']
         # 获取当前日期
         today = datetime.today()
@@ -191,7 +195,7 @@ class Ceate_new_sku:
         apitool = Gen_campaign(brand_name)
         new_campaign_id = apitool.create_camapign(market1, name, startDate, dynamicBidding, portfolioId=None,
                                                   endDate=None, targetingType='MANUAL', state='PAUSED',
-                                                  budgetType='DAILY', budget=5 * exchange_rate)
+                                                  budgetType='DAILY', budget=float(budget))
         # new_campaign_id ='388952063430466'
         if new_campaign_id == "":
             return "No new campaign"
@@ -200,7 +204,7 @@ class Ceate_new_sku:
         # new_adgroup_id = '546877730565898'
         apitool5 = Gen_adgroup(brand_name)
         new_adgroup_id = apitool5.create_adgroup(market1, new_campaign_id, new_ad_group_name, defaultBid_old, state='PAUSED')
-        apitool3 = DbSpTools(brand_name)
+        apitool3 = DbSpTools(brand_name,market1)
         apitool4 = ProductTools(brand_name)
 
         # product_info = apitool4.get_product_api(market2, ad_group_id)
@@ -216,14 +220,14 @@ class Ceate_new_sku:
         if market1 == 'US' or market2 == 'US':
             sku_info = apitool3.select_product_sku(market1, market2, advertisedSku)
         else:
-            sku_info = apitool3.select_product_sku_by_asin(market1, market2, advertisedSku,self.select_depository(brand_name))
+            sku_info = apitool3.select_product_sku_by_asin(market1, market2, advertisedSku,self.select_depository(brand_name,market1))
         for sku in sku_info:
             try:
                 new_sku = api3.create_productsku(market1, new_campaign_id, new_adgroup_id, sku, asin=None, state='ENABLED')
             except Exception as e:
                 # 处理异常，可以打印异常信息或者进行其他操作
                 print("An error occurred create_productsku:", e)
-                newdbtool = DbNewSpTools(brand_name)
+                newdbtool = DbNewSpTools(brand_name,market1)
                 newdbtool.create_sp_product(market1, new_campaign_id, None, sku, new_adgroup_id, None, "failed",
                                             datetime.now(), "SP")
 
@@ -289,7 +293,7 @@ class Ceate_new_sku:
                     except Exception as e:
                         # 处理异常，可以打印异常信息或者进行其他操作
                         print("An error occurred:", e)
-                        dbNewTools = DbNewSpTools(brand_name)
+                        dbNewTools = DbNewSpTools(brand_name,market1)
                         dbNewTools.add_sp_keyword_toadGroup(market1, None, new_campaign_id, matchType, state, bid, new_adgroup_id,
                                                             keywordText, None, "failed", datetime.now())
                     # 继续执行下面的代码
@@ -315,7 +319,7 @@ class Ceate_new_sku:
                     except Exception as e:
                         # 处理异常，可以打印异常信息或者进行其他操作
                         print("An error occurred:", e)
-                        newdbtool = DbNewSpTools(brand_name)
+                        newdbtool = DbNewSpTools(brand_name,market1)
                         newdbtool.add_sp_adGroup_negativeKeyword(market1, None, new_adgroup_id, new_campaign_id, None,
                                                                  match_type,
                                                                  state, keyword_text, None,
@@ -331,11 +335,11 @@ class Ceate_new_sku:
         return f"{new_campaign_name} create successfully"
 
 
-    def create_new_sp_asin_no_template(self,market,info,brand_name):
+    def create_new_sp_asin_no_template(self,market,info,brand_name,budget):
         exchange_rate = self.get_exchange_rate(market, 'DE')
         for i in info:
             name1 = f"DeepBI_0514_{i}_ASIN"
-            api1 = DbSpTools(brand_name)
+            api1 = DbSpTools(brand_name,market)
             res = api1.select_sp_campaign_name(market,name1)
             if res[0] == "success":
                 continue
@@ -346,27 +350,27 @@ class Ceate_new_sku:
                 startDate = today.strftime('%Y-%m-%d')
                 apitool = Gen_campaign(brand_name)
                 new_campaign_id = apitool.create_camapign(market, name, startDate, dynamicBidding={"placementBidding":[],"strategy":"LEGACY_FOR_SALES"}, portfolioId=None,
-                                                   endDate=None, targetingType='MANUAL', state='PAUSED',
-                                                   budgetType='DAILY', budget=5 * exchange_rate)
+                                                   endDate=None, targetingType='MANUAL', state='ENABLED',
+                                                   budgetType='DAILY', budget=float(budget))
                 # new_campaign_id = '507943269116693'
                 if new_campaign_id == "":
                     print("No new campaign")
                     continue
                 api2 = Gen_adgroup(brand_name)
-                new_adgroup_id = api2.create_adgroup(market, new_campaign_id, name, defaultBid=0.25 * exchange_rate, state='PAUSED')
+                new_adgroup_id = api2.create_adgroup(market, new_campaign_id, name, defaultBid=0.25 * exchange_rate, state='ENABLED')
                 # new_adgroup_id = '317410479958041'
                 api3 = Gen_product(brand_name)
                 if brand_name == 'LAPASA':
                     sku_info = api1.select_sd_product_sku(market, i)
                 else:
-                    sku_info = api1.select_product_sku_by_parent_asin(i, self.select_depository(brand_name), market)
+                    sku_info = api1.select_product_sku_by_parent_asin(i, self.select_depository(brand_name,market), market)
                 for sku in sku_info:
                     try:
                         new_sku = api3.create_productsku(market, new_campaign_id, new_adgroup_id, sku,asin=None, state="ENABLED")
                     except Exception as e:
                         # 处理异常，可以打印异常信息或者进行其他操作
                         print("An error occurred create_productsku:", e)
-                        newdbtool = DbNewSpTools(brand_name)
+                        newdbtool = DbNewSpTools(brand_name,market)
                         newdbtool.create_sp_product(market,new_campaign_id,None,sku,new_adgroup_id,None,"failed",datetime.now(),"SP")
                 apitool1 = AdGroupTools(brand_name)
                 apitool2 = ProductTools(brand_name)
@@ -463,7 +467,7 @@ class Ceate_new_sku:
                 except Exception as e:
                     # 处理异常，可以打印异常信息或者进行其他操作
                     print("An error occurred create_productsku:", e)
-                    newdbtool = DbNewSpTools(brand_name)
+                    newdbtool = DbNewSpTools(brand_name,market)
                     newdbtool.create_sp_product(market, new_campaign_id, None, sku, new_adgroup_id, None, "failed",
                                                 datetime.now(), "SP")
             apitool1 = AdGroupTools(brand_name)
@@ -508,11 +512,11 @@ class Ceate_new_sku:
             print(f"{name} create successfully")
         print("all create successfully")
 
-    def create_new_sp_auto_no_template(self,market,info,brand_name):
+    def create_new_sp_auto_no_template(self,market,info,brand_name,budget):
         exchange_rate = self.get_exchange_rate(market, 'DE')
         for i in info:
             name1 = f"DeepBI_0502_{i}_AUTO"
-            api1 = DbSpTools(brand_name)
+            api1 = DbSpTools(brand_name,market)
             res = api1.select_sp_campaign_name(market,name1)
             if res[0] == "success":
                 continue
@@ -524,7 +528,7 @@ class Ceate_new_sku:
                 apitool = Gen_campaign(brand_name)
                 new_campaign_id = apitool.create_camapign(market, name, startDate, dynamicBidding={"placementBidding":[],"strategy":"LEGACY_FOR_SALES"}, portfolioId=None,
                                                    endDate=None, targetingType='AUTO', state='PAUSED',
-                                                   budgetType='DAILY', budget=5 * exchange_rate)
+                                                   budgetType='DAILY', budget=float(budget))
                 # new_campaign_id = '310928261900083'
                 api2 = Gen_adgroup(brand_name)
                 new_adgroup_id = api2.create_adgroup(market, new_campaign_id, name, defaultBid=0.25 * exchange_rate, state='PAUSED')
@@ -533,31 +537,107 @@ class Ceate_new_sku:
                 if brand_name == 'LAPASA':
                     sku_info = api1.select_sd_product_sku(market, i)
                 else:
-                    sku_info = api1.select_product_sku_by_parent_asin(i, self.select_depository(brand_name), market)
+                    sku_info = api1.select_product_sku_by_parent_asin(i, self.select_depository(brand_name,market), market)
                 for sku in sku_info:
                     try:
                         new_sku = api3.create_productsku(market, new_campaign_id, new_adgroup_id, sku,asin=None, state="ENABLED")
                     except Exception as e:
                         # 处理异常，可以打印异常信息或者进行其他操作
                         print("An error occurred create_productsku:", e)
-                        newdbtool = DbNewSpTools(brand_name)
+                        newdbtool = DbNewSpTools(brand_name,market)
                         newdbtool.create_sp_product(market,new_campaign_id,None,sku,new_adgroup_id,None,"failed",datetime.now(),"SP")
 
             print(f"{name} create successfully")
         print("all create successfully")
 
-    def create_new_sp_manual_no_template(self,market,info,brand_name):
+    def create_new_sp_auto_no_template_jiutong(self,market,info,brand_name,budget):
+        print('jiutong')
+        exchange_rate = self.get_exchange_rate(market, 'DE')
+        for i in info:
+            name1 = f"DeepBI_0502_{i}_AUTO"
+            api1 = DbSpTools(brand_name,market)
+            res = api1.select_sp_campaign_name(market,name1)
+            if res[0] == "success":
+                continue
+            else:
+                name = f"DeepBI_0502_{i}_AUTO"
+                today = datetime.today()
+                # 格式化输出
+                startDate = today.strftime('%Y-%m-%d')
+                apitool = Gen_campaign(brand_name)
+                new_campaign_id = apitool.create_camapign(market, name, startDate, dynamicBidding={"placementBidding":[],"strategy":"LEGACY_FOR_SALES"}, portfolioId=None,
+                                                   endDate=None, targetingType='AUTO', state='ENABLED',
+                                                   budgetType='DAILY', budget=float(budget))
+                # new_campaign_id = '449345435691647'
+                api2 = Gen_adgroup(brand_name)
+                new_adgroup_id = api2.create_adgroup(market, new_campaign_id, name, defaultBid=0.25 * exchange_rate, state='ENABLED')
+                # new_adgroup_id = '361896893484449'
+                api3 = Gen_product(brand_name)
+                if brand_name == 'LAPASA':
+                    sku_info = api1.select_sd_product_sku(market, i)
+                else:
+                    sku_info = api1.select_product_sku_by_parent_asin(i, self.select_depository(brand_name,market), market)
+                for sku in sku_info:
+                    try:
+                        new_sku = api3.create_productsku(market, new_campaign_id, new_adgroup_id, sku,asin=None, state="ENABLED")
+                    except Exception as e:
+                        # 处理异常，可以打印异常信息或者进行其他操作
+                        print("An error occurred create_productsku:", e)
+                        newdbtool = DbNewSpTools(brand_name,market)
+                        newdbtool.create_sp_product(market,new_campaign_id,None,sku,new_adgroup_id,None,"failed",datetime.now(),"SP")
+                time.sleep(10)
+                apitool1 = AdGroupTools(brand_name)
+                market_TargetingClause = apitool1.list_adGroup_TargetingClause(new_adgroup_id, market)
+                TargetingClause_bid = apitool1.list_automatic_targeting_bid_recommendations(market,new_campaign_id,new_adgroup_id)
+                expressions = [{'type': expr['type'], 'targetId': item['targetId']} for item in market_TargetingClause for expr in item['expression']]
+                expressions_bid = [
+                    {
+                        'type': rec['targetingExpression']['type'],
+                        'secondSuggestedBid': rec['bidValues'][1]['suggestedBid']
+                    }
+                    for recommendation in TargetingClause_bid['bidRecommendations']
+                    for rec in recommendation['bidRecommendationsForTargetingExpressions']
+                ]
+                bid_map = {bid['type']: bid['secondSuggestedBid'] for bid in expressions_bid}
+
+                # Update expressions with corresponding bids
+                for expr in expressions:
+                    if expr['type'] == 'QUERY_HIGH_REL_MATCHES':
+                        expr['bid'] = bid_map.get('CLOSE_MATCH')
+                    elif expr['type'] == 'QUERY_BROAD_REL_MATCHES':
+                        expr['bid'] = bid_map.get('LOOSE_MATCH')
+                    elif expr['type'] == 'ASIN_ACCESSORY_RELATED':
+                        expr['bid'] = bid_map.get('COMPLEMENTS')
+                    elif expr['type'] == 'ASIN_SUBSTITUTE_RELATED':
+                        expr['bid'] = bid_map.get('SUBSTITUTES')
+
+                print(expressions)
+                for item in expressions:
+                    target_id = item['targetId']
+                    bid = item['bid']
+                    print(target_id)
+                    print(bid)
+                    if bid is not None:
+                        targetId = api2.update_adGroup_TargetingClause(market, target_id, 0.75*exchange_rate if bid > 0.75*exchange_rate else bid, 'ENABLED')
+                    else:
+                        targetId = api2.update_adGroup_TargetingClause(market, target_id, 0.75*exchange_rate, 'ENABLED')
+
+
+            print(f"{name} create successfully")
+        print("all create successfully")
+
+    def create_new_sp_manual_no_template(self,market,info,brand_name,budget):
         exchange_rate = self.get_exchange_rate(market, 'DE')
         for i in info:
             name1 = f"DeepBI_0502_{i}_MANUAL"
-            api1 = DbSpTools(brand_name)
+            api1 = DbSpTools(brand_name,market)
             res = api1.select_sp_campaign_name(market,name1)
             if res[0] == "success":
                 continue
             if brand_name == 'LAPASA':
                 search_term_info = api1.select_sp_campaign_search_term(market,i)
             else:
-                search_term_info = api1.select_sp_campaign_search_term_by_parent_asin(market,i,self.select_depository(brand_name))
+                search_term_info = api1.select_sp_campaign_search_term_by_parent_asin(market,i,self.select_depository(brand_name,market))
             if not search_term_info:
                 continue
             name = f"DeepBI_0502_{i}_MANUAL"
@@ -567,7 +647,7 @@ class Ceate_new_sku:
             apitool = Gen_campaign(brand_name)
             new_campaign_id = apitool.create_camapign(market, name, startDate, dynamicBidding={"placementBidding":[],"strategy":"LEGACY_FOR_SALES"}, portfolioId=None,
                                                endDate=None, targetingType='MANUAL', state='PAUSED',
-                                               budgetType='DAILY', budget=5 * exchange_rate)
+                                               budgetType='DAILY', budget=float(budget))
             #new_campaign_id = '297477921455980'
             api2 = Gen_adgroup(brand_name)
             new_adgroup_id = api2.create_adgroup(market, new_campaign_id, name, defaultBid=0.25 * exchange_rate, state='PAUSED')
@@ -576,14 +656,14 @@ class Ceate_new_sku:
             if brand_name == 'LAPASA':
                 sku_info = api1.select_sd_product_sku(market, i)
             else:
-                sku_info = api1.select_product_sku_by_parent_asin(i,self.select_depository(brand_name), market)
+                sku_info = api1.select_product_sku_by_parent_asin(i,self.select_depository(brand_name,market), market)
             for sku in sku_info:
                 try:
                     new_sku = api3.create_productsku(market, new_campaign_id, new_adgroup_id, sku,asin=None, state="ENABLED")
                 except Exception as e:
                     # 处理异常，可以打印异常信息或者进行其他操作
                     print("An error occurred create_productsku:", e)
-                    newdbtool = DbNewSpTools(brand_name)
+                    newdbtool = DbNewSpTools(brand_name,market)
                     newdbtool.create_sp_product(market,new_campaign_id,None,sku,new_adgroup_id,None,"failed",datetime.now(),"SP")
 
             apitool2 = SPKeywordTools(brand_name)
@@ -621,10 +701,96 @@ class Ceate_new_sku:
                 except Exception as e:
                     # 处理异常，可以打印异常信息或者进行其他操作
                     print("An error occurred:", e)
-                    dbNewTools = DbNewSpTools(brand_name)
+                    dbNewTools = DbNewSpTools(brand_name,market)
             print(f"{name} create successfully")
         print("all create successfully")
 
+    def create_new_sp_manual_no_template_jiutong(self,market,brand_name,uploaded_file,budget):
+        exchange_rate = self.get_exchange_rate(market, 'DE')
+        df = pd.read_csv(uploaded_file)
+        # 打印 DataFrame 的前几行，以确保成功读取
+        # 按照 parent_asins 列进行分组
+        grouped = df.groupby('parent_asins')
+
+        # 创建一个字典来存储每个 parent_asins 对应的列表
+        result = {}
+
+        # 遍历每个分组
+        for name, group in grouped:
+            # 将每个分组的 DataFrame 转换为字典的列表
+            result[name] = group[['keyword', 'matchType', 'bid']].to_dict(orient='records')
+
+        # 打印结果
+        for parent_asin, info_list in result.items():
+            print(f"parent_asins: {parent_asin}")
+            name1 = f"DeepBI_0502_{parent_asin}_MANUAL"
+            api1 = DbSpTools(brand_name,market)
+            res = api1.select_sp_campaign_name(market,name1)
+            if res[0] == "success":
+                continue
+            name = f"DeepBI_0502_{parent_asin}_MANUAL"
+            today = datetime.today()
+            # 格式化输出
+            startDate = today.strftime('%Y-%m-%d')
+            apitool = Gen_campaign(brand_name)
+            new_campaign_id = apitool.create_camapign(market, name, startDate, dynamicBidding={"placementBidding":[],"strategy":"LEGACY_FOR_SALES"}, portfolioId=None,
+                                               endDate=None, targetingType='MANUAL', state='ENABLED',
+                                               budgetType='DAILY', budget=float(budget))
+            #new_campaign_id = '297477921455980'
+            api2 = Gen_adgroup(brand_name)
+            new_adgroup_id = api2.create_adgroup(market, new_campaign_id, name, defaultBid=0.25 * exchange_rate, state='ENABLED')
+            #new_adgroup_id = '491456703765912'
+            api3 = Gen_product(brand_name)
+            if brand_name == 'LAPASA':
+                sku_info = api1.select_sd_product_sku(market, parent_asin)
+            else:
+                sku_info = api1.select_product_sku_by_parent_asin(parent_asin,self.select_depository(brand_name,market), market)
+            for sku in sku_info:
+                try:
+                    new_sku = api3.create_productsku(market, new_campaign_id, new_adgroup_id, sku,asin=None, state="ENABLED")
+                except Exception as e:
+                    # 处理异常，可以打印异常信息或者进行其他操作
+                    print("An error occurred create_productsku:", e)
+                    newdbtool = DbNewSpTools(brand_name,market)
+                    newdbtool.create_sp_product(market,new_campaign_id,None,sku,new_adgroup_id,None,"failed",datetime.now(),"SP")
+
+            apitool2 = SPKeywordTools(brand_name)
+            api4 = Gen_keyword(brand_name)
+            # 添加亚马逊推荐的关键词，暂时不用
+            # spkeyword_info = apitool2.get_spkeyword_recommendations_api(market, new_campaign_id, new_adgroup_id)
+            # for item in spkeyword_info:
+            #     matchType = item['matchType']
+            #     state = "ENABLED"
+            #     bid1 = item.get('bid')
+            #     if bid1 is not None:  # 检查是否存在有效的bid值
+            #         bid = exchange_rate * bid1
+            #         keywordText = item['keyword']
+            #         if state != "ENABLED" and state != "PAUSED":
+            #             continue  # 跳过当前迭代，进入下一次迭代
+            #         try:
+            #             new_keyword_id = api4.add_keyword_toadGroup_v0(market, new_campaign_id, new_adgroup_id, keywordText, matchType, state, bid)
+            #         except Exception as e:
+            #             # 处理异常，可以打印异常信息或者进行其他操作
+            #             print("An error occurred:", e)
+            #             dbNewTools = DbNewSpTools(brand_name)
+            #             dbNewTools.add_sp_keyword_toadGroup(market, None, new_campaign_id, matchType, state, bid,
+            #                                                 new_adgroup_id,
+            #                                                 keywordText, None, "failed", datetime.now())
+            #         # 继续执行下面的代码
+            #         else:
+            #             # 如果没有发生异常，则执行以下代码
+            #             # 这里可以放一些正常情况下的逻辑
+            #             print("Command executed successfully.")
+            for info in info_list:
+                print(f" keyword: {info['keyword']}, matchType: {info['matchType']}, bid: {info['bid']}")
+                try:
+                    new_keyword_id = api4.add_keyword_toadGroup_v0(market, new_campaign_id, new_adgroup_id, info['keyword'], matchType=info['matchType'], state="ENABLED", bid=float(info['bid']))
+                except Exception as e:
+                    # 处理异常，可以打印异常信息或者进行其他操作
+                    print("An error occurred:", e)
+                    dbNewTools = DbNewSpTools(brand_name,market)
+            print(f"{name} create successfully")
+        print("all create successfully")
 
 # #创建 Ceate_new_sku 类的实例
 # ceate_new_sku_instance = Ceate_new_sku()
@@ -638,6 +804,6 @@ class Ceate_new_sku:
 #ceate_new_sku_instance.create_new_sp_auto_no_template1('UK',['L17', 'G19', 'G11', 'L44', 'L41', 'L17', 'M11', 'M24', 'M57'],brand_name='LAPASA')
 #ceate_new_sku_instance.create_new_sp_manual_no_template('DE',['B14','L100','L103','L59','L98'])
 #ES DeepBI_0502_M19 manu 2 复制 1 需要sku
-
+# Ceate_new_sku().create_new_sp_auto_no_template_jiutong('UK',['L01'],'Veement',None)
 
 

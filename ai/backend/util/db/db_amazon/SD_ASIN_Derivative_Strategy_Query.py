@@ -15,29 +15,39 @@ warnings.filterwarnings("ignore", category=UserWarning)
 
 class SdAsinDerivativeStrategyQuery:
 
-    def __init__(self, brand):
+    def __init__(self, brand,market):
         self.brand = brand
-        self.db_info = self.load_db_info(brand)
+        self.db_info = self.load_db_info(brand,market)
         self.conn = self.connect(self.db_info)
-        self.depository = self.load_depository(brand)
+        self.depository = self.load_depository(brand,market)
 
-    def load_db_info(self, brand):
+    def load_db_info(self, brand, country=None):
         # 从 JSON 文件加载数据库信息
         db_info_path = os.path.join(get_config_path(), 'db_info.json')
         with open(db_info_path, 'r') as f:
             db_info_json = json.load(f)
 
-        if brand in db_info_json:
-            return db_info_json[brand]
-        else:
+        if brand not in db_info_json:
             raise ValueError(f"Unknown brand '{brand}'")
 
-    def load_depository(self, brand):
+        brand_info = db_info_json[brand]
+
+        if country and country in brand_info:
+            return brand_info[country]
+
+        return brand_info.get('default', {})
+
+    def load_depository(self, brand, country=None):
         # 从 JSON 文件加载数据库信息
-        db_info_path = os.path.join(get_config_path(), 'Brand.yml')
-        with open(db_info_path, 'r') as f:
-            db_info_json = yaml.safe_load(f)
-        return db_info_json.get(brand).get('depository')
+        Brand_path = os.path.join(get_config_path(), 'Brand.yml')
+        with open(Brand_path, 'r') as file:
+            Brand_data = yaml.safe_load(file)
+
+        brand_info = Brand_data.get(brand, {})
+        if country:
+            country_info = brand_info.get(country, {})
+            return country_info.get('depository', brand_info.get('default', {}).get('depository'))
+        return brand_info.get('depository', brand_info.get('default', {}).get('depository'))
 
 
     def connect(self, db_info):

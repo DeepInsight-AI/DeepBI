@@ -132,17 +132,17 @@ class ProductTools:
 
 #修改品测试
 
-# pt=ProductTools('LAPASA')
+# pt=ProductTools('KAPEYDESI')
 # # # res = pt.update_product_api(product_info)
 # # # print(type(res))
 # # # print(res)
-# res = pt.get_creatives_api('JP',449606849255206)
+# res = pt.get_creatives_api('SA',436764506244567)
 # print(res)
 #new_results = [{"asin": result["asin"]} for result in res]
 
 # 打印新的列表
 # print(new_results)
-# pt=ProductTools()
-# res = pt.create_product_api(product_info)
+# pt=ProductTools('Veement')
+# res = pt.get_product_api('UK','435116840242085')
 # print(type(res))
 # print(res)

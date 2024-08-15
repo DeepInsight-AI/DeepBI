@@ -248,5 +248,5 @@ class CampaignTools:
 #   ]
 # }
 # ct=CampaignTools('LAPASA')
-# res = ct.list_campaigns_api('366836223007357','FR')
+# res = ct.list_all_campaigns_api('IT')
 # print(res)

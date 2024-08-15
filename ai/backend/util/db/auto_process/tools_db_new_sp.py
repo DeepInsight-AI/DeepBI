@@ -7,20 +7,25 @@ from ai.backend.util.db.configuration.path import get_config_path
 from ai.backend.util.db.auto_process.summary.summary import get_request_data
 
 class DbNewSpTools:
-    def __init__(self, brand):
-        self.db_info = self.load_db_info(brand)
+    def __init__(self, brand,market):
+        self.db_info = self.load_db_info(brand,market)
         self.conn = self.connect(self.db_info)
 
-    def load_db_info(self, brand):
+    def load_db_info(self, brand, country=None):
         # 从 JSON 文件加载数据库信息
-        db_info_log_path = os.path.join(get_config_path(), 'db_info_log.json')
-        with open(db_info_log_path, 'r') as f:
+        db_info_path = os.path.join(get_config_path(), 'db_info_log.json')
+        with open(db_info_path, 'r') as f:
             db_info_json = json.load(f)
 
-        if brand in db_info_json:
-            return db_info_json[brand]
-        else:
+        if brand not in db_info_json:
             raise ValueError(f"Unknown brand '{brand}'")
+
+        brand_info = db_info_json[brand]
+
+        if country and country in brand_info:
+            return brand_info[country]
+
+        return brand_info.get('default', {})
 
     def connect(self, db_info):
         try:
@@ -586,4 +591,16 @@ class DbNewSpTools:
                 print("数据成功插入到 product_targets_search_term_info 表中")
         except Exception as e:
             print(f"插入数据到 product_targets_search_term_info 表时出错: {e}")
+
+    def create_category_info(self, market, category, category_id):
+        try:
+            conn = self.conn
+            cursor = conn.cursor()
+            query = "INSERT INTO category_info (category,category_id,market) VALUES (%s,%s,%s)"
+            values = (category, category_id, market)
+            cursor.execute(query, values)
+            conn.commit()
+            print("Record inserted successfully into category_info table")
+        except Exception as e:
+            print(f"Error occurred when into category_info: {e}")
 

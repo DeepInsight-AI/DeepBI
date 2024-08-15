@@ -1,4 +1,5 @@
 import json
+import time
 import traceback
 import pytz
 import os
@@ -12,7 +13,7 @@ from ai.backend.util.db.auto_process.selling_partner.util.client_config import s
 
 def get_profile_id_info(market, brand):
     try:
-        profileId,region = DbSpTools(brand).get_profileId(market)
+        profileId,region = DbSpTools(brand,market).get_profileId(market)
         print(profileId)
         return profileId,region
     except Exception as e:
@@ -41,12 +42,16 @@ def select_market(market,brand):
     return brand_credentials
 
 
-def select_brand(brand):
+def select_brand(brand, country=None):
+    # 从 JSON 文件加载数据库信息
     Brand_path = os.path.join(get_config_path(), 'Brand.yml')
     with open(Brand_path, 'r') as file:
         Brand_data = yaml.safe_load(file)
-    brand_info = Brand_data.get(brand)
-    return brand_info
+
+    brand_info = Brand_data.get(brand, {})
+    if country and country in brand_info:
+        return brand_info[country]
+    return brand_info.get('default', {})
 
 
 def new_get_api_config(brand_config, region, api_type, is_new=False):
@@ -79,7 +84,8 @@ def new_get_api_config(brand_config, region, api_type, is_new=False):
                     api_config = yaml.safe_load(f)
                 # 判断api_config 有没有access_token
                 print(api_config, "api_config++++++++++++++++++")
-                if api_config and 'access_token' in api_config and not is_new:
+                now_timestamp = int(time.time())
+                if api_config and 'access_token' in api_config and not is_new and now_timestamp < api_config['expires_timestamp'] - 50:
                     print("本地存在UID token 数据")
                     result = {
                         "client_id": config[api_type]['client_id'],
@@ -95,10 +101,10 @@ def new_get_api_config(brand_config, region, api_type, is_new=False):
                         "AreaCode": region,  # 那个地区
                         "OuthType": api_type  # 操作类型
                     }
-                    print("data==", data)
+                    # print("data==", data)
                     res, data = ProcessShowData.get_accesstoken(data)
-                    print("res==", res)
-                    print("data==", data)
+                    # print("res==", res)
+                    # print("data==", data)
                     if res:
                         result = {
                             "client_id": config[api_type]['client_id'],
@@ -146,7 +152,7 @@ def get_sp_my_credentials(market, brand):
 
 # 获取 ad my_credentials
 def get_ad_my_credentials(market, brand):
-    brand_config = select_brand(brand)
+    brand_config = select_brand(brand,market)
     if 'public' in brand_config and brand_config['public'] == 1:
         profileid,region = get_profile_id_info(market, brand)
         api_config = new_get_api_config(brand_config, region, "AD")
@@ -159,7 +165,7 @@ def get_ad_my_credentials(market, brand):
             client_secret=api_config['client_secret'],
             profile_id=str(profileid),
         )
-        print("api_config==", api_config)
+        #print("api_config==", api_config)
         return my_credentials,api_config['access_token']
     else:
         print("old==")

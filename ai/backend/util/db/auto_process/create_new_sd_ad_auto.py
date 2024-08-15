@@ -614,7 +614,7 @@ class Ceate_new_sd:
                 apitool2 = ProductTools(brand_name)
                 for targeting_asin in targeting_asin_list:
                     try:
-                        new_targetId = api3.create_adGroup_Targeting3(market, new_adgroup_id, targeting_asin['targeting_asin'], 'manual', 'enabled', 5*exchange_rate)
+                        new_targetId = api3.create_adGroup_Targeting3(market, new_adgroup_id, targeting_asin['targeting_asin'], 'manual', 'enabled', 3*exchange_rate)
                     except Exception as e:
                         # 处理异常，可以打印异常信息或者进行其他操作
                         print("An error occurred:", e)

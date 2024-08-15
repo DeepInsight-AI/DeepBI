@@ -73,11 +73,16 @@ class Sd0808Strategy:
             if asin == 0:
                 query = f"""
 WITH a AS(
-SELECT *,
-UPPER(searchTerm) AS ASIN
+SELECT
+adGroupId,
+campaignId,
+UPPER(searchTerm) AS ASIN,
+SUM(CASE WHEN date BETWEEN DATE_SUB(CURRENT_DATE - INTERVAL 1 DAY, INTERVAL 29 day) AND DATE_SUB(CURRENT_DATE, INTERVAL 1 DAY) THEN cost ELSE 0 END) / SUM(CASE WHEN date BETWEEN DATE_SUB(CURRENT_DATE - INTERVAL 1 DAY, INTERVAL 29 day) AND DATE_SUB(CURRENT_DATE, INTERVAL 1 DAY) THEN sales14d ELSE 0 END) AS ACOS_30d,
+SUM(CASE WHEN date BETWEEN DATE_SUB(CURRENT_DATE - INTERVAL 1 DAY, INTERVAL 6 DAY) AND DATE_SUB(CURRENT_DATE, INTERVAL 1 DAY) THEN cost ELSE 0 END) / SUM(CASE WHEN date BETWEEN DATE_SUB(CURRENT_DATE - INTERVAL 1 DAY, INTERVAL 6 DAY) AND DATE_SUB(CURRENT_DATE, INTERVAL 1 DAY) THEN sales14d ELSE 0 END) AS ACOS_7d
 FROM amazon_search_term_reports_sp
-WHERE searchTerm LIKE 'b0%%' AND LENGTH(searchTerm) = 10
+WHERE searchTerm LIKE 'b0%' AND LENGTH(searchTerm) = 10
 AND market = '{market}'
+AND date BETWEEN DATE_SUB(CURRENT_DATE, INTERVAL 30 DAY) AND CURRENT_DATE- INTERVAL 1 DAY
 GROUP BY
 campaignId,
 adGroupId,
@@ -87,7 +92,9 @@ b AS (
 SELECT
 campaignId,
 adGroupId,
-ASIN
+ASIN,
+ACOS_30d,
+ACOS_7d
 FROM
 a
 WHERE ASIN NOT IN (
@@ -98,7 +105,9 @@ WHERE market = '{market}'
 c AS (
 SELECT
 asp.asin,
-b.ASIN AS targeting_asin
+b.ASIN AS targeting_asin,
+b.ACOS_30d,
+b.ACOS_7d
 FROM
 amazon_sp_productads_list asp
 LEFT JOIN b ON asp.campaignId = b.campaignId AND asp.adGroupId = b.adGroupId
@@ -117,11 +126,16 @@ targeting_asin
             elif asin == 1:
                 query = f"""
 WITH a AS(
-SELECT *,
-UPPER(searchTerm) AS ASIN
+SELECT
+adGroupId,
+campaignId,
+UPPER(searchTerm) AS ASIN,
+SUM(CASE WHEN date BETWEEN DATE_SUB(CURRENT_DATE - INTERVAL 1 DAY, INTERVAL 29 day) AND DATE_SUB(CURRENT_DATE, INTERVAL 1 DAY) THEN cost ELSE 0 END) / SUM(CASE WHEN date BETWEEN DATE_SUB(CURRENT_DATE - INTERVAL 1 DAY, INTERVAL 29 day) AND DATE_SUB(CURRENT_DATE, INTERVAL 1 DAY) THEN sales14d ELSE 0 END) AS ACOS_30d,
+SUM(CASE WHEN date BETWEEN DATE_SUB(CURRENT_DATE - INTERVAL 1 DAY, INTERVAL 6 DAY) AND DATE_SUB(CURRENT_DATE, INTERVAL 1 DAY) THEN cost ELSE 0 END) / SUM(CASE WHEN date BETWEEN DATE_SUB(CURRENT_DATE - INTERVAL 1 DAY, INTERVAL 6 DAY) AND DATE_SUB(CURRENT_DATE, INTERVAL 1 DAY) THEN sales14d ELSE 0 END) AS ACOS_7d
 FROM amazon_search_term_reports_sp
-WHERE searchTerm LIKE 'b0%%' AND LENGTH(searchTerm) = 10
+WHERE searchTerm LIKE 'b0%' AND LENGTH(searchTerm) = 10
 AND market = '{market}'
+AND date BETWEEN DATE_SUB(CURRENT_DATE, INTERVAL 30 DAY) AND CURRENT_DATE- INTERVAL 1 DAY
 GROUP BY
 campaignId,
 adGroupId,
@@ -131,7 +145,9 @@ b AS (
 SELECT
 campaignId,
 adGroupId,
-ASIN
+ASIN,
+ACOS_30d,
+ACOS_7d
 FROM
 a
 WHERE ASIN NOT IN (
@@ -142,7 +158,9 @@ WHERE market = '{market}'
 c AS (
 SELECT
 asp.asin,
-b.ASIN AS targeting_asin
+b.ASIN AS targeting_asin,
+b.ACOS_30d,
+b.ACOS_7d
 FROM
 amazon_sp_productads_list asp
 LEFT JOIN b ON asp.campaignId = b.campaignId AND asp.adGroupId = b.adGroupId
@@ -151,29 +169,36 @@ HAVING
 targeting_asin IS NOT NULL
 )
 SELECT
-	amazon_product_info_extended.parent_asins as asin,
-	c.targeting_asin
+        amazon_product_info_extended.parent_asins as asin,
+        c.targeting_asin,
+        c.ACOS_30d,
+        c.ACOS_7d
 FROM
-	c
-	LEFT JOIN amazon_product_info_extended ON c.asin = amazon_product_info_extended.asin
+        c
+        LEFT JOIN amazon_product_info_extended ON c.asin = amazon_product_info_extended.asin
 WHERE
-	amazon_product_info_extended.market = '{self.depository}'
-	AND amazon_product_info_extended.parent_asins IN %(column1_values1)s
+        amazon_product_info_extended.market = '{self.depository}'
+        AND amazon_product_info_extended.parent_asins IN %(column1_values1)s
 GROUP BY
 parent_asins,
 targeting_asin
 HAVING
-	parent_asins IS NOT NULL AND parent_asins <> ''
+        parent_asins IS NOT NULL AND parent_asins <> ''
                                             """
             elif asin == 2:
                 variable = f'{market.lower()}asin'
                 query = f"""
 WITH a AS(
-SELECT *,
-UPPER(searchTerm) AS ASIN
+SELECT
+adGroupId,
+campaignId,
+UPPER(searchTerm) AS ASIN,
+SUM(CASE WHEN date BETWEEN DATE_SUB(CURRENT_DATE - INTERVAL 1 DAY, INTERVAL 29 day) AND DATE_SUB(CURRENT_DATE, INTERVAL 1 DAY) THEN cost ELSE 0 END) / SUM(CASE WHEN date BETWEEN DATE_SUB(CURRENT_DATE - INTERVAL 1 DAY, INTERVAL 29 day) AND DATE_SUB(CURRENT_DATE, INTERVAL 1 DAY) THEN sales14d ELSE 0 END) AS ACOS_30d,
+SUM(CASE WHEN date BETWEEN DATE_SUB(CURRENT_DATE - INTERVAL 1 DAY, INTERVAL 6 DAY) AND DATE_SUB(CURRENT_DATE, INTERVAL 1 DAY) THEN cost ELSE 0 END) / SUM(CASE WHEN date BETWEEN DATE_SUB(CURRENT_DATE - INTERVAL 1 DAY, INTERVAL 6 DAY) AND DATE_SUB(CURRENT_DATE, INTERVAL 1 DAY) THEN sales14d ELSE 0 END) AS ACOS_7d
 FROM amazon_search_term_reports_sp
-WHERE searchTerm LIKE 'b0%%' AND LENGTH(searchTerm) = 10
+WHERE searchTerm LIKE 'b0%' AND LENGTH(searchTerm) = 10
 AND market = '{market}'
+AND date BETWEEN DATE_SUB(CURRENT_DATE, INTERVAL 30 DAY) AND CURRENT_DATE- INTERVAL 1 DAY
 GROUP BY
 campaignId,
 adGroupId,
@@ -183,7 +208,9 @@ b AS (
 SELECT
 campaignId,
 adGroupId,
-ASIN
+ASIN,
+ACOS_30d,
+ACOS_7d
 FROM
 a
 WHERE ASIN NOT IN (
@@ -194,7 +221,9 @@ WHERE market = '{market}'
 c AS (
 SELECT
 asp.asin,
-b.ASIN AS targeting_asin
+b.ASIN AS targeting_asin,
+b.ACOS_30d,
+b.ACOS_7d
 FROM
 amazon_sp_productads_list asp
 LEFT JOIN b ON asp.campaignId = b.campaignId AND asp.adGroupId = b.adGroupId
@@ -203,18 +232,20 @@ HAVING
 targeting_asin IS NOT NULL
 )
 SELECT
-	prod_as_product_base.sspu as asin,
-	c.targeting_asin
+        prod_as_product_base.sspu as asin,
+        c.targeting_asin,
+        c.ACOS_30d,
+        c.ACOS_7d
 FROM
-	c
-	LEFT JOIN prod_as_product_base ON c.asin = prod_as_product_base.{variable}
+        c
+        LEFT JOIN prod_as_product_base ON c.asin = prod_as_product_base.{variable}
 WHERE
  prod_as_product_base.sspu IN %(column1_values1)s
 GROUP BY
 sspu,
 targeting_asin
 HAVING
-	sspu IS NOT NULL AND sspu <> ''
+        sspu IS NOT NULL AND sspu <> ''
                                                         """
             df = pd.read_sql(query, con=conn, params={'column1_values1': asin_info})
             output_filename = f'{self.brand}_{market}_0808.csv'

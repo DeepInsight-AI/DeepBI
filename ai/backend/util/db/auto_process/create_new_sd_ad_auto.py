@@ -238,7 +238,7 @@ class Ceate_new_sd:
     def manual_targeting(self, res, market1, market2, new_campaign_name, ad_group_id, new_ad_group_name, exchange_rate):
         pass
 
-    def create_new_sd_no_template(self,market,info,brand_name,budget):
+    def create_new_sd_no_template(self,market,info,brand_name,budget,target_bid):
         exchange_rate = self.get_exchange_rate(market,'DE')
         for i in info:
             name1 = f"DeepBI_0509_{i}"
@@ -308,7 +308,7 @@ class Ceate_new_sd:
                         if brand['name'] == target_brand_name:
                             target_brand_id = brand['id']
                             try:
-                                new_targetId = api3.create_adGroup_Targeting2(market, new_adgroup_id, category, target_brand_id, expression_type='manual', state='enabled', bid=5*exchange_rate)
+                                new_targetId = api3.create_adGroup_Targeting2(market, new_adgroup_id, category, target_brand_id, expression_type='manual', state='enabled', bid=float(target_bid))
                             except Exception as e:
                                 # 处理异常，可以打印异常信息或者进行其他操作
                                 print("An error occurred:", e)
@@ -441,7 +441,7 @@ class Ceate_new_sd:
                             # 处理异常，可以打印异常信息或者进行其他操作
                             print("An error occurred:", e)
 
-    def create_new_sd_0511(self,market,info,brand_name,budget):
+    def create_new_sd_0511(self,market,info,brand_name,budget,target_bid):
         exchange_rate = self.get_exchange_rate(market,'DE')
         for i in info:
             name1 = f"DeepBI_0511_{i}"
@@ -484,7 +484,7 @@ class Ceate_new_sd:
                         newdbtool = DbNewSpTools(brand_name,market)
                         newdbtool.create_sp_product(market,new_campaign_id,None,sku,new_adgroup_id,None,"failed",datetime.now(),"SD")
                 try:
-                    new_targetId = api3.create_adGroup_Targeting1(market, new_adgroup_id, 'manual', 'enabled', bid=1 * exchange_rate)
+                    new_targetId = api3.create_adGroup_Targeting1(market, new_adgroup_id, 'manual', 'enabled', bid=float(target_bid))
                 except Exception as e:
                     # 处理异常，可以打印异常信息或者进行其他操作
                     print("An error occurred:", e)
@@ -493,7 +493,7 @@ class Ceate_new_sd:
         print("all create successfully")
         pass
 
-    def create_new_sd_no_template_0731(self,market,info,brand_name,budget):
+    def create_new_sd_no_template_0731(self,market,info,brand_name,budget,target_bid):
         exchange_rate = self.get_exchange_rate(market,'DE')
         for i in info:
             name1 = f"DeepBI_0731_{i}"
@@ -545,7 +545,7 @@ class Ceate_new_sd:
                     continue
                 for asin in product:
                     try:
-                        new_targetId = api3.create_adGroup_Targeting3(market, new_adgroup_id, asin, 'manual', 'enabled', 5*exchange_rate)
+                        new_targetId = api3.create_adGroup_Targeting3(market, new_adgroup_id, asin, 'manual', 'enabled', float(target_bid))
                     except Exception as e:
                         # 处理异常，可以打印异常信息或者进行其他操作
                         print("An error occurred:", e)

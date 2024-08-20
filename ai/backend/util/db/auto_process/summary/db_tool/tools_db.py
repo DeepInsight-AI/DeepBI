@@ -102,6 +102,7 @@ AND market = '{}';
 SELECT COUNT(*) as count
 FROM amazon_campaign_update
 WHERE DATE(update_time) = '{}'
+AND change_type = 'budget'
 AND status = 'success'
 AND market = '{}';
                     """.format(date,market)

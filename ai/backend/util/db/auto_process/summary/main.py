@@ -1,5 +1,5 @@
 import time
-from ai.backend.util.db.auto_process.summary.summary import get_data,update_create_data_period,update_create_data
+from ai.backend.util.db.auto_process.summary.summary import get_data,update_create_data_period,update_create_data,get_data_temporary
 
 def run():
     # time.sleep(60 * 60 * 5)
@@ -27,7 +27,7 @@ def run():
     while True:
         for brand, countries in brands_and_countries.items():
             for country in countries:
-                get_data(country, brand)
+                get_data_temporary(country, brand)
                 update_create_data(country, brand)
         print('done')
         time.sleep(60 * 60 * 24)
@@ -35,14 +35,16 @@ def run():
 def run1():
     # time.sleep(60 * 60 * 5)
     brands_and_countries = {
-        # 'Veement': ['UK']
-        # 'KAPEYDESI': ['UK', 'DE', 'FR'],
-        'Gvyugke': ['DE', 'FR', 'IT']
+        'Veement': ['UK'],
+        'KAPEYDESI': ['SA'],
+        'Gvyugke': ['DE', 'FR', 'IT', 'AU'],
+        'Gonbouyoku': ['JP'],
+        'syndesmos': ['DE', 'IT']
     }
     while True:
         for brand, countries in brands_and_countries.items():
             for country in countries:
-                update_create_data_period(country, brand)
+                get_data_temporary(country, brand)
         print('done')
         time.sleep(60 * 60 * 24)
 

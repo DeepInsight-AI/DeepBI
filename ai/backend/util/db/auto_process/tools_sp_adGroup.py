@@ -277,7 +277,7 @@ class AdGroupTools:
         #     return ["success", negativeKeywordId]
         else:
             print("list adGroup TargetingClause failed")
-            return result.payload["targetingClauses"]
+            return None
 
     def update_adGroup_TargetingC(self, adGroup_info, market):
         try:

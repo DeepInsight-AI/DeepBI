@@ -1,56 +1,230 @@
 {
   "LAPASA": {
-    "host": "192.168.5.114",
-    "user": "root",
-    "passwd": "duozhuan888",
-    "port": 3308,
-    "db": "test_amazon_log",
-    "charset": "utf8mb4",
-    "use_unicode": true
+    "default": {
+      "host": "192.168.5.114",
+      "user": "root",
+      "passwd": "duozhuan888",
+      "port": 3308,
+      "db": "test_amazon_log",
+      "charset": "utf8mb4",
+      "use_unicode": true
+    }
   },
   "DELOMO": {
-    "host": "192.168.5.114",
-    "user": "root",
-    "passwd": "duozhuan888",
-    "port": 3308,
-    "db": "amazon_log_bdzx",
-    "charset": "utf8mb4",
-    "use_unicode": true
+    "default": {
+      "host": "192.168.5.114",
+      "user": "root",
+      "passwd": "duozhuan888",
+      "port": 3308,
+      "db": "amazon_log_bdzx",
+      "charset": "utf8mb4",
+      "use_unicode": true
+    }
   },
   "OutdoorMaster": {
-    "host": "192.168.5.114",
-    "user": "root",
-    "passwd": "duozhuan888",
-    "port": 3308,
-    "db": "amazon_log_outdoormaster",
-    "charset": "utf8mb4",
-    "use_unicode": true
+    "default": {
+      "host": "192.168.5.114",
+      "user": "root",
+      "passwd": "duozhuan888",
+      "port": 3308,
+      "db": "amazon_log_outdoormaster",
+      "charset": "utf8mb4",
+      "use_unicode": true
+    }
   },
   "MUDEELA": {
-    "host": "192.168.5.114",
-    "user": "root",
-    "passwd": "duozhuan888",
-    "port": 3308,
-    "db": "amazon_log_bdzx_mudeela",
-    "charset": "utf8mb4",
-    "use_unicode": true
+    "US": {
+      "host": "192.168.5.114",
+      "user": "root",
+      "passwd": "duozhuan888",
+      "port": 3308,
+      "db": "amazon_log_bdzx_mudeela",
+      "charset": "utf8mb4",
+      "use_unicode": true
+    }
   },
   "Rossny": {
-    "host": "192.168.5.114",
-    "user": "root",
-    "passwd": "duozhuan888",
-    "port": 3308,
-    "db": "amazon_log_bdzx_rossny",
-    "charset": "utf8mb4",
-    "use_unicode": true
+    "US": {
+      "host": "192.168.5.114",
+      "user": "root",
+      "passwd": "duozhuan888",
+      "port": 3308,
+      "db": "amazon_log_bdzx_rossny",
+      "charset": "utf8mb4",
+      "use_unicode": true
+    }
   },
   "ZEN CAVE": {
+    "US": {
+      "host": "192.168.5.114",
+      "user": "root",
+      "passwd": "duozhuan888",
+      "port": 3308,
+      "db": "amazon_log_bdzx_zen_cave",
+      "charset": "utf8mb4",
+      "use_unicode": true
+    }
+  },
+  "Veement": {
+    "UK": {
     "host": "192.168.5.114",
     "user": "root",
     "passwd": "duozhuan888",
     "port": 3308,
-    "db": "amazon_log_bdzx_zen_cave",
+    "db": "amazon_log_e_yeeger",
     "charset": "utf8mb4",
     "use_unicode": true
+    }
+  },
+  "KAPEYDESI": {
+    "UK": {
+      "host": "192.168.5.114",
+      "user": "root",
+      "passwd": "duozhuan888",
+      "port": 3308,
+      "db": "amazon_log_e_yeeger",
+      "charset": "utf8mb4",
+      "use_unicode": true
+    },
+    "DE": {
+      "host": "192.168.5.114",
+      "user": "root",
+      "passwd": "duozhuan888",
+      "port": 3308,
+      "db": "amazon_log_ruinadianzi_xx",
+      "charset": "utf8mb4",
+      "use_unicode": true
+    },
+    "FR": {
+      "host": "192.168.5.114",
+      "user": "root",
+      "passwd": "duozhuan888",
+      "port": 3308,
+      "db": "amazon_log_ruinadianzi_xx",
+      "charset": "utf8mb4",
+      "use_unicode": true
+    },
+    "SA": {
+      "host": "192.168.5.114",
+      "user": "root",
+      "passwd": "duozhuan888",
+      "port": 3308,
+      "db": "amazon_log_dongguanlangyeju",
+      "charset": "utf8mb4",
+      "use_unicode": true
+    }
+  },
+  "Gvyugke": {
+    "UK": {
+      "host": "192.168.5.114",
+      "user": "root",
+      "passwd": "duozhuan888",
+      "port": 3308,
+      "db": "amazon_log_e_yeeger",
+      "charset": "utf8mb4",
+      "use_unicode": true
+    },
+    "DE": {
+      "host": "192.168.5.114",
+      "user": "root",
+      "passwd": "duozhuan888",
+      "port": 3308,
+      "db": "amazon_log_ruinadianzi_xx",
+      "charset": "utf8mb4",
+      "use_unicode": true
+    },
+    "FR": {
+      "host": "192.168.5.114",
+      "user": "root",
+      "passwd": "duozhuan888",
+      "port": 3308,
+      "db": "amazon_log_ruinadianzi_xx",
+      "charset": "utf8mb4",
+      "use_unicode": true
+    },
+    "IT": {
+      "host": "192.168.5.114",
+      "user": "root",
+      "passwd": "duozhuan888",
+      "port": 3308,
+      "db": "amazon_log_ruinadianzi_xx",
+      "charset": "utf8mb4",
+      "use_unicode": true
+    },
+    "AU": {
+      "host": "192.168.5.114",
+      "user": "root",
+      "passwd": "duozhuan888",
+      "port": 3308,
+      "db": "amazon_log_ruinadianzi_dhy",
+      "charset": "utf8mb4",
+      "use_unicode": true
+    }
+  },
+  "Uuoeebb": {
+    "US": {
+    "host": "192.168.5.114",
+    "user": "root",
+    "passwd": "duozhuan888",
+    "port": 3308,
+    "db": "amazon_log_uuoeebb_global",
+    "charset": "utf8mb4",
+    "use_unicode": true
+    }
+  },
+  "syndesmos": {
+    "DE": {
+    "host": "192.168.5.114",
+    "user": "root",
+    "passwd": "duozhuan888",
+    "port": 3308,
+    "db": "amazon_log_hejudianzi",
+    "charset": "utf8mb4",
+    "use_unicode": true
+    },
+    "IT": {
+      "host": "192.168.5.114",
+      "user": "root",
+      "passwd": "duozhuan888",
+      "port": 3308,
+      "db": "amazon_log_hejudianzi",
+      "charset": "utf8mb4",
+      "use_unicode": true
+    }
+  },
+  "Gonbouyoku": {
+    "JP": {
+    "host": "192.168.5.114",
+    "user": "root",
+    "passwd": "duozhuan888",
+    "port": 3308,
+    "db": "amazon_log_jiahezhimao",
+    "charset": "utf8mb4",
+    "use_unicode": true
+    }
+  },
+  "gmrpwnage": {
+    "JP": {
+    "host": "192.168.5.114",
+    "user": "root",
+    "passwd": "duozhuan888",
+    "port": 3308,
+    "db": "amazon_log_jiahezhimao",
+    "charset": "utf8mb4",
+    "use_unicode": true
+    }
+  },
+  "suihuooo": {
+    "US": {
+    "host": "192.168.5.114",
+    "user": "root",
+    "passwd": "duozhuan888",
+    "port": 3308,
+    "db": "amazon_log_suihuooo",
+    "charset": "utf8mb4",
+    "use_unicode": true
+    }
   }
 }
+
+

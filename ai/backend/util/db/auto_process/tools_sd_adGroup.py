@@ -242,10 +242,10 @@ class AdGroupTools_SD:
             #     return ["success", negativeKeywordId]
             else:
                 print("list adGroup TargetingClause failed")
-                return ["failed", ""]
+                return None
         except Exception as e:
             print("list adGroup Targeting failed: ", e)
-            return ["failed", ""]
+            return None
 
     def list_adGroup_Targeting_by_campaignId(self, market, campaignId):
         try:
@@ -393,6 +393,6 @@ class AdGroupTools_SD:
 #
 # agt=AdGroupTools_SD('KAPEYDESI')
 # # 测试更新广告系列信息
-# res = agt.get_adGroup_bycampaignid_api('AE','411899272320403')
+# res = agt.list_adGroup_Targetingrecommendations('AE','411899272320403')
 # print(type(res))
 # print(res)

@@ -1,13 +1,30 @@
 import json
+import os
 import traceback
 import logging
 from datetime import datetime, timedelta
 import time
 import numpy as np
+import yaml
 
 from ai.backend.util.db.auto_process.summary.util.InserOnlineData import ProcessShowData
 from ai.backend.util.db.auto_process.summary.db_tool.tools_db import AmazonMysqlRagUitl
 from ai.backend.util.db.auto_process.summary.db_tool.ads_db import AmazonMysqlRagUitl as api
+from ai.backend.util.db.configuration.marketplaces import get_continent_code
+from ai.backend.util.db.configuration.path import get_config_path
+
+
+def load_uid(brand, country=None):
+    # 从 JSON 文件加载数据库信息
+    Brand_path = os.path.join(get_config_path(), 'Brand.yml')
+    with open(Brand_path, 'r') as file:
+        Brand_data = yaml.safe_load(file)
+
+    brand_info = Brand_data.get(brand, {})
+    if country:
+        country_info = brand_info.get(country, {})
+        return country_info.get('UID', brand_info.get('default', {}).get('UID'))
+    return brand_info.get('UID', brand_info.get('default', {}).get('UID'))
 
 
 def default_dump(obj):
@@ -20,63 +37,10 @@ def default_dump(obj):
         return obj
 
 def get_request_data(CountryCode, StartDate, report_type, all_table, data_id, brand):
-    if CountryCode == 'US':
-        ContinentCode = 'NA'
-    elif CountryCode == 'JP' or CountryCode == 'AU':
-        ContinentCode = 'FE'
-    else:
-        ContinentCode = 'EU'
-    if brand == 'LAPASA':
-        UID = "1"
-    elif brand == 'DELOMO':
-        UID = "4"
-    elif brand == 'OutdoorMaster':
-        UID = "3"
-    elif brand == 'MUDEELA':
-        UID = "7"
-    elif brand == 'Rossny':
-        UID = "15"
-    elif brand == 'ZEN CAVE':
-        UID = "14"
-    elif brand == 'Veement':
-        if CountryCode == 'UK':
-            UID = "22"
-    elif brand == 'KAPEYDESI':
-        if CountryCode == 'UK':
-            UID = "22"
-        elif CountryCode == 'DE':
-            UID = "23"
-        elif CountryCode == 'FR':
-            UID = "23"
-        elif CountryCode == 'SA':
-            UID = "20"
-    elif brand == 'Gvyugke':
-        if CountryCode == 'UK':
-            UID = "22"
-        elif CountryCode == 'DE':
-            UID = "23"
-        elif CountryCode == 'FR':
-            UID = "23"
-        elif CountryCode == 'IT':
-            UID = "23"
-        elif CountryCode == 'AU':
-            UID = "19"
-    elif brand == 'Uuoeebb':
-        UID = "25"
-    elif brand == 'syndesmos':
-        UID = "21"
-    elif brand == 'Gonbouyoku':
-        UID = "18"
-    elif brand == 'gmrpwnage':
-        UID = "18"
-    elif brand == 'suihuooo':
-        UID = "26"
-    else:
-        UID = None
     try:
         add_data = {
-            "UID": UID,
-            "ContinentCode": ContinentCode,
+            "UID": load_uid(brand,CountryCode),
+            "ContinentCode": get_continent_code(CountryCode),
             "CountryCode": CountryCode,
             "DataType": report_type,
             "StartDate": StartDate,
@@ -155,6 +119,52 @@ def get_data(market,brand):
                   ]
     get_request_data(market,cur_time,"D-CALL",all_table2,0,brand)
     #print(json.dumps(all_table2,ensure_ascii=False, default=default_dump))
+
+def get_data_temporary(market,brand):
+    start_date = datetime.strptime('2024-08-02', '%Y-%m-%d')
+    today = datetime.today()
+    yesterday = today - timedelta(days=1)
+
+    # 循环遍历日期范围
+    current_date = start_date
+    while current_date <= yesterday:
+        cur_time = current_date.strftime('%Y-%m-%d')
+
+        # 以下是您的 API 调用和数据处理逻辑
+        api2 = api(brand, market)
+        sp_count = api2.get_scan_campaign_sp(market, cur_time)
+        sd_count = api2.get_scan_campaign_sd(market, cur_time)
+        sb_count = api2.get_scan_campaign_sb(market, cur_time)
+        all_count = sp_count + sd_count + sb_count
+
+        api1 = AmazonMysqlRagUitl(brand, market)
+        new_create = api1.get_new_create_campaign(market, cur_time)
+        budget = api1.get_update_budget(market, cur_time)
+        targeting_group = api1.get_update_targeting_group(market, cur_time)
+        keyword = api1.get_update_keyword(market, cur_time)
+        keyword1 = api2.get_scan_keyword(market, cur_time)
+        SKU = api1.get_update_sku(market, cur_time)
+        SKU1 = api2.get_scan_sku(market, cur_time)
+
+        # 构建表格数据
+        all_table = [[cur_time, "预算优化", budget],
+                     [cur_time, "广告位置优化", targeting_group],
+                     [cur_time, "关键词优化", (keyword or 0) + (keyword1 or 0)],
+                     [cur_time, "SKU优化", (SKU or 0) + (SKU1 or 0)]
+                     ]
+
+        # 发送请求数据
+        get_request_data(market, cur_time, "D-Trim", all_table, 0, brand)
+
+        all_table2 = [[cur_time, "量化广告分析", all_count],
+                      [cur_time, "新建广告活动", new_create]
+                      ]
+
+        # 如果需要，发送其他请求数据
+        get_request_data(market, cur_time, "D-CALL", all_table2, 0, brand)
+
+        # 准备下一次循环
+        current_date += timedelta(days=1)
 
 def get_data_period(market,brand):
     today = datetime.today()

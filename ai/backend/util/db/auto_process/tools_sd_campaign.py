@@ -38,7 +38,7 @@ class CampaignTools:
 
         else:
             print("list campaign failed:")
-            res = ["failed",""]
+            res = None
         # 返回创建的 compaignID
         return res
 

@@ -335,7 +335,7 @@ class Ceate_new_sku:
         return f"{new_campaign_name} create successfully"
 
 
-    def create_new_sp_asin_no_template(self,market,info,brand_name,budget):
+    def create_new_sp_asin_no_template(self,market,info,brand_name,budget,target_bid):
         exchange_rate = self.get_exchange_rate(market, 'DE')
         for i in info:
             name1 = f"DeepBI_0514_{i}_ASIN"
@@ -403,7 +403,7 @@ class Ceate_new_sku:
                             except (IndexError, KeyError, TypeError):
                                 # 如果在尝试获取bid值时发生任何异常（比如索引错误、键错误或类型错误），则设置bid为0.25
                                 bid = 0.25 * exchange_rate
-                            targetId = api2.create_adGroup_Targeting2(market, new_campaign_id, new_adgroup_id, bid,
+                            targetId = api2.create_adGroup_Targeting2(market, new_campaign_id, new_adgroup_id, float(target_bid),
                                                                  categories_id, target_brand_id)
                     # try:
                     #                     #     # 尝试获取bid值
@@ -512,7 +512,7 @@ class Ceate_new_sku:
             print(f"{name} create successfully")
         print("all create successfully")
 
-    def create_new_sp_auto_no_template(self,market,info,brand_name,budget):
+    def create_new_sp_auto_no_template(self,market,info,brand_name,budget,target_bid):
         exchange_rate = self.get_exchange_rate(market, 'DE')
         for i in info:
             name1 = f"DeepBI_0502_{i}_AUTO"
@@ -546,6 +546,46 @@ class Ceate_new_sku:
                         print("An error occurred create_productsku:", e)
                         newdbtool = DbNewSpTools(brand_name,market)
                         newdbtool.create_sp_product(market,new_campaign_id,None,sku,new_adgroup_id,None,"failed",datetime.now(),"SP")
+                apitool1 = AdGroupTools(brand_name)
+                market_TargetingClause = apitool1.list_adGroup_TargetingClause(new_adgroup_id, market)
+                TargetingClause_bid = apitool1.list_automatic_targeting_bid_recommendations(market, new_campaign_id,
+                                                                                            new_adgroup_id)
+                expressions = [{'type': expr['type'], 'targetId': item['targetId']} for item in market_TargetingClause
+                               for expr in item['expression']]
+                expressions_bid = [
+                    {
+                        'type': rec['targetingExpression']['type'],
+                        'secondSuggestedBid': rec['bidValues'][1]['suggestedBid']
+                    }
+                    for recommendation in TargetingClause_bid['bidRecommendations']
+                    for rec in recommendation['bidRecommendationsForTargetingExpressions']
+                ]
+                bid_map = {bid['type']: bid['secondSuggestedBid'] for bid in expressions_bid}
+
+                # Update expressions with corresponding bids
+                for expr in expressions:
+                    if expr['type'] == 'QUERY_HIGH_REL_MATCHES':
+                        expr['bid'] = bid_map.get('CLOSE_MATCH')
+                    elif expr['type'] == 'QUERY_BROAD_REL_MATCHES':
+                        expr['bid'] = bid_map.get('LOOSE_MATCH')
+                    elif expr['type'] == 'ASIN_ACCESSORY_RELATED':
+                        expr['bid'] = bid_map.get('COMPLEMENTS')
+                    elif expr['type'] == 'ASIN_SUBSTITUTE_RELATED':
+                        expr['bid'] = bid_map.get('SUBSTITUTES')
+
+                print(expressions)
+                for item in expressions:
+                    target_id = item['targetId']
+                    bid = item['bid']
+                    print(target_id)
+                    print(bid)
+                    if bid is not None:
+                        targetId = api2.update_adGroup_TargetingClause(market, target_id,
+                                                                       float(target_bid),
+                                                                       'ENABLED')
+                    else:
+                        targetId = api2.update_adGroup_TargetingClause(market, target_id, float(target_bid),
+                                                                       'ENABLED')
 
             print(f"{name} create successfully")
         print("all create successfully")

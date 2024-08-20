@@ -58,6 +58,16 @@
         .extra-params {
             display: none;
         }
+        input[type="text"], input[type="number"] {
+          width: 50%;
+          padding: 8px;
+          margin-bottom: 8px;
+          border: 1px solid #ccc;
+          border-radius: 4px;
+          box-sizing: border-box;
+          display: block;
+          margin: 0 auto;
+        }
     </style>
 
     <script>
@@ -122,11 +132,15 @@
                 var option5 = document.createElement('option');
                 option5.value = '0511';
                 option5.textContent = '0511';
+                var option6 = document.createElement('option');
+                option6.value = '0731';
+                option6.textContent = '0731';
                 strategySelect.appendChild(option1);
                 strategySelect.appendChild(option2);
                 strategySelect.appendChild(option3);
                 strategySelect.appendChild(option4);
                 strategySelect.appendChild(option5);
+                strategySelect.appendChild(option6);
             } else {
                 strategyDropdown.style.display = 'none';
                 extraParamsSection.style.display = 'none';
@@ -146,7 +160,7 @@
             if (strategy === '0502' || strategy === '0507') {
                 extraParamsSection.style.display = 'block';
                 productInfoSection.style.display = 'none';
-            } else if (strategy === '0509' || strategy === '0514' || strategy === '0502_auto' || strategy === '0502_manual' || strategy === '0511') {
+            } else if (strategy === '0509' || strategy === '0514' || strategy === '0502_auto' || strategy === '0502_manual' || strategy === '0511' || strategy === '0731') {
                 extraParamsSection.style.display = 'none';
                 productInfoSection.style.display = 'block';
             } else {
@@ -249,6 +263,9 @@
         <div id="product_info_section" class="extra-params" style="display: none;">
             <label for="product_info">产品信息:</label>
             <input type="text" id="product_info" name="product_info"><br><br>
+
+            <label for="budget">预算:</label>
+            <input type="number" id="budget" name="budget" step="0.01" placeholder="请输入预算"><br><br>
         </div>
 
         <button type="submit" style="display: block; margin: 0 auto;">提交</button>

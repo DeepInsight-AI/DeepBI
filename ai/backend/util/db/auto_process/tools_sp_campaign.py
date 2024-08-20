@@ -9,6 +9,7 @@ from decimal import Decimal
 from ai.backend.util.db.configuration.path import get_config_path
 from ai.backend.util.db.util.common import get_ad_my_credentials,get_proxies
 
+
 class CampaignTools:
     def __init__(self,brand):
         self.brand = brand
@@ -33,11 +34,13 @@ class CampaignTools:
         if result and result.payload["campaigns"]:
 
             print("list campaign success")
+            print(result)
             res = result.payload["campaigns"]
 
         else:
             print("list campaign failed:")
-            res = ["failed",""]
+            print(result)
+            res = None
         # 返回创建的 compaignID
         return res
     # 新建广告活动/系列
@@ -201,9 +204,21 @@ class CampaignTools:
             res = ["failed",""]
         # 返回创建的 compaignID
         return print(res)
-# ct=CampaignTools()
+
+
+
+
+# info = {
+#   "campaignIdFilter": {
+#     "include": [
+#       "165106868294863"
+#     ]
+#   }
+# }
+#
+# ct = CampaignTools('LAPASA')
 # #测试更新广告系列信息
-# res = ct.delete_campaigns_api(513351641797772,'NL')
+# res = ct.list_campaigns_api(info,'ES')
 # #print(type(res))
 # print(res)
 

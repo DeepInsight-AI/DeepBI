@@ -101,6 +101,7 @@
                 <option value="type6">0511策略</option>
                 <option value="type7">德国SD-ASIN衍生策略</option>
                 <option value="type8">0808策略</option>
+                <option value="type9">库存健康度策略</option>
             </select><br>
 
             <div id="parameters"></div> <!-- 用于放置参数输入框 -->
@@ -148,6 +149,9 @@
                     addInputField('产品信息:', 'product', 'text', parametersDiv);
                     // 添加产品类型下拉菜单
                     addSelectField('产品类型:', 'product_type', ['parent_asin', 'asin', 'sspu'], parametersDiv);
+                case 'type9':
+                    // 添加产品类型下拉菜单
+                    addSelectField('区域:', 'region_type', ['NA', 'EU', 'UK'], parametersDiv);
                     break;
                 default:
                     break;

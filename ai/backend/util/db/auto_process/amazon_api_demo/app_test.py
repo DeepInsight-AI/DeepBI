@@ -21,6 +21,7 @@ from ai.backend.util.db.db_amazon.sku_and_country_linked_four_ads_creation impor
 from ai.backend.util.db.db_amazon.SD_0511_Recommended_Product_Ad_Strategy import SdRecommendedProductAdStrategy
 from ai.backend.util.db.db_amazon.SD_ASIN_Derivative_Strategy_Query import SdAsinDerivativeStrategyQuery
 from ai.backend.util.db.db_amazon.SD_0808_Strategy import Sd0808Strategy
+from ai.backend.util.db.cal_healthy.main import run
 
 
 app = Flask(__name__)
@@ -345,6 +346,9 @@ def strategy_function():
                     csv_filepath = Sd0808Strategy(brand, country).get_0808_sd_ad(country, product_info,1)
                 elif product_type == 'sspu':
                     csv_filepath = Sd0808Strategy(brand, country).get_0808_sd_ad(country, product_info,2)
+            elif strategy_type == 'type9':
+                region = request.form['region_type']
+                csv_filepath = run(brand, country,  region)
             else:
                 return 'Invalid strategy type'
     #     # 将额外参数添加到params字典中

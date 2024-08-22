@@ -4,7 +4,7 @@
       "host": "192.168.2.123",
       "user": "wanghequan",
       "passwd": "WHq123123Aa",
-      "port": 3308,
+      "port": 3306,
       "db": "test_amazon_log",
       "charset": "utf8mb4",
       "use_unicode": true
@@ -15,7 +15,7 @@
       "host": "192.168.2.123",
       "user": "wanghequan",
       "passwd": "WHq123123Aa",
-      "port": 3308,
+      "port": 3306,
       "db": "amazon_log_bdzx",
       "charset": "utf8mb4",
       "use_unicode": true
@@ -26,7 +26,7 @@
       "host": "192.168.2.123",
       "user": "wanghequan",
       "passwd": "WHq123123Aa",
-      "port": 3308,
+      "port": 3306,
       "db": "amazon_log_outdoormaster",
       "charset": "utf8mb4",
       "use_unicode": true
@@ -37,7 +37,7 @@
       "host": "192.168.2.123",
       "user": "wanghequan",
       "passwd": "WHq123123Aa",
-      "port": 3308,
+      "port": 3306,
       "db": "amazon_log_bdzx_mudeela",
       "charset": "utf8mb4",
       "use_unicode": true
@@ -48,7 +48,7 @@
       "host": "192.168.2.123",
       "user": "wanghequan",
       "passwd": "WHq123123Aa",
-      "port": 3308,
+      "port": 3306,
       "db": "amazon_log_bdzx_rossny",
       "charset": "utf8mb4",
       "use_unicode": true
@@ -59,7 +59,7 @@
       "host": "192.168.2.123",
       "user": "wanghequan",
       "passwd": "WHq123123Aa",
-      "port": 3308,
+      "port": 3306,
       "db": "amazon_log_bdzx_zen_cave",
       "charset": "utf8mb4",
       "use_unicode": true
@@ -70,7 +70,7 @@
     "host": "192.168.2.123",
     "user": "wanghequan",
     "passwd": "WHq123123Aa",
-    "port": 3308,
+    "port": 3306,
     "db": "amazon_log_e_yeeger",
     "charset": "utf8mb4",
     "use_unicode": true
@@ -81,7 +81,7 @@
       "host": "192.168.2.123",
       "user": "wanghequan",
       "passwd": "WHq123123Aa",
-      "port": 3308,
+      "port": 3306,
       "db": "amazon_log_e_yeeger",
       "charset": "utf8mb4",
       "use_unicode": true
@@ -90,7 +90,7 @@
       "host": "192.168.2.123",
       "user": "wanghequan",
       "passwd": "WHq123123Aa",
-      "port": 3308,
+      "port": 3306,
       "db": "amazon_log_ruinadianzi_xx",
       "charset": "utf8mb4",
       "use_unicode": true
@@ -99,7 +99,7 @@
       "host": "192.168.2.123",
       "user": "wanghequan",
       "passwd": "WHq123123Aa",
-      "port": 3308,
+      "port": 3306,
       "db": "amazon_log_ruinadianzi_xx",
       "charset": "utf8mb4",
       "use_unicode": true
@@ -108,7 +108,7 @@
       "host": "192.168.2.123",
       "user": "wanghequan",
       "passwd": "WHq123123Aa",
-      "port": 3308,
+      "port": 3306,
       "db": "amazon_log_dongguanlangyeju",
       "charset": "utf8mb4",
       "use_unicode": true
@@ -119,7 +119,7 @@
       "host": "192.168.2.123",
       "user": "wanghequan",
       "passwd": "WHq123123Aa",
-      "port": 3308,
+      "port": 3306,
       "db": "amazon_log_e_yeeger",
       "charset": "utf8mb4",
       "use_unicode": true
@@ -128,7 +128,7 @@
       "host": "192.168.2.123",
       "user": "wanghequan",
       "passwd": "WHq123123Aa",
-      "port": 3308,
+      "port": 3306,
       "db": "amazon_log_ruinadianzi_xx",
       "charset": "utf8mb4",
       "use_unicode": true
@@ -137,7 +137,7 @@
       "host": "192.168.2.123",
       "user": "wanghequan",
       "passwd": "WHq123123Aa",
-      "port": 3308,
+      "port": 3306,
       "db": "amazon_log_ruinadianzi_xx",
       "charset": "utf8mb4",
       "use_unicode": true
@@ -146,7 +146,7 @@
       "host": "192.168.2.123",
       "user": "wanghequan",
       "passwd": "WHq123123Aa",
-      "port": 3308,
+      "port": 3306,
       "db": "amazon_log_ruinadianzi_xx",
       "charset": "utf8mb4",
       "use_unicode": true
@@ -155,7 +155,7 @@
       "host": "192.168.2.123",
       "user": "wanghequan",
       "passwd": "WHq123123Aa",
-      "port": 3308,
+      "port": 3306,
       "db": "amazon_log_ruinadianzi_dhy",
       "charset": "utf8mb4",
       "use_unicode": true
@@ -166,7 +166,7 @@
     "host": "192.168.2.123",
     "user": "wanghequan",
     "passwd": "WHq123123Aa",
-    "port": 3308,
+    "port": 3306,
     "db": "amazon_log_uuoeebb_global",
     "charset": "utf8mb4",
     "use_unicode": true
@@ -177,7 +177,7 @@
     "host": "192.168.2.123",
     "user": "wanghequan",
     "passwd": "WHq123123Aa",
-    "port": 3308,
+    "port": 3306,
     "db": "amazon_log_hejudianzi",
     "charset": "utf8mb4",
     "use_unicode": true
@@ -186,7 +186,7 @@
       "host": "192.168.2.123",
       "user": "wanghequan",
       "passwd": "WHq123123Aa",
-      "port": 3308,
+      "port": 3306,
       "db": "amazon_log_hejudianzi",
       "charset": "utf8mb4",
       "use_unicode": true
@@ -197,7 +197,7 @@
     "host": "192.168.2.123",
     "user": "wanghequan",
     "passwd": "WHq123123Aa",
-    "port": 3308,
+    "port": 3306,
     "db": "amazon_log_jiahezhimao",
     "charset": "utf8mb4",
     "use_unicode": true
@@ -208,7 +208,7 @@
     "host": "192.168.2.123",
     "user": "wanghequan",
     "passwd": "WHq123123Aa",
-    "port": 3308,
+    "port": 3306,
     "db": "amazon_log_jiahezhimao",
     "charset": "utf8mb4",
     "use_unicode": true
@@ -219,7 +219,7 @@
     "host": "192.168.2.123",
     "user": "wanghequan",
     "passwd": "WHq123123Aa",
-    "port": 3308,
+    "port": 3306,
     "db": "amazon_log_suihuooo",
     "charset": "utf8mb4",
     "use_unicode": true

@@ -75,6 +75,8 @@ AND market = '{}';
             return count
         except Exception as e:
             print("Error while get_new_create_campaign:", e)
+        finally:
+            self.connect_close()
 
     def get_new_create_campaign(self, market, date):
         try:
@@ -93,6 +95,8 @@ AND market = '{}';
             return count
         except Exception as e:
             print("Error while get_new_create_campaign:", e)
+        finally:
+            self.connect_close()
 
     def get_update_budget(self, market, date):
         try:
@@ -112,6 +116,8 @@ AND market = '{}';
             return count
         except Exception as e:
             print("Error while get_update_budget:", e)
+        finally:
+            self.connect_close()
 
     def get_update_targeting_group(self, market, date):
         try:
@@ -130,6 +136,8 @@ AND market = '{}';
             return count
         except Exception as e:
             print("Error while get_update_targeting_group:", e)
+        finally:
+            self.connect_close()
 
     def get_update_keyword(self, market, date):
         try:
@@ -160,6 +168,8 @@ AND market = '{}';
             return count
         except Exception as e:
             print("Error while get_update_keyword:", e)
+        finally:
+            self.connect_close()
 
     def get_update_sku(self, market, date):
         try:
@@ -178,6 +188,8 @@ AND market = '{}';
             return count
         except Exception as e:
             print("Error while get_update_targeting_group:", e)
+        finally:
+            self.connect_close()
 
     def get_operated_campaign(self, market, date):
         try:
@@ -196,6 +208,8 @@ AND  update_time >= ('{}' - INTERVAL 4 DAY)
             return count
         except Exception as e:
             print("Error while get_operated_campaign:", e)
+        finally:
+            self.connect_close()
 
     def get_operated_campaign_placement(self, market, date):
         try:
@@ -220,6 +234,8 @@ WHERE status = 'success'
             return df1['campaignId'].tolist(), df1['mapped_placement'].tolist()
         except Exception as e:
             print("Error while get_operated_campaign_placement:", e)
+        finally:
+            self.connect_close()
 
     def get_data_campaign(self, market, date):
         """查找广告活动预算的中间信息上传线上数据库"""
@@ -252,6 +268,8 @@ HAVING
             return df1['campaignName'].tolist(), df1['bid_adjust'].tolist()
         except Exception as e:
             print("Error while get_data_campaign:", e)
+        finally:
+            self.connect_close()
 
     def get_data_sku(self, market, date):
         """查找广告活动预算的中间信息上传线上数据库"""
@@ -284,6 +302,8 @@ GROUP BY
             return df1['campaignName'].tolist(), df1['advertisedSku'].tolist(), df1['type'].tolist()
         except Exception as e:
             print("Error while get_data_sku:", e)
+        finally:
+            self.connect_close()
 
     def get_data_campaign_placement(self, market, date):
         """查找广告活动预算的中间信息上传线上数据库"""
@@ -318,6 +338,8 @@ GROUP BY
             return df1['campaignName'].tolist(), df1['placementClassification'].tolist(), df1['bid_adjust'].tolist()
         except Exception as e:
             print("Error while get_data_campaign_placement:", e)
+        finally:
+            self.connect_close()
 
     def get_data_keyword(self, market, date):
         """查找广告活动预算的中间信息上传线上数据库"""
@@ -355,6 +377,8 @@ GROUP BY
             return df1['campaignName'].tolist(), df1['matchType'].tolist(), df1['keyword'].tolist(), df1['bid_adjust'].tolist()
         except Exception as e:
             print("Error while get_data_keyword:", e)
+        finally:
+            self.connect_close()
 
     def get_data_automatic_targeting(self, market, date):
         """查找广告活动预算的中间信息上传线上数据库"""
@@ -390,6 +414,8 @@ GROUP BY
             return df1['campaignName'].tolist(), df1['keyword'].tolist(), df1['bid_adjust'].tolist()
         except Exception as e:
             print("Error while get_data_automatic_targeting:", e)
+        finally:
+            self.connect_close()
 
     def get_data_product_targets(self, market, date):
         """查找广告活动预算的中间信息上传线上数据库"""
@@ -426,6 +452,8 @@ GROUP BY
             return df1['campaignName'].tolist(), df1['keyword'].tolist(), df1['bid_adjust'].tolist()
         except Exception as e:
             print("Error while get_data_product_targets:", e)
+        finally:
+            self.connect_close()
 
     def get_create_campaign(self, market, date):
         """查找广告活动创建的信息上传线上数据库"""
@@ -443,6 +471,8 @@ AND market = '{market}'
             return df1['campaign_name'].tolist(), df1['campaign_type'].tolist(), df1['budget'].tolist()
         except Exception as e:
             print("Error while get_create_campaign:", e)
+        finally:
+            self.connect_close()
 
     def get_create_adgroup(self, market, date):
         """查找广告活动创建的信息上传线上数据库"""
@@ -467,6 +497,8 @@ WHERE
             return df1['campaign_name'].tolist(), df1['adGroupName'].tolist(), df1['defaultBid'].tolist()
         except Exception as e:
             print("Error while get_create_adgroup:", e)
+        finally:
+            self.connect_close()
 
     def get_create_sku(self, market, date):
         """查找广告活动创建的信息上传线上数据库"""
@@ -490,6 +522,8 @@ WHERE
             return df1['campaign_name'].tolist(), df1['sku'].tolist()
         except Exception as e:
             print("Error while get_create_sku:", e)
+        finally:
+            self.connect_close()
 
     def get_create_keyword(self, market, date):
         """查找广告活动创建的信息上传线上数据库"""
@@ -515,6 +549,8 @@ WHERE
             return df1['campaign_name'].tolist(), df1['matchType'].tolist(), df1['keywordText_new'].tolist(), df1['bid'].tolist()
         except Exception as e:
             print("Error while get_create_keyword:", e)
+        finally:
+            self.connect_close()
 
     def get_create_product_targets(self, market, date):
         """查找广告活动创建的信息上传线上数据库"""
@@ -540,6 +576,8 @@ WHERE
             return df1['campaign_name'].tolist(), df1['expression'].tolist(), df1['bid'].tolist()
         except Exception as e:
             print("Error while get_create_product_targets:", e)
+        finally:
+            self.connect_close()
 # # 实例化AmazonMysqlRagUitl类
 # util = AmazonMysqlRagUitl('LAPASA')
 #

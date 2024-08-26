@@ -19,6 +19,15 @@
       "db": "amazon_log_bdzx",
       "charset": "utf8mb4",
       "use_unicode": true
+    },
+     "US": {
+    "host": "192.168.2.123",
+    "user": "wanghequan",
+    "passwd": "WHq123123Aa",
+    "port": 3306,
+    "db": "amazon_log_bdzx_delomo",
+    "charset": "utf8mb4",
+    "use_unicode": true
     }
   },
   "OutdoorMaster": {
@@ -221,6 +230,28 @@
     "passwd": "WHq123123Aa",
     "port": 3306,
     "db": "amazon_log_suihuooo",
+    "charset": "utf8mb4",
+    "use_unicode": true
+    }
+  },
+  "Gotoly": {
+    "US": {
+    "host": "192.168.2.123",
+    "user": "wanghequan",
+    "passwd": "WHq123123Aa",
+    "port": 3306,
+    "db": "amazon_log_gotoly",
+    "charset": "utf8mb4",
+    "use_unicode": true
+    }
+  },
+  "keimi": {
+    "US": {
+    "host": "192.168.2.123",
+    "user": "wanghequan",
+    "passwd": "WHq123123Aa",
+    "port": 3306,
+    "db": "amazon_log_keimi",
     "charset": "utf8mb4",
     "use_unicode": true
     }

@@ -43,13 +43,14 @@ users = {
     'syndesmos': 'syndesmos',
     'Gonbouyoku': 'Gonbouyoku',
     'gmrpwnage': 'gmrpwnage',
-    'suihuooo': 'suihuooo'
+    'suihuooo': 'suihuooo',
+    'Gotoly': 'Gotoly'
 }
 user_permissions = {
     'admin': {
         'brands': {
             'LAPASA': ['IT', 'ES', 'DE', 'FR', 'UK', 'US', 'JP'],
-            'DELOMO': ['IT', 'ES', 'DE', 'FR'],
+            'DELOMO': ['IT', 'ES', 'DE', 'FR', 'US'],
             'OutdoorMaster': ['IT', 'ES', 'FR', 'SE'],
             'MUDEELA': ['US'],
             'Rossny': ['US'],
@@ -61,7 +62,8 @@ user_permissions = {
             'syndesmos': ['DE', 'IT'],
             'Gonbouyoku': ['JP'],
             'gmrpwnage': ['JP'],
-            'suihuooo': ['US']
+            'suihuooo': ['US'],
+            'Gotoly': ['US']
         }
     },
     'LAPASA': {
@@ -71,7 +73,7 @@ user_permissions = {
     },
     'DELOMO': {
         'brands': {
-            'DELOMO': ['IT', 'ES', 'DE', 'FR']
+            'DELOMO': ['IT', 'ES', 'DE', 'FR', 'US']
         }
     },
     'OutdoorMaster': {
@@ -132,6 +134,11 @@ user_permissions = {
     'suihuooo': {
         'brands': {
             'suihuooo': ['US']
+        }
+    },
+    'Gotoly': {
+        'brands': {
+            'Gotoly': ['US']
         }
     }
 }
@@ -272,7 +279,7 @@ def process_create():
                 elif params_create['strategy'] == "0514":
                     api2.create_new_sp_asin_no_template(params_create['country'], info, params_create['brand'], params_create['budget'], params_create['bid'])
                 elif params_create['strategy'] == "0502_auto":
-                    if params_create['brand'] == "Veement" or params_create['brand'] == "KAPEYDESI" or params_create['brand'] == "Gvyugke" or params_create['brand'] == "Uuoeebb" or params_create['brand'] == "syndesmos" or params_create['brand'] == "Gonbouyoku" or params_create['brand'] == "gmrpwnage":
+                    if params_create['brand'] == "Veement" or params_create['brand'] == "KAPEYDESI" or params_create['brand'] == "Gvyugke" or params_create['brand'] == "Uuoeebb" or params_create['brand'] == "syndesmos" or params_create['brand'] == "Gonbouyoku" or params_create['brand'] == "gmrpwnage" or params_create['brand'] == "suihuooo":
                         api2.create_new_sp_auto_no_template_jiutong(params_create['country'], info, params_create['brand'], params_create['budget'])
                     else:
                         api2.create_new_sp_auto_no_template(params_create['country'], info, params_create['brand'], params_create['budget'], params_create['bid'])
@@ -486,7 +493,7 @@ def modify_function():
                 api1 = Ceate_new_sd()
                 api2 = Ceate_new_sku()
                 if params_modify['strategy'] == "0502":
-                    if params_modify['brand'] == "Veement" or params_modify['brand'] == "KAPEYDESI" or params_modify['brand'] == "Gvyugke" or params_modify['brand'] == "Uuoeebb" or params_modify['brand'] == "syndesmos" or params_modify['brand'] == "Gonbouyoku" or params_modify['brand'] == "gmrpwnage":
+                    if params_modify['brand'] == "Veement" or params_modify['brand'] == "KAPEYDESI" or params_modify['brand'] == "Gvyugke" or params_modify['brand'] == "Uuoeebb" or params_modify['brand'] == "syndesmos" or params_modify['brand'] == "Gonbouyoku" or params_modify['brand'] == "gmrpwnage" or params_modify['brand'] == "suihuooo" or params_modify['brand'] == "Gotoly":
                         api2.create_new_sp_manual_no_template_jiutong(params_modify['country'],params_modify['brand'],csv_path,params_modify['budget'])
                     else:
                         def run_async_operation():

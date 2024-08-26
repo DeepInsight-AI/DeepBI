@@ -543,6 +543,111 @@ LIMIT 1
         except Exception as e:
             print(f"Error occurred when select_product_sku_by_asin: {e}")
 
+    def select_sp_campaignid_search_term_jiutong(self, market, curtime, campaignid):
+        try:
+            conn = self.conn
+            query = """
+WITH Campaign_Stats AS (
+    SELECT
+        acr.campaignId,
+        acr.campaignName,
+        acr.campaignBudgetAmount AS Budget,
+        acr.market,
+        SUM(CASE WHEN acr.date = DATE_SUB('{}', INTERVAL 2 DAY) THEN acr.cost ELSE 0 END) AS cost_yesterday,
+        SUM(CASE WHEN acr.date = DATE_SUB('{}', INTERVAL 2 DAY) THEN acr.clicks ELSE 0 END) AS clicks_yesterday,
+        SUM(CASE WHEN acr.date = DATE_SUB('{}', INTERVAL 2 DAY) THEN acr.sales14d ELSE 0 END) AS sales_yesterday,
+        SUM(CASE WHEN acr.date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 6 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN acr.cost ELSE 0 END) AS total_cost_7d,
+        SUM(CASE WHEN acr.date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 6 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN acr.sales14d ELSE 0 END) AS total_sales14d_7d,
+        SUM(CASE WHEN acr.date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 29 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN acr.cost ELSE 0 END) AS total_cost_30d,
+        SUM(CASE WHEN acr.date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 29 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN acr.sales14d ELSE 0 END) AS total_sales14d_30d,
+        SUM(CASE WHEN acr.date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 29 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN acr.clicks ELSE 0 END) AS total_clicks_30d,
+        SUM(CASE WHEN acr.date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 6 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN acr.clicks ELSE 0 END) AS total_clicks_7d,
+        SUM(CASE WHEN acr.date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 29 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN acr.cost ELSE 0 END) / NULLIF(SUM(CASE WHEN acr.date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 29 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN acr.sales14d ELSE 0 END), 0) AS ACOS_30d,
+        SUM(CASE WHEN acr.date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 6 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN acr.cost ELSE 0 END) / NULLIF(SUM(CASE WHEN acr.date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 6 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN acr.sales14d ELSE 0 END), 0) AS ACOS_7d,
+        SUM(CASE WHEN acr.date = '{}' - INTERVAL 2 DAY THEN acr.cost ELSE 0 END) / NULLIF(SUM(CASE WHEN acr.date = '{}' - INTERVAL 2 DAY THEN acr.sales14d ELSE 0 END), 0)  AS ACOS_yesterday
+    FROM
+        amazon_campaign_reports_sp acr
+    JOIN amazon_campaigns_list_sp acl ON acr.campaignId = acl.campaignId
+    WHERE
+        acr.date BETWEEN DATE_SUB('{}', INTERVAL 30 DAY)
+        AND ('{}' - INTERVAL 1 DAY)
+        AND acr.campaignId IN (SELECT campaignId FROM amazon_campaign_reports_sp WHERE campaignStatus = 'ENABLED' AND date = '{}' - INTERVAL 1 DAY )
+        AND acr.market = '{}'
+    GROUP BY
+        acr.campaignName
+),
+b AS (
+    SELECT
+        SUM(reports.cost) / SUM(reports.sales14d) AS country_avg_ACOS_1m,
+        reports.market
+    FROM
+        amazon_campaign_reports_sp AS reports
+    INNER JOIN amazon_campaigns_list_sp AS campaigns ON reports.campaignId = campaigns.campaignId
+    WHERE
+        reports.date BETWEEN DATE_SUB('{}', INTERVAL 30 DAY)
+        AND ('{}' - INTERVAL 1 DAY)
+        AND campaigns.campaignId IN (SELECT campaignId FROM amazon_campaign_reports_sp WHERE campaignStatus = 'ENABLED' AND date = '{}' - INTERVAL 1 DAY)
+        AND reports.market = '{}'
+    GROUP BY
+        reports.market
+),
+TargetCampaignIds AS (
+    SELECT DISTINCT campaignId, adGroupId
+    FROM amazon_sp_productads_list AS T1
+    WHERE EXISTS (
+        SELECT 1
+        FROM amazon_sp_productads_list AS T2
+        WHERE T2.campaignId = {}
+          AND T2.market = '{}'
+          AND T2.asin = T1.asin
+      )
+      AND EXISTS (
+        SELECT 1
+        FROM amazon_keywords_list_sp AS T4
+        WHERE T4.campaignId = T1.campaignId
+          AND T4.market = '{}'
+          AND T4.keywordText != '(_targeting_auto_)'
+          AND T4.extendedData_servingStatus ='TARGETING_CLAUSE_STATUS_LIVE'
+      )
+    GROUP BY T1.campaignId, T1.adGroupId
+    HAVING COUNT(DISTINCT CASE WHEN T1.campaignId = {} THEN T1.asin ELSE NULL END) * 1.0 / COUNT(DISTINCT T1.asin) <= 0.5
+),
+CampaignStatsResult AS (
+  SELECT
+    tci.adGroupId, --  从TargetCampaignIds中选择adGroupId, 放置在campaignId之前
+    cs.*,
+    b.country_avg_ACOS_1m
+  FROM
+    Campaign_Stats cs
+  JOIN b ON cs.market = b.market
+  JOIN TargetCampaignIds tci ON cs.campaignId = tci.campaignId
+  WHERE
+    cs.campaignId IN (SELECT campaignId FROM TargetCampaignIds)
+    AND cs.campaignName LIKE '%Deep%'
+)
+SELECT
+    *
+FROM
+    CampaignStatsResult
+ORDER BY
+    total_sales14d_30d DESC
+LIMIT 1
+                    """.format(curtime, curtime, curtime, curtime, curtime, curtime, curtime, curtime, curtime,
+                               curtime,
+                               curtime, curtime, curtime, curtime, curtime, curtime, curtime, curtime, curtime,
+                               curtime,
+                               curtime, curtime, curtime, curtime, curtime, curtime, curtime, curtime, market,
+                               curtime, curtime, curtime, market, campaignid, market, market, campaignid)
+            df = pd.read_sql(query, con=conn)
+            if df.empty:
+                print("No campaignId")
+                return None, None, None
+            else:
+                print("select campaignId success")
+                return df.loc[0, 'campaignId'], df.loc[0, 'campaignName'], df.loc[0, 'adGroupId']
+        except Exception as e:
+            print(f"Error occurred when select_product_sku_by_asin: {e}")
+
     def select_sp_asin_campaignid_search_term(self, market, curtime, campaignid):
         try:
             conn = self.conn
@@ -604,6 +709,110 @@ WHERE T3.targetingType = 'MANUAL' AND T3.state = 'ENABLED'
       AND T2.asin = T1.asin
   )
   AND (T3.campaign_name LIKE '%0514%' OR T3.campaign_name LIKE '%ASIN%')
+GROUP BY T1.adGroupId,T3.campaign_name, T3.state
+HAVING COUNT(DISTINCT CASE WHEN T1.campaignId = '{campaignid}' THEN T1.asin ELSE NULL END) * 1.0 / COUNT(DISTINCT T1.asin) <= 0.5
+),
+CampaignStatsResult AS (
+  SELECT
+    cs.*,
+    b.country_avg_ACOS_1m
+FROM
+    Campaign_Stats cs
+JOIN b ON cs.market = b.market
+WHERE
+  cs.campaignId IN (SELECT campaignId FROM TargetCampaignIds)
+  AND (SELECT COUNT(DISTINCT campaignId) FROM TargetCampaignIds) = 1
+UNION ALL
+SELECT
+    cs.*,
+    b.country_avg_ACOS_1m
+FROM
+    Campaign_Stats cs
+JOIN b ON cs.market = b.market
+JOIN TargetCampaignIds tci ON cs.campaignId = tci.campaignId
+WHERE (SELECT COUNT(DISTINCT campaignId) FROM TargetCampaignIds) > 1 AND (cs.ACOS_30d <= 0.36 OR cs.ACOS_30d IS NULL)
+)
+SELECT
+    tci.adGroupId,
+    cs.*
+FROM
+    CampaignStatsResult cs
+LEFT JOIN TargetCampaignIds tci ON cs.campaignId = tci.campaignId
+ORDER BY
+    total_sales14d_30d DESC
+LIMIT 1;
+                    """
+            df = pd.read_sql(query, con=conn)
+            if df.empty:
+                print("No campaignId")
+                return None, None, None
+            else:
+                print("select campaignId success")
+                return df.loc[0, 'campaignId'], df.loc[0, 'campaignName'], df.loc[0, 'adGroupId']
+        except Exception as e:
+            print(f"Error occurred when select_product_sku_by_asin: {e}")
+
+    def select_sp_asin_campaignid_search_term_jiutong(self, market, curtime, campaignid):
+        try:
+            conn = self.conn
+            query = f"""
+WITH Campaign_Stats AS (
+    SELECT
+        acr.campaignId,
+        acr.campaignName,
+        acr.campaignBudgetAmount AS Budget,
+        acr.market,
+        SUM(CASE WHEN acr.date = DATE_SUB('{curtime}', INTERVAL 2 DAY) THEN acr.cost ELSE 0 END) AS cost_yesterday,
+        SUM(CASE WHEN acr.date = DATE_SUB('{curtime}', INTERVAL 2 DAY) THEN acr.clicks ELSE 0 END) AS clicks_yesterday,
+        SUM(CASE WHEN acr.date = DATE_SUB('{curtime}', INTERVAL 2 DAY) THEN acr.sales14d ELSE 0 END) AS sales_yesterday,
+        SUM(CASE WHEN acr.date BETWEEN DATE_SUB('{curtime}' - INTERVAL 1 DAY, INTERVAL 6 DAY) AND DATE_SUB('{curtime}', INTERVAL 1 DAY) THEN acr.cost ELSE 0 END) AS total_cost_7d,
+        SUM(CASE WHEN acr.date BETWEEN DATE_SUB('{curtime}' - INTERVAL 1 DAY, INTERVAL 6 DAY) AND DATE_SUB('{curtime}', INTERVAL 1 DAY) THEN acr.sales14d ELSE 0 END) AS total_sales14d_7d,
+        SUM(CASE WHEN acr.date BETWEEN DATE_SUB('{curtime}' - INTERVAL 1 DAY, INTERVAL 29 DAY) AND DATE_SUB('{curtime}', INTERVAL 1 DAY) THEN acr.cost ELSE 0 END) AS total_cost_30d,
+        SUM(CASE WHEN acr.date BETWEEN DATE_SUB('{curtime}' - INTERVAL 1 DAY, INTERVAL 29 DAY) AND DATE_SUB('{curtime}', INTERVAL 1 DAY) THEN acr.sales14d ELSE 0 END) AS total_sales14d_30d,
+        SUM(CASE WHEN acr.date BETWEEN DATE_SUB('{curtime}' - INTERVAL 1 DAY, INTERVAL 29 DAY) AND DATE_SUB('{curtime}', INTERVAL 1 DAY) THEN acr.clicks ELSE 0 END) AS total_clicks_30d,
+        SUM(CASE WHEN acr.date BETWEEN DATE_SUB('{curtime}' - INTERVAL 1 DAY, INTERVAL 6 DAY) AND DATE_SUB('{curtime}', INTERVAL 1 DAY) THEN acr.clicks ELSE 0 END) AS total_clicks_7d,
+        SUM(CASE WHEN acr.date BETWEEN DATE_SUB('{curtime}' - INTERVAL 1 DAY, INTERVAL 29 DAY) AND DATE_SUB('{curtime}', INTERVAL 1 DAY) THEN acr.cost ELSE 0 END) / NULLIF(SUM(CASE WHEN acr.date BETWEEN DATE_SUB('{curtime}' - INTERVAL 1 DAY, INTERVAL 29 DAY) AND DATE_SUB('{curtime}', INTERVAL 1 DAY) THEN acr.sales14d ELSE 0 END), 0) AS ACOS_30d,
+        SUM(CASE WHEN acr.date BETWEEN DATE_SUB('{curtime}' - INTERVAL 1 DAY, INTERVAL 6 DAY) AND DATE_SUB('{curtime}', INTERVAL 1 DAY) THEN acr.cost ELSE 0 END) / NULLIF(SUM(CASE WHEN acr.date BETWEEN DATE_SUB('{curtime}' - INTERVAL 1 DAY, INTERVAL 6 DAY) AND DATE_SUB('{curtime}', INTERVAL 1 DAY) THEN acr.sales14d ELSE 0 END), 0) AS ACOS_7d,
+        SUM(CASE WHEN acr.date = '{curtime}' - INTERVAL 2 DAY THEN acr.cost ELSE 0 END) / NULLIF(SUM(CASE WHEN acr.date = '{curtime}' - INTERVAL 2 DAY THEN acr.sales14d ELSE 0 END), 0)  AS ACOS_yesterday
+    FROM
+        amazon_campaign_reports_sp acr
+    JOIN amazon_campaigns_list_sp acl ON acr.campaignId = acl.campaignId
+    WHERE
+        acr.date BETWEEN DATE_SUB('{curtime}', INTERVAL 30 DAY)
+        AND ('{curtime}' - INTERVAL 1 DAY)
+        AND acr.campaignId IN (SELECT campaignId FROM amazon_campaign_reports_sp WHERE campaignStatus = 'ENABLED' AND date = '{curtime}' - INTERVAL 1 DAY )
+        AND acr.market = '{market}'
+    GROUP BY
+        acr.campaignName
+),
+b AS (
+    SELECT
+        SUM(reports.cost) / SUM(reports.sales14d) AS country_avg_ACOS_1m,
+        reports.market
+    FROM
+        amazon_campaign_reports_sp AS reports
+    INNER JOIN amazon_campaigns_list_sp AS campaigns ON reports.campaignId = campaigns.campaignId
+    WHERE
+        reports.date BETWEEN DATE_SUB('{curtime}', INTERVAL 30 DAY)
+        AND ('{curtime}' - INTERVAL 1 DAY)
+        AND campaigns.campaignId IN (SELECT campaignId FROM amazon_campaign_reports_sp WHERE campaignStatus = 'ENABLED' AND date = '{curtime}' - INTERVAL 1 DAY)
+        AND reports.market = '{market}'
+    GROUP BY
+        reports.market
+),
+TargetCampaignIds AS (
+SELECT DISTINCT T1.adGroupId, T3.campaignId, T3.targetingType, T3.campaign_name, T3.state AS campaignStatus
+FROM amazon_sp_productads_list AS T1
+INNER JOIN amazon_campaigns_list_sp AS T3 ON T1.campaignId = T3.campaignId AND T3.market = '{market}'
+WHERE T3.targetingType = 'MANUAL' AND T3.state = 'ENABLED'
+  AND EXISTS (
+    SELECT 1
+    FROM amazon_sp_productads_list AS T2
+    WHERE T2.campaignId = '{campaignid}'
+      AND T2.market = '{market}'
+      AND T2.asin = T1.asin
+  )
+  AND (T3.campaign_name LIKE '%0514%')
 GROUP BY T1.adGroupId,T3.campaign_name, T3.state
 HAVING COUNT(DISTINCT CASE WHEN T1.campaignId = '{campaignid}' THEN T1.asin ELSE NULL END) * 1.0 / COUNT(DISTINCT T1.asin) <= 0.5
 ),

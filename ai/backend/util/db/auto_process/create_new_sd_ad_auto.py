@@ -241,7 +241,7 @@ class Ceate_new_sd:
     def create_new_sd_no_template(self,market,info,brand_name,budget,target_bid):
         exchange_rate = self.get_exchange_rate(market,'DE')
         for i in info:
-            name1 = f"DeepBI_0509_{i}"
+            name1 = f"DeepBI_0509-{i}"
             ct = CampaignTools(brand_name)
             res = ct.list_all_campaigns_api(market)
             #if len(res) == 0:
@@ -254,7 +254,7 @@ class Ceate_new_sd:
             # if res[0] == "success":
             #     continue
             # else:
-                name = f"DeepBI_0509_{i}"
+                name = f"DeepBI_0509-{i}"
                 today = datetime.today()
                 # 格式化输出
                 startDate = today.strftime('%Y%m%d')

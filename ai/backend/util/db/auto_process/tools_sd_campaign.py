@@ -247,6 +247,6 @@ class CampaignTools:
 #     }
 #   ]
 # }
-# ct=CampaignTools('LAPASA')
-# res = ct.list_all_campaigns_api('IT')
+# ct=CampaignTools('KAPEYDESI')
+# res = ct.list_all_campaigns_api('DE')
 # print(res)

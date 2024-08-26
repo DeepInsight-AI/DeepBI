@@ -13,17 +13,17 @@ class ProcessShowData():
         },
         'pre': {
             'INSERT_SECRATE': "69c5fcebaa65b560eaf06c3fbeb481ae44b8d618",
-            'ONLINE_URL': "https://192.168.5.165:8000/api/data/"
+            'ONLINE_URL': "http://192.168.5.165:5009/api/data/"
         }
     }
 
     # 默认使用生产环境
-    environment = 'test'
+    environment = 'pre'
 
     @classmethod
     def set_debug_mode(cls, debug):
         """根据debug状态设置环境"""
-        cls.environment = 'test'
+        cls.environment = 'pre'
 
     @classmethod
     def sha1(cls, input_string):
@@ -78,19 +78,29 @@ class ProcessShowData():
     #         return False
     #     return cls.post_data(data, "delete")
 
-if __name__ == "__main__":
-    # 要发送的JSON数据
-    update_data = {
-        "brand": "LAPASA",
-        "market": "DE",
-        "require": "bid",
-        "position": "placement",
-        "type": "SP",
-        "ID": "438171503570439",
-        "text": "10",
-        "placement": "PLACEMENT_REST_OF_SEARCH"
-    }
-
-    res = ProcessShowData.update(update_data)
-    print(res)
-
+# if __name__ == "__main__":
+#     # 要发送的JSON数据
+#     update_data = {
+#         "brand": "LAPASA",
+#         "market": "DE",
+#         "require": "bid",
+#         "position": "placement",
+#         "type": "SP",
+#         "ID": "438171503570439",
+#         "text": "10",
+#         "placement": "PLACEMENT_REST_OF_SEARCH"
+#     }
+#
+#     res = ProcessShowData.update(update_data)
+#     print(res)
+# add_data = {
+#     "brand": "LAPASA",
+#     "market": "DE",
+#     "type": "SP",
+#     "strategy": "manual",
+#     "replication": "False",
+#     "text": {"parent_asin1":[{"keyword":keyword1,"matchType":matchType1,"bid":bid1},{},{}],"parent_asin2":[{},{},{}]}
+#     "budget":"10"
+# }
+# res = ProcessShowData.create(add_data)
+# print(res)

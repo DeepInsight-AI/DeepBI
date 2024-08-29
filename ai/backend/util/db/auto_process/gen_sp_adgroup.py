@@ -337,10 +337,11 @@ class Gen_adgroup:
         if apires[0]=="success":
             newdbtool.add_sd_adGroup_Targeting(market, new_adgroup_id, None, "Negative", "ENABLED", expression, "SP",
                                                "success", datetime.now())
+            return apires[1]["targetId"]
         else:
             newdbtool.add_sd_adGroup_Targeting(market, new_adgroup_id, None, "Negative", "ENABLED", expression, "SP",
                                                "failed", datetime.now())
-        return apires[1]["targetId"]
+            return None
 
 # ASIN = 'b00eea9zks'
 # Gen_adgroup('syndesmos').update_adgroup_v0('DE',None,'361896893484449','ENABLED',0.25)

@@ -255,6 +255,48 @@
     "charset": "utf8mb4",
     "use_unicode": true
     }
+  },
+  "us1": {
+    "US": {
+      "host": "192.168.2.123",
+      "user": "wanghequan",
+      "passwd": "WHq123123Aa",
+      "port": 3306,
+      "db": "amazon_log_us1",
+      "charset": "utf8mb4",
+      "use_unicode": true
+    }
+  },
+  "us2": {
+    "US": {
+      "host": "192.168.2.123",
+      "user": "wanghequan",
+      "passwd": "WHq123123Aa",
+      "port": 3306,
+      "db": "amazon_log_us2",
+      "charset": "utf8mb4",
+      "use_unicode": true
+    }
+  },
+  "eu": {
+    "DE": {
+      "host": "192.168.2.123",
+      "user": "wanghequan",
+      "passwd": "WHq123123Aa",
+      "port": 3306,
+      "db": "amazon_log_eu",
+      "charset": "utf8mb4",
+      "use_unicode": true
+    },
+    "UK": {
+      "host": "192.168.2.123",
+      "user": "wanghequan",
+      "passwd": "WHq123123Aa",
+      "port": 3306,
+      "db": "amazon_log_eu",
+      "charset": "utf8mb4",
+      "use_unicode": true
+    }
   }
 }
 

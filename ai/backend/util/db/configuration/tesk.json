@@ -1,0 +1,291 @@
+{"LAPASA" : [
+              {
+                  "state": 0,
+                  "country": "US",
+                  "timezone_offset": "-07:00",
+                  "sales_channel": "Amazon.com"
+              },
+              {
+                  "state": 0,
+                  "country": "UK",
+                  "timezone_offset": "+01:00",
+                  "sales_channel": "Amazon.co.uk"
+              },
+              {
+                  "state": 0,
+                  "country": "DE",
+                  "timezone_offset": "+02:00",
+                  "sales_channel": "Amazon.de"
+              },
+              {
+                  "state": 0,
+                  "country": "FR",
+                  "timezone_offset": "+02:00",
+                  "sales_channel": "Amazon.fr"
+              },
+              {
+                  "state": 0,
+                  "country": "IT",
+                  "timezone_offset": "+02:00",
+                  "sales_channel": "Amazon.it"
+              },
+              {
+                  "state": 0,
+                  "country": "ES",
+                  "timezone_offset": "+02:00",
+                  "sales_channel": "Amazon.es"
+              },
+              {
+                  "state": 0,
+                  "country": "JP",
+                  "timezone_offset": "+09:00",
+                  "sales_channel": "Amazon.co.jp"
+              },
+              {
+                  "state": 0,
+                  "country": "SE",
+                  "timezone_offset": "+02:00",
+                  "sales_channel": "Amazon.se"
+              },
+              {
+                  "state": 0,
+                  "country": "NL",
+                  "timezone_offset": "+02:00",
+                  "sales_channel": "Amazon.nl"
+              },
+              {
+                  "state": 1,
+                  "region": "EU",
+                  "config": "FR",
+                  "country": ["FR","DE","ES","IT"],
+                  "timezone_offset": "+02:00",
+                  "sales_channel": ["Amazon.fr","Amazon.es","Amazon.it","Amazon.de"]
+              }
+          ],
+  "OutdoorMaster" : [
+              {
+                  "state": 0,
+                  "country": "FR",
+                  "timezone_offset": "+02:00",
+                  "sales_channel": "Amazon.fr"
+              },
+              {
+                  "state": 0,
+                  "country": "IT",
+                  "timezone_offset": "+02:00",
+                  "sales_channel": "Amazon.it"
+              },
+              {
+                  "state": 0,
+                  "country": "ES",
+                  "timezone_offset": "+02:00",
+                  "sales_channel": "Amazon.es"
+              },
+              {
+                  "state": 0,
+                  "country": "SE",
+                  "timezone_offset": "+02:00",
+                  "sales_channel": "Amazon.se"
+              },
+              {
+                  "state": 1,
+                  "region": "EU",
+                  "config": "FR",
+                  "country": ["FR","IT","ES"],
+                  "timezone_offset": "+02:00",
+                  "sales_channel": ["Amazon.fr","Amazon.es","Amazon.it"]
+              }
+          ],
+  "DELOMO" : [
+              {
+                  "state": 0,
+                  "country": "FR",
+                  "timezone_offset": "+02:00",
+                  "sales_channel": "Amazon.fr"
+              },
+              {
+                  "state": 0,
+                  "country": "IT",
+                  "timezone_offset": "+02:00",
+                  "sales_channel": "Amazon.it"
+              },
+              {
+                  "state": 0,
+                  "country": "ES",
+                  "timezone_offset": "+02:00",
+                  "sales_channel": "Amazon.es"
+              },
+              {
+                  "state": 0,
+                  "country": "DE",
+                  "timezone_offset": "+02:00",
+                  "sales_channel": "Amazon.de"
+              },
+              {
+                  "state": 1,
+                  "region": "EU",
+                  "config": "FR",
+                  "country": ["FR","DE","ES","IT"],
+                  "timezone_offset": "+02:00",
+                  "sales_channel": ["Amazon.fr","Amazon.es","Amazon.it","Amazon.de"]
+              }
+          ],
+  "MUDEELA" : [
+              {
+                  "state": 0,
+                  "country": "US",
+                  "config": "US",
+                  "timezone_offset": "-07:00",
+                  "sales_channel": "Amazon.com"
+              }
+          ],
+  "Rossny" : [
+              {
+                  "state": 0,
+                  "country": "US",
+                  "config": "US",
+                  "timezone_offset": "-07:00",
+                  "sales_channel": "Amazon.com"
+              }
+          ],
+  "ZEN CAVE" : [
+              {
+                  "state": 0,
+                  "country": "US",
+                  "config": "US",
+                  "timezone_offset": "-07:00",
+                  "sales_channel": "Amazon.com"
+              }
+          ],
+  "Veement" : [
+              {
+                  "state": 0,
+                  "country": "UK",
+                  "config": "UK",
+                  "timezone_offset": "+01:00",
+                  "sales_channel": "Amazon.co.uk"
+              }
+          ],
+  "KAPEYDESI" : [
+              {
+                  "state": 0,
+                  "country": "SA",
+                  "config": "SA",
+                  "timezone_offset": "+03:00",
+                  "sales_channel": "Amazon.sa"
+              }
+          ],
+  "Gvyugke" : [
+              {
+                  "state": 0,
+                  "country": "AU",
+                  "config": "AU",
+                  "timezone_offset": "+10:00",
+                  "sales_channel": "Amazon.com.au"
+              }
+          ],
+  "Uuoeebb" : [
+              {
+                  "state": 0,
+                  "country": "US",
+                  "config": "US",
+                  "timezone_offset": "-07:00",
+                  "sales_channel": "Amazon.com"
+              }
+          ],
+  "Gonbouyoku" : [
+              {
+                  "state": 0,
+                  "country": "JP",
+                  "config": "JP",
+                  "timezone_offset": "+09:00",
+                  "sales_channel": "Amazon.co.jp"
+              }
+          ],
+  "syndesmos" : [
+              {
+                  "state": 0,
+                  "country": "IT",
+                  "timezone_offset": "+02:00",
+                  "sales_channel": "Amazon.it"
+              },
+              {
+                  "state": 0,
+                  "country": "DE",
+                  "timezone_offset": "+02:00",
+                  "sales_channel": "Amazon.de"
+              },
+              {
+                  "state": 1,
+                  "region": "EU",
+                  "config": "DE",
+                  "country": ["DE","IT"],
+                  "timezone_offset": "+02:00",
+                  "sales_channel": ["Amazon.it","Amazon.de"]
+              }
+          ],
+  "suihuooo" : [
+              {
+                  "state": 0,
+                  "country": "US",
+                  "config": "US",
+                  "timezone_offset": "-07:00",
+                  "sales_channel": "Amazon.com"
+              }
+          ],
+  "TEST" : [
+              {
+                  "state": 0,
+                  "country": "FR",
+                  "timezone_offset": "+02:00",
+                  "sales_channel": "Amazon.fr"
+              },
+              {
+                  "state": 0,
+                  "country": "IT",
+                  "timezone_offset": "+02:00",
+                  "sales_channel": "Amazon.it"
+              },
+              {
+                  "state": 0,
+                  "country": "DE",
+                  "timezone_offset": "+02:00",
+                  "sales_channel": "Amazon.de"
+              },
+              {
+                  "state": 1,
+                  "region": "EU",
+                  "config": "FR",
+                  "country": ["FR","DE","IT"],
+                  "timezone_offset": "+02:00",
+                  "sales_channel": ["Amazon.fr","Amazon.it","Amazon.de"]
+              }
+          ],
+  "Gotoly" : [
+              {
+                  "state": 0,
+                  "country": "US",
+                  "config": "US",
+                  "timezone_offset": "-07:00",
+                  "sales_channel": "Amazon.com"
+              }
+          ],
+  "keimi" : [
+              {
+                  "state": 0,
+                  "country": "US",
+                  "config": "US",
+                  "timezone_offset": "-07:00",
+                  "sales_channel": "Amazon.com"
+              }
+          ],
+  "TEST2" : [
+              {
+                  "state": 0,
+                  "country": "US",
+                  "config": "US",
+                  "timezone_offset": "-07:00",
+                  "sales_channel": "Amazon.com"
+              }
+          ]
+}

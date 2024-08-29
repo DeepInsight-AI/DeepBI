@@ -2,8 +2,9 @@ import asyncio
 import json
 import threading
 import time
-
-from flask import Flask, request, session, render_template, redirect, flash, jsonify, send_file
+import logging
+from logging.handlers import RotatingFileHandler
+from flask import Flask, request, session, render_template, redirect, flash, jsonify, send_file, g
 from datetime import datetime
 from util.access_param import access_param,access_param_self
 import pandas as pd
@@ -27,6 +28,12 @@ from ai.backend.util.db.cal_healthy.main import run
 app = Flask(__name__)
 app.config['SECRET_KEY'] = '3c2d9d261a464e4e8814c5a39aa72f1c'
 lock = threading.Lock()
+# 设置日志记录器
+handler = RotatingFileHandler('app.log', maxBytes=10000, backupCount=1)
+handler.setLevel(logging.INFO)
+formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
+handler.setFormatter(formatter)
+app.logger.addHandler(handler)
 
 users = {
     'admin': 'A123123a',
@@ -650,6 +657,31 @@ def modify_function():
         except Exception as e:
             print(e)
             return jsonify({"status": "error", "message": str(e)}), 500
+
+
+@app.before_request
+def before_request():
+    g.start_time = time.time()
+    g.request_data = {
+        'method': request.method,
+        'url': request.url,
+        'headers': dict(request.headers),
+        'data': request.get_data(as_text=True)
+    }
+
+@app.after_request
+def after_request(response):
+    elapsed_time = time.time() - g.start_time
+    log_data = {
+        'method': g.request_data['method'],
+        'url': g.request_data['url'],
+        'status': response.status,
+        'elapsed_time': elapsed_time,
+        'headers': g.request_data['headers'],
+        'data': g.request_data['data']
+    }
+    app.logger.info(f"Request Info: {log_data}")
+    return response
 
 
 if __name__ == '__main__':

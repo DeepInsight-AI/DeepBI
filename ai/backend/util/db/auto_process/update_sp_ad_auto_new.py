@@ -137,8 +137,8 @@ class auto_api:
                 else:
                     api.add_keyword_toadGroup_v0(market, str(campaign_id), str(adGroupId), searchTerm, matchType="EXACT", state="ENABLED", bid=float(CPC_30d))
                     api.add_keyword_toadGroup_v0(market, str(campaign_id), str(adGroupId), searchTerm, matchType="PHRASE", state="ENABLED", bid=float(CPC_30d))
-                    api.add_keyword_toadGroup_v0(market, str(campaign_id), str(adGroupId), searchTerm, matchType="BROAD",
-                                                 state="ENABLED", bid=float(CPC_30d))
+                    # api.add_keyword_toadGroup_v0(market, str(campaign_id), str(adGroupId), searchTerm, matchType="BROAD",
+                    #                              state="ENABLED", bid=float(CPC_30d))
 
     def add_sp_ad_auto_searchTerm_keyword(self,market, path):
         uploaded_file = path
@@ -159,6 +159,8 @@ class auto_api:
                         adGroupId = item["new_adGroupId"]
                         searchTerm = item["searchTerm"]
                         CPC_30d = item["CPC_30d"]
+                        if CPC_30d == '' or not CPC_30d:
+                            CPC_30d = 0.5*self.exchange_rate
                         # try:
                         #     bid_info = apitool1.list_product_bid_recommendations(market, searchTerm.upper(),
                         #                                                          str(int(campaignId)),
@@ -179,6 +181,9 @@ class auto_api:
                         adGroupId = item["new_adGroupId"]
                         searchTerm = item["searchTerm"]
                         CPC_30d = item["CPC_30d"]
+                        if CPC_30d == '' or not CPC_30d:
+                            CPC_30d = 0.5*self.exchange_rate
+                        #print(CPC_30d)
                         api.add_keyword_toadGroup_v0(market, str(int(campaign_id)), str(int(adGroupId)), searchTerm, matchType="EXACT", state="ENABLED", bid=float(CPC_30d))
                         api.add_keyword_toadGroup_v0(market, str(int(campaign_id)), str(int(adGroupId)), searchTerm, matchType="PHRASE", state="ENABLED", bid=float(CPC_30d))
                         api.add_keyword_toadGroup_v0(market, str(int(campaign_id)), str(int(adGroupId)), searchTerm, matchType="BROAD", state="ENABLED", bid=float(CPC_30d))
@@ -367,8 +372,8 @@ class auto_api:
                                                      matchType="EXACT", state="ENABLED", bid=float(CPC_30d))
                         api.add_keyword_toadGroup_v0(market, str(int(campaign_id)), str(int(adGroupId)), searchTerm,
                                                      matchType="PHRASE", state="ENABLED", bid=float(CPC_30d))
-                        api.add_keyword_toadGroup_v0(market, str(int(campaign_id)), str(int(adGroupId)), searchTerm,
-                                                     matchType="BROAD", state="ENABLED", bid=float(CPC_30d))
+                        # api.add_keyword_toadGroup_v0(market, str(int(campaign_id)), str(int(adGroupId)), searchTerm,
+                        #                              matchType="BROAD", state="ENABLED", bid=float(CPC_30d))
 
     def add_sp_ad_negative_searchTerm_product(self,market, path):
         uploaded_file = path

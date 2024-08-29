@@ -342,7 +342,8 @@ SELECT
         all_order.总销售额,
         ad_order.广告总销售额 AS 广告销售额,
         ROUND((all_order.总销售额 - ad_order.广告总销售额),2) AS 自然销售额,
-        CONCAT(ROUND(((1 - ad_order.广告总销售额 / all_order.总销售额) * 100), 2),'%') AS 自然销售额比例
+        CONCAT(ROUND(((1 - ad_order.广告总销售额 / all_order.总销售额) * 100), 2),'%') AS 自然销售额比例,
+        CONCAT(ROUND(((COALESCE(ad_order.广告总花费, 0) / all_order.总销售额) * 100), 2), '%') AS tacos
     FROM
     (
         -- 计算总销售额
@@ -496,9 +497,53 @@ SELECT
             sp.DATE
     ) AS deepbi_order ON all_order.event_date = deepbi_order.DATE;
                     """
-            df1 = pd.read_sql(query1, con=conn)
+            df = pd.read_sql(query1, con=conn)
+            # 计算汇总数据
+            total_ad_sales = df['广告总销售额'].sum()
+            total_ad_cost = df['广告总花费'].sum()
+            total_new_cost = df['DeepBI计划花费'].sum()
+            total_new_sales = df['DeepBI计划销量'].sum()
+            total_old_sales = df['旧计划销售额'].sum()
+            total_old_cost = df['旧计划花费'].sum()
+            total_sales = df['总销售额'].sum()
+            total_nature_sales = df['自然销售额'].sum()
+
+            # 计算汇总行的各项指标
+            ad_acos = (total_ad_cost / total_ad_sales) * 100 if total_ad_sales > 0 else 0
+            new_ad_acos = (total_new_cost / total_new_sales) * 100 if total_new_sales > 0 else 0
+            new_ad_scale = (total_new_sales / total_ad_sales) * 100 if total_ad_sales > 0 else 0
+            old_ad_acos = (total_old_cost / total_old_sales) * 100 if total_old_sales > 0 else 0
+            old_ad_scale = (total_old_sales / total_ad_sales) * 100 if total_ad_sales > 0 else 0
+            nature_scale = (total_nature_sales / total_sales) * 100 if total_sales > 0 else 0
+            tacos = (total_ad_cost / total_sales) * 100 if total_sales > 0 else 0
+
+            # 创建汇总数据行
+            summary_data = {
+                '国家': query['country'],
+                '总销售日期': '汇总',
+                '广告总销售额': round(total_ad_sales, 2),
+                '广告总花费': round(total_ad_cost, 2),
+                '广告总ACOS': f'{ad_acos:.2f}%',
+                'DeepBI计划花费': round(total_new_cost, 2),
+                'DeepBI计划销量': round(total_new_sales, 2),
+                '新开计划acos': f'{new_ad_acos:.2f}%',
+                '新开计划销量占比': f'{new_ad_scale:.2f}%',
+                '旧计划销售额': round(total_old_sales, 2),
+                '旧计划花费': round(total_old_cost, 2),
+                '旧计划acos': f'{old_ad_acos:.2f}%',
+                '旧计划销量占比': f'{old_ad_scale:.2f}%',
+                '总销售额': round(total_sales, 2),
+                '广告销售额': round(total_ad_sales, 2),
+                '自然销售额': round(total_nature_sales, 2),
+                '自然销售额比例': f'{nature_scale:.2f}%',
+                'tacos': f'{tacos:.2f}%'
+            }
+
+            # 将汇总数据行添加到 DataFrame
+            summary_df = pd.DataFrame([summary_data])
+            df = pd.concat([df, summary_df], ignore_index=True)
             # return df
-            return df1
+            return df
         except Exception as e:
             print("Error while get_summarize_data_info:", e)
         finally:
@@ -527,7 +572,8 @@ SELECT
         all_order.总销售额,
         ad_order.广告总销售额 AS 广告销售额,
         ROUND((all_order.总销售额 - ad_order.广告总销售额),2) AS 自然销售额,
-        CONCAT(ROUND(((1 - ad_order.广告总销售额 / all_order.总销售额) * 100), 2),'%%') AS 自然销售额比例
+        CONCAT(ROUND(((1 - ad_order.广告总销售额 / all_order.总销售额) * 100), 2),'%%') AS 自然销售额比例,
+        CONCAT(ROUND(((COALESCE(ad_order.广告总花费, 0) / all_order.总销售额) * 100), 2), '%%') AS tacos
     FROM
     (
         -- 计算总销售额
@@ -590,7 +636,7 @@ SELECT
 										AND market IN %(column1_values2)s
                 GROUP BY
                     DATE
-            ) AS sd ON sd.market = sp.market AND sd.DATE = sp.DATE
+            ) AS sd ON sd.DATE = sp.DATE
         LEFT JOIN (
                 SELECT
                     market,
@@ -605,7 +651,7 @@ SELECT
 										AND market IN %(column1_values2)s
                 GROUP BY
                     DATE
-            ) AS sb ON sb.market = sp.market AND sb.DATE = sp.DATE
+            ) AS sb ON sb.DATE = sp.DATE
         WHERE
             sp.market IN %(column1_values2)s
         ORDER BY
@@ -657,7 +703,7 @@ SELECT
 										AND campaignName LIKE 'DeepBI_%%'
                 GROUP BY
                     DATE
-            ) AS sd ON sd.market = sp.market AND sd.DATE = sp.DATE
+            ) AS sd ON sd.DATE = sp.DATE
         LEFT JOIN (
                 SELECT
                     market,
@@ -673,16 +719,60 @@ SELECT
 										AND campaignName LIKE 'DeepBI_%%'
                 GROUP BY
                     DATE
-            ) AS sb ON sb.market = sp.market AND sb.DATE = sp.DATE
+            ) AS sb ON sb.DATE = sp.DATE
         WHERE
             sp.market IN %(column1_values2)s
         ORDER BY
             sp.DATE
     ) AS deepbi_order ON all_order.event_date = deepbi_order.DATE;
                     """
-            df1 = pd.read_sql(query1, con=conn, params={'column1_values1': query['sales_channel'], 'column1_values2': query['country']})
+            df = pd.read_sql(query1, con=conn, params={'column1_values1': query['sales_channel'], 'column1_values2': query['country']})
+            # 计算汇总数据
+            total_ad_sales = df['广告总销售额'].sum()
+            total_ad_cost = df['广告总花费'].sum()
+            total_new_cost = df['DeepBI计划花费'].sum()
+            total_new_sales = df['DeepBI计划销量'].sum()
+            total_old_sales = df['旧计划销售额'].sum()
+            total_old_cost = df['旧计划花费'].sum()
+            total_sales = df['总销售额'].sum()
+            total_nature_sales = df['自然销售额'].sum()
+
+            # 计算汇总行的各项指标
+            ad_acos = (total_ad_cost / total_ad_sales) * 100 if total_ad_sales > 0 else 0
+            new_ad_acos = (total_new_cost / total_new_sales) * 100 if total_new_sales > 0 else 0
+            new_ad_scale = (total_new_sales / total_ad_sales) * 100 if total_ad_sales > 0 else 0
+            old_ad_acos = (total_old_cost / total_old_sales) * 100 if total_old_sales > 0 else 0
+            old_ad_scale = (total_old_sales / total_ad_sales) * 100 if total_ad_sales > 0 else 0
+            nature_scale = (total_nature_sales / total_sales) * 100 if total_sales > 0 else 0
+            tacos = (total_ad_cost / total_sales) * 100 if total_sales > 0 else 0
+
+            # 创建汇总数据行
+            summary_data = {
+                '国家': query['region'],
+                '总销售日期': '汇总',
+                '广告总销售额': round(total_ad_sales, 2),
+                '广告总花费': round(total_ad_cost, 2),
+                '广告总ACOS': f'{ad_acos:.2f}%',
+                'DeepBI计划花费': round(total_new_cost, 2),
+                'DeepBI计划销量': round(total_new_sales, 2),
+                '新开计划acos': f'{new_ad_acos:.2f}%',
+                '新开计划销量占比': f'{new_ad_scale:.2f}%',
+                '旧计划销售额': round(total_old_sales, 2),
+                '旧计划花费': round(total_old_cost, 2),
+                '旧计划acos': f'{old_ad_acos:.2f}%',
+                '旧计划销量占比': f'{old_ad_scale:.2f}%',
+                '总销售额': round(total_sales, 2),
+                '广告销售额': round(total_ad_sales, 2),
+                '自然销售额': round(total_nature_sales, 2),
+                '自然销售额比例': f'{nature_scale:.2f}%',
+                'tacos': f'{tacos:.2f}%'
+            }
+
+            # 将汇总数据行添加到 DataFrame
+            summary_df = pd.DataFrame([summary_data])
+            df = pd.concat([df, summary_df], ignore_index=True)
             # return df
-            return df1
+            return df
         except Exception as e:
             print("Error while get_summarize_data_info_summarize_country:", e)
         finally:

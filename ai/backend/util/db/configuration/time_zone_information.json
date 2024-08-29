@@ -1,0 +1,88 @@
+{
+"BR":{
+"country": "BR",
+"timezone_offset": "-03:00",
+"sales_channel": "Amazon.com.br"
+},
+"CA":{
+"country": "CA",
+"timezone_offset": "-07:00",
+"sales_channel": "Amazon.ca"
+},
+"MX":{
+"country": "MX",
+"timezone_offset": "-07:00",
+"sales_channel": "Amazon.com.mx"
+},
+"US":{
+"country": "US",
+"timezone_offset": "-07:00",
+"sales_channel": "Amazon.com"
+},
+"TR":{
+"country": "TR",
+"timezone_offset": "+03:00",
+"sales_channel": "Amazon.com.tr"
+},
+"IT":{
+"country": "IT",
+"timezone_offset": "+02:00",
+"sales_channel": "Amazon.it"
+},
+"SE":{
+"country": "SE",
+"timezone_offset": "+02:00",
+"sales_channel": "Amazon.se"
+},
+"PL":{
+"country": "PL",
+"timezone_offset": "+02:00",
+"sales_channel": "Amazon.pl"
+},
+"FR":{
+"country": "FR",
+"timezone_offset": "+02:00",
+"sales_channel": "Amazon.fr"
+},
+"NL":{
+"country": "NL",
+"timezone_offset": "+02:00",
+"sales_channel": "Amazon.nl"
+},
+"ES":{
+"country": "ES",
+"timezone_offset": "+02:00",
+"sales_channel": "Amazon.es"
+},
+"UK":{
+"country": "UK",
+"timezone_offset": "+01:00",
+"sales_channel": "Amazon.co.uk"
+},
+"DE":{
+"country": "DE",
+"timezone_offset": "+02:00",
+"sales_channel": "Amazon.de"
+},
+"SA":{
+"country": "SA",
+"timezone_offset": "+03:00",
+"sales_channel": "Amazon.sa"
+},
+"AE":{
+"country": "AE",
+"timezone_offset": "+04:00",
+"sales_channel": "Amazon.ae"
+},
+"AU":{
+"country": "AU",
+"timezone_offset": "+10:00",
+"sales_channel": "Amazon.com.au"
+},
+"JP":{
+"country": "JP",
+"timezone_offset": "+09:00",
+"sales_channel": "Amazon.co.jp"
+}
+}
+

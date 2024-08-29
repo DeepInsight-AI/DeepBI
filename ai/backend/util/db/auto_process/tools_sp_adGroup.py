@@ -586,10 +586,11 @@ class AdGroupTools:
 #   ]
 # }
 # #
-# agt=AdGroupTools('KAPEYDESI')
+# agt=AdGroupTools('Gotoly')
 # # 测试更新广告系列信息
-# res = agt.get_adGroup_api('UK','560403892575481')
-# #res = agt.list_adGroup_TargetingClause('479266699513385','UK')
+# res = agt.list_adGroup_TargetingClause_by_targetId('','US')
+# print(res)
+#res = agt.list_adGroup_TargetingClause('479266699513385','UK')
 # #res = agt.list_adGroup_Targetingrecommendations('FR',['B08NDYCFVG','B0CHRX765S','B0CHRYCWPG','B08NDY9F91','B08NDR42XX','B0CHRTK8LZ'])
 # #res = agt.list_category_refinements('FR',464943031)464867031
 # #res = agt.list_product_bid_recommendations('FR','B07L8GX9YY',332826141768516,366375831366135)

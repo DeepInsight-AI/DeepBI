@@ -297,9 +297,9 @@ def process_create():
             if params_create['create_method'] == '新建':
                 if params_create['strategy'] == "0509_youniverse":
                     additional_params_create = {
-                        'product_info': request.form.get('product_info', ''),
-                        'budget': request.form.get('budget', ''),
-                        'bid': request.form.get('bid', ''),
+                        'product_info': request.form.get('product_info_youniverse', ''),
+                        'budget': request.form.get('budget_youniverse', ''),
+                        'bid': request.form.get('bid_youniverse', ''),
                         'brand_youniverse': request.form.get('brand_info_youniverse', '')
                     }
                     params_create.update(additional_params_create)
@@ -309,9 +309,9 @@ def process_create():
                     return jsonify({"status": "success", "message": "处理完成，未生成 CSV 文件。"})
                 elif params_create['strategy'] == "0514_youniverse":
                     additional_params_create = {
-                        'product_info': request.form.get('product_info', ''),
-                        'budget': request.form.get('budget', ''),
-                        'bid': request.form.get('bid', ''),
+                        'product_info': request.form.get('product_info_youniverse', ''),
+                        'budget': request.form.get('budget_youniverse', ''),
+                        'bid': request.form.get('bid_youniverse', ''),
                         'brand_youniverse': request.form.get('brand_info_youniverse', '')
                     }
                     params_create.update(additional_params_create)

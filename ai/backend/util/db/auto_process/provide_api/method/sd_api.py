@@ -95,7 +95,7 @@ class auto_api_sd:
             # 检查是否存在名为"LAPASA"的品牌
             target_brand_name = self.brand
             target_brand_id = None
-
+            print('1')
             for brand in brand_info['brands']:
                 if brand['name'] == target_brand_name:
                     target_brand_id = brand['id']
@@ -103,8 +103,7 @@ class auto_api_sd:
                                                                   expression_type='manual', state='enabled',
                                                                   bid=float(bid))
                     return 200
-                else:
-                    return 404
+            return 404
         except Exception as e:
             print(e)
             return 500  # Internal Server Error

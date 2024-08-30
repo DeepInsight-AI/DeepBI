@@ -295,29 +295,54 @@ def process_create():
             api3 = sp(params_create['brand'], params_create['country'])
             api4 = sd(params_create['brand'], params_create['country'])
             if params_create['create_method'] == '新建':
-                additional_params_create = {
-                    'product_info': request.form.get('product_info', ''),
-                    'budget': request.form.get('budget', ''),
-                    'bid': request.form.get('bid', ''),
-                }
-                params_create.update(additional_params_create)
-                info = product_info_list = [item.strip(" '") for item in params_create['product_info'].strip('[]').split(', ')]
-                if params_create['strategy'] == "0509":
-                    api1.create_new_sd_no_template(params_create['country'], info, params_create['brand'], params_create['budget'], params_create['bid'])
-                elif params_create['strategy'] == "0514":
-                    api2.create_new_sp_asin_no_template(params_create['country'], info, params_create['brand'], params_create['budget'], params_create['bid'])
-                elif params_create['strategy'] == "0502_auto":
-                    if params_create['brand'] == "Veement" or params_create['brand'] == "KAPEYDESI" or params_create['brand'] == "Gvyugke" or params_create['brand'] == "Uuoeebb" or params_create['brand'] == "syndesmos" or params_create['brand'] == "Gonbouyoku" or params_create['brand'] == "gmrpwnage" or params_create['brand'] == "suihuooo":
-                        api2.create_new_sp_auto_no_template_jiutong(params_create['country'], info, params_create['brand'], params_create['budget'])
-                    else:
-                        api2.create_new_sp_auto_no_template(params_create['country'], info, params_create['brand'], params_create['budget'], params_create['bid'])
-                elif params_create['strategy'] == "0502_manual":
-                    api2.create_new_sp_manual_no_template(params_create['country'], info, params_create['brand'], params_create['budget'])
-                elif params_create['strategy'] == "0511":
-                    api1.create_new_sd_0511(params_create['country'], info, params_create['brand'], params_create['budget'], params_create['bid'])
-                elif params_create['strategy'] == "0731":
-                    api1.create_new_sd_no_template_0731(params_create['country'], info, params_create['brand'], params_create['budget'], params_create['bid'])
-                return jsonify({"status": "success", "message": "处理完成，未生成 CSV 文件。"})
+                if params_create['strategy'] == "0509_youniverse":
+                    additional_params_create = {
+                        'product_info': request.form.get('product_info', ''),
+                        'budget': request.form.get('budget', ''),
+                        'bid': request.form.get('bid', ''),
+                        'brand': request.form.get('brand_info_youniverse', '')
+                    }
+                    params_create.update(additional_params_create)
+                    info = product_info_list = [item.strip(" '") for item in
+                                                params_create['product_info'].strip('[]').split(', ')]
+                    api1.create_new_sd_no_template_youniverse(params_create['country'], info, params_create['brand'], params_create['budget'], params_create['bid'], params_create['brand'])
+                    return jsonify({"status": "success", "message": "处理完成，未生成 CSV 文件。"})
+                elif params_create['strategy'] == "0514_youniverse":
+                    additional_params_create = {
+                        'product_info': request.form.get('product_info', ''),
+                        'budget': request.form.get('budget', ''),
+                        'bid': request.form.get('bid', ''),
+                        'brand': request.form.get('brand_info_youniverse', '')
+                    }
+                    params_create.update(additional_params_create)
+                    info = product_info_list = [item.strip(" '") for item in
+                                                params_create['product_info'].strip('[]').split(', ')]
+                    api2.create_new_sp_asin_no_template_youniverse(params_create['country'], info, params_create['brand'], params_create['budget'], params_create['bid'], params_create['brand'])
+                    return jsonify({"status": "success", "message": "处理完成，未生成 CSV 文件。"})
+                else:
+                    additional_params_create = {
+                        'product_info': request.form.get('product_info', ''),
+                        'budget': request.form.get('budget', ''),
+                        'bid': request.form.get('bid', ''),
+                    }
+                    params_create.update(additional_params_create)
+                    info = product_info_list = [item.strip(" '") for item in params_create['product_info'].strip('[]').split(', ')]
+                    if params_create['strategy'] == "0509":
+                        api1.create_new_sd_no_template(params_create['country'], info, params_create['brand'], params_create['budget'], params_create['bid'])
+                    elif params_create['strategy'] == "0514":
+                        api2.create_new_sp_asin_no_template(params_create['country'], info, params_create['brand'], params_create['budget'], params_create['bid'])
+                    elif params_create['strategy'] == "0502_auto":
+                        if params_create['brand'] == "Veement" or params_create['brand'] == "KAPEYDESI" or params_create['brand'] == "Gvyugke" or params_create['brand'] == "Uuoeebb" or params_create['brand'] == "syndesmos" or params_create['brand'] == "Gonbouyoku" or params_create['brand'] == "gmrpwnage" or params_create['brand'] == "suihuooo":
+                            api2.create_new_sp_auto_no_template_jiutong(params_create['country'], info, params_create['brand'], params_create['budget'])
+                        else:
+                            api2.create_new_sp_auto_no_template(params_create['country'], info, params_create['brand'], params_create['budget'], params_create['bid'])
+                    elif params_create['strategy'] == "0502_manual":
+                        api2.create_new_sp_manual_no_template(params_create['country'], info, params_create['brand'], params_create['budget'])
+                    elif params_create['strategy'] == "0511":
+                        api1.create_new_sd_0511(params_create['country'], info, params_create['brand'], params_create['budget'], params_create['bid'])
+                    elif params_create['strategy'] == "0731":
+                        api1.create_new_sd_no_template_0731(params_create['country'], info, params_create['brand'], params_create['budget'], params_create['bid'])
+                    return jsonify({"status": "success", "message": "处理完成，未生成 CSV 文件。"})
             elif params_create['create_method'] == '横向复刻':
                 additional_params_create = {
                     'template_country': request.form.get('template_country', ''),

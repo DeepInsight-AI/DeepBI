@@ -262,7 +262,7 @@
       "user": "wanghequan",
       "passwd": "WHq123123Aa",
       "port": 3306,
-      "db": "amazon_youniverse_ins_us",
+      "db": "amazon_youniverse_inc_us",
       "charset": "utf8mb4",
       "use_unicode": true
     }

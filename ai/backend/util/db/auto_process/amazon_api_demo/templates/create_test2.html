@@ -135,12 +135,20 @@
                 var option6 = document.createElement('option');
                 option6.value = '0731';
                 option6.textContent = '0731';
+                var option7 = document.createElement('option');
+                option7.value = '0509_youniverse';
+                option7.textContent = '0509_youniverse';
+                var option8 = document.createElement('option');
+                option8.value = '0514_youniverse';
+                option8.textContent = '0514_youniverse';
                 strategySelect.appendChild(option1);
                 strategySelect.appendChild(option2);
                 strategySelect.appendChild(option3);
                 strategySelect.appendChild(option4);
                 strategySelect.appendChild(option5);
                 strategySelect.appendChild(option6);
+                strategySelect.appendChild(option7);
+                strategySelect.appendChild(option8);
             } else {
                 strategyDropdown.style.display = 'none';
                 extraParamsSection.style.display = 'none';
@@ -156,16 +164,24 @@
             var strategy = document.getElementById('strategy').value;
             var extraParamsSection = document.getElementById('extra_params_section');
             var productInfoSection = document.getElementById('product_info_section');
+            var productInfoSectionYouniverse = document.getElementById('product_info_section_youniverse');
 
             if (strategy === '0502' || strategy === '0507') {
                 extraParamsSection.style.display = 'block';
                 productInfoSection.style.display = 'none';
+                productInfoSectionYouniverse.style.display = 'none';
             } else if (strategy === '0509' || strategy === '0514' || strategy === '0502_auto' || strategy === '0502_manual' || strategy === '0511' || strategy === '0731') {
                 extraParamsSection.style.display = 'none';
                 productInfoSection.style.display = 'block';
+                productInfoSectionYouniverse.style.display = 'none';
+            } else if(strategy === '0509_youniverse' || strategy === '0514_youniverse') {
+                extraParamsSection.style.display = 'none';
+                productInfoSection.style.display = 'none';
+                productInfoSectionYouniverse.style.display = 'block';
             } else {
                 extraParamsSection.style.display = 'none';
                 productInfoSection.style.display = 'none';
+                productInfoSectionYouniverse.style.display = 'none';
             }
         }
 
@@ -269,6 +285,21 @@
 
             <label for="budget">投放竞价:</label>
             <input type="number" id="bid" name="bid" step="0.01" placeholder="请输入竞价"><br><br>
+        </div>
+
+        <!-- 独立的产品信息 -->
+        <div id="product_info_section_youniverse" class="extra-params" style="display: none;">
+            <label for="product_info_youniverse">产品信息:</label>
+            <input type="text" id="product_info_youniverse" name="product_info_youniverse"><br><br>
+
+            <label for="budget_youniverse">预算:</label>
+            <input type="number" id="budget_youniverse" name="budget_youniverse" step="0.01" placeholder="请输入预算"><br><br>
+
+            <label for="budget_youniverse">投放竞价:</label>
+            <input type="number" id="bid_youniverse" name="bid_youniverse" step="0.01" placeholder="请输入竞价"><br><br>
+
+            <label for="brand_info_youniverse">品牌:</label>
+            <input type="text" id="brand_info_youniverse" name="brand_info_youniverse"><br><br>
         </div>
 
         <button type="submit" style="display: block; margin: 0 auto;">提交</button>

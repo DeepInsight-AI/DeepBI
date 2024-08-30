@@ -11,14 +11,14 @@ from ai.backend.util.db.auto_process.summary.summary import create_summarize_dat
 def run():
     # time.sleep(60 * 60 * 5)
     brands_and_countries = {
-        'LAPASA': ["US", "FR", "IT", "DE", "NL", "SE", "ES", "UK","JP"],
-        'DELOMO': ['IT', 'ES', 'DE', 'FR', 'US'],
-        'OutdoorMaster': ['IT', 'ES', 'FR', 'SE'],
-        'MUDEELA': ['US'],
-        'Rossny': ['US'],
-        'ZEN CAVE': ['US'],
-        'Veement': ['UK'],
-        'KAPEYDESI': ['SA'],
+        # 'LAPASA': ["US", "FR", "IT", "DE", "NL", "SE", "ES", "UK","JP"],
+        # 'DELOMO': ['IT', 'ES', 'DE', 'FR', 'US'],
+        # 'OutdoorMaster': ['IT', 'ES', 'FR', 'SE'],
+        # 'MUDEELA': ['US'],
+        # 'Rossny': ['US'],
+        # 'ZEN CAVE': ['US'],
+        # 'Veement': ['UK'],
+        # 'KAPEYDESI': ['SA'],
         'Gvyugke': ['DE', 'FR', 'IT', 'AU'],
         'Uuoeebb': ['US'],
         'Gonbouyoku': ['JP'],
@@ -28,7 +28,7 @@ def run():
         'keimi': ['US']
     }
     # brands_and_countries = {
-    #     'LAPASA': ["US", "FR", "IT", "DE", "NL", "SE", "ES", "UK"]
+    #     'KAPEYDESI': ['SA'],
     # }
     while True:
         for brand, countries in brands_and_countries.items():
@@ -58,7 +58,7 @@ def run1():
 
 
 if __name__ == "__main__":
-    create_summarize_data()
+    # create_summarize_data()
     run()
 
 

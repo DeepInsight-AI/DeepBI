@@ -535,8 +535,9 @@ def update_create_data(market, brand):
     campaignName_info, keyword_info, bid_adjust_info = AmazonMysqlRagUitl(brand, market).get_create_product_targets(market, cur_time)
     if campaignName_info and keyword_info and bid_adjust_info:
         for campaignName, keyword, bid_adjust in zip(campaignName_info, keyword_info, bid_adjust_info):
-            table2 = [[market, cur_time, "商品投放创建", campaignName, keyword, f'竞价为{round(float(bid_adjust), 2)}']]
-            get_request_data(market, cur_time, "D-LOG", table2, 0, brand)
+            if bid_adjust:
+                table2 = [[market, cur_time, "商品投放创建", campaignName, keyword, f'竞价为{round(float(bid_adjust), 2)}']]
+                get_request_data(market, cur_time, "D-LOG", table2, 0, brand)
 
 
 def update_create_data_period(market, brand, start_date):

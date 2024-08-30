@@ -907,6 +907,88 @@ class Ceate_new_sku:
             print(f"{name} create successfully")
         print("all create successfully")
 
+
+    def create_new_sp_asin_no_template_youniverse(self,market,info,brand_name,budget,target_bid,brand_youniverse):
+        exchange_rate = self.get_exchange_rate(market, 'DE')
+        for i in info:
+            name1 = f"DeepBI_0514_{i}_ASIN"
+            api1 = DbSpTools(brand_name,market)
+            res = api1.select_sp_campaign_name(market,name1)
+            if res[0] == "success":
+                continue
+            else:
+                name = f"DeepBI_0514_{i}_ASIN"
+                today = datetime.today()
+                # 格式化输出
+                startDate = today.strftime('%Y-%m-%d')
+                apitool = Gen_campaign(brand_name)
+                new_campaign_id = apitool.create_camapign(market, name, startDate, dynamicBidding={"placementBidding":[],"strategy":"LEGACY_FOR_SALES"}, portfolioId=None,
+                                                   endDate=None, targetingType='MANUAL', state='ENABLED',
+                                                   budgetType='DAILY', budget=float(budget))
+                # new_campaign_id = '507943269116693'
+                if new_campaign_id == "":
+                    print("No new campaign")
+                    continue
+                api2 = Gen_adgroup(brand_name)
+                new_adgroup_id = api2.create_adgroup(market, new_campaign_id, name, defaultBid=0.25 * exchange_rate, state='ENABLED')
+                # new_adgroup_id = '317410479958041'
+                api3 = Gen_product(brand_name)
+                if brand_name == 'LAPASA':
+                    sku_info = api1.select_sd_product_sku(market, i)
+                else:
+                    sku_info = api1.select_product_sku_by_parent_asin(i, self.select_depository(brand_name,market), market)
+                for sku in sku_info:
+                    try:
+                        new_sku = api3.create_productsku(market, new_campaign_id, new_adgroup_id, sku,asin=None, state="ENABLED")
+                    except Exception as e:
+                        # 处理异常，可以打印异常信息或者进行其他操作
+                        print("An error occurred create_productsku:", e)
+                        newdbtool = DbNewSpTools(brand_name,market)
+                        newdbtool.create_sp_product(market,new_campaign_id,None,sku,new_adgroup_id,None,"failed",datetime.now(),"SP")
+                apitool1 = AdGroupTools(brand_name)
+                apitool2 = ProductTools(brand_name)
+                time.sleep(10)
+                new_product_info = apitool2.get_product_api(market, new_adgroup_id)
+                try:
+                    product = [result['asin'] for result in new_product_info if "asin" in result]
+                except Exception as e:
+                    print(e)
+                    continue
+                recommendations = apitool1.list_adGroup_Targetingrecommendations(market, product)
+                print(recommendations)
+                for category in recommendations["categories"]:
+                    categories_id = category["id"]
+                    brand_info = apitool1.list_category_refinements(market, categories_id)
+                    # 检查是否存在名为"LAPASA"的品牌
+                    target_brand_name = brand_youniverse
+                    target_brand_id = None
+
+                    bid_info = apitool1.list_category_bid_recommendations(market, categories_id,
+                                                                          new_campaign_id, new_adgroup_id)
+                    for brand in brand_info['brands']:
+                        if brand['name'] == target_brand_name:
+                            target_brand_id = brand['id']
+
+                            try:
+                                # 尝试获取bid值
+                                bid = bid_info['bidRecommendations'][0]['bidRecommendationsForTargetingExpressions'][0][
+                                    'bidValues'][0]['suggestedBid']
+                            except (IndexError, KeyError, TypeError):
+                                # 如果在尝试获取bid值时发生任何异常（比如索引错误、键错误或类型错误），则设置bid为0.25
+                                bid = 0.25 * exchange_rate
+                            targetId = api2.create_adGroup_Targeting2(market, new_campaign_id, new_adgroup_id, float(target_bid),
+                                                                 categories_id, target_brand_id)
+                    # try:
+                    #                     #     # 尝试获取bid值
+                    #                     #     bid2 = bid_info['bidRecommendations'][0]['bidRecommendationsForTargetingExpressions'][0][
+                    #                     #         'bidValues'][1]['suggestedBid']
+                    #                     # except (IndexError, KeyError, TypeError):
+                    #                     #     # 如果在尝试获取bid值时发生任何异常（比如索引错误、键错误或类型错误），则设置bid为0.25
+                    #                     #     bid2 = 0.25 * exchange_rate
+                    #                     # targetId2 = api2.create_adGroup_Targeting1(market, new_campaign_id, new_adgroup_id, categories_id, bid2,
+                    #                     #                                       state='ENABLED', type='ASIN_CATEGORY_SAME_AS')
+            print(f"{name} create successfully")
+        print("all create successfully")
 # #创建 Ceate_new_sku 类的实例
 # ceate_new_sku_instance = Ceate_new_sku()
 

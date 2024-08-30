@@ -300,24 +300,24 @@ def process_create():
                         'product_info': request.form.get('product_info', ''),
                         'budget': request.form.get('budget', ''),
                         'bid': request.form.get('bid', ''),
-                        'brand': request.form.get('brand_info_youniverse', '')
+                        'brand_youniverse': request.form.get('brand_info_youniverse', '')
                     }
                     params_create.update(additional_params_create)
                     info = product_info_list = [item.strip(" '") for item in
                                                 params_create['product_info'].strip('[]').split(', ')]
-                    api1.create_new_sd_no_template_youniverse(params_create['country'], info, params_create['brand'], params_create['budget'], params_create['bid'], params_create['brand'])
+                    api1.create_new_sd_no_template_youniverse(params_create['country'], info, params_create['brand'], params_create['budget'], params_create['bid'], params_create['brand_youniverse'])
                     return jsonify({"status": "success", "message": "处理完成，未生成 CSV 文件。"})
                 elif params_create['strategy'] == "0514_youniverse":
                     additional_params_create = {
                         'product_info': request.form.get('product_info', ''),
                         'budget': request.form.get('budget', ''),
                         'bid': request.form.get('bid', ''),
-                        'brand': request.form.get('brand_info_youniverse', '')
+                        'brand_youniverse': request.form.get('brand_info_youniverse', '')
                     }
                     params_create.update(additional_params_create)
                     info = product_info_list = [item.strip(" '") for item in
                                                 params_create['product_info'].strip('[]').split(', ')]
-                    api2.create_new_sp_asin_no_template_youniverse(params_create['country'], info, params_create['brand'], params_create['budget'], params_create['bid'], params_create['brand'])
+                    api2.create_new_sp_asin_no_template_youniverse(params_create['country'], info, params_create['brand'], params_create['budget'], params_create['bid'], params_create['brand_youniverse'])
                     return jsonify({"status": "success", "message": "处理完成，未生成 CSV 文件。"})
                 else:
                     additional_params_create = {

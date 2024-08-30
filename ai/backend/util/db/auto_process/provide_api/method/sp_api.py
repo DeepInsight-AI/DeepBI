@@ -176,8 +176,7 @@ class auto_api_sp:
                                                               float(bid),
                                                               keywordId, target_brand_id)
                     return 200
-                else:
-                    return 404
+            return 404
         except Exception as e:
             print(e)
             return 500  # Internal Server Error

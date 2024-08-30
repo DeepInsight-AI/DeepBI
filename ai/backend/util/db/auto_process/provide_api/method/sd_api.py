@@ -8,6 +8,7 @@ from ai.backend.util.db.auto_process.gen_sp_keyword import Gen_keyword
 from ai.backend.util.db.auto_process.gen_sd_adgroup import Gen_adgroup
 from ai.backend.util.db.auto_process.gen_sd_product import Gen_product
 from ai.backend.util.db.auto_process.tools_sd_adGroup import AdGroupTools_SD
+from ai.backend.util.db.auto_process.tools_sp_adGroup import AdGroupTools
 from ai.backend.util.db.auto_process.tools_sp_keyword import SPKeywordTools
 from ai.backend.util.db.auto_process.create_new_sp_ad_auto import load_config
 
@@ -82,6 +83,28 @@ class auto_api_sd:
             api1 = Gen_adgroup(self.brand)
             api1.update_adGroup_Targeting(self.market, str(keywordId), bid=None, state=status.lower())
             return 200
+        except Exception as e:
+            print(e)
+            return 500  # Internal Server Error
+
+    def create_product_target(self, keywordId, bid, campaignId, adGroupId):
+        try:
+            apitool1 = AdGroupTools(self.brand)
+            api3 = Gen_adgroup(self.brand)
+            brand_info = apitool1.list_category_refinements(self.market, keywordId)
+            # 检查是否存在名为"LAPASA"的品牌
+            target_brand_name = self.brand
+            target_brand_id = None
+
+            for brand in brand_info['brands']:
+                if brand['name'] == target_brand_name:
+                    target_brand_id = brand['id']
+                    new_targetId = api3.create_adGroup_Targeting2(self.market, adGroupId, keywordId, target_brand_id,
+                                                                  expression_type='manual', state='enabled',
+                                                                  bid=float(bid))
+                    return 200
+                else:
+                    return 404
         except Exception as e:
             print(e)
             return 500  # Internal Server Error

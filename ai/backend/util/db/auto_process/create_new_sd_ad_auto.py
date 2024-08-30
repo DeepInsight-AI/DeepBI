@@ -406,39 +406,46 @@ class Ceate_new_sd:
 
         pass
 
-    def create_new_sd_no_template_error(self, market, info, brand_name='LAPASA'):
-        for i in info:
-            new_adgroup_id = i
-            apitool2 = ProductTools(brand_name)
-            new_product_info = apitool2.get_product_api(market, new_adgroup_id)
-            product = [{"asin": result["asin"]} for result in new_product_info if "asin" in result]
-            apitool1 = AdGroupTools_SD(brand_name)
-            recommendations = apitool1.list_adGroup_Targetingrecommendations(market, new_adgroup_id, product)
-            # 选取满足条件的元素
-            # selected_categories = [category for category in recommendations['recommendations']['categories'] if
-            #                        1 <= category['rank'] <= 10]
-            selected_categories = recommendations['recommendations']['categories']
-
-            # 打印选取的元素
-            print(selected_categories)
-            for category in selected_categories:
-                time.sleep(5)
-                category = category['category']
-                api2 = AdGroupTools(brand_name)
-                api3 = Gen_adgroup(brand_name)
-                brand_info = api2.list_category_refinements(market, category)
-                # 检查是否存在名为"LAPASA"的品牌
-                target_brand_name = brand_name
-                target_brand_id = None
-                for brand in brand_info['brands']:
-                    if brand['name'] == target_brand_name:
-                        target_brand_id = brand['id']
-                        try:
-                            new_targetId = api3.create_adGroup_Targeting2(market, new_adgroup_id, category, target_brand_id,
-                                                                     expression_type='manual', state='enabled', bid=2.49)
-                        except Exception as e:
-                            # 处理异常，可以打印异常信息或者进行其他操作
-                            print("An error occurred:", e)
+    def create_new_sd_no_template_error(self, market, i, brand_name,target_bid,new_campaign_id):
+        exchange_rate = self.get_exchange_rate(market, 'DE')
+        api1 = DbSpTools(brand_name, market)
+        name = f"DeepBI_0509_{i}"
+        apitool = Gen_campaign(brand_name)
+        # new_campaign_id = 349636835938591
+        api3 = Gen_adgroup(brand_name)
+        new_adgroup_id = api3.create_adgroup(market, new_campaign_id, name, bidOptimization='reach',
+                                             creativeType='IMAGE', state='enabled', defaultBid=2.49 * exchange_rate)
+        # new_adgroup_id = 301828066664478
+        if brand_name == 'LAPASA':
+            sku_info = api1.select_sd_product_sku(market, i)
+        else:
+            sku_info = api1.select_product_sku_by_parent_asin(i, self.select_depository(brand_name, market), market)
+        api4 = Gen_product(brand_name)
+        for sku in sku_info:
+            try:
+                new_sku = api4.create_productsku(market, new_campaign_id, new_adgroup_id, sku, state="enabled")
+            except Exception as e:
+                # 处理异常，可以打印异常信息或者进行其他操作
+                print("An error occurred create_productsku:", e)
+                newdbtool = DbNewSpTools(brand_name, market)
+                newdbtool.create_sp_product(market, new_campaign_id, None, sku, new_adgroup_id, None, "failed",
+                                            datetime.now(), "SD")
+        apitool2 = ProductTools(brand_name)
+        time.sleep(10)
+        new_product_info = apitool2.get_product_api(market, new_adgroup_id)
+        try:
+            product = [result["asin"] for result in new_product_info if "asin" in result]
+        except Exception as e:
+            print(e)
+        for asin in product:
+            try:
+                new_targetId = api3.create_adGroup_Targeting3(market, new_adgroup_id, asin, 'manual', 'enabled',
+                                                              float(target_bid))
+            except Exception as e:
+                # 处理异常，可以打印异常信息或者进行其他操作
+                print("An error occurred:", e)
+        if brand_name == 'LAPASA' or brand_name == 'OutdoorMaster' or brand_name == 'DELOMO':
+            creativeId = api4.create_creatives(market, new_adgroup_id)
 
     def create_new_sd_0511(self,market,info,brand_name,budget,target_bid):
         exchange_rate = self.get_exchange_rate(market,'DE')

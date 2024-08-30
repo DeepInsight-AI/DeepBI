@@ -546,7 +546,7 @@ def modify_function():
                 api1 = Ceate_new_sd()
                 api2 = Ceate_new_sku()
                 if params_modify['strategy'] == "0502":
-                    if params_modify['brand'] == "Veement" or params_modify['brand'] == "KAPEYDESI" or params_modify['brand'] == "Gvyugke" or params_modify['brand'] == "Uuoeebb" or params_modify['brand'] == "syndesmos" or params_modify['brand'] == "Gonbouyoku" or params_modify['brand'] == "gmrpwnage" or params_modify['brand'] == "suihuooo" or params_modify['brand'] == "Gotoly":
+                    if params_modify['brand'] == "Veement" or params_modify['brand'] == "KAPEYDESI" or params_modify['brand'] == "Gvyugke" or params_modify['brand'] == "Uuoeebb" or params_modify['brand'] == "syndesmos" or params_modify['brand'] == "Gonbouyoku" or params_modify['brand'] == "gmrpwnage" or params_modify['brand'] == "suihuooo" or params_modify['brand'] == "Gotoly" or params_modify['brand'] == "us1" or params_modify['brand'] == "us2" or params_modify['brand'] == "eu":
                         api2.create_new_sp_manual_no_template_jiutong(params_modify['country'],params_modify['brand'],csv_path,params_modify['budget'])
                     else:
                         def run_async_operation():

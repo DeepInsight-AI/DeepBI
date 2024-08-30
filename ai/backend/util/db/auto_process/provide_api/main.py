@@ -102,7 +102,7 @@ def handle_update():
     if code == 200:
         return jsonify({"status":200,"error":""})
     elif code == 404:
-        return jsonify({"status":404,"error": "Resource not found"})
+        return jsonify({"status":404,"error": "Brand not found"})
     elif code == 500:
         return jsonify({"status":500,"error": "Internal Server Error"})
     else:

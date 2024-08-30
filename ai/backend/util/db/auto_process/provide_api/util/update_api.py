@@ -33,6 +33,9 @@ def sp_api(data):
             code = api.auto_targeting_status(data['ID'], data['text'])
         elif data['position'] == 'automatic_targeting':
             code = api.auto_targeting_status(data['ID'], data['text'])
+    elif data['require'] == 'create':
+        if data['position'] == 'product_target':
+            code = api.create_product_target(data['ID'], data['text'], data['campaignId'], data['adGroupId'])
     return code
 
 def sd_api(data):
@@ -49,4 +52,7 @@ def sd_api(data):
             code = api.auto_sku_status(data['ID'], data['text'])
         elif data['position'] == 'product_target':
             code = api.auto_targeting_status(data['ID'], data['text'])
+    elif data['require'] == 'create':
+        if data['position'] == 'product_target':
+            code = api.create_product_target(data['ID'], data['text'], data['campaignId'], data['adGroupId'])
     return code

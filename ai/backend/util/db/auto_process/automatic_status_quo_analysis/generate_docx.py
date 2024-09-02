@@ -61,14 +61,22 @@ def generate_docx(brand, market, csv_path):
     # 增加标题：add_heading(self, text="", level=1):
     doc.add_heading(f'{brand}_{market}_{start_date}-{end_date}(30天)_现状分析',0)
 
-    doc.add_heading('一、日常分析', 1)
-    # 增加段落正文，add_paragraph(self, text='', style=None)：返回一个 Paragraph 段落对象
-    par = doc.add_paragraph().add_run('以下是店铺近一年来的销售数据和广告情况：')
-    insert_csv_to_docx(doc, csv_path)
-    json0 = csv_to_json(csv_path)
-    df0 = pd.DataFrame(json.loads(json0))
-    translate_kw0 = create_summery(json0, 6)
-    doc.add_paragraph().add_run(translate_kw0)
+    doc.add_heading('一、宏观分析', 1)
+    doc.add_paragraph().add_run('近30天的广告数据和店铺营收数据如下所示:')
+    csv_path1 = DbToolsCsv(brand, market).get_advertising_data(market)
+    insert_csv_to_docx(doc, csv_path1)
+    doc.add_paragraph().add_run('')
+    csv_path2 = DbToolsCsv(brand, market).get_store_data(market)
+    insert_csv_to_docx(doc, csv_path2)
+    json1 = csv_to_json(csv_path1)
+    json2 = csv_to_json(csv_path2)
+    df1 = pd.DataFrame(json.loads(json1))
+    df2 = pd.DataFrame(json.loads(json2))
+    # 合并 DataFrame
+    merged_data1 = pd.concat([df1, df2], ignore_index=True)
+    translate_kw1 = create_summery(merged_data1, 0)
+    doc.add_paragraph().add_run('')
+    doc.add_paragraph().add_run(translate_kw1)
 
 
     doc.add_heading(f'二、现状分析（{start_date}-{end_date}，30天）', 1)
@@ -155,7 +163,7 @@ def generate_docx(brand, market, csv_path):
     doc.add_paragraph().add_run(f'整体广告花费下降（1-{expect_ad_cost}/{total_ad_cost}）*100%={round((1-expect_ad_cost/total_ad_cost)*100,2)}%')
 
     doc.add_heading(f'四、总结', 1)
-    result = translate_kw0 + "\n" + translate_kw1 + "\n" + translate_kw2 + "\n" + translate_kw3 + "\n" + translate_kw4 + "\n" + translate_kw5
+    result = translate_kw1 + "\n" + translate_kw2 + "\n" + translate_kw3 + "\n" + translate_kw4 + "\n" + translate_kw5
     # merged_data3 = pd.concat([df1, df2, df3, df4, df5, df7, df8, df9], ignore_index=True)
     translate_kw6 = create_summery(result, 5)
     doc.add_paragraph().add_run(translate_kw6)

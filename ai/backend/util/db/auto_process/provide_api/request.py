@@ -18,12 +18,12 @@ class ProcessShowData():
     }
 
     # 默认使用生产环境
-    environment = 'pre'
+    environment = 'test'
 
     @classmethod
     def set_debug_mode(cls, debug):
         """根据debug状态设置环境"""
-        cls.environment = 'pre'
+        cls.environment = 'test'
 
     @classmethod
     def sha1(cls, input_string):
@@ -78,21 +78,22 @@ class ProcessShowData():
     #         return False
     #     return cls.post_data(data, "delete")
 
-# if __name__ == "__main__":
-#     # 要发送的JSON数据
-#     update_data = {
-#         "brand": "LAPASA",
-#         "market": "DE",
-#         "require": "bid",
-#         "position": "placement",
-#         "type": "SP",
-#         "ID": "438171503570439",
-#         "text": "10",
-#         "placement": "PLACEMENT_REST_OF_SEARCH"
-#     }
-#
-#     res = ProcessShowData.update(update_data)
-#     print(res)
+if __name__ == "__main__":
+    # 要发送的JSON数据
+    update_data = {
+        "brand": "Gotoly",
+        "market": "US",
+        "require": "create",
+        "position": "product_target_asin",
+        "type": "SD",
+        "ID": "asin",
+        "text": "10",
+        "campaignId": "532741363543129",
+        "adGroupId": "377421135440884"
+    }
+
+    res = ProcessShowData.update(update_data)
+    print(res)
 # add_data = {
 #     "brand": "LAPASA",
 #     "market": "DE",

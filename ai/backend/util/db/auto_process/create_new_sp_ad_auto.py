@@ -989,6 +989,43 @@ class Ceate_new_sku:
                     #                     #                                       state='ENABLED', type='ASIN_CATEGORY_SAME_AS')
             print(f"{name} create successfully")
         print("all create successfully")
+
+    def create_new_sp_no_template_error(self, market, brand_name,target_bid,new_campaign_id,new_adgroup_id,brand_w):
+        exchange_rate = self.get_exchange_rate(market, 'DE')
+        apitool1 = AdGroupTools(brand_name)
+        apitool2 = ProductTools(brand_name)
+        api2 = Gen_adgroup(brand_name)
+        time.sleep(10)
+        new_product_info = apitool2.get_product_api(market, new_adgroup_id)
+        try:
+            product = [result['asin'] for result in new_product_info if "asin" in result]
+        except Exception as e:
+            print(e)
+            pass
+        recommendations = apitool1.list_adGroup_Targetingrecommendations(market, product)
+        print(recommendations)
+        for category in recommendations["categories"]:
+            categories_id = category["id"]
+            brand_info = apitool1.list_category_refinements(market, categories_id)
+            # 检查是否存在名为"LAPASA"的品牌
+            target_brand_name = brand_w
+            target_brand_id = None
+
+            bid_info = apitool1.list_category_bid_recommendations(market, categories_id,
+                                                                  new_campaign_id, new_adgroup_id)
+            for brand in brand_info['brands']:
+                if brand['name'] == target_brand_name:
+                    target_brand_id = brand['id']
+
+                    try:
+                        # 尝试获取bid值
+                        bid = bid_info['bidRecommendations'][0]['bidRecommendationsForTargetingExpressions'][0][
+                            'bidValues'][0]['suggestedBid']
+                    except (IndexError, KeyError, TypeError):
+                        # 如果在尝试获取bid值时发生任何异常（比如索引错误、键错误或类型错误），则设置bid为0.25
+                        bid = 0.25 * exchange_rate
+                    targetId = api2.create_adGroup_Targeting2(market, new_campaign_id, new_adgroup_id, float(target_bid),
+                                                         categories_id, target_brand_id)
 # #创建 Ceate_new_sku 类的实例
 # ceate_new_sku_instance = Ceate_new_sku()
 

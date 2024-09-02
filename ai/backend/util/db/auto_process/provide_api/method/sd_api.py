@@ -107,3 +107,12 @@ class auto_api_sd:
         except Exception as e:
             print(e)
             return 500  # Internal Server Error
+
+    def create_product_target_asin(self, asin, bid, adGroupId):
+        try:
+            api2 = Gen_adgroup(self.brand)
+            api2.create_adGroup_Targeting3(self.brand, adGroupId, asin, 'manual', 'enabled',float(bid))
+            return 200
+        except Exception as e:
+            print(e)
+            return 500  # Internal Server Error

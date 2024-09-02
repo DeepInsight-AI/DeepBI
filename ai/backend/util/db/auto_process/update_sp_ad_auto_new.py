@@ -135,6 +135,8 @@ class auto_api:
                 if len(item['searchTerm']) == 10 and item['searchTerm'].startswith('b0'):
                     pass
                 else:
+                    if CPC_30d == '' or not CPC_30d:
+                        CPC_30d = 0.5 * self.exchange_rate
                     api.add_keyword_toadGroup_v0(market, str(campaign_id), str(adGroupId), searchTerm, matchType="EXACT", state="ENABLED", bid=float(CPC_30d))
                     api.add_keyword_toadGroup_v0(market, str(campaign_id), str(adGroupId), searchTerm, matchType="PHRASE", state="ENABLED", bid=float(CPC_30d))
                     # api.add_keyword_toadGroup_v0(market, str(campaign_id), str(adGroupId), searchTerm, matchType="BROAD",
@@ -186,7 +188,7 @@ class auto_api:
                         #print(CPC_30d)
                         api.add_keyword_toadGroup_v0(market, str(int(campaign_id)), str(int(adGroupId)), searchTerm, matchType="EXACT", state="ENABLED", bid=float(CPC_30d))
                         api.add_keyword_toadGroup_v0(market, str(int(campaign_id)), str(int(adGroupId)), searchTerm, matchType="PHRASE", state="ENABLED", bid=float(CPC_30d))
-                        api.add_keyword_toadGroup_v0(market, str(int(campaign_id)), str(int(adGroupId)), searchTerm, matchType="BROAD", state="ENABLED", bid=float(CPC_30d))
+                        # api.add_keyword_toadGroup_v0(market, str(int(campaign_id)), str(int(adGroupId)), searchTerm, matchType="BROAD", state="ENABLED", bid=float(CPC_30d))
 
     def add_sp_ad_searchTerm_negative_keyword(self,market, path):
         uploaded_file = path
@@ -350,6 +352,8 @@ class auto_api:
                     adGroupId = item["adGroupId"]
                     searchTerm = item["searchTerm"]
                     CPC_30d = item["CPC_30d"]
+                    if CPC_30d == '' or not CPC_30d:
+                        CPC_30d = 0.5 * self.exchange_rate
                     # try:
                     #     bid_info = apitool1.list_product_bid_recommendations(market, searchTerm.upper(), campaignId,
                     #                                                          adGroupId)
@@ -368,6 +372,8 @@ class auto_api:
                         adGroupId = item["new_adGroupId"]
                         searchTerm = item["searchTerm"]
                         CPC_30d = item["CPC_30d"]
+                        if CPC_30d == '' or not CPC_30d:
+                            CPC_30d = 0.5 * self.exchange_rate
                         api.add_keyword_toadGroup_v0(market, str(int(campaign_id)), str(int(adGroupId)), searchTerm,
                                                      matchType="EXACT", state="ENABLED", bid=float(CPC_30d))
                         api.add_keyword_toadGroup_v0(market, str(int(campaign_id)), str(int(adGroupId)), searchTerm,

@@ -83,13 +83,11 @@ if __name__ == "__main__":
     update_data = {
         "brand": "Gotoly",
         "market": "US",
-        "require": "create",
-        "position": "product_target_asin",
+        "require": "name",
+        "position": "campaign",
         "type": "SD",
-        "ID": "asin",
-        "text": "10",
-        "campaignId": "532741363543129",
-        "adGroupId": "377421135440884"
+        "ID": "campaignId",
+        "text": "new_name",
     }
 
     res = ProcessShowData.update(update_data)

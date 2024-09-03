@@ -190,3 +190,19 @@ class auto_api_sp:
         except Exception as e:
             print(e)
             return 500  # Internal Server Error
+
+    def auto_campaign_name(self, campaignId, new_name):
+        try:
+            api1 = Gen_campaign(self.brand)
+            campaign_info = api1.list_camapign(campaignId, self.market)
+            if campaign_info is not None:
+                for item in campaign_info:
+                    campaignId = item['campaignId']
+                    name = item['name']
+                    api1.update_camapign_name(self.market, str(campaignId), name, new_name)
+                return 200
+            else:
+                return 404  # Campaign not found
+        except Exception as e:
+            print(e)
+            return 500  # Internal Server Error

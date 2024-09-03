@@ -39,6 +39,14 @@
       "db": "amazon_log_outdoormaster",
       "charset": "utf8mb4",
       "use_unicode": true
+    },"JP": {
+      "host": "192.168.2.123",
+      "user": "wanghequan",
+      "passwd": "WHq123123Aa",
+      "port": 3306,
+      "db": "amazon_log_outdoormaster_jp",
+      "charset": "utf8mb4",
+      "use_unicode": true
     }
   },
   "MUDEELA": {

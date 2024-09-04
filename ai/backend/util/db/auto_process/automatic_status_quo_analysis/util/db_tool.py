@@ -213,7 +213,7 @@ SELECT
         -- 计算总销售额
         SELECT
             sales_channel AS 国家,
-            'US' AS market,
+            '{market}' AS market,
             DATE(CONVERT_TZ(purchase_date ,'+08:00', '{self.load_config_info()['timezone_offset']}')) AS event_date,
             ROUND(SUM(item_price), 2) AS 总销售额
         FROM
@@ -759,7 +759,8 @@ FROM b
         ORDER BY
             sp.DATE
     ) AS ad_order ON all_order.parent_asins_or_asin = ad_order.parent_asins_or_asin
-
+ORDER BY
+		all_order.总销售额 DESC
 
 
              """
@@ -945,7 +946,8 @@ c AS (
                 FROM a
                 LEFT JOIN b ON a.parent_asins_or_asin = b.parent_asins_or_asin
                 LEFT JOIN c ON a.parent_asins_or_asin = c.parent_asins_or_asin
-
+ORDER BY
+COALESCE(b.广告总销售额, 0) DESC
              """
             df = pd.read_sql(query, con=conn)
             # 计算汇总数据
@@ -1158,7 +1160,8 @@ d AS (
                 LEFT JOIN b ON a.parent_asins_or_asin = b.parent_asins_or_asin
                 LEFT JOIN c ON a.parent_asins_or_asin = c.parent_asins_or_asin
                 LEFT JOIN d ON a.parent_asins_or_asin = d.parent_asins_or_asin
-
+ORDER BY
+ COALESCE(b.广告总销售额, 0) DESC
 
              """
             df = pd.read_sql(query, con=conn)
@@ -1351,7 +1354,8 @@ c AS (
                 FROM a
                 LEFT JOIN b ON a.parent_asins_or_asin = b.parent_asins_or_asin
                 LEFT JOIN c ON a.parent_asins_or_asin = c.parent_asins_or_asin
-
+            ORDER BY
+            COALESCE(b.广告总销售额, 0) DESC
              """
             df = pd.read_sql(query, con=conn)
             # 计算汇总数据
@@ -1602,6 +1606,8 @@ END AS 期望广告销售额
             LEFT JOIN b ON a.parent_asins_or_asin = b.parent_asins_or_asin
             LEFT JOIN c ON a.parent_asins_or_asin = c.parent_asins_or_asin
             LEFT JOIN d ON a.parent_asins_or_asin = d.parent_asins_or_asin
+    ORDER BY
+			COALESCE(b.广告总销售额, 0) DESC
              """
             df = pd.read_sql(query, con=conn)
             # 计算汇总数据
@@ -1648,7 +1654,7 @@ END AS 期望广告销售额
         except Exception as error:
             print("get_expected_sales Error while query data:", error)
 
-    def get_expected_cost(self, market, spacos_expectation=24, sdacos_expectation=7):
+    def get_expected_cost(self, market, spacos_expectation=24, sdacos_expectation=8):
         # 低于 平均ACOS值 30% 以上的  campaign 广告活动
         # 建议执行的操作：预算提升30%
         try:
@@ -1833,7 +1839,7 @@ d AS (
 				CONCAT({sdacos_expectation}
 ,'%') AS 期望SDAcos,
 				COALESCE(b.广告总花费, 0) AS 广告花费,
-				 ROUND(
+				ROUND(
         (CASE
             WHEN ROUND(((COALESCE(d.广告总销售额, 0) / COALESCE(b.广告总销售额, 0)) * 100), 2) > {sdacos_expectation}
 
@@ -1842,7 +1848,8 @@ d AS (
  / 100) * {sdacos_expectation}
  / 100, 2)
         END * LEAST({sdacos_expectation}
- / 100, ROUND(d.广告总ACOS * 100, 2) / 100))
+ / 100, ROUND(COALESCE(d.广告总ACOS, {sdacos_expectation}
+ / 100) * 100, 2) / 100))
         +
         (CASE
             WHEN ROUND(((COALESCE(c.广告总销售额, 0) / COALESCE(b.广告总销售额, 0)) * 100), 2) > {spacos_expectation}
@@ -1852,7 +1859,8 @@ d AS (
  / 100) * {spacos_expectation}
  / 100, 2)
         END * LEAST({spacos_expectation}
- / 100, ROUND(c.广告总ACOS * 100, 2) / 100)),
+ / 100, ROUND(COALESCE(c.广告总ACOS, {spacos_expectation}
+ / 100) * 100, 2) / 100)),
     2) AS 期望广告花费,
     ROUND(
         (CASE
@@ -1863,7 +1871,8 @@ d AS (
  / 100) * {sdacos_expectation}
  / 100, 2)
         END * LEAST({sdacos_expectation}
- / 100, ROUND(d.广告总ACOS * 100, 2) / 100))
+ / 100, ROUND(COALESCE(d.广告总ACOS, {sdacos_expectation}
+ / 100) * 100, 2) / 100))
         +
         (CASE
             WHEN ROUND(((COALESCE(c.广告总销售额, 0) / COALESCE(b.广告总销售额, 0)) * 100), 2) > {spacos_expectation}
@@ -1873,13 +1882,16 @@ d AS (
  / 100) * {spacos_expectation}
  / 100, 2)
         END * LEAST({spacos_expectation}
- / 100, ROUND(c.广告总ACOS * 100, 2) / 100))
+ / 100, ROUND(COALESCE(c.广告总ACOS, {spacos_expectation}
+ / 100) * 100, 2) / 100))
         - COALESCE(b.广告总花费, 0),
     2) AS 期望广告新增花费
 		FROM a
 		LEFT JOIN b ON a.parent_asins_or_asin = b.parent_asins_or_asin
 		LEFT JOIN c ON a.parent_asins_or_asin = c.parent_asins_or_asin
 		LEFT JOIN d ON a.parent_asins_or_asin = d.parent_asins_or_asin
+	ORDER BY
+COALESCE(b.广告总花费, 0) DESC
              """
             df = pd.read_sql(query, con=conn)
             # 计算汇总数据

@@ -20,7 +20,7 @@ api_host = "https://apiserver.deep-thought.io/proxy"
 
 config_list_gpt4_turbo = [
     {
-        'model': 'gpt-4-1106-preview',
+        'model': 'gpt-4o-2024-08-06',
         'api_key': api_key,
         'api_base': api_host,
     },
@@ -31,27 +31,77 @@ user_name = '2_bob'
 question_ask = f"Read the conversation above. Then select the type of task from . Only the task type is returned.",
 
 # 默认的 summarizer 配置
+# default_system_message = [
+# """You are a professional AI Summarize assistant.
+# It is generally believed that a natural sales ratio between 40-50% is healthy, an advertising expenditure ratio below 10% is healthy,
+# and an Acos value of advertising data below 24% is healthy. If the above data are all healthy, our main goal is to increase sales.
+# NOTE:Just return one paragraph
+# """,
+# """You are a professional AI Summarize assistant.
+# We believe that a SD ad sales share below 35% is unhealthy, 55%-65% of SP advertising sales is healthy,
+# and below 90% of SP manual advertising sales share is unhealthy.
+# NOTE:Just return one paragraph.We only analyze sales.""",
+# """You are a professional AI Summarize assistant.
+# For each list and the whole, we believe that Acos and SPAcos are both healthy if they are below 24%, and SP advertising sales are healthy if they are above 55%.
+# NOTE:Just return one paragraph""",
+# """You are a professional AI Summarize assistant.
+# For each list and the whole, we believe that SPAcos and SP手动Acos and SP自动Acos are both healthy if they are below 24%, and SP manual advertising sales account for more than 90% is healthy.
+# NOTE:Just return one paragraph""",
+# """You are a professional AI Summarize assistant.
+# For each list and overall, we believe that SD advertising sales account for 35%-40% is healthy, and SD_ACOS is healthy when it is around 8%.
+# NOTE:Just return one paragraph,Focus on the proportion of SD advertising sales""",
+# """You are a professional AI Summarize assistant.
+# Summarize the given paragraphs
+# NOTE:Just return one paragraph""",
+# """You are a professional AI Summarize assistant.
+# Given a year's worth of monthly data, determine whether sales have obvious off-seasons and peak seasons, and analyze current sales trends and acos value trends
+# NOTE:Just return one paragraph"""
+# ]
 default_system_message = [
 """You are a professional AI Summarize assistant.
-It is generally believed that a natural sales ratio between 40-50% is healthy, an advertising expenditure ratio below 10% is healthy,
-and an Acos value of advertising data below 24% is healthy. If the above data are all healthy, our main goal is to increase sales.
-NOTE:Just return one paragraph
+It is generally believed that  an Acos value of advertising data below 24% is healthy.
+NOTE:Just return one paragraph.We only analyze Acos.
 """,
 """You are a professional AI Summarize assistant.
-We believe that a SD ad sales share below 35% is unhealthy, 55%-65% of SP advertising sales is healthy,
-and below 90% of SP manual advertising sales share is unhealthy.
-NOTE:Just return one paragraph.We only analyze sales.""",
+It is generally believed that a natural sales ratio between 40-50% is healthy
+NOTE:Just return one paragraph.We only analyze natural sales ratio.
+""",
 """You are a professional AI Summarize assistant.
-For each list and the whole, we believe that Acos and SPAcos are both healthy if they are below 24%, and SP advertising sales are healthy if they are above 55%.
-NOTE:Just return one paragraph""",
+It is generally believed that an advertising expenditure ratio below 12% is healthy,
+NOTE:Just return one paragraph.We only analyze advertising expenditure ratio.
+""",
 """You are a professional AI Summarize assistant.
-For each list and the whole, we believe that SPAcos and SP手动Acos and SP自动Acos are both healthy if they are below 24%, and SP manual advertising sales account for more than 90% is healthy.
-NOTE:Just return one paragraph""",
+To summarize the given paragraph, if all the metrics are healthy, then our goal is to increase sales while maintaining healthy metrics.
+NOTE:Just return one paragraph,Need to state the goal""",
 """You are a professional AI Summarize assistant.
-For each list and overall, we believe that SD advertising sales account for 35%-40% is healthy, and SD_ACOS is healthy when it is around 8%.
+We believe that 35%-40% of a SD ad sales share is healthy,55%-65% of SP ad sales share is healthy
+NOTE:Just return one paragraph.We only analyze  ad sales share.""",
+"""You are a professional AI Summarize assistant.
+We believe that the sales ratio of SP manual and SP automatic is about 8:2, which we think is healthy.When the ratio is unhealthy, you need to increase the sales of the corresponding ads
+NOTE:Just return one paragraph.We only analyze the sales ratio.Review expected proportions and ensure accuracy of analysis.""",
+"""You are a professional AI Summarize assistant.
+For each list and the whole, we believe that ACOS and SP_ACOS are both healthy if they are below 24%
+NOTE:Just return one paragraph.We only analyze ACOS and SP_ACOS.""",
+"""You are a professional AI Summarize assistant.
+For each list and the whole, we believe that  SP advertising sales are healthy if they are above 55%.When it is much higher than 55%, it is considered that the performance of SD advertising needs to be strengthened.
+NOTE:Just return one paragraph.We only analyze SP advertising sales""",
+"""You are a professional AI Summarize assistant.
+For each list and the whole, we believe that SP_ACOS and SP手动_ACOS and SP自动_ACOS are both healthy if they are below 24%
+NOTE:Just return one paragraph.We only analyze SP_ACOS and SP手动_ACOS and SP自动_ACOS""",
+"""You are a professional AI Summarize assistant.
+For each list and the whole, we believe that SP manual advertising sales account for more than 80% is healthy.
+NOTE:Just return one paragraph.We only analyze SP manual advertising sales""",
+"""You are a professional AI Summarize assistant.
+For each list and overall, we believe that SD advertising sales account for 35%-40% is healthy.When it is much higher than 40%, it is considered that the performance of SP advertising needs to be strengthened.
 NOTE:Just return one paragraph,Focus on the proportion of SD advertising sales""",
 """You are a professional AI Summarize assistant.
-Summarize the given paragraphs
+For each list and overall, we believe that  SD_ACOS is healthy when it is around 8%.
+NOTE:Just return one paragraph,We only analyze SD_ACOS""",
+"""You are a professional AI Summarize assistant.
+Summarize the problems encountered by SD advertising, and output that we will increase sales and reduce ACOS by launching SD advertising activities such as 0509, 0731, and 0808, so as to achieve a sales share of 35% and an AOCS value of 8% for SD advertising
+NOTE:Just return one paragraph""",
+"""You are a professional AI Summarize assistant.
+Summarize the problems encountered by SP advertising, and output that we will increase sales and reduce ACOS by launching SP advertising activities such as 0502 and 0514, so as to achieve a sales share of 65% for SP advertising, 80% for SP manual advertising, and an AOCS value of 24%
 NOTE:Just return one paragraph""",
 """You are a professional AI Summarize assistant.
 Given a year's worth of monthly data, determine whether sales have obvious off-seasons and peak seasons, and analyze current sales trends and acos value trends

@@ -287,5 +287,39 @@
                   "timezone_offset": "-07:00",
                   "sales_channel": "Amazon.com"
               }
+          ],
+  "us1" : [
+              {
+                  "state": 0,
+                  "country": "US",
+                  "config": "US",
+                  "timezone_offset": "-07:00",
+                  "sales_channel": "Amazon.com"
+              }
+          ],
+  "us2" : [
+              {
+                  "state": 0,
+                  "country": "US",
+                  "config": "US",
+                  "timezone_offset": "-07:00",
+                  "sales_channel": "Amazon.com"
+              }
+          ],
+  "eu" : [
+              {
+                  "state": 0,
+                  "country": "UK",
+                  "config": "UK",
+                  "timezone_offset": "+01:00",
+                  "sales_channel": "Amazon.co.uk"
+              },
+              {
+                  "state": 0,
+                  "country": "DE",
+                  "config": "DE",
+                  "timezone_offset": "+02:00",
+                  "sales_channel": "Amazon.de"
+              }
           ]
 }

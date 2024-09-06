@@ -23,7 +23,7 @@
             display: block;
             margin-top: 10px;
         }
-        select, input[type="file"] {
+        select, input[type="file"], input[type="number"], input[type="text"] {
             width: 100%;
             padding: 8px;
             margin-top: 5px;
@@ -47,6 +47,9 @@
         .hidden {
             display: none;
         }
+        .additional-fields {
+            margin-top: 20px;
+        }
     </style>
 </head>
 <body>
@@ -63,6 +66,7 @@
             <option value="priceAdjustment">改价</option>
             <option value="modifyStatus">状态修改</option>
             <option value="createTargeting">新建投放</option>
+            <option value="createBudgetRules">新建预算规则</option>
         </select>
 
         <div id="createCampaignFields" class="hidden">
@@ -80,7 +84,6 @@
                     <option value="{{ brand }}">{{ brand }}</option>
                 {% endfor %}
             </select><br>
-
 
             <label for="country">选择国家：</label>
             <select id="country" name="country" >
@@ -103,7 +106,6 @@
         </div>
 
         <div id="priceAdjustmentFields" class="hidden">
-
             <label for="adjustmentBrand">品牌:</label>
             <select id="adjustmentBrand" name="adjustmentBrand" >
                 <option value="">请选择品牌</option>
@@ -141,110 +143,222 @@
         </div>
 
         <div id="modifyStatusFields" class="hidden">
+            <label for="modifyBrand">品牌:</label>
+            <select id="modifyBrand" name="modifyBrand" >
+                <option value="">请选择品牌</option>
+                {% for brand, countries in permissions.brands.items() %}
+                    <option value="{{ brand }}">{{ brand }}</option>
+                {% endfor %}
+            </select><br>
 
-                <label for="modifyBrand">品牌:</label>
-                <select id="modifyBrand" name="modifyBrand" >
-                    <option value="">请选择品牌</option>
-                    {% for brand, countries in permissions.brands.items() %}
-                        <option value="{{ brand }}">{{ brand }}</option>
-                    {% endfor %}
-                </select><br>
+            <label for="modifyCountry">选择国家：</label>
+            <select id="modifyCountry" name="modifyCountry" >
+                <option value="">请选择国家</option>
+                <!-- 国家选项会根据品牌选择动态生成 -->
+            </select><br>
 
-                <label for="modifyCountry">选择国家：</label>
-                <select id="modifyCountry" name="modifyCountry" >
-                    <option value="">请选择国家</option>
-                    <!-- 国家选项会根据品牌选择动态生成 -->
-                </select><br>
+            <label for="modifyAdType">广告类型:</label>
+            <select name="modifyAdType" id="modifyAdType">
+                <option value="SP">SP</option>
+                <option value="SD">SD</option>
+            </select>
 
-                <label for="modifyAdType">广告类型:</label>
-                <select name="modifyAdType" id="modifyAdType">
-                    <option value="SP">SP</option>
-                    <option value="SD">SD</option>
-                </select>
+            <label for="modifyPosition">修改位置:</label>
+            <select name="modifyPosition" id="modifyPosition">
+                <option value="campaign">广告活动</option>
+                <option value="SKU">SKU</option>
+                <option value="keywords">关键词</option>
+                <option value="productTargeting">商品投放</option>
+                <option value="autoTargeting">自动定位组</option>
+            </select>
 
-                <label for="modifyPosition">修改位置:</label>
-                <select name="modifyPosition" id="modifyPosition">
-                    <option value="campaign">广告活动</option>
-                    <option value="SKU">SKU</option>
-                    <option value="keywords">关键词</option>
-                    <option value="productTargeting">商品投放</option>
-                    <option value="autoTargeting">自动定位组</option>
-                </select>
-
-                <label for="status">状态:</label>
-                <select name="status" id="status">
-                    <option value="ENABLED">开启</option>
-                    <option value="PAUSED">关闭</option>
-                </select>
+            <label for="status">状态:</label>
+            <select name="status" id="status">
+                <option value="ENABLED">开启</option>
+                <option value="PAUSED">关闭</option>
+            </select>
         </div>
 
         <div id="createTargetingFields" class="hidden">
+            <label for="targetingBrand">品牌:</label>
+            <select id="targetingBrand" name="targetingBrand" >
+                <option value="">请选择品牌</option>
+                {% for brand, countries in permissions.brands.items() %}
+                    <option value="{{ brand }}">{{ brand }}</option>
+                {% endfor %}
+            </select><br>
 
-                <label for="targetingBrand">品牌:</label>
-                <select id="targetingBrand" name="targetingBrand" >
-                    <option value="">请选择品牌</option>
-                    {% for brand, countries in permissions.brands.items() %}
-                        <option value="{{ brand }}">{{ brand }}</option>
-                    {% endfor %}
-                </select><br>
+            <label for="targetingCountry">选择国家：</label>
+            <select id="targetingCountry" name="targetingCountry" >
+                <option value="">请选择国家</option>
+                <!-- 国家选项会根据品牌选择动态生成 -->
+            </select><br>
 
-                <label for="targetingCountry">选择国家：</label>
-                <select id="targetingCountry" name="targetingCountry" >
-                    <option value="">请选择国家</option>
-                    <!-- 国家选项会根据品牌选择动态生成 -->
-                </select><br>
+            <label for="targetingAdType">广告类型:</label>
+            <select name="targetingAdType" id="targetingAdType">
+                <option value="SP">SP</option>
+                <option value="SD">SD</option>
+            </select>
 
-                <label for="targetingAdType">广告类型:</label>
-                <select name="targetingAdType" id="targetingAdType">
-                    <option value="SP">SP</option>
-                    <option value="SD">SD</option>
+            <label for="targetingPosition">新建内容:</label>
+            <select name="targetingPosition" id="targetingPosition">
+                <option value="productTargeting1">商品投放-品类</option>
+                <option value="productTargeting2">商品投放-商品</option>
+                <option value="keywords">关键词</option>
+                <option value="negativeProductTargeting">否定商品</option>
+                <option value="negativeKeywords">否定关键词</option>
+            </select>
+        </div>
+
+        <div id="createBudgetRulesFields" class="hidden">
+            <label for="BudgetRulesBrand">品牌:</label>
+            <select id="BudgetRulesBrand" name="BudgetRulesBrand" >
+                <option value="">请选择品牌</option>
+                {% for brand, countries in permissions.brands.items() %}
+                    <option value="{{ brand }}">{{ brand }}</option>
+                {% endfor %}
+            </select><br>
+
+            <label for="BudgetRulesCountry">选择国家：</label>
+            <select id="BudgetRulesCountry" name="BudgetRulesCountry" >
+                <option value="">请选择国家</option>
+                <!-- 国家选项会根据品牌选择动态生成 -->
+            </select><br>
+
+            <label for="BudgetRulesAdType">广告类型:</label>
+            <select name="BudgetRulesAdType" id="BudgetRulesAdType">
+                <option value="SP">SP</option>
+                <option value="SD">SD</option>
+            </select>
+
+            <label for="BudgetRulesName">规则名称:</label>
+            <input type="text" id="BudgetRulesName" name="BudgetRulesName"><br><br>
+
+            <label for="enddate">结束日期:</label>
+            <input type="text" id="enddate" name="enddate"><br><br>
+
+            <label for="budget_increase">预算增幅:</label>
+            <input type="number" id="budget_increase" name="budget_increase" step="1"><br><br>
+
+            <label for="BudgetRulesType">类型:</label>
+            <select name="BudgetRulesType" id="BudgetRulesType" onchange="toggleBudgetRulesFields(this.value)">
+                <option value="">请选择类型</option>
+                <option value="SCHEDULE">时间表</option>
+                <option value="PERFORMANCE">效果</option>
+            </select>
+        </div>
+
+        <div id="budgetRulesAdditionalFields" class="hidden additional-fields">
+            <!-- Additional fields for schedule type -->
+            <div id="scheduleFields" class="hidden">
+                <label for="supportDailySchedule">是否支持日内时间表:</label>
+                <select id="supportDailySchedule" name="supportDailySchedule">
+                    <option value="True">是</option>
+                    <option value="False">否</option>
                 </select>
 
-                <label for="targetingPosition">新建内容:</label>
-                <select name="targetingPosition" id="targetingPosition">
-                    <option value="productTargeting1">商品投放-品类</option>
-                    <option value="productTargeting2">商品投放-商品</option>
-                    <option value="keywords">关键词</option>
-                    <option value="negativeProductTargeting">否定商品</option>
-                    <option value="negativeKeywords">否定关键词</option>
+                <label for="startTime">开始时间:</label>
+                <input type="text" id="startTime" name="startTime" placeholder="请输入开始时间">
+
+                <label for="endTime">结束时间:</label>
+                <input type="text" id="endTime" name="endTime" placeholder="请输入结束时间">
+            </div>
+
+            <!-- Additional fields for performance type -->
+            <div id="performanceFields" class="hidden">
+                <label for="metricName">指标名称:</label>
+                <select name="metricName" id="metricName">
+                    <option value="ACOS">ACOS</option>
+                    <option value="CTR">CTR</option>
+                    <option value="CVR">CVR</option>
+                    <option value="ROAS">ROAS</option>
                 </select>
+
+                <label for="comparisonOperator">比较运算符:</label>
+                <select name="comparisonOperator" id="comparisonOperator">
+                    <option value="LESS_THAN">小于</option>
+                    <option value="LESS_THAN_OR_EQUAL_TO">小于或等于</option>
+                    <option value="GREATER_THAN_OR_EQUAL_TO">大于或等于</option>
+                    <option value="GREATER_THAN">大于</option>
+                </select>
+
+                <label for="performanceValue">业绩指标值:</label>
+                <input type="number" id="performanceValue" name="performanceValue" step="0.01" placeholder="请输入业绩指标值">
+            </div>
         </div>
 
         <button type="submit">修改</button>
     </form>
 
     <script>
-
-        // 根据操作选项显示或隐藏相关字段
         function toggleFields(value) {
             var createFields = document.getElementById('createCampaignFields');
             var priceFields = document.getElementById('priceAdjustmentFields');
             var statusFields = document.getElementById('modifyStatusFields');
             var targetingFields = document.getElementById('createTargetingFields');
+            var BudgetRulesFields = document.getElementById('createBudgetRulesFields');
+            var budgetRulesAdditionalFields = document.getElementById('budgetRulesAdditionalFields');
+            var scheduleFields = document.getElementById('scheduleFields');
+            var performanceFields = document.getElementById('performanceFields');
 
             if (value === 'createCampaign') {
                 createFields.classList.remove('hidden');
                 priceFields.classList.add('hidden');
                 statusFields.classList.add('hidden');
                 targetingFields.classList.add('hidden');
+                BudgetRulesFields.classList.add('hidden');
+                budgetRulesAdditionalFields.classList.add('hidden');
             } else if (value === 'priceAdjustment') {
                 createFields.classList.add('hidden');
                 priceFields.classList.remove('hidden');
                 statusFields.classList.add('hidden');
                 targetingFields.classList.add('hidden');
+                BudgetRulesFields.classList.add('hidden');
+                budgetRulesAdditionalFields.classList.add('hidden');
             } else if (value === 'modifyStatus') {
                 createFields.classList.add('hidden');
                 priceFields.classList.add('hidden');
                 statusFields.classList.remove('hidden');
                 targetingFields.classList.add('hidden');
+                BudgetRulesFields.classList.add('hidden');
+                budgetRulesAdditionalFields.classList.add('hidden');
             } else if (value === 'createTargeting') {
-              createFields.classList.add('hidden');
-              priceFields.classList.add('hidden');
-              statusFields.classList.add('hidden');
-              targetingFields.classList.remove('hidden');
+                createFields.classList.add('hidden');
+                priceFields.classList.add('hidden');
+                statusFields.classList.add('hidden');
+                targetingFields.classList.remove('hidden');
+                BudgetRulesFields.classList.add('hidden');
+                budgetRulesAdditionalFields.classList.add('hidden');
+            } else if (value === 'createBudgetRules') {
+                createFields.classList.add('hidden');
+                priceFields.classList.add('hidden');
+                statusFields.classList.add('hidden');
+                targetingFields.classList.add('hidden');
+                BudgetRulesFields.classList.remove('hidden');
+                budgetRulesAdditionalFields.classList.remove('hidden');
             } else {
                 createFields.classList.add('hidden');
                 priceFields.classList.add('hidden');
+                statusFields.classList.add('hidden');
+                targetingFields.classList.add('hidden');
+                BudgetRulesFields.classList.add('hidden');
+                budgetRulesAdditionalFields.classList.add('hidden');
+            }
+        }
+
+        function toggleBudgetRulesFields(value) {
+            var scheduleFields = document.getElementById('scheduleFields');
+            var performanceFields = document.getElementById('performanceFields');
+
+            if (value === 'SCHEDULE') {
+                scheduleFields.classList.remove('hidden');
+                performanceFields.classList.add('hidden');
+            } else if (value === 'PERFORMANCE') {
+                scheduleFields.classList.add('hidden');
+                performanceFields.classList.remove('hidden');
+            } else {
+                scheduleFields.classList.add('hidden');
+                performanceFields.classList.add('hidden');
             }
         }
     </script>
@@ -313,6 +427,25 @@
         document.getElementById('targetingBrand').addEventListener('change', function() {
             const brand = this.value;
             const countrySelect = document.getElementById('targetingCountry');
+
+            // 清空国家下拉框
+            countrySelect.innerHTML = '<option value="">请选择国家</option>';
+
+            // 根据选中的品牌动态加载国家选项
+            if (brand && permissions.brands[brand]) {
+                permissions.brands[brand].forEach(function(country) {
+                    const option = document.createElement('option');
+                    option.value = country;
+                    option.textContent = country;
+                    countrySelect.appendChild(option);
+                });
+            }
+        });
+
+        // 监听改价品牌下拉框的变化事件
+        document.getElementById('BudgetRulesBrand').addEventListener('change', function() {
+            const brand = this.value;
+            const countrySelect = document.getElementById('BudgetRulesCountry');
 
             // 清空国家下拉框
             countrySelect.innerHTML = '<option value="">请选择国家</option>';

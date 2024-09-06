@@ -61,7 +61,7 @@ user_permissions = {
         'brands': {
             'LAPASA': ['IT', 'ES', 'DE', 'FR', 'UK', 'US', 'JP'],
             'DELOMO': ['IT', 'ES', 'DE', 'FR', 'US'],
-            'OutdoorMaster': ['IT', 'ES', 'FR', 'SE'],
+            'OutdoorMaster': ['IT', 'ES', 'FR', 'SE', 'JP'],
             'MUDEELA': ['US'],
             'Rossny': ['US'],
             'ZEN CAVE': ['US'],
@@ -91,7 +91,7 @@ user_permissions = {
     },
     'OutdoorMaster': {
         'brands': {
-            'OutdoorMaster': ['IT', 'ES', 'FR', 'SE']
+            'OutdoorMaster': ['IT', 'ES', 'FR', 'SE', 'JP']
         }
     },
     'MUDEELA': {
@@ -690,6 +690,41 @@ def modify_function():
                     elif params_modify['targetingPosition'] == 'negativeKeywords':
                         print('执行修改操作...')
                         api1.auto_create_negative_keyword(params_modify['country'], csv_path)
+                elif params_modify['adType'] == 'SD':
+                    api1 = auto_api_sd(params_modify['brand'])
+                    if params_modify['targetingPosition'] == 'productTargeting1':
+                        print('执行修改操作...')
+                        api1.auto_create_targeting_category(params_modify['country'], csv_path)
+                    elif params_modify['targetingPosition'] == 'productTargeting2':
+                        print('执行修改操作...')
+                        api1.auto_create_targeting_product(params_modify['country'], csv_path)
+                    elif params_modify['targetingPosition'] == 'negativeProductTargeting':
+                        print('执行修改操作...')
+                        api1.auto_create_negative_targeting_product(params_modify['country'], csv_path)
+                return f'修改完成'
+            elif params['operationOption'] == 'createBudgetRules':
+                params_modify = {
+                    'brand': request.form.get('BudgetRulesBrand'),
+                    'country': request.form.get('BudgetRulesCountry'),
+                    'Name': request.form.get('BudgetRulesName'),
+                    'adType': request.form.get('BudgetRulesAdType'),
+                    'Type': request.form.get('BudgetRulesType'),
+                    'enddate': request.form.get('enddate',None),
+                    'budget_increase': request.form.get('budget_increase'),
+                }
+                if params_modify['adType'] == 'SP':
+                    api1 = auto_api_sp(params_modify['brand'])
+                    additional_params = {
+                        'supportDailySchedule': request.form.get('supportDailySchedule', ''),
+                        'startTime': request.form.get('startTime', ''),
+                        'endTime': request.form.get('endTime', ''),
+                        'metricName': request.form.get('metricName', ''),
+                        'comparisonOperator': request.form.get('comparisonOperator', ''),
+                        'performanceValue': request.form.get('performanceValue', '')
+                    }
+                    params_modify.update(additional_params)
+                    print(params_modify)
+                    api1.auto_create_BudgetRules(params_modify['country'], csv_path, params_modify)
                 elif params_modify['adType'] == 'SD':
                     api1 = auto_api_sd(params_modify['brand'])
                     if params_modify['targetingPosition'] == 'productTargeting1':

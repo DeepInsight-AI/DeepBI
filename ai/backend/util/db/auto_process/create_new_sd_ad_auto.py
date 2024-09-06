@@ -444,7 +444,7 @@ class Ceate_new_sd:
             except Exception as e:
                 # 处理异常，可以打印异常信息或者进行其他操作
                 print("An error occurred:", e)
-        if brand_name == 'LAPASA' or brand_name == 'OutdoorMaster' or brand_name == 'DELOMO':
+        if brand_name == 'LAPASA'  or brand_name == 'DELOMO':
             creativeId = api4.create_creatives(market, new_adgroup_id)
 
     def create_new_sd_0511(self,market,info,brand_name,budget,target_bid):
@@ -494,7 +494,7 @@ class Ceate_new_sd:
                 except Exception as e:
                     # 处理异常，可以打印异常信息或者进行其他操作
                     print("An error occurred:", e)
-                if brand_name == 'LAPASA' or brand_name == 'OutdoorMaster' or brand_name == 'DELOMO':
+                if brand_name == 'LAPASA' or brand_name == 'DELOMO':
                     creativeId = api4.create_creatives(market, new_adgroup_id)
             print(f"{name} create successfully")
         print("all create successfully")
@@ -556,7 +556,7 @@ class Ceate_new_sd:
                     except Exception as e:
                         # 处理异常，可以打印异常信息或者进行其他操作
                         print("An error occurred:", e)
-                if brand_name == 'LAPASA' or brand_name == 'OutdoorMaster' or brand_name == 'DELOMO':
+                if brand_name == 'LAPASA'  or brand_name == 'DELOMO':
                     creativeId = api4.create_creatives(market, new_adgroup_id)
             print(f"{name} create successfully")
         print("all create successfully")
@@ -625,7 +625,7 @@ class Ceate_new_sd:
                     except Exception as e:
                         # 处理异常，可以打印异常信息或者进行其他操作
                         print("An error occurred:", e)
-                if brand_name == 'LAPASA' or brand_name == 'OutdoorMaster' or brand_name == 'DELOMO':
+                if brand_name == 'LAPASA'  or brand_name == 'DELOMO':
                     creativeId = api4.create_creatives(market, new_adgroup_id)
             print(f"{name} create successfully")
         print("all create successfully")
@@ -782,7 +782,7 @@ class Ceate_new_sd:
                 #             except Exception as e:
                 #                 # 处理异常，可以打印异常信息或者进行其他操作
                 #                 print("An error occurred:", e)
-                if brand_name == 'LAPASA' or brand_name == 'OutdoorMaster' or brand_name == 'DELOMO':
+                if brand_name == 'LAPASA'  or brand_name == 'DELOMO':
                     creativeId = api4.create_creatives(market, new_adgroup_id)
             print(f"{name} create successfully")
         print("all create successfully")

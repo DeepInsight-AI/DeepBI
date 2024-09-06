@@ -108,6 +108,27 @@ class auto_api_sd:
             print(e)
             return 500  # Internal Server Error
 
+    def create_product_target_new(self, keywordId, bid, campaignId, adGroupId):
+        try:
+            apitool1 = AdGroupTools(self.brand)
+            api3 = Gen_adgroup(self.brand)
+            brand_info = apitool1.list_category_refinements(self.market, keywordId)
+            # 检查是否存在名为"LAPASA"的品牌
+            target_brand_name = self.brand
+            target_brand_id = None
+            print('1')
+            for brand in brand_info['brands']:
+                if brand['name'] == target_brand_name:
+                    target_brand_id = brand['id']
+                    new_targetId = api3.create_adGroup_Targeting4(self.market, adGroupId, keywordId,
+                                                                  expression_type='manual', state='enabled',
+                                                                  bid=float(bid))
+                    return 200
+            return 404
+        except Exception as e:
+            print(e)
+            return 500  # Internal Server Error
+
     def create_product_target_asin(self, asin, bid, adGroupId):
         try:
             api2 = Gen_adgroup(self.brand)

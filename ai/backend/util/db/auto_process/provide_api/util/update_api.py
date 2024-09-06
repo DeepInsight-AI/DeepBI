@@ -60,6 +60,8 @@ def sd_api(data):
     elif data['require'] == 'create':
         if data['position'] == 'product_target':
             code = api.create_product_target(data['ID'], data['text'], data['campaignId'], data['adGroupId'])
+        elif data['position'] == 'product_target_new':
+            code = api.create_product_target_new(data['ID'], data['text'], data['campaignId'], data['adGroupId'])
         elif data['position'] == 'product_target_asin':
             code = api.create_product_target_asin(data['ID'], data['text'], data['adGroupId'])
     elif data['require'] == 'name':

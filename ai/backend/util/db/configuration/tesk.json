@@ -159,47 +159,52 @@
           ],
   "Veement" : [
               {
-                  "state": 0,
+                  "state": 2,
                   "country": "UK",
                   "config": "UK",
                   "timezone_offset": "+01:00",
-                  "sales_channel": "Amazon.co.uk"
+                  "sales_channel": "Amazon.co.uk",
+                  "parent_asins": ["B0D5LN4TZC","B0CP3M2ZZH","B0CNXZBJ7V","B0CNXYKTQQ","B0CP3FNGYX","B0CF8BC412"]
               }
           ],
   "KAPEYDESI" : [
               {
-                  "state": 0,
+                  "state": 2,
                   "country": "SA",
                   "config": "SA",
                   "timezone_offset": "+03:00",
-                  "sales_channel": "Amazon.sa"
+                  "sales_channel": "Amazon.sa",
+                  "parent_asins": ["B0CQXPP44Y", "B0D1YFL94W", "B0D1YF9G3T", "B0CZL4CW9X", "B0CL47PF47"]
               }
           ],
   "Gvyugke" : [
               {
-                  "state": 0,
+                  "state": 2,
                   "country": "AU",
                   "config": "AU",
                   "timezone_offset": "+10:00",
-                  "sales_channel": "Amazon.com.au"
+                  "sales_channel": "Amazon.com.au",
+                  "parent_asins": ["B0CQ4XNF98", "B0C61Z25B9", "B0CHFCQP9Z", "B0CC5DKJJN", "B0C6QQCQTG", "B0C6QJX767"]
               }
           ],
   "Uuoeebb" : [
               {
-                  "state": 0,
+                  "state": 2,
                   "country": "US",
                   "config": "US",
                   "timezone_offset": "-07:00",
-                  "sales_channel": "Amazon.com"
+                  "sales_channel": "Amazon.com",
+                  "parent_asins": ["B0CZRMRZBB", "B0CZRMTNM4", "B0CRYZ9LWM", "B0CZRPV8QP", "B0CZKZM19Y", "B0CZL32TTM", "B0CNK5ZRZN", "B0CZKZLM7T", "B0CNK63VVK"]
               }
           ],
   "Gonbouyoku" : [
               {
-                  "state": 0,
+                  "state": 2,
                   "country": "JP",
                   "config": "JP",
                   "timezone_offset": "+09:00",
-                  "sales_channel": "Amazon.co.jp"
+                  "sales_channel": "Amazon.co.jp",
+                  "parent_asins": ["B0CJJHDV51", "B0CHYTZJX5", "B0CLV1VNVV", "B0CJJNNJ17", "B0CJJQPM8Z", "B0CL9QZFGV", "B0D6BMWMPX"]
               }
           ],
   "syndesmos" : [
@@ -207,13 +212,15 @@
                   "state": 0,
                   "country": "IT",
                   "timezone_offset": "+02:00",
-                  "sales_channel": "Amazon.it"
+                  "sales_channel": "Amazon.it",
+                  "parent_asins": ["B0D12VWCSS"]
               },
               {
                   "state": 0,
                   "country": "DE",
                   "timezone_offset": "+02:00",
-                  "sales_channel": "Amazon.de"
+                  "sales_channel": "Amazon.de",
+                  "parent_asins": ["B0D12VWCSS"]
               },
               {
                   "state": 1,
@@ -226,31 +233,35 @@
           ],
   "suihuooo" : [
               {
-                  "state": 0,
+                  "state": 2,
                   "country": "US",
                   "config": "US",
                   "timezone_offset": "-07:00",
-                  "sales_channel": "Amazon.com"
+                  "sales_channel": "Amazon.com",
+                  "parent_asins": ["B0CZ8Y94SK", "B0CSF7KRCF", "B0CSF8MH4N", "B0CZRZ4T34", "B0CZRXH3M3"]
               }
           ],
   "TEST" : [
               {
-                  "state": 0,
+                  "state": 2,
                   "country": "FR",
                   "timezone_offset": "+02:00",
-                  "sales_channel": "Amazon.fr"
+                  "sales_channel": "Amazon.fr",
+                  "parent_asins": ["B0CN3FH3CD", "B0BNN98Y35", "B0CSSTY9MH", "B0CN3DLLBM", "B0C4Y9L5V9", "B0C61Z25B9", "B0C6QJX767", "B0CMJ6X8YH", "B0C4T6NJCZ", "B0CL5T4H2H", "B0BZNM4C6Y", "B0BNNGLKP6", "B0C6QQCQTG"]
               },
               {
-                  "state": 0,
+                  "state": 2,
                   "country": "IT",
                   "timezone_offset": "+02:00",
-                  "sales_channel": "Amazon.it"
+                  "sales_channel": "Amazon.it",
+                  "parent_asins": ["B0BNN998LY", "B0CN3FH3CD", "B0BNN98Y35", "B0CSSTY9MH", "B0CN3DLLBM", "B0C4YCLF3Q", "B0C4Y9L5V9", "B0C61Z25B9", "B0C6QJX767", "B0BNNGLKP6", "B0C6QQCQTG"]
               },
               {
-                  "state": 0,
+                  "state": 2,
                   "country": "DE",
                   "timezone_offset": "+02:00",
-                  "sales_channel": "Amazon.de"
+                  "sales_channel": "Amazon.de",
+                  "parent_asins": ["B0BNN998LY", "B0CN3FH3CD", "B0BNN98Y35", "B0CSSTY9MH", "B0CN3DLLBM", "B0C4YCLF3Q", "B0C4Y9L5V9", "B0C61Z25B9", "B0C6QJX767", "B0BNNGLKP6", "B0C6QQCQTG"]
               },
               {
                   "state": 1,
@@ -290,36 +301,40 @@
           ],
   "us1" : [
               {
-                  "state": 0,
+                  "state": 2,
                   "country": "US",
                   "config": "US",
                   "timezone_offset": "-07:00",
-                  "sales_channel": "Amazon.com"
+                  "sales_channel": "Amazon.com",
+                  "parent_asins": ["B0C4Y1HB91", "B0C53MT4LQ", "B0C53KY7H7", "B0C53MXH1C", "B0C53MHD24", "B0C53MGCNC", "B0C53LV71G", "B0C53J7VFH", "B0C53KHY2L", "B0C53N8SXY", "B0C53L99GL", "B0C53HNMH9", "B0C53KWYT5", "B0C1NT6RK5", "B0C1NS8KX6", "B0C1NV9W9R", "B0C1NSX2CX", "B0C1NV48N2", "B0C1NVV8BZ", "B0C1NX7QT2", "B0C1NSRJ7L", "B0C1NWCMJC", "B0B9ZT2YFY", "B0B9ZQJC3X", "B0B9ZXP2J2", "B08GL98LG3", "B0C372VSJ7", "B098B1TWQ9", "B0C371ZGQK", "B0C372NCMN", "B0C36QQF4K", "B09B1LYSP8", "B0C3719K27", "B0C3718QWC", "B0B9SBG74F", "B0B9SCQ2FJ", "B0B9SDGWXV", "B0B9SFMHWK", "B08GLC97VT", "B0B9SG1GG1", "B09B1MJB1W", "B0B9SCRGBR", "B098B2T45M", "B0C372YRWR", "B0BB125SQG", "B0B9SD3BL7", "B0C37476DD", "B0C37225WT", "B0C371BZNN", "B08GL9M1S6", "B0C371K9Y8", "B0C36ZH99Q", "B0C371CPDR", "B0C3716SBG", "B08GLBGQ3F"]
               }
           ],
   "us2" : [
               {
-                  "state": 0,
+                  "state": 2,
                   "country": "US",
                   "config": "US",
                   "timezone_offset": "-07:00",
-                  "sales_channel": "Amazon.com"
+                  "sales_channel": "Amazon.com",
+                  "parent_asins": ["B07YXY6L8L", "B07HD838VP", "B07YXXHKFN", "B088R4DBSW", "B088R5D89T", "B088R4RQSY", "B0B19YYQC3", "B0B19ZTWK1", "B0B1B1GNB3", "B0B1B1F8MH", "B0B19Y8P5J", "B0B19XP8RV", "B0B19YRHBH", "B0B19ZFR38", "B0B19YSP8G", "B0B19Z4K4M", "B0B1B1RYP9", "B0B19XYH3K", "B0B19ZD7Z8", "B0B19YV58F", "B0B19ZDHYJ", "B0B19Z6ZPV", "B09YHDM4C6", "B08B4MM5M5", "B0B19Y25GD", "B0B19YKD2T", "B0B19ZTWJY", "B0B1B1SSFM", "B091Y8TJRR", "B091Y9VQP3", "B09N3WHM99", "B0BVQNBFSG", "B0BRMZ69XK", "B0BRMYS7MJ", "B0BYJF1289", "B088R59ZQ8", "B088R5PDRQ", "B088R5DJM9", "B0831N61G3", "B086SNYK79", "B086SMSZQ9", "B0BTHJ8R81", "B0BTHKQN31", "B0BTHKKHN5", "B0B39LY5W8", "B0B39JVD4B", "B0B29HJTQW", "B0B29KS7X8", "B0BL7FBLST", "B0B39H8DGT", "B0B87CPPTB", "B0CLQT2MHC", "B0DDTT7B76", "B0CJ8N1JCG", "B0CN6WPFCK", "B0B87BDDRP", "B0B87DMD6S", "B0CJ8QGTZR", "B0B18RD823", "B08D75RYGS", "B085GG5B25", "B094H6YJBN", "B0B18PQ9JL", "B094H6TBV9", "B094H7L8XG", "B0C371GC92", "B0B18Q9XGV", "B08T5TSWT3", "B08D74BP3C", "B085GFRM6H", "B08T5NT24S", "B0CCD1K57M", "B0C88YJK5V", "B08D75DWSL", "B0CCD1KQYV", "B08T6MY1VK", "B0C88ZQ67C", "B08D73C9FH", "B0CCD1L678", "B0C893TJR9", "B0CCD2PMRW", "B0C8946SSP", "B09JSBL7LH", "B08D74VL5P", "B085GGCCLL", "B0CJ2CHKLL", "B0B18Q5T2W", "B0CJ2C7M4C", "B0B18PT3MS", "B0CJ2CM65Z", "B0B18PR58B", "B0CJ2BVK62", "B0B18QKGKD", "B0BTCMSHTQ", "B08D74V5BN", "B0C36ZYW1F", "B0C37383DK", "B0C37138BR", "B0C372YQK5", "B0C36ZGMQN", "B0C374FPM7", "B0C372493B", "B0C372HV7K", "B0CC8XPJ99", "B0CC9239RX", "B0CC8VWMZ4", "B0CC91CV31", "B0CC8XW6QW", "B0CC9219B7", "B0CC8XGCXG", "B0CFY2LVFC", "B0CBK8ZBWM", "B0CBKDTXX5", "B0BC8CBX54", "B0BC8CYQJN", "B0BC8FBP5X", "B0CJ313Q9P", "B0CFXPCQ9Z", "B0CJ2JHLQQ", "B0CJ2L1JK6", "B0BC89WM77", "B0BC8BBG7V", "B0BC86RG8Z", "B0B87CNT8R", "B0B879CNYN", "B0B87C69YJ", "B0B87GKMF9", "B0BPLYKCS9", "B0B87GX6TB", "B0B87HVY1P", "B0BPLXRWKK", "B0BPM235Q1", "B0B878ZNLZ", "B0DDTCJ9L3", "B0CJQ7QJQW", "B0BRKJ553F", "B0DDTB967N", "B0DDT8PS1N", "B08B4MPHMG"]
               }
           ],
   "eu" : [
               {
-                  "state": 0,
+                  "state": 2,
                   "country": "UK",
                   "config": "UK",
                   "timezone_offset": "+01:00",
-                  "sales_channel": "Amazon.co.uk"
+                  "sales_channel": "Amazon.co.uk",
+                  "parent_asins": ["B082F1B7J9", "B0BNHXF3H2", "B09DV8QFZ3", "B0C9MF7GYK", "B09DV958KK", "B0C9TQDG8G", "B0C9MJ2VPX", "B0C9TS4427", "B0CB6BC6HC", "B0C9TPV7W5", "B0C2Z262YW", "B0BYD9X4S5", "B082DZWPZH", "B0BNHYM64R", "B09XV513C7", "B0C2YWS1TL", "B0C2YYL1J4", "B0BNHZBD9S", "B0C2Z1JKMC", "B0C2YX9TW5", "B082F1JD5D", "B09XV3YVR9", "B0C2YXKPXS", "B082DZZN92", "B082F1C247", "B09XV3RQW4", "B088R5PDRQ", "B0831N61G3", "B08211MDK7", "B08211KDRK", "B0C33BZJ99", "B0CC27KT8Z", "B0CC296ZY6", "B0CC27C3KM", "B0C9MHVFML", "B0CGV6L4N1", "B0C33C1VM6", "B0CC28P2HQ", "B08BXSXXDF", "B087QL4Q8V", "B0BYDDCKHX", "B087QK4MGN", "B0C9TR68YQ", "B0C9TMQ5K5", "B0C9TP3G78", "B09P9XN1XS", "B09PB4R5CJ", "B09P9ZWYMD", "B0C73HP2RF", "B0C73GYP5Y", "B0C73HNS1P", "B0C73GTJD4", "B0BLCG5DTF", "B0BLCCL873", "B0C6T2PMRR", "B0BLCDZ21P", "B0BLCF6HH5", "B0BLCFLP3H", "B0BLCFDFRH", "B0CGD4VL97", "B0BLCLR78T", "B0BLCGB1G6", "B0C6T63Z3L", "B0C6T6JW79", "B0C6T4T1MZ", "B0CGCL2S1L", "B0CGCLX5DD", "B0CGD72LSR", "B0CC91CV31", "B0CC9219B7", "B0CC8XPJ99", "B0CC9239RX", "B0CBK8ZBWM", "B0CBKDTXX5", "B0CC8VWMZ4", "B0CC8XW6QW", "B0DCNCNY51", "B0DCNFZW81", "B0DCNFY654", "B0DCNGRYG5", "B0DCN185DT", "B0B9SG1GG1", "B09B1MJB1W", "B0DCN3GVYQ", "B0DCMKM962", "B0DCN4R5M6", "B0DCN7DWWN", "B0CC2CDXJM", "B0CC282PBW", "B0CC261H87", "B0B9SCQ2FJ", "B0DCNGV95J", "B08KXYCNSY", "B0C9TQCFFT", "B0C9TR59H5", "B0C9TNZ5QF", "B0C2YTD6FN", "B0C5D5NHDL", "B0C5D49PJZ", "B0C53MHD24", "B0861518LN", "B0C2YTBGW1"]
               },
               {
-                  "state": 0,
+                  "state": 2,
                   "country": "DE",
                   "config": "DE",
                   "timezone_offset": "+02:00",
-                  "sales_channel": "Amazon.de"
+                  "sales_channel": "Amazon.de",
+                  "parent_asins": ["B08211MDK7", "B08J83SWSG", "B08BXRK95X", "B08211KDRK", "B0C33BZJ99", "B0CC4L1CXS", "B0CC4K37N1", "B0CC4L48TD", "B0CC4LVTWX", "B0CC4LM2ZQ", "B0CC4MNH1F", "B0CC4LG82D", "B08BXSXXDF", "B0CC4NL7FK", "B087QL4Q8V", "B087QK4MGN", "B08YCY76HK", "B08Z3LDXHF", "B08Z34WPKJ", "B08YD5YJX9", "B08YDS6DFB", "B08Z3C4YS4", "B08Z3B27LY", "B08Z3CJ7K5", "B08Z3Y4HBX", "B0CC92RM7Z", "B0CC92K1CR", "B0CC9168FR", "B0CC93MZYK", "B0CFDCY6L9", "B0CFDFST4B", "B0CFDFJNSX", "B0CFDP79J7", "B0CFD8W2S8", "B0CFDGYM49", "B0CFDCYWK2", "B0C5MD2DD2", "B0C5MCM281", "B0CFDDYVP9", "B0CFDJZPQ5", "B0D793RQKM", "B0D79355B7", "B0D7931953", "B0D797BCXQ", "B0CJ313Q9P", "B0C747M2G4", "B0CJ2Y9S9S", "B0CJ2YCHJF", "B09CV3X5MB", "B09CV6TX35", "B09CV3SHZG", "B0C7BQNS8B", "B0C7BNWXNY", "B0C7BQGRRD", "B0C6TH9KRS", "B0C6TJQJ1T", "B0C6TLS557", "B0BP7P587Y", "B0BP7KWBMT", "B0C9H93NJ6", "B0C9GX811D", "B0CFL3FN3Z", "B0C9H6G2KB", "B0CFF4CV2H", "B0CFF3KF7X", "B0CFF4ZDWV", "B0CFF31B8W", "B0CFF4C7L1", "B0CJ9PCM5W", "B0CCNDVRQ7", "B0CCNDJQCP", "B0CCJL3CGP", "B0CCNFJHYV", "B0CCNC9FSK", "B0CCND4142", "B0CCNBQBH1", "B0CCNDMV5D", "B0CLLHZHBQ", "B0CLLHGB9T", "B0CLLHYZRH", "B0CLLJMHJ4", "B0CCJMQ5VW", "B0CCJK8S4V", "B0CCJM4V77", "B0CCJPJVTW", "B0CCNCHTSM", "B0CCJM15Y4", "B0CCJM13JQ", "B0CCNC86NP", "B0CCJP8BN2", "B0CCJM7QWQ", "B0CCJMYFBL", "B0CCNDZ6LM", "B0CGTXVFTZ", "B0CGTZHG7S", "B0CGV174V8", "B0CGTYJH8R", "B0CGV12LM3", "B0CGTZPMWC", "B0CGV26KD8", "B0CGTZ9F2C"]
               }
           ]
 }

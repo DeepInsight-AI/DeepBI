@@ -342,6 +342,8 @@ def process_create():
                         api1.create_new_sd_0511(params_create['country'], info, params_create['brand'], params_create['budget'], params_create['bid'])
                     elif params_create['strategy'] == "0731":
                         api1.create_new_sd_no_template_0731(params_create['country'], info, params_create['brand'], params_create['budget'], params_create['bid'])
+                    elif params_create['strategy'] == "0901":
+                        api1.create_new_sd_no_template_0901(params_create['country'], info, params_create['brand'], params_create['budget'], params_create['bid'])
                     return jsonify({"status": "success", "message": "处理完成，未生成 CSV 文件。"})
             elif params_create['create_method'] == '横向复刻':
                 additional_params_create = {

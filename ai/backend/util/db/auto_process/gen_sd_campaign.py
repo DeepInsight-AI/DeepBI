@@ -261,8 +261,8 @@ class Gen_campaign:
         else:
             newdbtool.update_sp_campaign_negativeKeyword(market, keyword_state, None, campaignNegativeKeywordId, "failed",datetime.now())
 
-# ins = Gen_campaign('KAPEYDESI')
-# ins.update_camapign_status('UK',470187500409927,None,None,'enabled')
+# ins = Gen_campaign('Gotoly')
+# ins.update_camapign_status('US',375934001677502,None,None,'paused')
 # ins.create_camapign(market='FR',portfolioId=None,dynamicBidding={"placementBidding": [{"percentage": 20, "placement": "PLACEMENT_TOP"}], "strategy": "AUTO_FOR_SALES"}, endDate=None,name='DeepBI_AUTO_test',targetingType='AUTO',state='PAUSED',startDate='2024-05-20',budgetType='DAILY',budget=10)
     #修改关键词状态测试：
     #update_campaigin_negative_keyword('US','428799562608462','PAUSED')

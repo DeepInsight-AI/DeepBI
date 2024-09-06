@@ -287,6 +287,28 @@ class Gen_adgroup:
             newdbtool.add_sd_adGroup_Targeting(market,adGroupId,bid,expression_type,state,expression,"SD","failed",datetime.now())
         return apires[1]
 
+    def create_adGroup_Targeting4(self,market,adGroupId,expression,expression_type,state,bid):
+
+        adGroup_info = [
+      {
+        "expression": expression,
+        "bid": bid,
+        "adGroupId": adGroupId,
+        "expressionType": expression_type,
+        "state": state
+      }
+    ]
+        # api更新
+        apitool = AdGroupTools_SD(self.brand)
+        apires = apitool.create_adGroup_Targeting(adGroup_info,market)
+        # 结果写入日志
+        newdbtool = DbNewSpTools(self.brand,market)
+        if apires[0]=="success":
+            newdbtool.add_sd_adGroup_Targeting(market,adGroupId,bid,expression_type,state,expression,"SD","success",datetime.now())
+        else:
+            newdbtool.add_sd_adGroup_Targeting(market,adGroupId,bid,expression_type,state,expression,"SD","failed",datetime.now())
+        return apires[1]
+
     def update_adGroup_Targeting(self,market,target_id,bid,state):
 
         adGroup_info = [

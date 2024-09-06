@@ -247,6 +247,6 @@ class CampaignTools:
 #     }
 #   ]
 # }
-# ct=CampaignTools('KAPEYDESI')
-# res = ct.list_all_campaigns_api('DE')
+# ct=CampaignTools('Gotoly')
+# res = ct.list_all_campaigns_api('US')
 # print(res)

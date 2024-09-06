@@ -7,6 +7,8 @@ from ai.backend.util.db.auto_process.gen_sd_campaign import Gen_campaign
 from ai.backend.util.db.auto_process.gen_sd_product import Gen_product
 from ai.backend.util.db.auto_process.tools_sd_campaign import CampaignTools
 from ai.backend.util.db.auto_process.tools_sp_adGroup import AdGroupTools
+from ai.backend.util.db.auto_process.tools_sd_budget_rules import BudgetRulesToolsSD
+from ai.backend.util.db.auto_process.gen_sd_budget_rules import GenBudgetRuleSD
 
 
 class auto_api_sd:
@@ -196,6 +198,24 @@ class auto_api_sd:
                     # 处理异常，可以打印异常信息或者进行其他操作
                     print("An error occurred:", e)
 
+    def auto_create_BudgetRules(self,market,path,params_modify):
+        uploaded_file = path
+        if os.stat(uploaded_file).st_size > 2:
+            df = pd.read_csv(uploaded_file)
+            # 打印 DataFrame 的前几行，以确保成功读取
+            print(df.head())
+            # 将DataFrame转换为一个列表，每个元素是一个字典表示一行数据
+            df_data = json.loads(df.to_json(orient='records'))
+            print(df_data)
+            apitool1 = GenBudgetRuleSD(self.brand)
+            api2 = BudgetRulesToolsSD(self.brand)
+            for item in df_data:
+                campaignId = item['campaignId']
+                ruleId = apitool1.create_budget_rules(market,None if params_modify['enddate'] == '' else params_modify['enddate'], params_modify['startTime'], params_modify['endTime'],
+                                                          params_modify['Type'], int(params_modify['budget_increase']), params_modify['Name'],
+                                                          params_modify['metricName'], params_modify['comparisonOperator'], int(params_modify['performanceValue'] or '0'),
+                                                          params_modify['supportDailySchedule'])
+                api2.Associates_budget_rules_to_campaign(ruleId,campaignId,market)
 # api = auto_api('LAPASA')
 # #auto_campaign_keyword('FR',293153114778136)
 # #api.auto_campaign_product_targets('FR',493452433045396)

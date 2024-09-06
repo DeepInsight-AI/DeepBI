@@ -62,6 +62,7 @@
             <option value="createCampaign">新建广告活动</option>
             <option value="priceAdjustment">改价</option>
             <option value="modifyStatus">状态修改</option>
+            <option value="createTargeting">新建投放</option>
         </select>
 
         <div id="createCampaignFields" class="hidden">
@@ -69,6 +70,7 @@
             <select name="strategy" id="strategy">
                 <option value="0502">0502</option>
                 <option value="0507">0507</option>
+                <option value="0808">0808</option>
             </select>
 
             <label for="brand">品牌:</label>
@@ -176,6 +178,38 @@
                 </select>
         </div>
 
+        <div id="createTargetingFields" class="hidden">
+
+                <label for="targetingBrand">品牌:</label>
+                <select id="targetingBrand" name="targetingBrand" >
+                    <option value="">请选择品牌</option>
+                    {% for brand, countries in permissions.brands.items() %}
+                        <option value="{{ brand }}">{{ brand }}</option>
+                    {% endfor %}
+                </select><br>
+
+                <label for="targetingCountry">选择国家：</label>
+                <select id="targetingCountry" name="targetingCountry" >
+                    <option value="">请选择国家</option>
+                    <!-- 国家选项会根据品牌选择动态生成 -->
+                </select><br>
+
+                <label for="targetingAdType">广告类型:</label>
+                <select name="targetingAdType" id="targetingAdType">
+                    <option value="SP">SP</option>
+                    <option value="SD">SD</option>
+                </select>
+
+                <label for="targetingPosition">新建内容:</label>
+                <select name="targetingPosition" id="targetingPosition">
+                    <option value="productTargeting1">商品投放-品类</option>
+                    <option value="productTargeting2">商品投放-商品</option>
+                    <option value="keywords">关键词</option>
+                    <option value="negativeProductTargeting">否定商品</option>
+                    <option value="negativeKeywords">否定关键词</option>
+                </select>
+        </div>
+
         <button type="submit">修改</button>
     </form>
 
@@ -186,19 +220,28 @@
             var createFields = document.getElementById('createCampaignFields');
             var priceFields = document.getElementById('priceAdjustmentFields');
             var statusFields = document.getElementById('modifyStatusFields');
+            var targetingFields = document.getElementById('createTargetingFields');
 
             if (value === 'createCampaign') {
                 createFields.classList.remove('hidden');
                 priceFields.classList.add('hidden');
                 statusFields.classList.add('hidden');
+                targetingFields.classList.add('hidden');
             } else if (value === 'priceAdjustment') {
                 createFields.classList.add('hidden');
                 priceFields.classList.remove('hidden');
                 statusFields.classList.add('hidden');
+                targetingFields.classList.add('hidden');
             } else if (value === 'modifyStatus') {
                 createFields.classList.add('hidden');
                 priceFields.classList.add('hidden');
                 statusFields.classList.remove('hidden');
+                targetingFields.classList.add('hidden');
+            } else if (value === 'createTargeting') {
+              createFields.classList.add('hidden');
+              priceFields.classList.add('hidden');
+              statusFields.classList.add('hidden');
+              targetingFields.classList.remove('hidden');
             } else {
                 createFields.classList.add('hidden');
                 priceFields.classList.add('hidden');
@@ -251,6 +294,25 @@
         document.getElementById('modifyBrand').addEventListener('change', function() {
             const brand = this.value;
             const countrySelect = document.getElementById('modifyCountry');
+
+            // 清空国家下拉框
+            countrySelect.innerHTML = '<option value="">请选择国家</option>';
+
+            // 根据选中的品牌动态加载国家选项
+            if (brand && permissions.brands[brand]) {
+                permissions.brands[brand].forEach(function(country) {
+                    const option = document.createElement('option');
+                    option.value = country;
+                    option.textContent = country;
+                    countrySelect.appendChild(option);
+                });
+            }
+        });
+
+        // 监听改价品牌下拉框的变化事件
+        document.getElementById('targetingBrand').addEventListener('change', function() {
+            const brand = this.value;
+            const countrySelect = document.getElementById('targetingCountry');
 
             // 清空国家下拉框
             countrySelect.innerHTML = '<option value="">请选择国家</option>';

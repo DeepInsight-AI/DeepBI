@@ -494,7 +494,8 @@ class Ceate_new_sd:
                 except Exception as e:
                     # 处理异常，可以打印异常信息或者进行其他操作
                     print("An error occurred:", e)
-                creativeId = api4.create_creatives(market, new_adgroup_id)
+                if brand_name == 'LAPASA' or brand_name == 'OutdoorMaster' or brand_name == 'DELOMO':
+                    creativeId = api4.create_creatives(market, new_adgroup_id)
             print(f"{name} create successfully")
         print("all create successfully")
         pass

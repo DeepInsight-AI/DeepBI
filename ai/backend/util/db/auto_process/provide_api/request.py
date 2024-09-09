@@ -89,19 +89,20 @@ if __name__ == "__main__":
         "ID": "[{'type': 'purchases', 'value': [{'type': 'exactProduct'}, {'type': 'lookback', 'value': '30'}]}]",
         "text": "10",
         "campaignId": "532741363543129",
-        "adGroupId": "377421135440884"
+        "adGroupId": "377421135440884",
+        "matchType": "matchType"
     }
 
     res = ProcessShowData.update(update_data)
     print(res)
-# add_data = {
-#     "brand": "LAPASA",
-#     "market": "DE",
-#     "type": "SP",
-#     "strategy": "manual",
-#     "replication": "False",
-#     "text": {"parent_asin1":[{"keyword":keyword1,"matchType":matchType1,"bid":bid1},{},{}],"parent_asin2":[{},{},{}]}
-#     "budget":"10"
-# }
-# res = ProcessShowData.create(add_data)
-# print(res)
+    add_data = {
+        "brand": "LAPASA",
+        "market": "DE",
+        "type": "SP",
+        "strategy": "manual",
+        "replication": "False",
+        "text": {"parent_asin1":[{"keyword":"keyword1","matchType":"matchType1","bid":"bid1"},{},{}],"parent_asin2":[{},{},{}]},
+        "budget":"10"
+    }
+    res = ProcessShowData.create(add_data)
+    print(res)

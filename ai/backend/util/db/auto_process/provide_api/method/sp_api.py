@@ -184,8 +184,18 @@ class auto_api_sp:
     def create_product_target_asin(self, asin, bid, campaignId, adGroupId):
         try:
             api2 = Gen_adgroup(self.brand)
-            api2.create_adGroup_Targeting1(self.brand, campaignId, adGroupId, asin, bid,
+            api2.create_adGroup_Targeting1(self.market, campaignId, adGroupId, asin, bid,
                                            state='ENABLED', type='ASIN_SAME_AS')
+            return 200
+        except Exception as e:
+            print(e)
+            return 500  # Internal Server Error
+
+    def create_keyword(self, keywordtext, bid, campaignId, adGroupId,matchType):
+        try:
+            api2 = Gen_keyword(self.brand)
+            api2.add_keyword_toadGroup_v0(self.market, campaignId, adGroupId, keywordtext, matchType,
+                                           'ENABLED', float(bid))
             return 200
         except Exception as e:
             print(e)

@@ -3,7 +3,7 @@ import json
 import threading
 import time
 import logging
-from logging.handlers import RotatingFileHandler
+from logging.handlers import RotatingFileHandler, TimedRotatingFileHandler
 from flask import Flask, request, session, render_template, redirect, flash, jsonify, send_file, g
 from datetime import datetime
 from util.access_param import access_param,access_param_self
@@ -29,7 +29,7 @@ app = Flask(__name__)
 app.config['SECRET_KEY'] = '3c2d9d261a464e4e8814c5a39aa72f1c'
 lock = threading.Lock()
 # 设置日志记录器
-handler = RotatingFileHandler('app.log', maxBytes=10000, backupCount=1)
+handler = TimedRotatingFileHandler('app.log', when='midnight', interval=1, backupCount=7)
 handler.setLevel(logging.INFO)
 formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
 handler.setFormatter(formatter)

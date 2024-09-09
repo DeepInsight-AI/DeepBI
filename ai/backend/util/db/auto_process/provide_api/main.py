@@ -1,6 +1,6 @@
 from flask import Flask, request, jsonify, g
 import logging
-from logging.handlers import RotatingFileHandler
+from logging.handlers import RotatingFileHandler, TimedRotatingFileHandler
 import hashlib
 import time
 from ai.backend.util.db.auto_process.provide_api.util.update_api import update_api
@@ -8,7 +8,7 @@ from ai.backend.util.db.auto_process.provide_api.util.create_api import create_a
 
 app = Flask(__name__)
 # 设置日志记录器
-handler = RotatingFileHandler('app.log', maxBytes=10000, backupCount=1)
+handler = TimedRotatingFileHandler('app.log', when='midnight', interval=1, backupCount=7)
 handler.setLevel(logging.INFO)
 formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
 handler.setFormatter(formatter)

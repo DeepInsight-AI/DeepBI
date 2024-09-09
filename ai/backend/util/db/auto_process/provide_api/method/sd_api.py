@@ -2,6 +2,7 @@ from datetime import datetime
 import os
 import pandas as pd
 import json
+import ast
 from ai.backend.util.db.auto_process.gen_sd_campaign import Gen_campaign
 from ai.backend.util.db.auto_process.tools_sd_campaign import CampaignTools
 from ai.backend.util.db.auto_process.gen_sp_keyword import Gen_keyword
@@ -112,8 +113,8 @@ class auto_api_sd:
         try:
             api3 = Gen_adgroup(self.brand)
             # 检查是否存在名为"LAPASA"的品牌
-
-            new_targetId = api3.create_adGroup_Targeting4(self.market, adGroupId, keywordId,
+            variable = ast.literal_eval(keywordId)
+            new_targetId = api3.create_adGroup_Targeting4(self.market, adGroupId, variable,
                                                                   expression_type='manual', state='enabled',
                                                                   bid=float(bid))
             return 200

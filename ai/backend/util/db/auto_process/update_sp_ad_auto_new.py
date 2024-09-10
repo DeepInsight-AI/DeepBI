@@ -8,6 +8,7 @@ from ai.backend.util.db.auto_process.gen_sp_keyword import Gen_keyword  #add_key
 from ai.backend.util.db.auto_process.gen_sp_adgroup import Gen_adgroup  #add_adGroup_negative_keyword_v0,update_adGroup_TargetingClause
 from ai.backend.util.db.auto_process.gen_sp_product import Gen_product
 from ai.backend.util.db.auto_process.tools_db_new_sp import DbNewSpTools
+from ai.backend.util.db.auto_process.tools_db_sp import DbSpTools
 from ai.backend.util.db.auto_process.tools_sp_adGroup import AdGroupTools
 from ai.backend.util.db.auto_process.tools_sp_keyword import SPKeywordTools
 from ai.backend.util.db.auto_process.create_new_sp_ad_auto import load_config
@@ -137,8 +138,15 @@ class auto_api:
                 else:
                     if CPC_30d == '' or not CPC_30d:
                         CPC_30d = 0.5 * self.exchange_rate
-                    api.add_keyword_toadGroup_v0(market, str(campaign_id), str(adGroupId), searchTerm, matchType="EXACT", state="ENABLED", bid=float(CPC_30d))
-                    api.add_keyword_toadGroup_v0(market, str(campaign_id), str(adGroupId), searchTerm, matchType="PHRASE", state="ENABLED", bid=float(CPC_30d))
+                    api2 = DbSpTools(self.brand, self.market)
+                    count1 = api2.select_sp_keyword_count(campaign_id,adGroupId,searchTerm,"EXACT")
+                    if count1 == 0:
+                        print(count1)
+                        api.add_keyword_toadGroup_v0(market, str(campaign_id), str(adGroupId), searchTerm, matchType="EXACT", state="ENABLED", bid=float(CPC_30d))
+                    count2 = api2.select_sp_keyword_count(campaign_id, adGroupId, searchTerm, "PHRASE")
+                    if count2 == 0:
+                        print(count2)
+                        api.add_keyword_toadGroup_v0(market, str(campaign_id), str(adGroupId), searchTerm, matchType="PHRASE", state="ENABLED", bid=float(CPC_30d))
                     # api.add_keyword_toadGroup_v0(market, str(campaign_id), str(adGroupId), searchTerm, matchType="BROAD",
                     #                              state="ENABLED", bid=float(CPC_30d))
 
@@ -163,6 +171,9 @@ class auto_api:
                         CPC_30d = item["CPC_30d"]
                         if CPC_30d == '' or not CPC_30d:
                             CPC_30d = 0.5*self.exchange_rate
+                        api2 = DbSpTools(self.brand, self.market)
+                        count = api2.select_sp_target_count(campaignId, adGroupId, searchTerm.upper())
+                        if count == 0:
                         # try:
                         #     bid_info = apitool1.list_product_bid_recommendations(market, searchTerm.upper(),
                         #                                                          str(int(campaignId)),
@@ -172,12 +183,12 @@ class auto_api:
                         # except Exception as e:
                         #     print(e)
                         #     bid = 0.25 * self.exchange_rate
-                        try:
-                            api1.create_adGroup_Targeting1(market, str(int(campaignId)), str(int(adGroupId)),
-                                                           searchTerm.upper(), float(CPC_30d), state='ENABLED',
-                                                           type='ASIN_SAME_AS')
-                        except Exception as e:
-                            print(e)
+                            try:
+                                api1.create_adGroup_Targeting1(market, str(int(campaignId)), str(int(adGroupId)),
+                                                               searchTerm.upper(), float(CPC_30d), state='ENABLED',
+                                                               type='ASIN_SAME_AS')
+                            except Exception as e:
+                                print(e)
                     else:
                         campaign_id = item["new_campaignId"]
                         adGroupId = item["new_adGroupId"]
@@ -186,8 +197,15 @@ class auto_api:
                         if CPC_30d == '' or not CPC_30d:
                             CPC_30d = 0.5*self.exchange_rate
                         #print(CPC_30d)
-                        api.add_keyword_toadGroup_v0(market, str(int(campaign_id)), str(int(adGroupId)), searchTerm, matchType="EXACT", state="ENABLED", bid=float(CPC_30d))
-                        api.add_keyword_toadGroup_v0(market, str(int(campaign_id)), str(int(adGroupId)), searchTerm, matchType="PHRASE", state="ENABLED", bid=float(CPC_30d))
+                        api2 = DbSpTools(self.brand, self.market)
+                        count1 = api2.select_sp_keyword_count(campaign_id, adGroupId, searchTerm, "EXACT")
+                        if count1 == 0:
+                            print(count1)
+                            api.add_keyword_toadGroup_v0(market, str(int(campaign_id)), str(int(adGroupId)), searchTerm, matchType="EXACT", state="ENABLED", bid=float(CPC_30d))
+                        count2 = api2.select_sp_keyword_count(campaign_id, adGroupId, searchTerm, "PHRASE")
+                        if count2 == 0:
+                            print(count2)
+                            api.add_keyword_toadGroup_v0(market, str(int(campaign_id)), str(int(adGroupId)), searchTerm, matchType="PHRASE", state="ENABLED", bid=float(CPC_30d))
                         # api.add_keyword_toadGroup_v0(market, str(int(campaign_id)), str(int(adGroupId)), searchTerm, matchType="BROAD", state="ENABLED", bid=float(CPC_30d))
 
     def add_sp_ad_searchTerm_negative_keyword(self,market, path):
@@ -354,6 +372,9 @@ class auto_api:
                     CPC_30d = item["CPC_30d"]
                     if CPC_30d == '' or not CPC_30d:
                         CPC_30d = 0.5 * self.exchange_rate
+                    api2 = DbSpTools(self.brand, self.market)
+                    count = api2.select_sp_target_count(campaignId, adGroupId, searchTerm.upper())
+                    if count == 0:
                     # try:
                     #     bid_info = apitool1.list_product_bid_recommendations(market, searchTerm.upper(), campaignId,
                     #                                                          adGroupId)
@@ -361,10 +382,10 @@ class auto_api:
                     # except Exception as e:
                     #     print(e)
                     #     bid = 0.25 * self.exchange_rate
-                    try:
-                        api1.create_adGroup_Targeting1(market,str(campaignId),str(adGroupId),searchTerm.upper(),float(CPC_30d),state='ENABLED',type='ASIN_SAME_AS')
-                    except Exception as e:
-                        print(e)
+                        try:
+                            api1.create_adGroup_Targeting1(market,str(campaignId),str(adGroupId),searchTerm.upper(),float(CPC_30d),state='ENABLED',type='ASIN_SAME_AS')
+                        except Exception as e:
+                            print(e)
                 else:
                     if "new_campaignId" in item and item["new_campaignId"]:
                         api = Gen_keyword(self.brand)
@@ -374,9 +395,16 @@ class auto_api:
                         CPC_30d = item["CPC_30d"]
                         if CPC_30d == '' or not CPC_30d:
                             CPC_30d = 0.5 * self.exchange_rate
-                        api.add_keyword_toadGroup_v0(market, str(int(campaign_id)), str(int(adGroupId)), searchTerm,
+                        api2 = DbSpTools(self.brand, self.market)
+                        count1 = api2.select_sp_keyword_count(campaign_id, adGroupId, searchTerm, "EXACT")
+                        if count1 == 0:
+                            print(count1)
+                            api.add_keyword_toadGroup_v0(market, str(int(campaign_id)), str(int(adGroupId)), searchTerm,
                                                      matchType="EXACT", state="ENABLED", bid=float(CPC_30d))
-                        api.add_keyword_toadGroup_v0(market, str(int(campaign_id)), str(int(adGroupId)), searchTerm,
+                        count2 = api2.select_sp_keyword_count(campaign_id, adGroupId, searchTerm, "PHRASE")
+                        if count2 == 0:
+                            print(count2)
+                            api.add_keyword_toadGroup_v0(market, str(int(campaign_id)), str(int(adGroupId)), searchTerm,
                                                      matchType="PHRASE", state="ENABLED", bid=float(CPC_30d))
                         # api.add_keyword_toadGroup_v0(market, str(int(campaign_id)), str(int(adGroupId)), searchTerm,
                         #                              matchType="BROAD", state="ENABLED", bid=float(CPC_30d))

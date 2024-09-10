@@ -1077,6 +1077,38 @@ WHERE
                 return df["keywordId"].tolist()
         except Exception as e:
             print(f"Error occurred when select_sp_delete_keyword: {e}")
+
+    def select_sp_keyword_count(self, campaignId, adGroupId, keywordText, matchType):
+        try:
+            conn = self.conn
+            query = f"""
+SELECT COUNT(*) AS count FROM amazon_keywords_list_sp
+WHERE campaignId = "{int(campaignId)}" AND adGroupId = "{int(adGroupId)}" AND keywordText = "{keywordText}" AND matchType = "{matchType}"
+            """
+            df = pd.read_sql(query, con=conn)
+            if df.empty:
+                print("No keyword")
+            else:
+                print("select sp keyword success")
+                return df.loc[0,'count']
+        except Exception as e:
+            print(f"Error occurred when select_sp_keyword_count: {e}")
+
+    def select_sp_target_count(self, campaignId, adGroupId, asin):
+        try:
+            conn = self.conn
+            query = f"""
+SELECT COUNT(*) AS count FROM amazon_targets_list_sp
+WHERE campaignId = "{int(campaignId)}" AND adGroupId = "{int(adGroupId)}" AND expression LIKE "{asin}"
+            """
+            df = pd.read_sql(query, con=conn)
+            if df.empty:
+                print("No target")
+            else:
+                print("select_sp_target_count success")
+                return df.loc[0,'count']
+        except Exception as e:
+            print(f"Error occurred when select_sp_target_count: {e}")
 # api = DbSpTools('OutdoorMaster')
 # #res = api.select_sd_campaign_name("FR",'M06')
 # # #res = api.select_sp_product_asin("IT",'FR','B0CHRYCWPG')

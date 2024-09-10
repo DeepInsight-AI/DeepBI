@@ -377,9 +377,9 @@ class DbNewSpTools:
             cursor = conn.cursor()
             # 检查是否存在重复数据
             check_query = """
-                                            SELECT COUNT(*) FROM search_term_info
-                                            WHERE market = %s AND brand = %s AND strategy = %s AND type = %s AND campaignName = %s AND campaignId = %s
-                                            AND adGroupName = %s AND adGroupId = %s AND searchTerm = %s AND reason = %s AND date = %s
+                            SELECT COUNT(*) FROM search_term_info
+                            WHERE market = %s AND brand = %s AND strategy = %s AND type = %s AND campaignName = %s AND campaignId = %s
+                            AND adGroupName = %s AND adGroupId = %s AND searchTerm = %s AND reason = %s AND date = %s
                                             """
             check_values = (
                 market, brand, strategy, type1, campaignName, campaignId, adGroupName, adGroupId, searchTerm, reason, date

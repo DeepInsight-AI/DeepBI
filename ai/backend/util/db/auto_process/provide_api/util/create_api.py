@@ -40,6 +40,13 @@ def sp_api(data):
             except Exception as e:
                 print(e)
                 return 500  # Internal Server Error
+        elif data['strategy'] == '0503':
+            try:
+                api.create_new_sp_manual_no_template_0503_api(data['market'], data['brand'], data['text'], data['budget'])
+                return 200
+            except Exception as e:
+                print(e)
+                return 500  # Internal Server Error
         elif data['strategy'] == '0514':
             try:
                 api.create_new_sp_asin_no_template(data['market'], data['text'], data['brand'],data['budget'], data['target_bid'])

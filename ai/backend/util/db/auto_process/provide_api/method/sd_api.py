@@ -45,8 +45,11 @@ class auto_api_sd:
             if automatic_targeting_info:
                 targetId = automatic_targeting_info['targetId']
                 state = automatic_targeting_info['state']
-                api1.update_adGroup_Targeting(self.market, str(targetId), float(bid), state=state)
-                return 200
+                res = api1.update_adGroup_Targeting(self.market, str(targetId), float(bid), state=state)
+                if res:
+                    return 200
+                else:
+                    return 500
             else:
                 return 404  # Targeting not found
         except Exception as e:

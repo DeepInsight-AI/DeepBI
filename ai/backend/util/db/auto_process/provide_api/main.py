@@ -71,6 +71,8 @@ def handle_insert():
     secret_key = "10470c3b4b1fed12c3baac014be15fac67c6e815"  # 测试环境的秘钥, 根据环境配置选择秘钥
     if not verify_request(token, timestamp, secret_key):
         return jsonify({"error": "Unauthorized"}), 401
+    if not data.get("text") or data["text"] == "":
+        return jsonify({"status": 404, "error": "The 'text' field cannot be an empty string."})
     code = create_api(data)
     if code == 200:
         return jsonify({"status": 200, "error": ""})

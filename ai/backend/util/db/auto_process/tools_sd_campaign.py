@@ -247,6 +247,6 @@ class CampaignTools:
 #     }
 #   ]
 # }
-# ct=CampaignTools('Gotoly')
+# ct=CampaignTools('VC1')
 # res = ct.list_all_campaigns_api('US')
 # print(res)

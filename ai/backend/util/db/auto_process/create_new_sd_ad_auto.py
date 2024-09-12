@@ -125,6 +125,9 @@ class Ceate_new_sd:
         except Exception as e:
             print("create campaign failed: ", e)
             return None
+        if new_campaign_id == "":
+            print("No new campaign")
+            pass
         # new_campaign_id =388564619938132
         apitool1 = AdGroupTools_SD(brand_name)
         ad_group_info = apitool1.get_adGroup_api(market2, ad_group_id)
@@ -263,6 +266,9 @@ class Ceate_new_sd:
                                                           endDate=None, tactic='T00020', state='enabled',
                                                           budgetType='daily', budget=float(budget))
                 # new_campaign_id = 349636835938591
+                if new_campaign_id == "":
+                    print("No new campaign")
+                    continue
                 api3 = Gen_adgroup(brand_name)
                 new_adgroup_id = api3.create_adgroup(market, new_campaign_id, name, bidOptimization='reach',
                                                 creativeType='IMAGE', state='enabled', defaultBid=2.49*exchange_rate)
@@ -472,6 +478,9 @@ class Ceate_new_sd:
                                                           endDate=None, tactic='T00020', state='paused',
                                                           budgetType='daily', budget=float(budget))
                 # new_campaign_id = 349636835938591
+                if new_campaign_id == "":
+                    print("No new campaign")
+                    continue
                 api3 = Gen_adgroup(brand_name)
                 new_adgroup_id = api3.create_adgroup(market, new_campaign_id, name, bidOptimization='reach',
                                                 creativeType='IMAGE', state='paused', defaultBid=1*exchange_rate)
@@ -525,6 +534,9 @@ class Ceate_new_sd:
                                                           endDate=None, tactic='T00020', state='enabled',
                                                           budgetType='daily', budget=float(budget))
                 # new_campaign_id = 349636835938591
+                if new_campaign_id == "":
+                    print("No new campaign")
+                    continue
                 api3 = Gen_adgroup(brand_name)
                 new_adgroup_id = api3.create_adgroup(market, new_campaign_id, name, bidOptimization='reach',
                                                 creativeType='IMAGE', state='enabled', defaultBid=5*exchange_rate)
@@ -601,6 +613,9 @@ class Ceate_new_sd:
                                                           endDate=None, tactic='T00020', state='enabled',
                                                           budgetType='daily', budget=float(budget))
                 # new_campaign_id = 349636835938591
+                if new_campaign_id == "":
+                    print("No new campaign")
+                    continue
                 api3 = Gen_adgroup(brand_name)
                 new_adgroup_id = api3.create_adgroup(market, new_campaign_id, name, bidOptimization='reach',
                                                 creativeType='IMAGE', state='enabled', defaultBid=5*exchange_rate)
@@ -655,6 +670,9 @@ class Ceate_new_sd:
                                                           endDate=None, tactic='T00020', state='enabled',
                                                           budgetType='daily', budget=float(budget))
                 # new_campaign_id = 349636835938591
+                if new_campaign_id == "":
+                    print("No new campaign")
+                    continue
                 api3 = Gen_adgroup(brand_name)
                 new_adgroup_id = api3.create_adgroup(market, new_campaign_id, name, bidOptimization='reach',
                                                 creativeType='IMAGE', state='enabled', defaultBid=2.49*exchange_rate)
@@ -733,6 +751,9 @@ class Ceate_new_sd:
                                                           endDate=None, tactic='T00030', state='enabled',
                                                           budgetType='daily', budget=float(budget))
                 # new_campaign_id = 349636835938591
+                if new_campaign_id == "":
+                    print("No new campaign")
+                    continue
                 api3 = Gen_adgroup(brand_name)
                 new_adgroup_id = api3.create_adgroup(market, new_campaign_id, name, bidOptimization='reach',
                                                 creativeType='IMAGE', state='enabled', defaultBid=2.49*exchange_rate)

@@ -1099,7 +1099,7 @@ WHERE campaignId = "{int(campaignId)}" AND adGroupId = "{int(adGroupId)}" AND ke
             conn = self.conn
             query = f"""
 SELECT COUNT(*) AS count FROM amazon_targets_list_sp
-WHERE campaignId = "{int(campaignId)}" AND adGroupId = "{int(adGroupId)}" AND expression LIKE "{asin}"
+WHERE campaignId = "{int(campaignId)}" AND adGroupId = "{int(adGroupId)}" AND expression LIKE "%{asin}%"
             """
             df = pd.read_sql(query, con=conn)
             if df.empty:

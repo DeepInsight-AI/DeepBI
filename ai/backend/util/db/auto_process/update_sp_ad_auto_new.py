@@ -375,6 +375,7 @@ class auto_api:
                     api2 = DbSpTools(self.brand, self.market)
                     count = api2.select_sp_target_count(campaignId, adGroupId, searchTerm.upper())
                     if count == 0:
+                        print(count)
                     # try:
                     #     bid_info = apitool1.list_product_bid_recommendations(market, searchTerm.upper(), campaignId,
                     #                                                          adGroupId)

@@ -165,10 +165,12 @@ class Gen_campaign:
         if apires[0] == "success":
             print("api update success")
             newdbtool.update_sp_campaign(market, campaignName, campaignId,'campaignStatus',state,state_new,None,None,"","success",datetime.now())
+            return apires[1]
         else:
             print("api update failed")
             newdbtool.update_sp_campaign(market, campaignName, campaignId,'campaignStatus', state, state_new, None, None, "", "failed",
                                          datetime.now())
+            return None
 
     def update_camapign_Bidding_strategy(self,market,campaignId):
         campaign_info = {
@@ -330,9 +332,10 @@ class Gen_campaign:
         else:
             newdbtool.update_sp_campaign_negativeKeyword(market, keyword_state, None, campaignNegativeKeywordId, "failed",datetime.now())
 
-# ins = Gen_campaign('syndesmos')
-# # ins.update_camapign_Bidding_strategy(campaignId=549565849731294, market='ES')
-# ins.update_camapign_status('DE','449345435691647',None,None,'ENABLED')
+if __name__ == '__main__':
+    ins = Gen_campaign('Rossny')
+    # ins.update_camapign_Bidding_strategy(campaignId=549565849731294, market='ES')
+    ins.update_camapign_status('US','354129241148102',None,None,'ENABLED')
 # ins.create_camapign(market='FR',portfolioId=None,dynamicBidding={"placementBidding": [{"percentage": 20, "placement": "PLACEMENT_TOP"}], "strategy": "AUTO_FOR_SALES"}, endDate=None,name='DeepBI_AUTO_test',targetingType='AUTO',state='PAUSED',startDate='2024-05-20',budgetType='DAILY',budget=10)
 #     修改关键词状态测试：
 #     update_campaigin_negative_keyword('US','428799562608462','PAUSED')

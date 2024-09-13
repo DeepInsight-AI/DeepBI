@@ -65,8 +65,11 @@ class auto_api_sd:
                 campaignId = campaign_info['campaignId']
                 name = campaign_info['name']
                 state = campaign_info['state']
-                api1.update_camapign_status(self.market, str(campaignId), name, state, status.lower())
-                return 200
+                res = api1.update_camapign_status(self.market, str(campaignId), name, state, status.lower())
+                if res:
+                    return 200
+                else:
+                    return 500
             else:
                 return 404  # Campaign not found
         except Exception as e:

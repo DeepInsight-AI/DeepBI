@@ -305,6 +305,28 @@
       "charset": "utf8mb4",
       "use_unicode": true
     }
+  },
+  "VC1": {
+    "US": {
+      "host": "192.168.2.123",
+      "user": "wanghequan",
+      "passwd": "WHq123123Aa",
+      "port": 3306,
+      "db": "amazon_log_outdoormaster_vc1",
+      "charset": "utf8mb4",
+      "use_unicode": true
+    }
+  },
+  "VC2": {
+    "US": {
+      "host": "192.168.2.123",
+      "user": "wanghequan",
+      "passwd": "WHq123123Aa",
+      "port": 3306,
+      "db": "amazon_log_outdoormaster_vc2",
+      "charset": "utf8mb4",
+      "use_unicode": true
+    }
   }
 }
 

@@ -88,6 +88,12 @@
                   "sales_channel": "Amazon.se"
               },
               {
+                  "state": 0,
+                  "country": "JP",
+                  "timezone_offset": "+09:00",
+                  "sales_channel": "Amazon.co.jp"
+              },
+              {
                   "state": 1,
                   "region": "EU",
                   "config": "FR",

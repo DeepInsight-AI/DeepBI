@@ -4,7 +4,7 @@ ContinentCode = {
     'MX': 'NA',
     'BR': 'NA',
     'ES': 'EU',
-    'UK': 'EU',
+    'UK': 'UK',
     'FR': 'EU',
     'BE': 'EU',
     'NL': 'EU',
@@ -22,6 +22,36 @@ ContinentCode = {
     'JP': 'FE'
 }
 
+regions = {
+    'NA': {
+        'market': ['US'],
+        'sales_channel': ['Amazon.com'],
+        'sku': 'ussku',
+        'country': 'US'
+    },
+    'UK': {
+        'market': ['UK'],
+        'sales_channel': ['Amazon.co.uk'],
+        'sku': 'uksku',
+        'country': 'UK'
+    },
+    'EU': {
+        'market': ['DE','FR','IT','ES'],
+        'sales_channel': ['Amazon.fr', 'Amazon.it', 'Amazon.de', 'Amazon.es'],
+        'sku': 'desku',
+        'country': 'DE'
+    }
+}
+
 
 def get_continent_code(region):
     return ContinentCode.get(region, {})
+
+def get_region_info(region):
+    continent_code = get_continent_code(region)
+    if continent_code:
+        return regions.get(continent_code, {})
+    else:
+        return {}
+
+

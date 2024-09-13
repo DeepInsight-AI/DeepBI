@@ -115,11 +115,13 @@ class Gen_campaign:
             print("api update success")
             newdbtool.update_sp_campaign(market, campaignName, campaignId, 'state', state,
                                          state_new, None, None, "SD", "success", datetime.now())
+            return apires[1]
         else:
             print("api update failed")
             newdbtool.update_sp_campaign(market, campaignName, campaignId, 'state', state,
                                          state_new, None, None, "SD", "failed",
                                          datetime.now())
+            return None
 
     # 更新 根据要求自动批量更新
     def update_camapign(self,market,startdate,enddate,start_acos,end_acos,adjuest):

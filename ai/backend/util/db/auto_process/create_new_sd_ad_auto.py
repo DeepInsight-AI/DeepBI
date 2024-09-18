@@ -136,7 +136,7 @@ class Ceate_new_sd:
         creativeType = ad_group_info["creativeType"]
         api2 = Gen_adgroup(brand_name)
         # new_adgroup_id = 366550150186444
-        new_adgroup_id = api2.create_adgroup(market1, new_campaign_id, new_ad_group_name,bidOptimization,creativeType,state='paused', defaultBid=2.49*exchange_rate)
+        new_adgroup_id = api2.create_adgroup(market1, new_campaign_id, new_ad_group_name,bidOptimization,creativeType,state='enabled', defaultBid=2.49*exchange_rate)
         apitool2 = ProductTools(brand_name)
         apitool3 = DbSpTools(brand_name,market1)
         # product_info = apitool2.get_product_api(market2, ad_group_id)
@@ -369,7 +369,7 @@ class Ceate_new_sd:
                     continue
                 api3 = Gen_adgroup(brand_name)
                 new_adgroup_id = api3.create_adgroup(market, new_campaign_id, name, bidOptimization='reach',
-                                                creativeType='IMAGE', state='paused', defaultBid=2.49)
+                                                creativeType='IMAGE', state='enabled', defaultBid=2.49)
                 # new_adgroup_id = 485848574838633
                 api4 = Gen_product(brand_name)
                 for sku in skus:
@@ -483,7 +483,7 @@ class Ceate_new_sd:
                     continue
                 api3 = Gen_adgroup(brand_name)
                 new_adgroup_id = api3.create_adgroup(market, new_campaign_id, name, bidOptimization='reach',
-                                                creativeType='IMAGE', state='paused', defaultBid=1*exchange_rate)
+                                                creativeType='IMAGE', state='enabled', defaultBid=1*exchange_rate)
                 # new_adgroup_id = 301828066664478
                 if brand_name == 'LAPASA':
                     sku_info = api1.select_sd_product_sku(market,i)

@@ -109,7 +109,7 @@ class Ceate_new_sku:
         defaultBid_old = exchange_rate * apitool1.get_adGroup_api(market2, ad_group_id)
         #new_adgroup_id = 437018151615304
         apitool2 = Gen_adgroup(brand_name)
-        new_adgroup_id = apitool2.create_adgroup(market1, new_campaign_id, new_ad_group_name, defaultBid_old, state='PAUSED')
+        new_adgroup_id = apitool2.create_adgroup(market1, new_campaign_id, new_ad_group_name, defaultBid_old, state='ENABLED')
         market2_TargetingClause = apitool1.list_adGroup_TargetingClause(ad_group_id,market2)
         market1_TargetingClause = apitool1.list_adGroup_TargetingClause(new_adgroup_id, market1)
         if market2_TargetingClause:
@@ -203,7 +203,7 @@ class Ceate_new_sku:
         defaultBid_old = exchange_rate * apitool1.get_adGroup_api(market2, ad_group_id)
         # new_adgroup_id = '546877730565898'
         apitool5 = Gen_adgroup(brand_name)
-        new_adgroup_id = apitool5.create_adgroup(market1, new_campaign_id, new_ad_group_name, defaultBid_old, state='PAUSED')
+        new_adgroup_id = apitool5.create_adgroup(market1, new_campaign_id, new_ad_group_name, defaultBid_old, state='ENABLED')
         apitool3 = DbSpTools(brand_name,market1)
         apitool4 = ProductTools(brand_name)
 
@@ -456,7 +456,7 @@ class Ceate_new_sku:
                 continue
             api2 = Gen_adgroup(brand_name)
             new_adgroup_id = api2.create_adgroup(market, new_campaign_id, name, defaultBid=0.25 * exchange_rate,
-                                            state='PAUSED')
+                                            state='ENABLED')
             # new_adgroup_id = '419956427382148'
             # 在这里可以添加你的进一步处理或操作，例如：
             api3 = Gen_product(brand_name)
@@ -534,7 +534,7 @@ class Ceate_new_sku:
                     continue
                     # new_campaign_id = '310928261900083'
                 api2 = Gen_adgroup(brand_name)
-                new_adgroup_id = api2.create_adgroup(market, new_campaign_id, name, defaultBid=0.25 * exchange_rate, state='PAUSED')
+                new_adgroup_id = api2.create_adgroup(market, new_campaign_id, name, defaultBid=0.25 * exchange_rate, state='ENABLED')
                 # new_adgroup_id = '491456703765912'
                 api3 = Gen_product(brand_name)
                 if brand_name == 'LAPASA':
@@ -696,7 +696,7 @@ class Ceate_new_sku:
                 print("No new campaign")
                 continue
             api2 = Gen_adgroup(brand_name)
-            new_adgroup_id = api2.create_adgroup(market, new_campaign_id, name, defaultBid=0.25 * exchange_rate, state='PAUSED')
+            new_adgroup_id = api2.create_adgroup(market, new_campaign_id, name, defaultBid=0.25 * exchange_rate, state='ENABLED')
             #new_adgroup_id = '491456703765912'
             api3 = Gen_product(brand_name)
             if brand_name == 'LAPASA':

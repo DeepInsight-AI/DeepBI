@@ -305,9 +305,9 @@ class Gen_adgroup:
         # 结果写入日志
         newdbtool = DbNewSpTools(self.brand,market)
         if apires[0]=="success":
-            newdbtool.add_sd_adGroup_Targeting(market,adGroupId,bid,expression_type,state,json.dump(expression),"SD","success",datetime.now())
+            newdbtool.add_sd_adGroup_Targeting(market,adGroupId,bid,expression_type,state,json.dumps(expression),"SD","success",datetime.now())
         else:
-            newdbtool.add_sd_adGroup_Targeting(market,adGroupId,bid,expression_type,state,json.dump(expression),"SD","failed",datetime.now())
+            newdbtool.add_sd_adGroup_Targeting(market,adGroupId,bid,expression_type,state,json.dumps(expression),"SD","failed",datetime.now())
         return apires[1]
 
     def update_adGroup_Targeting(self,market,target_id,bid,state):

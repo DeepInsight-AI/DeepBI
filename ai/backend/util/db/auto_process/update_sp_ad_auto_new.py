@@ -147,8 +147,10 @@ class auto_api:
                     if count2 == 0:
                         print(count2)
                         api.add_keyword_toadGroup_v0(market, str(campaign_id), str(adGroupId), searchTerm, matchType="PHRASE", state="ENABLED", bid=float(CPC_30d))
-                    # api.add_keyword_toadGroup_v0(market, str(campaign_id), str(adGroupId), searchTerm, matchType="BROAD",
-                    #                              state="ENABLED", bid=float(CPC_30d))
+                    count3 = api2.select_sp_keyword_count(campaign_id, adGroupId, searchTerm, "BROAD")
+                    if count3 == 0:
+                        api.add_keyword_toadGroup_v0(market, str(campaign_id), str(adGroupId), searchTerm, matchType="BROAD",
+                                                 state="ENABLED", bid=float(CPC_30d))
 
     def add_sp_ad_auto_searchTerm_keyword(self,market, path):
         uploaded_file = path
@@ -206,7 +208,10 @@ class auto_api:
                         if count2 == 0:
                             print(count2)
                             api.add_keyword_toadGroup_v0(market, str(int(campaign_id)), str(int(adGroupId)), searchTerm, matchType="PHRASE", state="ENABLED", bid=float(CPC_30d))
-                        # api.add_keyword_toadGroup_v0(market, str(int(campaign_id)), str(int(adGroupId)), searchTerm, matchType="BROAD", state="ENABLED", bid=float(CPC_30d))
+                        count3 = api2.select_sp_keyword_count(campaign_id, adGroupId, searchTerm, "BROAD")
+                        if count3 == 0:
+                            print(count3)
+                            api.add_keyword_toadGroup_v0(market, str(int(campaign_id)), str(int(adGroupId)), searchTerm, matchType="BROAD", state="ENABLED", bid=float(CPC_30d))
 
     def add_sp_ad_searchTerm_negative_keyword(self,market, path):
         uploaded_file = path
@@ -407,8 +412,9 @@ class auto_api:
                             print(count2)
                             api.add_keyword_toadGroup_v0(market, str(int(campaign_id)), str(int(adGroupId)), searchTerm,
                                                      matchType="PHRASE", state="ENABLED", bid=float(CPC_30d))
-                        # api.add_keyword_toadGroup_v0(market, str(int(campaign_id)), str(int(adGroupId)), searchTerm,
-                        #                              matchType="BROAD", state="ENABLED", bid=float(CPC_30d))
+                        count3 = api2.select_sp_keyword_count(campaign_id, adGroupId, searchTerm, "BROAD")
+                        if count3 == 0:
+                            api.add_keyword_toadGroup_v0(market, str(int(campaign_id)), str(int(adGroupId)), searchTerm,matchType="BROAD", state="ENABLED", bid=float(CPC_30d))
 
     def add_sp_ad_negative_searchTerm_product(self,market, path):
         uploaded_file = path

@@ -11,9 +11,9 @@ from ai.backend.util.db.configuration.path import get_config_path
 from ai.backend.util.db.auto_process.selling_partner.util.client_config import sp_config
 
 
-def get_profile_id_info(market, brand):
+def get_profile_id_info(db, market, brand):
     try:
-        profileId,region = DbSpTools(brand,market).get_profileId(market)
+        profileId,region = DbSpTools(db,brand,market).get_profileId(market)
         print(profileId)
         return profileId,region
     except Exception as e:
@@ -42,15 +42,38 @@ def select_market(market,brand):
     return brand_credentials
 
 
-def select_brand(brand, country=None):
-    # 从 JSON 文件加载数据库信息
+# def select_brand(brand, country=None):
+#     # 从 JSON 文件加载数据库信息
+#     Brand_path = os.path.join(get_config_path(), 'Brand.yml')
+#     with open(Brand_path, 'r') as file:
+#         Brand_data = yaml.safe_load(file)
+#
+#     brand_info = Brand_data.get(brand, {})
+#     if country and country in brand_info:
+#         return brand_info[country]
+#     return brand_info.get('default', {})
+
+
+def select_brand(db, sub_brand=None, country=None):
+    # 从 YAML 文件加载数据库信息
     Brand_path = os.path.join(get_config_path(), 'Brand.yml')
     with open(Brand_path, 'r') as file:
         Brand_data = yaml.safe_load(file)
 
-    brand_info = Brand_data.get(brand, {})
+    # 获取品牌信息
+    brand_info = Brand_data.get(db, {})
+
+    # 如果指定了子品牌，则进一步获取该子品牌的信息
+    if sub_brand:
+        sub_brand_info = brand_info.get(sub_brand, {})
+        if country and country in sub_brand_info:
+            return sub_brand_info[country]
+        return sub_brand_info.get('default', {})
+
+    # 处理没有子品牌的情况
     if country and country in brand_info:
         return brand_info[country]
+
     return brand_info.get('default', {})
 
 
@@ -65,6 +88,12 @@ def new_get_api_config(brand_config, region, api_type, is_new=False):
 
     try:
         if config:
+            if 'api_type' in brand_config:
+                print("old api 标识")
+                config = config['OLD']
+            else:
+                print("new api 标识")
+                config = config["NEW"]
             if config[api_type]:
                 name = brand_config['dbname'].replace("amazon_", "")
 
@@ -151,10 +180,10 @@ def get_sp_my_credentials(market, brand):
 
 
 # 获取 ad my_credentials
-def get_ad_my_credentials(market, brand):
-    brand_config = select_brand(brand,market)
+def get_ad_my_credentials(db, market, brand):
+    brand_config = select_brand(db, brand, market)
     if 'public' in brand_config and brand_config['public'] == 1:
-        profileid,region = get_profile_id_info(market, brand)
+        profileid,region = get_profile_id_info(db,market, brand)
         api_config = new_get_api_config(brand_config, region, "AD")
         if not api_config:
             print(f"No API config found for region: {market}")

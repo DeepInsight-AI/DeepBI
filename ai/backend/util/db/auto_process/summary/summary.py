@@ -5,6 +5,7 @@ import logging
 from datetime import datetime, timedelta
 import time
 import numpy as np
+import pandas as pd
 import yaml
 
 from ai.backend.util.db.auto_process.summary.util.InserOnlineData import ProcessShowData
@@ -14,17 +15,21 @@ from ai.backend.util.db.configuration.marketplaces import get_continent_code
 from ai.backend.util.db.configuration.path import get_config_path
 
 
-def load_uid(brand, country=None):
-    # 从 JSON 文件加载数据库信息
-    Brand_path = os.path.join(get_config_path(), 'Brand.yml')
-    with open(Brand_path, 'r') as file:
-        Brand_data = yaml.safe_load(file)
+def load_uid(db, brand, country=None):
+    # 从 YAML 文件加载数据库信息
+    brand_path = os.path.join(get_config_path(), 'Brand.yml')
 
-    brand_info = Brand_data.get(brand, {})
+    with open(brand_path, 'r') as file:
+        brand_data = yaml.safe_load(file)
+
+    # 获取品牌信息
+    brand_info = brand_data.get(db, {}).get(brand, {})
+
     if country:
         country_info = brand_info.get(country, {})
         return country_info.get('UID', brand_info.get('default', {}).get('UID'))
-    return brand_info.get('UID', brand_info.get('default', {}).get('UID'))
+
+    return brand_info.get('default', {}).get('UID')
 
 
 # def default_dump(obj):
@@ -36,13 +41,12 @@ def load_uid(brand, country=None):
 #     else:
 #         return obj
 
-def get_request_data(CountryCode, StartDate, report_type, all_table, data_id, brand, ID=None):
+def get_request_data(CountryCode, StartDate, report_type, all_table, data_id, brand, db,ID=None):
     try:
-
         if data_id > 0:
             add_data = {
                 "ID": str(ID),
-                "UID": str(load_uid(brand, CountryCode)),
+                "UID": str(load_uid(db, brand, CountryCode)),
                 "ContinentCode": get_continent_code(CountryCode),
                 "CountryCode": CountryCode,
                 "DataType": report_type,
@@ -55,7 +59,7 @@ def get_request_data(CountryCode, StartDate, report_type, all_table, data_id, br
             res, data = ProcessShowData.update(add_data)
         else:
             add_data = {
-                "UID": load_uid(brand, CountryCode),
+                "UID": load_uid(db, brand, CountryCode),
                 "ContinentCode": get_continent_code(CountryCode),
                 "CountryCode": CountryCode,
                 "DataType": report_type,
@@ -135,28 +139,76 @@ def create_summarize_data():
         for item in items:
             if item.get("state") == 0:
                 df = api(brand, item['country']).get_summarize_data_info_one_country(item)
+                data = []
+                for index, row in df.iterrows():
+                    res = [str(row['国家']), str(row['总销售日期']), str(row['广告总销售额']), str(row['广告总花费']),
+                           str(row['广告总ACOS']), str(row['DeepBI计划花费']),
+                           str(row['DeepBI计划销量']), str(row['新开计划acos']), str(row['新开计划销量占比']),
+                           str(row['旧计划销售额']), str(row['旧计划花费']),
+                           str(row['旧计划acos']), str(row['旧计划销量占比']), str(row['总销售额']), str(row['广告销售额']),
+                           str(row['自然销售额']),str(row['自然销售额比例']),str(row['tacos'])]
+                    data.append(res)
+                    print(res)
+                table = {"title": ["国家","日期","广告销售总额","广告总花费","广告总acos","DeepBI计划-花费","DeepBI计划-销量",
+                                   "新开计划-acos","新开计划-销售额占比","旧计划-销售额","旧计划-花费","旧计划-acos","旧计划-销售额占比",
+                                   "总销售额","广告销售额","自然销售额","自然比例","总-acos"], "data":data}
+                print(table)
+                all_res.append(table)
             elif item.get("state") == 1:
                 df = api(brand, item['config']).get_summarize_data_info_summarize_country(item)
+                data = []
+                for index, row in df.iterrows():
+                    res = [str(row['国家']), str(row['总销售日期']), str(row['广告总销售额']), str(row['广告总花费']),
+                           str(row['广告总ACOS']), str(row['DeepBI计划花费']),
+                           str(row['DeepBI计划销量']), str(row['新开计划acos']), str(row['新开计划销量占比']),
+                           str(row['旧计划销售额']), str(row['旧计划花费']),
+                           str(row['旧计划acos']), str(row['旧计划销量占比']), str(row['总销售额']),
+                           str(row['广告销售额']),
+                           str(row['自然销售额']), str(row['自然销售额比例']), str(row['tacos'])]
+                    data.append(res)
+                table = {"title": ["国家", "日期", "广告销售总额", "广告总花费", "广告总acos", "DeepBI计划-花费",
+                                   "DeepBI计划-销量",
+                                   "新开计划-acos", "新开计划-销售额占比", "旧计划-销售额", "旧计划-花费",
+                                   "旧计划-acos", "旧计划-销售额占比",
+                                   "总销售额", "广告销售额", "自然销售额", "自然比例", "总-acos"], "data": data}
+                all_res.append(table)
+            elif item.get("state") == 2:
+                df1 = api(brand, item['country']).get_summarize_data_info_one_country(item)
+                df2 = api(brand, item['country']).get_summarize_parent_asins_data_info_one_country(item)
+                combined_df = pd.concat([df1, df2], axis=1)
+                print(combined_df)
+                data = []
+                # 遍历合并后的数据框
+                for index, row in combined_df.iterrows():
+                    res = [str(row['国家']), str(row['总销售日期']), str(row['广告总销售额']), str(row['广告总花费']),
+                           str(row['广告总ACOS']), str(row['DeepBI计划花费']),
+                           str(row['DeepBI计划销量']), str(row['新开计划acos']), str(row['新开计划销量占比']),
+                           str(row['新开计划销量占比1']),str(row['旧计划销售额']), str(row['旧计划花费']),
+                           str(row['旧计划acos']), str(row['旧计划销量占比']), str(row['旧计划销售额1']), str(row['旧计划花费1']),
+                           str(row['旧计划acos1']), str(row['旧计划销量占比1']),
+                           str(row['总销售额1']),str(row['广告销售额1']),
+                           str(row['自然销售额1']), str(row['自然销售额比例1']), str(row['tacos1']),str(row['总销售额']),
+                           str(row['广告销售额']), str(row['自然销售额']), str(row['自然销售额比例']), str(row['tacos'])]
+                    data.append(res)
+                table = {"title": ["国家", "日期", "广告销售总额", "广告总花费", "广告总acos", "DeepBI计划-花费",
+                                   "DeepBI计划-销量", "新开计划-acos", "新开计划-销售额占比", "新开计划-接管-销售额占比",
+                                   "旧计划-销售额", "旧计划-花费", "旧计划-acos", "旧计划-销售额占比","接管-旧计划-销售额",
+                                   "接管-旧计划-花费", "接管-旧计划-acos", "接管-旧计划-销售额占比","接管-总销售额", "接管-广告销售额", "接管-自然销售额",
+                                   "接管-自然比例", "接管-总-acos", "总销售额", "广告销售额",
+                                   "自然销售额", "自然比例", "总-acos"], "data": data}
+                all_res.append(table)
+        cleaned_res = all_res
 
-            for index, row in df.iterrows():
-                res = [str(row['国家']), str(row['总销售日期']), str(row['广告总销售额']), str(row['广告总花费']),
-                       str(row['广告总ACOS']), str(row['DeepBI计划花费']),
-                       str(row['DeepBI计划销量']), str(row['新开计划acos']), str(row['新开计划销量占比']),
-                       str(row['旧计划销售额']), str(row['旧计划花费']),
-                       str(row['旧计划acos']), str(row['旧计划销量占比']), str(row['总销售额']), str(row['广告销售额']),
-                       str(row['自然销售额']),str(row['自然销售额比例']),str(row['tacos'])]
-                all_res.append(res)
-                cleaned_res = [[item if item not in ('nan', 'None') else '0' for item in sublist] for sublist in all_res]
-
+        print(cleaned_res)
         # 执行插入操作并存储返回的 ID
         if original_brand in storage:
             stored_id = storage[original_brand]
             print(f"使用存储的ID进行更新: {stored_id}")
             print(all_res)
-            get_request_data(item['config'], cur_time, "B-TABLE", cleaned_res, 1, brand, stored_id)
+            get_request_data(item['config'], cur_time, "B-TABLE", cleaned_res, 1, brand, item['db'], stored_id)
             continue
         else:
-            res = get_request_data(item['config'], cur_time, "B-TABLE", cleaned_res, 0, brand)
+            res = get_request_data(item['config'], cur_time, "B-TABLE", cleaned_res, 0, brand, item['db'])
             print(f"插入操作返回的 ID: {res}")
         if res:
             storage[original_brand] = res
@@ -196,25 +248,25 @@ def get_data(market, brand):
     # print(json.dumps(all_table2,ensure_ascii=False, default=default_dump))
 
 
-def get_data_temporary(market, brand):
+def get_data_temporary(market, brand, db):
     today = datetime.today()
     yesterday = today - timedelta(days=1)
     cur_time = yesterday.strftime('%Y-%m-%d')
     # cur_time = '2024-08-25'
     # 以下是您的 API 调用和数据处理逻辑
-    sp_count = api(brand, market).get_scan_campaign_sp(market, cur_time)
-    sd_count = api(brand, market).get_scan_campaign_sd(market, cur_time)
-    sb_count = api(brand, market).get_scan_campaign_sb(market, cur_time)
+    sp_count = api(db, brand, market).get_scan_campaign_sp(market, cur_time)
+    sd_count = api(db, brand, market).get_scan_campaign_sd(market, cur_time)
+    sb_count = api(db, brand, market).get_scan_campaign_sb(market, cur_time)
     all_count = sp_count + sd_count + sb_count
 
 
-    new_create = AmazonMysqlRagUitl(brand, market).get_new_create_campaign(market, cur_time)
-    budget = AmazonMysqlRagUitl(brand, market).get_update_budget(market, cur_time)
-    targeting_group = AmazonMysqlRagUitl(brand, market).get_update_targeting_group(market, cur_time)
-    keyword = AmazonMysqlRagUitl(brand, market).get_update_keyword(market, cur_time)
-    keyword1 = api(brand, market).get_scan_keyword(market, cur_time)
-    SKU = AmazonMysqlRagUitl(brand, market).get_update_sku(market, cur_time)
-    SKU1 = api(brand, market).get_scan_sku(market, cur_time)
+    new_create = AmazonMysqlRagUitl(db, brand, market).get_new_create_campaign(market, cur_time)
+    budget = AmazonMysqlRagUitl(db, brand, market).get_update_budget(market, cur_time)
+    targeting_group = AmazonMysqlRagUitl(db, brand, market).get_update_targeting_group(market, cur_time)
+    keyword = AmazonMysqlRagUitl(db, brand, market).get_update_keyword(market, cur_time)
+    keyword1 = api(db, brand, market).get_scan_keyword(market, cur_time)
+    SKU = AmazonMysqlRagUitl(db, brand, market).get_update_sku(market, cur_time)
+    SKU1 = api(db, brand, market).get_scan_sku(market, cur_time)
 
     # 构建表格数据
     all_table = [[str(cur_time), "预算优化", str(budget)],
@@ -224,14 +276,14 @@ def get_data_temporary(market, brand):
                  ]
     print(all_table)
     # 发送请求数据
-    get_request_data(market, cur_time, "D-Trim", all_table, 0, brand)
+    get_request_data(market, cur_time, "D-Trim", all_table, 0, brand,db)
 
     all_table2 = [[str(cur_time), "量化广告分析", str(all_count)],
                   [str(cur_time), "新建广告活动", str(new_create)]
                   ]
 
     # 如果需要，发送其他请求数据
-    get_request_data(market, cur_time, "D-CALL", all_table2, 0, brand)
+    get_request_data(market, cur_time, "D-CALL", all_table2, 0, brand,db)
 
 
 def get_data_temporary_period(market, brand, start_date):
@@ -391,13 +443,13 @@ def update_data_period(market, brand):
                 get_request_data(market, cur_time, "D-LOG", table2, 0, brand)
 
 
-def update_data_manual(market, brand):
+def update_data_manual(market, brand, db):
     """将每日手动操作数据上传到线上数据库"""
     today = datetime.today()
     yesterday = today - timedelta(days=1)
     cur_time = yesterday.strftime('%Y-%m-%d')
     # cur_time = '2024-08-25'
-    campaignName_info, advertisedSku_info, type_info = api(brand, market).get_sku_state_info(market, cur_time)
+    campaignName_info, advertisedSku_info, type_info = api(db, brand, market).get_sku_state_info(market, cur_time)
     if campaignName_info and advertisedSku_info and type_info:
         for campaignName, advertisedSku, type1 in zip(campaignName_info, advertisedSku_info, type_info):
             if type1 == "ENABLED":
@@ -407,8 +459,8 @@ def update_data_manual(market, brand):
             else:
                 sku_status = "关闭"
             table2 = [[market, cur_time, "SKU状态", campaignName, advertisedSku, sku_status]]
-            get_request_data(market, cur_time, "D-LOG", table2, 0, brand)
-    campaignName_info, keyword_info, matchType_info, bid_adjust_info = api(brand, market).get_keyword_bid_info(market, cur_time)
+            get_request_data(market, cur_time, "D-LOG", table2, 0, brand, db)
+    campaignName_info, keyword_info, matchType_info, bid_adjust_info = api(db, brand, market).get_keyword_bid_info(market, cur_time)
     if campaignName_info and matchType_info and keyword_info and bid_adjust_info:
         for campaignName, matchType, keyword, bid_adjust in zip(campaignName_info, matchType_info, keyword_info,
                                                                 bid_adjust_info):
@@ -423,14 +475,14 @@ def update_data_manual(market, brand):
 
             if keyword_type is not None:
                 table2 = [[market, cur_time, keyword_type, campaignName, keyword, bid_adjust]]
-                get_request_data(market, cur_time, "D-LOG", table2, 0, brand)
-    campaignName_info, keyword_info, bid_adjust_info = api(brand, market).get_automatic_targeting_bid_info(market, cur_time)
+                get_request_data(market, cur_time, "D-LOG", table2, 0, brand, db)
+    campaignName_info, keyword_info, bid_adjust_info = api(db, brand, market).get_automatic_targeting_bid_info(market, cur_time)
     if campaignName_info and keyword_info and bid_adjust_info:
         for campaignName, keyword, bid_adjust in zip(campaignName_info, keyword_info, bid_adjust_info):
             table2 = [[market, cur_time, "自动定位组竞价", campaignName, keyword,
                        "设置竞价为0.05" if bid_adjust == -1 else bid_adjust]]
-            get_request_data(market, cur_time, "D-LOG", table2, 0, brand)
-    campaignName_info, keyword_info, bid_adjust_info = api(brand, market).get_product_target_bid_info(market, cur_time)
+            get_request_data(market, cur_time, "D-LOG", table2, 0, brand, db)
+    campaignName_info, keyword_info, bid_adjust_info = api(db, brand, market).get_product_target_bid_info(market, cur_time)
     if campaignName_info and keyword_info and bid_adjust_info:
         for campaignName, keyword, bid_adjust in zip(campaignName_info, keyword_info, bid_adjust_info):
             if bid_adjust == -1 or bid_adjust == -10:
@@ -438,7 +490,7 @@ def update_data_manual(market, brand):
             else:
                 bid_adjust_desc = "根据ACOS值降价" if bid_adjust == 0 else bid_adjust
             table2 = [[market, cur_time, "商品投放竞价", campaignName, keyword, bid_adjust_desc]]
-            get_request_data(market, cur_time, "D-LOG", table2, 0, brand)
+            get_request_data(market, cur_time, "D-LOG", table2, 0, brand, db)
 
 
 def update_data_manual_period(market, brand, start_date):
@@ -497,29 +549,29 @@ def update_data_manual_period(market, brand, start_date):
         current_date += timedelta(days=1)
 
 
-def update_create_data(market, brand):
+def update_create_data(market, brand, db):
     """将每日创建数据上传到线上数据库"""
     today = datetime.today()
     yesterday = today - timedelta(days=1)
     cur_time = yesterday.strftime('%Y-%m-%d')
     # cur_time = '2024-08-25'
     print(cur_time)
-    campaignName_info, campaign_type_info, budget_info = AmazonMysqlRagUitl(brand, market).get_create_campaign(market, cur_time)
+    campaignName_info, campaign_type_info, budget_info = AmazonMysqlRagUitl(db, brand, market).get_create_campaign(market, cur_time)
     if campaignName_info and campaign_type_info and budget_info:
         for campaignName, campaign_type, budget in zip(campaignName_info, campaign_type_info, budget_info):
             table2 = [[market, cur_time, "广告活动创建", campaignName, campaign_type, f'预算为{budget}']]
-            get_request_data(market, cur_time, "D-LOG", table2, 0, brand)
-    campaignName_info, adGroupName_info, defaultBid_info = AmazonMysqlRagUitl(brand, market).get_create_adgroup(market, cur_time)
+            get_request_data(market, cur_time, "D-LOG", table2, 0, brand, db)
+    campaignName_info, adGroupName_info, defaultBid_info = AmazonMysqlRagUitl(db, brand, market).get_create_adgroup(market, cur_time)
     if campaignName_info and adGroupName_info and defaultBid_info:
         for campaignName, adGroupName, defaultBid in zip(campaignName_info, adGroupName_info, defaultBid_info):
             table2 = [[market, cur_time, "广告组创建", campaignName, adGroupName, f'预算为{round(defaultBid, 2)}']]
-            get_request_data(market, cur_time, "D-LOG", table2, 0, brand)
-    campaignName_info, advertisedSku_info = AmazonMysqlRagUitl(brand, market).get_create_sku(market, cur_time)
+            get_request_data(market, cur_time, "D-LOG", table2, 0, brand, db)
+    campaignName_info, advertisedSku_info = AmazonMysqlRagUitl(db, brand, market).get_create_sku(market, cur_time)
     if campaignName_info and advertisedSku_info:
         for campaignName, advertisedSku in zip(campaignName_info, advertisedSku_info):
             table2 = [[market, cur_time, "SKU添加", campaignName, advertisedSku, ""]]
-            get_request_data(market, cur_time, "D-LOG", table2, 0, brand)
-    campaignName_info, matchType_info, keyword_info, bid_info = AmazonMysqlRagUitl(brand, market).get_create_keyword(market, cur_time)
+            get_request_data(market, cur_time, "D-LOG", table2, 0, brand, db)
+    campaignName_info, matchType_info, keyword_info, bid_info = AmazonMysqlRagUitl(db, brand, market).get_create_keyword(market, cur_time)
     if campaignName_info and matchType_info and keyword_info and bid_info:
         for campaignName, matchType, keyword, bid in zip(campaignName_info, matchType_info, keyword_info, bid_info):
             if matchType == "BROAD":
@@ -531,13 +583,13 @@ def update_create_data(market, brand):
             else:
                 keyword_type = None  # 或者设置为其他默认值，或者不赋值
             table2 = [[market, cur_time, keyword_type, campaignName, keyword, f'竞价为{round(bid, 2)}']]
-            get_request_data(market, cur_time, "D-LOG", table2, 0, brand)
-    campaignName_info, keyword_info, bid_adjust_info = AmazonMysqlRagUitl(brand, market).get_create_product_targets(market, cur_time)
+            get_request_data(market, cur_time, "D-LOG", table2, 0, brand, db)
+    campaignName_info, keyword_info, bid_adjust_info = AmazonMysqlRagUitl(db, brand, market).get_create_product_targets(market, cur_time)
     if campaignName_info and keyword_info and bid_adjust_info:
         for campaignName, keyword, bid_adjust in zip(campaignName_info, keyword_info, bid_adjust_info):
             if bid_adjust:
                 table2 = [[market, cur_time, "商品投放创建", campaignName, keyword, f'竞价为{round(float(bid_adjust), 2)}']]
-                get_request_data(market, cur_time, "D-LOG", table2, 0, brand)
+                get_request_data(market, cur_time, "D-LOG", table2, 0, brand, db)
 
 
 def update_create_data_period(market, brand, start_date):
@@ -588,8 +640,8 @@ def update_create_data_period(market, brand, start_date):
         # 准备下一次循环
         current_date += timedelta(days=1)
 
-
-# create_summarize_data()
+if __name__ == "__main__":
+    create_summarize_data()
 # get_request_data('FR', '2024-08-21', 'B-TABLE', [
 #     ['FR', '2024-08-07', '1399.58', '220.03', '15.72%', '220.03', '1399.58', '15.72%', '100.00%', '0.0', '0.0', '0',
 #      '0.00%', '2138.61', '1399.58', '739.03', '34.56%'],

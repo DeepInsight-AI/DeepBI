@@ -8,23 +8,19 @@ import datetime
 from decimal import Decimal
 from ai.backend.util.db.configuration.path import get_config_path
 from ai.backend.util.db.util.common import get_ad_my_credentials,get_proxies
+from ai.backend.util.db.auto_process.base_api import BaseApi
 
 
-class CampaignTools:
-    def __init__(self,brand):
-        self.brand = brand
+class CampaignTools(BaseApi):
+    def __init__(self, db, brand, market):
+        super().__init__(db, brand, market)
 
-    def load_credentials(self,market):
-        my_credentials,access_token = get_ad_my_credentials(market,self.brand)
-        return my_credentials,access_token
-
-    def list_campaigns_api(self,campaignId,market):
+    def list_campaigns_api(self,campaignId):
         try:
-            credentials, access_token = self.load_credentials(market)
-            result = sponsored_display.Campaigns(credentials=credentials,
-                                                 marketplace=Marketplaces[market.upper()],
-                                                 access_token=access_token,
-                                                 proxies=get_proxies(market),
+            result = sponsored_display.Campaigns(credentials=self.credentials,
+                                                 marketplace=Marketplaces[self.market.upper()],
+                                                 access_token=self.access_token,
+                                                 proxies=get_proxies(self.market),
                                                  debug=True).get_campaign(
               str(campaignId))
         except Exception as e:
@@ -43,13 +39,12 @@ class CampaignTools:
         return res
 
     # 新建广告活动/系列
-    def create_campaigns_api(self,campaign_info,market):
+    def create_campaigns_api(self,campaign_info):
         try:
-            credentials, access_token = self.load_credentials(market)
-            result = sponsored_display.Campaigns(credentials=credentials,
-                                                 marketplace=Marketplaces[market.upper()],
-                                                 access_token=access_token,
-                                                 proxies=get_proxies(market),
+            result = sponsored_display.Campaigns(credentials=self.credentials,
+                                                 marketplace=Marketplaces[self.market.upper()],
+                                                 access_token=self.access_token,
+                                                 proxies=get_proxies(self.market),
                                                  debug=True).create_campaigns(
                 body=json.dumps(campaign_info))
         except Exception as e:
@@ -67,14 +62,13 @@ class CampaignTools:
         return res
 
     # 更新广告系列（调整Budget、状态、enddate）
-    def update_campaigns(self,campaign_info,market):
+    def update_campaigns(self,campaign_info):
 
         try:
-            credentials, access_token = self.load_credentials(market)
-            result = sponsored_display.Campaigns(credentials=credentials,
-                                                 marketplace=Marketplaces[market.upper()],
-                                                 access_token=access_token,
-                                                 proxies=get_proxies(market),
+            result = sponsored_display.Campaigns(credentials=self.credentials,
+                                                 marketplace=Marketplaces[self.market.upper()],
+                                                 access_token=self.access_token,
+                                                 proxies=get_proxies(self.market),
                                                  debug=True).edit_campaigns(
                 body=json.dumps(campaign_info))
             print(result)
@@ -174,9 +168,8 @@ class CampaignTools:
         # 返回创建的 campaignNegativeKeywordId
         return res
 
-    def delete_campaigns_api(self,campaign_id,market):
+    def delete_campaigns_api(self,campaign_id):
         try:
-            credentials, access_token = self.load_credentials(market)
             campaign_info={
   "campaignIdFilter": {
     "include": [
@@ -184,10 +177,10 @@ class CampaignTools:
     ]
   }
 }
-            result = sponsored_display.CampaignsV4(credentials=credentials,
-                                                   marketplace=Marketplaces[market.upper()],
-                                                   access_token=access_token,
-                                                   proxies=get_proxies(market),
+            result = sponsored_display.CampaignsV4(credentials=self.credentials,
+                                                   marketplace=Marketplaces[self.market.upper()],
+                                                   access_token=self.access_token,
+                                                   proxies=get_proxies(self.market),
                                                    debug=True).delete_campaigns(
                 body=json.dumps(campaign_info))
         except Exception as e:
@@ -205,13 +198,12 @@ class CampaignTools:
         # 返回创建的 compaignID
         return print(res)
 
-    def list_all_campaigns_api(self,market):
+    def list_all_campaigns_api(self):
         try:
-            credentials, access_token = self.load_credentials(market)
-            result = sponsored_display.Campaigns(credentials=credentials,
-                                                 marketplace=Marketplaces[market.upper()],
-                                                 access_token=access_token,
-                                                 proxies=get_proxies(market),
+            result = sponsored_display.Campaigns(credentials=self.credentials,
+                                                 marketplace=Marketplaces[self.market.upper()],
+                                                 access_token=self.access_token,
+                                                 proxies=get_proxies(self.market),
                                                  debug=True).list_campaigns(
               )
         except Exception as e:
@@ -229,12 +221,14 @@ class CampaignTools:
         # 返回创建的 compaignID
         return res
 
-# ct=CampaignTools('LAPASA')
-# #测试更新广告系列信息
-# #res = ct.list_campaigns_api(None,'FR')
-# res = ct.list_campaigns_api(498971857900272,'FR')
-# # #print(type(res))
-# print(res)
+if __name__ == "__main__":
+
+    ct=CampaignTools('amazon_ads','LAPASA','DE')
+    #测试更新广告系列信息
+    res = ct.list_all_campaigns_api()
+    # res = ct.list_campaigns_api(498971857900272,'FR')
+    # #print(type(res))
+    print(res)
 
 # 测试新增广告系列
 

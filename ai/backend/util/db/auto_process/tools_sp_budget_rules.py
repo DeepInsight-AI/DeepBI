@@ -8,27 +8,23 @@ import datetime
 from decimal import Decimal
 from ai.backend.util.db.configuration.path import get_config_path
 from ai.backend.util.db.util.common import get_ad_my_credentials,get_proxies
+from ai.backend.util.db.auto_process.base_api import BaseApi
 
 
-class BudgetRulesTools:
-    def __init__(self,brand):
-        self.brand = brand
+class BudgetRulesTools(BaseApi):
+    def __init__(self, db, brand, market):
+        super().__init__(db, brand, market)
 
-    def load_credentials(self,market):
-        my_credentials,access_token = get_ad_my_credentials(market,self.brand)
-        return my_credentials,access_token
-
-    def list_budget_rules_recommendations_api(self,market,campaignId):
+    def list_budget_rules_recommendations_api(self,campaignId):
         try:
             campaign_info = {
                 "campaignId": str(campaignId),
                 "recommendationType": "EVENTS_FOR_EXISTING_CAMPAIGN"
             }
-            credentials, access_token = self.load_credentials(market)
-            result = sponsored_products.BudgetRulesRecommendations(credentials=credentials,
-                                                    marketplace=Marketplaces[market.upper()],
-                                                    access_token=access_token,
-                                                    proxies=get_proxies(market),
+            result = sponsored_products.BudgetRulesRecommendations(credentials=self.credentials,
+                                                    marketplace=Marketplaces[self.market.upper()],
+                                                    access_token=self.access_token,
+                                                    proxies=get_proxies(self.market),
                                                     debug=True).list_campaigns_budget_rules_recommendations(
                body=json.dumps(campaign_info))
         except Exception as e:
@@ -48,14 +44,12 @@ class BudgetRulesTools:
         # 返回创建的 compaignID
         return res
     # 新建广告活动/系列
-    def create_budget_rules_api(self,campaign_info,market):
+    def create_budget_rules_api(self,campaign_info):
         try:
-
-            credentials, access_token = self.load_credentials(market)
-            result = sponsored_products.BudgetRules(credentials=credentials,
-                                                    marketplace=Marketplaces[market.upper()],
-                                                    access_token=access_token,
-                                                    proxies=get_proxies(market),
+            result = sponsored_products.BudgetRules(credentials=self.credentials,
+                                                    marketplace=Marketplaces[self.market.upper()],
+                                                    access_token=self.access_token,
+                                                    proxies=get_proxies(self.market),
                                                     debug=True).create_budget_rules(
                 body=json.dumps(campaign_info))
         except Exception as e:
@@ -72,18 +66,17 @@ class BudgetRulesTools:
         # 返回创建的 compaignID
         return res
 
-    def Associates_budget_rules_to_campaign(self,budgetRuleIds,campaign_id,market):
+    def Associates_budget_rules_to_campaign(self,budgetRuleIds,campaign_id):
         try:
             campaign_info = {
   "budgetRuleIds": [
     str(budgetRuleIds)
   ]
 }
-            credentials, access_token = self.load_credentials(market)
-            result = sponsored_products.BudgetRules(credentials=credentials,
-                                                    marketplace=Marketplaces[market.upper()],
-                                                    access_token=access_token,
-                                                    proxies=get_proxies(market),
+            result = sponsored_products.BudgetRules(credentials=self.credentials,
+                                                    marketplace=Marketplaces[self.market.upper()],
+                                                    access_token=self.access_token,
+                                                    proxies=get_proxies(self.market),
                                                     debug=True).create_campaign_budget_rules(
                 campaignId=int(campaign_id),
                 body=json.dumps(campaign_info))

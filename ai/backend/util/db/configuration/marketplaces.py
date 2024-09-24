@@ -19,7 +19,10 @@ ContinentCode = {
     'IN': 'EU',
     'SG': 'FE',
     'AU': 'FE',
-    'JP': 'FE'
+    'JP': 'FE',
+    'EU': 'EU',
+    'NA': 'NA',
+    'FE': 'FE',
 }
 
 regions = {
@@ -40,6 +43,12 @@ regions = {
         'sales_channel': ['Amazon.fr', 'Amazon.it', 'Amazon.de', 'Amazon.es'],
         'sku': 'desku',
         'country': 'DE'
+    },
+    'FE': {
+        'market': ['JP'],
+        'sales_channel': ['Amazon.co.jp'],
+        'sku': 'jpsku',
+        'country': 'JP'
     }
 }
 

@@ -7,13 +7,13 @@ from datetime import datetime
 from ai.backend.util.db.db_amazon.generate_tools import ask_question
 
 
-class Gen_campaign:
+class Gen_campaign(CampaignTools):
 
-    def __init__(self,brand):
-        self.brand = brand
+    def __init__(self, db, brand, market):
+        super().__init__(db, brand, market)
 
     # 新增广告系列
-    def create_camapign(self,market,name,startDate,costType,portfolioId,endDate,tactic,state,budgetType,budget):
+    def create_camapign(self,name,startDate,costType,portfolioId,endDate,tactic,state,budgetType,budget,user='test'):
         campaigninfo = [
   {
     "name": name,
@@ -29,15 +29,14 @@ class Gen_campaign:
 ]
 
         # 执行创建
-        apitool = CampaignTools(self.brand)
-        res = apitool.create_campaigns_api(campaigninfo,market)
+        res = self.create_campaigns_api(campaigninfo)
 
         #根据创建结果更新log
-        dbNewTools = DbNewSpTools(self.brand,market)
+        dbNewTools = DbNewSpTools(self.db, self.brand,self.market)
         if res[0] == "success":
-            dbNewTools.create_sp_campaigin(market,portfolioId,endDate,name,res[1],tactic,state,startDate,budgetType,budget,"success",datetime.now(),"SD",costType)
+            dbNewTools.create_sp_campaigin(self.market,portfolioId,endDate,name,res[1],tactic,state,startDate,budgetType,budget,"success",datetime.now(),"SD",costType,user)
         else:
-            dbNewTools.create_sp_campaigin(market,portfolioId,endDate,name,res[1],tactic,state,startDate,budgetType,budget,"failed",datetime.now(),"SD",costType)
+            dbNewTools.create_sp_campaigin(self.market,portfolioId,endDate,name,res[1],tactic,state,startDate,budgetType,budget,"failed",datetime.now(),"SD",costType,user)
 
         return res[1]
 
@@ -45,7 +44,7 @@ class Gen_campaign:
 
 
     # 更新广告系列 简单数据更新
-    def update_camapign_v0(self,market,campaignId,campaignName,state,budgetType,budget_new,budget_old=None):
+    def update_camapign_v0(self,campaignId,campaignName,state,budgetType,budget_new,budget_old=None, user='test'):
         campaign_info = [
   {
     "name": campaignName,
@@ -57,22 +56,21 @@ class Gen_campaign:
 ]
 
         #调用api
-        apitool = CampaignTools(self.brand)
-        apires = apitool.update_campaigns(campaign_info,market)
+        apires = self.update_campaigns(campaign_info)
 
         # 更新log
         #     def update_sp_campaign(self,market,campaign_name,campaign_id,budget_old,budget_new,standards_acos,acos,beizhu,status,update_time):
-        newdbtool = DbNewSpTools(self.brand,market)
+        newdbtool = DbNewSpTools(self.db, self.brand,self.market)
         if apires[0] == "success":
             print("api update success")
-            newdbtool.update_sp_campaign(market, campaignName, campaignId, 'budget', budget_old, budget_new,None,None,"SD","success",datetime.now())
+            newdbtool.update_sp_campaign(self.market, campaignName, campaignId, 'budget', budget_old, budget_new,None,None,"SD","success",datetime.now(), user)
         else:
             print("api update failed")
-            newdbtool.update_sp_campaign(market, campaignName, campaignId, 'budget', budget_old, budget_new, None, None, "SD", "failed",
-                                         datetime.now())
+            newdbtool.update_sp_campaign(self.market, campaignName, campaignId, 'budget', budget_old, budget_new, None, None, "SD", "failed",
+                                         datetime.now(), user)
 
 
-    def update_camapign_name(self,market,campaignId,campaignName,campaignName_new):
+    def update_camapign_name(self,campaignId,campaignName,campaignName_new, user='test'):
         campaign_info = [
   {
     "name": campaignName_new,
@@ -80,24 +78,23 @@ class Gen_campaign:
   }
 ]
         #调用api
-        apitool = CampaignTools(self.brand)
-        apires = apitool.update_campaigns(campaign_info,market)
+        apires = self.update_campaigns(campaign_info)
 
         # 更新log
         #     def update_sp_campaign(self,market,campaign_name,campaign_id,budget_old,budget_new,standards_acos,acos,beizhu,status,update_time):
-        newdbtool = DbNewSpTools(self.brand,market)
+        newdbtool = DbNewSpTools(self.db, self.brand,self.market)
         if apires[0] == "success":
             print("api update success")
-            newdbtool.update_sp_campaign(market, campaignName, campaignId, 'campaignName', campaignName, campaignName_new,None,None,"SD","success",datetime.now())
+            newdbtool.update_sp_campaign(self.market, campaignName, campaignId, 'campaignName', campaignName, campaignName_new,None,None,"SD","success",datetime.now(), user)
         else:
             print("api update failed")
-            newdbtool.update_sp_campaign(market, campaignName, campaignId, 'campaignName', campaignName, campaignName_new, None, None, "SD", "failed",
-                                         datetime.now())
+            newdbtool.update_sp_campaign(self.market, campaignName, campaignId, 'campaignName', campaignName, campaignName_new, None, None, "SD", "failed",
+                                         datetime.now(), user)
 
     # update v0 测试
     # update_camapign_v0('US','531571979684792','B09ZQLY99J-2024-03-29','PAUSED','DAILY',2)
 
-    def update_camapign_status(self, market, campaignId, campaignName,state,state_new):
+    def update_camapign_status(self, campaignId, campaignName,state,state_new, user='test'):
         campaign_info = [
             {
                 "state": state_new,
@@ -105,22 +102,21 @@ class Gen_campaign:
             }
         ]
         # 调用api
-        apitool = CampaignTools(self.brand)
-        apires = apitool.update_campaigns(campaign_info, market)
+        apires = self.update_campaigns(campaign_info)
 
         # 更新log
         #     def update_sp_campaign(self,market,campaign_name,campaign_id,budget_old,budget_new,standards_acos,acos,beizhu,status,update_time):
-        newdbtool = DbNewSpTools(self.brand,market)
+        newdbtool = DbNewSpTools(self.db, self.brand,self.market)
         if apires[0] == "success":
             print("api update success")
-            newdbtool.update_sp_campaign(market, campaignName, campaignId, 'state', state,
-                                         state_new, None, None, "SD", "success", datetime.now())
+            newdbtool.update_sp_campaign(self.market, campaignName, campaignId, 'state', state,
+                                         state_new, None, None, "SD", "success", datetime.now(), user)
             return apires[1]
         else:
             print("api update failed")
-            newdbtool.update_sp_campaign(market, campaignName, campaignId, 'state', state,
+            newdbtool.update_sp_campaign(self.market, campaignName, campaignId, 'state', state,
                                          state_new, None, None, "SD", "failed",
-                                         datetime.now())
+                                         datetime.now(), user)
             return None
 
     # 更新 根据要求自动批量更新
@@ -172,7 +168,7 @@ class Gen_campaign:
 
     # 更新广告系列的placement
     # 按照顺序进行传入
-    def update_campaign_placement(self,market,campaignId,p_top_percentage,p_res_of_search_percentage,p_product_page_percentage):
+    def update_campaign_placement(self,campaignId,p_top_percentage,p_res_of_search_percentage,p_product_page_percentage):
         campaign_placement_info = {
             "campaigns": [
                 {
@@ -198,15 +194,14 @@ class Gen_campaign:
         }
 
         # api更新
-        apitool = CampaignTools(self.brand)
-        res = apitool.update_campaigns(campaign_placement_info,market)
+        res = self.update_campaigns(campaign_placement_info)
         # 根据结果写入日志
         #     def update_sp_campaign_placement(self,market,campaignId,p_top,p_top_percentage,p_res_of_search,p_res_of_search_percentage,p_product_page,p_product_page_percentage,status,update_time):
-        newdbtool = DbNewSpTools(self.brand,market)
+        newdbtool = DbNewSpTools(self.db, self.brand,self.market)
         if res[0]=="success":
-            newdbtool.update_sp_campaign_placement(market,campaignId,"PLACEMENT_TOP",p_top_percentage,"PLACEMENT_REST_OF_SEARCH",p_res_of_search_percentage,"PLACEMENT_PRODUCT_PAGE",p_product_page_percentage,"success",datetime.now())
+            newdbtool.update_sp_campaign_placement(self.market,campaignId,"PLACEMENT_TOP",p_top_percentage,"PLACEMENT_REST_OF_SEARCH",p_res_of_search_percentage,"PLACEMENT_PRODUCT_PAGE",p_product_page_percentage,"success",datetime.now())
         else:
-            newdbtool.update_sp_campaign_placement(market, campaignId, "PLACEMENT_TOP", p_top_percentage,
+            newdbtool.update_sp_campaign_placement(self.market, campaignId, "PLACEMENT_TOP", p_top_percentage,
                                                    "PLACEMENT_REST_OF_SEARCH", p_res_of_search_percentage,
                                                    "PLACEMENT_PRODUCT_PAGE", p_product_page_percentage, "failed",
                                                    datetime.now())
@@ -214,9 +209,9 @@ class Gen_campaign:
     # update_campaign_placement('US','531571979684792',0,0,0)
 
     # 给广告系列新增否定关键词
-    def add_campaigin_negative_keyword(self,market,campaignId,matchType,state,keywordText):
+    def add_campaigin_negative_keyword(self,campaignId,matchType,state,keywordText):
         # 翻译注意
-        translate_kw = asyncio.get_event_loop().run_until_complete(ask_question(keywordText, market))
+        translate_kw = asyncio.get_event_loop().run_until_complete(ask_question(keywordText, self.market))
         keywordText_new = eval(translate_kw)[0]
 
         campaigin_negative_keyword_info = {
@@ -230,20 +225,19 @@ class Gen_campaign:
       ]
     }
         # api更新
-        apitool = CampaignTools(self.brand)
-        apires = apitool.add_campaigns_negative_keywords(campaigin_negative_keyword_info)
+        apires = self.add_campaigns_negative_keywords(campaigin_negative_keyword_info)
         # 结果写入日志
         #     def add_sp_campaign_negativeKeyword(self,market,adGroupName,adGroupId,campaignId,campaignName,matchType,keyword_state,keywordText,campaignNegativeKeywordId,operation_state,update_time):
-        newdbtool = DbNewSpTools(self.brand,market)
+        newdbtool = DbNewSpTools(self.db, self.brand,self.market)
         if apires[0]=="success":
-            newdbtool.add_sp_campaign_negativeKeyword(market,None,None,campaignId,None,matchType,state,keywordText,keywordText_new,apires[1],"success",datetime.now())
+            newdbtool.add_sp_campaign_negativeKeyword(self.market,None,None,campaignId,None,matchType,state,keywordText,keywordText_new,apires[1],"success",datetime.now())
         else:
-            newdbtool.add_sp_campaign_negativeKeyword(market, None, None, campaignId, None, matchType, state, keywordText,keywordText_new,None,
+            newdbtool.add_sp_campaign_negativeKeyword(self.market, None, None, campaignId, None, matchType, state, keywordText,keywordText_new,None,
                                                       "failed", datetime.now())
 
 
     # 给广告系列更新否定关键词
-    def update_campaigin_negative_keyword(self,market,campaignNegativeKeywordId,keyword_state):
+    def update_campaigin_negative_keyword(self,campaignNegativeKeywordId,keyword_state):
         campaigin_negative_keyword_info = {
       "campaignNegativeKeywords": [
         {
@@ -253,15 +247,14 @@ class Gen_campaign:
       ]
     }
         # api更新
-        apitool = CampaignTools(self.brand)
-        apires = apitool.update_campaigns_negative_keywords(campaigin_negative_keyword_info)
+        apires = self.update_campaigns_negative_keywords(campaigin_negative_keyword_info)
         # 结果写入日志
         #     def update_sp_campaign_negativeKeyword(self, market,keyword_state, keywordText, campaignNegativeKeywordId, operation_state,update_time):
-        newdbtool = DbNewSpTools(self.brand,market)
+        newdbtool = DbNewSpTools(self.db, self.brand,self.market)
         if apires[0]=="success":
-            newdbtool.update_sp_campaign_negativeKeyword(market,keyword_state,None,campaignNegativeKeywordId,"success",datetime.now())
+            newdbtool.update_sp_campaign_negativeKeyword(self.market,keyword_state,None,campaignNegativeKeywordId,"success",datetime.now())
         else:
-            newdbtool.update_sp_campaign_negativeKeyword(market, keyword_state, None, campaignNegativeKeywordId, "failed",datetime.now())
+            newdbtool.update_sp_campaign_negativeKeyword(self.market, keyword_state, None, campaignNegativeKeywordId, "failed",datetime.now())
 
 # ins = Gen_campaign('Gotoly')
 # ins.update_camapign_status('US',375934001677502,None,None,'paused')

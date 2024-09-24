@@ -10,7 +10,7 @@ def update_api(data):
     return code
 
 def sp_api(data):
-    api = auto_api_sp(data['brand'],data['market'])
+    api = auto_api_sp(data['brand'],data['market'],data['db'],data['user'])
     if data['require'] == 'bid':
         if data['position'] == 'campaign':
             code = api.update_sp_ad_budget(data['ID'], data['text'])
@@ -22,6 +22,9 @@ def sp_api(data):
             code = api.update_sp_ad_product_targets(data['ID'], data['text'])
         elif data['position'] == 'automatic_targeting':
             code = api.update_sp_ad_automatic_targeting(data['ID'], data['text'])
+    elif data['require'] == 'bid_batch':
+        if data['position'] == 'keyword':
+            code = api.update_sp_ad_keyword_batch(data['ID'], data['text'])
     elif data['require'] == 'state':
         if data['position'] == 'campaign':
             code = api.auto_campaign_status(data['ID'], data['text'])

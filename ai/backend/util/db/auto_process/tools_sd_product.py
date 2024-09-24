@@ -8,23 +8,19 @@ import datetime
 from decimal import Decimal
 from ai.backend.util.db.configuration.path import get_config_path
 from ai.backend.util.db.util.common import get_ad_my_credentials,get_proxies
+from ai.backend.util.db.auto_process.base_api import BaseApi
 
 
-class ProductTools:
-    def __init__(self,brand):
-        self.brand = brand
+class ProductTools(BaseApi):
+    def __init__(self, db, brand, market):
+        super().__init__(db, brand, market)
 
-    def load_credentials(self,market):
-        my_credentials,access_token = get_ad_my_credentials(market,self.brand)
-        return my_credentials,access_token
-
-    def create_product_api(self,product_info,market):
+    def create_product_api(self,product_info):
         try:
-            credentials, access_token = self.load_credentials(market)
-            result = sponsored_display.ProductAds(credentials=credentials,
-                                                  marketplace=Marketplaces[market.upper()],
-                                                  access_token=access_token,
-                                                  proxies=get_proxies(market),
+            result = sponsored_display.ProductAds(credentials=self.credentials,
+                                                  marketplace=Marketplaces[self.market.upper()],
+                                                  access_token=self.access_token,
+                                                  proxies=get_proxies(self.market),
                                                   debug=True).create_product_ads(
                     body=json.dumps(product_info))
         except Exception as e:
@@ -42,14 +38,13 @@ class ProductTools:
 
 
 
-    def update_product_api(self,product_info,market):
+    def update_product_api(self,product_info):
 
         try:
-            credentials, access_token = self.load_credentials(market)
-            result = sponsored_display.ProductAds(credentials=credentials,
-                                                  marketplace=Marketplaces[market.upper()],
-                                                  access_token=access_token,
-                                                  proxies=get_proxies(market),
+            result = sponsored_display.ProductAds(credentials=self.credentials,
+                                                  marketplace=Marketplaces[self.market.upper()],
+                                                  access_token=self.access_token,
+                                                  proxies=get_proxies(self.market),
                                                   debug=True).edit_product_ads(
                     body=json.dumps(product_info))
             print(result)
@@ -67,13 +62,12 @@ class ProductTools:
         # 返回创建的 compaignID
         return res
 
-    def get_product_api(self, market, adGroupID):
-        credentials, access_token = self.load_credentials(market)
+    def get_product_api(self, adGroupID):
         try:
-            result = sponsored_display.ProductAds(credentials=credentials,
-                                                  marketplace=Marketplaces[market.upper()],
-                                                  access_token=access_token,
-                                                  proxies=get_proxies(market),
+            result = sponsored_display.ProductAds(credentials=self.credentials,
+                                                  marketplace=Marketplaces[self.market.upper()],
+                                                  access_token=self.access_token,
+                                                  proxies=get_proxies(self.market),
                                                   debug=True).list_product_ads(
                 adGroupIdFilter=adGroupID)
         except Exception as e:
@@ -88,13 +82,12 @@ class ProductTools:
             defaultBid_old = None
         return defaultBid_old
 
-    def get_creatives_api(self, market, adGroupID):
-        credentials, access_token = self.load_credentials(market)
+    def get_creatives_api(self, adGroupID):
         try:
-            result = sponsored_display.Creatives(credentials=credentials,
-                                                 marketplace=Marketplaces[market.upper()],
-                                                 access_token=access_token,
-                                                 proxies=get_proxies(market),
+            result = sponsored_display.Creatives(credentials=self.credentials,
+                                                 marketplace=Marketplaces[self.market.upper()],
+                                                 access_token=self.access_token,
+                                                 proxies=get_proxies(self.market),
                                                  debug=True).list_creatives(
                 adGroupIdFilter=adGroupID)
         except Exception as e:
@@ -109,13 +102,12 @@ class ProductTools:
             defaultBid_old = None
         return defaultBid_old
 
-    def create_creatives_api(self, market, creatives_info):
-        credentials, access_token = self.load_credentials(market)
+    def create_creatives_api(self, creatives_info):
         try:
-            result = sponsored_display.Creatives(credentials=credentials,
-                                                 marketplace=Marketplaces[market.upper()],
-                                                 access_token=access_token,
-                                                 proxies=get_proxies(market),
+            result = sponsored_display.Creatives(credentials=self.credentials,
+                                                 marketplace=Marketplaces[self.market.upper()],
+                                                 access_token=self.access_token,
+                                                 proxies=get_proxies(self.market),
                                                  debug=True).create_creatives(
                 body=json.dumps(creatives_info))
         except Exception as e:

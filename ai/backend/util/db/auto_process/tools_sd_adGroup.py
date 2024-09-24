@@ -8,25 +8,21 @@ import datetime
 from decimal import Decimal
 from ai.backend.util.db.configuration.path import get_config_path
 from ai.backend.util.db.util.common import get_ad_my_credentials,get_proxies
+from ai.backend.util.db.auto_process.base_api import BaseApi
 
 
-class AdGroupTools_SD:
-    def __init__(self,brand):
-        self.brand = brand
-
-    def load_credentials(self,market):
-        my_credentials,access_token = get_ad_my_credentials(market,self.brand)
-        return my_credentials,access_token
+class AdGroupTools_SD(BaseApi):
+    def __init__(self, db, brand, market):
+        super().__init__(db, brand, market)
 
 
     # 新建广告组
-    def create_adGroup_api(self,adGroup_info,market):
+    def create_adGroup_api(self,adGroup_info):
         try:
-            credentials, access_token = self.load_credentials(market)
-            result = sponsored_display.AdGroups(credentials=credentials,
-                                                marketplace=Marketplaces[market.upper()],
-                                                access_token=access_token,
-                                                proxies=get_proxies(market),
+            result = sponsored_display.AdGroups(credentials=self.credentials,
+                                                marketplace=Marketplaces[self.market.upper()],
+                                                access_token=self.access_token,
+                                                proxies=get_proxies(self.market),
                                                 debug=True).create_ad_groups(
                 body=json.dumps(adGroup_info))
         except Exception as e:
@@ -63,14 +59,13 @@ class AdGroupTools_SD:
             return ["failed", adGroupID]
 
 
-    def get_adGroup_api(self,market,adGroupID):
+    def get_adGroup_api(self,adGroupID):
 
         try:
-            credentials, access_token = self.load_credentials(market)
-            result = sponsored_display.AdGroups(credentials=credentials,
-                                                marketplace=Marketplaces[market.upper()],
-                                                access_token=access_token,
-                                                proxies=get_proxies(market),
+            result = sponsored_display.AdGroups(credentials=self.credentials,
+                                                marketplace=Marketplaces[self.market.upper()],
+                                                access_token=self.access_token,
+                                                proxies=get_proxies(self.market),
                                                 debug=True).get_ad_group(
                 str(adGroupID))
         except Exception as e:
@@ -85,14 +80,13 @@ class AdGroupTools_SD:
             defaultBid_old = None
         return defaultBid_old
 
-    def get_adGroup_bycampaignid_api(self,market,campaignid):
+    def get_adGroup_bycampaignid_api(self,campaignid):
 
         try:
-            credentials, access_token = self.load_credentials(market)
-            result = sponsored_display.AdGroups(credentials=credentials,
-                                                marketplace=Marketplaces[market.upper()],
-                                                access_token=access_token,
-                                                proxies=get_proxies(market),
+            result = sponsored_display.AdGroups(credentials=self.credentials,
+                                                marketplace=Marketplaces[self.market.upper()],
+                                                access_token=self.access_token,
+                                                proxies=get_proxies(self.market),
                                                 debug=True).list_ad_groups(
                 campaignIdFilter=str(campaignid))
         except Exception as e:
@@ -107,7 +101,7 @@ class AdGroupTools_SD:
             defaultBid_old = None
         return defaultBid_old
 
-    def get_adGroup_negativekw(self, market, adGroupID):
+    def get_adGroup_negativekw(self, adGroupID):
         adGroup_info = {
             "maxResults": 500,
             "adGroupIdFilter": {
@@ -118,11 +112,10 @@ class AdGroupTools_SD:
             "includeExtendedDataFields": True,
         }
         try:
-            credentials, access_token = self.load_credentials(market)
-            result = sponsored_products.NegativeKeywordsV3(credentials=credentials,
-                                                           marketplace=Marketplaces[market.upper()],
-                                                           access_token=access_token,
-                                                           proxies=get_proxies(market),
+            result = sponsored_products.NegativeKeywordsV3(credentials=self.credentials,
+                                                           marketplace=Marketplaces[self.market.upper()],
+                                                           access_token=self.access_token,
+                                                           proxies=get_proxies(self.market),
                                                            debug=True).list_negative_keywords(
                 body=json.dumps(adGroup_info))
         except Exception as e:
@@ -137,13 +130,12 @@ class AdGroupTools_SD:
         return negativeKeywords
 
     # 广告组增加否定定向关键词
-    def create_adGroup_negative_targeting(self,adGroup_negativekw_info,market):
+    def create_adGroup_negative_targeting1(self,adGroup_negativekw_info):
         try:
-            credentials, access_token = self.load_credentials(market)
-            result = sponsored_display.NegativeTargets(credentials=credentials,
-                                                marketplace=Marketplaces[market.upper()],
-                                                access_token=access_token,
-                                                proxies=get_proxies(market),
+            result = sponsored_display.NegativeTargets(credentials=self.credentials,
+                                                marketplace=Marketplaces[self.market.upper()],
+                                                access_token=self.access_token,
+                                                proxies=get_proxies(self.market),
                                                 debug=True).create_negative_targets(
                 body=json.dumps(adGroup_negativekw_info))
         except Exception as e:
@@ -176,7 +168,7 @@ class AdGroupTools_SD:
             return ["failed", ""]
 
     #
-    def list_adGroup_negative_pd(self, adGroup_negativekw_info, market):
+    def list_adGroup_negative_pd(self, adGroup_negativekw_info):
         try:
             credentials, access_token = self.load_credentials(market)
             result = sponsored_products.NegativeTargetsV3(credentials=credentials,
@@ -199,14 +191,12 @@ class AdGroupTools_SD:
             print("list adGroup negative product failed:", e)
             return ["failed", ""]
 
-    def list_adGroup_Targeting(self, market, adGroupID):
+    def list_adGroup_Targeting(self, adGroupID):
         try:
-            credentials, access_token = self.load_credentials(market)
-
-            result = sponsored_display.Targets(credentials=credentials,
-                                               marketplace=Marketplaces[market.upper()],
-                                               access_token=access_token,
-                                               proxies=get_proxies(market),
+            result = sponsored_display.Targets(credentials=self.credentials,
+                                               marketplace=Marketplaces[self.market.upper()],
+                                               access_token=self.access_token,
+                                               proxies=get_proxies(self.market),
                                                debug=True).list_products_targets(
                 adGroupIdFilter=adGroupID)
         except Exception as e:
@@ -223,14 +213,12 @@ class AdGroupTools_SD:
             print("list adGroup TargetingClause failed")
             return ["failed", ""]
 
-    def list_adGroup_Targeting_by_targetId(self, market, targetId):
+    def list_adGroup_Targeting_by_targetId(self, targetId):
         try:
-            credentials, access_token = self.load_credentials(market)
-
-            result = sponsored_display.Targets(credentials=credentials,
-                                               marketplace=Marketplaces[market.upper()],
-                                               access_token=access_token,
-                                               proxies=get_proxies(market),
+            result = sponsored_display.Targets(credentials=self.credentials,
+                                               marketplace=Marketplaces[self.market.upper()],
+                                               access_token=self.access_token,
+                                               proxies=get_proxies(self.market),
                                                debug=True).get_products_target(
                 targetId=targetId)
             if result and result.payload:
@@ -247,14 +235,12 @@ class AdGroupTools_SD:
             print("list adGroup Targeting failed: ", e)
             return None
 
-    def list_adGroup_Targeting_by_campaignId(self, market, campaignId):
+    def list_adGroup_Targeting_by_campaignId(self, campaignId):
         try:
-            credentials, access_token = self.load_credentials(market)
-
-            result = sponsored_display.Targets(credentials=credentials,
-                                               marketplace=Marketplaces[market.upper()],
-                                               access_token=access_token,
-                                               proxies=get_proxies(market),
+            result = sponsored_display.Targets(credentials=self.credentials,
+                                               marketplace=Marketplaces[self.market.upper()],
+                                               access_token=self.access_token,
+                                               proxies=get_proxies(self.market),
                                                debug=True).list_products_targets(
                 campaignIdFilter=campaignId)
             if result and result.payload:
@@ -271,13 +257,12 @@ class AdGroupTools_SD:
             print("list adGroup Targeting failed: ", e)
             return ["failed", ""]
 
-    def create_adGroup_Targeting(self, adGroup_info, market):
+    def create_adGroup_Targeting(self, adGroup_info):
         try:
-            credentials, access_token = self.load_credentials(market)
-            result = sponsored_display.Targets(credentials=credentials,
-                                               marketplace=Marketplaces[market.upper()],
-                                               access_token=access_token,
-                                               proxies=get_proxies(market),
+            result = sponsored_display.Targets(credentials=self.credentials,
+                                               marketplace=Marketplaces[self.market.upper()],
+                                               access_token=self.access_token,
+                                               proxies=get_proxies(self.market),
                                                debug=True).create_products_targets(
                 body=json.dumps(adGroup_info))
         except Exception as e:
@@ -294,13 +279,12 @@ class AdGroupTools_SD:
             print("create adGroup TargetingClause failed")
             return ["failed", ""]
 
-    def update_adGroup_Targeting(self, adGroup_info, market):
+    def update_adGroup_Targeting1(self, adGroup_info):
         try:
-            credentials, access_token = self.load_credentials(market)
-            result = sponsored_display.Targets(credentials=credentials,
-                                               marketplace=Marketplaces[market.upper()],
-                                               access_token=access_token,
-                                               proxies=get_proxies(market),
+            result = sponsored_display.Targets(credentials=self.credentials,
+                                               marketplace=Marketplaces[self.market.upper()],
+                                               access_token=self.access_token,
+                                               proxies=get_proxies(self.market),
                                                debug=True).edit_products_targets(
                 body=json.dumps(adGroup_info))
 
@@ -318,7 +302,7 @@ class AdGroupTools_SD:
             print("update adGroup TargetingClause failed: ", e)
             return ["failed", ""]
 
-    def list_adGroup_Targetingrecommendations(self, market, adGroupID,products):
+    def list_adGroup_Targetingrecommendations(self, adGroupID,products):
         adGroup_info={
   "tactic": "T00020",
   "products": products,
@@ -327,12 +311,10 @@ class AdGroupTools_SD:
   ]
 }
         try:
-            credentials, access_token = self.load_credentials(market)
-
-            result = sponsored_display.TargetsRecommendations(credentials=credentials,
-                                                              marketplace=Marketplaces[market.upper()],
-                                                              access_token=access_token,
-                                                              proxies=get_proxies(market),
+            result = sponsored_display.TargetsRecommendations(credentials=self.credentials,
+                                                              marketplace=Marketplaces[self.market.upper()],
+                                                              access_token=self.access_token,
+                                                              proxies=get_proxies(self.market),
                                                               debug=True).list_targets_recommendations(
                 body=json.dumps(adGroup_info))
         except Exception as e:

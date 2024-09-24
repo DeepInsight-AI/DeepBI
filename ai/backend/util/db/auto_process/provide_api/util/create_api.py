@@ -12,7 +12,7 @@ def create_api(data):
     return code
 
 def sp_api(data):
-    api = Ceate_new_sku()
+    api = Ceate_new_sku(data['db'],data['brand'],data['market'])
     if data['replication'] == 'True':
         pass
         # if data['position'] == 'campaign':
@@ -28,28 +28,28 @@ def sp_api(data):
     elif data['replication'] == 'False':
         if data['strategy'] == 'manual':
             try:
-                api.create_new_sp_manual_no_template_jiutong_api(data['market'], data['brand'], data['text'], data['budget'])
+                api.create_new_sp_manual_no_template_jiutong_api(data['text'], data['budget'], data['user'])
                 return 200
             except Exception as e:
                 print(e)
                 return 500  # Internal Server Error
         elif data['strategy'] == 'auto':
             try:
-                api.create_new_sp_auto_no_template(data['market'], data['text'], data['brand'],data['budget'], data['target_bid'])
+                api.create_new_sp_auto_no_template(data['text'],data['budget'], data['target_bid'], data['user'])
                 return 200
             except Exception as e:
                 print(e)
                 return 500  # Internal Server Error
         elif data['strategy'] == '0503':
             try:
-                api.create_new_sp_manual_no_template_0503_api(data['market'], data['brand'], data['text'], data['budget'])
+                api.create_new_sp_manual_no_template_0503_api(data['text'], data['budget'], data['user'])
                 return 200
             except Exception as e:
                 print(e)
                 return 500  # Internal Server Error
         elif data['strategy'] == '0514':
             try:
-                api.create_new_sp_asin_no_template(data['market'], data['text'], data['brand'],data['budget'], data['target_bid'])
+                api.create_new_sp_asin_no_template(data['text'],data['budget'], data['target_bid'], data['user'])
                 return 200
             except Exception as e:
                 print(e)
@@ -62,7 +62,7 @@ def sp_api(data):
         #     code = api.auto_targeting_status(data['ID'], data['text'])
 
 def sd_api(data):
-    api = Ceate_new_sd()
+    api = Ceate_new_sd(data['db'],data['brand'],data['market'])
     if data['replication'] == 'True':
         pass
         # if data['position'] == 'campaign':
@@ -78,28 +78,28 @@ def sd_api(data):
     elif data['replication'] == 'False':
         if data['strategy'] == '0509':
             try:
-                api.create_new_sd_no_template(data['market'], data['text'], data['brand'], data['budget'], data['target_bid'])
+                api.create_new_sd_no_template(data['text'], data['budget'], data['target_bid'], data['user'])
                 return 200
             except Exception as e:
                 print(e)
                 return 500  # Internal Server Error
         elif data['strategy'] == '0511':
             try:
-                api.create_new_sd_0511(data['market'], data['text'], data['brand'],data['budget'], data['target_bid'])
+                api.create_new_sd_0511(data['text'],data['budget'], data['target_bid'], data['user'])
                 return 200
             except Exception as e:
                 print(e)
                 return 500  # Internal Server Error
         elif data['strategy'] == '0731':
             try:
-                api.create_new_sd_no_template_0731(data['market'], data['text'], data['brand'],data['budget'], data['target_bid'])
+                api.create_new_sd_no_template_0731(data['text'],data['budget'], data['target_bid'], data['user'])
                 return 200
             except Exception as e:
                 print(e)
                 return 500  # Internal Server Error
         elif data['strategy'] == '0901':
             try:
-                api.create_new_sd_no_template_0901(data['market'], data['text'], data['brand'],data['budget'], data['target_bid'])
+                api.create_new_sd_no_template_0901(data['text'],data['budget'], data['target_bid'], data['user'])
                 return 200
             except Exception as e:
                 print(e)

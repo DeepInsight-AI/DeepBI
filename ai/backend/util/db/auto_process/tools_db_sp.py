@@ -5,6 +5,7 @@ from datetime import datetime
 import pandas as pd
 import pymysql
 from ai.backend.util.db.configuration.path import get_config_path
+from ai.backend.util.db.auto_process.db_api import BaseDb
 
 
 
@@ -17,44 +18,11 @@ def get_timestamp():
     date_timestamp_string = f"{date_string}_{timestamp}"
     return date_timestamp_string
 
-class DbSpTools:
-    def __init__(self, brand,market):
-        self.db_info = self.load_db_info(brand,market)
-        self.conn = self.connect(self.db_info)
+class DbSpTools(BaseDb):
+    def __init__(self, db, brand, market):
+        super().__init__(db, brand, market)
 
-    def load_db_info(self, brand, country=None):
-        # 从 JSON 文件加载数据库信息
-        db_info_path = os.path.join(get_config_path(), 'db_info.json')
-        with open(db_info_path, 'r') as f:
-            db_info_json = json.load(f)
-
-        if brand not in db_info_json:
-            raise ValueError(f"Unknown brand '{brand}'")
-
-        brand_info = db_info_json[brand]
-
-        if country and country in brand_info:
-            return brand_info[country]
-
-        return brand_info.get('default', {})
-
-    def connect(self, db_info):
-        try:
-            conn = pymysql.connect(**db_info)
-            print("Connected to amazon_mysql database!")
-            return conn
-        except Exception as error:
-            print("Error while connecting to amazon_mysql:", error)
-            return None
-
-    def connect_close(self):
-        try:
-            self.conn.close()
-        except Exception as error:
-            print("Error while connecting to amazon_mysql:", error)
-            return None
-
-    def get_sp_SkuAdgroupCamapign(self, market,startdate,enddate,start_acos,end_acos,adjuest):
+    def get_sp_SkuAdgroupCamapign(self,startdate,enddate,start_acos,end_acos,adjuest):
         # 低于 平均ACOS值 30% 以上的  campaign 广告活动
         # 建议执行的操作：预算提升30%
         try:
@@ -79,7 +47,7 @@ having SUM(cost)/SUM(sales14d) >(select avgacos from tempacos)*(1+{}) and SUM(co
 select
 *
 from temp2
-             """.format(startdate,enddate,market,adjuest,adjuest,startdate,enddate,market,start_acos,end_acos)
+             """.format(startdate,enddate,self.market,adjuest,adjuest,startdate,enddate,self.market,start_acos,end_acos)
             df = pd.read_sql(query, con=conn)
             return df
             for index, row in df.iterrows():
@@ -92,7 +60,7 @@ from temp2
         except Exception as error:
             print("get_sp_SkuAdgroupCamapign Error while query data:", error)
 
-    def get_sp_adgroup_update(self, market, startdate, enddate, start_acos, end_acos, adjuest):
+    def get_sp_adgroup_update(self, startdate, enddate, start_acos, end_acos, adjuest):
         # 查找需要操作的广告组
         try:
             conn = self.conn
@@ -116,7 +84,7 @@ having SUM(cost)/SUM(sales14d) >(select avgacos from tempacos)*(1+{}) and SUM(co
 select
 *
 from temp2
-             """.format(startdate, enddate, market, adjuest, startdate, enddate, market, start_acos,
+             """.format(startdate, enddate, self.market, adjuest, startdate, enddate, self.market, start_acos,
                         end_acos)
             pd.set_option('display.max_columns', None)
             pd.set_option('display.max_rows', None)
@@ -132,13 +100,13 @@ from temp2
         except Exception as error:
             print("get_sp_adgroup_update Error while query data:", error)
 
-    def select_sd_campaign_name(self, market,product):
+    def select_sd_campaign_name(self,product):
         try:
             conn = self.conn
 
             query = """SELECT campaignName FROM amazon_campaign_reports_sd
             WHERE market = '{}'
-            AND LOWER(campaignName) LIKE LOWER('%{}%')""".format(market, product)
+            AND LOWER(campaignName) LIKE LOWER('%{}%')""".format(self.market, product)
             df = pd.read_sql(query, con=conn)
             if df.empty:
                 print("No campaign name")
@@ -149,13 +117,13 @@ from temp2
         except Exception as e:
             print(f"Error occurred when select_sd_campaign_name: {e}")
 
-    def select_sp_campaign_name(self, market,product):
+    def select_sp_campaign_name(self,product):
         try:
             conn = self.conn
 
             query = """SELECT campaignName FROM amazon_campaign_reports_sp
             WHERE market = '{}'
-            AND LOWER(campaignName) LIKE LOWER('%{}%')""".format(market, product)
+            AND LOWER(campaignName) LIKE LOWER('%{}%')""".format(self.market, product)
             df = pd.read_sql(query, con=conn)
             if df.empty:
                 print("No campaign name")
@@ -166,11 +134,11 @@ from temp2
         except Exception as e:
             print(f"Error occurred when select_sd_campaign_name: {e}")
 
-    def select_sd_product_sku(self, market,product):
+    def select_sd_product_sku(self,product):
         try:
             conn = self.conn
-            if market in ('US', 'JP', 'UK'):
-                sku = f"{market.lower()}sku"
+            if self.market in ('US', 'JP', 'UK'):
+                sku = f"{self.market.lower()}sku"
             else:
                 sku = "frsku"
             query = """
@@ -294,7 +262,7 @@ WHERE
         except Exception as e:
             print(f"Error occurred when select_product_sku_by_asin: {e}")
 
-    def select_product_sku_by_parent_asin(self, parent_asins, depository, market):
+    def select_product_sku_by_parent_asin(self, parent_asins, depository):
         try:
             conn = self.conn
             query = f"""
@@ -314,7 +282,7 @@ WHERE
                             SELECT DISTINCT sku
                             FROM amazon_product_info
                             WHERE asin = '{parent_asins}'
-                            AND market = '{market}'
+                            AND market = '{self.market}'
                             """
                 df1 = pd.read_sql(query1, con=conn)
                 return df1['sku'].tolist()
@@ -323,7 +291,7 @@ WHERE
                 return df['sku'].tolist()
         except Exception as e:
             print(f"Error occurred when select_product_sku_by_asin: {e}")
-    def select_sp_sspu_name(self,market,sspu):
+    def select_sp_sspu_name(self,sspu):
         try:
             conn = self.conn
             sspu1 = sspu.lower()
@@ -332,7 +300,7 @@ SELECT DISTINCT campaign_name,campaignId FROM amazon_campaigns_list_sp
 WHERE market = '{}'
 AND state != 'ARCHIVED'
 AND (campaign_name LIKE '%{}%' OR campaign_name LIKE '%{}%')
-                    """.format(market,sspu,sspu1)
+                    """.format(self.market,sspu,sspu1)
             df = pd.read_sql(query, con=conn)
             if df.empty:
                 print("No campaignName")
@@ -343,7 +311,7 @@ AND (campaign_name LIKE '%{}%' OR campaign_name LIKE '%{}%')
         except Exception as e:
             print(f"Error occurred when select_product_sku_by_asin: {e}")
 
-    def select_sd_sspu_name(self,market,sspu):
+    def select_sd_sspu_name(self,sspu):
         try:
             conn = self.conn
             sspu1 = sspu.lower()
@@ -352,7 +320,7 @@ SELECT DISTINCT campaignName,campaignId FROM amazon_campaigns_list_sd
 WHERE market = '{}'
 AND state != 'archived'
 AND (campaignName LIKE '%{}%' OR campaignName LIKE '%{}%')
-                    """.format(market,sspu,sspu1)
+                    """.format(self.market,sspu,sspu1)
             df = pd.read_sql(query, con=conn)
             if df.empty:
                 print("No campaignName")
@@ -363,7 +331,7 @@ AND (campaignName LIKE '%{}%' OR campaignName LIKE '%{}%')
         except Exception as e:
             print(f"Error occurred when select_sd_sspu_name: {e}")
 
-    def select_sp_sspu_name_overstock(self,market,sspu):
+    def select_sp_sspu_name_overstock(self,sspu):
         try:
             conn = self.conn
             sspu1 = sspu.lower()
@@ -377,7 +345,7 @@ WHERE
         campaign_name LIKE '%{}%' OR
         campaign_name LIKE '%{}%'
     )
-                    """.format(market,sspu,sspu1)
+                    """.format(self.market,sspu,sspu1)
             df = pd.read_sql(query, con=conn)
             if df.empty:
                 print("No campaignName")
@@ -388,7 +356,7 @@ WHERE
         except Exception as e:
             print(f"Error occurred when select_product_sku_by_asin: {e}")
 
-    def select_sd_sspu_name_overstock(self,market,sspu):
+    def select_sd_sspu_name_overstock(self,sspu):
         try:
             conn = self.conn
             sspu1 = sspu.lower()
@@ -402,7 +370,7 @@ WHERE
         campaignName LIKE '%{}%' OR
         campaignName LIKE '%{}%'
     )
-                    """.format(market,sspu,sspu1)
+                    """.format(self.market,sspu,sspu1)
             df = pd.read_sql(query, con=conn)
             if df.empty:
                 print("No campaignName")
@@ -413,14 +381,14 @@ WHERE
         except Exception as e:
             print(f"Error occurred when select_sd_sspu_name: {e}")
 
-    def select_sp_campaign(self,market):
+    def select_sp_campaign(self):
         try:
             conn = self.conn
             query = """
 SELECT DISTINCT campaignId FROM amazon_campaigns_list_sp
 WHERE market = '{}'
 AND state = 'ENABLED'
-                    """.format(market)
+                    """.format(self.market)
             df = pd.read_sql(query, con=conn)
             if df.empty:
                 print("No campaignId")
@@ -431,7 +399,7 @@ AND state = 'ENABLED'
         except Exception as e:
             print(f"Error occurred when select_product_sku_by_asin: {e}")
 
-    def select_sp_campaignid_search_term(self,market,curtime,campaignid):
+    def select_sp_campaignid_search_term(self,curtime,campaignid):
         try:
             conn = self.conn
             query = """
@@ -532,7 +500,7 @@ ORDER BY
 LIMIT 1
                     """.format(curtime,curtime,curtime,curtime,curtime,curtime,curtime,curtime,curtime,curtime,
                                curtime,curtime,curtime,curtime,curtime,curtime,curtime,curtime,curtime,curtime,
-                               curtime,curtime,curtime,curtime,curtime,curtime,curtime,curtime,market,curtime,curtime,curtime,market,campaignid,market,market,campaignid)
+                               curtime,curtime,curtime,curtime,curtime,curtime,curtime,curtime,self.market,curtime,curtime,curtime,self.market,campaignid,self.market,self.market,campaignid)
             df = pd.read_sql(query, con=conn)
             if df.empty:
                 print("No campaignId")
@@ -543,7 +511,7 @@ LIMIT 1
         except Exception as e:
             print(f"Error occurred when select_product_sku_by_asin: {e}")
 
-    def select_sp_campaignid_search_term_jiutong(self, market, curtime, campaignid):
+    def select_sp_campaignid_search_term_jiutong(self, curtime, campaignid):
         try:
             conn = self.conn
             query = """
@@ -636,8 +604,8 @@ LIMIT 1
                                curtime,
                                curtime, curtime, curtime, curtime, curtime, curtime, curtime, curtime, curtime,
                                curtime,
-                               curtime, curtime, curtime, curtime, curtime, curtime, curtime, curtime, market,
-                               curtime, curtime, curtime, market, campaignid, market, market, campaignid)
+                               curtime, curtime, curtime, curtime, curtime, curtime, curtime, curtime, self.market,
+                               curtime, curtime, curtime, self.market, campaignid, self.market, self.market, campaignid)
             df = pd.read_sql(query, con=conn)
             if df.empty:
                 print("No campaignId")
@@ -648,7 +616,7 @@ LIMIT 1
         except Exception as e:
             print(f"Error occurred when select_product_sku_by_asin: {e}")
 
-    def select_sp_asin_campaignid_search_term(self, market, curtime, campaignid):
+    def select_sp_asin_campaignid_search_term(self, curtime, campaignid):
         try:
             conn = self.conn
             query = f"""
@@ -677,7 +645,7 @@ WITH Campaign_Stats AS (
         acr.date BETWEEN DATE_SUB('{curtime}', INTERVAL 30 DAY)
         AND ('{curtime}' - INTERVAL 1 DAY)
         AND acr.campaignId IN (SELECT campaignId FROM amazon_campaign_reports_sp WHERE campaignStatus = 'ENABLED' AND date = '{curtime}' - INTERVAL 1 DAY )
-        AND acr.market = '{market}'
+        AND acr.market = '{self.market}'
     GROUP BY
         acr.campaignName
 ),
@@ -692,20 +660,20 @@ b AS (
         reports.date BETWEEN DATE_SUB('{curtime}', INTERVAL 30 DAY)
         AND ('{curtime}' - INTERVAL 1 DAY)
         AND campaigns.campaignId IN (SELECT campaignId FROM amazon_campaign_reports_sp WHERE campaignStatus = 'ENABLED' AND date = '{curtime}' - INTERVAL 1 DAY)
-        AND reports.market = '{market}'
+        AND reports.market = '{self.market}'
     GROUP BY
         reports.market
 ),
 TargetCampaignIds AS (
 SELECT DISTINCT T1.adGroupId, T3.campaignId, T3.targetingType, T3.campaign_name, T3.state AS campaignStatus
 FROM amazon_sp_productads_list AS T1
-INNER JOIN amazon_campaigns_list_sp AS T3 ON T1.campaignId = T3.campaignId AND T3.market = '{market}'
+INNER JOIN amazon_campaigns_list_sp AS T3 ON T1.campaignId = T3.campaignId AND T3.market = '{self.market}'
 WHERE T3.targetingType = 'MANUAL' AND T3.state = 'ENABLED'
   AND EXISTS (
     SELECT 1
     FROM amazon_sp_productads_list AS T2
     WHERE T2.campaignId = '{campaignid}'
-      AND T2.market = '{market}'
+      AND T2.market = '{self.market}'
       AND T2.asin = T1.asin
   )
   AND (T3.campaign_name LIKE '%0514%' OR T3.campaign_name LIKE '%ASIN%')
@@ -752,7 +720,7 @@ LIMIT 1;
         except Exception as e:
             print(f"Error occurred when select_product_sku_by_asin: {e}")
 
-    def select_sp_asin_campaignid_search_term_jiutong(self, market, curtime, campaignid):
+    def select_sp_asin_campaignid_search_term_jiutong(self, curtime, campaignid):
         try:
             conn = self.conn
             query = f"""
@@ -781,7 +749,7 @@ WITH Campaign_Stats AS (
         acr.date BETWEEN DATE_SUB('{curtime}', INTERVAL 30 DAY)
         AND ('{curtime}' - INTERVAL 1 DAY)
         AND acr.campaignId IN (SELECT campaignId FROM amazon_campaign_reports_sp WHERE campaignStatus = 'ENABLED' AND date = '{curtime}' - INTERVAL 1 DAY )
-        AND acr.market = '{market}'
+        AND acr.market = '{self.market}'
     GROUP BY
         acr.campaignName
 ),
@@ -796,20 +764,20 @@ b AS (
         reports.date BETWEEN DATE_SUB('{curtime}', INTERVAL 30 DAY)
         AND ('{curtime}' - INTERVAL 1 DAY)
         AND campaigns.campaignId IN (SELECT campaignId FROM amazon_campaign_reports_sp WHERE campaignStatus = 'ENABLED' AND date = '{curtime}' - INTERVAL 1 DAY)
-        AND reports.market = '{market}'
+        AND reports.market = '{self.market}'
     GROUP BY
         reports.market
 ),
 TargetCampaignIds AS (
 SELECT DISTINCT T1.adGroupId, T3.campaignId, T3.targetingType, T3.campaign_name, T3.state AS campaignStatus
 FROM amazon_sp_productads_list AS T1
-INNER JOIN amazon_campaigns_list_sp AS T3 ON T1.campaignId = T3.campaignId AND T3.market = '{market}'
+INNER JOIN amazon_campaigns_list_sp AS T3 ON T1.campaignId = T3.campaignId AND T3.market = '{self.market}'
 WHERE T3.targetingType = 'MANUAL' AND T3.state = 'ENABLED'
   AND EXISTS (
     SELECT 1
     FROM amazon_sp_productads_list AS T2
     WHERE T2.campaignId = '{campaignid}'
-      AND T2.market = '{market}'
+      AND T2.market = '{self.market}'
       AND T2.asin = T1.asin
   )
   AND (T3.campaign_name LIKE '%0514%')
@@ -856,7 +824,7 @@ LIMIT 1;
         except Exception as e:
             print(f"Error occurred when select_product_sku_by_asin: {e}")
 
-    def select_sp_campaign_search_term(self,market,sspu):
+    def select_sp_campaign_search_term(self,sspu):
         try:
             conn = self.conn
             query = f"""
@@ -894,13 +862,13 @@ JOIN
     from amazon_advertised_product_reports_sp t1
     join
         prod_as_product_base t2 ON t2.sku = t1.advertisedSku
-    where market = '{market}'
+    where market = '{self.market}'
     group by
         campaignId
     ) b ON c.campaignId = b.campaignId
 WHERE
     a.date BETWEEN DATE_SUB(CURDATE()- INTERVAL 1 DAY, INTERVAL 30 DAY) AND CURDATE()- INTERVAL 1 DAY- INTERVAL 1 DAY
-    AND a.market = '{market}'
+    AND a.market = '{self.market}'
     AND b.sspu = '{sspu}'
     AND c.state = 'ENABLED'
     AND c.targetingType LIKE '%AUT%'
@@ -916,7 +884,7 @@ ORDER BY
     a.campaignName,
     a.keyword,
     a.searchTerm;
-                    """.format(market)
+                    """.format(self.market)
             df = pd.read_sql(query, con=conn)
             if df.empty:
                 print("No search_term")
@@ -942,7 +910,7 @@ ORDER BY
         except Exception as e:
             print(f"Error occurred when selecting campaign search term: {e}")
 
-    def select_sp_campaign_search_term_by_parent_asin(self, market, parent_asin,depository):
+    def select_sp_campaign_search_term_by_parent_asin(self, parent_asin,depository):
         try:
             conn = self.conn
             query = f"""
@@ -981,7 +949,7 @@ FROM
 	amazon_advertised_product_reports_sp t1
 	JOIN amazon_product_info_extended t2 ON t2.asin = t1.advertisedAsin
 WHERE
-	t1.market = '{market}'
+	t1.market = '{self.market}'
 	AND t2.market = '{depository}'
 GROUP BY
 	campaignId
@@ -991,7 +959,7 @@ HAVING
     ) b ON a.campaignId = b.campaignId
 WHERE
     a.date BETWEEN DATE_SUB(CURDATE()- INTERVAL 1 DAY, INTERVAL 30 DAY) AND CURDATE()- INTERVAL 1 DAY- INTERVAL 1 DAY
-    AND a.market = '{market}'
+    AND a.market = '{self.market}'
     AND b.parent_asins = '{parent_asin}'
     AND NOT (a.searchTerm LIKE 'b0%' AND LENGTH(a.searchTerm) = 10) -- 添加排除条件
 		AND a.matchType IN ('TARGETING_EXPRESSION_PREDEFINED')
@@ -1007,7 +975,7 @@ ORDER BY
     a.keyword,
     a.searchTerm;
 
-                    """.format(market)
+                    """.format(self.market)
             df = pd.read_sql(query, con=conn)
             if df.empty:
                 print("No search_term")
@@ -1033,7 +1001,7 @@ ORDER BY
         except Exception as e:
             print(f"Error occurred when selecting campaign search term: {e}")
 
-    def select_sp_delete_keyword(self, market):
+    def select_sp_delete_keyword(self):
         try:
             conn = self.conn
             query = f"""
@@ -1049,7 +1017,7 @@ SELECT
 FROM
         amazon_keywords_list_sp
 WHERE
-        market = '{market}'
+        market = '{self.market}'
         AND state = 'PAUSED'
         AND keywordText NOT IN ( '(_targeting_auto_)' )
         AND campaignId IN (
@@ -1058,7 +1026,7 @@ WHERE
         FROM
                 amazon_keywords_list_sp
         WHERE
-                market = '{market}'
+                market = '{self.market}'
                 AND state IN ( 'ENABLED', 'PAUSED' )
                 AND keywordText NOT IN ( '(_targeting_auto_)' )
                 AND extendedData_servingStatus NOT IN ( 'CAMPAIGN_PAUSED', 'AD_GROUP_PAUSED' )

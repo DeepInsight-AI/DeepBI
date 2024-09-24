@@ -77,32 +77,60 @@ class ProcessShowData():
     #     if "UID" not in data:
     #         return False
     #     return cls.post_data(data, "delete")
+    @classmethod
+    def get_data(cls, file_name):
+        """获取数据"""
+        timestamp = int(time.time())
+        secrete = cls.config[cls.environment]['INSERT_SECRATE']
+        token = cls.sha1(secrete + str(timestamp) + secrete)
+        headers = {
+            'token': str(token),
+            'timestamp': str(timestamp)
+        }
+        url = cls.config[cls.environment]['ONLINE_URL'] + "get_data"
+
+        # 发送GET请求
+        response = requests.get(url, headers=headers, json=file_name)
+
+        # 输出响应内容
+        print(response.status_code)
+        if response.status_code == 200:
+            return True, response.json()
+        else:
+            print("操作失败")
+            print(response.text)
+            return False
+
 
 if __name__ == "__main__":
     # 要发送的JSON数据
     update_data = {
-        "brand": "Gotoly",
-        "market": "US",
-        "require": "create",
-        "position": "product_target_new",
-        "type": "SD",
-        "ID": "[{'type': 'purchases', 'value': [{'type': 'exactProduct'}, {'type': 'lookback', 'value': '30'}]}]",
-        "text": "10",
-        "campaignId": "532741363543129",
-        "adGroupId": "377421135440884",
-        "matchType": "matchType"
+        "db":"amazon_ads",
+        "brand": "LAPASA",
+        "market": "DE",
+        "require": "bid_batch",
+        "position": "keyword",
+        "type": "SP",
+        "ID": ["20178462947151", "8078361568771", "12345"],
+        "text": ["1", "1.0", "1"],
+        "user":"wanghequan"
     }
 
     res = ProcessShowData.update(update_data)
-    print(res)
-    add_data = {
-        "brand": "LAPASA",
-        "market": "DE",
-        "type": "SP",
-        "strategy": "manual",
-        "replication": "False",
-        "text": {"parent_asin1":[{"keyword":"keyword1","matchType":"matchType1","bid":"bid1"},{},{}],"parent_asin2":[{},{},{}]},
-        "budget":"10"
-    }
-    res = ProcessShowData.create(add_data)
-    print(res)
+    # print(res)
+    # add_data = {
+    #     "brand": "LAPASA",
+    #     "market": "DE",
+    #     "type": "SP",
+    #     "strategy": "manual",
+    #     "replication": "False",
+    #     "text": {"parent_asin1": [{"keyword":"keyword1","matchType":"matchType1","bid":"bid1"},{},{}],"parent_asin2":[{},{},{}]},
+    #     "budget": "10"
+    # }
+    # res = ProcessShowData.create(add_data)
+    # print(res)
+    # add_data = {
+    #     "file": "execution_times"
+    # }
+    # res = ProcessShowData.get_data(add_data)
+    # print(res)

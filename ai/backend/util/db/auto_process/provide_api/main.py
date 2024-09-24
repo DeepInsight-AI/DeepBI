@@ -1,3 +1,6 @@
+import json
+import os
+
 from flask import Flask, request, jsonify, g
 import logging
 from logging.handlers import RotatingFileHandler, TimedRotatingFileHandler
@@ -5,6 +8,7 @@ import hashlib
 import time
 from ai.backend.util.db.auto_process.provide_api.util.update_api import update_api
 from ai.backend.util.db.auto_process.provide_api.util.create_api import create_api
+from backend.util.db.configuration.path import get_config_path
 
 app = Flask(__name__)
 # 设置日志记录器
@@ -25,6 +29,10 @@ def verify_request(token, timestamp, secret_key):
 def validate_id(data):
     """检查数据中的ID是否有效"""
     if not data or 'ID' not in data or not data['ID']:
+        return False
+    if 'user' not in data or not data['user']:
+        return False
+    if 'db' not in data or not data['db']:
         return False
     return True
 
@@ -124,6 +132,27 @@ def handle_delete():
     # 处理删除数据的逻辑
     # 在此处添加处理删除数据的逻辑
     return jsonify({"message": "Delete data received"}), 200
+
+
+@app.route('/api/data/get_data', methods=['GET'])
+def get_data():
+    # 验证请求头
+    token = request.headers.get('token')
+    timestamp = request.headers.get('timestamp')
+    secret_key = "10470c3b4b1fed12c3baac014be15fac67c6e815"  # 测试环境的秘钥
+    if not verify_request(token, timestamp, secret_key):
+        return jsonify({"error": "Unauthorized"}), 401
+
+    data = request.get_json()
+    # 读取 execution_times.json 文件
+    execution_path = os.path.join(get_config_path(), f'{data["file"]}.json')
+    if os.path.exists(execution_path):
+        with open(execution_path, 'r') as json_file:
+            execution_times = json.load(json_file)
+            return jsonify(execution_times), 200
+    else:
+        return jsonify({"error": "File not found"}), 404
+
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=5009, threaded=True)

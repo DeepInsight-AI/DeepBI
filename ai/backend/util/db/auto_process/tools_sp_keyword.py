@@ -8,25 +8,21 @@ import datetime
 from decimal import Decimal
 from ai.backend.util.db.configuration.path import get_config_path
 from ai.backend.util.db.util.common import get_ad_my_credentials,get_proxies
+from ai.backend.util.db.auto_process.base_api import BaseApi
 
 
-class SPKeywordTools:
+class SPKeywordTools(BaseApi):
 
-    def __init__(self,brand):
-        self.brand = brand
-
-    def load_credentials(self,market):
-        my_credentials,access_token = get_ad_my_credentials(market,self.brand)
-        return my_credentials,access_token
+    def __init__(self, db, brand, market):
+        super().__init__(db, brand, market)
 
     # 新建关键词
-    def create_spkeyword_api(self, keyword_info,market):
+    def create_spkeyword_api(self, keyword_info):
         try:
-            credentials, access_token = self.load_credentials(market)
-            result = sponsored_products.KeywordsV3(credentials=credentials,
-                                                   marketplace=Marketplaces[market.upper()],
-                                                   access_token=access_token,
-                                                   proxies=get_proxies(market),
+            result = sponsored_products.KeywordsV3(credentials=self.credentials,
+                                                   marketplace=Marketplaces[self.market.upper()],
+                                                   access_token=self.access_token,
+                                                   proxies=get_proxies(self.market),
                                                    debug=True).create_keyword(
                 body=json.dumps(keyword_info))
         except Exception as e:
@@ -42,13 +38,12 @@ class SPKeywordTools:
             return ["failed", keywordId]
 
     # 修改广告组关键词
-    def update_spkeyword_api(self, keyword_info,market):
+    def update_spkeyword_api(self, keyword_info):
         try:
-            credentials, access_token = self.load_credentials(market)
-            result = sponsored_products.KeywordsV3(credentials=credentials,
-                                                   marketplace=Marketplaces[market.upper()],
-                                                   access_token=access_token,
-                                                   proxies=get_proxies(market),
+            result = sponsored_products.KeywordsV3(credentials=self.credentials,
+                                                   marketplace=Marketplaces[self.market.upper()],
+                                                   access_token=self.access_token,
+                                                   proxies=get_proxies(self.market),
                                                    debug=True).edit_keyword(
                 body=json.dumps(keyword_info))
         except Exception as e:
@@ -63,13 +58,32 @@ class SPKeywordTools:
             print("update sp keyword failed:")
             return ["failed", keywordId]
 
-    def delete_spkeyword_api(self, keyword_info,market):
+    def update_spkeyword_api_batch(self, keyword_info):
         try:
-            credentials, access_token = self.load_credentials(market)
-            result = sponsored_products.KeywordsV3(credentials=credentials,
-                                                   marketplace=Marketplaces[market.upper()],
-                                                   access_token=access_token,
-                                                   proxies=get_proxies(market),
+            result = sponsored_products.KeywordsV3(credentials=self.credentials,
+                                                   marketplace=Marketplaces[self.market.upper()],
+                                                   access_token=self.access_token,
+                                                   proxies=get_proxies(self.market),
+                                                   debug=True).edit_keyword(
+                body=json.dumps(keyword_info))
+        except Exception as e:
+            print("update sp keyword failed: ", e)
+            result = None
+        keywordId = ""
+        if result and result.payload["keywords"]["success"]:
+            spkeywordid = result.payload["keywords"]["success"]
+            print("update sp keyword success,sp keywordid is:", spkeywordid)
+            return ["success", spkeywordid]
+        else:
+            print("update sp keyword failed:")
+            return ["failed", keywordId]
+
+    def delete_spkeyword_api(self, keyword_info):
+        try:
+            result = sponsored_products.KeywordsV3(credentials=self.credentials,
+                                                   marketplace=Marketplaces[self.market.upper()],
+                                                   access_token=self.access_token,
+                                                   proxies=get_proxies(self.market),
                                                    debug=True).delete_keywords(
                 body=json.dumps(keyword_info))
         except Exception as e:
@@ -84,8 +98,7 @@ class SPKeywordTools:
             print("delete sp keyword failed")
             return ["failed", keywordId]
 
-    def get_spkeyword_api(self, market, adGroupID):
-        credentials, access_token = self.load_credentials(market)
+    def get_spkeyword_api(self, adGroupID):
         adGroup_info = {
             "maxResults": 2000,
             "adGroupIdFilter": {
@@ -96,10 +109,10 @@ class SPKeywordTools:
             "includeExtendedDataFields": False,
         }
         try:
-            result = sponsored_products.KeywordsV3(credentials=credentials,
-                                                   marketplace=Marketplaces[market.upper()],
-                                                   access_token=access_token,
-                                                   proxies=get_proxies(market),
+            result = sponsored_products.KeywordsV3(credentials=self.credentials,
+                                                   marketplace=Marketplaces[self.market.upper()],
+                                                   access_token=self.access_token,
+                                                   proxies=get_proxies(self.market),
                                                    debug=True).list_keywords(
                 body=json.dumps(adGroup_info))
         except Exception as e:
@@ -114,8 +127,7 @@ class SPKeywordTools:
             defaultBid_old = None
         return defaultBid_old
 
-    def get_spkeyword_api_by_campaignid(self, market, campaignId):
-        credentials, access_token = self.load_credentials(market)
+    def get_spkeyword_api_by_campaignid(self, campaignId):
         adGroup_info = {
             "maxResults": 2000,
             "campaignIdFilter": {
@@ -126,10 +138,10 @@ class SPKeywordTools:
             "includeExtendedDataFields": False,
         }
         try:
-            result = sponsored_products.KeywordsV3(credentials=credentials,
-                                                   marketplace=Marketplaces[market.upper()],
-                                                   access_token=access_token,
-                                                   proxies=get_proxies(market),
+            result = sponsored_products.KeywordsV3(credentials=self.credentials,
+                                                   marketplace=Marketplaces[self.market.upper()],
+                                                   access_token=self.access_token,
+                                                   proxies=get_proxies(self.market),
                                                    debug=True).list_keywords(
                 body=json.dumps(adGroup_info))
         except Exception as e:
@@ -144,8 +156,7 @@ class SPKeywordTools:
             defaultBid_old = None
         return defaultBid_old
 
-    def get_spkeyword_api_by_keywordId(self, market, keywordId):
-        credentials, access_token = self.load_credentials(market)
+    def get_spkeyword_api_by_keywordId(self, keywordId):
         adGroup_info = {
             "maxResults": 2000,
             "keywordIdFilter": {
@@ -156,10 +167,10 @@ class SPKeywordTools:
             "includeExtendedDataFields": False,
         }
         try:
-            result = sponsored_products.KeywordsV3(credentials=credentials,
-                                                   marketplace=Marketplaces[market.upper()],
-                                                   access_token=access_token,
-                                                   proxies=get_proxies(market),
+            result = sponsored_products.KeywordsV3(credentials=self.credentials,
+                                                   marketplace=Marketplaces[self.market.upper()],
+                                                   access_token=self.access_token,
+                                                   proxies=get_proxies(self.market),
                                                    debug=True).list_keywords(
                 body=json.dumps(adGroup_info))
         except Exception as e:
@@ -174,18 +185,44 @@ class SPKeywordTools:
             defaultBid_old = None
         return defaultBid_old
 
-    def get_spkeyword_recommendations_api(self, market, campaignId, adGroupID):
-        credentials, access_token = self.load_credentials(market)
+    def get_spkeyword_api_by_keywordId_batch(self, keywordId):
+        adGroup_info = {
+            "maxResults": 2000,
+            "keywordIdFilter": {
+                "include": keywordId
+            },
+            "includeExtendedDataFields": False,
+        }
+        try:
+            result = sponsored_products.KeywordsV3(credentials=self.credentials,
+                                                   marketplace=Marketplaces[self.market.upper()],
+                                                   access_token=self.access_token,
+                                                   proxies=get_proxies(self.market),
+                                                   debug=True).list_keywords(
+                body=json.dumps(adGroup_info))
+        except Exception as e:
+            print("查找关键词失败: ", e)
+            result = None
+
+        if result and result.payload["keywords"]:
+            defaultBid_old = result.payload["keywords"]
+            print(" 查找关键词成功")
+        else:
+            print("查找关键词失败:")
+            defaultBid_old = None
+        return defaultBid_old
+
+    def get_spkeyword_recommendations_api(self, campaignId, adGroupID):
         adGroup_info = {
   "campaignId": str(campaignId),
   "recommendationType": "KEYWORDS_FOR_ADGROUP",
   "adGroupId": adGroupID
 }
         try:
-            result = sponsored_products.RankedKeywordsRecommendations(credentials=credentials,
-                                                                      marketplace=Marketplaces[market.upper()],
-                                                                      access_token=access_token,
-                                                                      proxies=get_proxies(market),
+            result = sponsored_products.RankedKeywordsRecommendations(credentials=self.credentials,
+                                                                      marketplace=Marketplaces[self.market.upper()],
+                                                                      access_token=self.access_token,
+                                                                      proxies=get_proxies(self.market),
                                                                       debug=True).list_ranked_keywords_recommendations(
                 body=json.dumps(adGroup_info))
         except Exception as e:

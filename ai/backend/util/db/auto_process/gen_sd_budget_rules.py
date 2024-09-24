@@ -8,12 +8,12 @@ from ai.backend.util.db.db_amazon.generate_tools import ask_question
 
 
 
-class GenBudgetRuleSD:
-    def __init__(self,brand):
-        self.brand = brand
+class GenBudgetRuleSD(BudgetRulesToolsSD):
+    def __init__(self, db, brand, market):
+        super().__init__(db, brand, market)
 
     # 新增广告系列
-    def create_budget_rules(self,market,endDate,startTime,endTime,ruleType,budgetIncrease,name,metricName,comparisonOperator,threshold,DaySchedule='False'):
+    def create_budget_rules(self,endDate,startTime,endTime,ruleType,budgetIncrease,name,metricName,comparisonOperator,threshold,DaySchedule='False'):
         today = datetime.today()
         # 格式化输出
         startDate = today.strftime('%Y%m%d')
@@ -96,8 +96,7 @@ class GenBudgetRuleSD:
                     ]
                 }
         # 执行创建
-        apitool = BudgetRulesToolsSD(self.brand)
-        res = apitool.create_budget_rules_api(campaigninfo,market)
+        res = self.create_budget_rules_api(campaigninfo)
 
         # 根据创建结果更新log
         # dbNewTools = DbNewSpTools(self.brand,market)

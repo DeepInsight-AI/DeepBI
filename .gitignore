@@ -33,3 +33,4 @@ supervisord.conf
 uwsgi.ini
 /ai/test/
 /ai/paper/
+/ai/backend/util/db/configuration/Brand.yml

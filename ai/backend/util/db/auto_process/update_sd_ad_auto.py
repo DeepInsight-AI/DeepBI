@@ -12,13 +12,13 @@ from ai.backend.util.db.auto_process.tools_db_new_sp import DbNewSpTools
 from ai.backend.util.db.auto_process.tools_sd_adGroup import AdGroupTools_SD
 from ai.backend.util.db.auto_process.tools_sp_keyword import SPKeywordTools
 from ai.backend.util.db.auto_process.create_new_sp_ad_auto import load_config
+from ai.backend.util.db.auto_process.base_api import BaseApi
 
 
 
-class auto_api_sd:
-    def __init__(self,brand,market):
-        self.brand = brand
-        self.market = market
+class auto_api_sd(BaseApi):
+    def __init__(self, db, brand, market):
+        super().__init__(db, brand, market)
         self.exchange_rate = load_config('exchange_rate.json').get('exchange_rate', {}).get("DE", {}).get(self.market)
 
 

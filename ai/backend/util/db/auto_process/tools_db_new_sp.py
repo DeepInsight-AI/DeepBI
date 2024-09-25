@@ -225,6 +225,25 @@ class DbNewSpTools(BaseDb):
         except Exception as e:
             print(f"Error occurred when into amazon_targeting_update: {e}")
 
+    def batch_update_adGroup_Targeting(self, updates):
+        try:
+            conn = self.conn
+            cursor = conn.cursor()
+
+            # 创建插入的 SQL 语句
+            query = "INSERT INTO amazon_targeting_update (market,adGroupId,bid,state,expression,targetingType,targetingState,update_time,user) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)"
+
+            # 批量执行插入
+            cursor.executemany(query, [(update['market'], update['adGroupId'], update['bid'], update['state'],
+                                        update['expression'], update['targetingType'], update['targetingState'],
+                                        update['update_time'], update['user']) for
+                                       update in updates])
+
+            conn.commit()
+            print("Records inserted successfully into batch_update_adGroup_Targeting table")
+        except Exception as e:
+            print(f"Error occurred while inserting into batch_update_adGroup_Targeting: {e}")
+
     def create_budget_info(self, market, brand, strategy, type1, campaignId, campaignName, Budget, New_Budget,
                            cost_yesterday, clicks_yesterday, ACOS_yesterday, total_clicks_7d, total_sales14d_7d,
                            ACOS_7d, ACOS_30d, total_clicks_30d, total_sales14d_30d, Reason, country_avg_ACOS_1m,

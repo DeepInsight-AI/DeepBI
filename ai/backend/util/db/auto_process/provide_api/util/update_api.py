@@ -25,6 +25,10 @@ def sp_api(data):
     elif data['require'] == 'bid_batch':
         if data['position'] == 'keyword':
             code = api.update_sp_ad_keyword_batch(data['ID'], data['text'])
+        elif data['position'] == 'product_target':
+            code = api.update_sp_ad_automatic_targeting_batch(data['ID'], data['text'])
+        elif data['position'] == 'automatic_targeting':
+            code = api.update_sp_ad_automatic_targeting_batch(data['ID'], data['text'])
     elif data['require'] == 'state':
         if data['position'] == 'campaign':
             code = api.auto_campaign_status(data['ID'], data['text'])

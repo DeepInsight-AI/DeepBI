@@ -6,7 +6,7 @@ from ai.backend.util.db.auto_process.tools_db_new_sp import DbNewSpTools
 from datetime import datetime
 
 
-def main(path, brand, cur_time, country, version=2):
+def main(path, brand, cur_time, country, version=3):
     # 1. Load the data
     file_path = r'C:\Users\admin\PycharmProjects\DeepBI\ai\backend\util\db\auto_yzj\日常优化\自动sp广告\搜索词优化\预处理.csv'
     file_name = "自动_劣质搜索词" + '_' + brand + '_' + country + '_' + cur_time + '.csv'
@@ -46,14 +46,23 @@ def main(path, brand, cur_time, country, version=2):
         # Add reasons based on conditions
         filtered_df.loc[condition_1, 'reason'] += '定义一 '
         filtered_df.loc[condition_2, 'reason'] += '定义二 '
+    elif version == 3:
+        # 2. Define the conditions
+        condition_1 = (df['total_clicks_30d'] > 20) & (df['ORDER_1m'] == 0)
 
+        # 3. Filtering and adding reasons
+        filtered_df = df[condition_1 ]
+        filtered_df['reason'] = ''  # Initializing the reason column
+
+        # Add reasons based on conditions
+        filtered_df.loc[condition_1, 'reason'] += '定义一'
     # 4. Select the required columns
     selected_columns = ['campaignName', 'campaignId', 'adGroupName', 'adGroupId', 'ORDER_1m',
-                        'total_clicks_30d', 'total_cost_30d', 'ORDER_7d', 'total_clicks_7d', 'total_cost_7d', 'searchTerm', 'reason']
+                        'total_clicks_30d', 'total_cost_30d', 'ORDER_7d', 'total_clicks_7d', 'total_cost_7d', 'CPC_30d', 'searchTerm', 'reason']
 
     result_df = filtered_df[selected_columns]
     result_df.replace({np.nan: None}, inplace=True)
-    api = DbNewSpTools(brand)
+    api = DbNewSpTools(brand,country)
     for index, row in result_df.iterrows():
         api.create_search_term_info(country, brand, '日常优化', '自动_劣质', row['campaignName'],row['campaignId'],
                                row['adGroupName'], row['adGroupId'], None,

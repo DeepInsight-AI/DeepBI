@@ -140,7 +140,7 @@ class Gen_adgroup(AdGroupTools):
         return apires[1]
 
 
-    def add_adGroup_negative_keyword_v0(self,campaignId,adGroupId,keywordText,matchType,state):
+    def add_adGroup_negative_keyword_v0(self,campaignId,adGroupId,keywordText,matchType,state, user = 'test'):
 
         adGroup_negative_keyword_info = {
       "negativeKeywords": [
@@ -161,9 +161,9 @@ class Gen_adgroup(AdGroupTools):
         #                                         update_time):
         newdbtool = DbNewSpTools(self.db, self.brand,self.market)
         if apires[0] == "success":
-            newdbtool.add_sp_adGroup_negativeKeyword(self.market, None, adGroupId, campaignId, None, matchType, state,keywordText, "success", datetime.now(),apires[1],keywordText)
+            newdbtool.add_sp_adGroup_negativeKeyword(self.market, None, adGroupId, campaignId, None, matchType, state,keywordText, "success", datetime.now(),apires[1],keywordText,user)
         else:
-            newdbtool.add_sp_adGroup_negativeKeyword(self.market, None, adGroupId, campaignId, None, matchType, state,keywordText, "success", datetime.now(),apires[1],keywordText)
+            newdbtool.add_sp_adGroup_negativeKeyword(self.market, None, adGroupId, campaignId, None, matchType, state,keywordText, "success", datetime.now(),apires[1],keywordText,user)
         return apires[1]
 
     # 给广告组更新否定关键词
@@ -233,7 +233,46 @@ class Gen_adgroup(AdGroupTools):
                                                "failed", datetime.now(), user)
             return None
 
+    def update_adGroup_TargetingClause_batch(self,info, user='test'):
 
+        adGroup_info = {
+            "targetingClauses": []
+        }
+
+        for item in info:
+            adGroup_info["targetingClauses"].append({
+                "targetId": str(item['keywordId']),
+                "state": item['state'],
+                "bid": float(item['bid_new'])
+            })
+        print(adGroup_info)
+        # 修改关键词操作
+        res = self.update_adGroup_TargetingC_batch(adGroup_info)
+        print(res)
+        # 存储更新记录到数据库
+        dbNewTools = DbNewSpTools(self.db, self.brand, self.market)
+        updates = []
+
+        if res[0] == "success":
+            status = "success"
+        else:
+            status = "failed"
+
+        for item in info:
+            updates.append({
+                'market': self.market,
+                'adGroupId': None,
+                'bid': item['bid_new'],
+                'state': item['state'],
+                'expression': item['keywordId'],  # Assuming you have this value in `info`
+                'targetingType': 'SP',
+                'targetingState': status,
+                'update_time': datetime.now(),
+                'user': user
+            })
+
+        # 批量插入到数据库
+        dbNewTools.batch_update_adGroup_Targeting(updates)
 
     def create_adGroup_Targeting1(self,new_campaign_id,new_adgroup_id,asin,bid,state,type, user='test'):
         adGroup_info = {
@@ -300,7 +339,7 @@ class Gen_adgroup(AdGroupTools):
                                                "failed", datetime.now(), user)
         return apires[1]["targetId"]
 
-    def create_adGroup_Negative_Targeting_by_asin(self,new_campaign_id,new_adgroup_id,asin):
+    def create_adGroup_Negative_Targeting_by_asin(self,new_campaign_id,new_adgroup_id,asin,user='test'):
         adGroup_info = {
   "negativeTargetingClauses": [
     {
@@ -323,11 +362,11 @@ class Gen_adgroup(AdGroupTools):
         expression = f"asin={asin}"
         if apires[0]=="success":
             newdbtool.add_sd_adGroup_Targeting(self.market, new_adgroup_id, None, "Negative", "ENABLED", expression, "SP",
-                                               "success", datetime.now())
+                                               "success", datetime.now(),user)
             return apires[1]["targetId"]
         else:
             newdbtool.add_sd_adGroup_Targeting(self.market, new_adgroup_id, None, "Negative", "ENABLED", expression, "SP",
-                                               "failed", datetime.now())
+                                               "failed", datetime.now(),user)
             return None
 
 if __name__ == "__main__":

@@ -5,8 +5,28 @@ import pandas as pd
 from datetime import datetime
 import warnings
 import os
+from ai.backend.util.db.auto_process.db_api import BaseDb
+from ai.backend.util.db.configuration.path import get_config_path
 from ai.backend.util.db.auto_yzj.utils.trans_to import csv_to_json
 from ai.backend.util.db.auto_yzj.日常优化.手动sp广告.SKU优化.query import skuquery_manual
+from ai.backend.util.db.auto_yzj.日常优化.手动sp广告.复开SKU.query import reopenSkuQueryManual
+from ai.backend.util.db.auto_yzj.日常优化.自动sp广告.SKU优化.query import skuQueryAuto
+from ai.backend.util.db.auto_yzj.日常优化.自动sp广告.复开SKU.query import reopenSkuQueryAuto
+from ai.backend.util.db.auto_yzj.日常优化.手动sp广告.商品投放搜索词优化.query import ProductTargetsSearchTermQuery
+from ai.backend.util.db.auto_yzj.日常优化.手动sp广告.商品投放优化.query import ProductTargetsQuery
+from ai.backend.util.db.auto_yzj.日常优化.手动sp广告.预算优化.query import BudgetQueryManual
+from ai.backend.util.db.auto_yzj.日常优化.手动sp广告.广告位优化.query import TargetingGroupQueryManual
+from ai.backend.util.db.auto_yzj.日常优化.自动sp广告.预算优化.query import BudgetQueryAuto
+from ai.backend.util.db.auto_yzj.日常优化.自动sp广告.广告位优化.query import TargetingGroupQueryAuto
+from ai.backend.util.db.auto_yzj.日常优化.自动sp广告.自动定位组优化.query import AutomaticTargetingQuery
+from ai.backend.util.db.auto_yzj.日常优化.自动sp广告.搜索词优化.query import SearchTermQueryAuto
+from ai.backend.util.db.auto_yzj.日常优化.手动sp广告.关键词优化.query import KeywordQuery
+from ai.backend.util.db.auto_yzj.日常优化.手动sp广告.搜索词优化.query import SearchTermQueryManual
+from ai.backend.util.db.auto_yzj.日常优化.sd广告.预算优化.query import BudgetQuerySD
+from ai.backend.util.db.auto_yzj.日常优化.sd广告.关闭SKU.query import SkuQuerySD
+from ai.backend.util.db.auto_yzj.日常优化.sd广告.复开SKU.query import reopenSkuQuerySD
+from ai.backend.util.db.auto_yzj.日常优化.sd广告.商品投放优化.query import ProductTargetsQuerySD
+
 
 # 忽略特定类型的警告
 warnings.filterwarnings("ignore", category=UserWarning)
@@ -21,40 +41,12 @@ def get_timestamp():
     date_timestamp_string = f"{date_string}_{timestamp}"
     return date_timestamp_string
 
-class AmazonMysqlRagUitl:
+class AmazonMysqlRagUitl(BaseDb):
 
-    def __init__(self, brand):
-        self.brand = brand
-        self.db_info = self.load_db_info(brand)
-        self.conn = self.connect(self.db_info)
+    def __init__(self, db, brand, market):
+        super().__init__(db, brand, market)
 
-    def load_db_info(self, brand):
-        # 从 JSON 文件加载数据库信息
-        with open('C:/Users/admin/PycharmProjects/DeepBI/ai/backend/util/db/db_info.json', 'r') as f:
-            db_info_json = json.load(f)
-
-        if brand in db_info_json:
-            return db_info_json[brand]
-        else:
-            raise ValueError(f"Unknown brand '{brand}'")
-
-    def connect(self, db_info):
-        try:
-            conn = pymysql.connect(**db_info)
-            print("Connected to amazon_mysql database!")
-            return conn
-        except Exception as error:
-            print("Error while connecting to amazon_mysql:", error)
-            return None
-
-    def connect_close(self):
-        try:
-            self.conn.close()
-        except Exception as error:
-            print("Error while connecting to amazon_mysql:", error)
-            return None
-
-    def preprocessing_sku(self, country, cur_time, version=1.3):
+    def preprocessing_sku(self, country, cur_time, version=1.5):
 
         """"""
         try:
@@ -70,6 +62,8 @@ class AmazonMysqlRagUitl:
                 query = api.get_query_v1_3(cur_time, country)
             elif version == 1.4:
                 query = api.get_query_v1_4(cur_time, country)
+            elif version == 1.5:
+                query = api.get_query_v1_5(cur_time, country)
             else:
                 query = None
             df1 = pd.read_sql(query, con=conn)
@@ -88,99 +82,11 @@ class AmazonMysqlRagUitl:
         """"""
         try:
             conn = self.conn
-
+            api = reopenSkuQueryManual()
             if version == 1.0:
-                query = """
-                       SELECT
-            adGroupName,
-            a.adId,
-            a.campaignId,
-            campaignName,
-            advertisedSku,
-                -- 过去30天的总订单数
-                SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 29 day) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN purchases7d ELSE 0 END) AS ORDER_1m,
-                -- 过去7天的总订单数
-                SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 6 day) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN purchases7d ELSE 0 END) AS ORDER_7d,
-                -- 过去30天（包含今天）的总点击量
-                SUM(CASE WHEN date BETWEEN DATE_SUB('{}', INTERVAL 30 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN clicks ELSE 0 END) AS total_clicks_30d,
-                -- 过去7天（包含今天）的总点击量
-                SUM(CASE WHEN date BETWEEN DATE_SUB('{}', INTERVAL 7 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN clicks ELSE 0 END) AS total_clicks_7d,
-                -- 昨天的总点击量
-                SUM(CASE WHEN date = '{}' - INTERVAL 2 DAY THEN clicks ELSE 0 END) AS total_clicks_yesterday,
-                -- 过去30天的总销售额
-                SUM(CASE WHEN date BETWEEN DATE_SUB('{}', INTERVAL 30 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN sales14d ELSE 0 END) AS total_sales14d_30d,
-                -- 过去7天的总销售额
-                SUM(CASE WHEN date BETWEEN DATE_SUB('{}', INTERVAL 7 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN sales14d ELSE 0 END) AS total_sales14d_7d,
-                -- 昨天的总销售额
-                SUM(CASE WHEN date = '{}' - INTERVAL 2 DAY THEN sales14d ELSE 0 END) AS total_sales14d_yesterday,
-                -- 过去30天的总成本
-                SUM(CASE WHEN date BETWEEN DATE_SUB('{}', INTERVAL 30 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN cost ELSE 0 END) AS total_cost_30d,
-                -- 过去7天的总成本
-                SUM(CASE WHEN date BETWEEN DATE_SUB('{}', INTERVAL 7 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN cost ELSE 0 END) AS total_cost_7d,
-                -- 昨天的总成本
-                SUM(CASE WHEN date = '{}' - INTERVAL 2 DAY THEN cost ELSE 0 END) AS total_cost_yesterday,
-                -- 过去30天的平均成本销售比（ACOS）
-                CASE WHEN SUM(CASE WHEN date BETWEEN DATE_SUB('{}', INTERVAL 30 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN sales14d ELSE 0 END) > 0
-                     THEN SUM(CASE WHEN date BETWEEN DATE_SUB('{}', INTERVAL 30 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN cost ELSE 0 END) /
-                          SUM(CASE WHEN date BETWEEN DATE_SUB('{}', INTERVAL 30 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN sales14d ELSE 0 END)
-                     ELSE 0
-                END AS ACOS_30d,
-                -- 过去7天的平均成本销售比（ACOS）
-                CASE WHEN SUM(CASE WHEN date BETWEEN DATE_SUB('{}', INTERVAL 7 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN sales14d ELSE 0 END) > 0
-                     THEN SUM(CASE WHEN date BETWEEN DATE_SUB('{}', INTERVAL 7 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN cost ELSE 0 END) /
-                          SUM(CASE WHEN date BETWEEN DATE_SUB('{}', INTERVAL 7 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN sales14d ELSE 0 END)
-                     ELSE 0
-                END AS ACOS_7d,
-                -- 昨天的平均成本销售比（ACOS）
-                CASE WHEN SUM(CASE WHEN date = '{}' - INTERVAL 2 DAY THEN sales14d ELSE 0 END) > 0
-                     THEN SUM(CASE WHEN date = '{}' - INTERVAL 2 DAY THEN cost ELSE 0 END) /
-                          SUM(CASE WHEN date = '{}' - INTERVAL 2 DAY THEN sales14d ELSE 0 END)
-                     ELSE 0
-                END AS ACOS_yesterday
-            FROM
-                amazon_advertised_product_reports_sp a
-            JOIN
-                amazon_campaigns_list_sp c ON a.campaignId = c.campaignId
-            WHERE
-                a.date BETWEEN DATE_SUB('{}', INTERVAL 30 DAY) AND '{}'- INTERVAL 1 DAY
-                AND a.market = '{}'
-                AND a.campaignId IN (
-                    SELECT campaignId
-                    FROM amazon_advertised_product_reports_sp
-                    WHERE campaignStatus = 'ENABLED' AND date = '{}' - INTERVAL 1 DAY
-                    AND campaignName NOT LIKE '%_overstock%'
-                )
-                AND c.targetingType like '%MAN%'
-                AND not EXISTS (
-        SELECT 1
-        FROM amazon_sp_productads_list
-        WHERE sku = a.advertisedSku
-          AND campaignId = a.campaignId
-          AND adId = a.adId
-          AND state in ('ARCHIVED','ENABLED')
-    )
-            GROUP BY
-                adGroupName,
-                a.adId,
-                campaignName,
-                advertisedSku
-
-            ORDER BY
-                adGroupName,
-                campaignName,
-                advertisedSku;
-                                        """.format(cur_time, cur_time, cur_time, cur_time, cur_time, cur_time,
-                                                   cur_time,
-                                                   cur_time, cur_time,
-                                                   cur_time, cur_time, cur_time, cur_time, cur_time, cur_time,
-                                                   cur_time,
-                                                   cur_time,
-                                                   cur_time, cur_time, cur_time, cur_time, cur_time, cur_time,
-                                                   cur_time,
-                                                   cur_time, cur_time, cur_time, cur_time, cur_time,
-                                                   cur_time, cur_time, cur_time, cur_time, cur_time, cur_time,
-                                                   cur_time,
-                                                   country, cur_time)
+                query = api.get_query_v1_0(cur_time, country)
+            elif version == 1.1:
+                query = api.get_query_v1_1(cur_time, country)
             else:
                 query = None
             df1 = pd.read_sql(query, con=conn)
@@ -194,223 +100,20 @@ class AmazonMysqlRagUitl:
         except Exception as error:
             print("Error while inserting data:", error)
 
-    def preprocessing_keyword(self, country, cur_time, version=1.2):
+    def preprocessing_keyword(self, country, cur_time, version=1.3):
 
         """"""
         try:
             conn = self.conn
-
+            api = KeywordQuery()
             if version == 1.0:
-                query = """
-            WITH a AS (
-    SELECT
-        keywordId,
-        keyword,
-        targeting,
-        matchType,
-        adGroupName,
-        campaignName,
-        -- ... 其他字段和聚合计算
-                                  SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 29 day) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN purchases7d ELSE 0 END) AS ORDER_1m,
-    SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 29 day) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN clicks ELSE 0 END) AS total_clicks_30d,
-    SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 6 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN clicks ELSE 0 END) AS total_clicks_7d,
-    SUM(CASE WHEN date = '{}' - INTERVAL 2 DAY THEN clicks ELSE 0 END) AS total_clicks_yesterday,
-                SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 29 day) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN sales14d ELSE 0 END) AS total_sales14d_30d,
-                SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 6 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN sales14d ELSE 0 END) AS total_sales14d_7d,
-                SUM(CASE WHEN date = '{}' - INTERVAL 2 DAY THEN sales14d ELSE 0 END) AS total_sales14d_yesterday,
-                SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 29 day) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN cost ELSE 0 END) AS total_cost_30d,
-                SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 6 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN cost ELSE 0 END) AS total_cost_7d,
-                SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 3 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN cost ELSE 0 END) AS total_cost_4d,
-                SUM(CASE WHEN date = '{}' - INTERVAL 2 DAY THEN cost ELSE 0 END) AS total_cost_yesterday,
-                SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 29 day) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN cost ELSE 0 END) / SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 29 day) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN sales14d ELSE 0 END) AS ACOS_30d,
-               SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 6 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN cost ELSE 0 END) / SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 6 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN sales14d ELSE 0 END) AS ACOS_7d,
-     SUM(CASE WHEN date = '{}' - INTERVAL 2 DAY THEN cost ELSE 0 END) / SUM(CASE WHEN date = '{}' - INTERVAL 2 DAY THEN sales14d ELSE 0 END)  AS ACOS_yesterday
-    FROM
-        amazon_targeting_reports_sp
-    WHERE
-        date BETWEEN DATE_SUB('{}', INTERVAL 30 DAY) and DATE_SUB('{}', INTERVAL 1 DAY)
-        -- ... 其他 WHERE 条件
-                                AND market = '{}'
-    -- 确保keywordId是来自特定日期的启用状态的campaign
-    AND keywordId IN (SELECT keywordId FROM amazon_targeting_reports_sp WHERE campaignStatus = 'ENABLED' AND date = '{}'- INTERVAL 1 DAY)
-    -- 确保campaignName包含特定文本
-    AND (campaignName LIKE '%MAN%' OR campaignName LIKE '%手动%' OR campaignName LIKE '%Man%' OR campaignName LIKE '%man%')
-    -- 排除最近4天内有变更的keywordId
-    AND keywordId NOT IN (
-        SELECT DISTINCT entityId
-        FROM amazon_advertising_change_history
-        WHERE timestamp >= (UNIX_TIMESTAMP(NOW(3)) - 4 * 24 * 60 * 60) * 1000
-        AND entityType = 'KEYWORD'
-        AND market = '{}')
-    GROUP BY
-        adGroupName,
-        campaignName,
-        keyword,
-        matchType,
-        keywordId,
-        targeting
-    ORDER BY
-        adGroupName,
-        campaignName,
-        keyword,
-        matchType,
-        keywordId,
-        targeting)
-SELECT
-    a.*,
-    b.keywordBid
-FROM
-    a
-LEFT JOIN
-    amazon_targeting_reports_sp b ON a.keywordId = b.keywordId
-WHERE
-    b.date = DATE_SUB('{}', INTERVAL 1 DAY)
-                """.format(cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,country,cur_time,country,cur_time)
+                query = api.get_query_v1_0(cur_time, country)
             elif version == 1.1:
-                query = """
-                WITH a AS (
-    SELECT
-        keywordId,
-        keyword,
-        targeting,
-        matchType,
-        adGroupName,
-        campaignName,
-        SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 29 day) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN purchases7d ELSE 0 END) AS ORDER_1m,
-        SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 29 day) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN clicks ELSE 0 END) AS total_clicks_30d,
-        SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 6 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN clicks ELSE 0 END) AS total_clicks_7d,
-        SUM(CASE WHEN date = '{}' - INTERVAL 2 DAY THEN clicks ELSE 0 END) AS total_clicks_yesterday,
-        SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 29 day) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN sales14d ELSE 0 END) AS total_sales14d_30d,
-        SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 6 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN sales14d ELSE 0 END) AS total_sales14d_7d,
-        SUM(CASE WHEN date = '{}' - INTERVAL 2 DAY THEN sales14d ELSE 0 END) AS total_sales14d_yesterday,
-        SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 29 day) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN cost ELSE 0 END) AS total_cost_30d,
-        SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 6 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN cost ELSE 0 END) AS total_cost_7d,
-        SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 3 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN cost ELSE 0 END) AS total_cost_4d,
-        SUM(CASE WHEN date = '{}' - INTERVAL 2 DAY THEN cost ELSE 0 END) AS total_cost_yesterday,
-        SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 29 day) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN cost ELSE 0 END) / SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 29 day) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN sales14d ELSE 0 END) AS ACOS_30d,
-        SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 6 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN cost ELSE 0 END) / SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 6 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN sales14d ELSE 0 END) AS ACOS_7d,
-        SUM(CASE WHEN date = '{}' - INTERVAL 2 DAY THEN cost ELSE 0 END) / SUM(CASE WHEN date = '{}' - INTERVAL 2 DAY THEN sales14d ELSE 0 END)  AS ACOS_yesterday
-    FROM
-        amazon_targeting_reports_sp b
-    JOIN
-    amazon_campaigns_list_sp c ON b.campaignId = c.campaignId -- 联接广告活动表，获取广告活动类型
-    WHERE
-    b.date BETWEEN DATE_SUB('{}', INTERVAL 30 DAY) AND '{}'- INTERVAL 1 DAY
-    AND b.market = '{}'
-    AND b.keywordId IN (
-        SELECT keywordId
-        FROM amazon_targeting_reports_sp
-        WHERE campaignStatus = 'ENABLED' AND date = '{}' - INTERVAL 1 DAY
-    )
-    AND c.targetingType like '%MAN%'
-    AND  b.keywordId not in (SELECT DISTINCT entityId
-        FROM amazon_advertising_change_history
-        WHERE timestamp >= (UNIX_TIMESTAMP(NOW(3)) - 4 * 24 * 60 * 60) * 1000
-        AND entityType = 'KEYWORD'
-        AND market = '{}')
-    GROUP BY
-        b.adGroupName,
-        b.campaignName,
-        b.keyword,
-        b.matchType,
-        b.targeting,
-        b.keywordId
-    ORDER BY
-        b.adGroupName,
-        b.campaignName,
-        b.keyword,
-        b.matchType,
-        b.keywordId
-        )
-SELECT
-    a.*,
-    d.keywordBid
-FROM
-    a
-LEFT JOIN
-    amazon_targeting_reports_sp d ON a.keywordId = d.keywordId
-WHERE
-    d.date = DATE_SUB('{}', INTERVAL 1 DAY)
-                """.format(cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,
-                           cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,
-                           cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,
-                           cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,
-                           cur_time,cur_time,cur_time,cur_time,country,cur_time,country,cur_time)
+                query = api.get_query_v1_1(cur_time, country)
             elif version == 1.2:
-                query = """
-                            WITH a AS (
-                SELECT
-                    keywordId,
-                    keyword,
-                    targeting,
-                    matchType,
-                    adGroupName,
-                    campaignName,
-                    SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 29 day) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN purchases7d ELSE 0 END) AS ORDER_1m,
-                    SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 29 day) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN clicks ELSE 0 END) AS total_clicks_30d,
-                    SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 6 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN clicks ELSE 0 END) AS total_clicks_7d,
-                    SUM(CASE WHEN date = '{}' - INTERVAL 2 DAY THEN clicks ELSE 0 END) AS total_clicks_yesterday,
-                    SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 29 day) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN sales14d ELSE 0 END) AS total_sales14d_30d,
-                    SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 6 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN sales14d ELSE 0 END) AS total_sales14d_7d,
-                    SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 2 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN sales14d ELSE 0 END) AS total_sales14d_3d,
-                    SUM(CASE WHEN date = '{}' - INTERVAL 2 DAY THEN sales14d ELSE 0 END) AS total_sales14d_yesterday,
-                    SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 29 day) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN cost ELSE 0 END) AS total_cost_30d,
-                    SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 6 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN cost ELSE 0 END) AS total_cost_7d,
-                    SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 2 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN cost ELSE 0 END) AS total_cost_3d,
-                    SUM(CASE WHEN date = '{}' - INTERVAL 2 DAY THEN cost ELSE 0 END) AS total_cost_yesterday,
-                    SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 29 day) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN cost ELSE 0 END) / SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 29 day) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN sales14d ELSE 0 END) AS ACOS_30d,
-                    SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 6 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN cost ELSE 0 END) / SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 6 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN sales14d ELSE 0 END) AS ACOS_7d,
-                    SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 2 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN cost ELSE 0 END) / SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 2 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN sales14d ELSE 0 END) AS ACOS_3d,
-                    SUM(CASE WHEN date = '{}' - INTERVAL 2 DAY THEN cost ELSE 0 END) / SUM(CASE WHEN date = '{}' - INTERVAL 2 DAY THEN sales14d ELSE 0 END)  AS ACOS_yesterday
-                FROM
-                    amazon_targeting_reports_sp b
-                JOIN
-                amazon_campaigns_list_sp c ON b.campaignId = c.campaignId -- 联接广告活动表，获取广告活动类型
-                WHERE
-                b.date BETWEEN DATE_SUB('{}', INTERVAL 30 DAY) AND '{}'- INTERVAL 1 DAY
-                AND b.market = '{}'
-                AND b.keywordId IN (
-                    SELECT keywordId
-                    FROM amazon_targeting_reports_sp
-                    WHERE campaignStatus = 'ENABLED' AND date = '{}' - INTERVAL 1 DAY
-                    AND campaignName NOT LIKE '%_overstock%'
-                )
-                AND c.targetingType like '%MAN%'
-                AND  b.keywordId not in (SELECT DISTINCT entityId
-                    FROM amazon_advertising_change_history
-                    WHERE timestamp >= (UNIX_TIMESTAMP(NOW(3)) - 4 * 24 * 60 * 60) * 1000
-                    AND entityType = 'KEYWORD'
-                    AND market = '{}')
-                AND matchType not in ('TARGETING_EXPRESSION')
-                GROUP BY
-                    b.adGroupName,
-                    b.campaignName,
-                    b.keyword,
-                    b.matchType,
-                    b.targeting,
-                    b.keywordId
-                ORDER BY
-                    b.adGroupName,
-                    b.campaignName,
-                    b.keyword,
-                    b.matchType,
-                    b.keywordId
-                    )
-            SELECT
-                a.*,
-                d.keywordBid
-            FROM
-                a
-            LEFT JOIN
-                amazon_targeting_reports_sp d ON a.keywordId = d.keywordId
-            WHERE
-                d.date = DATE_SUB('{}', INTERVAL 1 DAY)
-                            """.format(cur_time, cur_time, cur_time, cur_time, cur_time, cur_time,
-                                       cur_time, cur_time, cur_time, cur_time, cur_time, cur_time,
-                                       cur_time, cur_time, cur_time, cur_time, cur_time, cur_time, cur_time,
-                                       cur_time, cur_time, cur_time, cur_time, cur_time, cur_time, cur_time,
-                                       cur_time, cur_time, cur_time, cur_time, cur_time, cur_time, cur_time,
-                                       cur_time, cur_time, cur_time, cur_time, country, cur_time, country, cur_time)
+                query = api.get_query_v1_2(cur_time, country)
+            elif version == 1.3 or version == '初阶':
+                query = api.get_query_v1_3(cur_time, country)
             else:
                 query = None
             df1 = pd.read_sql(query, con=conn)
@@ -423,142 +126,19 @@ WHERE
         except Exception as error:
             print("Error while inserting data:", error)
 
-    def preprocessing_targeting_group(self, country, cur_time, version=1.2):
-
+    def preprocessing_targeting_group(self, country, cur_time, version=1.3):
         """"""
         try:
             conn = self.conn
-
+            api = TargetingGroupQueryManual()
             if version == 1.0:
-                query = """
-        SELECT placementClassification,
-            campaignName,
-            SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 2 day) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN clicks ELSE 0 END) AS total_clicks_3d,
-            SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 6 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN clicks ELSE 0 END) AS total_clicks_7d,
-            SUM(CASE WHEN date = '{}' - INTERVAL 2 DAY THEN clicks ELSE 0 END) AS total_clicks_yesterday,
-            SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 2 day) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN sales14d ELSE 0 END) AS total_sales14d_3d,
-            SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 6 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN sales14d ELSE 0 END) AS total_sales14d_7d,
-            SUM(CASE WHEN date = '{}' - INTERVAL 2 DAY THEN sales14d ELSE 0 END) AS total_sales14d_yesterday,
-            SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 2 day) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN cost ELSE 0 END) AS total_cost_3d,
-            SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 6 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN cost ELSE 0 END) AS total_cost_7d,
-            SUM(CASE WHEN date = '{}' - INTERVAL 2 DAY THEN cost ELSE 0 END) AS total_cost_yesterday,
-            SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 2 day) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN cost ELSE 0 END) / SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 2 day) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN sales14d ELSE 0 END) AS ACOS_3d,
-            SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 6 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN cost ELSE 0 END) / SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 6 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN sales14d ELSE 0 END) AS ACOS_7d,
-            SUM(CASE WHEN date = '{}' - INTERVAL 2 DAY THEN cost ELSE 0 END) / SUM(CASE WHEN date = '{}' - INTERVAL 2 DAY THEN sales14d ELSE 0 END)  AS ACOS_yesterday
-        FROM
-        amazon_campaign_placement_reports_sp
-        WHERE
-            DATE BETWEEN DATE_SUB('{}', INTERVAL 30 DAY)
-            AND ('{}'-INTERVAL 1 DAY)
-            AND market = '{}'
-            AND  campaignId in (select campaignId from amazon_targeting_reports_sp where campaignStatus='ENABLED' and date=DATE_SUB('{}', INTERVAL 1 DAY))
-            AND( campaignName not LIKE '%AUTO%' and  campaignName not  LIKE '%auto%' and campaignName not LIKE '%Auto%' and  campaignName not LIKE '%自动%' )
-
-        GROUP BY
-          campaignName,
-          placementClassification
-        ORDER BY
-          campaignName,
-          placementClassification;
-                """.format(cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,country,cur_time)
+                query = api.get_query_v1_0(cur_time, country)
             elif version == 1.1:
-                query = """
-                        SELECT placementClassification,
-                            campaignName,
-                            campaignId,
-                            SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 2 day) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN clicks ELSE 0 END) AS total_clicks_3d,
-                            SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 6 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN clicks ELSE 0 END) AS total_clicks_7d,
-                            SUM(CASE WHEN date = '{}' - INTERVAL 2 DAY THEN clicks ELSE 0 END) AS total_clicks_yesterday,
-                            SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 2 day) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN sales14d ELSE 0 END) AS total_sales14d_3d,
-                            SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 6 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN sales14d ELSE 0 END) AS total_sales14d_7d,
-                            SUM(CASE WHEN date = '{}' - INTERVAL 2 DAY THEN sales14d ELSE 0 END) AS total_sales14d_yesterday,
-                            SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 2 day) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN cost ELSE 0 END) AS total_cost_3d,
-                            SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 6 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN cost ELSE 0 END) AS total_cost_7d,
-                            SUM(CASE WHEN date = '{}' - INTERVAL 2 DAY THEN cost ELSE 0 END) AS total_cost_yesterday,
-                            SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 2 day) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN cost ELSE 0 END) / SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 2 day) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN sales14d ELSE 0 END) AS ACOS_3d,
-                            SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 6 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN cost ELSE 0 END) / SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 6 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN sales14d ELSE 0 END) AS ACOS_7d,
-                            SUM(CASE WHEN date = '{}' - INTERVAL 2 DAY THEN cost ELSE 0 END) / SUM(CASE WHEN date = '{}' - INTERVAL 2 DAY THEN sales14d ELSE 0 END)  AS ACOS_yesterday
-
-                        FROM
-                        amazon_campaign_placement_reports_sp
-                        WHERE
-                            DATE BETWEEN DATE_SUB('{}', INTERVAL 30 DAY)
-                            AND ('{}'-INTERVAL 1 DAY)
-                            AND market = '{}'
-                            AND  campaignId in (select campaignId from amazon_targeting_reports_sp where campaignStatus='ENABLED' and date=DATE_SUB('{}', INTERVAL 1 DAY))
-                            AND( campaignName not LIKE '%AUTO%' and  campaignName not  LIKE '%auto%' and campaignName not LIKE '%Auto%' and  campaignName not LIKE '%自动%' )
-
-                        GROUP BY
-                          campaignName,
-                          placementClassification
-                        ORDER BY
-                          campaignName,
-                          placementClassification;
-                                """.format(cur_time, cur_time, cur_time, cur_time, cur_time, cur_time, cur_time,
-                                           cur_time, cur_time, cur_time, cur_time, cur_time, cur_time, cur_time,
-                                           cur_time, cur_time, cur_time, cur_time, cur_time, cur_time, cur_time,
-                                           cur_time, cur_time, cur_time, cur_time, cur_time, cur_time, country,
-                                           cur_time)
+                query = api.get_query_v1_1(cur_time, country)
             elif version == 1.2:
-                query = """
-                        SELECT
-    a.campaignName,
-    a.campaignId,
-                a.placementClassification,
-    SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 2 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY)  THEN a.clicks ELSE 0 END) AS total_clicks_3d,
-    SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 6 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY)  THEN a.clicks ELSE 0 END) AS total_clicks_7d,
-    SUM(CASE WHEN date = '{}' - INTERVAL 2 DAY THEN a.clicks ELSE 0 END) AS total_clicks_yesterday,
-    SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 2 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY)  THEN a.sales14d ELSE 0 END) AS total_sales14d_3d,
-    SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 6 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY)  THEN a.sales14d ELSE 0 END) AS total_sales14d_7d,
-    SUM(CASE WHEN date = '{}' - INTERVAL 2 DAY THEN a.sales14d ELSE 0 END) AS total_sales14d_yesterday,
-    SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 2 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY)  THEN a.cost ELSE 0 END) AS total_cost_3d,
-    SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 6 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY)  THEN a.cost ELSE 0 END) AS total_cost_7d,
-    SUM(CASE WHEN date = '{}' - INTERVAL 2 DAY THEN a.cost ELSE 0 END) AS total_cost_yesterday,
-    SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 2 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY)  THEN a.cost ELSE 0 END) / SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 2 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY)  THEN a.sales14d ELSE 0 END) AS ACOS_3d,
-    SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 6 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY)  THEN a.cost ELSE 0 END) / SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 6 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY)  THEN a.sales14d ELSE 0 END) AS ACOS_7d,
-    SUM(CASE WHEN date = '{}' - INTERVAL 2 DAY THEN a.cost ELSE 0 END) / SUM(CASE WHEN date = '{}' - INTERVAL 2 DAY THEN a.sales14d ELSE 0 END)  AS ACOS_yesterday ,
-    COALESCE(
-        CASE
-            WHEN a.placementClassification = 'Detail Page on-Amazon' THEN c.dynamicBidding_placementProductPage_percentage
-            WHEN a.placementClassification = 'Other on-Amazon' THEN c.dynamicBidding_placementRestOfSearch_percentage
-            WHEN a.placementClassification = 'Top of Search on-Amazon' THEN c.dynamicBidding_placementTop_percentage
-        END,
-    0) AS bid
-FROM
-    amazon_campaign_placement_reports_sp a
-JOIN
-    (SELECT
-         campaignId,
-         targetingType,
-         dynamicBidding_placementTop_percentage,
-         dynamicBidding_placementProductPage_percentage,
-         dynamicBidding_placementRestOfSearch_percentage
-     FROM
-         amazon_campaigns_list_sp
-     ) c ON a.campaignId = c.campaignId
-WHERE
-    a.market = '{}'
-    AND a.campaignId IN (
-        SELECT campaignId
-        FROM amazon_campaigns_list_sp
-        WHERE campaignStatus = 'ENABLED' AND date = '{}' - INTERVAL 1 DAY
-        AND campaignName NOT LIKE '%_overstock%'
-    )
-    AND c.targetingType LIKE '%MAN%' -- 筛选出手动广告
-GROUP BY
-    a.campaignName,
-    a.campaignId,
-    a.placementClassification,
-    c.dynamicBidding_placementTop_percentage,
-    c.dynamicBidding_placementProductPage_percentage,
-    c.dynamicBidding_placementRestOfSearch_percentage
-ORDER BY
-    a.campaignName,
-    a.placementClassification;
-                                """.format(cur_time, cur_time, cur_time, cur_time, cur_time, cur_time, cur_time,
-                                           cur_time, cur_time, cur_time, cur_time, cur_time, cur_time, cur_time,
-                                           cur_time, cur_time, cur_time, cur_time, cur_time, cur_time, cur_time,
-                                           cur_time, cur_time, cur_time, cur_time, country, cur_time)
+                query = api.get_query_v1_2(cur_time, country)
+            elif version == 1.3 or version == '初阶':
+                query = api.get_query_v1_3(cur_time, country)
             else:
                 query = None
             df1 = pd.read_sql(query, con=conn)
@@ -571,279 +151,26 @@ ORDER BY
         except Exception as error:
             print("Error while inserting data:", error)
 
-    def preprocessing_search_term(self, country, cur_time, version=1.4):
+    def preprocessing_search_term(self, country, cur_time, version=1.6):
 
         """"""
         try:
             conn = self.conn
-
+            api = SearchTermQueryManual()
             if version == 1.0:
-                query = """
-SELECT keyword,searchTerm,adGroupName,matchType,
-    campaignName,
-    SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 29 day) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN clicks ELSE 0 END) AS total_clicks_30d,
-    SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 6 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN clicks ELSE 0 END) AS total_clicks_7d,
-    SUM(CASE WHEN date = '{}' - INTERVAL 2 DAY THEN clicks ELSE 0 END) AS total_clicks_yesterday,
-    SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 29 day) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN sales14d ELSE 0 END) AS total_sales14d_30d,
-    SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 6 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN sales14d ELSE 0 END) AS total_sales14d_7d,
-    SUM(CASE WHEN date = '{}' - INTERVAL 2 DAY THEN sales14d ELSE 0 END) AS total_sales14d_yesterday,
-    SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 29 day) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN cost ELSE 0 END) AS total_cost_30d,
-    SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 6 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN cost ELSE 0 END) AS total_cost_7d,
-    SUM(CASE WHEN date = '{}' - INTERVAL 2 DAY THEN cost ELSE 0 END) AS total_cost_yesterday,
-    SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 29 day) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN cost ELSE 0 END) / SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 29 day) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN sales14d ELSE 0 END) AS ACOS_30d,
-    SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 6 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN cost ELSE 0 END) / SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 6 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN sales14d ELSE 0 END) AS ACOS_7d,
-    SUM(CASE WHEN date = '{}' - INTERVAL 2 DAY THEN cost ELSE 0 END) / SUM(CASE WHEN date = '{}' - INTERVAL 2 DAY THEN sales14d ELSE 0 END)  AS ACOS_yesterday
-
-FROM
-amazon_search_term_reports_sp
-WHERE
-(date between DATE_SUB('{}', INTERVAL 30 DAY) and ('{}'-INTERVAL 1 DAY))
-and market='{}'
-and keywordId in (select keywordId from amazon_targeting_reports_sp where campaignStatus='ENABLED' and date='{}'-INTERVAL 1 DAY)
-and  ( campaignName not LIKE '%AUTO%' and  campaignName not  LIKE '%auto%' and campaignName not LIKE '%Auto%' and  campaignName not LIKE '%自动%' )
-and campaignId not in (SELECT
-DISTINCT entityId
-FROM
-amazon_advertising_change_history
-WHERE
-timestamp >= (UNIX_TIMESTAMP(NOW(3)) - 4 * 24 * 60 * 60) * 1000
-and market = '{}'
-and predefinedTarget <> '')
-GROUP BY
-  adGroupName,
-  campaignName,
-  keyword,
-  searchTerm,
-        matchType
-ORDER BY
-  adGroupName,
-  campaignName,
-  keyword,
-  searchTerm;
-                """.format(cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,country,cur_time,country)
+                query = api.get_query_v1_0(cur_time, country)
             elif version == 1.1:
-                query = """
-                SELECT keyword,searchTerm,adGroupName,adGroupId,matchType,
-                    campaignName,
-                    campaignId,
-                    SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 29 day) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN clicks ELSE 0 END) AS total_clicks_30d,
-                    SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 6 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN clicks ELSE 0 END) AS total_clicks_7d,
-                    SUM(CASE WHEN date = '{}' - INTERVAL 2 DAY THEN clicks ELSE 0 END) AS total_clicks_yesterday,
-                    SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 29 day) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN sales14d ELSE 0 END) AS total_sales14d_30d,
-                    SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 6 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN sales14d ELSE 0 END) AS total_sales14d_7d,
-                    SUM(CASE WHEN date = '{}' - INTERVAL 2 DAY THEN sales14d ELSE 0 END) AS total_sales14d_yesterday,
-                    SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 29 day) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN cost ELSE 0 END) AS total_cost_30d,
-                    SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 6 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN cost ELSE 0 END) AS total_cost_7d,
-                    SUM(CASE WHEN date = '{}' - INTERVAL 2 DAY THEN cost ELSE 0 END) AS total_cost_yesterday,
-                    SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 29 day) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN cost ELSE 0 END) / SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 29 day) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN sales14d ELSE 0 END) AS ACOS_30d,
-                    SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 6 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN cost ELSE 0 END) / SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 6 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN sales14d ELSE 0 END) AS ACOS_7d,
-                    SUM(CASE WHEN date = '{}' - INTERVAL 2 DAY THEN cost ELSE 0 END) / SUM(CASE WHEN date = '{}' - INTERVAL 2 DAY THEN sales14d ELSE 0 END)  AS ACOS_yesterday
-                FROM
-                amazon_search_term_reports_sp
-                WHERE
-                (date between DATE_SUB('{}', INTERVAL 30 DAY) and ('{}'-INTERVAL 1 DAY))
-                and market='{}'
-                and keywordId in (select keywordId from amazon_targeting_reports_sp where campaignStatus='ENABLED' and date='{}')
-                and  ( campaignName not LIKE '%AUTO%' and  campaignName not  LIKE '%auto%' and campaignName not LIKE '%Auto%' and  campaignName not LIKE '%自动%' )
-                and campaignId not in (SELECT
-                DISTINCT entityId
-                FROM
-                amazon_advertising_change_history
-                WHERE
-                timestamp >= (UNIX_TIMESTAMP(NOW(3)) - 4 * 24 * 60 * 60) * 1000
-                and market = '{}'
-                and predefinedTarget <> '')
-                GROUP BY
-                  adGroupName,
-                  campaignName,
-                  keyword,
-                  searchTerm,
-                        matchType
-                ORDER BY
-                  adGroupName,
-                  campaignName,
-                  keyword,
-                  searchTerm;
-                                """.format(cur_time, cur_time, cur_time, cur_time, cur_time, cur_time, cur_time,
-                                           cur_time, cur_time, cur_time, cur_time, cur_time, cur_time, cur_time,
-                                           cur_time, cur_time, cur_time, cur_time, cur_time, cur_time, cur_time,
-                                           cur_time, cur_time, cur_time, cur_time, cur_time, cur_time, country,
-                                           cur_time, country)
+                query = api.get_query_v1_1(cur_time, country)
             elif version == 1.2:
-                query = """
-                SELECT
-                a.keyword,
-                a.searchTerm,
-                a.adGroupName,
-                a.adGroupId,
-                a.matchType,
-                a.campaignName,
-                a.campaignId,
-                SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 29 day) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN purchases7d ELSE 0 END) AS ORDER_1m,
-                SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 6 day) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN purchases7d ELSE 0 END) AS ORDER_7d,
-                SUM(CASE WHEN date = '{}' - INTERVAL 2 DAY THEN purchases7d ELSE 0 END) AS ORDER_yesterday,
-                SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 29 day) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN a.clicks ELSE 0 END) AS total_clicks_30d,
-                SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 6 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN a.clicks ELSE 0 END) AS total_clicks_7d,
-                SUM(CASE WHEN date = '{}' - INTERVAL 2 DAY THEN a.clicks ELSE 0 END) AS total_clicks_yesterday,
-                SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 29 day) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN a.sales14d ELSE 0 END) AS total_sales14d_30d,
-                SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 6 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN a.sales14d ELSE 0 END) AS total_sales14d_7d,
-                SUM(CASE WHEN date = '{}' - INTERVAL 2 DAY THEN a.sales14d ELSE 0 END) AS total_sales14d_yesterday,
-                SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 29 day) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN a.cost ELSE 0 END) AS total_cost_30d,
-                SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 6 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN a.cost ELSE 0 END) AS total_cost_7d,
-                SUM(CASE WHEN date = '{}' - INTERVAL 2 DAY THEN a.cost ELSE 0 END) AS total_cost_yesterday,
-                SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 29 day) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN a.cost ELSE 0 END) / SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 29 day) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN a.sales14d ELSE 0 END) AS ACOS_30d,
-                SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 6 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN a.cost ELSE 0 END) / SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 6 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN a.sales14d ELSE 0 END) AS ACOS_7d,
-                SUM(CASE WHEN date = '{}' - INTERVAL 2 DAY THEN cost ELSE 0 END) / SUM(CASE WHEN date = '{}' - INTERVAL 2 DAY THEN a.sales14d ELSE 0 END)  AS ACOS_yesterday
-
-FROM
-amazon_search_term_reports_sp a
-JOIN
-    amazon_campaigns_list_sp c ON a.campaignId = c.campaignId -- 联接广告活动表，获取广告活动类型
-WHERE
-    a.date BETWEEN DATE_SUB('{}', INTERVAL 30 DAY) AND '{}'- INTERVAL 1 DAY
-    AND a.market = '{}'
-                and a.keywordId in (select keywordId from amazon_targeting_reports_sp where campaignStatus='ENABLED' and date='{}'-INTERVAL 1 DAY)
-    AND c.targetingType like '%MAN%' -- 筛选出手动广告
-GROUP BY
-  a.adGroupName,
-  a.campaignName,
-  a.keyword,
-  a.searchTerm,
-        a.matchType
-ORDER BY
-  a.adGroupName,
-  a.campaignName,
-  a.keyword,
-  a.searchTerm;
-                                """.format(cur_time, cur_time, cur_time, cur_time, cur_time, cur_time, cur_time, cur_time,
-                                           cur_time, cur_time, cur_time, cur_time, cur_time, cur_time, cur_time, cur_time, cur_time,
-                                           cur_time, cur_time, cur_time, cur_time, cur_time, cur_time, cur_time, cur_time, cur_time,
-                                           cur_time, cur_time, cur_time, cur_time, cur_time, cur_time, country,
-                                           cur_time)
+                query = api.get_query_v1_2(cur_time, country)
             elif version == 1.3:
-                query = """
-                            SELECT
-                            a.keyword,
-                            a.searchTerm,
-                            a.adGroupName,
-                            a.adGroupId,
-                            a.matchType,
-                            a.campaignName,
-                            a.campaignId,
-                            SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 29 day) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN purchases7d ELSE 0 END) AS ORDER_1m,
-                            SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 6 day) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN purchases7d ELSE 0 END) AS ORDER_7d,
-                            SUM(CASE WHEN date = '{}' - INTERVAL 2 DAY THEN purchases7d ELSE 0 END) AS ORDER_yesterday,
-                            SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 29 day) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN a.clicks ELSE 0 END) AS total_clicks_30d,
-                            SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 6 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN a.clicks ELSE 0 END) AS total_clicks_7d,
-                            SUM(CASE WHEN date = '{}' - INTERVAL 2 DAY THEN a.clicks ELSE 0 END) AS total_clicks_yesterday,
-                            SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 29 day) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN a.sales14d ELSE 0 END) AS total_sales14d_30d,
-                            SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 6 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN a.sales14d ELSE 0 END) AS total_sales14d_7d,
-                            SUM(CASE WHEN date = '{}' - INTERVAL 2 DAY THEN a.sales14d ELSE 0 END) AS total_sales14d_yesterday,
-                            SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 29 day) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN a.cost ELSE 0 END) AS total_cost_30d,
-                            SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 6 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN a.cost ELSE 0 END) AS total_cost_7d,
-                            SUM(CASE WHEN date = '{}' - INTERVAL 2 DAY THEN a.cost ELSE 0 END) AS total_cost_yesterday,
-                            SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 29 day) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN a.cost ELSE 0 END) / SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 29 day) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN a.sales14d ELSE 0 END) AS ACOS_30d,
-                            SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 6 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN a.cost ELSE 0 END) / SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 6 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN a.sales14d ELSE 0 END) AS ACOS_7d,
-                            SUM(CASE WHEN date = '{}' - INTERVAL 2 DAY THEN cost ELSE 0 END) / SUM(CASE WHEN date = '{}' - INTERVAL 2 DAY THEN a.sales14d ELSE 0 END)  AS ACOS_yesterday
-
-            FROM
-            amazon_search_term_reports_sp a
-            JOIN
-                amazon_campaigns_list_sp c ON a.campaignId = c.campaignId -- 联接广告活动表，获取广告活动类型
-            WHERE
-                a.date BETWEEN DATE_SUB('{}', INTERVAL 30 DAY) AND '{}'- INTERVAL 1 DAY
-                AND a.market = '{}'
-                and a.keywordId in (select keywordId from amazon_targeting_reports_sp where campaignStatus='ENABLED' and date='{}'-INTERVAL 1 DAY)
-                AND c.targetingType like '%MAN%' -- 筛选出手动广告
-                AND (a.campaignName not LIKE '%%ASIN%%' and a.campaignName not LIKE '%%asin%%' and a.campaignName not LIKE '%%商品投放%%' and a.campaignName not LIKE '%%品类投放%%' and a.campaignName not LIKE '%%CATEGORY%%' and a.campaignName not LIKE '%%PRODUCT%%')
-            GROUP BY
-              a.adGroupName,
-              a.campaignName,
-              a.keyword,
-              a.searchTerm,
-              a.matchType
-            ORDER BY
-              a.adGroupName,
-              a.campaignName,
-              a.keyword,
-              a.searchTerm;
-                                            """.format(cur_time, cur_time, cur_time, cur_time, cur_time, cur_time,
-                                                       cur_time, cur_time,
-                                                       cur_time, cur_time, cur_time, cur_time, cur_time, cur_time,
-                                                       cur_time, cur_time, cur_time,
-                                                       cur_time, cur_time, cur_time, cur_time, cur_time, cur_time,
-                                                       cur_time, cur_time, cur_time,
-                                                       cur_time, cur_time, cur_time, cur_time, cur_time, cur_time,
-                                                       country,
-                                                       cur_time)
+                query = api.get_query_v1_3(cur_time, country)
             elif version == 1.4:
-                query = """
-                            SELECT
-                            a.keyword,
-                            a.searchTerm,
-                            a.adGroupName,
-                            a.adGroupId,
-                            a.matchType,
-                            a.campaignName,
-                            a.campaignId,
-                            SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 29 day) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN purchases7d ELSE 0 END) AS ORDER_1m,
-                            SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 6 day) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN purchases7d ELSE 0 END) AS ORDER_7d,
-                            SUM(CASE WHEN date = '{}' - INTERVAL 2 DAY THEN purchases7d ELSE 0 END) AS ORDER_yesterday,
-                            SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 29 day) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN a.clicks ELSE 0 END) AS total_clicks_30d,
-                            SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 6 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN a.clicks ELSE 0 END) AS total_clicks_7d,
-                            SUM(CASE WHEN date = '{}' - INTERVAL 2 DAY THEN a.clicks ELSE 0 END) AS total_clicks_yesterday,
-                            SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 29 day) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN a.sales14d ELSE 0 END) AS total_sales14d_30d,
-                            SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 6 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN a.sales14d ELSE 0 END) AS total_sales14d_7d,
-                            SUM(CASE WHEN date = '{}' - INTERVAL 2 DAY THEN a.sales14d ELSE 0 END) AS total_sales14d_yesterday,
-                            SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 29 day) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN a.cost ELSE 0 END) AS total_cost_30d,
-                            SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 6 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN a.cost ELSE 0 END) AS total_cost_7d,
-                            SUM(CASE WHEN date = '{}' - INTERVAL 2 DAY THEN a.cost ELSE 0 END) AS total_cost_yesterday,
-                            SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 29 day) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN a.cost ELSE 0 END) / SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 29 day) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN a.sales14d ELSE 0 END) AS ACOS_30d,
-                            SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 6 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN a.cost ELSE 0 END) / SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 6 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN a.sales14d ELSE 0 END) AS ACOS_7d,
-                            SUM(CASE WHEN date = '{}' - INTERVAL 2 DAY THEN cost ELSE 0 END) / SUM(CASE WHEN date = '{}' - INTERVAL 2 DAY THEN a.sales14d ELSE 0 END)  AS ACOS_yesterday
-
-            FROM
-            amazon_search_term_reports_sp a
-            JOIN
-                amazon_campaigns_list_sp c ON a.campaignId = c.campaignId -- 联接广告活动表，获取广告活动类型
-            WHERE
-                a.date BETWEEN DATE_SUB('{}', INTERVAL 30 DAY) AND '{}'- INTERVAL 1 DAY
-                AND a.market = '{}'
-                and a.keywordId in (select keywordId from amazon_search_term_reports_sp where campaignStatus='ENABLED' and date='{}'-INTERVAL 1 DAY AND campaignName NOT LIKE '%_overstock%')
-                AND c.targetingType like '%MAN%' -- 筛选出手动广告
-                AND (a.campaignName not LIKE '%%ASIN%%' and a.campaignName not LIKE '%%asin%%' and a.campaignName not LIKE '%%商品投放%%' and a.campaignName not LIKE '%%品类投放%%' and a.campaignName not LIKE '%%CATEGORY%%' and a.campaignName not LIKE '%%PRODUCT%%')
-                AND a.campaignId NOT IN (
-		SELECT DISTINCT campaignId
-		FROM amazon_targeting_reports_sp
-		WHERE matchType = 'TARGETING_EXPRESSION'
-		)
-                AND NOT EXISTS (
-            SELECT 1
-            FROM amazon_targeting_reports_sp
-            WHERE keyword = a.searchTerm
-              AND campaignId = a.campaignId
-              AND adGroupId = a.adGroupId
-        )
-            GROUP BY
-              a.adGroupName,
-              a.campaignName,
-              a.keyword,
-              a.searchTerm,
-              a.matchType
-            ORDER BY
-              a.adGroupName,
-              a.campaignName,
-              a.keyword,
-              a.searchTerm;
-                                            """.format(cur_time, cur_time, cur_time, cur_time, cur_time, cur_time,
-                                                       cur_time, cur_time,
-                                                       cur_time, cur_time, cur_time, cur_time, cur_time, cur_time,
-                                                       cur_time, cur_time, cur_time,
-                                                       cur_time, cur_time, cur_time, cur_time, cur_time, cur_time,
-                                                       cur_time, cur_time, cur_time,
-                                                       cur_time, cur_time, cur_time, cur_time, cur_time, cur_time,
-                                                       country,
-                                                       cur_time)
+                query = api.get_query_v1_4(cur_time, country)
+            elif version == 1.5 or version == '初阶':
+                query = api.get_query_v1_5(cur_time, country)
+            elif version == 1.6:
+                query = api.get_query_v1_6(cur_time, country)
             else:
                 query = None
             df1 = pd.read_sql(query, con=conn)
@@ -856,7 +183,7 @@ ORDER BY
         except Exception as error:
             print("Error while inserting data:", error)
 
-    def preprocessing_spkeyword(self, country, cur_time, version=1.2):
+    def preprocessing_spkeyword(self, country, cur_time, version=1.3):
 
         """"""
         try:
@@ -990,6 +317,100 @@ WHERE
                     group by b.keywordId;
                             """.format(cur_time, cur_time, cur_time, cur_time, cur_time, cur_time, country, cur_time, country,
                                        cur_time, country)
+            if version == 1.3:
+                query = """
+WITH a AS (
+SELECT
+        b.campaignName,
+        b.campaignId,
+        b.adGroupName,
+        b.adGroupId,
+        b.keyword,
+        b.keywordId,
+        b.matchType,
+        purchases7d,
+        clicks,
+        cost,
+        bid,
+        date
+FROM
+        amazon_targeting_reports_sp b
+        JOIN amazon_keywords_list_sp c ON b.keywordId = c.keywordId
+WHERE
+        b.market = '{}'
+        AND b.date BETWEEN DATE_SUB( '{}', INTERVAL 15 DAY )
+        AND DATE_SUB( '{}', INTERVAL 1 DAY )
+ UNION
+SELECT
+        NULL AS campaignName,
+        akl.campaignId,
+        NULL AS adGroupName,
+        akl.adGroupId,
+        akl.keywordText AS keyword,
+        akl.keywordId,
+        akl.matchType,
+        0 AS purchases7d,
+        0 AS clicks,
+        0 AS cost,
+        bid,
+        DATE_SUB( '{}', INTERVAL 1 DAY ) AS date
+FROM
+        amazon_keywords_list_sp akl
+WHERE
+        akl.market = '{}'
+        AND akl.state = 'ENABLED'
+        AND akl.extendedData_servingStatus NOT IN ( 'CAMPAIGN_PAUSED', 'AD_GROUP_PAUSED', 'TARGETING_CLAUSE_PAUSED' )
+        AND akl.keywordId NOT IN (
+        SELECT
+                b.keywordId
+        FROM
+                amazon_targeting_reports_sp b
+        WHERE
+                b.market = '{}'
+                AND b.date BETWEEN DATE_SUB( '{}', INTERVAL 15 DAY )
+        AND DATE_SUB( '{}', INTERVAL 1 DAY )
+        )
+        ORDER BY
+        campaignId,
+        adGroupId
+),
+b AS(
+SELECT
+        campaignName,
+        campaignId,
+        adGroupName,
+        adGroupId,
+        SUM(CASE WHEN date BETWEEN DATE_SUB('{}', INTERVAL 15 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN purchases7d ELSE 0 END) AS total_purchases7d_15d,
+        SUM(CASE WHEN date BETWEEN DATE_SUB('{}', INTERVAL 7 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN clicks ELSE 0 END) AS total_clicks_7d,
+                                SUM(CASE WHEN date BETWEEN DATE_SUB('{}', INTERVAL 7 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN cost ELSE 0 END) AS total_cost_7d
+        FROM
+        a
+        GROUP BY
+        campaignId,
+        adGroupId
+)
+SELECT
+        a.campaignName,
+        a.campaignId,
+        a.adGroupName,
+        a.adGroupId,
+        a.keywordId,
+        a.keyword,
+        b.total_purchases7d_15d,
+        b.total_clicks_7d,
+        b.total_cost_7d,
+        a.matchType,
+        a.bid
+        FROM a
+        JOIN b  ON a.campaignId = b.campaignId AND a.adGroupId = b.adGroupId
+        GROUP BY
+        a.keywordId
+        ORDER BY
+        a.campaignId,
+        a.adGroupId
+
+                            """.format(country,cur_time, cur_time, cur_time,country,country, cur_time, cur_time, cur_time, cur_time,
+                                       cur_time, cur_time, cur_time, cur_time)
             else:
                 query = None
             df1 = pd.read_sql(query, con=conn)
@@ -1002,179 +423,19 @@ WHERE
         except Exception as error:
             print("Error while inserting data:", error)
 
-    def preprocessing_budget(self, country, cur_time, version=1.2):
-
+    def preprocessing_budget(self, country, cur_time, version=1.3):
         """"""
         try:
             conn = self.conn
-
+            api = BudgetQueryManual()
             if version == 1.0:
-                query = """
-WITH Campaign_Stats AS (
-    SELECT
-        campaignName,
-        SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 6 day) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN cost ELSE 0 END) AS cost_7d,
-        SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 6 day) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN sales14d ELSE 0 END) AS sales14d_7d,
-        SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 29 day) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN cost ELSE 0 END) AS cost_1m,
-        SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 29 day) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN sales14d ELSE 0 END) AS sales14d_1m,
-        SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 29 day) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN sales7d ELSE 0 END) AS sales_1m,
-        SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 6 day) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN clicks ELSE 0 END) AS clicks_7d,
-        SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 29 day) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN clicks ELSE 0 END) AS clicks_1m
-    FROM
-        amazon_campaign_reports_sp
-    WHERE
-        date BETWEEN DATE_SUB('{}', INTERVAL 30 DAY) AND ('{}'-INTERVAL 1 DAY)
-        AND campaignStatus = 'ENABLED'
-        AND ( campaignName not LIKE '%AUTO%' and  campaignName not  LIKE '%auto%' and campaignName not LIKE '%Auto%' and  campaignName not LIKE '%自动%' )
-        AND market = '{}'
-    GROUP BY
-        campaignName
-)
-SELECT
-    a.campaignName,
-    a.campaignId,
-    a.date,
-    a.campaignBudgetAmount AS Budget,
-    a.clicks,
-    a.cost,
-    a.sales7d as sales,
-    (a.cost / NULLIF(a.sales14d, 0)) AS ACOS,
-    cs.sales_1m,
-    cs.cost_1m,
-    (cs.cost_7d / NULLIF(cs.sales14d_7d, 0)) AS avg_ACOS_7d,
-    cs.cost_1m / NULLIF(cs.sales14d_1m, 0) AS avg_ACOS_1m,
-    cs.clicks_1m,
-    cs.clicks_7d,
-    (SELECT SUM(cost) / SUM(sales14d) FROM amazon_campaign_reports_sp WHERE market = '{}' AND date BETWEEN DATE_SUB('{}', INTERVAL 30 DAY) AND ('{}'-INTERVAL 1 DAY) AND ( campaignName not LIKE '%AUTO%' and  campaignName not  LIKE '%auto%' and campaignName not LIKE '%Auto%' and  campaignName not LIKE '%自动%' )) AS country_avg_ACOS_1m
-FROM
-    amazon_campaign_reports_sp a
-LEFT JOIN Campaign_Stats cs ON a.campaignName = cs.campaignName
-WHERE
-    a.date = ('{}'-INTERVAL 1 DAY)
-    AND a.campaignStatus = 'ENABLED'
-    AND a.campaignName NOT LIKE '%_overstock%'
-    AND ( a.campaignName not LIKE '%AUTO%' and  a.campaignName not  LIKE '%auto%' and a.campaignName not LIKE '%Auto%' and  a.campaignName not LIKE '%自动%' )
-    AND a.market = '{}'
-ORDER BY
-    a.date;
-
-                """.format(cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,country,country,cur_time,cur_time,cur_time,country)
+                query = api.get_query_v1_0(cur_time, country)
             elif version == 1.1:
-                query = """
-                WITH Campaign_Stats AS (
-                    SELECT
-                        campaignId,
-                        campaignName,
-                        campaignBudgetAmount AS Budget,
-                        market,
-                        sum(CASE WHEN date = DATE_SUB('{}', INTERVAL 2 DAY) THEN cost ELSE 0 END) as cost_yesterday,
-                        sum(CASE WHEN date = DATE_SUB('{}', INTERVAL 2 DAY) THEN clicks ELSE 0 END) as clicks_yesterday,
-                        sum(CASE WHEN date = DATE_SUB('{}', INTERVAL 2 DAY) THEN sales14d ELSE 0 END) as sales_yesterday,
-                        SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 6 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN cost ELSE 0 END) AS total_cost_7d,
-                        SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 6 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN sales14d ELSE 0 END) AS total_sales14d_7d,
-                        SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 29 day) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN cost ELSE 0 END) AS total_cost_30d,
-                        SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 29 day) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN sales14d ELSE 0 END) AS total_sales14d_30d,
-                        SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 29 day) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN clicks ELSE 0 END) AS total_clicks_30d,
-                        SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 6 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN clicks ELSE 0 END) AS total_clicks_7d,
-                        SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 29 day) AND DATE_SUB('{}', INTERVAL 1 DAY)  THEN cost ELSE 0 END) / SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 29 day) AND DATE_SUB('{}', INTERVAL 1 DAY)  THEN sales14d ELSE 0 END) AS ACOS_30d,
-                        SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 6 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY)  THEN cost ELSE 0 END) / SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 6 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY)  THEN sales14d ELSE 0 END) AS ACOS_7d,
-                        SUM(CASE WHEN date = '{}' - INTERVAL 2 DAY THEN cost ELSE 0 END) / SUM(CASE WHEN date = '{}' - INTERVAL 2 DAY THEN sales14d ELSE 0 END)  AS ACOS_yesterday
-                    FROM
-                        amazon_campaign_reports_sp
-                    WHERE
-                        date BETWEEN DATE_SUB('{}', INTERVAL 30 DAY) AND ('{}'-INTERVAL 1 DAY)
-                        AND campaignId IN (
-        SELECT campaignId
-        FROM amazon_campaign_reports_sp
-        WHERE campaignStatus = 'ENABLED' AND date = '{}' - INTERVAL 1 DAY )
-                        AND ( campaignName not LIKE '%AUTO%' and  campaignName not  LIKE '%auto%' and campaignName not LIKE '%Auto%' and  campaignName not LIKE '%自动%' )
-                        AND market = '{}'
-                    GROUP BY
-                        campaignName
-                ),
-      b as (select sum(cost)/sum(sales14d) as country_avg_ACOS_1m,market
-from amazon_campaign_reports_sp
-    WHERE
-        date BETWEEN DATE_SUB('{}', INTERVAL 30 DAY) AND ('{}'-INTERVAL 1 DAY)
-        AND campaignId IN (
-        SELECT campaignId
-        FROM amazon_campaign_reports_sp
-        WHERE campaignStatus = 'ENABLED' AND date = '{}' - INTERVAL 1 DAY )
-        AND ( campaignName not LIKE '%AUTO%' and  campaignName not  LIKE '%auto%' and campaignName not LIKE '%Auto%' and  campaignName not LIKE '%自动%' )
-        AND market = '{}'
-                                )
-  SELECT Campaign_Stats.*,b. country_avg_ACOS_1m
-        from Campaign_Stats join b
-        on Campaign_Stats.market =b.market
-                                """.format(cur_time, cur_time, cur_time, cur_time, cur_time, cur_time, cur_time, cur_time, cur_time, cur_time,
-                                           cur_time, cur_time, cur_time, cur_time, cur_time, cur_time, cur_time,
-                                           cur_time, cur_time, cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time, country, cur_time, cur_time, cur_time, country)
+                query = api.get_query_v1_1(cur_time, country)
             elif version == 1.2:
-                query = """
-                        WITH Campaign_Stats AS (
-                 SELECT
-                    acr.campaignId,
-                    acr.campaignName,
-                    acr.campaignBudgetAmount AS Budget,
-                    acr.market,
-                    sum(CASE WHEN acr.date = DATE_SUB('{}', INTERVAL 2 DAY) THEN acr.cost ELSE 0 END) as cost_yesterday,
-                    sum(CASE WHEN acr.date = DATE_SUB('{}', INTERVAL 2 DAY) THEN acr.clicks ELSE 0 END) as clicks_yesterday,
-                    sum(CASE WHEN acr.date = DATE_SUB('{}', INTERVAL 2 DAY) THEN acr.sales14d ELSE 0 END) as sales_yesterday,
-                    SUM(CASE WHEN acr.date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 6 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN acr.cost ELSE 0 END) AS total_cost_7d,
-                    SUM(CASE WHEN acr.date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 6 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN acr.sales14d ELSE 0 END) AS total_sales14d_7d,
-                    SUM(CASE WHEN acr.date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 29 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN acr.cost ELSE 0 END) AS total_cost_30d,
-                    SUM(CASE WHEN acr.date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 29 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN acr.sales14d ELSE 0 END) AS total_sales14d_30d,
-                    SUM(CASE WHEN acr.date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 29 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN acr.clicks ELSE 0 END) AS total_clicks_30d,
-                    SUM(CASE WHEN acr.date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 6 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN acr.clicks ELSE 0 END) AS total_clicks_7d,
-                    SUM(CASE WHEN acr.date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 29 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN acr.cost ELSE 0 END) / NULLIF(SUM(CASE WHEN acr.date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 29 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN acr.sales14d ELSE 0 END), 0) AS ACOS_30d,
-                    SUM(CASE WHEN acr.date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 6 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN acr.cost ELSE 0 END) / NULLIF(SUM(CASE WHEN acr.date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 6 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN acr.sales14d ELSE 0 END), 0) AS ACOS_7d,
-                    SUM(CASE WHEN acr.date = '{}' - INTERVAL 2 DAY THEN acr.cost ELSE 0 END) / NULLIF(SUM(CASE WHEN acr.date = '{}' - INTERVAL 2 DAY THEN acr.sales14d ELSE 0 END), 0)  AS ACOS_yesterday
-                FROM
-                    amazon_campaign_reports_sp acr
-                JOIN
-                    amazon_campaigns_list_sp acl ON acr.campaignId = acl.campaignId
-                WHERE
-                    acr.date BETWEEN DATE_SUB('{}', INTERVAL 30 DAY) AND ('{}'-INTERVAL 1 DAY)
-                    AND acr.campaignId IN (
-                        SELECT campaignId
-                        FROM amazon_campaign_reports_sp
-                        WHERE campaignStatus = 'ENABLED' AND date = '{}' - INTERVAL 1 DAY
-                        AND campaignName NOT LIKE '%_overstock%')
-                    AND acl.targetingType LIKE '%MAN%'  -- 这里筛选手动广告
-                    AND acr.market = '{}'
-                GROUP BY
-                    acr.campaignName
-            ),
-            b as (SELECT
-                SUM(reports.cost)/SUM(reports.sales14d) AS country_avg_ACOS_1m,
-                reports.market
-            FROM
-                amazon_campaign_reports_sp AS reports
-            INNER JOIN
-                amazon_campaigns_list_sp AS campaigns ON reports.campaignId = campaigns.campaignId
-            WHERE
-                reports.date BETWEEN DATE_SUB('{}', INTERVAL 30 DAY) AND ('{}'-INTERVAL 1 DAY)
-                            and campaigns.campaignId in ( SELECT campaignId
-                    FROM amazon_campaign_reports_sp
-                 WHERE campaignStatus = 'ENABLED' AND date = '{}' - INTERVAL 1 DAY)
-
-                AND campaigns.targetingType LIKE '%MAN%'  -- 筛选手动广告
-                AND reports.market = '{}'
-            GROUP BY
-                reports.market)
-
-
-              SELECT Campaign_Stats.*,b. country_avg_ACOS_1m
-                    from Campaign_Stats join b
-                    on Campaign_Stats.market =b.market
-                                        """.format(cur_time, cur_time, cur_time, cur_time, cur_time, cur_time, cur_time,
-                                                   cur_time, cur_time,
-                                                   cur_time, cur_time, cur_time, cur_time, cur_time, cur_time, cur_time,
-                                                   cur_time,
-                                                   cur_time, cur_time, cur_time, cur_time, cur_time, cur_time, cur_time,
-                                                   cur_time,
-                                                   cur_time, cur_time, cur_time, country, cur_time, cur_time, cur_time,
-                                                   country)
+                query = api.get_query_v1_2(cur_time, country)
+            elif version == 1.3 or version == '初阶':
+                query = api.get_query_v1_3(cur_time, country)
             else:
                 query = None
             #print(query)
@@ -1188,106 +449,16 @@ from amazon_campaign_reports_sp
         except Exception as error:
             print("Error while inserting data:", error)
 
-    def preprocessing_product_targets(self, country, cur_time, version=1.0):
+    def preprocessing_product_targets(self, country, cur_time, version=1.1):
 
         """"""
         try:
             conn = self.conn
-
+            api = ProductTargetsQuery()
             if version == 1.0:
-                query = """
-WITH a AS (
-    SELECT
-        keywordId,
-        keyword,
-        targeting,
-        matchType,
-        adGroupName,
-        campaignName,
-        -- 过去30天的总订单数
-        SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 29 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN purchases7d ELSE 0 END) AS ORDER_1m,
-        -- 过去30天的总点击量
-        SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 29 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN clicks ELSE 0 END) AS total_clicks_30d,
-        -- 过去7天的总点击量
-        SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 6 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN clicks ELSE 0 END) AS total_clicks_7d,
-        -- 昨天的总点击量
-        SUM(CASE WHEN date = '{}' - INTERVAL 2 DAY THEN clicks ELSE 0 END) AS total_clicks_yesterday,
-        -- 过去30天的总销售额
-        SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 29 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN sales14d ELSE 0 END) AS total_sales14d_30d,
-        -- 过去7天的总销售额
-        SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 6 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN sales14d ELSE 0 END) AS total_sales14d_7d,
-        SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 2 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN sales14d ELSE 0 END) AS total_sales14d_3d,
-        -- 昨天的总销售额
-        SUM(CASE WHEN date = '{}' - INTERVAL 2 DAY THEN sales14d ELSE 0 END) AS total_sales14d_yesterday,
-        -- 过去30天的总成本
-        SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 29 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN cost ELSE 0 END) AS total_cost_30d,
-        -- 过去7天的总成本
-        SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 6 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN cost ELSE 0 END) AS total_cost_7d,
-        -- 过去4天的总成本
-        SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 2 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN cost ELSE 0 END) AS total_cost_3d,
-        -- 昨天的总成本
-        SUM(CASE WHEN date = '{}' - INTERVAL 2 DAY THEN cost ELSE 0 END) AS total_cost_yesterday,
-        -- 过去30天的平均成本销售比（ACOS）
-        SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 29 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN cost ELSE 0 END) /
-        SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 29 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN sales14d ELSE 0 END) AS ACOS_30d,
-        -- 过去7天的平均成本销售比（ACOS）
-        SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 6 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN cost ELSE 0 END) /
-        SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 6 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN sales14d ELSE 0 END) AS ACOS_7d,
-        SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 2 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN cost ELSE 0 END) /
-        SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 2 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN sales14d ELSE 0 END) AS ACOS_3d,
-        -- 昨天的平均成本销售比（ACOS）
-        SUM(CASE WHEN date = '{}' - INTERVAL 2 DAY THEN cost ELSE 0 END) /
-        SUM(CASE WHEN date = '{}' - INTERVAL 2 DAY THEN sales14d ELSE 0 END) AS ACOS_yesterday
-    FROM
-        amazon_targeting_reports_sp b
-    JOIN
-        amazon_campaigns_list_sp c ON b.campaignId = c.campaignId -- 联接广告活动表，获取广告活动类型
-    WHERE
-        b.date BETWEEN DATE_SUB('{}', INTERVAL 30 DAY) AND '{}' - INTERVAL 1 DAY
-        AND b.market = '{}'
-        AND b.keywordId IN (
-            SELECT keywordId
-            FROM amazon_targeting_reports_sp
-            WHERE campaignStatus = 'ENABLED' AND date = '{}' - INTERVAL 1 DAY
-            AND campaignName NOT LIKE '%_overstock%'
-        )
-        AND c.targetingType LIKE '%MAN%' -- 筛选出手动广告
-        -- 排除最近4天内有变更的keywordId
-        AND b.keywordId NOT IN (SELECT DISTINCT entityId
-            FROM amazon_advertising_change_history
-            WHERE timestamp >= (UNIX_TIMESTAMP(NOW(3)) - 4 * 24 * 60 * 60) * 1000
-            AND entityType = 'KEYWORD'
-            AND market = '{}')
-        AND b.campaignId NOT IN (SELECT DISTINCT campaignId FROM amazon_targeting_reports_sd) -- 排除在amazon_targeting_reports_sd中的campaignId
-    GROUP BY
-        b.adGroupName,
-        b.campaignName,
-        b.keyword,
-        b.matchType,
-        b.targeting,
-        b.keywordId
-    ORDER BY
-        b.adGroupName,
-        b.campaignName,
-        b.keyword,
-        b.matchType,
-        b.keywordId
-)
--- 从CTE结果中选择数据
-SELECT
-    a.*,
-    d.keywordBid
-FROM
-    a
-LEFT JOIN
-    amazon_targeting_reports_sp d ON a.keywordId = d.keywordId
-WHERE
-    d.date = DATE_SUB('{}', INTERVAL 1 DAY)
-    AND (a.keyword LIKE '%asin%' OR a.targeting LIKE '%asin%' OR a.keyword LIKE '%category%' OR a.targeting LIKE '%category%' OR a.campaignName LIKE '%ASIN%');
-                """.format(cur_time, cur_time, cur_time, cur_time, cur_time, cur_time, cur_time, cur_time, cur_time, cur_time, cur_time,
-                           cur_time, cur_time, cur_time, cur_time, cur_time, cur_time,
-                           cur_time, cur_time, cur_time, cur_time, cur_time, cur_time, cur_time, cur_time, cur_time, cur_time,
-                           cur_time, cur_time, cur_time, cur_time, cur_time, cur_time, cur_time, cur_time, cur_time, cur_time, country, cur_time, country, cur_time)
+                query = api.get_query_v1_0(cur_time, country)
+            elif version == 1.1 or version == '初阶':
+                query = api.get_query_v1_1(cur_time, country)
             else:
                 query = None
             # print(query)
@@ -1301,7 +472,7 @@ WHERE
         except Exception as error:
             print("Error while inserting data:", error)
 
-    def preprocessing_sp_product_targets(self, country, cur_time, version=1.0):
+    def preprocessing_sp_product_targets(self, country, cur_time, version=1.1):
 
         """"""
         try:
@@ -1371,6 +542,106 @@ WHERE
 GROUP BY
     b.keywordId;
                 """.format(cur_time, cur_time, cur_time, cur_time, cur_time, cur_time, country, cur_time, country, cur_time, country)
+            if version == 1.1:
+                query =f"""
+WITH a AS (
+    SELECT
+        b.campaignName,
+        b.campaignId,
+        b.adGroupName,
+        b.adGroupId,
+        b.keyword,
+        b.keywordId,
+        purchases7d,
+        clicks,
+        cost,
+        bid,
+        date
+    FROM
+        amazon_targeting_reports_sp b
+        JOIN amazon_targets_list_sp c ON b.keywordId = c.targetId
+    WHERE
+        b.market = '{country}'
+        AND b.date BETWEEN DATE_SUB('{cur_time}', INTERVAL 15 DAY)
+        AND DATE_SUB('{cur_time}', INTERVAL 1 DAY)
+        AND expressionType = 'MANUAL'
+    UNION
+    SELECT
+        NULL AS campaignName,
+        akl.campaignId,
+        NULL AS adGroupName,
+        akl.adGroupId,
+        akl.expression AS keyword,
+        akl.targetId AS keywordId,
+        0 AS purchases7d,
+        0 AS clicks,
+        0 AS cost,
+        bid,
+        DATE_SUB('{cur_time}', INTERVAL 1 DAY) AS date
+    FROM
+        amazon_targets_list_sp akl
+    WHERE
+        akl.market = '{country}'
+        AND akl.state = 'ENABLED'
+        AND akl.servingStatus NOT IN ('CAMPAIGN_PAUSED', 'AD_GROUP_PAUSED', 'TARGETING_CLAUSE_PAUSED')
+        AND expressionType = 'MANUAL'
+        AND akl.targetId NOT IN (
+            SELECT
+                b.keywordId
+            FROM
+                amazon_targeting_reports_sp b
+            WHERE
+                b.market = '{country}'
+                AND b.date BETWEEN DATE_SUB('{cur_time}', INTERVAL 15 DAY)
+                AND DATE_SUB('{cur_time}', INTERVAL 1 DAY)
+        )
+    ORDER BY
+        campaignId,
+        adGroupId
+),
+b AS (
+    SELECT
+        campaignName,
+        campaignId,
+        adGroupName,
+        adGroupId,
+        SUM(CASE WHEN date BETWEEN DATE_SUB('{cur_time}', INTERVAL 15 DAY) AND DATE_SUB('{cur_time}', INTERVAL 1 DAY) THEN purchases7d ELSE 0 END) AS total_purchases7d_15d,
+        SUM(CASE WHEN date BETWEEN DATE_SUB('{cur_time}', INTERVAL 7 DAY) AND DATE_SUB('{cur_time}', INTERVAL 1 DAY) THEN clicks ELSE 0 END) AS total_clicks_7d,
+        SUM(CASE WHEN date BETWEEN DATE_SUB('{cur_time}', INTERVAL 7 DAY) AND DATE_SUB('{cur_time}', INTERVAL 1 DAY) THEN cost ELSE 0 END) AS total_cost_7d
+    FROM
+        a
+    GROUP BY
+        campaignId,
+        adGroupId
+)
+SELECT
+    a.campaignName,
+    a.campaignId,
+    a.adGroupName,
+    a.adGroupId,
+    a.keywordId,
+    CASE
+        WHEN a.keyword LIKE "%'type': 'ASIN_SAME_AS', 'value': %" THEN CONCAT('asin="', TRIM(SUBSTRING_INDEX(SUBSTRING_INDEX(a.keyword, "'", -2), "'", 1)), '"')
+        WHEN a.keyword LIKE "%'type': 'ASIN_EXPANDED_FROM', 'value': %" THEN CONCAT('asin-expanded="', TRIM(SUBSTRING_INDEX(SUBSTRING_INDEX(a.keyword, "'", -2), "'", 1)), '"')
+        WHEN a.keyword LIKE "%'type': 'ASIN_CATEGORY_SAME_AS', 'value': %" THEN CONCAT('category="', TRIM(SUBSTRING_INDEX(SUBSTRING_INDEX(a.keyword, "'", -2), "'", 1)), '"')
+        WHEN a.keyword LIKE "%'type': 'ASIN_CATEGORY_SAME_AS', 'value': %" AND a.keyword LIKE "%, 'type': 'ASIN_BRAND_SAME_AS', 'value': %" THEN
+            CONCAT('category="', TRIM(SUBSTRING_INDEX(SUBSTRING_INDEX(a.keyword, "'", -2), "'", 2)), '" ',
+                   'brand="', TRIM(SUBSTRING_INDEX(SUBSTRING_INDEX(a.keyword, "'", -8), "'", 2)), '"')
+        ELSE a.keyword
+    END AS keyword,
+    b.total_purchases7d_15d,
+    b.total_clicks_7d,
+    b.total_cost_7d,
+    a.bid
+FROM
+    a
+JOIN b ON a.campaignId = b.campaignId AND a.adGroupId = b.adGroupId
+GROUP BY
+    a.keywordId
+ORDER BY
+    a.campaignId,
+    a.adGroupId;
+                """
             else:
                 query = None
             # print(query)
@@ -1384,171 +655,17 @@ GROUP BY
         except Exception as error:
             print("Error while inserting data:", error)
 
-    def preprocessing_product_targets_search_term(self, country, cur_time, version=1.1):
-
+    def preprocessing_product_targets_search_term(self, country, cur_time, version=1.2):
         """"""
         try:
             conn = self.conn
-
+            api = ProductTargetsSearchTermQuery()
             if version == 1.0:
-                query = """
-SELECT
-    a.keyword,
-    a.searchTerm,
-    a.adGroupName,
-    a.adGroupId,
-    a.matchType,
-    a.campaignName,
-    a.campaignId,
-    -- 过去30天的总点击量
-    SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 29 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN a.clicks ELSE 0 END) AS total_clicks_30d,
-    -- 过去7天的总点击量
-    SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 6 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN a.clicks ELSE 0 END) AS total_clicks_7d,
-    -- 昨天的总点击量
-    SUM(CASE WHEN date = '{}' - INTERVAL 2 DAY THEN a.clicks ELSE 0 END) AS total_clicks_yesterday,
-    -- 过去30天的总销售额
-    SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 29 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN a.sales14d ELSE 0 END) AS total_sales14d_30d,
-    -- 过去7天的总销售额
-    SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 6 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN a.sales14d ELSE 0 END) AS total_sales14d_7d,
-    -- 昨天的总销售额
-    SUM(CASE WHEN date = '{}' - INTERVAL 2 DAY THEN a.sales14d ELSE 0 END) AS total_sales14d_yesterday,
-    -- 过去30天的总成本
-    SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 29 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN a.cost ELSE 0 END) AS total_cost_30d,
-    -- 过去7天的总成本
-    SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 6 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN a.cost ELSE 0 END) AS total_cost_7d,
-    -- 昨天的总成本
-    SUM(CASE WHEN date = '{}' - INTERVAL 2 DAY THEN a.cost ELSE 0 END) AS total_cost_yesterday,
-    -- 过去30天的平均成本销售比（ACOS）
-    SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 29 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN a.cost ELSE 0 END) /
-    SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 29 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN a.sales14d ELSE 0 END) AS ACOS_30d,
-    -- 过去7天的平均成本销售比（ACOS）
-    SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 6 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN a.cost ELSE 0 END) /
-    SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 6 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN a.sales14d ELSE 0 END) AS ACOS_7d,
-    -- 昨天的平均成本销售比（ACOS）
-    SUM(CASE WHEN date = '{}' - INTERVAL 2 DAY THEN a.cost ELSE 0 END) /
-    SUM(CASE WHEN date = '{}' - INTERVAL 2 DAY THEN a.sales14d ELSE 0 END) AS ACOS_yesterday,
-    -- 过去30天的总订单数
-    SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 29 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN purchases7d ELSE 0 END) AS ORDER_1m,
-    -- 过去7天的总订单数
-    SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 6 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN purchases7d ELSE 0 END) AS ORDER_7d
-FROM
-    amazon_search_term_reports_sp a
-JOIN
-    amazon_campaigns_list_sp c ON a.campaignId = c.campaignId -- 联接广告活动表，获取广告活动类型
-WHERE
-    a.date BETWEEN DATE_SUB('{}', INTERVAL 30 DAY) AND '{}' - INTERVAL 1 DAY
-    AND a.market = '{}'
-    AND a.keywordId IN (
-        SELECT keywordId
-        FROM amazon_targeting_reports_sp
-        WHERE campaignStatus = 'ENABLED'
-        AND date = '{}' - INTERVAL 1 DAY
-        AND campaignName NOT LIKE '%_overstock%'
-    )
-    AND c.targetingType LIKE '%MAN%' -- 筛选出手动广告
-    AND (
-        a.keyword LIKE '%asin%'
-        OR a.targeting LIKE '%asin%'
-        OR a.campaignName LIKE '%ASIN%'
-        OR a.keyword LIKE '%category%'
-        OR a.targeting LIKE '%category%'
-    ) -- 筛选出keyword、targeting中包含asin或category，或campaignName中包含ASIN的数据行
-    AND a.campaignId NOT IN (
-        SELECT DISTINCT campaignId
-        FROM amazon_targeting_reports_sd
-    ) -- 排除在 amazon_targeting_reports_sd 中的 campaignId
-GROUP BY
-    a.adGroupName,
-    a.campaignName,
-    a.keyword,
-    a.searchTerm,
-    a.matchType
-ORDER BY
-    a.adGroupName,
-    a.campaignName,
-    a.keyword,
-    a.searchTerm;
-                """.format(cur_time, cur_time, cur_time, cur_time, cur_time, cur_time, cur_time, cur_time, cur_time,
-                           cur_time, cur_time, cur_time, cur_time, cur_time, cur_time, cur_time, cur_time, cur_time, cur_time, cur_time,
-                           cur_time, cur_time, cur_time, cur_time, cur_time, cur_time, cur_time, cur_time, cur_time, cur_time,
-                           cur_time, country, cur_time)
-            if version == 1.1:
-                query = """
-        SELECT
-            a.keyword,
-            a.searchTerm,
-            a.adGroupName,
-            a.adGroupId,
-            a.matchType,
-            a.campaignName,
-            a.campaignId,
-            -- 过去30天的总点击量
-            SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 29 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN a.clicks ELSE 0 END) AS total_clicks_30d,
-            -- 过去7天的总点击量
-            SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 6 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN a.clicks ELSE 0 END) AS total_clicks_7d,
-            -- 昨天的总点击量
-            SUM(CASE WHEN date = '{}' - INTERVAL 2 DAY THEN a.clicks ELSE 0 END) AS total_clicks_yesterday,
-            -- 过去30天的总销售额
-            SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 29 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN a.sales14d ELSE 0 END) AS total_sales14d_30d,
-            -- 过去7天的总销售额
-            SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 6 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN a.sales14d ELSE 0 END) AS total_sales14d_7d,
-            -- 昨天的总销售额
-            SUM(CASE WHEN date = '{}' - INTERVAL 2 DAY THEN a.sales14d ELSE 0 END) AS total_sales14d_yesterday,
-            -- 过去30天的总成本
-            SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 29 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN a.cost ELSE 0 END) AS total_cost_30d,
-            -- 过去7天的总成本
-            SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 6 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN a.cost ELSE 0 END) AS total_cost_7d,
-            -- 昨天的总成本
-            SUM(CASE WHEN date = '{}' - INTERVAL 2 DAY THEN a.cost ELSE 0 END) AS total_cost_yesterday,
-            -- 过去30天的平均成本销售比（ACOS）
-            SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 29 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN a.cost ELSE 0 END) /
-            SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 29 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN a.sales14d ELSE 0 END) AS ACOS_30d,
-            -- 过去7天的平均成本销售比（ACOS）
-            SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 6 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN a.cost ELSE 0 END) /
-            SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 6 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN a.sales14d ELSE 0 END) AS ACOS_7d,
-            -- 昨天的平均成本销售比（ACOS）
-            SUM(CASE WHEN date = '{}' - INTERVAL 2 DAY THEN a.cost ELSE 0 END) /
-            SUM(CASE WHEN date = '{}' - INTERVAL 2 DAY THEN a.sales14d ELSE 0 END) AS ACOS_yesterday,
-            -- 过去30天的总订单数
-            SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 29 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN purchases7d ELSE 0 END) AS ORDER_1m,
-            -- 过去7天的总订单数
-            SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 6 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN purchases7d ELSE 0 END) AS ORDER_7d
-        FROM
-            amazon_search_term_reports_sp a
-        JOIN
-            amazon_campaigns_list_sp c ON a.campaignId = c.campaignId -- 联接广告活动表，获取广告活动类型
-        WHERE
-            a.date BETWEEN DATE_SUB('{}', INTERVAL 30 DAY) AND '{}' - INTERVAL 1 DAY
-            AND a.market = '{}'
-            AND a.keywordId IN (
-                SELECT keywordId
-                FROM amazon_targeting_reports_sp
-                WHERE campaignStatus = 'ENABLED'
-                AND date = '{}' - INTERVAL 1 DAY
-                AND campaignName LIKE '%_overstock%'
-            )
-            AND c.targetingType LIKE '%MAN%' -- 筛选出手动广告
-            AND matchType in ('TARGETING_EXPRESSION')
-            AND LENGTH(a.searchTerm) = 10 -- searchTerm的长度是十位
-            AND LEFT(a.searchTerm, 2) = 'b0' -- searchTerm的开头两个字符是b0
-        GROUP BY
-            a.adGroupName,
-            a.campaignName,
-            a.keyword,
-            a.searchTerm,
-            a.matchType
-        ORDER BY
-            a.adGroupName,
-            a.campaignName,
-            a.keyword,
-            a.searchTerm;
-                        """.format(cur_time, cur_time, cur_time, cur_time, cur_time, cur_time, cur_time, cur_time,
-                                   cur_time,
-                                   cur_time, cur_time, cur_time, cur_time, cur_time, cur_time, cur_time, cur_time,
-                                   cur_time, cur_time, cur_time,
-                                   cur_time, cur_time, cur_time, cur_time, cur_time, cur_time, cur_time, cur_time,
-                                   cur_time, cur_time,
-                                   cur_time, country, cur_time)
+                query = api.get_query_v1_0(cur_time, country)
+            elif version == 1.1:
+                query = api.get_query_v1_1(cur_time, country)
+            elif version == 1.2 or version == '初阶':
+                query = api.get_query_v1_2(cur_time, country)
             else:
                 query = None
             # print(query)
@@ -1567,278 +684,17 @@ ORDER BY
         """"""
         try:
             conn = self.conn
-
+            api = skuQueryAuto()
             if version == 1.0:
-                query = """
-SELECT
-    adGroupName,
-    campaignName,
-    advertisedSku,
-    -- 过去30天（包含今天）的总点击量
-    SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 29 day) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN clicks ELSE 0 END) AS total_clicks_30d,
-    -- 过去7天（包含今天）的总点击量
-    SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 6 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN clicks ELSE 0 END) AS total_clicks_7d,
-    -- 昨天的总点击量
-    SUM(CASE WHEN date = DATE_SUB('{}', INTERVAL 1 DAY) - INTERVAL 1 DAY THEN clicks ELSE 0 END) AS total_clicks_yesterday,
-    -- 过去30天的总销售额
-    SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 29 day) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN sales14d ELSE 0 END) AS total_sales14d_30d,
-    -- 过去7天的总销售额
-    SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 6 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN sales14d ELSE 0 END) AS total_sales14d_7d,
-    -- 昨天的总销售额
-    SUM(CASE WHEN date = DATE_SUB('{}', INTERVAL 1 DAY) - INTERVAL 1 DAY THEN sales14d ELSE 0 END) AS total_sales14d_yesterday,
-    -- 过去30天的总成本
-    SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 29 day) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN cost ELSE 0 END) AS total_cost_30d,
-    -- 过去7天的总成本
-    SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 6 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN cost ELSE 0 END) AS total_cost_7d,
-    -- 昨天的总成本
-    SUM(CASE WHEN date = DATE_SUB('{}', INTERVAL 1 DAY) - INTERVAL 1 DAY THEN cost ELSE 0 END) AS total_cost_yesterday,
-    -- 过去30天的平均成本销售比（ACOS）
-    SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 29 day) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN cost ELSE 0 END) / NULLIF(SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 29 day) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN sales14d ELSE 0 END), 0) AS ACOS_30d,
-    -- 过去7天的平均成本销售比（ACOS）
-    SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 6 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN cost ELSE 0 END) / NULLIF(SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 6 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN sales14d ELSE 0 END), 0) AS ACOS_7d,
-    -- 昨天的平均成本销售比（ACOS）
-    SUM(CASE WHEN date = DATE_SUB('{}', INTERVAL 1 DAY) - INTERVAL 1 DAY THEN cost ELSE 0 END) / NULLIF(SUM(CASE WHEN date = DATE_SUB('{}', INTERVAL 1 DAY) - INTERVAL 1 DAY THEN sales14d ELSE 0 END), 0) AS ACOS_yesterday
-FROM
-    amazon_advertised_product_reports_sp
-WHERE
-    date BETWEEN DATE_SUB('{}', INTERVAL 30 DAY) AND ('{}'-INTERVAL 1 DAY)
-    AND market = '{}'
-    AND adId IN (
-        SELECT adId
-        FROM amazon_advertised_product_reports_sp
-        WHERE campaignStatus = 'ENABLED' AND date = DATE_SUB('{}', INTERVAL 1 DAY
-        AND campaignName NOT LIKE '%_overstock%')
-    )
-    AND (campaignName LIKE '%AUTO%' OR campaignName LIKE '%auto%' OR campaignName LIKE '%Auto%' OR campaignName LIKE '%自动%')
-GROUP BY
-    adGroupName,
-    campaignName,
-    advertisedSku
-ORDER BY
-    adGroupName,
-    campaignName,
-    advertisedSku;
-                """.format(cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,country,cur_time)
+                query = api.get_query_v1_0(cur_time, country)
             elif version == 1.1:
-                query = """
-                SELECT
-                    adGroupName,
-                    adId,
-                    campaignName,
-                    advertisedSku,
-                    -- 过去30天（包含今天）的总点击量
-                    SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 29 day) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN clicks ELSE 0 END) AS total_clicks_30d,
-                    -- 过去7天（包含今天）的总点击量
-                    SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 6 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN clicks ELSE 0 END) AS total_clicks_7d,
-                    -- 昨天的总点击量
-                    SUM(CASE WHEN date = DATE_SUB('{}', INTERVAL 1 DAY) - INTERVAL 1 DAY THEN clicks ELSE 0 END) AS total_clicks_yesterday,
-                    -- 过去30天的总销售额
-                    SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 29 day) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN sales14d ELSE 0 END) AS total_sales14d_30d,
-                    -- 过去7天的总销售额
-                    SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 6 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN sales14d ELSE 0 END) AS total_sales14d_7d,
-                    -- 昨天的总销售额
-                    SUM(CASE WHEN date = DATE_SUB('{}', INTERVAL 1 DAY) - INTERVAL 1 DAY THEN sales14d ELSE 0 END) AS total_sales14d_yesterday,
-                    -- 过去30天的总成本
-                    SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 29 day) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN cost ELSE 0 END) AS total_cost_30d,
-                    -- 过去7天的总成本
-                    SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 6 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN cost ELSE 0 END) AS total_cost_7d,
-                    -- 昨天的总成本
-                    SUM(CASE WHEN date = DATE_SUB('{}', INTERVAL 1 DAY) - INTERVAL 1 DAY THEN cost ELSE 0 END) AS total_cost_yesterday,
-                    -- 过去30天的平均成本销售比（ACOS）
-                    SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 29 day) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN cost ELSE 0 END) / NULLIF(SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 29 day) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN sales14d ELSE 0 END), 0) AS ACOS_30d,
-                    -- 过去7天的平均成本销售比（ACOS）
-                    SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 6 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN cost ELSE 0 END) / NULLIF(SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 6 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN sales14d ELSE 0 END), 0) AS ACOS_7d,
-                    -- 昨天的平均成本销售比（ACOS）
-                    SUM(CASE WHEN date = DATE_SUB('{}', INTERVAL 1 DAY) - INTERVAL 1 DAY THEN cost ELSE 0 END) / NULLIF(SUM(CASE WHEN date = DATE_SUB('{}', INTERVAL 1 DAY) - INTERVAL 1 DAY THEN sales14d ELSE 0 END), 0) AS ACOS_yesterday
-                FROM
-                    amazon_advertised_product_reports_sp
-                WHERE
-                    date BETWEEN DATE_SUB('{}', INTERVAL 30 DAY) AND ('{}'-INTERVAL 1 DAY)
-                    AND market = '{}'
-                    AND adId IN (
-                        SELECT adId
-                        FROM amazon_advertised_product_reports_sp
-                        WHERE campaignStatus = 'ENABLED' AND date = DATE_SUB('{}', INTERVAL 1 DAY)
-                    )
-                    AND (campaignName LIKE '%AUTO%' OR campaignName LIKE '%auto%' OR campaignName LIKE '%Auto%' OR campaignName LIKE '%自动%')
-                GROUP BY
-                    adGroupName,
-                    campaignName,
-                    advertisedSku
-                ORDER BY
-                    adGroupName,
-                    campaignName,
-                    advertisedSku;
-                                """.format(cur_time, cur_time, cur_time, cur_time, cur_time, cur_time, cur_time,
-                                           cur_time, cur_time, cur_time, cur_time, cur_time, cur_time, cur_time,
-                                           cur_time, cur_time, cur_time, cur_time, cur_time, cur_time, cur_time,
-                                           cur_time, cur_time, cur_time, cur_time, cur_time, cur_time, country,
-                                           cur_time)
+                query = api.get_query_v1_1(cur_time, country)
             elif version == 1.2:
-                query = """
-                SELECT
-adGroupName,
-a.adId,
-a.campaignId,
-campaignName,
-advertisedSku,
-    -- 过去30天的总订单数
-    SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 29 day) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN purchases7d ELSE 0 END) AS ORDER_1m,
-    -- 过去7天的总订单数
-    SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 6 day) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN purchases7d ELSE 0 END) AS ORDER_7d,
-    -- 过去30天（包含今天）的总点击量
-    SUM(CASE WHEN date BETWEEN DATE_SUB('{}', INTERVAL 30 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN clicks ELSE 0 END) AS total_clicks_30d,
-    -- 过去7天（包含今天）的总点击量
-    SUM(CASE WHEN date BETWEEN DATE_SUB('{}', INTERVAL 7 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN clicks ELSE 0 END) AS total_clicks_7d,
-    -- 昨天的总点击量
-    SUM(CASE WHEN date = '{}' - INTERVAL 2 DAY THEN clicks ELSE 0 END) AS total_clicks_yesterday,
-    -- 过去30天的总销售额
-    SUM(CASE WHEN date BETWEEN DATE_SUB('{}', INTERVAL 30 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN sales14d ELSE 0 END) AS total_sales14d_30d,
-    -- 过去7天的总销售额
-    SUM(CASE WHEN date BETWEEN DATE_SUB('{}', INTERVAL 7 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN sales14d ELSE 0 END) AS total_sales14d_7d,
-    -- 昨天的总销售额
-    SUM(CASE WHEN date = '{}' - INTERVAL 2 DAY THEN sales14d ELSE 0 END) AS total_sales14d_yesterday,
-    -- 过去30天的总成本
-    SUM(CASE WHEN date BETWEEN DATE_SUB('{}', INTERVAL 30 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN cost ELSE 0 END) AS total_cost_30d,
-    -- 过去7天的总成本
-    SUM(CASE WHEN date BETWEEN DATE_SUB('{}', INTERVAL 7 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN cost ELSE 0 END) AS total_cost_7d,
-    -- 昨天的总成本
-    SUM(CASE WHEN date = '{}' - INTERVAL 2 DAY THEN cost ELSE 0 END) AS total_cost_yesterday,
-    -- 过去30天的平均成本销售比（ACOS）
-    CASE WHEN SUM(CASE WHEN date BETWEEN DATE_SUB('{}', INTERVAL 30 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN sales14d ELSE 0 END) > 0
-         THEN SUM(CASE WHEN date BETWEEN DATE_SUB('{}', INTERVAL 30 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN cost ELSE 0 END) /
-              SUM(CASE WHEN date BETWEEN DATE_SUB('{}', INTERVAL 30 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN sales14d ELSE 0 END)
-         ELSE 0
-    END AS ACOS_30d,
-    -- 过去7天的平均成本销售比（ACOS）
-    CASE WHEN SUM(CASE WHEN date BETWEEN DATE_SUB('{}', INTERVAL 7 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN sales14d ELSE 0 END) > 0
-         THEN SUM(CASE WHEN date BETWEEN DATE_SUB('{}', INTERVAL 7 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN cost ELSE 0 END) /
-              SUM(CASE WHEN date BETWEEN DATE_SUB('{}', INTERVAL 7 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN sales14d ELSE 0 END)
-         ELSE 0
-    END AS ACOS_7d,
-    -- 昨天的平均成本销售比（ACOS）
-    CASE WHEN SUM(CASE WHEN date = '{}' - INTERVAL 2 DAY THEN sales14d ELSE 0 END) > 0
-         THEN SUM(CASE WHEN date = '{}' - INTERVAL 2 DAY THEN cost ELSE 0 END) /
-              SUM(CASE WHEN date = '{}' - INTERVAL 2 DAY THEN sales14d ELSE 0 END)
-         ELSE 0
-    END AS ACOS_yesterday
-FROM
-    amazon_advertised_product_reports_sp a
-JOIN
-    amazon_campaigns_list_sp c ON a.campaignId = c.campaignId
-WHERE
-    a.date BETWEEN DATE_SUB('{}', INTERVAL 30 DAY) AND '{}'- INTERVAL 1 DAY
-    AND a.market = '{}'
-    AND a.campaignId IN (
-        SELECT campaignId
-        FROM amazon_advertised_product_reports_sp
-        WHERE campaignStatus = 'ENABLED' AND date = '{}' - INTERVAL 1 DAY
-    )
-    AND c.targetingType like '%AUT%'
-GROUP BY
-    adGroupName,
-    a.adId,
-    campaignName,
-    advertisedSku
-
-ORDER BY
-    adGroupName,
-    campaignName,
-    advertisedSku;
-                                """.format(cur_time, cur_time, cur_time, cur_time, cur_time, cur_time, cur_time, cur_time, cur_time, cur_time,
-                                           cur_time, cur_time, cur_time, cur_time, cur_time, cur_time, cur_time, cur_time, cur_time, cur_time,
-                                           cur_time, cur_time, cur_time, cur_time, cur_time, cur_time, cur_time, cur_time, cur_time, cur_time,
-                                           cur_time, cur_time, cur_time, cur_time, cur_time, cur_time, country,
-                                           cur_time)
+                query = api.get_query_v1_2(cur_time, country)
             elif version == 1.3:
-                query = """
-                            SELECT
-            adGroupName,
-            a.adId,
-            a.campaignId,
-            campaignName,
-            advertisedSku,
-                -- 过去30天的总订单数
-                SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 29 day) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN purchases7d ELSE 0 END) AS ORDER_1m,
-                -- 过去7天的总订单数
-                SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 6 day) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN purchases7d ELSE 0 END) AS ORDER_7d,
-                -- 过去30天（包含今天）的总点击量
-                SUM(CASE WHEN date BETWEEN DATE_SUB('{}', INTERVAL 30 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN clicks ELSE 0 END) AS total_clicks_30d,
-                -- 过去7天（包含今天）的总点击量
-                SUM(CASE WHEN date BETWEEN DATE_SUB('{}', INTERVAL 7 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN clicks ELSE 0 END) AS total_clicks_7d,
-                -- 昨天的总点击量
-                SUM(CASE WHEN date = '{}' - INTERVAL 2 DAY THEN clicks ELSE 0 END) AS total_clicks_yesterday,
-                -- 过去30天的总销售额
-                SUM(CASE WHEN date BETWEEN DATE_SUB('{}', INTERVAL 30 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN sales14d ELSE 0 END) AS total_sales14d_30d,
-                -- 过去7天的总销售额
-                SUM(CASE WHEN date BETWEEN DATE_SUB('{}', INTERVAL 7 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN sales14d ELSE 0 END) AS total_sales14d_7d,
-                -- 昨天的总销售额
-                SUM(CASE WHEN date = '{}' - INTERVAL 2 DAY THEN sales14d ELSE 0 END) AS total_sales14d_yesterday,
-                -- 过去30天的总成本
-                SUM(CASE WHEN date BETWEEN DATE_SUB('{}', INTERVAL 30 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN cost ELSE 0 END) AS total_cost_30d,
-                -- 过去7天的总成本
-                SUM(CASE WHEN date BETWEEN DATE_SUB('{}', INTERVAL 7 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN cost ELSE 0 END) AS total_cost_7d,
-                -- 昨天的总成本
-                SUM(CASE WHEN date = '{}' - INTERVAL 2 DAY THEN cost ELSE 0 END) AS total_cost_yesterday,
-                -- 过去30天的平均成本销售比（ACOS）
-                CASE WHEN SUM(CASE WHEN date BETWEEN DATE_SUB('{}', INTERVAL 30 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN sales14d ELSE 0 END) > 0
-                     THEN SUM(CASE WHEN date BETWEEN DATE_SUB('{}', INTERVAL 30 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN cost ELSE 0 END) /
-                          SUM(CASE WHEN date BETWEEN DATE_SUB('{}', INTERVAL 30 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN sales14d ELSE 0 END)
-                     ELSE 0
-                END AS ACOS_30d,
-                -- 过去7天的平均成本销售比（ACOS）
-                CASE WHEN SUM(CASE WHEN date BETWEEN DATE_SUB('{}', INTERVAL 7 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN sales14d ELSE 0 END) > 0
-                     THEN SUM(CASE WHEN date BETWEEN DATE_SUB('{}', INTERVAL 7 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN cost ELSE 0 END) /
-                          SUM(CASE WHEN date BETWEEN DATE_SUB('{}', INTERVAL 7 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN sales14d ELSE 0 END)
-                     ELSE 0
-                END AS ACOS_7d,
-                -- 昨天的平均成本销售比（ACOS）
-                CASE WHEN SUM(CASE WHEN date = '{}' - INTERVAL 2 DAY THEN sales14d ELSE 0 END) > 0
-                     THEN SUM(CASE WHEN date = '{}' - INTERVAL 2 DAY THEN cost ELSE 0 END) /
-                          SUM(CASE WHEN date = '{}' - INTERVAL 2 DAY THEN sales14d ELSE 0 END)
-                     ELSE 0
-                END AS ACOS_yesterday
-            FROM
-                amazon_advertised_product_reports_sp a
-            JOIN
-                amazon_campaigns_list_sp c ON a.campaignId = c.campaignId
-            WHERE
-                a.date BETWEEN DATE_SUB('{}', INTERVAL 30 DAY) AND '{}'- INTERVAL 1 DAY
-                AND a.market = '{}'
-                AND a.campaignId IN (
-                    SELECT campaignId
-                    FROM amazon_advertised_product_reports_sp
-                    WHERE campaignStatus = 'ENABLED' AND date = '{}' - INTERVAL 1 DAY
-                    AND campaignName NOT LIKE '%_overstock%'
-                )
-                AND c.targetingType like '%AUT%'
-                AND not EXISTS (
-        SELECT 1
-        FROM amazon_sp_productads_list
-        WHERE sku = a.advertisedSku
-          AND campaignId = a.campaignId
-          AND adId = a.adId
-          AND state in ('ARCHIVED','PAUSED')
-    )
-            GROUP BY
-                adGroupName,
-                a.adId,
-                campaignName,
-                advertisedSku
-
-            ORDER BY
-                adGroupName,
-                campaignName,
-                advertisedSku;
-                                            """.format(cur_time, cur_time, cur_time, cur_time, cur_time, cur_time,
-                                                       cur_time, cur_time, cur_time, cur_time,
-                                                       cur_time, cur_time, cur_time, cur_time, cur_time, cur_time,
-                                                       cur_time, cur_time, cur_time, cur_time,
-                                                       cur_time, cur_time, cur_time, cur_time, cur_time, cur_time,
-                                                       cur_time, cur_time, cur_time, cur_time,
-                                                       cur_time, cur_time, cur_time, cur_time, cur_time, cur_time,
-                                                       country,
-                                                       cur_time)
+                query = api.get_query_v1_3(cur_time, country)
+            elif version == 1.4:
+                query = api.get_query_v1_4(cur_time, country)
             else:
                 query = None
             df1 = pd.read_sql(query, con=conn)
@@ -1857,96 +713,11 @@ ORDER BY
         """"""
         try:
             conn = self.conn
-
+            api = reopenSkuQueryAuto()
             if version == 1.0:
-                query = """
-                            SELECT
-            adGroupName,
-            a.adId,
-            a.campaignId,
-            campaignName,
-            advertisedSku,
-                -- 过去30天的总订单数
-                SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 29 day) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN purchases7d ELSE 0 END) AS ORDER_1m,
-                -- 过去7天的总订单数
-                SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 6 day) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN purchases7d ELSE 0 END) AS ORDER_7d,
-                -- 过去30天（包含今天）的总点击量
-                SUM(CASE WHEN date BETWEEN DATE_SUB('{}', INTERVAL 30 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN clicks ELSE 0 END) AS total_clicks_30d,
-                -- 过去7天（包含今天）的总点击量
-                SUM(CASE WHEN date BETWEEN DATE_SUB('{}', INTERVAL 7 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN clicks ELSE 0 END) AS total_clicks_7d,
-                -- 昨天的总点击量
-                SUM(CASE WHEN date = '{}' - INTERVAL 2 DAY THEN clicks ELSE 0 END) AS total_clicks_yesterday,
-                -- 过去30天的总销售额
-                SUM(CASE WHEN date BETWEEN DATE_SUB('{}', INTERVAL 30 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN sales14d ELSE 0 END) AS total_sales14d_30d,
-                -- 过去7天的总销售额
-                SUM(CASE WHEN date BETWEEN DATE_SUB('{}', INTERVAL 7 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN sales14d ELSE 0 END) AS total_sales14d_7d,
-                -- 昨天的总销售额
-                SUM(CASE WHEN date = '{}' - INTERVAL 2 DAY THEN sales14d ELSE 0 END) AS total_sales14d_yesterday,
-                -- 过去30天的总成本
-                SUM(CASE WHEN date BETWEEN DATE_SUB('{}', INTERVAL 30 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN cost ELSE 0 END) AS total_cost_30d,
-                -- 过去7天的总成本
-                SUM(CASE WHEN date BETWEEN DATE_SUB('{}', INTERVAL 7 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN cost ELSE 0 END) AS total_cost_7d,
-                -- 昨天的总成本
-                SUM(CASE WHEN date = '{}' - INTERVAL 2 DAY THEN cost ELSE 0 END) AS total_cost_yesterday,
-                -- 过去30天的平均成本销售比（ACOS）
-                CASE WHEN SUM(CASE WHEN date BETWEEN DATE_SUB('{}', INTERVAL 30 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN sales14d ELSE 0 END) > 0
-                     THEN SUM(CASE WHEN date BETWEEN DATE_SUB('{}', INTERVAL 30 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN cost ELSE 0 END) /
-                          SUM(CASE WHEN date BETWEEN DATE_SUB('{}', INTERVAL 30 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN sales14d ELSE 0 END)
-                     ELSE 0
-                END AS ACOS_30d,
-                -- 过去7天的平均成本销售比（ACOS）
-                CASE WHEN SUM(CASE WHEN date BETWEEN DATE_SUB('{}', INTERVAL 7 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN sales14d ELSE 0 END) > 0
-                     THEN SUM(CASE WHEN date BETWEEN DATE_SUB('{}', INTERVAL 7 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN cost ELSE 0 END) /
-                          SUM(CASE WHEN date BETWEEN DATE_SUB('{}', INTERVAL 7 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN sales14d ELSE 0 END)
-                     ELSE 0
-                END AS ACOS_7d,
-                -- 昨天的平均成本销售比（ACOS）
-                CASE WHEN SUM(CASE WHEN date = '{}' - INTERVAL 2 DAY THEN sales14d ELSE 0 END) > 0
-                     THEN SUM(CASE WHEN date = '{}' - INTERVAL 2 DAY THEN cost ELSE 0 END) /
-                          SUM(CASE WHEN date = '{}' - INTERVAL 2 DAY THEN sales14d ELSE 0 END)
-                     ELSE 0
-                END AS ACOS_yesterday
-            FROM
-                amazon_advertised_product_reports_sp a
-            JOIN
-                amazon_campaigns_list_sp c ON a.campaignId = c.campaignId
-            WHERE
-                a.date BETWEEN DATE_SUB('{}', INTERVAL 30 DAY) AND '{}'- INTERVAL 1 DAY
-                AND a.market = '{}'
-                AND a.campaignId IN (
-                    SELECT campaignId
-                    FROM amazon_advertised_product_reports_sp
-                    WHERE campaignStatus = 'ENABLED' AND date = '{}' - INTERVAL 1 DAY
-                    AND campaignName NOT LIKE '%_overstock%'
-                )
-                AND c.targetingType like '%AUT%'
-                AND not EXISTS (
-        SELECT 1
-        FROM amazon_sp_productads_list
-        WHERE sku = a.advertisedSku
-          AND campaignId = a.campaignId
-          AND adId = a.adId
-          AND state in ('ARCHIVED','ENABLED')
-    )
-            GROUP BY
-                adGroupName,
-                a.adId,
-                campaignName,
-                advertisedSku
-
-            ORDER BY
-                adGroupName,
-                campaignName,
-                advertisedSku;
-                                            """.format(cur_time, cur_time, cur_time, cur_time, cur_time, cur_time,
-                                                       cur_time, cur_time, cur_time, cur_time,
-                                                       cur_time, cur_time, cur_time, cur_time, cur_time, cur_time,
-                                                       cur_time, cur_time, cur_time, cur_time,
-                                                       cur_time, cur_time, cur_time, cur_time, cur_time, cur_time,
-                                                       cur_time, cur_time, cur_time, cur_time,
-                                                       cur_time, cur_time, cur_time, cur_time, cur_time, cur_time,
-                                                       country,
-                                                       cur_time)
+                query = api.get_query_v1_0(cur_time, country)
+            elif version == 1.1:
+                query = api.get_query_v1_1(cur_time, country)
             else:
                 query = None
             df1 = pd.read_sql(query, con=conn)
@@ -1960,145 +731,20 @@ ORDER BY
         except Exception as error:
             print("Error while inserting data:", error)
 
-    def preprocessing_targeting_group_auto(self, country, cur_time, version=1.2):
+    def preprocessing_targeting_group_auto(self, country, cur_time, version=1.3):
 
         """"""
         try:
             conn = self.conn
-
+            api = TargetingGroupQueryAuto()
             if version == 1.0:
-                query = """
-        SELECT placementClassification,
-    campaignName,
-    SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 2 day) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN clicks ELSE 0 END) AS total_clicks_3d,
-    SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 6 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN clicks ELSE 0 END) AS total_clicks_7d,
-    SUM(CASE WHEN date = '{}' - INTERVAL 2 DAY THEN clicks ELSE 0 END) AS total_clicks_yesterday,
-                SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 2 day) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN sales14d ELSE 0 END) AS total_sales14d_3d,
-                SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 6 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN sales14d ELSE 0 END) AS total_sales14d_7d,
-                SUM(CASE WHEN date = '{}' - INTERVAL 2 DAY THEN sales14d ELSE 0 END) AS total_sales14d_yesterday,
-                SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 2 day) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN cost ELSE 0 END) AS total_cost_3d,
-                SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 6 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN cost ELSE 0 END) AS total_cost_7d,
-                SUM(CASE WHEN date = '{}' - INTERVAL 2 DAY THEN cost ELSE 0 END) AS total_cost_yesterday,
-                SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 2 day) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN cost ELSE 0 END) / SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 2 day) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN sales14d ELSE 0 END) AS ACOS_3d,
-               SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 6 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN cost ELSE 0 END) / SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 6 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN sales14d ELSE 0 END) AS ACOS_7d,
-     SUM(CASE WHEN date = '{}' - INTERVAL 2 DAY THEN cost ELSE 0 END) / SUM(CASE WHEN date = '{}' - INTERVAL 2 DAY THEN sales14d ELSE 0 END)  AS ACOS_yesterday
-
-FROM
-amazon_campaign_placement_reports_sp
-  WHERE
-    DATE BETWEEN DATE_SUB('{}', INTERVAL 30 DAY)
-    AND ('{}'-INTERVAL 1 DAY)
-    AND market = '{}'
-    AND  campaignId in (select campaignId from amazon_targeting_reports_sp where campaignStatus='ENABLED' and date=DATE_SUB('{}', INTERVAL 1 DAY))
-    AND ( campaignName LIKE '%AUTO%' OR campaignName LIKE '%auto%' OR campaignName LIKE '%Auto%' OR campaignName LIKE '%自动%' )
-
-GROUP BY
-  campaignName,
-  placementClassification
-ORDER BY
-  campaignName,
-  placementClassification;
-                """.format(cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,country,cur_time)
+                query = api.get_query_v1_0(cur_time, country)
             elif version == 1.1:
-                query = """
-                SELECT
-                    placementClassification,
-                    campaignName,
-                    campaignId,
-                    SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 2 day) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN clicks ELSE 0 END) AS total_clicks_3d,
-                    SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 6 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN clicks ELSE 0 END) AS total_clicks_7d,
-                    SUM(CASE WHEN date = '{}' - INTERVAL 2 DAY THEN clicks ELSE 0 END) AS total_clicks_yesterday,
-                    SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 2 day) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN sales14d ELSE 0 END) AS total_sales14d_3d,
-                    SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 6 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN sales14d ELSE 0 END) AS total_sales14d_7d,
-                    SUM(CASE WHEN date = '{}' - INTERVAL 2 DAY THEN sales14d ELSE 0 END) AS total_sales14d_yesterday,
-                    SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 2 day) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN cost ELSE 0 END) AS total_cost_3d,
-                    SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 6 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN cost ELSE 0 END) AS total_cost_7d,
-                    SUM(CASE WHEN date = '{}' - INTERVAL 2 DAY THEN cost ELSE 0 END) AS total_cost_yesterday,
-                    SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 2 day) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN cost ELSE 0 END) / SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 2 day) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN sales14d ELSE 0 END) AS ACOS_3d,
-                    SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 6 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN cost ELSE 0 END) / SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 6 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN sales14d ELSE 0 END) AS ACOS_7d,
-                    SUM(CASE WHEN date = '{}' - INTERVAL 2 DAY THEN cost ELSE 0 END) / SUM(CASE WHEN date = '{}' - INTERVAL 2 DAY THEN sales14d ELSE 0 END)  AS ACOS_yesterday
-
-                FROM
-                amazon_campaign_placement_reports_sp
-                WHERE
-                    DATE BETWEEN DATE_SUB('{}', INTERVAL 30 DAY)
-                    AND ('{}'-INTERVAL 1 DAY)
-                    AND market = '{}'
-                    AND  campaignId in (select campaignId from amazon_targeting_reports_sp where campaignStatus='ENABLED' and date=DATE_SUB('{}', INTERVAL 1 DAY))
-                    AND ( campaignName LIKE '%AUTO%' OR campaignName LIKE '%auto%' OR campaignName LIKE '%Auto%' OR campaignName LIKE '%自动%' )
-
-                GROUP BY
-                  campaignName,
-                  placementClassification
-                ORDER BY
-                  campaignName,
-                  placementClassification;
-                                """.format(cur_time, cur_time, cur_time, cur_time, cur_time, cur_time, cur_time,
-                                           cur_time, cur_time, cur_time, cur_time, cur_time, cur_time, cur_time,
-                                           cur_time, cur_time, cur_time, cur_time, cur_time, cur_time, cur_time,
-                                           cur_time, cur_time, cur_time, cur_time, cur_time, cur_time, country,
-                                           cur_time)
+                query = api.get_query_v1_1(cur_time, country)
             elif version == 1.2:
-                query = """
-                SELECT
-    a.campaignName,
-    a.campaignId,
-    a.placementClassification,
-    SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 2 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY)  THEN a.clicks ELSE 0 END) AS total_clicks_3d,
-    SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 6 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY)  THEN a.clicks ELSE 0 END) AS total_clicks_7d,
-    SUM(CASE WHEN date = '{}' - INTERVAL 2 DAY THEN a.clicks ELSE 0 END) AS total_clicks_yesterday,
-    SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 2 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY)  THEN a.sales14d ELSE 0 END) AS total_sales14d_3d,
-    SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 6 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY)  THEN a.sales14d ELSE 0 END) AS total_sales14d_7d,
-    SUM(CASE WHEN date = '{}' - INTERVAL 2 DAY THEN a.sales14d ELSE 0 END) AS total_sales14d_yesterday,
-    SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 2 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY)  THEN a.cost ELSE 0 END) AS total_cost_3d,
-    SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 6 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY)  THEN a.cost ELSE 0 END) AS total_cost_7d,
-    SUM(CASE WHEN date = '{}' - INTERVAL 2 DAY THEN a.cost ELSE 0 END) AS total_cost_yesterday,
-    SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 2 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY)  THEN a.cost ELSE 0 END) / SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 2 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY)  THEN a.sales14d ELSE 0 END) AS ACOS_3d,
-    SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 6 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY)  THEN a.cost ELSE 0 END) / SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 6 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY)  THEN a.sales14d ELSE 0 END) AS ACOS_7d,
-    SUM(CASE WHEN date = '{}' - INTERVAL 2 DAY THEN a.cost ELSE 0 END) / SUM(CASE WHEN date = '{}' - INTERVAL 2 DAY THEN a.sales14d ELSE 0 END)  AS ACOS_yesterday ,
-    COALESCE(
-        CASE
-            WHEN a.placementClassification = 'Detail Page on-Amazon' THEN c.dynamicBidding_placementProductPage_percentage
-            WHEN a.placementClassification = 'Other on-Amazon' THEN c.dynamicBidding_placementRestOfSearch_percentage
-            WHEN a.placementClassification = 'Top of Search on-Amazon' THEN c.dynamicBidding_placementTop_percentage
-        END,
-    0) AS bid
-FROM
-    amazon_campaign_placement_reports_sp a
-JOIN
-    (SELECT
-         campaignId,
-         targetingType,
-         dynamicBidding_placementTop_percentage,
-         dynamicBidding_placementProductPage_percentage,
-         dynamicBidding_placementRestOfSearch_percentage
-     FROM
-         amazon_campaigns_list_sp
-     ) c ON a.campaignId = c.campaignId
-WHERE
-    a.market = '{}'
-    AND a.campaignId IN (
-        SELECT campaignId
-        FROM amazon_advertised_product_reports_sp
-        WHERE campaignStatus = 'ENABLED' AND date = '{}' - INTERVAL 1 DAY
-        AND campaignName NOT LIKE '%_overstock%'
-    )
-    AND c.targetingType LIKE '%AUT%'
-GROUP BY
-    a.campaignName,
-    a.campaignId,
-    a.placementClassification,
-    c.dynamicBidding_placementTop_percentage,
-    c.dynamicBidding_placementProductPage_percentage,
-    c.dynamicBidding_placementRestOfSearch_percentage
-ORDER BY
-    a.campaignName,
-    a.placementClassification;
-                                """.format(cur_time, cur_time, cur_time, cur_time, cur_time, cur_time, cur_time,
-                                           cur_time, cur_time, cur_time, cur_time, cur_time, cur_time, cur_time,
-                                           cur_time, cur_time, cur_time, cur_time, cur_time, cur_time, cur_time,
-                                           cur_time, cur_time, cur_time, cur_time, country,
-                                           cur_time)
+                query = api.get_query_v1_2(cur_time, country)
+            elif version == 1.3 or version == '初阶':
+                query = api.get_query_v1_3(cur_time, country)
             else:
                 query = None
             df1 = pd.read_sql(query, con=conn)
@@ -2111,157 +757,21 @@ ORDER BY
         except Exception as error:
             print("Error while inserting data:", error)
 
-    def preprocessing_search_term_auto(self, country, cur_time, version=1.2):
+    def preprocessing_search_term_auto(self, country, cur_time, version=1.3):
 
         """"""
         try:
             conn = self.conn
 
+            api = SearchTermQueryAuto()
             if version == 1.0:
-                query = """
-SELECT keyword,searchTerm,adGroupName,
-    campaignName,
-    SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 29 day) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN clicks ELSE 0 END) AS total_clicks_30d,
-    SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 6 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN clicks ELSE 0 END) AS total_clicks_7d,
-    SUM(CASE WHEN date = '{}' - INTERVAL 2 DAY THEN clicks ELSE 0 END) AS total_clicks_yesterday,
-                SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 29 day) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN sales14d ELSE 0 END) AS total_sales14d_30d,
-                SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 6 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN sales14d ELSE 0 END) AS total_sales14d_7d,
-                SUM(CASE WHEN date = '{}' - INTERVAL 2 DAY THEN sales14d ELSE 0 END) AS total_sales14d_yesterday,
-                SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 29 day) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN cost ELSE 0 END) AS total_cost_30d,
-                SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 6 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN cost ELSE 0 END) AS total_cost_7d,
-                SUM(CASE WHEN date = '{}' - INTERVAL 2 DAY THEN cost ELSE 0 END) AS total_cost_yesterday,
-                SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 29 day) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN cost ELSE 0 END) / SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 29 day) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN sales14d ELSE 0 END) AS ACOS_30d,
-               SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 6 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN cost ELSE 0 END) / SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 6 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN sales14d ELSE 0 END) AS ACOS_7d,
-     SUM(CASE WHEN date = '{}' - INTERVAL 2 DAY THEN cost ELSE 0 END) / SUM(CASE WHEN date = '{}' - INTERVAL 2 DAY THEN sales14d ELSE 0 END)  AS ACOS_yesterday
-
-FROM
-amazon_search_term_reports_sp
-WHERE
-(date between DATE_SUB('{}', INTERVAL 30 DAY) and ('{}'-INTERVAL 1 DAY))
-and market='{}'
-and keywordId in (select keywordId from amazon_targeting_reports_sp where campaignStatus='ENABLED' and date='{}')
-and ( campaignName LIKE '%AUTO%' OR campaignName LIKE '%auto%' OR campaignName LIKE '%Auto%' OR campaignName LIKE '%自动%' )
-and campaignId not in (SELECT
-DISTINCT entityId
-FROM
-amazon_advertising_change_history
-WHERE
-timestamp >= (UNIX_TIMESTAMP(NOW(3)) - 4 * 24 * 60 * 60) * 1000
-and market = '{}'
-and predefinedTarget <> '')
-GROUP BY
-  adGroupName,
-  campaignName,
-  keyword,
-  searchTerm
-ORDER BY
-  adGroupName,
-  campaignName,
-  keyword,
-  searchTerm;
-                """.format(cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,country,cur_time,country)
+                query = api.get_query_v1_0(cur_time, country)
             elif version == 1.1:
-                query = """
-                SELECT
-                    keyword,
-                    searchTerm,
-                    adGroupName,
-                    adGroupId,
-                    campaignName,
-                    campaignId,
-                    SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 29 day) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN clicks ELSE 0 END) AS total_clicks_30d,
-                    SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 6 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN clicks ELSE 0 END) AS total_clicks_7d,
-                    SUM(CASE WHEN date = '{}' - INTERVAL 2 DAY THEN clicks ELSE 0 END) AS total_clicks_yesterday,
-                    SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 29 day) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN sales14d ELSE 0 END) AS total_sales14d_30d,
-                    SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 6 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN sales14d ELSE 0 END) AS total_sales14d_7d,
-                    SUM(CASE WHEN date = '{}' - INTERVAL 2 DAY THEN sales14d ELSE 0 END) AS total_sales14d_yesterday,
-                    SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 29 day) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN cost ELSE 0 END) AS total_cost_30d,
-                    SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 6 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN cost ELSE 0 END) AS total_cost_7d,
-                    SUM(CASE WHEN date = '{}' - INTERVAL 2 DAY THEN cost ELSE 0 END) AS total_cost_yesterday,
-                    SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 29 day) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN cost ELSE 0 END) / SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 29 day) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN sales14d ELSE 0 END) AS ACOS_30d,
-                    SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 6 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN cost ELSE 0 END) / SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 6 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN sales14d ELSE 0 END) AS ACOS_7d,
-                    SUM(CASE WHEN date = '{}' - INTERVAL 2 DAY THEN cost ELSE 0 END) / SUM(CASE WHEN date = '{}' - INTERVAL 2 DAY THEN sales14d ELSE 0 END)  AS ACOS_yesterday
-                FROM
-                amazon_search_term_reports_sp
-                WHERE
-                (date between DATE_SUB('{}', INTERVAL 30 DAY) and ('{}'-INTERVAL 1 DAY))
-                and market='{}'
-                and keywordId in (select keywordId from amazon_targeting_reports_sp where campaignStatus='ENABLED' and date='{}')
-                and ( campaignName LIKE '%AUTO%' OR campaignName LIKE '%auto%' OR campaignName LIKE '%Auto%' OR campaignName LIKE '%自动%' )
-                and campaignId not in (SELECT
-                DISTINCT entityId
-                FROM
-                amazon_advertising_change_history
-                WHERE
-                timestamp >= (UNIX_TIMESTAMP(NOW(3)) - 4 * 24 * 60 * 60) * 1000
-                and market = '{}'
-                and predefinedTarget <> '')
-                GROUP BY
-                  adGroupName,
-                  campaignName,
-                  keyword,
-                  searchTerm
-                ORDER BY
-                  adGroupName,
-                  campaignName,
-                  keyword,
-                  searchTerm;
-                                """.format(cur_time, cur_time, cur_time, cur_time, cur_time, cur_time, cur_time,
-                                           cur_time, cur_time, cur_time, cur_time, cur_time, cur_time, cur_time,
-                                           cur_time, cur_time, cur_time, cur_time, cur_time, cur_time, cur_time,
-                                           cur_time, cur_time, cur_time, cur_time, cur_time, cur_time, country,
-                                           cur_time, country)
+                query = api.get_query_v1_1(cur_time, country)
             elif version == 1.2:
-                query = """
-                SELECT
-                a.keyword,
-                a.searchTerm,
-                a.adGroupName,
-                a.adGroupId,
-                a.matchType,
-                a.campaignName,
-                a.campaignId,
-                SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 29 day) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN purchases7d ELSE 0 END) AS ORDER_1m,
-                SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 6 day) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN purchases7d ELSE 0 END) AS ORDER_7d,
-                SUM(CASE WHEN date = '{}' - INTERVAL 2 DAY THEN purchases7d ELSE 0 END) AS ORDER_yesterday,
-                SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 29 day) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN a.clicks ELSE 0 END) AS total_clicks_30d,
-                SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 6 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN a.clicks ELSE 0 END) AS total_clicks_7d,
-                SUM(CASE WHEN date = '{}' - INTERVAL 2 DAY THEN a.clicks ELSE 0 END) AS total_clicks_yesterday,
-                SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 29 day) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN a.sales14d ELSE 0 END) AS total_sales14d_30d,
-                SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 6 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN a.sales14d ELSE 0 END) AS total_sales14d_7d,
-                SUM(CASE WHEN date = '{}' - INTERVAL 2 DAY THEN a.sales14d ELSE 0 END) AS total_sales14d_yesterday,
-                SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 29 day) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN a.cost ELSE 0 END) AS total_cost_30d,
-                SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 6 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN a.cost ELSE 0 END) AS total_cost_7d,
-                SUM(CASE WHEN date = '{}' - INTERVAL 2 DAY THEN a.cost ELSE 0 END) AS total_cost_yesterday,
-                SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 29 day) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN a.cost ELSE 0 END) / SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 29 day) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN a.sales14d ELSE 0 END) AS ACOS_30d,
-                SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 6 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN a.cost ELSE 0 END) / SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 6 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN a.sales14d ELSE 0 END) AS ACOS_7d,
-                SUM(CASE WHEN date = '{}' - INTERVAL 2 DAY THEN cost ELSE 0 END) / SUM(CASE WHEN date = '{}' - INTERVAL 2 DAY THEN a.sales14d ELSE 0 END)  AS ACOS_yesterday
-FROM
-amazon_search_term_reports_sp a
-JOIN
-    amazon_campaigns_list_sp c ON a.campaignId = c.campaignId
-WHERE
-    a.date BETWEEN DATE_SUB('{}', INTERVAL 30 DAY) AND '{}'- INTERVAL 1 DAY
-    AND a.market = '{}'
-    and a.keywordId in (select keywordId from amazon_targeting_reports_sp where campaignStatus='ENABLED' and date='{}'-INTERVAL 1 DAY AND campaignName NOT LIKE '%_overstock%')
-    AND c.targetingType like '%AUT%'
-    AND NOT (a.searchTerm LIKE 'b0%' AND LENGTH(a.searchTerm) = 10)
-GROUP BY
-  a.adGroupName,
-  a.campaignName,
-  a.keyword,
-  a.searchTerm,
-  a.matchType
-ORDER BY
-  a.adGroupName,
-  a.campaignName,
-  a.keyword,
-  a.searchTerm;
-                                """.format(cur_time, cur_time, cur_time, cur_time, cur_time, cur_time, cur_time, cur_time,
-                                           cur_time, cur_time, cur_time, cur_time, cur_time, cur_time, cur_time, cur_time, cur_time,
-                                           cur_time, cur_time, cur_time, cur_time, cur_time, cur_time, cur_time, cur_time, cur_time,
-                                           cur_time, cur_time, cur_time, cur_time, cur_time, cur_time, country,
-                                           cur_time)
+                query = api.get_query_v1_2(cur_time, country)
+            elif version == 1.3 or version == '初阶':
+                query = api.get_query_v1_3(cur_time, country)
             else:
                 query = None
             df1 = pd.read_sql(query, con=conn)
@@ -2274,183 +784,20 @@ ORDER BY
         except Exception as error:
             print("Error while inserting data:", error)
 
-    def preprocessing_automatic_targeting_auto(self, country, cur_time, version=1.2):
+    def preprocessing_automatic_targeting_auto(self, country, cur_time, version=1.3):
 
         """"""
         try:
             conn = self.conn
-
+            api = AutomaticTargetingQuery()
             if version == 1.0:
-                query = """
-SELECT keyword,keywordBid,adGroupName,
-    campaignName,
-    SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 29 day) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN clicks ELSE 0 END) AS total_clicks_30d,
-    SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 6 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN clicks ELSE 0 END) AS total_clicks_7d,
-    SUM(CASE WHEN date = '{}' - INTERVAL 2 DAY THEN clicks ELSE 0 END) AS total_clicks_yesterday,
-                SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 29 day) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN sales14d ELSE 0 END) AS total_sales14d_30d,
-                SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 6 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN sales14d ELSE 0 END) AS total_sales14d_7d,
-                SUM(CASE WHEN date = '{}' - INTERVAL 2 DAY THEN sales14d ELSE 0 END) AS total_sales14d_yesterday,
-                SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 29 day) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN cost ELSE 0 END) AS total_cost_30d,
-                SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 6 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN cost ELSE 0 END) AS total_cost_7d,
-                SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 3 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN cost ELSE 0 END) AS total_cost_4d,
-                SUM(CASE WHEN date = '{}' - INTERVAL 2 DAY THEN cost ELSE 0 END) AS total_cost_yesterday,
-                SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 29 day) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN cost ELSE 0 END) / SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 29 day) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN sales14d ELSE 0 END) AS ACOS_30d,
-               SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 6 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN cost ELSE 0 END) / SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 6 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN sales14d ELSE 0 END) AS ACOS_7d,
-     SUM(CASE WHEN date = '{}' - INTERVAL 2 DAY THEN cost ELSE 0 END) / SUM(CASE WHEN date = '{}' - INTERVAL 2 DAY THEN sales14d ELSE 0 END)  AS ACOS_yesterday
-
-FROM
- amazon_targeting_reports_sp
-  WHERE
-    DATE BETWEEN DATE_SUB('{}', INTERVAL 30 DAY)
-    AND ('{}'-INTERVAL 1 DAY)
-    AND market = '{}'
-    AND  keywordId in (select keywordId from amazon_targeting_reports_sp where campaignStatus='ENABLED' and date='{}')
-    AND ( campaignName LIKE '%AUTO%' OR campaignName LIKE '%auto%' OR campaignName LIKE '%Auto%' OR campaignName LIKE '%自动%' )
-    and campaignId not in ( SELECT DISTINCT entityId
-        FROM amazon_advertising_change_history
-        WHERE timestamp >= (UNIX_TIMESTAMP(NOW(3)) - 4 * 24 * 60 * 60) * 1000
-        AND market = '{}'
-        AND predefinedTarget <> '')
-
-GROUP BY
-  adGroupName,
-  campaignName,
-  keyword
-ORDER BY
-  adGroupName,
-  campaignName,
-  keyword;
-                """.format(cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,country,cur_time,country)
+                query = api.get_query_v1_0(cur_time, country)
             elif version == 1.1:
-                query = """
-                WITH a AS (
-    SELECT
-        keywordId,
-        keyword,
-        adGroupName,
-        campaignName,
-        SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 29 day) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN purchases7d ELSE 0 END) AS ORDER_1m,
-        SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 29 day) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN clicks ELSE 0 END) AS total_clicks_30d,
-        SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 6 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN clicks ELSE 0 END) AS total_clicks_7d,
-        SUM(CASE WHEN date = '{}' - INTERVAL 2 DAY THEN clicks ELSE 0 END) AS total_clicks_yesterday,
-        SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 29 day) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN sales14d ELSE 0 END) AS total_sales14d_30d,
-        SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 6 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN sales14d ELSE 0 END) AS total_sales14d_7d,
-        SUM(CASE WHEN date = '{}' - INTERVAL 2 DAY THEN sales14d ELSE 0 END) AS total_sales14d_yesterday,
-        SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 29 day) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN cost ELSE 0 END) AS total_cost_30d,
-        SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 6 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN cost ELSE 0 END) AS total_cost_7d,
-        SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 3 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN cost ELSE 0 END) AS total_cost_4d,
-        SUM(CASE WHEN date = '{}' - INTERVAL 2 DAY THEN cost ELSE 0 END) AS total_cost_yesterday,
-        SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 29 day) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN cost ELSE 0 END) / SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 29 day) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN sales14d ELSE 0 END) AS ACOS_30d,
-        SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 6 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN cost ELSE 0 END) / SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 6 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN sales14d ELSE 0 END) AS ACOS_7d,
-        SUM(CASE WHEN date = '{}' - INTERVAL 2 DAY THEN cost ELSE 0 END) / SUM(CASE WHEN date = '{}' - INTERVAL 2 DAY THEN sales14d ELSE 0 END)  AS ACOS_yesterday
-    FROM
-        amazon_targeting_reports_sp
-    WHERE
-        date BETWEEN DATE_SUB('{}', INTERVAL 30 DAY) and DATE_SUB('{}', INTERVAL 1 DAY)
-        -- ... 其他 WHERE 条件
-        AND market = '{}'
-    -- 确保keywordId是来自特定日期的启用状态的campaign
-    AND keywordId IN (SELECT keywordId FROM amazon_targeting_reports_sp WHERE campaignStatus = 'ENABLED' AND date = '{}'- INTERVAL 1 DAY)
-    -- 确保campaignName包含特定文本
-    AND ( campaignName LIKE '%AUTO%' OR campaignName LIKE '%auto%' OR campaignName LIKE '%Auto%' OR campaignName LIKE '%自动%' )
-    -- 排除最近4天内有变更的keywordId
-    AND  keywordId not in ( SELECT DISTINCT entityId
-        FROM amazon_advertising_change_history
-        WHERE timestamp >= (UNIX_TIMESTAMP(NOW(3)) - 4 * 24 * 60 * 60) * 1000
-        AND market = '{}'
-        AND predefinedTarget <> '')
-    GROUP BY
-        adGroupName,
-        campaignName,
-        keyword,
-        keywordId
-    ORDER BY
-        adGroupName,
-        campaignName,
-        keyword,
-        keywordId
-        )
-SELECT
-    a.*,
-    b.keywordBid
-FROM
-    a
-LEFT JOIN
-    amazon_targeting_reports_sp b ON a.keywordId = b.keywordId
-WHERE
-    b.date = DATE_SUB('{}', INTERVAL 1 DAY)
-                                """.format(cur_time, cur_time, cur_time, cur_time, cur_time, cur_time, cur_time, cur_time, cur_time, cur_time, cur_time, cur_time, cur_time, cur_time, cur_time, cur_time, cur_time, cur_time, cur_time, cur_time, cur_time, cur_time, cur_time, cur_time, cur_time, cur_time, cur_time, cur_time, cur_time, cur_time, cur_time, country, cur_time, country, cur_time)
+                query = api.get_query_v1_1(cur_time, country)
             elif version == 1.2:
-                query = """
-                           WITH a AS (
-    SELECT
-        keywordId,
-        keyword,
-        adGroupName,
-        campaignName,
-        SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 29 day) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN purchases7d ELSE 0 END) AS ORDER_1m,
-        SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 29 day) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN clicks ELSE 0 END) AS total_clicks_30d,
-        SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 6 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN clicks ELSE 0 END) AS total_clicks_7d,
-        SUM(CASE WHEN date = '{}' - INTERVAL 2 DAY THEN clicks ELSE 0 END) AS total_clicks_yesterday,
-        SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 29 day) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN sales14d ELSE 0 END) AS total_sales14d_30d,
-        SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 6 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN sales14d ELSE 0 END) AS total_sales14d_7d,
-        SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 2 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN sales14d ELSE 0 END) AS total_sales14d_3d,
-        SUM(CASE WHEN date = '{}' - INTERVAL 2 DAY THEN sales14d ELSE 0 END) AS total_sales14d_yesterday,
-        SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 29 day) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN cost ELSE 0 END) AS total_cost_30d,
-        SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 6 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN cost ELSE 0 END) AS total_cost_7d,
-        SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 2 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN cost ELSE 0 END) AS total_cost_3d,
-        SUM(CASE WHEN date = '{}' - INTERVAL 2 DAY THEN cost ELSE 0 END) AS total_cost_yesterday,
-        SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 29 day) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN cost ELSE 0 END) / SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 29 day) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN sales14d ELSE 0 END) AS ACOS_30d,
-        SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 6 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN cost ELSE 0 END) / SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 6 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN sales14d ELSE 0 END) AS ACOS_7d,
-        SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 2 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN cost ELSE 0 END) / SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 2 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN sales14d ELSE 0 END) AS ACOS_3d,
-        SUM(CASE WHEN date = '{}' - INTERVAL 2 DAY THEN cost ELSE 0 END) / SUM(CASE WHEN date = '{}' - INTERVAL 2 DAY THEN sales14d ELSE 0 END)  AS ACOS_yesterday
-    FROM
-        amazon_targeting_reports_sp b
-   JOIN
-        amazon_campaigns_list_sp c ON b.campaignId = c.campaignId
-WHERE
-    b.date BETWEEN DATE_SUB('{}', INTERVAL 30 DAY) AND '{}'- INTERVAL 1 DAY
-    AND b.market = '{}'
-    AND b.keywordId IN (
-        SELECT keywordId
-        FROM amazon_advertised_product_reports_sp
-        WHERE campaignStatus = 'ENABLED' AND date = '{}' - INTERVAL 1 DAY
-        AND campaignName NOT LIKE '%_overstock%'
-    )
-    AND c.targetingType like '%AUT%'
-    AND  b.keywordId not in ( SELECT DISTINCT entityId
-        FROM amazon_advertising_change_history
-        WHERE timestamp >= (UNIX_TIMESTAMP(NOW(3)) - 4 * 24 * 60 * 60) * 1000
-        AND market = '{}'
-        AND predefinedTarget <> '')
-    GROUP BY
-        b.adGroupName,
-        b.campaignName,
-        b.keyword,
-        b.targeting,
-        b.keywordId
-    ORDER BY
-        b.adGroupName,
-        b.campaignName,
-        b.keyword,
-        b.keywordId
-        )
-SELECT
-    a.*,
-    d.keywordBid
-FROM
-    a
-LEFT JOIN
-    amazon_targeting_reports_sp d ON a.keywordId = d.keywordId
-WHERE
-    d.date = DATE_SUB('{}', INTERVAL 1 DAY)
-                                            """.format(cur_time, cur_time, cur_time, cur_time, cur_time, cur_time,
-                                                       cur_time, cur_time, cur_time, cur_time, cur_time, cur_time,
-                                                       cur_time, cur_time, cur_time, cur_time, cur_time, cur_time,
-                                                       cur_time, cur_time, cur_time, cur_time, cur_time, cur_time,
-                                                       cur_time, cur_time, cur_time, cur_time, cur_time, cur_time,
-                                                       cur_time, cur_time, cur_time, cur_time, cur_time, cur_time,
-                                                       cur_time, country, cur_time, country, cur_time)
+                query = api.get_query_v1_2(cur_time, country)
+            elif version == 1.3 or version == '初阶':
+                query = api.get_query_v1_3(cur_time, country)
             else:
                 query = None
             df1 = pd.read_sql(query, con=conn)
@@ -2463,7 +810,7 @@ WHERE
         except Exception as error:
             print("Error while inserting data:", error)
 
-    def preprocessing_sp_automatic_targeting_auto(self, country, cur_time, version=1.1):
+    def preprocessing_sp_automatic_targeting_auto(self, country, cur_time, version=1.2):
 
         """"""
         try:
@@ -2556,6 +903,106 @@ GROUP BY
         b.keywordId;
                             """.format(cur_time, cur_time, cur_time, cur_time, cur_time, cur_time, country,
                                        cur_time, country, cur_time, country)
+            if version == 1.2:
+                query = """
+WITH a AS (
+SELECT
+        b.campaignName,
+        b.campaignId,
+        b.adGroupName,
+        b.adGroupId,
+        b.keyword,
+        b.keywordId,
+        purchases7d,
+        clicks,
+        cost,
+        bid,
+        date
+FROM
+        amazon_targeting_reports_sp b
+        JOIN amazon_targets_list_sp c ON b.keywordId = c.targetId
+WHERE
+        b.market = '{}'
+        AND b.date BETWEEN DATE_SUB( '{}', INTERVAL 15 DAY )
+        AND DATE_SUB( '{}', INTERVAL 1 DAY )
+                                and expressionType='AUTO'
+ UNION
+SELECT
+        NULL AS campaignName,
+        akl.campaignId,
+        NULL AS adGroupName,
+        akl.adGroupId,
+         (CASE
+        WHEN resolvedExpression like '%QUERY_HIGH_REL_MATCHES%' THEN 'close match'
+        WHEN resolvedExpression like '%QUERY_BROAD_REL_MATCHES%' THEN 'loose match'
+        WHEN resolvedExpression like '%ASIN_ACCESSORY_RELATED%' THEN 'complements'
+        WHEN resolvedExpression like '%ASIN_SUBSTITUTE_RELATED%' THEN 'substitute'
+    END) AS keyword,
+        akl.targetId as keywordId,
+        0 AS purchases7d,
+        0 AS clicks,
+        0 AS cost,
+        bid,
+        DATE_SUB( '{}', INTERVAL 1 DAY ) AS date
+FROM
+        amazon_targets_list_sp akl
+WHERE
+        akl.market = '{}'
+        AND akl.state = 'ENABLED'
+        AND akl.servingStatus NOT IN ( 'CAMPAIGN_PAUSED', 'AD_GROUP_PAUSED', 'TARGETING_CLAUSE_PAUSED' )
+                                and expressionType='AUTO'
+        AND akl.targetId NOT IN (
+        SELECT
+                b.keywordId
+        FROM
+                amazon_targeting_reports_sp b
+        WHERE
+                b.market = '{}'
+                AND b.date BETWEEN DATE_SUB( '{}', INTERVAL 15 DAY )
+        AND DATE_SUB( '{}', INTERVAL 1 DAY )
+        )
+        ORDER BY
+        campaignId,
+        adGroupId
+),
+b AS(
+SELECT
+        campaignName,
+        campaignId,
+        adGroupName,
+        adGroupId,
+        SUM(CASE WHEN date BETWEEN DATE_SUB('{}', INTERVAL 15 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN purchases7d ELSE 0 END) AS total_purchases7d_15d,
+        SUM(CASE WHEN date BETWEEN DATE_SUB('{}', INTERVAL 7 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN clicks ELSE 0 END) AS total_clicks_7d,
+        SUM(CASE WHEN date BETWEEN DATE_SUB('{}', INTERVAL 7 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN cost ELSE 0 END) AS total_cost_7d
+        FROM
+        a
+        GROUP BY
+        campaignId,
+        adGroupId
+)
+SELECT
+        a.campaignName,
+        a.campaignId,
+        a.adGroupName,
+        a.adGroupId,
+        a.keywordId,
+        a.keyword,
+        b.total_purchases7d_15d,
+        b.total_clicks_7d,
+        b.total_cost_7d,
+        a.bid
+
+        FROM a
+        JOIN b  ON a.campaignId = b.campaignId AND a.adGroupId = b.adGroupId
+        GROUP BY
+        a.keywordId
+        ORDER BY
+        a.campaignId,
+        a.adGroupId
+
+
+                """.format(country,cur_time, cur_time, cur_time,country,country, cur_time, cur_time, cur_time, cur_time,
+                                       cur_time, cur_time, cur_time, cur_time)
             else:
                 query = None
             df1 = pd.read_sql(query, con=conn)
@@ -2568,177 +1015,21 @@ GROUP BY
         except Exception as error:
             print("Error while inserting data:", error)
 
-    def preprocessing_budget_auto(self, country, cur_time, version=1.2):
+    def preprocessing_budget_auto(self, country, cur_time, version=1.3):
 
         """"""
         try:
             conn = self.conn
 
+            api = BudgetQueryAuto()
             if version == 1.0:
-                query = """
-WITH Campaign_Stats AS (
-    SELECT
-        campaignName,
-        SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 6 day) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN cost ELSE 0 END) AS cost_7d,
-        SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 6 day) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN sales14d ELSE 0 END) AS sales14d_7d,
-        SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 29 day) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN cost ELSE 0 END) AS cost_1m,
-        SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 29 day) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN sales14d ELSE 0 END) AS sales14d_1m,
-        SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 29 day) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN sales7d ELSE 0 END) AS sales_1m,
-        SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 6 day) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN clicks ELSE 0 END) AS clicks_7d,
-        SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 29 day) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN clicks ELSE 0 END) AS clicks_1m
-    FROM
-        amazon_campaign_reports_sp
-    WHERE
-        date BETWEEN DATE_SUB('{}', INTERVAL 30 DAY) AND ('{}'-INTERVAL 1 DAY)
-        AND campaignStatus = 'ENABLED'
-        AND ( campaignName  LIKE '%AUTO%' or  campaignName   LIKE '%auto%' or campaignName  LIKE '%Auto%' or  campaignName  LIKE '%自动%' )
-        AND market = '{}'
-    GROUP BY
-        campaignName
-)
-SELECT
-    a.campaignName,
-    a.campaignId,
-    a.date,
-    a.campaignBudgetAmount AS Budget,
-    a.clicks,
-    a.cost,
-    a.sales7d as sales,
-    (a.cost / NULLIF(a.sales14d, 0)) AS ACOS,
-    cs.sales_1m,
-    cs.cost_1m,
-    (cs.cost_7d / NULLIF(cs.sales14d_7d, 0)) AS avg_ACOS_7d,
-    cs.cost_1m / NULLIF(cs.sales14d_1m, 0) AS avg_ACOS_1m,
-    cs.clicks_1m,
-    cs.clicks_7d,
-    (SELECT SUM(cost) / SUM(sales14d) FROM amazon_campaign_reports_sp WHERE market = '{}' AND date BETWEEN DATE_SUB('{}', INTERVAL 30 DAY) AND ('{}'-INTERVAL 1 DAY) AND ( campaignName  LIKE '%AUTO%' or  campaignName   LIKE '%auto%' or campaignName  LIKE '%Auto%' or  campaignName  LIKE '%自动%' )) AS country_avg_ACOS_1m
-FROM
-    amazon_campaign_reports_sp a
-LEFT JOIN Campaign_Stats cs ON a.campaignName = cs.campaignName
-WHERE
-    a.date = ('{}'-INTERVAL 1 DAY)
-    AND a.campaignStatus = 'ENABLED'
-    AND ( a.campaignName  LIKE '%AUTO%' or  a.campaignName   LIKE '%auto%' or a.campaignName  LIKE '%Auto%' or  a.campaignName  LIKE '%自动%' )
-    AND a.market = '{}'
-ORDER BY
-    a.date;
-
-                """.format(cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,country,country,cur_time,cur_time,cur_time,country)
+                query = api.get_query_v1_0(cur_time, country)
             elif version == 1.1:
-                query = """
-               WITH Campaign_Stats AS (
-        SELECT
-            campaignId,
-            campaignName,
-            campaignBudgetAmount AS Budget,
-            market,
-            sum(CASE WHEN date = DATE_SUB('{}', INTERVAL 2 DAY) THEN cost ELSE 0 END) as cost_yesterday,
-            sum(CASE WHEN date = DATE_SUB('{}', INTERVAL 2 DAY) THEN clicks ELSE 0 END) as clicks_yesterday,
-            sum(CASE WHEN date = DATE_SUB('{}', INTERVAL 2 DAY) THEN sales14d ELSE 0 END) as sales_yesterday,
-            SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 6 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN cost ELSE 0 END) AS total_cost_7d,
-            SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 6 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN sales14d ELSE 0 END) AS total_sales14d_7d,
-            SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 29 day) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN cost ELSE 0 END) AS total_cost_30d,
-            SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 29 day) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN sales14d ELSE 0 END) AS total_sales14d_30d,
-            SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 29 day) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN clicks ELSE 0 END) AS total_clicks_30d,
-            SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 6 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN clicks ELSE 0 END) AS total_clicks_7d,
-            SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 29 day) AND DATE_SUB('{}', INTERVAL 1 DAY)  THEN cost ELSE 0 END) / SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 29 day) AND DATE_SUB('{}', INTERVAL 1 DAY)  THEN sales14d ELSE 0 END) AS ACOS_30d,
-            SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 6 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY)  THEN cost ELSE 0 END) / SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 6 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY)  THEN sales14d ELSE 0 END) AS ACOS_7d,
-            SUM(CASE WHEN date = '{}' - INTERVAL 2 DAY THEN cost ELSE 0 END) / SUM(CASE WHEN date = '{}' - INTERVAL 2 DAY THEN sales14d ELSE 0 END)  AS ACOS_yesterday
-        FROM
-        amazon_campaign_reports_sp
-        WHERE
-        date BETWEEN DATE_SUB('{}', INTERVAL 30 DAY) AND ('{}'-INTERVAL 1 DAY)
-        AND campaignId IN (
-        SELECT campaignId
-        FROM amazon_campaign_reports_sp
-        WHERE campaignStatus = 'ENABLED' AND date = '{}' - INTERVAL 1 DAY )
-        AND  ( campaignName LIKE '%AUTO%' or  campaignName  LIKE '%auto%' or campaignName LIKE '%Auto%' or  campaignName LIKE '%自动%' )
-        AND market = '{}'
-        GROUP BY
-        campaignName
-),
-b as (
-        select sum(cost)/sum(sales14d) as country_avg_ACOS_1m,market
-        from amazon_campaign_reports_sp
-        WHERE
-        date BETWEEN DATE_SUB('{}', INTERVAL 30 DAY) AND ('{}'-INTERVAL 1 DAY)
-        AND campaignId IN (
-        SELECT campaignId
-        FROM amazon_campaign_reports_sp
-        WHERE campaignStatus = 'ENABLED' AND date = '{}' - INTERVAL 1 DAY )
-        AND  ( campaignName LIKE '%AUTO%' or  campaignName  LIKE '%auto%' or campaignName LIKE '%Auto%' or  campaignName LIKE '%自动%' )
-        AND market = '{}'
-                                )
-    SELECT Campaign_Stats.*,b. country_avg_ACOS_1m
-    from Campaign_Stats join b
-        on Campaign_Stats.market =b.market
-
-                                """.format(cur_time, cur_time, cur_time, cur_time, cur_time, cur_time, cur_time, cur_time, cur_time, cur_time,
-                                           cur_time, cur_time, cur_time, cur_time, cur_time, cur_time, cur_time,
-                                           cur_time, cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time, country, cur_time, cur_time, cur_time, country)
+                query = api.get_query_v1_1(cur_time, country)
             elif version == 1.2:
-                query = """
-                           WITH Campaign_Stats AS (
-     SELECT
-        acr.campaignId,
-        acr.campaignName,
-        acr.campaignBudgetAmount AS Budget,
-        acr.market,
-        sum(CASE WHEN acr.date = DATE_SUB('{}', INTERVAL 2 DAY) THEN acr.cost ELSE 0 END) as cost_yesterday,
-        sum(CASE WHEN acr.date = DATE_SUB('{}', INTERVAL 2 DAY) THEN acr.clicks ELSE 0 END) as clicks_yesterday,
-        sum(CASE WHEN acr.date = DATE_SUB('{}', INTERVAL 2 DAY) THEN acr.sales14d ELSE 0 END) as sales_yesterday,
-        SUM(CASE WHEN acr.date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 6 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN acr.cost ELSE 0 END) AS total_cost_7d,
-        SUM(CASE WHEN acr.date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 6 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN acr.sales14d ELSE 0 END) AS total_sales14d_7d,
-        SUM(CASE WHEN acr.date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 29 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN acr.cost ELSE 0 END) AS total_cost_30d,
-        SUM(CASE WHEN acr.date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 29 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN acr.sales14d ELSE 0 END) AS total_sales14d_30d,
-        SUM(CASE WHEN acr.date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 29 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN acr.clicks ELSE 0 END) AS total_clicks_30d,
-        SUM(CASE WHEN acr.date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 6 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN acr.clicks ELSE 0 END) AS total_clicks_7d,
-        SUM(CASE WHEN acr.date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 29 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN acr.cost ELSE 0 END) / NULLIF(SUM(CASE WHEN acr.date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 29 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN acr.sales14d ELSE 0 END), 0) AS ACOS_30d,
-        SUM(CASE WHEN acr.date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 6 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN acr.cost ELSE 0 END) / NULLIF(SUM(CASE WHEN acr.date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 6 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN acr.sales14d ELSE 0 END), 0) AS ACOS_7d,
-        SUM(CASE WHEN acr.date = '{}' - INTERVAL 2 DAY THEN acr.cost ELSE 0 END) / NULLIF(SUM(CASE WHEN acr.date = '{}' - INTERVAL 2 DAY THEN acr.sales14d ELSE 0 END), 0)  AS ACOS_yesterday
-    FROM
-        amazon_campaign_reports_sp acr
-    JOIN
-        amazon_campaigns_list_sp acl ON acr.campaignId = acl.campaignId
-    WHERE
-        acr.date BETWEEN DATE_SUB('{}', INTERVAL 30 DAY) AND ('{}'-INTERVAL 1 DAY)
-        AND acr.campaignId IN (
-            SELECT campaignId
-            FROM amazon_campaign_reports_sp
-            WHERE campaignStatus = 'ENABLED' AND date = '{}' - INTERVAL 1 DAY
-            AND campaignName NOT LIKE '%_overstock%')
-        AND acl.targetingType LIKE '%AUT%'  -- 这里筛选手动广告
-        AND acr.market = '{}'
-    GROUP BY
-        acr.campaignName
-),
-b as (SELECT
-    SUM(reports.cost)/SUM(reports.sales14d) AS country_avg_ACOS_1m,
-    reports.market
-FROM
-    amazon_campaign_reports_sp AS reports
-INNER JOIN
-    amazon_campaigns_list_sp AS campaigns ON reports.campaignId = campaigns.campaignId
-WHERE
-    reports.date BETWEEN DATE_SUB('{}', INTERVAL 30 DAY) AND ('{}'-INTERVAL 1 DAY)
-                and campaigns.campaignId in ( SELECT campaignId
-        FROM amazon_campaign_reports_sp
-     WHERE campaignStatus = 'ENABLED' AND date = '{}' - INTERVAL 1 DAY )
-
-    AND campaigns.targetingType LIKE '%AUT%'  -- 筛选手动广告
-    AND reports.market = '{}'
-GROUP BY
-    reports.market)
-  SELECT Campaign_Stats.*,b. country_avg_ACOS_1m
-        from Campaign_Stats join b
-        on Campaign_Stats.market =b.market
-                                            """.format(cur_time, cur_time, cur_time, cur_time, cur_time, cur_time,
-                                                       cur_time, cur_time, cur_time, cur_time,
-                                                       cur_time, cur_time, cur_time, cur_time, cur_time, cur_time,
-                                                       cur_time,
-                                                       cur_time, cur_time, cur_time, cur_time, cur_time, cur_time,
-                                                       cur_time, cur_time, cur_time, cur_time, cur_time, country,
-                                                       cur_time, cur_time, cur_time, country)
+                query = api.get_query_v1_2(cur_time, country)
+            elif version == 1.3 or version == '初阶':
+                query = api.get_query_v1_3(cur_time, country)
             else:
                 query = None
             df1 = pd.read_sql(query, con=conn)
@@ -2751,58 +1042,76 @@ GROUP BY
         except Exception as error:
             print("Error while inserting data:", error)
 
-    def preprocessing_campaign_anomaly_detection(self, country, cur_time):
+    def preprocessing_campaign_anomaly_detection(self, country, cur_time, version=1.1):
 
         """"""
         try:
             conn = self.conn
+            if version == 1.0:
+                query = """
+    WITH a AS (
+    SELECT
+        campaignName,
+        campaignId,
+        SUM( CASE WHEN date BETWEEN DATE_SUB( '{}' - INTERVAL 1 DAY, INTERVAL 29 DAY ) AND '{}'- INTERVAL 1 DAY THEN sales14d ELSE 0 END ) AS total_sales14d_1m,
+        SUM( CASE WHEN date BETWEEN DATE_SUB( '{}' - INTERVAL 1 DAY, INTERVAL 6 DAY ) AND '{}'- INTERVAL 1 DAY THEN sales14d ELSE 0 END ) AS total_sales14d_7d,
+        SUM( CASE WHEN date BETWEEN DATE_SUB( '{}' - INTERVAL 1 DAY, INTERVAL 29 DAY ) AND '{}'- INTERVAL 1 DAY THEN cost ELSE 0 END ) AS total_cost_30d,
+        SUM( CASE WHEN date BETWEEN DATE_SUB( '{}' - INTERVAL 1 DAY, INTERVAL 6 DAY ) AND '{}'- INTERVAL 1 DAY THEN cost ELSE 0 END ) AS total_cost_7d,
+        SUM( CASE WHEN date BETWEEN DATE_SUB( '{}' - INTERVAL 1 DAY, INTERVAL 29 DAY ) AND '{}'- INTERVAL 1 DAY THEN cost ELSE 0 END ) / NULLIF(
+            SUM( CASE WHEN date BETWEEN DATE_SUB( '{}' - INTERVAL 1 DAY, INTERVAL 29 DAY ) AND '{}'- INTERVAL 1 DAY THEN sales14d ELSE 0 END ),
+            0
+        ) AS ACOS_30d,
+        SUM( CASE WHEN date BETWEEN DATE_SUB( '{}' - INTERVAL 1 DAY, INTERVAL 6 DAY ) AND '{}'- INTERVAL 1 DAY THEN cost ELSE 0 END ) / NULLIF(
+            SUM( CASE WHEN date BETWEEN DATE_SUB( '{}' - INTERVAL 1 DAY, INTERVAL 6 DAY ) AND '{}'- INTERVAL 1 DAY THEN sales14d ELSE 0 END ),
+            0
+        ) AS ACOS_7d,
+        SUM( CASE WHEN date = '{}' - INTERVAL 2 DAY THEN cost ELSE 0 END ) / NULLIF( SUM( CASE WHEN date = '{}' - INTERVAL 2 DAY THEN sales14d ELSE 0 END ), 0 ) AS ACOS_yesterday
+    FROM
+        amazon_campaign_reports_sp
+    where campaignId in (
+    SELECT campaignId from amazon_campaign_reports_sp
+    where campaignStatus = 'ENABLED'
+    and date = '{}'- INTERVAL 1 DAY
+    and market = '{}'
+    )
+    and date BETWEEN '{}'- INTERVAL 30 DAY and '{}'- INTERVAL 1 DAY
+    and market = '{}'
 
-            query = """
-WITH a AS (
-SELECT
-	campaignName,
-	campaignId,
-	SUM( CASE WHEN date BETWEEN DATE_SUB( '{}' - INTERVAL 1 DAY, INTERVAL 29 DAY ) AND '{}'- INTERVAL 1 DAY THEN sales14d ELSE 0 END ) AS total_sales14d_1m,
-	SUM( CASE WHEN date BETWEEN DATE_SUB( '{}' - INTERVAL 1 DAY, INTERVAL 6 DAY ) AND '{}'- INTERVAL 1 DAY THEN sales14d ELSE 0 END ) AS total_sales14d_7d,
-	SUM( CASE WHEN date BETWEEN DATE_SUB( '{}' - INTERVAL 1 DAY, INTERVAL 29 DAY ) AND '{}'- INTERVAL 1 DAY THEN cost ELSE 0 END ) AS total_cost_30d,
-	SUM( CASE WHEN date BETWEEN DATE_SUB( '{}' - INTERVAL 1 DAY, INTERVAL 6 DAY ) AND '{}'- INTERVAL 1 DAY THEN cost ELSE 0 END ) AS total_cost_7d,
-	SUM( CASE WHEN date BETWEEN DATE_SUB( '{}' - INTERVAL 1 DAY, INTERVAL 29 DAY ) AND '{}'- INTERVAL 1 DAY THEN cost ELSE 0 END ) / NULLIF(
-		SUM( CASE WHEN date BETWEEN DATE_SUB( '{}' - INTERVAL 1 DAY, INTERVAL 29 DAY ) AND '{}'- INTERVAL 1 DAY THEN sales14d ELSE 0 END ),
-		0
-	) AS ACOS_30d,
-	SUM( CASE WHEN date BETWEEN DATE_SUB( '{}' - INTERVAL 1 DAY, INTERVAL 6 DAY ) AND '{}'- INTERVAL 1 DAY THEN cost ELSE 0 END ) / NULLIF(
-		SUM( CASE WHEN date BETWEEN DATE_SUB( '{}' - INTERVAL 1 DAY, INTERVAL 6 DAY ) AND '{}'- INTERVAL 1 DAY THEN sales14d ELSE 0 END ),
-		0
-	) AS ACOS_7d,
-	SUM( CASE WHEN date = '{}' - INTERVAL 2 DAY THEN cost ELSE 0 END ) / NULLIF( SUM( CASE WHEN date = '{}' - INTERVAL 2 DAY THEN sales14d ELSE 0 END ), 0 ) AS ACOS_yesterday
+    GROUP BY
+        campaignName)
+    SELECT
+      a.*,
+        b.impressions AS impressions_yesterday,
+        b.clicks AS clicks_yesterday,
+        b.cost AS cost_yesterday,
+        b.campaignBudgetAmount,
+        b.sales14d AS sales14d_yesterday
+
+    FROM
+        a
+    LEFT JOIN
+        amazon_campaign_reports_sp b ON a.campaignId = b.campaignId
+    WHERE
+        b.date = DATE_SUB('{}', INTERVAL 2 DAY)
+                    """.format(cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,country,cur_time,cur_time,country,cur_time)
+            elif version == 1.1:
+                query ="""
+                SELECT
+        campaignName,
+  campaignId,
+        cost,
+        campaignBudgetAmount,
+        sales14d as sales,
+        ROUND((cost/sales14d), 2) as ACOS,
+        purchases14d as purchases
 FROM
-	amazon_campaign_reports_sp
-where campaignId in (
-SELECT campaignId from amazon_campaign_reports_sp
-where campaignStatus = 'ENABLED'
-and date = '{}'- INTERVAL 1 DAY
-and market = '{}'
-)
-and date BETWEEN '{}'- INTERVAL 30 DAY and '{}'- INTERVAL 1 DAY
-and market = '{}'
-
-GROUP BY
-	campaignName)
-SELECT
-  a.*,
-	b.impressions AS impressions_yesterday,
-	b.clicks AS clicks_yesterday,
-	b.cost AS cost_yesterday,
-	b.campaignBudgetAmount,
-	b.sales14d AS sales14d_yesterday
-
-FROM
-    a
-LEFT JOIN
-    amazon_campaign_reports_sp b ON a.campaignId = b.campaignId
+        amazon_campaign_reports_sp
 WHERE
-    b.date = DATE_SUB('{}', INTERVAL 2 DAY)
-                """.format(cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,country,cur_time,cur_time,country,cur_time)
+        campaignStatus = 'ENABLED' AND
+        date = '{}' AND
+        market = '{}'
+                """.format(cur_time,country)
+
             df1 = pd.read_sql(query, con=conn)
 
             output_filename = '.\日常优化\异常定位检测\广告活动\预处理.csv'
@@ -2814,65 +1123,126 @@ WHERE
         except Exception as error:
             print("Error while inserting data:", error)
 
-    def preprocessing_targeting_group_anomaly_detection(self, country, cur_time):
+    def preprocessing_targeting_group_anomaly_detection(self, country, cur_time, version=1.1):
 
         """"""
         try:
             conn = self.conn
 
+            if version == 1.0:
+                query = """
+    WITH a AS (
+    SELECT
+        campaignName,
+        campaignId,
+        placementClassification,
+        SUM( CASE WHEN date BETWEEN DATE_SUB( '{}' - INTERVAL 1 DAY, INTERVAL 29 DAY ) AND '{}'- INTERVAL 1 DAY THEN sales14d ELSE 0 END ) AS total_sales14d_1m,
+        SUM( CASE WHEN date BETWEEN DATE_SUB( '{}' - INTERVAL 1 DAY, INTERVAL 6 DAY ) AND '{}'- INTERVAL 1 DAY THEN sales14d ELSE 0 END ) AS total_sales14d_7d,
+        SUM( CASE WHEN date BETWEEN DATE_SUB( '{}' - INTERVAL 1 DAY, INTERVAL 29 DAY ) AND '{}'- INTERVAL 1 DAY THEN cost ELSE 0 END ) AS total_cost_30d,
+        SUM( CASE WHEN date BETWEEN DATE_SUB( '{}' - INTERVAL 1 DAY, INTERVAL 6 DAY ) AND '{}'- INTERVAL 1 DAY THEN cost ELSE 0 END ) AS total_cost_7d,
+        SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 29 day) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN clicks ELSE 0 END) AS total_clicks_30d,
+        SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 6 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN clicks ELSE 0 END) AS total_clicks_7d,
+        SUM( CASE WHEN date BETWEEN DATE_SUB( '{}' - INTERVAL 1 DAY, INTERVAL 29 DAY ) AND '{}'- INTERVAL 1 DAY THEN cost ELSE 0 END ) / NULLIF(
+        SUM( CASE WHEN date BETWEEN DATE_SUB( '{}' - INTERVAL 1 DAY, INTERVAL 29 DAY ) AND '{}'- INTERVAL 1 DAY THEN sales14d ELSE 0 END ),
+            0
+        ) AS ACOS_30d,
+        SUM( CASE WHEN date BETWEEN DATE_SUB( '{}' - INTERVAL 1 DAY, INTERVAL 6 DAY ) AND '{}'- INTERVAL 1 DAY THEN cost ELSE 0 END ) / NULLIF(
+            SUM( CASE WHEN date BETWEEN DATE_SUB( '{}' - INTERVAL 1 DAY, INTERVAL 6 DAY ) AND '{}'- INTERVAL 1 DAY THEN sales14d ELSE 0 END ),
+            0
+        ) AS ACOS_7d,
+        SUM( CASE WHEN date = '{}' - INTERVAL 2 DAY THEN cost ELSE 0 END ) / NULLIF( SUM( CASE WHEN date = '{}' - INTERVAL 2 DAY THEN sales14d ELSE 0 END ), 0 ) AS ACOS_yesterday
+    FROM
+        amazon_campaign_placement_reports_sp
+    where campaignId in (
+    SELECT campaignId from amazon_campaign_reports_sp
+    where campaignStatus = 'ENABLED'
+    and date = '{}'- INTERVAL 1 DAY
+    and market = '{}'
+    )
+    and date BETWEEN '{}'- INTERVAL 30 DAY and '{}'- INTERVAL 1 DAY
+    and market = '{}'
 
-            query = """
-WITH a AS (
+    GROUP BY
+        campaignName,
+        placementClassification)
+    SELECT
+      a.*,
+        b.impressions AS impressions_yesterday,
+        b.clicks AS clicks_yesterday,
+        b.cost AS cost_yesterday,
+        b.campaignBudgetAmount,
+        b.sales14d AS sales14d_yesterday
+
+    FROM
+        a
+    LEFT JOIN
+        amazon_campaign_placement_reports_sp b ON a.campaignId = b.campaignId AND a.placementClassification = b.placementClassification
+    WHERE
+        b.date = DATE_SUB('{}', INTERVAL 2 DAY)
+                    """.format(cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,country,cur_time,cur_time,country,cur_time)
+            elif version == 1.1:
+                query = """
 SELECT
-	campaignName,
-	campaignId,
-	placementClassification,
-	SUM( CASE WHEN date BETWEEN DATE_SUB( '{}' - INTERVAL 1 DAY, INTERVAL 29 DAY ) AND '{}'- INTERVAL 1 DAY THEN sales14d ELSE 0 END ) AS total_sales14d_1m,
-	SUM( CASE WHEN date BETWEEN DATE_SUB( '{}' - INTERVAL 1 DAY, INTERVAL 6 DAY ) AND '{}'- INTERVAL 1 DAY THEN sales14d ELSE 0 END ) AS total_sales14d_7d,
-	SUM( CASE WHEN date BETWEEN DATE_SUB( '{}' - INTERVAL 1 DAY, INTERVAL 29 DAY ) AND '{}'- INTERVAL 1 DAY THEN cost ELSE 0 END ) AS total_cost_30d,
-	SUM( CASE WHEN date BETWEEN DATE_SUB( '{}' - INTERVAL 1 DAY, INTERVAL 6 DAY ) AND '{}'- INTERVAL 1 DAY THEN cost ELSE 0 END ) AS total_cost_7d,
-	SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 29 day) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN clicks ELSE 0 END) AS total_clicks_30d,
-    SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 6 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN clicks ELSE 0 END) AS total_clicks_7d,
-	SUM( CASE WHEN date BETWEEN DATE_SUB( '{}' - INTERVAL 1 DAY, INTERVAL 29 DAY ) AND '{}'- INTERVAL 1 DAY THEN cost ELSE 0 END ) / NULLIF(
-	SUM( CASE WHEN date BETWEEN DATE_SUB( '{}' - INTERVAL 1 DAY, INTERVAL 29 DAY ) AND '{}'- INTERVAL 1 DAY THEN sales14d ELSE 0 END ),
-		0
-	) AS ACOS_30d,
-	SUM( CASE WHEN date BETWEEN DATE_SUB( '{}' - INTERVAL 1 DAY, INTERVAL 6 DAY ) AND '{}'- INTERVAL 1 DAY THEN cost ELSE 0 END ) / NULLIF(
-		SUM( CASE WHEN date BETWEEN DATE_SUB( '{}' - INTERVAL 1 DAY, INTERVAL 6 DAY ) AND '{}'- INTERVAL 1 DAY THEN sales14d ELSE 0 END ),
-		0
-	) AS ACOS_7d,
-	SUM( CASE WHEN date = '{}' - INTERVAL 2 DAY THEN cost ELSE 0 END ) / NULLIF( SUM( CASE WHEN date = '{}' - INTERVAL 2 DAY THEN sales14d ELSE 0 END ), 0 ) AS ACOS_yesterday
+    a.campaignName,
+    a.campaignId,
+    a.placementClassification,
+    ROUND(SUM(a.cost) / SUM(a.sales14d), 2) as ACOS, -- 计算最近七天的ACOS并保留两位小数
+    SUM(a.sales14d) as total_sales, -- 计算最近七天的总销售额
+    COALESCE(
+        CASE
+            WHEN a.placementClassification = 'Detail Page on-Amazon' THEN c.dynamicBidding_placementProductPage_percentage
+            WHEN a.placementClassification = 'Other on-Amazon' THEN c.dynamicBidding_placementRestOfSearch_percentage
+            WHEN a.placementClassification = 'Top of Search on-Amazon' THEN c.dynamicBidding_placementTop_percentage
+        END,
+        0
+    ) AS bid
 FROM
-	amazon_campaign_placement_reports_sp
-where campaignId in (
-SELECT campaignId from amazon_campaign_reports_sp
-where campaignStatus = 'ENABLED'
-and date = '{}'- INTERVAL 1 DAY
-and market = '{}'
-)
-and date BETWEEN '{}'- INTERVAL 30 DAY and '{}'- INTERVAL 1 DAY
-and market = '{}'
-
-GROUP BY
-	campaignName,
-	placementClassification)
-SELECT
-  a.*,
-	b.impressions AS impressions_yesterday,
-	b.clicks AS clicks_yesterday,
-	b.cost AS cost_yesterday,
-	b.campaignBudgetAmount,
-	b.sales14d AS sales14d_yesterday
-
-FROM
-    a
-LEFT JOIN
-    amazon_campaign_placement_reports_sp b ON a.campaignId = b.campaignId AND a.placementClassification = b.placementClassification
+    (
+        SELECT
+            campaignName,
+            campaignId,
+            placementClassification,
+            cost,
+            sales14d
+        FROM
+            amazon_campaign_placement_reports_sp
+        WHERE
+            market = '{}'
+            AND date >= DATE_SUB('{}', INTERVAL 7 DAY) -- 最近七天的日期条件
+            AND date <= '{}' -- 指定日期及之前的数据
+    ) a
+JOIN
+    (
+        SELECT
+            campaignId,
+            targetingType,
+            dynamicBidding_placementTop_percentage,
+            dynamicBidding_placementProductPage_percentage,
+            dynamicBidding_placementRestOfSearch_percentage
+        FROM
+            amazon_campaigns_list_sp
+    ) c ON a.campaignId = c.campaignId
 WHERE
-    b.date = DATE_SUB('{}', INTERVAL 2 DAY)
-                """.format(cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,country,cur_time,cur_time,country,cur_time)
-            df1 = pd.read_sql(query, con=conn)
+    a.campaignId IN (
+        SELECT
+            campaignId
+        FROM
+            amazon_advertised_product_reports_sp
+        WHERE
+            campaignStatus = 'ENABLED'
+            AND date >= DATE_SUB('{}', INTERVAL 7 DAY) -- 最近七天的日期条件
+            AND date <= '{}' -- 指定日期及之前的数据
+    )
+GROUP BY
+    a.campaignName,
+    a.campaignId,
+    a.placementClassification,
+    c.dynamicBidding_placementTop_percentage,
+    c.dynamicBidding_placementProductPage_percentage,
+    c.dynamicBidding_placementRestOfSearch_percentage;
+                            """.format(country,cur_time,cur_time,cur_time,cur_time)
 
+            df1 = pd.read_sql(query, con=conn)
             output_filename = '.\日常优化\异常定位检测\广告位\预处理.csv'
             df1.to_csv(output_filename, index=False, encoding='utf-8-sig')
             csv_to_json(output_filename)
@@ -2882,65 +1252,88 @@ WHERE
         except Exception as error:
             print("Error while inserting data:", error)
 
-    def preprocessing_sku_anomaly_detection(self, country, cur_time,campaign_ids):
+    def preprocessing_sku_anomaly_detection(self, country, cur_time,campaign_ids=None, version=1.1):
 
         """"""
         try:
             conn = self.conn
 
+            if version == 1.0:
+                query = """
+    WITH a AS (
+    SELECT
+        campaignName,
+        campaignId,
+        adGroupName,
+        advertisedSku,
+        SUM( CASE WHEN date BETWEEN DATE_SUB( '{}' - INTERVAL 1 DAY, INTERVAL 29 DAY ) AND '{}'- INTERVAL 1 DAY THEN sales14d ELSE 0 END ) AS total_sales14d_1m,
+        SUM( CASE WHEN date BETWEEN DATE_SUB( '{}' - INTERVAL 1 DAY, INTERVAL 6 DAY ) AND '{}'- INTERVAL 1 DAY THEN sales14d ELSE 0 END ) AS total_sales14d_7d,
+        SUM( CASE WHEN date BETWEEN DATE_SUB( '{}' - INTERVAL 1 DAY, INTERVAL 29 DAY ) AND '{}'- INTERVAL 1 DAY THEN cost ELSE 0 END ) AS total_cost_30d,
+        SUM( CASE WHEN date BETWEEN DATE_SUB( '{}' - INTERVAL 1 DAY, INTERVAL 6 DAY ) AND '{}'- INTERVAL 1 DAY THEN cost ELSE 0 END ) AS total_cost_7d,
+            SUM( CASE WHEN date BETWEEN DATE_SUB( '{}' - INTERVAL 1 DAY, INTERVAL 29 DAY ) AND '{}'- INTERVAL 1 DAY THEN purchases7d ELSE 0 END ) AS total_purchases7d_30d,
+        SUM( CASE WHEN date BETWEEN DATE_SUB( '{}' - INTERVAL 1 DAY, INTERVAL 6 DAY ) AND '{}'- INTERVAL 1 DAY THEN purchases7d ELSE 0 END ) AS total_purchases7d_7d,
+          SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 29 day) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN clicks ELSE 0 END) AS total_clicks_30d,
+        SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 6 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN clicks ELSE 0 END) AS total_clicks_7d,
+        SUM( CASE WHEN date BETWEEN DATE_SUB( '{}' - INTERVAL 1 DAY, INTERVAL 29 DAY ) AND '{}'- INTERVAL 1 DAY THEN cost ELSE 0 END ) / NULLIF(
+        SUM( CASE WHEN date BETWEEN DATE_SUB( '{}' - INTERVAL 1 DAY, INTERVAL 29 DAY ) AND '{}'- INTERVAL 1 DAY THEN sales14d ELSE 0 END ),
+            0
+        ) AS ACOS_30d,
+        SUM( CASE WHEN date BETWEEN DATE_SUB( '{}' - INTERVAL 1 DAY, INTERVAL 6 DAY ) AND '{}'- INTERVAL 1 DAY THEN cost ELSE 0 END ) / NULLIF(
+            SUM( CASE WHEN date BETWEEN DATE_SUB( '{}' - INTERVAL 1 DAY, INTERVAL 6 DAY ) AND '{}'- INTERVAL 1 DAY THEN sales14d ELSE 0 END ),
+            0
+        ) AS ACOS_7d,
+        SUM( CASE WHEN date = '{}' - INTERVAL 2 DAY THEN cost ELSE 0 END ) / NULLIF( SUM( CASE WHEN date = '{}' - INTERVAL 2 DAY THEN sales14d ELSE 0 END ), 0 ) AS ACOS_yesterday
+    FROM
+        amazon_advertised_product_reports_sp
+    where campaignId in {}
+    and date BETWEEN '{}'- INTERVAL 30 DAY and '{}'- INTERVAL 1 DAY
+    and market = '{}'
 
-            query = """
-WITH a AS (
-SELECT
-	campaignName,
-	campaignId,
-	adGroupName,
-	advertisedSku,
-	SUM( CASE WHEN date BETWEEN DATE_SUB( '{}' - INTERVAL 1 DAY, INTERVAL 29 DAY ) AND '{}'- INTERVAL 1 DAY THEN sales14d ELSE 0 END ) AS total_sales14d_1m,
-	SUM( CASE WHEN date BETWEEN DATE_SUB( '{}' - INTERVAL 1 DAY, INTERVAL 6 DAY ) AND '{}'- INTERVAL 1 DAY THEN sales14d ELSE 0 END ) AS total_sales14d_7d,
-	SUM( CASE WHEN date BETWEEN DATE_SUB( '{}' - INTERVAL 1 DAY, INTERVAL 29 DAY ) AND '{}'- INTERVAL 1 DAY THEN cost ELSE 0 END ) AS total_cost_30d,
-	SUM( CASE WHEN date BETWEEN DATE_SUB( '{}' - INTERVAL 1 DAY, INTERVAL 6 DAY ) AND '{}'- INTERVAL 1 DAY THEN cost ELSE 0 END ) AS total_cost_7d,
-		SUM( CASE WHEN date BETWEEN DATE_SUB( '{}' - INTERVAL 1 DAY, INTERVAL 29 DAY ) AND '{}'- INTERVAL 1 DAY THEN purchases7d ELSE 0 END ) AS total_purchases7d_30d,
-	SUM( CASE WHEN date BETWEEN DATE_SUB( '{}' - INTERVAL 1 DAY, INTERVAL 6 DAY ) AND '{}'- INTERVAL 1 DAY THEN purchases7d ELSE 0 END ) AS total_purchases7d_7d,
-	  SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 29 day) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN clicks ELSE 0 END) AS total_clicks_30d,
-    SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 6 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN clicks ELSE 0 END) AS total_clicks_7d,
-	SUM( CASE WHEN date BETWEEN DATE_SUB( '{}' - INTERVAL 1 DAY, INTERVAL 29 DAY ) AND '{}'- INTERVAL 1 DAY THEN cost ELSE 0 END ) / NULLIF(
-	SUM( CASE WHEN date BETWEEN DATE_SUB( '{}' - INTERVAL 1 DAY, INTERVAL 29 DAY ) AND '{}'- INTERVAL 1 DAY THEN sales14d ELSE 0 END ),
-		0
-	) AS ACOS_30d,
-	SUM( CASE WHEN date BETWEEN DATE_SUB( '{}' - INTERVAL 1 DAY, INTERVAL 6 DAY ) AND '{}'- INTERVAL 1 DAY THEN cost ELSE 0 END ) / NULLIF(
-		SUM( CASE WHEN date BETWEEN DATE_SUB( '{}' - INTERVAL 1 DAY, INTERVAL 6 DAY ) AND '{}'- INTERVAL 1 DAY THEN sales14d ELSE 0 END ),
-		0
-	) AS ACOS_7d,
-	SUM( CASE WHEN date = '{}' - INTERVAL 2 DAY THEN cost ELSE 0 END ) / NULLIF( SUM( CASE WHEN date = '{}' - INTERVAL 2 DAY THEN sales14d ELSE 0 END ), 0 ) AS ACOS_yesterday
+    GROUP BY
+        campaignName,
+        adGroupName,
+        advertisedSku)
+    SELECT
+      a.*,
+        b.impressions AS impressions_yesterday,
+        b.clicks AS clicks_yesterday,
+        b.cost AS cost_yesterday,
+        b.purchases7d AS purchases7d_yesterday,
+        b.sales14d AS sales14d_yesterday
+
+    FROM
+        a
+    LEFT JOIN
+        amazon_advertised_product_reports_sp b ON a.campaignId = b.campaignId AND a.adGroupName = b.adGroupName AND a.advertisedSku = b.advertisedSku
+    WHERE
+        b.date = DATE_SUB('{}', INTERVAL 2 DAY)
+                    """.format(cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,campaign_ids,cur_time,cur_time,country,cur_time)
+            elif version == 1.1:
+                query = """
+SELECT DISTINCT
+       campaignName,
+       adGroupName,
+       advertisedSku,
+       sum(clicks) as clicks30d,
+        sum(cost) as cost30d,
+        sum(sales14d) as sales30d,
+        ROUND((sum(cost) / sum(sales14d)), 2) as ACOS,
+        sum(purchases14d) as purchases30d
 FROM
-	amazon_advertised_product_reports_sp
-where campaignId in {}
-and date BETWEEN '{}'- INTERVAL 30 DAY and '{}'- INTERVAL 1 DAY
-and market = '{}'
-
-GROUP BY
-	campaignName,
-	adGroupName,
-	advertisedSku)
-SELECT
-  a.*,
-	b.impressions AS impressions_yesterday,
-	b.clicks AS clicks_yesterday,
-	b.cost AS cost_yesterday,
-	b.purchases7d AS purchases7d_yesterday,
-	b.sales14d AS sales14d_yesterday
-
-FROM
-    a
-LEFT JOIN
-    amazon_advertised_product_reports_sp b ON a.campaignId = b.campaignId AND a.adGroupName = b.adGroupName AND a.advertisedSku = b.advertisedSku
+        amazon_advertised_product_reports_sp
 WHERE
-    b.date = DATE_SUB('{}', INTERVAL 2 DAY)
-                """.format(cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,campaign_ids,cur_time,cur_time,country,cur_time)
-            df1 = pd.read_sql(query, con=conn)
+        campaignStatus = 'ENABLED' AND
+        date between  '{}'- INTERVAL 30 DAY and '{}'- INTERVAL 1 DAY
+         AND
+        market = '{}'
+GROUP BY
+        campaignName,
+        adGroupName,
+        advertisedSku
+                                        """.format(cur_time, cur_time, country)
 
-            output_filename = '.\日常优化\异常定位检测\商品\预处理1.csv'
+            df1 = pd.read_sql(query, con=conn)
+            output_filename = '.\日常优化\异常定位检测\商品\预处理.csv'
             df1.to_csv(output_filename, index=False, encoding='utf-8-sig')
             csv_to_json(output_filename)
             # return df
@@ -2949,76 +1342,99 @@ WHERE
         except Exception as error:
             print("Error while inserting data:", error)
 
-    def preprocessing_targeting_anomaly_detection(self, country, cur_time,campaign_ids):
+    def preprocessing_targeting_anomaly_detection(self, country, cur_time,campaign_ids, version=1.1):
 
         """"""
         try:
             conn = self.conn
 
+            if version == 1.0:
+                query = """
+    WITH a AS (
+    SELECT
+        campaignName,
+        campaignId,
+        adGroupName,
+        targeting,
+        matchType,
+        SUM( CASE WHEN date BETWEEN DATE_SUB( '{}' - INTERVAL 1 DAY, INTERVAL 29 DAY ) AND '{}'- INTERVAL 1 DAY THEN sales14d ELSE 0 END ) AS total_sales14d_1m,
+        SUM( CASE WHEN date BETWEEN DATE_SUB( '{}' - INTERVAL 1 DAY, INTERVAL 6 DAY ) AND '{}'- INTERVAL 1 DAY THEN sales14d ELSE 0 END ) AS total_sales14d_7d,
+        SUM( CASE WHEN date BETWEEN DATE_SUB( '{}' - INTERVAL 1 DAY, INTERVAL 29 DAY ) AND '{}'- INTERVAL 1 DAY THEN cost ELSE 0 END ) AS total_cost_30d,
+        SUM( CASE WHEN date BETWEEN DATE_SUB( '{}' - INTERVAL 1 DAY, INTERVAL 6 DAY ) AND '{}'- INTERVAL 1 DAY THEN cost ELSE 0 END ) AS total_cost_7d,
+        SUM( CASE WHEN date BETWEEN DATE_SUB( '{}' - INTERVAL 1 DAY, INTERVAL 29 DAY ) AND '{}'- INTERVAL 1 DAY THEN purchases7d ELSE 0 END ) AS total_purchases7d_30d,
+        SUM( CASE WHEN date BETWEEN DATE_SUB( '{}' - INTERVAL 1 DAY, INTERVAL 6 DAY ) AND '{}'- INTERVAL 1 DAY THEN purchases7d ELSE 0 END ) AS total_purchases7d_7d,
+        SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 29 day) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN clicks ELSE 0 END) AS total_clicks_30d,
+        SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 6 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN clicks ELSE 0 END) AS total_clicks_7d,
+        SUM( CASE WHEN date BETWEEN DATE_SUB( '{}' - INTERVAL 1 DAY, INTERVAL 29 DAY ) AND '{}'- INTERVAL 1 DAY THEN cost ELSE 0 END ) / NULLIF(
+        SUM( CASE WHEN date BETWEEN DATE_SUB( '{}' - INTERVAL 1 DAY, INTERVAL 29 DAY ) AND '{}'- INTERVAL 1 DAY THEN clicks ELSE 0 END ),
+            0
+        ) AS CPC_30d,
+        SUM( CASE WHEN date BETWEEN DATE_SUB( '{}' - INTERVAL 1 DAY, INTERVAL 6 DAY ) AND '{}'- INTERVAL 1 DAY THEN cost ELSE 0 END ) / NULLIF(
+            SUM( CASE WHEN date BETWEEN DATE_SUB( '{}' - INTERVAL 1 DAY, INTERVAL 6 DAY ) AND '{}'- INTERVAL 1 DAY THEN clicks ELSE 0 END ),
+            0
+        ) AS CPC_7d,
+        SUM( CASE WHEN date = '{}' - INTERVAL 2 DAY THEN cost ELSE 0 END ) / NULLIF( SUM( CASE WHEN date = '{}' - INTERVAL 2 DAY THEN clicks ELSE 0 END ), 0 ) AS CPC_yesterday,
+        SUM( CASE WHEN date BETWEEN DATE_SUB( '{}' - INTERVAL 1 DAY, INTERVAL 29 DAY ) AND '{}'- INTERVAL 1 DAY THEN cost ELSE 0 END ) / NULLIF(
+        SUM( CASE WHEN date BETWEEN DATE_SUB( '{}' - INTERVAL 1 DAY, INTERVAL 29 DAY ) AND '{}'- INTERVAL 1 DAY THEN sales14d ELSE 0 END ),
+            0
+        ) AS ACOS_30d,
+        SUM( CASE WHEN date BETWEEN DATE_SUB( '{}' - INTERVAL 1 DAY, INTERVAL 6 DAY ) AND '{}'- INTERVAL 1 DAY THEN cost ELSE 0 END ) / NULLIF(
+            SUM( CASE WHEN date BETWEEN DATE_SUB( '{}' - INTERVAL 1 DAY, INTERVAL 6 DAY ) AND '{}'- INTERVAL 1 DAY THEN sales14d ELSE 0 END ),
+            0
+        ) AS ACOS_7d,
+        SUM( CASE WHEN date = '{}' - INTERVAL 2 DAY THEN cost ELSE 0 END ) / NULLIF( SUM( CASE WHEN date = '{}' - INTERVAL 2 DAY THEN sales14d ELSE 0 END ), 0 ) AS ACOS_yesterday
+    FROM
+        amazon_targeting_reports_sp
+    where campaignId in {}
+    and date BETWEEN '{}'- INTERVAL 30 DAY and '{}'- INTERVAL 1 DAY
+    and market = '{}'
 
-            query = """
-WITH a AS (
-SELECT
-	campaignName,
-	campaignId,
-	adGroupName,
-	targeting,
-	matchType,
-	SUM( CASE WHEN date BETWEEN DATE_SUB( '{}' - INTERVAL 1 DAY, INTERVAL 29 DAY ) AND '{}'- INTERVAL 1 DAY THEN sales14d ELSE 0 END ) AS total_sales14d_1m,
-	SUM( CASE WHEN date BETWEEN DATE_SUB( '{}' - INTERVAL 1 DAY, INTERVAL 6 DAY ) AND '{}'- INTERVAL 1 DAY THEN sales14d ELSE 0 END ) AS total_sales14d_7d,
-	SUM( CASE WHEN date BETWEEN DATE_SUB( '{}' - INTERVAL 1 DAY, INTERVAL 29 DAY ) AND '{}'- INTERVAL 1 DAY THEN cost ELSE 0 END ) AS total_cost_30d,
-	SUM( CASE WHEN date BETWEEN DATE_SUB( '{}' - INTERVAL 1 DAY, INTERVAL 6 DAY ) AND '{}'- INTERVAL 1 DAY THEN cost ELSE 0 END ) AS total_cost_7d,
-	SUM( CASE WHEN date BETWEEN DATE_SUB( '{}' - INTERVAL 1 DAY, INTERVAL 29 DAY ) AND '{}'- INTERVAL 1 DAY THEN purchases7d ELSE 0 END ) AS total_purchases7d_30d,
-	SUM( CASE WHEN date BETWEEN DATE_SUB( '{}' - INTERVAL 1 DAY, INTERVAL 6 DAY ) AND '{}'- INTERVAL 1 DAY THEN purchases7d ELSE 0 END ) AS total_purchases7d_7d,
-	SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 29 day) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN clicks ELSE 0 END) AS total_clicks_30d,
-    SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 6 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN clicks ELSE 0 END) AS total_clicks_7d,
-    SUM( CASE WHEN date BETWEEN DATE_SUB( '{}' - INTERVAL 1 DAY, INTERVAL 29 DAY ) AND '{}'- INTERVAL 1 DAY THEN cost ELSE 0 END ) / NULLIF(
-	SUM( CASE WHEN date BETWEEN DATE_SUB( '{}' - INTERVAL 1 DAY, INTERVAL 29 DAY ) AND '{}'- INTERVAL 1 DAY THEN clicks ELSE 0 END ),
-		0
-	) AS CPC_30d,
-	SUM( CASE WHEN date BETWEEN DATE_SUB( '{}' - INTERVAL 1 DAY, INTERVAL 6 DAY ) AND '{}'- INTERVAL 1 DAY THEN cost ELSE 0 END ) / NULLIF(
-		SUM( CASE WHEN date BETWEEN DATE_SUB( '{}' - INTERVAL 1 DAY, INTERVAL 6 DAY ) AND '{}'- INTERVAL 1 DAY THEN clicks ELSE 0 END ),
-		0
-	) AS CPC_7d,
-	SUM( CASE WHEN date = '{}' - INTERVAL 2 DAY THEN cost ELSE 0 END ) / NULLIF( SUM( CASE WHEN date = '{}' - INTERVAL 2 DAY THEN clicks ELSE 0 END ), 0 ) AS CPC_yesterday,
-	SUM( CASE WHEN date BETWEEN DATE_SUB( '{}' - INTERVAL 1 DAY, INTERVAL 29 DAY ) AND '{}'- INTERVAL 1 DAY THEN cost ELSE 0 END ) / NULLIF(
-	SUM( CASE WHEN date BETWEEN DATE_SUB( '{}' - INTERVAL 1 DAY, INTERVAL 29 DAY ) AND '{}'- INTERVAL 1 DAY THEN sales14d ELSE 0 END ),
-		0
-	) AS ACOS_30d,
-	SUM( CASE WHEN date BETWEEN DATE_SUB( '{}' - INTERVAL 1 DAY, INTERVAL 6 DAY ) AND '{}'- INTERVAL 1 DAY THEN cost ELSE 0 END ) / NULLIF(
-		SUM( CASE WHEN date BETWEEN DATE_SUB( '{}' - INTERVAL 1 DAY, INTERVAL 6 DAY ) AND '{}'- INTERVAL 1 DAY THEN sales14d ELSE 0 END ),
-		0
-	) AS ACOS_7d,
-	SUM( CASE WHEN date = '{}' - INTERVAL 2 DAY THEN cost ELSE 0 END ) / NULLIF( SUM( CASE WHEN date = '{}' - INTERVAL 2 DAY THEN sales14d ELSE 0 END ), 0 ) AS ACOS_yesterday
-FROM
-	amazon_targeting_reports_sp
-where campaignId in {}
-and date BETWEEN '{}'- INTERVAL 30 DAY and '{}'- INTERVAL 1 DAY
-and market = '{}'
+    GROUP BY
+        campaignName,
+        adGroupName,
+        targeting,
+        matchType)
+    SELECT
+      a.*,
+        b.impressions AS impressions_yesterday,
+        b.clicks AS clicks_yesterday,
+        b.cost AS cost_yesterday,
+        b.purchases7d AS purchases7d_yesterday,
+        b.sales14d AS sales14d_yesterday
 
-GROUP BY
-	campaignName,
-	adGroupName,
-	targeting,
-	matchType)
-SELECT
-  a.*,
-	b.impressions AS impressions_yesterday,
-	b.clicks AS clicks_yesterday,
-	b.cost AS cost_yesterday,
-	b.purchases7d AS purchases7d_yesterday,
-	b.sales14d AS sales14d_yesterday
+    FROM
+        a
+    LEFT JOIN
+        amazon_targeting_reports_sp b ON a.campaignId = b.campaignId AND a.adGroupName = b.adGroupName AND a.targeting = b.targeting AND a.matchType = b.matchType
+    WHERE
+        b.date = DATE_SUB('{}', INTERVAL 2 DAY)
+                    """.format(cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,campaign_ids,cur_time,cur_time,country,cur_time)
+            elif version == 1.1:
+                query = """
+            SELECT DISTINCT
+                   campaignName,
+                   adGroupName,
+                   advertisedSku,
+                   sum(clicks) as clicks30d,
+                    sum(cost) as cost30d,
+                    sum(sales14d) as sales30d,
+                    ROUND((sum(cost) / sum(sales14d)), 2) as ACOS,
+                    sum(purchases14d) as purchases30d
+            FROM
+                    amazon_advertised_product_reports_sp
+            WHERE
+                    campaignStatus = 'ENABLED' AND
+                    date between  '{}'- INTERVAL 30 DAY and '{}'- INTERVAL 1 DAY
+                     AND
+                    market = '{}'
+            GROUP BY
+                    campaignName,
+                    adGroupName,
+                    advertisedSku
+                                                    """.format(cur_time, cur_time, country)
 
-FROM
-    a
-LEFT JOIN
-    amazon_targeting_reports_sp b ON a.campaignId = b.campaignId AND a.adGroupName = b.adGroupName AND a.targeting = b.targeting AND a.matchType = b.matchType
-WHERE
-    b.date = DATE_SUB('{}', INTERVAL 2 DAY)
-                """.format(cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,cur_time,campaign_ids,cur_time,cur_time,country,cur_time)
             df1 = pd.read_sql(query, con=conn)
-
-            output_filename = '.\日常优化\异常定位检测\投放词\预处理1.csv'
+            output_filename = '.\日常优化\异常定位检测\投放词\预处理.csv'
             df1.to_csv(output_filename, index=False, encoding='utf-8-sig')
             csv_to_json(output_filename)
             # return df
@@ -3072,8 +1488,8 @@ WHERE
                                 AND (a.campaignName not LIKE '%%ASIN%%' and a.campaignName not LIKE '%%asin%%' and a.campaignName not LIKE '%%商品投放%%' and a.campaignName not LIKE '%%品类投放%%' and a.campaignName not LIKE '%%CATEGORY%%' and a.campaignName not LIKE '%%PRODUCT%%')
                                 AND NOT EXISTS (
                             SELECT 1
-                            FROM amazon_targeting_reports_sp
-                            WHERE keyword = a.searchTerm
+                            FROM amazon_keywords_list_sp
+                            WHERE keywordText = a.searchTerm
                               AND campaignId = a.campaignId
                               AND adGroupId = a.adGroupId
                         )
@@ -3106,6 +1522,122 @@ WHERE
             # print(query)
             df1 = pd.read_sql(query, con=conn)
             output_filename = '.\滞销品优化\手动sp广告\搜索词优化\预处理.csv'
+            df1.to_csv(output_filename, index=False, encoding='utf-8-sig')
+            csv_to_json(output_filename)
+            # return df
+            return print("查询已完成，请查看文件： " + output_filename)
+
+        except Exception as error:
+            print("Error while inserting data:", error)
+
+    def preprocessing_sp_overstock_product_targets(self, country, cur_time, version=1.0):
+
+        """"""
+        try:
+            conn = self.conn
+
+            if version == 1.0:
+                query = """
+WITH a AS (
+    SELECT
+        keywordId,
+        keyword,
+        targeting,
+        matchType,
+        adGroupName,
+        campaignName,
+        -- 过去30天的总订单数
+        SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 29 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN purchases7d ELSE 0 END) AS ORDER_1m,
+        -- 过去30天的总点击量
+        SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 29 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN clicks ELSE 0 END) AS total_clicks_30d,
+        -- 过去7天的总点击量
+        SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 6 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN clicks ELSE 0 END) AS total_clicks_7d,
+        -- 昨天的总点击量
+        SUM(CASE WHEN date = '{}' - INTERVAL 2 DAY THEN clicks ELSE 0 END) AS total_clicks_yesterday,
+        -- 过去30天的总销售额
+        SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 29 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN sales14d ELSE 0 END) AS total_sales14d_30d,
+        -- 过去7天的总销售额
+        SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 6 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN sales14d ELSE 0 END) AS total_sales14d_7d,
+        -- 过去3天的总销售额
+        SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 2 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN sales14d ELSE 0 END) AS total_sales14d_3d,
+        -- 昨天的总销售额
+        SUM(CASE WHEN date = '{}' - INTERVAL 2 DAY THEN sales14d ELSE 0 END) AS total_sales14d_yesterday,
+        -- 过去30天的总成本
+        SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 29 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN cost ELSE 0 END) AS total_cost_30d,
+        -- 过去7天的总成本
+        SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 6 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN cost ELSE 0 END) AS total_cost_7d,
+        -- 过去3天的总成本
+        SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 2 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN cost ELSE 0 END) AS total_cost_3d,
+        -- 昨天的总成本
+        SUM(CASE WHEN date = '{}' - INTERVAL 2 DAY THEN cost ELSE 0 END) AS total_cost_yesterday,
+        -- 过去30天的平均成本销售比（ACOS）
+        SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 29 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN cost ELSE 0 END) /
+        SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 29 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN sales14d ELSE 0 END) AS ACOS_30d,
+        -- 过去7天的平均成本销售比（ACOS）
+        SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 6 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN cost ELSE 0 END) /
+        SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 6 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN sales14d ELSE 0 END) AS ACOS_7d,
+         -- 过去3天的平均成本销售比（ACOS）
+        SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 2 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN cost ELSE 0 END) /
+        SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 2 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN sales14d ELSE 0 END) AS ACOS_3d,
+        -- 昨天的平均成本销售比（ACOS）
+        SUM(CASE WHEN date = '{}' - INTERVAL 2 DAY THEN cost ELSE 0 END) /
+        SUM(CASE WHEN date = '{}' - INTERVAL 2 DAY THEN sales14d ELSE 0 END) AS ACOS_yesterday
+    FROM
+        amazon_targeting_reports_sp b
+    JOIN
+        amazon_campaigns_list_sp c ON b.campaignId = c.campaignId -- 联接广告活动表，获取广告活动类型
+    WHERE
+        b.date BETWEEN DATE_SUB('{}', INTERVAL 30 DAY) AND '{}' - INTERVAL 1 DAY
+        AND b.market = '{}'
+        AND b.keywordId IN (
+            SELECT keywordId
+            FROM amazon_targeting_reports_sp
+            WHERE campaignStatus = 'ENABLED' AND date = '{}' - INTERVAL 1 DAY
+                                                AND campaignName LIKE '%_overstock%'
+        )
+        AND c.targetingType LIKE '%MAN%' -- 筛选出手动广告
+        -- 排除最近4天内有变更的keywordId
+        AND b.keywordId NOT IN (SELECT DISTINCT entityId
+            FROM amazon_advertising_change_history
+            WHERE timestamp >= (UNIX_TIMESTAMP(NOW(3)) - 4 * 24 * 60 * 60) * 1000
+            AND entityType = 'KEYWORD'
+            AND market = '{}')
+        AND b.campaignId NOT IN (SELECT DISTINCT campaignId FROM amazon_targeting_reports_sd)
+    GROUP BY
+        b.adGroupName,
+        b.campaignName,
+        b.keyword,
+        b.matchType,
+        b.targeting,
+        b.keywordId
+    ORDER BY
+        b.adGroupName,
+        b.campaignName,
+        b.keyword,
+        b.matchType,
+        b.keywordId
+)
+-- 从CTE结果中选择数据
+SELECT
+    a.*,
+    d.keywordBid
+FROM
+    a
+LEFT JOIN
+    amazon_targeting_reports_sp d ON a.keywordId = d.keywordId
+WHERE
+    d.date = DATE_SUB('{}', INTERVAL 1 DAY)
+    AND a.matchType in ('TARGETING_EXPRESSION');
+                                        """.format(cur_time, cur_time, cur_time, cur_time, cur_time, cur_time, cur_time, cur_time, cur_time, cur_time, cur_time,
+                           cur_time, cur_time, cur_time, cur_time, cur_time, cur_time,
+                           cur_time, cur_time, cur_time, cur_time, cur_time, cur_time, cur_time, cur_time, cur_time, cur_time,
+                           cur_time, cur_time, cur_time, cur_time, cur_time, cur_time, cur_time, cur_time, cur_time, cur_time, country, cur_time, country, cur_time)
+
+            else:
+                query = None
+            # print(query)
+            df1 = pd.read_sql(query, con=conn)
+            output_filename = '.\滞销品优化\手动sp广告\商品投放优化\预处理.csv'
             df1.to_csv(output_filename, index=False, encoding='utf-8-sig')
             csv_to_json(output_filename)
             # return df
@@ -3379,6 +1911,166 @@ WHERE
             # print(query)
             df1 = pd.read_sql(query, con=conn)
             output_filename = '.\滞销品优化\自动sp广告\预算优化\预处理.csv'
+            df1.to_csv(output_filename, index=False, encoding='utf-8-sig')
+            csv_to_json(output_filename)
+            # return df
+            return print("查询已完成，请查看文件： " + output_filename)
+
+        except Exception as error:
+            print("Error while inserting data:", error)
+
+    def preprocessing_sp_overstock_targeting_group_manual(self, country, cur_time, version=1.0):
+
+        """"""
+        try:
+            conn = self.conn
+
+            if version == 1.0:
+                query = """
+                            SELECT
+    a.campaignName,
+    a.campaignId,
+                a.placementClassification,
+    SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 2 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY)  THEN a.clicks ELSE 0 END) AS total_clicks_3d,
+    SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 6 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY)  THEN a.clicks ELSE 0 END) AS total_clicks_7d,
+    SUM(CASE WHEN date = '{}' - INTERVAL 2 DAY THEN a.clicks ELSE 0 END) AS total_clicks_yesterday,
+    SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 2 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY)  THEN a.sales14d ELSE 0 END) AS total_sales14d_3d,
+    SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 6 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY)  THEN a.sales14d ELSE 0 END) AS total_sales14d_7d,
+    SUM(CASE WHEN date = '{}' - INTERVAL 2 DAY THEN a.sales14d ELSE 0 END) AS total_sales14d_yesterday,
+    SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 2 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY)  THEN a.cost ELSE 0 END) AS total_cost_3d,
+    SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 6 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY)  THEN a.cost ELSE 0 END) AS total_cost_7d,
+    SUM(CASE WHEN date = '{}' - INTERVAL 2 DAY THEN a.cost ELSE 0 END) AS total_cost_yesterday,
+    SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 2 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY)  THEN a.cost ELSE 0 END) / SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 2 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY)  THEN a.sales14d ELSE 0 END) AS ACOS_3d,
+    SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 6 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY)  THEN a.cost ELSE 0 END) / SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 6 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY)  THEN a.sales14d ELSE 0 END) AS ACOS_7d,
+    SUM(CASE WHEN date = '{}' - INTERVAL 2 DAY THEN a.cost ELSE 0 END) / SUM(CASE WHEN date = '{}' - INTERVAL 2 DAY THEN a.sales14d ELSE 0 END)  AS ACOS_yesterday ,
+    COALESCE(
+        CASE
+            WHEN a.placementClassification = 'Detail Page on-Amazon' THEN c.dynamicBidding_placementProductPage_percentage
+            WHEN a.placementClassification = 'Other on-Amazon' THEN c.dynamicBidding_placementRestOfSearch_percentage
+            WHEN a.placementClassification = 'Top of Search on-Amazon' THEN c.dynamicBidding_placementTop_percentage
+        END,
+    0) AS bid
+FROM
+    amazon_campaign_placement_reports_sp a
+JOIN
+    (SELECT
+         campaignId,
+         targetingType,
+         dynamicBidding_placementTop_percentage,
+         dynamicBidding_placementProductPage_percentage,
+         dynamicBidding_placementRestOfSearch_percentage
+     FROM
+         amazon_campaigns_list_sp
+     ) c ON a.campaignId = c.campaignId
+WHERE
+    a.market = '{}'
+    AND a.campaignId IN (
+        SELECT campaignId
+        FROM amazon_advertised_product_reports_sp
+        WHERE campaignStatus = 'ENABLED' AND date = '{}' - INTERVAL 1 DAY
+                                AND campaignName LIKE '%_overstock'
+                                GROUP BY campaignId
+    )
+    AND c.targetingType LIKE '%MAN%'
+GROUP BY
+    a.campaignId,
+    a.placementClassification,
+    c.dynamicBidding_placementTop_percentage,
+    c.dynamicBidding_placementProductPage_percentage,
+    c.dynamicBidding_placementRestOfSearch_percentage
+ORDER BY
+    a.campaignName,
+    a.placementClassification;
+                                                        """.format(cur_time, cur_time, cur_time, cur_time, cur_time,
+                                                                   cur_time, cur_time, cur_time, cur_time,
+                                                                   cur_time, cur_time, cur_time, cur_time, cur_time,
+                                                                   cur_time, cur_time, cur_time, cur_time, cur_time, cur_time, cur_time, cur_time,
+                                                                   cur_time, cur_time, cur_time,country, cur_time)
+            else:
+                query = None
+            # print(query)
+            df1 = pd.read_sql(query, con=conn)
+            output_filename = '.\滞销品优化\手动sp广告\广告位优化\预处理.csv'
+            df1.to_csv(output_filename, index=False, encoding='utf-8-sig')
+            csv_to_json(output_filename)
+            # return df
+            return print("查询已完成，请查看文件： " + output_filename)
+
+        except Exception as error:
+            print("Error while inserting data:", error)
+
+    def preprocessing_sp_overstock_targeting_group_auto(self, country, cur_time, version=1.0):
+
+        """"""
+        try:
+            conn = self.conn
+
+            if version == 1.0:
+                query = """
+SELECT
+    a.campaignName,
+    a.campaignId,
+                a.placementClassification,
+    SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 2 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY)  THEN a.clicks ELSE 0 END) AS total_clicks_3d,
+    SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 6 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY)  THEN a.clicks ELSE 0 END) AS total_clicks_7d,
+    SUM(CASE WHEN date = '{}' - INTERVAL 2 DAY THEN a.clicks ELSE 0 END) AS total_clicks_yesterday,
+    SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 2 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY)  THEN a.sales14d ELSE 0 END) AS total_sales14d_3d,
+    SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 6 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY)  THEN a.sales14d ELSE 0 END) AS total_sales14d_7d,
+    SUM(CASE WHEN date = '{}' - INTERVAL 2 DAY THEN a.sales14d ELSE 0 END) AS total_sales14d_yesterday,
+    SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 2 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY)  THEN a.cost ELSE 0 END) AS total_cost_3d,
+    SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 6 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY)  THEN a.cost ELSE 0 END) AS total_cost_7d,
+    SUM(CASE WHEN date = '{}' - INTERVAL 2 DAY THEN a.cost ELSE 0 END) AS total_cost_yesterday,
+    SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 2 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY)  THEN a.cost ELSE 0 END) / SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 2 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY)  THEN a.sales14d ELSE 0 END) AS ACOS_3d,
+    SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 6 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY)  THEN a.cost ELSE 0 END) / SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 6 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY)  THEN a.sales14d ELSE 0 END) AS ACOS_7d,
+    SUM(CASE WHEN date = '{}' - INTERVAL 2 DAY THEN a.cost ELSE 0 END) / SUM(CASE WHEN date = '{}' - INTERVAL 2 DAY THEN a.sales14d ELSE 0 END)  AS ACOS_yesterday ,
+    COALESCE(
+        CASE
+            WHEN a.placementClassification = 'Detail Page on-Amazon' THEN c.dynamicBidding_placementProductPage_percentage
+            WHEN a.placementClassification = 'Other on-Amazon' THEN c.dynamicBidding_placementRestOfSearch_percentage
+            WHEN a.placementClassification = 'Top of Search on-Amazon' THEN c.dynamicBidding_placementTop_percentage
+        END,
+    0) AS bid
+FROM
+    amazon_campaign_placement_reports_sp a
+JOIN
+    (SELECT
+         campaignId,
+         targetingType,
+         dynamicBidding_placementTop_percentage,
+         dynamicBidding_placementProductPage_percentage,
+         dynamicBidding_placementRestOfSearch_percentage
+     FROM
+         amazon_campaigns_list_sp
+     ) c ON a.campaignId = c.campaignId
+WHERE
+    a.market = '{}'
+    AND a.campaignId IN (
+        SELECT campaignId
+        FROM amazon_advertised_product_reports_sp
+        WHERE campaignStatus = 'ENABLED' AND date = '{}' - INTERVAL 1 DAY
+                                AND campaignName LIKE '%_overstock'
+                                GROUP BY campaignId
+    )
+    AND c.targetingType LIKE '%AUT%'
+GROUP BY
+    a.campaignId,
+    a.placementClassification,
+    c.dynamicBidding_placementTop_percentage,
+    c.dynamicBidding_placementProductPage_percentage,
+    c.dynamicBidding_placementRestOfSearch_percentage
+ORDER BY
+    a.campaignName,
+    a.placementClassification;
+                                                            """.format(cur_time, cur_time, cur_time, cur_time, cur_time,
+                                                                   cur_time, cur_time, cur_time, cur_time,
+                                                                   cur_time, cur_time, cur_time, cur_time, cur_time,
+                                                                   cur_time, cur_time, cur_time, cur_time, cur_time, cur_time, cur_time, cur_time,
+                                                                   cur_time, cur_time, cur_time,country, cur_time)
+            else:
+                query = None
+            # print(query)
+            df1 = pd.read_sql(query, con=conn)
+            output_filename = '.\滞销品优化\自动sp广告\广告位优化\预处理.csv'
             df1.to_csv(output_filename, index=False, encoding='utf-8-sig')
             csv_to_json(output_filename)
             # return df
@@ -3861,16 +2553,19 @@ WHERE
                                     SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 29 day) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN purchases7d ELSE 0 END) AS ORDER_1m,
                                     SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 29 day) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN clicks ELSE 0 END) AS total_clicks_30d,
                                     SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 6 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN clicks ELSE 0 END) AS total_clicks_7d,
+                                    SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 2 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN clicks ELSE 0 END) AS total_clicks_3d,
                                     SUM(CASE WHEN date = '{}' - INTERVAL 2 DAY THEN clicks ELSE 0 END) AS total_clicks_yesterday,
                                     SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 29 day) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN sales14d ELSE 0 END) AS total_sales14d_30d,
                                     SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 6 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN sales14d ELSE 0 END) AS total_sales14d_7d,
+                                    SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 2 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN sales14d ELSE 0 END) AS total_sales14d_3d,
                                     SUM(CASE WHEN date = '{}' - INTERVAL 2 DAY THEN sales14d ELSE 0 END) AS total_sales14d_yesterday,
                                     SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 29 day) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN cost ELSE 0 END) AS total_cost_30d,
                                     SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 6 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN cost ELSE 0 END) AS total_cost_7d,
-                                    SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 3 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN cost ELSE 0 END) AS total_cost_4d,
+                                    SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 2 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN cost ELSE 0 END) AS total_cost_3d,
                                     SUM(CASE WHEN date = '{}' - INTERVAL 2 DAY THEN cost ELSE 0 END) AS total_cost_yesterday,
                                     SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 29 day) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN cost ELSE 0 END) / SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 29 day) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN sales14d ELSE 0 END) AS ACOS_30d,
                                     SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 6 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN cost ELSE 0 END) / SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 6 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN sales14d ELSE 0 END) AS ACOS_7d,
+                                    SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 2 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN cost ELSE 0 END) / SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 2 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN sales14d ELSE 0 END) AS ACOS_3d,
                                     SUM(CASE WHEN date = '{}' - INTERVAL 2 DAY THEN cost ELSE 0 END) / SUM(CASE WHEN date = '{}' - INTERVAL 2 DAY THEN sales14d ELSE 0 END)  AS ACOS_yesterday
                                 FROM
                                     amazon_targeting_reports_sp b
@@ -3917,9 +2612,9 @@ WHERE
                                 d.date = DATE_SUB('{}', INTERVAL 1 DAY)
                                             """.format(cur_time, cur_time, cur_time, cur_time, cur_time, cur_time,
                                                        cur_time, cur_time, cur_time, cur_time, cur_time, cur_time,
-                                                       cur_time,
+                                                       cur_time,cur_time, cur_time, cur_time, cur_time, cur_time, cur_time,
                                                        cur_time, cur_time, cur_time, cur_time, cur_time, cur_time,
-                                                       cur_time,
+                                                       cur_time, cur_time, cur_time,
                                                        cur_time, cur_time, cur_time, cur_time, cur_time, cur_time,
                                                        cur_time,
                                                        cur_time, cur_time, cur_time, cur_time, country, cur_time,
@@ -3954,16 +2649,19 @@ WHERE
                         SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 29 day) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN purchases7d ELSE 0 END) AS ORDER_1m,
                         SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 29 day) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN clicks ELSE 0 END) AS total_clicks_30d,
                         SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 6 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN clicks ELSE 0 END) AS total_clicks_7d,
+                        SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 2 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN clicks ELSE 0 END) AS total_clicks_3d,
                         SUM(CASE WHEN date = '{}' - INTERVAL 2 DAY THEN clicks ELSE 0 END) AS total_clicks_yesterday,
                         SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 29 day) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN sales14d ELSE 0 END) AS total_sales14d_30d,
                         SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 6 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN sales14d ELSE 0 END) AS total_sales14d_7d,
+                        SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 2 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN sales14d ELSE 0 END) AS total_sales14d_3d,
                         SUM(CASE WHEN date = '{}' - INTERVAL 2 DAY THEN sales14d ELSE 0 END) AS total_sales14d_yesterday,
                         SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 29 day) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN cost ELSE 0 END) AS total_cost_30d,
                         SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 6 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN cost ELSE 0 END) AS total_cost_7d,
-                        SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 3 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN cost ELSE 0 END) AS total_cost_4d,
+                        SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 2 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN cost ELSE 0 END) AS total_cost_3d,
                         SUM(CASE WHEN date = '{}' - INTERVAL 2 DAY THEN cost ELSE 0 END) AS total_cost_yesterday,
                         SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 29 day) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN cost ELSE 0 END) / SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 29 day) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN sales14d ELSE 0 END) AS ACOS_30d,
                         SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 6 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN cost ELSE 0 END) / SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 6 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN sales14d ELSE 0 END) AS ACOS_7d,
+                        SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 2 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN cost ELSE 0 END) / SUM(CASE WHEN date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 2 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN sales14d ELSE 0 END) AS ACOS_3d,
                         SUM(CASE WHEN date = '{}' - INTERVAL 2 DAY THEN cost ELSE 0 END) / SUM(CASE WHEN date = '{}' - INTERVAL 2 DAY THEN sales14d ELSE 0 END)  AS ACOS_yesterday
                     FROM
                         amazon_targeting_reports_sp b
@@ -4006,9 +2704,9 @@ WHERE
                 WHERE
                     d.date = DATE_SUB('{}', INTERVAL 1 DAY)
                                                             """.format(cur_time, cur_time, cur_time, cur_time, cur_time,
-                                                                       cur_time,
+                                                                       cur_time,cur_time, cur_time, cur_time, cur_time, cur_time,
                                                                        cur_time, cur_time, cur_time, cur_time, cur_time,
-                                                                       cur_time,
+                                                                       cur_time,cur_time, cur_time, cur_time,
                                                                        cur_time, cur_time, cur_time, cur_time, cur_time,
                                                                        cur_time,
                                                                        cur_time, cur_time, cur_time, cur_time, cur_time,
@@ -4195,7 +2893,7 @@ WITH DailyData AS (
         ) AS sb
         ON sb.market = sp.market AND sb.date = sp.date
     WHERE
-        sp.market IN ('IT', 'SE', 'FR', 'UK', 'NL', 'ES', 'DE')
+        sp.market IN ('{country}')
 ),
 ThreeDayAvg AS (
   SELECT
@@ -4439,116 +3137,9 @@ ORDER BY
         """"""
         try:
             conn = self.conn
-
-            if version == 1.0:
-                query = """
-WITH CampaignStats AS (
-    SELECT
-        a.campaignId,                          -- 广告活动ID
-        a.campaignName,                       -- 广告活动名称
-        c.budget AS campaignBudget,           -- 预算
-        a.market,                           -- 市场
-
-        -- 计算昨天的花费
-        SUM(CASE WHEN a.date = DATE_SUB('{}', INTERVAL 2 DAY) THEN a.cost ELSE 0 END) AS costYesterday,
-
-        -- 计算昨天的点击量
-        SUM(CASE WHEN a.date = DATE_SUB('{}', INTERVAL 2 DAY) THEN a.clicks ELSE 0 END) AS clicksYesterday,
-
-        -- 计算昨天的销售额，使用 sales 字段，因为它代表 "Total value of sales occurring within 14 days of an ad click or view."
-        SUM(CASE WHEN a.date = DATE_SUB('{}', INTERVAL 2 DAY) THEN a.sales ELSE 0 END) AS salesYesterday,
-
-        -- 计算过去7天的总花费
-        SUM(CASE WHEN a.date BETWEEN DATE_SUB('{}', INTERVAL 7 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN a.cost ELSE 0 END) AS totalCost7d,
-
-        -- 计算过去7天的总销售额，使用 sales 字段
-        SUM(CASE WHEN a.date BETWEEN DATE_SUB('{}', INTERVAL 7 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN a.sales ELSE 0 END) AS totalSales7d,
-
-        -- 计算过去30天的总花费
-        SUM(CASE WHEN a.date BETWEEN DATE_SUB('{}', INTERVAL 30 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN a.cost ELSE 0 END) AS totalCost30d,
-
-        -- 计算过去30天的总销售额，使用 sales 字段
-        SUM(CASE WHEN a.date BETWEEN DATE_SUB('{}', INTERVAL 30 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN a.sales ELSE 0 END) AS totalSales30d,
-
-        -- 计算过去30天的总点击量
-        SUM(CASE WHEN a.date BETWEEN DATE_SUB('{}', INTERVAL 30 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN a.clicks ELSE 0 END) AS totalClicks30d,
-
-        -- 计算过去7天的总点击量
-        SUM(CASE WHEN a.date BETWEEN DATE_SUB('{}', INTERVAL 7 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN a.clicks ELSE 0 END) AS totalClicks7d,
-
-        -- 计算过去30天的ACOS (Advertising Cost of Sales)，使用 sales 字段
-        SUM(CASE WHEN a.date BETWEEN DATE_SUB('{}', INTERVAL 30 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN a.cost ELSE 0 END) / NULLIF(SUM(CASE WHEN a.date BETWEEN DATE_SUB('{}', INTERVAL 30 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN a.sales ELSE 0 END), 0) AS ACOS30d,
-
-        -- 计算过去7天的ACOS (Advertising Cost of Sales)，使用 sales 字段
-        SUM(CASE WHEN a.date BETWEEN DATE_SUB('{}', INTERVAL 7 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN a.cost ELSE 0 END) / NULLIF(SUM(CASE WHEN a.date BETWEEN DATE_SUB('{}', INTERVAL 7 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN a.sales ELSE 0 END), 0) AS ACOS7d,
-
-        -- 计算昨天的ACOS (Advertising Cost of Sales)，使用 sales 字段
-        SUM(CASE WHEN a.date = DATE_SUB('{}', INTERVAL 2 DAY) THEN a.cost ELSE 0 END) / NULLIF(SUM(CASE WHEN a.date = DATE_SUB('{}', INTERVAL 2 DAY) THEN a.sales ELSE 0 END), 0)  AS ACOSYesterday
-
-    FROM
-        amazon_advertised_product_reports_sd a
-    JOIN
-        amazon_campaigns_list_sd c ON a.campaignId = c.campaignId
-    WHERE
-        -- 筛选过去30天内的数据
-        a.date BETWEEN DATE_SUB('{}', INTERVAL 30 DAY) AND ('{}' - INTERVAL 1 DAY)
-
-        -- 筛选在查询日期前一天仍然处于启用状态的广告活动
-        AND a.campaignId IN (
-            SELECT campaignId
-            FROM amazon_advertised_product_reports_sd
-            WHERE date = '{}' - INTERVAL 1 DAY
-        )
-
-        -- 筛选法国市场的数据
-        AND a.market = '{}'
-
-    -- 根据广告活动ID、名称、预算和市场进行分组
-    GROUP BY
-        a.campaignId,
-        a.campaignName,
-        c.budget,
-        a.market
-),
-
--- 计算每个市场的平均 ACOS
-CountryAvgACOS AS (
-    SELECT
-        SUM(reports.cost) / SUM(reports.sales) AS countryAvgACOS1m,
-        reports.market
-    FROM
-        amazon_advertised_product_reports_sd AS reports
-    INNER JOIN
-        amazon_campaigns_list_sd AS campaigns ON reports.campaignId = campaigns.campaignId
-    WHERE
-        reports.date BETWEEN DATE_SUB('{}', INTERVAL 30 DAY) AND ('{}' - INTERVAL 1 DAY)
-        AND campaigns.campaignId IN (
-            SELECT campaignId
-            FROM amazon_advertised_product_reports_sd
-            WHERE date = '{}' - INTERVAL 1 DAY
-        )
-        AND reports.market = '{}'
-    GROUP BY
-        reports.market
-)
-
--- 连接两个 CTE，获取最终结果并筛选campaignName包含0507和0509的数据
-SELECT
-    cs.*,
-    ca.countryAvgACOS1m
-FROM
-    CampaignStats cs
-JOIN
-    CountryAvgACOS ca ON cs.market = ca.market
-WHERE
-    cs.campaignName LIKE '%0507%' OR cs.campaignName LIKE '%0509%';
-
-                                                            """.format(cur_time, cur_time, cur_time, cur_time, cur_time, cur_time,
-                                                                       cur_time, cur_time, cur_time, cur_time, cur_time, cur_time,
-                                                                       cur_time, cur_time, cur_time, cur_time, cur_time, cur_time,
-                                                                       cur_time, cur_time, cur_time, cur_time, cur_time, cur_time,
-                                                                       cur_time, cur_time, cur_time, cur_time, country, cur_time, cur_time,
-                                                                       cur_time, country)
+            api = BudgetQuerySD()
+            if version == 1.0 or version == '初阶':
+                query = api.get_query_v1_0(cur_time, country)
             else:
                 query = None
             # print(query)
@@ -4562,96 +3153,16 @@ WHERE
         except Exception as error:
             print("Error while inserting data:", error)
 
-    def preprocessing_sd_sku(self, country, cur_time, version=1.0):
+    def preprocessing_sd_sku(self, country, cur_time, version=1.1):
 
         """"""
         try:
             conn = self.conn
-
+            api = SkuQuerySD()
             if version == 1.0:
-                query = """
-SELECT
-    a.adGroupName,                             -- 广告组名称
-    a.adId,                                -- 广告ID
-    a.campaignId,                          -- 广告活动ID
-    a.campaignName,                       -- 广告活动名称
-    a.promotedSku AS advertisedSku,        -- 使用 promotedSku 代替 advertisedSku
-    -- 计算过去30天内的总订单数，使用 purchases 字段，因为它代表 "Number of attributed conversion events occurring within 14 days of an ad click or view."
-    SUM(CASE WHEN a.date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 29 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN a.purchases ELSE 0 END) AS ORDER_1m,
-    -- 计算过去7天内的总订单数，使用 purchases 字段
-    SUM(CASE WHEN a.date BETWEEN DATE_SUB('{}' - INTERVAL 1 DAY, INTERVAL 6 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN a.purchases ELSE 0 END) AS ORDER_7d,
-    -- 计算过去30天内（包含今天）的总点击量
-    SUM(CASE WHEN a.date BETWEEN DATE_SUB('{}', INTERVAL 30 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN a.clicks ELSE 0 END) AS total_clicks_30d,
-    -- 计算过去7天内（包含今天）的总点击量
-    SUM(CASE WHEN a.date BETWEEN DATE_SUB('{}', INTERVAL 7 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN a.clicks ELSE 0 END) AS total_clicks_7d,
-    -- 计算昨天的总点击量
-    SUM(CASE WHEN a.date = '{}' - INTERVAL 2 DAY THEN a.clicks ELSE 0 END) AS total_clicks_yesterday,
-    -- 计算过去30天内的总销售额，使用 sales 字段，因为它代表 "Total value of sales occurring within 14 days of an ad click or view."
-    SUM(CASE WHEN a.date BETWEEN DATE_SUB('{}', INTERVAL 30 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN a.sales ELSE 0 END) AS total_sales_30d,
-    -- 计算过去7天内的总销售额，使用 sales 字段
-    SUM(CASE WHEN a.date BETWEEN DATE_SUB('{}', INTERVAL 7 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN a.sales ELSE 0 END) AS total_sales_7d,
-    -- 计算昨天的总销售额，使用 sales 字段
-    SUM(CASE WHEN a.date = '{}' - INTERVAL 2 DAY THEN a.sales ELSE 0 END) AS total_sales_yesterday,
-    -- 计算过去30天内的总成本
-    SUM(CASE WHEN a.date BETWEEN DATE_SUB('{}', INTERVAL 30 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN a.cost ELSE 0 END) AS total_cost_30d,
-    -- 计算过去7天内的总成本
-    SUM(CASE WHEN a.date BETWEEN DATE_SUB('{}', INTERVAL 7 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN a.cost ELSE 0 END) AS total_cost_7d,
-    -- 计算昨天的总成本
-    SUM(CASE WHEN a.date = '{}' - INTERVAL 2 DAY THEN a.cost ELSE 0 END) AS total_cost_yesterday,
-    -- 计算过去30天内的平均广告花费回报率 (ACOS)，使用 sales 字段
-    CASE WHEN SUM(CASE WHEN a.date BETWEEN DATE_SUB('{}', INTERVAL 30 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN a.sales ELSE 0 END) > 0
-         THEN SUM(CASE WHEN a.date BETWEEN DATE_SUB('{}', INTERVAL 30 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN a.cost ELSE 0 END) /
-              SUM(CASE WHEN a.date BETWEEN DATE_SUB('{}', INTERVAL 30 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN a.sales ELSE 0 END)
-         ELSE 0
-    END AS ACOS_30d,
-    -- 计算过去7天内的平均广告花费回报率 (ACOS)，使用 sales 字段
-    CASE WHEN SUM(CASE WHEN a.date BETWEEN DATE_SUB('{}', INTERVAL 7 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN a.sales ELSE 0 END) > 0
-         THEN SUM(CASE WHEN a.date BETWEEN DATE_SUB('{}', INTERVAL 7 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN a.cost ELSE 0 END) /
-              SUM(CASE WHEN a.date BETWEEN DATE_SUB('{}', INTERVAL 7 DAY) AND DATE_SUB('{}', INTERVAL 1 DAY) THEN a.sales ELSE 0 END)
-         ELSE 0
-    END AS ACOS_7d,
-    -- 计算昨天的平均广告花费回报率 (ACOS)，使用 sales 字段
-    CASE WHEN SUM(CASE WHEN a.date = '{}' - INTERVAL 2 DAY THEN a.sales ELSE 0 END) > 0
-         THEN SUM(CASE WHEN a.date = '{}' - INTERVAL 2 DAY THEN a.cost ELSE 0 END) /
-              SUM(CASE WHEN a.date = '{}' - INTERVAL 2 DAY THEN a.sales ELSE 0 END)
-         ELSE 0
-    END AS ACOS_yesterday
--- 从 amazon_advertised_product_reports_sd 表中读取数据，并将其连接到 amazon_campaigns_list_sd 表
-FROM
-    amazon_advertised_product_reports_sd a
-JOIN
-    amazon_campaigns_list_sd c ON a.campaignId = c.campaignId
--- 设置查询条件
-WHERE
-    a.date BETWEEN DATE_SUB('{}', INTERVAL 30 DAY) AND '{}' - INTERVAL 1 DAY  -- 筛选过去30天内的数据
-    AND a.market = '{}'
-    AND a.campaignId IN (
-        SELECT campaignId
-        FROM amazon_advertised_product_reports_sd
-        WHERE date = '{}' - INTERVAL 1 DAY
-    )
-    AND (a.campaignName LIKE '%0507%' OR a.campaignName LIKE '%0509%') -- 筛选广告活动名称包含'0507'或'0509' --修改: 添加筛选条件
--- 根据广告组名称、广告ID、广告活动名称和广告商品SKU对结果进行分组
-GROUP BY
-    adGroupName,
-    a.adId,
-    a.campaignName,
-    advertisedSku
--- 按照广告组名称、广告活动名称和广告商品SKU对结果进行排序
-ORDER BY
-    adGroupName,
-    a.campaignName,
-    advertisedSku;
-                                                            """.format(cur_time, cur_time, cur_time, cur_time, cur_time,
-                                                                       cur_time,cur_time, cur_time, cur_time, cur_time,
-                                                                       cur_time, cur_time, cur_time, cur_time, cur_time,
-                                                                       cur_time,cur_time, cur_time, cur_time,
-                                                                       cur_time, cur_time, cur_time, cur_time, cur_time,
-                                                                       cur_time, cur_time, cur_time, cur_time, cur_time,
-                                                                       cur_time,
-                                                                       cur_time, cur_time, cur_time, cur_time,
-                                                                       cur_time, cur_time, country,
-                                                                       cur_time)
+                query = api.get_query_v1_0(cur_time, country)
+            elif version == 1.1 or version == '初阶':
+                query = api.get_query_v1_1(cur_time, country)
             else:
                 query = None
             # print(query)
@@ -4665,7 +3176,267 @@ ORDER BY
         except Exception as error:
             print("Error while inserting data:", error)
 
+    def preprocessing_sd_sku_reopen(self, country, cur_time, version=1.0):
+
+        """"""
+        try:
+            conn = self.conn
+            api = reopenSkuQuerySD()
+            if version == 1.0 or version == '初阶':
+                query = api.get_query_v1_0(cur_time, country)
+            else:
+                query = None
+            # print(query)
+            df1 = pd.read_sql(query, con=conn)
+            output_filename = '.\日常优化\sd广告\复开SKU\预处理.csv'
+            df1.to_csv(output_filename, index=False, encoding='utf-8-sig')
+            csv_to_json(output_filename)
+            # return df
+            return print("查询已完成，请查看文件： " + output_filename)
+
+        except Exception as error:
+            print("Error while inserting data:", error)
+
+    def preprocessing_sd_product_targets(self, country, cur_time, version=1.0):
+
+        """"""
+        try:
+            conn = self.conn
+
+            api = ProductTargetsQuerySD()
+            if version == 1.0:
+                query = api.get_query_v1_0(cur_time, country)
+            elif version == 1.1 or version == '初阶':
+                query = api.get_query_v1_1(cur_time, country)
+            else:
+                query = None
+            # print(query)
+            df1 = pd.read_sql(query, con=conn)
+            output_filename = '.\日常优化\sd广告\商品投放优化\预处理.csv'
+            df1.to_csv(output_filename, index=False, encoding='utf-8-sig')
+            csv_to_json(output_filename)
+            # return df
+            return print("查询已完成，请查看文件： " + output_filename)
+
+        except Exception as error:
+            print("Error while inserting data:", error)
+
+    def preprocessing_sd_sp_product_targets(self, country, cur_time, version=1.0):
+
+        """"""
+        try:
+            conn = self.conn
+
+            if version == 1.0:
+                query = f"""
+                WITH a AS (
+                    SELECT
+                        b.campaignName,
+                        b.campaignId,
+                        b.adGroupName,
+                        b.adGroupId,
+                        CASE
+                            WHEN b.targetingText LIKE '%asinExpandedFrom%' THEN CONCAT('asin-expanded="', SUBSTRING_INDEX(SUBSTRING_INDEX(b.targetingText, 'value\\': \\'', -1), '\\'}}', 1), '"')
+                            WHEN b.targetingText LIKE '%asinSameAs%' THEN CONCAT('asin="', SUBSTRING_INDEX(SUBSTRING_INDEX(b.targetingText, 'value\\': \\'', -1), '\\'}}', 1), '"')
+                            WHEN b.targetingText LIKE '%asinCategorySameAs%' AND b.targetingText LIKE '%asinBrandSameAs%' THEN CONCAT('category="', SUBSTRING_INDEX(SUBSTRING_INDEX(b.targetingText, 'asinCategorySameAs\\', \\'value\\': \\'', -1), '\\'}},', 1), '" ', 'brand="', SUBSTRING_INDEX(SUBSTRING_INDEX(b.targetingText, 'asinBrandSameAs\\', \\'value\\': \\'', -1), '\\'}}', 1), '"')
+                            WHEN b.targetingText LIKE '%asinCategorySameAs%' THEN CONCAT('category="', SUBSTRING_INDEX(SUBSTRING_INDEX(b.targetingText, 'value\\': \\'', -1), '\\'}}', 1), '"')
+                            ELSE b.targetingText
+                        END AS targetingText,
+                        b.targetingId,
+                        b.sales,
+                        b.cost,
+                        bid,
+                        b.date
+                    FROM
+                        amazon_targeting_reports_sd b
+                        JOIN amazon_targets_list_sd c ON b.targetingId = c.targetId
+                    WHERE
+                        b.market = '{country}'
+                        AND b.date BETWEEN DATE_SUB('{cur_time}', INTERVAL 15 DAY) AND DATE_SUB('{cur_time}', INTERVAL 1 DAY)
+                    UNION
+                    SELECT
+                        NULL AS campaignName,
+                        akl.campaignId,
+                        NULL AS adGroupName,
+                        akl.adGroupId,
+                        CASE
+                            WHEN akl.resolvedExpression LIKE '%asinExpandedFrom%' THEN CONCAT('asin-expanded="', SUBSTRING_INDEX(SUBSTRING_INDEX(akl.resolvedExpression, 'value\\': \\'', -1), '\\'}}', 1), '"')
+                            WHEN akl.resolvedExpression LIKE '%asinSameAs%' THEN CONCAT('asin="', SUBSTRING_INDEX(SUBSTRING_INDEX(akl.resolvedExpression, 'value\\': \\'', -1), '\\'}}', 1), '"')
+                            WHEN akl.resolvedExpression LIKE '%asinCategorySameAs%' AND akl.resolvedExpression LIKE '%asinBrandSameAs%' THEN CONCAT('category="', SUBSTRING_INDEX(SUBSTRING_INDEX(akl.resolvedExpression, 'asinCategorySameAs\\', \\'value\\': \\'', -1), '\\'}},', 1), '" ', 'brand="', SUBSTRING_INDEX(SUBSTRING_INDEX(akl.resolvedExpression, 'asinBrandSameAs\\', \\'value\\': \\'', -1), '\\'}}', 1), '"')
+                            WHEN akl.resolvedExpression LIKE '%asinCategorySameAs%' THEN CONCAT('category="', SUBSTRING_INDEX(SUBSTRING_INDEX(akl.resolvedExpression, 'value\\': \\'', -1), '\\'}}', 1), '"')
+                            ELSE akl.resolvedExpression
+                        END AS targetingText,
+                        akl.targetId AS targetingId,
+                        0 AS sales,
+                        0 AS cost,
+                        akl.bid AS bid,
+                        DATE_SUB('{cur_time}', INTERVAL 1 DAY) AS date
+                    FROM
+                        amazon_targets_list_sd akl
+                    WHERE
+                        akl.market = '{country}'
+                        AND akl.state = 'enabled'
+                        AND akl.servingStatus NOT IN ('CAMPAIGN_PAUSED', 'AD_GROUP_PAUSED', 'TARGETING_CLAUSE_PAUSED')
+                        AND akl.targetId NOT IN (
+                            SELECT
+                                b.targetingId
+                            FROM
+                                amazon_targeting_reports_sd b
+                            WHERE
+                                b.market = '{country}'
+                                AND b.date BETWEEN DATE_SUB('{cur_time}', INTERVAL 15 DAY) AND DATE_SUB('{cur_time}', INTERVAL 1 DAY)
+                        )
+                ),
+                b AS (
+                    SELECT
+                        campaignName,
+                        campaignId,
+                        adGroupName,
+                        adGroupId,
+                        SUM(CASE WHEN date BETWEEN DATE_SUB('{cur_time}', INTERVAL 7 DAY) AND DATE_SUB('{cur_time}', INTERVAL 1 DAY) THEN sales ELSE 0 END) AS total_sales_7d,
+                        SUM(CASE WHEN date BETWEEN DATE_SUB('{cur_time}', INTERVAL 7 DAY) AND DATE_SUB('{cur_time}', INTERVAL 1 DAY) THEN cost ELSE 0 END) AS total_cost_7d
+                    FROM
+                        a
+                    GROUP BY
+                        campaignId,
+                        adGroupId
+                )
+                SELECT
+                    a.campaignName,
+                    a.campaignId,
+                    a.adGroupName,
+                    a.adGroupId,
+                    a.targetingText,
+                    a.targetingId AS keywordId,
+                    b.total_sales_7d,
+                    b.total_cost_7d,
+                    a.bid
+                FROM a
+                JOIN b ON a.campaignId = b.campaignId AND a.adGroupId = b.adGroupId
+                GROUP BY
+                    a.campaignName,
+                    a.campaignId,
+                    a.adGroupName,
+                    a.adGroupId,
+                    a.targetingText,
+                    a.targetingId,
+                    b.total_sales_7d,
+                    b.total_cost_7d,
+                    a.bid
+                ORDER BY
+                    a.campaignId,
+                    a.adGroupId;
+                """
+            #                 query = f"""
+# WITH a AS (
+#     SELECT
+#         b.campaignName,
+#         b.campaignId,
+#         b.adGroupName,
+#         b.adGroupId,
+#         CASE
+#             WHEN b.targetingText LIKE '%asinExpandedFrom%' THEN CONCAT('asin-expanded="', SUBSTRING_INDEX(SUBSTRING_INDEX(b.targetingText, 'value\': \'', -1), '\'}}', 1), '"')
+#             WHEN b.targetingText LIKE '%asinSameAs%' THEN CONCAT('asin="', SUBSTRING_INDEX(SUBSTRING_INDEX(b.targetingText, 'value\': \'', -1), '\'}}', 1), '"')
+#             WHEN b.targetingText LIKE '%asinCategorySameAs%' AND b.targetingText LIKE '%asinBrandSameAs%' THEN CONCAT('category="', SUBSTRING_INDEX(SUBSTRING_INDEX(b.targetingText, 'asinCategorySameAs\', \'value\': \'', -1), '\'}},', 1), '" ', 'brand="', SUBSTRING_INDEX(SUBSTRING_INDEX(b.targetingText, 'asinBrandSameAs\', \'value\': \'', -1), '\'}}', 1), '"')
+#             WHEN b.targetingText LIKE '%asinCategorySameAs%' THEN CONCAT('category="', SUBSTRING_INDEX(SUBSTRING_INDEX(b.targetingText, 'value\': \'', -1), '\'}}', 1), '"')
+#             ELSE b.targetingText
+#         END AS targetingText,
+#         targetingId,
+#         sales,
+#         cost,
+#         bid,
+#         date
+#     FROM
+#         amazon_targeting_reports_sd b
+#         JOIN amazon_targets_list_sd c ON b.targetingId = c.targetId
+#     WHERE
+#         b.market = '{country}'
+#         AND b.date BETWEEN DATE_SUB('{cur_time}', INTERVAL 15 DAY)
+#         AND DATE_SUB('{cur_time}', INTERVAL 1 DAY)
+#     UNION
+#     SELECT
+#         NULL AS campaignName,
+#         akl.campaignId,
+#         NULL AS adGroupName,
+#         akl.adGroupId,
+#         CASE
+#             WHEN akl.resolvedExpression LIKE '%asinExpandedFrom%' THEN CONCAT('asin-expanded="', SUBSTRING_INDEX(SUBSTRING_INDEX(akl.resolvedExpression, 'value\': \'', -1), '\'}}', 1), '"')
+#             WHEN akl.resolvedExpression LIKE '%asinSameAs%' THEN CONCAT('asin="', SUBSTRING_INDEX(SUBSTRING_INDEX(akl.resolvedExpression, 'value\': \'', -1), '\'}}', 1), '"')
+#             WHEN akl.resolvedExpression LIKE '%asinCategorySameAs%' AND akl.resolvedExpression LIKE '%asinBrandSameAs%' THEN CONCAT('category="', SUBSTRING_INDEX(SUBSTRING_INDEX(akl.resolvedExpression, 'asinCategorySameAs\', \'value\': \'', -1), '\'}},', 1), '" ', 'brand="', SUBSTRING_INDEX(SUBSTRING_INDEX(akl.resolvedExpression, 'asinBrandSameAs\', \'value\': \'', -1), '\'}}', 1), '"')
+#             WHEN akl.resolvedExpression LIKE '%asinCategorySameAs%' THEN CONCAT('category="', SUBSTRING_INDEX(SUBSTRING_INDEX(akl.resolvedExpression, 'value\': \'', -1), '\'}}', 1), '"')
+#             ELSE akl.resolvedExpression
+#         END AS targetingText,
+#         akl.targetId AS targetingId,
+#         0 AS sales,
+#         0 AS cost,
+#         bid,
+#         DATE_SUB('{cur_time}', INTERVAL 1 DAY) AS date
+#     FROM
+#         amazon_targets_list_sd akl
+#     WHERE
+#         akl.market = '{country}'
+#         AND akl.state = 'enabled'
+#         AND akl.servingStatus NOT IN ('CAMPAIGN_PAUSED', 'AD_GROUP_PAUSED', 'TARGETING_CLAUSE_PAUSED')
+#         AND akl.targetId NOT IN (
+#             SELECT
+#                 b.targetingId
+#             FROM
+#                 amazon_targeting_reports_sd b
+#             WHERE
+#                 b.market = '{country}'
+#                 AND b.date BETWEEN DATE_SUB('{cur_time}', INTERVAL 15 DAY)
+#                 AND DATE_SUB('{cur_time}', INTERVAL 1 DAY)
+#         )
+#     ORDER BY
+#         campaignId,
+#         adGroupId
+# ),
+# b AS (
+#     SELECT
+#         campaignName,
+#         campaignId,
+#         adGroupName,
+#         adGroupId,
+#         SUM(CASE WHEN date BETWEEN DATE_SUB('{cur_time}', INTERVAL 7 DAY) AND DATE_SUB('{cur_time}', INTERVAL 1 DAY) THEN sales ELSE 0 END) AS total_sales_7d,
+#         SUM(CASE WHEN date BETWEEN DATE_SUB('{cur_time}', INTERVAL 7 DAY) AND DATE_SUB('{cur_time}', INTERVAL 1 DAY) THEN cost ELSE 0 END) AS total_cost_7d
+#     FROM
+#         a
+#     GROUP BY
+#         campaignId,
+#         adGroupId
+# )
+# SELECT
+#     a.campaignName,
+#     a.campaignId,
+#     a.adGroupName,
+#     a.adGroupId,
+#     a.targetingText,
+#     a.targetingId,
+#     b.total_sales_7d,
+#     b.total_cost_7d,
+#     a.bid
+# FROM a
+# JOIN b ON a.campaignId = b.campaignId AND a.adGroupId = b.adGroupId
+# GROUP BY
+#     a.targetingId
+# ORDER BY
+#     a.campaignId,
+#     a.adGroupId;
+#                                                             """
+            else:
+                query = None
+            # print(query)
+            df1 = pd.read_sql(query, con=conn)
+            output_filename = '.\日常优化\sd广告\特殊商品投放\预处理.csv'
+            df1.to_csv(output_filename, index=False, encoding='utf-8-sig')
+            csv_to_json(output_filename)
+            # return df
+            return print("查询已完成，请查看文件： " + output_filename)
+
+        except Exception as error:
+            print("Error while inserting data:", error)
+
 
 # amr = AmazonMysqlRagUitl('LAPASA')
-# #amr.preprocessing_sp_anomaly_detection_macroscopic('FR','2024-07-09')
-# amr.preprocessing_product_targets_search_term('US','2024-07-15')
+# #amr.preprocessing_sp_anomaly_detection_macroscopic('US','2024-07-09')
+# amr.preprocessing_sp_overstock_targeting_group_manual('US','2024-07-17')

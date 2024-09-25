@@ -2,54 +2,63 @@
               {
                   "state": 0,
                   "country": "US",
+                  "db": "amazon_ads",
                   "timezone_offset": "-07:00",
                   "sales_channel": "Amazon.com"
               },
               {
                   "state": 0,
                   "country": "UK",
+                  "db": "amazon_ads",
                   "timezone_offset": "+01:00",
                   "sales_channel": "Amazon.co.uk"
               },
               {
                   "state": 0,
                   "country": "DE",
+                  "db": "amazon_ads",
                   "timezone_offset": "+02:00",
                   "sales_channel": "Amazon.de"
               },
               {
                   "state": 0,
                   "country": "FR",
+                  "db": "amazon_ads",
                   "timezone_offset": "+02:00",
                   "sales_channel": "Amazon.fr"
               },
               {
                   "state": 0,
                   "country": "IT",
+                  "db": "amazon_ads",
                   "timezone_offset": "+02:00",
                   "sales_channel": "Amazon.it"
               },
               {
                   "state": 0,
                   "country": "ES",
+                  "db": "amazon_ads",
                   "timezone_offset": "+02:00",
                   "sales_channel": "Amazon.es"
               },
               {
                   "state": 0,
                   "country": "JP",
+                  "db": "amazon_ads",
                   "timezone_offset": "+09:00",
                   "sales_channel": "Amazon.co.jp"
               },
               {
                   "state": 0,
                   "country": "SE",
+                  "db": "amazon_ads",
                   "timezone_offset": "+02:00",
                   "sales_channel": "Amazon.se"
               },
               {
                   "state": 0,
                   "country": "NL",
+                  "db": "amazon_ads",
                   "timezone_offset": "+02:00",
                   "sales_channel": "Amazon.nl"
               },
@@ -67,30 +76,35 @@
               {
                   "state": 0,
                   "country": "FR",
+                  "db": "amazon_outdoormaster",
                   "timezone_offset": "+02:00",
                   "sales_channel": "Amazon.fr"
               },
               {
                   "state": 0,
                   "country": "IT",
+                  "db": "amazon_outdoormaster",
                   "timezone_offset": "+02:00",
                   "sales_channel": "Amazon.it"
               },
               {
                   "state": 0,
                   "country": "ES",
+                  "db": "amazon_outdoormaster",
                   "timezone_offset": "+02:00",
                   "sales_channel": "Amazon.es"
               },
               {
                   "state": 0,
                   "country": "SE",
+                  "db": "amazon_outdoormaster",
                   "timezone_offset": "+02:00",
                   "sales_channel": "Amazon.se"
               },
               {
                   "state": 0,
                   "country": "JP",
+                  "db": "amazon_outdoormaster_jp",
                   "timezone_offset": "+09:00",
                   "sales_channel": "Amazon.co.jp"
               },
@@ -108,24 +122,28 @@
               {
                   "state": 0,
                   "country": "FR",
+                  "db": "amazon_bdzx",
                   "timezone_offset": "+02:00",
                   "sales_channel": "Amazon.fr"
               },
               {
                   "state": 0,
                   "country": "IT",
+                  "db": "amazon_bdzx",
                   "timezone_offset": "+02:00",
                   "sales_channel": "Amazon.it"
               },
               {
                   "state": 0,
                   "country": "ES",
+                  "db": "amazon_bdzx",
                   "timezone_offset": "+02:00",
                   "sales_channel": "Amazon.es"
               },
               {
                   "state": 0,
                   "country": "DE",
+                  "db": "amazon_bdzx",
                   "timezone_offset": "+02:00",
                   "sales_channel": "Amazon.de"
               },
@@ -204,7 +222,7 @@
                   "state": 2,
                   "country": "US",
                   "config": "US",
-                  "db": "amazon_youniverse_ins_us",
+                  "db": "amazon_youniverse_inc_us",
                   "timezone_offset": "-07:00",
                   "sales_channel": "Amazon.com",
                   "parent_asins": ["B0B9ZT2YFY", "B0B9ZQJC3X", "B0B9ZXP2J2", "B08GL98LG3", "B0C372VSJ7", "B098B1TWQ9", "B0C371ZGQK", "B0C372NCMN", "B0C36QQF4K", "B09B1LYSP8", "B0C3719K27", "B0C3718QWC", "B0B9SBG74F", "B0B9SCQ2FJ", "B0B9SDGWXV", "B0B9SFMHWK", "B08GLC97VT", "B0B9SG1GG1", "B09B1MJB1W", "B0B9SCRGBR", "B098B2T45M", "B0C372YRWR", "B0BB125SQG", "B0B9SD3BL7", "B0C37476DD", "B0C37225WT", "B0C371BZNN", "B08GL9M1S6", "B0C371K9Y8", "B0C36ZH99Q", "B0C371CPDR", "B0C3716SBG", "B08GLBGQ3F"]
@@ -226,6 +244,7 @@
                   "state": 2,
                   "country": "UK",
                   "config": "UK",
+                  "db": "amazon_youniverse_eu",
                   "timezone_offset": "+01:00",
                   "sales_channel": "Amazon.co.uk",
                   "parent_asins": ["B0BLCG5DTF", "B0BLCCL873", "B0C6T2PMRR", "B0BLCDZ21P", "B0BLCF6HH5", "B0BLCFLP3H", "B0BLCFDFRH", "B0CGD4VL97", "B0BLCLR78T", "B0BLCGB1G6", "B0C6T63Z3L", "B0C6T6JW79", "B0C6T4T1MZ", "B0CGCL2S1L", "B0CGCLX5DD", "B0CGD72LSR"]
@@ -238,6 +257,84 @@
                   "timezone_offset": "+02:00",
                   "sales_channel": "Amazon.de",
                   "parent_asins": ["B08211MDK7", "B08J83SWSG", "B08BXRK95X", "B08211KDRK", "B0C33BZJ99", "B0CC4L1CXS", "B0CC4K37N1", "B0CC4L48TD", "B0CC4LVTWX", "B0CC4LM2ZQ", "B0CC4MNH1F", "B0CC4LG82D", "B08BXSXXDF", "B0CC4NL7FK", "B087QL4Q8V", "B087QK4MGN", "B08YCY76HK", "B08Z3LDXHF", "B08Z34WPKJ", "B08YD5YJX9", "B08YDS6DFB", "B08Z3C4YS4", "B08Z3B27LY", "B08Z3CJ7K5", "B08Z3Y4HBX", "B0CC92RM7Z", "B0CC92K1CR", "B0CC9168FR", "B0CC93MZYK", "B0CFDCY6L9", "B0CFDFST4B", "B0CFDFJNSX", "B0CFDP79J7", "B0CFD8W2S8", "B0CFDGYM49", "B0CFDCYWK2", "B0C5MD2DD2", "B0C5MCM281", "B0CFDDYVP9", "B0CFDJZPQ5", "B0D793RQKM", "B0D79355B7", "B0D7931953", "B0D797BCXQ", "B0CJ313Q9P", "B0C747M2G4", "B0CJ2Y9S9S", "B0CJ2YCHJF", "B09CV3X5MB", "B09CV6TX35", "B09CV3SHZG", "B0C7BQNS8B", "B0C7BNWXNY", "B0C7BQGRRD", "B0C6TH9KRS", "B0C6TJQJ1T", "B0C6TLS557", "B0BP7P587Y", "B0BP7KWBMT", "B0C9H93NJ6", "B0C9GX811D", "B0CFL3FN3Z", "B0C9H6G2KB", "B0CFF4CV2H", "B0CFF3KF7X", "B0CFF4ZDWV", "B0CFF31B8W", "B0CFF4C7L1", "B0CJ9PCM5W", "B0CCNDVRQ7", "B0CCNDJQCP", "B0CCJL3CGP", "B0CCNFJHYV", "B0CCNC9FSK", "B0CCND4142", "B0CCNBQBH1", "B0CCNDMV5D", "B0CLLHZHBQ", "B0CLLHGB9T", "B0CLLHYZRH", "B0CLLJMHJ4", "B0CCJMQ5VW", "B0CCJK8S4V", "B0CCJM4V77", "B0CCJPJVTW", "B0CCNCHTSM", "B0CCJM15Y4", "B0CCJM13JQ", "B0CCNC86NP", "B0CCJP8BN2", "B0CCJM7QWQ", "B0CCJMYFBL", "B0CCNDZ6LM", "B0CGTXVFTZ", "B0CGTZHG7S", "B0CGV174V8", "B0CGTYJH8R", "B0CGV12LM3", "B0CGTZPMWC", "B0CGV26KD8", "B0CGTZ9F2C"]
+              }
+          ],
+  "ANTSHARE" : [
+              {
+                  "state": 0,
+                  "country": "DE",
+                  "db": "amazon_mayigongxiang",
+                  "timezone_offset": "+02:00",
+                  "sales_channel": "Amazon.de"
+              },
+              {
+                  "state": 0,
+                  "country": "FR",
+                  "db": "amazon_mayigongxiang",
+                  "timezone_offset": "+02:00",
+                  "sales_channel": "Amazon.fr"
+              },
+              {
+                  "state": 0,
+                  "country": "IT",
+                  "db": "amazon_mayigongxiang",
+                  "timezone_offset": "+02:00",
+                  "sales_channel": "Amazon.it"
+              },
+              {
+                  "state": 0,
+                  "country": "ES",
+                  "db": "amazon_mayigongxiang",
+                  "timezone_offset": "+02:00",
+                  "sales_channel": "Amazon.es"
+              },
+              {
+                  "state": 1,
+                  "region": "EU",
+                  "config": "FR",
+                  "db": "amazon_mayigongxiang",
+                  "country": ["FR","DE","ES","IT"],
+                  "timezone_offset": "+02:00",
+                  "sales_channel": ["Amazon.fr","Amazon.es","Amazon.it","Amazon.de"]
+              }
+          ],
+  "GOLDJU" : [
+              {
+                  "state": 0,
+                  "country": "DE",
+                  "db": "amazon_mayigongxiang_huakey",
+                  "timezone_offset": "+02:00",
+                  "sales_channel": "Amazon.de"
+              },
+              {
+                  "state": 0,
+                  "country": "FR",
+                  "db": "amazon_mayigongxiang_huakey",
+                  "timezone_offset": "+02:00",
+                  "sales_channel": "Amazon.fr"
+              },
+              {
+                  "state": 0,
+                  "country": "IT",
+                  "db": "amazon_mayigongxiang_huakey",
+                  "timezone_offset": "+02:00",
+                  "sales_channel": "Amazon.it"
+              },
+              {
+                  "state": 0,
+                  "country": "ES",
+                  "db": "amazon_mayigongxiang_huakey",
+                  "timezone_offset": "+02:00",
+                  "sales_channel": "Amazon.es"
+              },
+              {
+                  "state": 1,
+                  "region": "EU",
+                  "config": "FR",
+                  "db": "amazon_mayigongxiang_huakey",
+                  "country": ["FR","DE","ES","IT"],
+                  "timezone_offset": "+02:00",
+                  "sales_channel": ["Amazon.fr","Amazon.es","Amazon.it","Amazon.de"]
               }
           ]
 }

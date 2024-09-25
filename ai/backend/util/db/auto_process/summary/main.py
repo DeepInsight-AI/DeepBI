@@ -46,7 +46,7 @@ def run():
             'brand': 'keimi',
             'countries': ['US']
         },
-        'amazon_youniverse_ins_us': {
+        'amazon_youniverse_inc_us': {
             'brand': 'us1',
             'countries': ['US']
         },
@@ -57,7 +57,16 @@ def run():
         'amazon_youniverse_eu': {
             'brand': 'eu',
             'countries': ['DE', 'UK']
+        },
+        'amazon_mayigongxiang': {
+            'brand': 'ANTSHARE',
+            'countries': ['IT', 'ES', 'DE', 'FR']
+        },
+        'amazon_mayigongxiang_huakey': {
+            'brand': 'ANTSHARE',
+            'countries': ['IT', 'ES', 'DE', 'FR']
         }
+
     }
 
     # Initialize timing

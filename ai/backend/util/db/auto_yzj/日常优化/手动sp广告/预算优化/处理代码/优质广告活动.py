@@ -28,27 +28,27 @@ def main(path, brand, cur_time, country):
     ]
 
     # 增加原来预算的1/5，直到预算为50
-    good_campaigns['New_Budget'] = good_campaigns.apply(increase_budget, axis=1)
+    good_campaigns['New_Budget'] = good_campaigns['Budget'] + 5
 
     # 添加原因字段
-    good_campaigns['Reason'] = 'Performance is good based on 7d ACOS and yesterday ACOS and yesterday cost exceeds 80% of budget'
-
+    good_campaigns['Reason'] = '定义一'
+    good_campaigns['bid_adjust'] = 5
     # 选择需要的字段
     output_columns = [
         'campaignId', 'campaignName', 'Budget', 'New_Budget', 'cost_yesterday',
         'clicks_yesterday', 'ACOS_yesterday', 'ACOS_7d', 'ACOS_30d',
-        'total_clicks_30d', 'total_sales14d_30d', 'Reason'
+        'total_clicks_30d', 'total_sales14d_30d', 'Reason', 'bid_adjust'
     ]
     output_data = good_campaigns[output_columns]
-    api2 = AmazonMysqlRagUitl(brand)
+    api2 = AmazonMysqlRagUitl(brand,country)
     excluded_campaign_ids = api2.get_operated_campaign(country,cur_time)
     if excluded_campaign_ids:
         excluded_campaign_ids = [int(campaign_id) for campaign_id in excluded_campaign_ids]
         output_data = output_data[~output_data['campaignId'].isin(excluded_campaign_ids)]
     output_data.replace({np.nan: None}, inplace=True)
-    api = DbNewSpTools(brand)
+    api = DbNewSpTools(brand,country)
     for index, row in output_data.iterrows():
-        api.create_budget_info(country,brand,'日常优化','手动_优质',row['campaignId'],row['campaignName'],row['Budget'],row['New_Budget'],row['cost_yesterday'],row['clicks_yesterday'],row['ACOS_yesterday'],None,None,row['ACOS_7d'],row['ACOS_30d'],row['total_clicks_30d'],row['total_sales14d_30d'],row['Reason'],None,cur_time,datetime.now(),0)
+        api.create_budget_info(country,brand,'日常优化','手动_优质',row['campaignId'],row['campaignName'],row['Budget'],row['New_Budget'],row['cost_yesterday'],row['clicks_yesterday'],row['ACOS_yesterday'],None,None,row['ACOS_7d'],row['ACOS_30d'],row['total_clicks_30d'],row['total_sales14d_30d'],row['Reason'],None,row['bid_adjust'],cur_time,datetime.now(),0)
     # 保存到新的CSV文件
     output_data.to_csv(output_file_path, index=False)
 

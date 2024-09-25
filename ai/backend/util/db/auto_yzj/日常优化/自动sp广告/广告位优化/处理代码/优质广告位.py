@@ -7,7 +7,7 @@ from ai.backend.util.db.auto_process.summary.db_tool.tools_db import AmazonMysql
 from datetime import datetime
 
 
-def main(path, brand, cur_time, country, version=2):
+def main(path, brand, cur_time, country, version=3):
     # Load the CSV file into a DataFrame
     file_path = r'C:\Users\admin\PycharmProjects\DeepBI\ai\backend\util\db\auto_yzj\日常优化\自动sp广告\广告位优化\预处理.csv'
     file_name = "自动_优质广告位" + '_' + brand + '_' + country + '_' + cur_time + '.csv'
@@ -66,25 +66,45 @@ def main(path, brand, cur_time, country, version=2):
             placementClassification = row['placementClassification']
             ACOS_7d = row['ACOS_7d']
             ACOS_3d = row['ACOS_3d']
-            total_sales14d_3d = row['total_clicks_7d']
-            total_cost_3d = row['total_clicks_3d']
+            total_sales14d_3d = row['total_sales14d_3d']
+            total_cost_3d = row['total_cost_3d']
             bid = row['bid']
             if 0 < ACOS_7d < 0.24 and 0 < ACOS_3d < 0.24:
                 reason = '定义一'
+                bid_adjust = 5
                 new_bid = min(50, row['bid'] + 5)
                 results.append([campaignName, campaignId, placementClassification, ACOS_7d, ACOS_3d, total_sales14d_3d, total_cost_3d,
-                                bid, new_bid, reason])
+                                bid, new_bid, reason, bid_adjust])
 
             elif 0 < ACOS_7d < 0.24 and total_sales14d_3d == 0 and total_cost_3d < 5:
                 reason = '定义二'
+                bid_adjust = 5
                 new_bid = min(50, row['bid'] + 5)
                 results.append([campaignName, campaignId, placementClassification, ACOS_7d, ACOS_3d, total_sales14d_3d,
                                 total_cost_3d,
-                                bid, new_bid, reason])
-        columns = ['campaignName', 'campaignId', 'placementClassification', 'ACOS_7d', 'ACOS_3d', 'total_sales14d_3d', 'total_cost_3d', 'bid', 'new_bid', 'reason']
+                                bid, new_bid, reason, bid_adjust])
+        columns = ['campaignName', 'campaignId', 'placementClassification', 'ACOS_7d', 'ACOS_3d', 'total_sales14d_3d', 'total_cost_3d', 'bid', 'new_bid', 'reason', 'bid_adjust']
         result_df = pd.DataFrame(results, columns=columns)
-
-    api2 = AmazonMysqlRagUitl(brand)
+    elif version == 3 or version == '初阶':
+        results = []
+        for index, row in data.iterrows():
+            campaignId = row['campaignId']
+            campaignName = row['campaignName']
+            placementClassification = row['placementClassification']
+            ACOS_7d = row['ACOS_7d']
+            ACOS_3d = row['ACOS_3d']
+            total_sales14d_3d = row['total_sales14d_3d']
+            total_cost_3d = row['total_cost_3d']
+            bid = row['bid']
+            if 0 < ACOS_7d < 0.2 and 0 < ACOS_3d < 0.2:
+                reason = '定义一'
+                bid_adjust = 5
+                new_bid = min(50, row['bid'] + 5)
+                results.append([campaignName, campaignId, placementClassification, ACOS_7d, ACOS_3d, total_sales14d_3d, total_cost_3d,
+                                bid, new_bid, reason, bid_adjust])
+        columns = ['campaignName', 'campaignId', 'placementClassification', 'ACOS_7d', 'ACOS_3d', 'total_sales14d_3d', 'total_cost_3d', 'bid', 'new_bid', 'reason', 'bid_adjust']
+        result_df = pd.DataFrame(results, columns=columns)
+    api2 = AmazonMysqlRagUitl(brand,country)
     campaignIds_to_remove, placements_to_remove = api2.get_operated_campaign_placement(country, cur_time)
     if campaignIds_to_remove and placements_to_remove:
         campaignIds_to_remove = [int(campaign_id) for campaign_id in campaignIds_to_remove]
@@ -93,9 +113,9 @@ def main(path, brand, cur_time, country, version=2):
         # 根据掩码过滤数据框
         result_df = result_df[mask]
     result_df.replace({np.nan: None}, inplace=True)
-    api = DbNewSpTools(brand)
+    api = DbNewSpTools(brand,country)
     for index, row in result_df.iterrows():
-        api.create_campaign_placement_info(country,brand,'日常优化','自动_优质',row['campaignName'],row['campaignId'],row['placementClassification'],row['bid'],row['new_bid'],row['ACOS_7d'],None,None,row['ACOS_3d'],row['total_sales14d_3d'],row['total_cost_3d'],row['reason'],cur_time,datetime.now(),0)
+        api.create_campaign_placement_info(country,brand,'日常优化','自动_优质',row['campaignName'],row['campaignId'],row['placementClassification'],row['bid'],row['new_bid'],row['ACOS_7d'],None,None,row['ACOS_3d'],row['total_sales14d_3d'],row['total_cost_3d'],row['reason'],row['bid_adjust'],cur_time,datetime.now(),0)
 
 
     # Save the output to a new CSV file

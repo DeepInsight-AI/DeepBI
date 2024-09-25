@@ -34,3 +34,9 @@ uwsgi.ini
 /ai/test/
 /ai/paper/
 /ai/backend/util/db/configuration/Brand.yml
+/ai/backend/util/db/auto_yzj/日常优化/输出结果/
+/ai/backend/util/db/auto_yzj/paper/
+/ai/backend/util/db/auto_process/automatic_status_quo_analysis/export/
+/ai/backend/util/db/auto_process/automatic_status_quo_analysis/output/
+/ai/backend/util/db/auto_process/amazon_api_demo/uploads/
+/ai/backend/util/db/auto_yzj/config/

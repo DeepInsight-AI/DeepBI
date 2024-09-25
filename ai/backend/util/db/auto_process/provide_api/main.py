@@ -1,5 +1,6 @@
 import json
 import os
+from datetime import datetime
 
 from flask import Flask, request, jsonify, g
 import logging
@@ -8,6 +9,7 @@ import hashlib
 import time
 from ai.backend.util.db.auto_process.provide_api.util.update_api import update_api
 from ai.backend.util.db.auto_process.provide_api.util.create_api import create_api
+from ai.backend.util.db.auto_process.provide_api.util.automatically_api import automatically_api
 from backend.util.db.configuration.path import get_config_path
 
 app = Flask(__name__)
@@ -152,6 +154,27 @@ def get_data():
             return jsonify(execution_times), 200
     else:
         return jsonify({"error": "File not found"}), 404
+
+@app.route('/api/data/automatically', methods=['POST'])
+def get_automatically():
+    # 验证请求头
+    token = request.headers.get('token')
+    timestamp = request.headers.get('timestamp')
+    secret_key = "10470c3b4b1fed12c3baac014be15fac67c6e815"  # 测试环境的秘钥
+    if not verify_request(token, timestamp, secret_key):
+        return jsonify({"error": "Unauthorized"}), 401
+
+    data = request.get_json()
+    code = automatically_api(data)
+    current_time = time.time()
+    if code == 200:
+        return jsonify({"status": 200, "error": "", "timestamp": datetime.fromtimestamp(current_time).strftime('%Y-%m-%d %H:%M:%S')})
+    elif code == 404:
+        return jsonify({"status": 404, "error": "Brand not found"})
+    elif code == 500:
+        return jsonify({"status": 500, "error": "Internal Server Error"})
+    else:
+        return jsonify({"status": 404, "error": "Unknown error"})  # Bad Request
 
 
 if __name__ == '__main__':

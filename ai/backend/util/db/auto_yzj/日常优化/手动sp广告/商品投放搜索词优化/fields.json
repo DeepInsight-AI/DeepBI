@@ -2,87 +2,91 @@
     "field_desc": [
         {
             "name": "keyword",
-            "comment": "商品投放"
+            "comment": "keyword"
         },
         {
             "name": "searchTerm",
-            "comment": "搜索词"
+            "comment": "searchTerm"
         },
         {
             "name": "adGroupName",
-            "comment": "广告组名称"
+            "comment": "adGroupName"
         },
         {
             "name": "adGroupId",
-            "comment": "广告组Id"
+            "comment": "adGroupId"
         },
         {
             "name": "matchType",
-            "comment": "匹配类型"
+            "comment": "matchType"
         },
         {
             "name": "campaignName",
-            "comment": "广告活动名称"
+            "comment": "campaignName"
         },
         {
             "name": "campaignId",
-            "comment": "广告活动Id"
+            "comment": "campaignId"
         },
         {
             "name": "total_clicks_30d",
-            "comment": "搜索词最近30天的总点击数"
+            "comment": "total_clicks_30d"
         },
         {
             "name": "total_clicks_7d",
-            "comment": "搜索词最近7天的总点击数"
+            "comment": "total_clicks_7d"
         },
         {
             "name": "total_clicks_yesterday",
-            "comment": "搜索词昨天的点击数"
+            "comment": "total_clicks_yesterday"
         },
         {
             "name": "total_sales14d_30d",
-            "comment": "搜索词最近30天的总销售额"
+            "comment": "total_sales14d_30d"
         },
         {
             "name": "total_sales14d_7d",
-            "comment": "搜索词最近7天的总销售额"
+            "comment": "total_sales14d_7d"
         },
         {
             "name": "total_sales14d_yesterday",
-            "comment": "搜索词昨天的销售额"
+            "comment": "total_sales14d_yesterday"
         },
         {
             "name": "total_cost_30d",
-            "comment": "搜索词最近30天的总花费"
+            "comment": "total_cost_30d"
         },
         {
             "name": "total_cost_7d",
-            "comment": "搜索词最近7天的总花费"
+            "comment": "total_cost_7d"
         },
         {
             "name": "total_cost_yesterday",
-            "comment": "搜索词昨天的花费"
+            "comment": "total_cost_yesterday"
         },
         {
             "name": "ACOS_30d",
-            "comment": "搜索词最近30天的平均ACOS值"
+            "comment": "ACOS_30d"
         },
         {
             "name": "ACOS_7d",
-            "comment": "搜索词最近7天的平均ACOS值"
+            "comment": "ACOS_7d"
         },
         {
             "name": "ACOS_yesterday",
-            "comment": "搜索词昨天的ACOS值"
+            "comment": "ACOS_yesterday"
         },
         {
             "name": "ORDER_1m",
-            "comment": "近一个月的订单数"
+            "comment": "ORDER_1m"
         },
         {
             "name": "ORDER_7d",
-            "comment": "近7天的订单数"
+            "comment": "ORDER_7d"
+        },
+        {
+            "name": "CPC_30d",
+            "comment": "CPC_30d"
         }
     ]
 }

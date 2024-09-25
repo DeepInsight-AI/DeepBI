@@ -70,6 +70,10 @@ class ProcessShowData():
     def update(cls, data):
         return cls.post_data(data, "update")
 
+    @classmethod
+    def automatically_add_targets(cls, data):
+        return cls.post_data(data, "automatically")
+
     # @classmethod
     # def delete(cls, data):
     #     if "ID" not in data:
@@ -104,19 +108,19 @@ class ProcessShowData():
 
 if __name__ == "__main__":
     # 要发送的JSON数据
-    update_data = {
-        "db":"amazon_ads",
-        "brand": "LAPASA",
-        "market": "DE",
-        "require": "bid_batch",
-        "position": "keyword",
-        "type": "SP",
-        "ID": ["20178462947151", "8078361568771", "12345"],
-        "text": ["1", "1.0", "1"],
-        "user":"wanghequan"
-    }
-
-    res = ProcessShowData.update(update_data)
+    # update_data = {
+    #     "db":"amazon_ads",
+    #     "brand": "LAPASA",
+    #     "market": "IT",
+    #     "require": "bid_batch",
+    #     "position": "automatic_targeting",
+    #     "type": "SP",
+    #     "ID": ["211711817244392", "263489723525844", "12345"],
+    #     "text": ["1", "1.0", "1"],
+    #     "user":"wanghequan"
+    # }
+    #
+    # res = ProcessShowData.update(update_data)
     # print(res)
     # add_data = {
     #     "brand": "LAPASA",
@@ -134,3 +138,13 @@ if __name__ == "__main__":
     # }
     # res = ProcessShowData.get_data(add_data)
     # print(res)
+    automatically_data = {
+        "db": "amazon_bdzx",
+        "brand": "DELOMO",
+        "market": "IT",
+        "strategy": "automatically_add_targets",
+        "user": "wanghequan"
+    }
+
+    res = ProcessShowData.automatically_add_targets(automatically_data)
+    print(res)

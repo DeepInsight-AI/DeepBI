@@ -13,12 +13,13 @@ from ai.backend.util.db.auto_process.tools_sp_adGroup import AdGroupTools
 from ai.backend.util.db.auto_process.tools_sp_keyword import SPKeywordTools
 from ai.backend.util.db.auto_process.create_new_sp_ad_auto import load_config
 from ai.backend.util.db.auto_process.advertising.db_tool.check_records_within_24_hours import CheckRecordsWithin24Hours
+from ai.backend.util.db.auto_process.base_api import BaseApi
 
 
-class auto_api:
-    def __init__(self,brand,market):
-        self.brand = brand
-        self.market = market
+class auto_api(BaseApi):
+    def __init__(self, db, brand, market, user):
+        super().__init__(db, brand, market)
+        self.user = user
         self.exchange_rate = load_config('exchange_rate.json').get('exchange_rate', {}).get("DE", {}).get(self.market)
 
     def update_sp_ad_budget(self,market, path):
@@ -127,7 +128,7 @@ class auto_api:
             # 将DataFrame转换为一个列表，每个元素是一个字典表示一行数据
             df_data = json.loads(df.to_json(orient='records'))
             print(df_data)
-            api = Gen_keyword(self.brand)
+            api = Gen_keyword(self.db,self.brand,self.market)
             for item in df_data:
                 campaign_id = item["campaignId"]
                 adGroupId = item["adGroupId"]
@@ -138,19 +139,19 @@ class auto_api:
                 else:
                     if CPC_30d == '' or not CPC_30d:
                         CPC_30d = 0.5 * self.exchange_rate
-                    api2 = DbSpTools(self.brand, self.market)
+                    api2 = DbSpTools(self.db,self.brand,self.market)
                     count1 = api2.select_sp_keyword_count(campaign_id,adGroupId,searchTerm,"EXACT")
                     if count1 == 0:
                         print(count1)
-                        api.add_keyword_toadGroup_v0(market, str(campaign_id), str(adGroupId), searchTerm, matchType="EXACT", state="ENABLED", bid=float(CPC_30d))
+                        api.add_keyword_toadGroup_v0(str(campaign_id), str(adGroupId), searchTerm, matchType="EXACT", state="ENABLED", bid=float(CPC_30d), user=self.user)
                     count2 = api2.select_sp_keyword_count(campaign_id, adGroupId, searchTerm, "PHRASE")
                     if count2 == 0:
                         print(count2)
-                        api.add_keyword_toadGroup_v0(market, str(campaign_id), str(adGroupId), searchTerm, matchType="PHRASE", state="ENABLED", bid=float(CPC_30d))
+                        api.add_keyword_toadGroup_v0(str(campaign_id), str(adGroupId), searchTerm, matchType="PHRASE", state="ENABLED", bid=float(CPC_30d), user=self.user)
                     count3 = api2.select_sp_keyword_count(campaign_id, adGroupId, searchTerm, "BROAD")
                     if count3 == 0:
-                        api.add_keyword_toadGroup_v0(market, str(campaign_id), str(adGroupId), searchTerm, matchType="BROAD",
-                                                 state="ENABLED", bid=float(CPC_30d))
+                        api.add_keyword_toadGroup_v0(str(campaign_id), str(adGroupId), searchTerm, matchType="BROAD",
+                                                 state="ENABLED", bid=float(CPC_30d), user=self.user)
 
     def add_sp_ad_auto_searchTerm_keyword(self,market, path):
         uploaded_file = path
@@ -161,19 +162,19 @@ class auto_api:
             # 将DataFrame转换为一个列表，每个元素是一个字典表示一行数据
             df_data = json.loads(df.to_json(orient='records'))
             print(df_data)
-            api = Gen_keyword(self.brand)
+            api = Gen_keyword(self.db,self.brand,self.market)
             for item in df_data:
                 if "new_campaignId" in item and item["new_campaignId"]:
                     if len(item['searchTerm']) == 10 and item['searchTerm'].startswith('b0'):
-                        apitool1 = AdGroupTools(self.brand)
-                        api1 = Gen_adgroup(self.brand)
+                        apitool1 = AdGroupTools(self.db,self.brand,self.market)
+                        api1 = Gen_adgroup(self.db,self.brand,self.market)
                         campaignId = item["new_campaignId"]
                         adGroupId = item["new_adGroupId"]
                         searchTerm = item["searchTerm"]
                         CPC_30d = item["CPC_30d"]
                         if CPC_30d == '' or not CPC_30d:
                             CPC_30d = 0.5*self.exchange_rate
-                        api2 = DbSpTools(self.brand, self.market)
+                        api2 = DbSpTools(self.db,self.brand,self.market)
                         count = api2.select_sp_target_count(campaignId, adGroupId, searchTerm.upper())
                         if count == 0:
                         # try:
@@ -186,9 +187,9 @@ class auto_api:
                         #     print(e)
                         #     bid = 0.25 * self.exchange_rate
                             try:
-                                api1.create_adGroup_Targeting1(market, str(int(campaignId)), str(int(adGroupId)),
+                                api1.create_adGroup_Targeting1(str(int(campaignId)), str(int(adGroupId)),
                                                                searchTerm.upper(), float(CPC_30d), state='ENABLED',
-                                                               type='ASIN_SAME_AS')
+                                                               type='ASIN_SAME_AS', user=self.user)
                             except Exception as e:
                                 print(e)
                     else:
@@ -199,19 +200,19 @@ class auto_api:
                         if CPC_30d == '' or not CPC_30d:
                             CPC_30d = 0.5*self.exchange_rate
                         #print(CPC_30d)
-                        api2 = DbSpTools(self.brand, self.market)
+                        api2 = DbSpTools(self.db,self.brand,self.market)
                         count1 = api2.select_sp_keyword_count(campaign_id, adGroupId, searchTerm, "EXACT")
                         if count1 == 0:
                             print(count1)
-                            api.add_keyword_toadGroup_v0(market, str(int(campaign_id)), str(int(adGroupId)), searchTerm, matchType="EXACT", state="ENABLED", bid=float(CPC_30d))
+                            api.add_keyword_toadGroup_v0(str(int(campaign_id)), str(int(adGroupId)), searchTerm, matchType="EXACT", state="ENABLED", bid=float(CPC_30d), user=self.user)
                         count2 = api2.select_sp_keyword_count(campaign_id, adGroupId, searchTerm, "PHRASE")
                         if count2 == 0:
                             print(count2)
-                            api.add_keyword_toadGroup_v0(market, str(int(campaign_id)), str(int(adGroupId)), searchTerm, matchType="PHRASE", state="ENABLED", bid=float(CPC_30d))
+                            api.add_keyword_toadGroup_v0(str(int(campaign_id)), str(int(adGroupId)), searchTerm, matchType="PHRASE", state="ENABLED", bid=float(CPC_30d), user=self.user)
                         count3 = api2.select_sp_keyword_count(campaign_id, adGroupId, searchTerm, "BROAD")
                         if count3 == 0:
                             print(count3)
-                            api.add_keyword_toadGroup_v0(market, str(int(campaign_id)), str(int(adGroupId)), searchTerm, matchType="BROAD", state="ENABLED", bid=float(CPC_30d))
+                            api.add_keyword_toadGroup_v0(str(int(campaign_id)), str(int(adGroupId)), searchTerm, matchType="BROAD", state="ENABLED", bid=float(CPC_30d), user=self.user)
 
     def add_sp_ad_searchTerm_negative_keyword(self,market, path):
         uploaded_file = path
@@ -223,22 +224,22 @@ class auto_api:
             df_data = json.loads(df.to_json(orient='records'))
             print(df_data)
 
-            api1 = Gen_adgroup(self.brand)
+            api1 = Gen_adgroup(self.db,self.brand,self.market)
             for item in df_data:
                 campaign_id = item["campaignId"]
                 adGroupId = item["adGroupId"]
                 searchTerm = item["searchTerm"]
                 if len(item['searchTerm']) == 10 and item['searchTerm'].startswith('b0'):
-                    api1.create_adGroup_Negative_Targeting_by_asin(market, str(campaign_id), str(adGroupId), searchTerm.upper())
+                    api1.create_adGroup_Negative_Targeting_by_asin(str(campaign_id), str(adGroupId), searchTerm.upper())
                 else:
                     try:
-                        api1.add_adGroup_negative_keyword_v0(market, str(campaign_id), str(adGroupId), searchTerm, matchType="NEGATIVE_EXACT", state="ENABLED")
+                        api1.add_adGroup_negative_keyword_v0(str(campaign_id), str(adGroupId), searchTerm, matchType="NEGATIVE_EXACT", state="ENABLED", user=self.user)
                     except Exception as e:
                         print("An error occurred:", e)
-                        newdbtool = DbNewSpTools(self.brand,market)
+                        newdbtool = DbNewSpTools(self.db,self.brand,self.market)
                         newdbtool.add_sp_adGroup_negativeKeyword(market, None, adGroupId, campaign_id, None,"NEGATIVE_EXACT",
                                                                  "ENABLED", searchTerm, "failed",datetime.now()
-                                                                 ,None ,None )
+                                                                 ,None ,None, user=self.user )
 
     def update_sp_ad_sku(self,market, path):
         uploaded_file = path
@@ -367,8 +368,8 @@ class auto_api:
             df_data = json.loads(df.to_json(orient='records'))
             print(df_data)
 
-            apitool1 = AdGroupTools(self.brand)
-            api1 = Gen_adgroup(self.brand)
+            apitool1 = AdGroupTools(self.db,self.brand,self.market)
+            api1 = Gen_adgroup(self.db,self.brand,self.market)
             for item in df_data:
                 if len(item['searchTerm']) == 10 and item['searchTerm'].startswith('b0'):
                     campaignId = item["campaignId"]
@@ -377,7 +378,7 @@ class auto_api:
                     CPC_30d = item["CPC_30d"]
                     if CPC_30d == '' or not CPC_30d:
                         CPC_30d = 0.5 * self.exchange_rate
-                    api2 = DbSpTools(self.brand, self.market)
+                    api2 = DbSpTools(self.db,self.brand,self.market)
                     count = api2.select_sp_target_count(campaignId, adGroupId, searchTerm.upper())
                     if count == 0:
                         print(count)
@@ -389,7 +390,7 @@ class auto_api:
                     #     print(e)
                     #     bid = 0.25 * self.exchange_rate
                         try:
-                            api1.create_adGroup_Targeting1(market,str(campaignId),str(adGroupId),searchTerm.upper(),float(CPC_30d),state='ENABLED',type='ASIN_SAME_AS')
+                            api1.create_adGroup_Targeting1(str(campaignId),str(adGroupId),searchTerm.upper(),float(CPC_30d),state='ENABLED',type='ASIN_SAME_AS', user=self.user)
                         except Exception as e:
                             print(e)
                 else:
@@ -401,20 +402,20 @@ class auto_api:
                         CPC_30d = item["CPC_30d"]
                         if CPC_30d == '' or not CPC_30d:
                             CPC_30d = 0.5 * self.exchange_rate
-                        api2 = DbSpTools(self.brand, self.market)
+                        api2 = DbSpTools(self.db,self.brand,self.market)
                         count1 = api2.select_sp_keyword_count(campaign_id, adGroupId, searchTerm, "EXACT")
                         if count1 == 0:
                             print(count1)
-                            api.add_keyword_toadGroup_v0(market, str(int(campaign_id)), str(int(adGroupId)), searchTerm,
-                                                     matchType="EXACT", state="ENABLED", bid=float(CPC_30d))
+                            api.add_keyword_toadGroup_v0(str(int(campaign_id)), str(int(adGroupId)), searchTerm,
+                                                     matchType="EXACT", state="ENABLED", bid=float(CPC_30d), user=self.user)
                         count2 = api2.select_sp_keyword_count(campaign_id, adGroupId, searchTerm, "PHRASE")
                         if count2 == 0:
                             print(count2)
-                            api.add_keyword_toadGroup_v0(market, str(int(campaign_id)), str(int(adGroupId)), searchTerm,
-                                                     matchType="PHRASE", state="ENABLED", bid=float(CPC_30d))
+                            api.add_keyword_toadGroup_v0(str(int(campaign_id)), str(int(adGroupId)), searchTerm,
+                                                     matchType="PHRASE", state="ENABLED", bid=float(CPC_30d), user=self.user)
                         count3 = api2.select_sp_keyword_count(campaign_id, adGroupId, searchTerm, "BROAD")
                         if count3 == 0:
-                            api.add_keyword_toadGroup_v0(market, str(int(campaign_id)), str(int(adGroupId)), searchTerm,matchType="BROAD", state="ENABLED", bid=float(CPC_30d))
+                            api.add_keyword_toadGroup_v0(str(int(campaign_id)), str(int(adGroupId)), searchTerm,matchType="BROAD", state="ENABLED", bid=float(CPC_30d), user=self.user)
 
     def add_sp_ad_negative_searchTerm_product(self,market, path):
         uploaded_file = path
@@ -426,14 +427,14 @@ class auto_api:
             df_data = json.loads(df.to_json(orient='records'))
             print(df_data)
 
-            api1 = Gen_adgroup(self.brand)
+            api1 = Gen_adgroup(self.db,self.brand,self.market)
             for item in df_data:
                 campaign_id = item["campaignId"]
                 adGroupId = item["adGroupId"]
                 searchTerm = item["searchTerm"]
 
-                api1.create_adGroup_Negative_Targeting_by_asin(market, str(campaign_id), str(adGroupId),
-                                                                   searchTerm.upper())
+                api1.create_adGroup_Negative_Targeting_by_asin(str(campaign_id), str(adGroupId),
+                                                                   searchTerm.upper(), user=self.user)
 
 
 # uploaded_file = 'C:/Users/admin/PycharmProjects/DeepBI/ai/backend/util/db/auto_yzj/日常优化/输出结果/LAPASA_IT_2024-07-25/手动_ASIN_优质商品投放_LAPASA_IT_2024-07-25.csv'

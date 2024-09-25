@@ -266,6 +266,33 @@ class AdGroupTools(BaseApi):
             print("list adGroup TargetingClause failed")
             return None
 
+    def list_adGroup_TargetingClause_by_targetId_batch(self, targetId):
+        try:
+            adGroup_info = {
+                "targetIdFilter": {
+                    "include": targetId
+                }
+            }
+            result = sponsored_products.TargetsV3(credentials=self.credentials,
+                                                  marketplace=Marketplaces[self.market.upper()],
+                                                  access_token=self.access_token,
+                                                  proxies=get_proxies(self.market),
+                                                  debug=True).list_product_targets(
+                body=json.dumps(adGroup_info))
+        except Exception as e:
+            print("list adGroup TargetingClause failed: ", e)
+            result = None
+        if result and result.payload["targetingClauses"]:
+            print("list adGroup TargetingClause success")
+            return result.payload["targetingClauses"]
+        # if result and result.payload["negativeKeywords"]["success"]:
+        #     negativeKeywordId = result.payload["negativeKeywords"]["success"][0]["negativeKeywordId"]
+        #     print("add adGroup negative keyword success,negativeKeywordId is:", negativeKeywordId)
+        #     return ["success", negativeKeywordId]
+        else:
+            print("list adGroup TargetingClause failed")
+            return None
+
     def update_adGroup_TargetingC(self, adGroup_info):
         try:
             result = sponsored_products.TargetsV3(credentials=self.credentials,
@@ -280,6 +307,28 @@ class AdGroupTools(BaseApi):
         if result and result.payload["targetingClauses"]["success"]:
             print("update adGroup TargetingClause success")
             return ["success", result.payload["targetingClauses"]["success"][0]]
+        # if result and result.payload["negativeKeywords"]["success"]:
+        #     negativeKeywordId = result.payload["negativeKeywords"]["success"][0]["negativeKeywordId"]
+        #     print("add adGroup negative keyword success,negativeKeywordId is:", negativeKeywordId)
+        #     return ["success", negativeKeywordId]
+        else:
+            print("update adGroup TargetingClause failed")
+            return ["failed", ""]
+
+    def update_adGroup_TargetingC_batch(self, adGroup_info):
+        try:
+            result = sponsored_products.TargetsV3(credentials=self.credentials,
+                                                  marketplace=Marketplaces[self.market.upper()],
+                                                  access_token=self.access_token,
+                                                  proxies=get_proxies(self.market),
+                                                  debug=True).edit_product_targets(
+                body=json.dumps(adGroup_info))
+        except Exception as e:
+            print("update adGroup TargetingClause failed: ", e)
+            result = None
+        if result and result.payload["targetingClauses"]["success"]:
+            print("update adGroup TargetingClause success")
+            return ["success", result.payload["targetingClauses"]["success"]]
         # if result and result.payload["negativeKeywords"]["success"]:
         #     negativeKeywordId = result.payload["negativeKeywords"]["success"][0]["negativeKeywordId"]
         #     print("add adGroup negative keyword success,negativeKeywordId is:", negativeKeywordId)
@@ -513,6 +562,10 @@ class AdGroupTools(BaseApi):
         else:
             print("list category_refinements failed")
             return ["failed", ""]
+
+if __name__ == '__main__':
+    res = AdGroupTools('amazon_ads', 'LAPASA', 'IT').list_adGroup_TargetingClause_by_targetId_batch(['211711817244392','263489723525844'])
+    print(res)
 # 广告组更新否定关键词测试
 # adGroup_negativekw_info = {
 # "negativeKeywords": [

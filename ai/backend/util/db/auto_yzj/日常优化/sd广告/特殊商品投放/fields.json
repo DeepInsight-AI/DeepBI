@@ -1,0 +1,40 @@
+{
+    "field_desc": [
+        {
+            "name": "campaignName",
+            "comment": "campaignName"
+        },
+        {
+            "name": "campaignId",
+            "comment": "campaignId"
+        },
+        {
+            "name": "adGroupName",
+            "comment": "adGroupName"
+        },
+        {
+            "name": "adGroupId",
+            "comment": "adGroupId"
+        },
+        {
+            "name": "targetingText",
+            "comment": "targetingText"
+        },
+        {
+            "name": "keywordId",
+            "comment": "keywordId"
+        },
+        {
+            "name": "total_sales_7d",
+            "comment": "total_sales_7d"
+        },
+        {
+            "name": "total_cost_7d",
+            "comment": "total_cost_7d"
+        },
+        {
+            "name": "bid",
+            "comment": "bid"
+        }
+    ]
+}

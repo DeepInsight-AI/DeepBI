@@ -7,7 +7,7 @@ from datetime import datetime
 
 
 # 定义条件函数
-def get_raise_amount(row, version=2):
+def get_raise_amount(row, version=3):
     ACOS_3d = row['ACOS_3d']
     ACOS_7d = row['ACOS_7d']
     ACOS_30d = row['ACOS_30d']
@@ -42,6 +42,11 @@ def get_raise_amount(row, version=2):
             return 0.01, '定义六'
         else:
             return 0, ''
+    elif version == 3:
+        if 0 < ACOS_3d <= 0.24 and 0 < ACOS_7d < 0.24 and 0 < ACOS_30d < 0.24:
+            return 0.02, '定义一'
+        else:
+            return 0, ''
 
 def main(path, brand, cur_time, country):
     # 读取CSV文件
@@ -65,19 +70,19 @@ def main(path, brand, cur_time, country):
         return
 
     # 应用条件函数
-    df['raise_amount'], df['reason'] = zip(*df.apply(get_raise_amount, axis=1))
+    df['bid_adjust'], df['reason'] = zip(*df.apply(get_raise_amount, axis=1))
 
     # 筛选出符合条件的关键词并计算新竞价
-    df['new_keywordBid'] = df['keywordBid'] + df['raise_amount']
-    result_df = df[df['raise_amount'] > 0][[
+    df['new_keywordBid'] = df['keywordBid'] + df['bid_adjust']
+    result_df = df[df['bid_adjust'] > 0][[
         'keyword', 'keywordId', 'campaignName', 'adGroupName', 'matchType',
         'keywordBid', 'new_keywordBid', 'ACOS_3d',
-        'ACOS_7d', 'ACOS_30d', 'ORDER_1m', 'raise_amount', 'reason'
+        'ACOS_7d', 'ACOS_30d', 'ORDER_1m', 'bid_adjust', 'reason'
     ]]
     result_df.replace({np.nan: None}, inplace=True)
-    api = DbNewSpTools(brand)
+    api = DbNewSpTools(brand,country)
     for index, row in result_df.iterrows():
-        api.create_keyword_info(country,brand,'日常优化','手动_优质',row['keyword'],row['keywordId'],row['campaignName'],row['adGroupName'],row['matchType'],row['keywordBid'],row['new_keywordBid'],row['ACOS_30d'],row['ORDER_1m'],None,None,None,row['ACOS_7d'],None,None,None,row['ACOS_3d'],None,None,row['reason'],cur_time,datetime.now(),0)
+        api.create_keyword_info(country,brand,'日常优化','手动_优质',row['keyword'],row['keywordId'],row['campaignName'],row['adGroupName'],row['matchType'],row['keywordBid'],row['new_keywordBid'],row['ACOS_30d'],row['ORDER_1m'],None,None,None,None,row['ACOS_7d'],None,None,None,row['ACOS_3d'],None,None,row['reason'],row['bid_adjust'],cur_time,datetime.now(),0)
     # 输出结果到指定文件
     result_df.to_csv(output_file_path, index=False)
 

@@ -34,42 +34,48 @@ def main(path, brand, cur_time, country):
         total_sales14d_30d = row['total_sales14d_30d']
 
         # 定义一
-        if (ACOS_7d > 0.35 and ACOS_yesterday > 0.35 and clicks_yesterday >= 10 and Budget > 8):
+        if (ACOS_7d > 0.35 and ACOS_yesterday > 0.3 and clicks_yesterday >= 10 and Budget > 8):
             reason = '定义一'
+            bid_adjust = -5
             new_budget = max(8, Budget - 5)
             results.append([campaignId, campaignName, Budget, new_budget, clicks_yesterday, ACOS_yesterday, ACOS_7d,
                             total_clicks_7d, total_sales14d_7d, ACOS_30d, total_clicks_30d, total_sales14d_30d,
-                            country_avg_ACOS_1m, reason])
+                            country_avg_ACOS_1m, reason, bid_adjust])
 
         # 定义二
         elif (ACOS_30d > 0.35 and total_sales14d_7d == 0 and total_clicks_7d >= 15 and Budget > 5):
             reason = '定义二'
+            bid_adjust = -5
             new_budget = max(5, Budget - 5)
             results.append([campaignId, campaignName, Budget, new_budget, clicks_yesterday, ACOS_yesterday, ACOS_7d,
                             total_clicks_7d, total_sales14d_7d, ACOS_30d, total_clicks_30d, total_sales14d_30d,
-                            country_avg_ACOS_1m, reason])
+                            country_avg_ACOS_1m, reason, bid_adjust])
 
         # 定义三
-        elif (total_sales14d_30d == 0 and total_clicks_30d >= 75):
+        elif (total_sales14d_30d == 0 and total_clicks_30d >= 100):
             reason = '定义三'
+            bid_adjust = 0
             new_budget = '关闭'
             results.append([campaignId, campaignName, Budget, new_budget, clicks_yesterday, ACOS_yesterday, ACOS_7d,
                             total_clicks_7d, total_sales14d_7d, ACOS_30d, total_clicks_30d, total_sales14d_30d,
-                            country_avg_ACOS_1m, reason])
+                            country_avg_ACOS_1m, reason, bid_adjust])
 
     # 转换为DataFrame并保存为新的CSV文件
     columns = ['campaignId', 'campaignName', 'Budget', 'New_Budget', 'clicks_yesterday', 'ACOS_yesterday', 'ACOS_7d',
                'total_clicks_7d', 'total_sales14d_7d', 'ACOS_30d', 'total_clicks_30d', 'total_sales14d_30d',
-               'country_avg_ACOS_1m', 'Reason']
+               'country_avg_ACOS_1m', 'Reason', 'bid_adjust']
     results_df = pd.DataFrame(results, columns=columns)
-    api2 = AmazonMysqlRagUitl(brand)
+    api2 = AmazonMysqlRagUitl(brand,country)
     excluded_campaign_ids = api2.get_operated_campaign(country,cur_time)
     if excluded_campaign_ids:
         excluded_campaign_ids = [int(campaign_id) for campaign_id in excluded_campaign_ids]
         results_df = results_df[~results_df['campaignId'].isin(excluded_campaign_ids)]
     results_df.replace({np.nan: None}, inplace=True)
-    api = DbNewSpTools(brand)
+    api = DbNewSpTools(brand,country)
     for index, row in results_df.iterrows():
-        api.create_budget_info(country,brand,'滞销品优化','手动_劣质',row['campaignId'],row['campaignName'],row['Budget'],row['New_Budget'],None,row['clicks_yesterday'],row['ACOS_yesterday'],row['total_clicks_7d'],row['total_sales14d_7d'],row['ACOS_7d'],row['ACOS_30d'],row['total_clicks_30d'],row['total_sales14d_30d'],row['Reason'],row['country_avg_ACOS_1m'],cur_time,datetime.now(),0)
+        api.create_budget_info(country,brand,'滞销品优化','手动_劣质',row['campaignId'],row['campaignName'],row['Budget'],row['New_Budget'],None,row['clicks_yesterday'],row['ACOS_yesterday'],row['total_clicks_7d'],row['total_sales14d_7d'],row['ACOS_7d'],row['ACOS_30d'],row['total_clicks_30d'],row['total_sales14d_30d'],row['Reason'],row['country_avg_ACOS_1m'],row['bid_adjust'],cur_time,datetime.now(),0)
     results_df.to_csv(output_file_path, index=False)
     print(f'分析结果已保存在 {output_file_path} 文件中。')
+
+
+#main('C:/Users/admin/PycharmProjects/DeepBI/ai/backend/util/db/auto_yzj/滞销品优化/输出结果/LAPASA_US_2024-07-17','LAPASA','2024-07-17','US')

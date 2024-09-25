@@ -138,7 +138,7 @@ def create_summarize_data():
 
         for item in items:
             if item.get("state") == 0:
-                df = api(brand, item['country']).get_summarize_data_info_one_country(item)
+                df = api(item['db'], brand, item['country']).get_summarize_data_info_one_country(item)
                 data = []
                 for index, row in df.iterrows():
                     res = [str(row['国家']), str(row['总销售日期']), str(row['广告总销售额']), str(row['广告总花费']),
@@ -155,7 +155,7 @@ def create_summarize_data():
                 print(table)
                 all_res.append(table)
             elif item.get("state") == 1:
-                df = api(brand, item['config']).get_summarize_data_info_summarize_country(item)
+                df = api(item['db'], brand, item['config']).get_summarize_data_info_summarize_country(item)
                 data = []
                 for index, row in df.iterrows():
                     res = [str(row['国家']), str(row['总销售日期']), str(row['广告总销售额']), str(row['广告总花费']),
@@ -173,8 +173,8 @@ def create_summarize_data():
                                    "总销售额", "广告销售额", "自然销售额", "自然比例", "总-acos"], "data": data}
                 all_res.append(table)
             elif item.get("state") == 2:
-                df1 = api(brand, item['country']).get_summarize_data_info_one_country(item)
-                df2 = api(brand, item['country']).get_summarize_parent_asins_data_info_one_country(item)
+                df1 = api(item['db'], brand, item['country']).get_summarize_data_info_one_country(item)
+                df2 = api(item['db'], brand, item['country']).get_summarize_parent_asins_data_info_one_country(item)
                 combined_df = pd.concat([df1, df2], axis=1)
                 print(combined_df)
                 data = []
@@ -252,7 +252,7 @@ def get_data_temporary(market, brand, db):
     today = datetime.today()
     yesterday = today - timedelta(days=1)
     cur_time = yesterday.strftime('%Y-%m-%d')
-    # cur_time = '2024-08-25'
+    # cur_time = '2024-09-23'
     # 以下是您的 API 调用和数据处理逻辑
     sp_count = api(db, brand, market).get_scan_campaign_sp(market, cur_time)
     sd_count = api(db, brand, market).get_scan_campaign_sd(market, cur_time)
@@ -448,7 +448,7 @@ def update_data_manual(market, brand, db):
     today = datetime.today()
     yesterday = today - timedelta(days=1)
     cur_time = yesterday.strftime('%Y-%m-%d')
-    # cur_time = '2024-08-25'
+    # cur_time = '2024-09-23'
     campaignName_info, advertisedSku_info, type_info = api(db, brand, market).get_sku_state_info(market, cur_time)
     if campaignName_info and advertisedSku_info and type_info:
         for campaignName, advertisedSku, type1 in zip(campaignName_info, advertisedSku_info, type_info):
@@ -554,7 +554,7 @@ def update_create_data(market, brand, db):
     today = datetime.today()
     yesterday = today - timedelta(days=1)
     cur_time = yesterday.strftime('%Y-%m-%d')
-    # cur_time = '2024-08-25'
+    # cur_time = '2024-09-23'
     print(cur_time)
     campaignName_info, campaign_type_info, budget_info = AmazonMysqlRagUitl(db, brand, market).get_create_campaign(market, cur_time)
     if campaignName_info and campaign_type_info and budget_info:

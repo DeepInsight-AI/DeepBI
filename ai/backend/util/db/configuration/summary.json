@@ -1,0 +1,55 @@
+{
+  "LAPASA": {
+    "EU": {
+      "country": [
+        "DE",
+        "FR",
+        "IT",
+        "ES"
+      ],
+      "timezone_offset": "+02:00",
+      "sales_channel": [
+        "Amazon.fr",
+        "Amazon.it",
+        "Amazon.de",
+        "Amazon.es"
+      ],
+      "market": "DE"
+    }
+  },
+  "DELOMO": {
+    "EU": {
+      "country": [
+        "DE",
+        "FR",
+        "IT",
+        "ES"
+      ],
+      "timezone_offset": "+02:00",
+      "sales_channel": [
+        "Amazon.fr",
+        "Amazon.it",
+        "Amazon.de",
+        "Amazon.es"
+      ],
+      "market": "DE"
+    }
+  },
+  "OutdoorMaster": {
+    "EU": {
+      "country": [
+        "FR",
+        "IT",
+        "ES"
+      ],
+      "timezone_offset": "+02:00",
+      "sales_channel": [
+        "Amazon.fr",
+        "Amazon.it",
+        "Amazon.es"
+      ],
+      "market": "DE"
+    }
+  }
+}
+

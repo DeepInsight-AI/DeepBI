@@ -125,6 +125,31 @@ class auto_api_sp:
             print(e)
             return 500  # Internal Server Error
 
+    def update_sp_ad_automatic_targeting_batch(self, keywordId, bid):
+        try:
+            api1 = Gen_adgroup(self.db, self.brand, self.market)
+            api2 = AdGroupTools(self.db, self.brand, self.market)
+            automatic_targeting_info = api2.list_adGroup_TargetingClause_by_targetId_batch(keywordId)
+            keyword_bid_mapping = {k: v for k, v in zip(keywordId, bid)}
+            if automatic_targeting_info is not None:
+                merged_info = []
+                for info in automatic_targeting_info:
+                    keyword_id = info['targetId']
+                    if keyword_id in keyword_bid_mapping:
+                        merged_info.append({
+                            "keywordId": keyword_id,
+                            "state": info["state"],
+                            "bid": info.get('bid', None),
+                            "bid_new": keyword_bid_mapping[keyword_id]  # 从 mapping 中获取 bid_old
+                        })
+                api1.update_adGroup_TargetingClause_batch(merged_info, self.user)
+                return 200
+            else:
+                return 404  # Keyword not found
+        except Exception as e:
+            print(e)
+            return 500  # Internal Server Error
+
     def update_sp_ad_product_targets(self, keywordId, bid):
         try:
             api1 = Gen_adgroup(self.db, self.brand, self.market)

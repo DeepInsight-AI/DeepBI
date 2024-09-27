@@ -360,6 +360,19 @@
           "use_unicode": true
       }
     }
+  },
+  "amazon_huixin": {
+    "YOURUN": {
+      "default": {
+          "host": "192.168.2.123",
+          "user": "wanghequan",
+          "passwd": "WHq123123Aa",
+          "port": 3308,
+          "db": "amazon_log_huixin",
+          "charset": "utf8mb4",
+          "use_unicode": true
+      }
+    }
   }
 }
 

@@ -50,6 +50,42 @@
       ],
       "market": "DE"
     }
+  },
+  "ANTSHARE": {
+    "EU": {
+      "country": [
+        "DE",
+        "FR",
+        "IT",
+        "ES"
+      ],
+      "timezone_offset": "+02:00",
+      "sales_channel": [
+        "Amazon.fr",
+        "Amazon.it",
+        "Amazon.de",
+        "Amazon.es"
+      ],
+      "market": "DE"
+    }
+  },
+  "GOLDJU": {
+    "EU": {
+      "country": [
+        "DE",
+        "FR",
+        "IT",
+        "ES"
+      ],
+      "timezone_offset": "+02:00",
+      "sales_channel": [
+        "Amazon.fr",
+        "Amazon.it",
+        "Amazon.de",
+        "Amazon.es"
+      ],
+      "market": "DE"
+    }
   }
 }
 

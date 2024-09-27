@@ -30,7 +30,7 @@ class ProcessShowData():
         },
         'pre': {
             'INSERT_SECRATE': "69c5fcebaa65b560eaf06c3fbeb481ae44b8d618",
-            'ONLINE_URL': "https://atlas.deepbi.com/api/data/"
+            'ONLINE_URL': "https://atlas.deepbi.cn/api/data/"
         }
     }
 
@@ -97,7 +97,7 @@ class ProcessShowData():
         if "UID" not in data:
             return False
         return cls.post_data(data, "delete")
-    
+
     @classmethod
     def get_accesstoken(cls, data):
         if "UID" not in data:

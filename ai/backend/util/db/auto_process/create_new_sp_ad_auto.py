@@ -412,7 +412,7 @@ class Ceate_new_sku:
                             targetId = api2.create_adGroup_Targeting2(new_campaign_id, new_adgroup_id, float(target_bid),
                                                                  categories_id, target_brand_id,user=user)
                 if targetId is None:  # 如果没有找到目标品牌
-                    targetId = api2.create_adGroup_Targeting1(new_campaign_id, new_adgroup_id, categories_id, 0.25 * exchange_rate,"ENABLED", "ASIN_CATEGORY_SAME_AS", user=user)
+                    targetId = api2.create_adGroup_Targeting1(new_campaign_id, new_adgroup_id, new_product_info[0]['asin'], 0.25 * exchange_rate,"ENABLED", "ASIN_SAME_AS", user=user)
                     # try:
                     #                     #     # 尝试获取bid值
                     #                     #     bid2 = bid_info['bidRecommendations'][0]['bidRecommendationsForTargetingExpressions'][0][

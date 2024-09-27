@@ -34,7 +34,7 @@ class ProcessShowData():
         },
         'pre': {
             'INSERT_SECRATE': "69c5fcebaa65b560eaf06c3fbeb481ae44b8d618",
-            'ONLINE_URL': "https://atlas.deepbi.com/api/data/"
+            'ONLINE_URL': "https://atlas.deepbi.cn/api/data/"
         }
     }
 
@@ -113,7 +113,13 @@ class ProcessShowData():
 
     @classmethod
     def insert(cls, data):
+        """单个添加"""
         return cls.post_data(data, "insert")
+
+    @classmethod
+    def inserts(cls, data):
+        """批量添加"""
+        return cls.post_data(data, "inserts")
 
     @classmethod
     def update(cls, data):
@@ -173,13 +179,82 @@ class ProcessShowData():
             return False
         return cls.post_file(cls, file_path, data=data)
 
+    @classmethod
+    def add_or_update_asin(cls, post_data=None):
+        """更新或者提交 某个用户某个国家 asin 关系"""
+        if "UID" not in post_data:
+            return False, "UID 不能为空"
+        if "CountryCode" not in post_data:
+            return False, "CountryCode 不能为空"
+        if "AsinData" not in post_data:
+            return False, "AsinData 不能为空"
+        return cls.post_data(post_data, "add_or_update_asin")
+
+    @classmethod
+    def add_or_update_asin_country_data(cls, post_data=None):
+        """更新或者提交 某个用户某个国家 asin 总体广告数据 每天 按照每天更新"""
+        if "UID" not in post_data:
+            return False, "UID 不能为空"
+        if "CountryCode" not in post_data:
+            return False, "CountryCode 不能为空"
+        if "DataDate" not in post_data:
+            return False, "DataDate 不能为空"
+        if "Data" not in post_data:
+            return False, "Data 不能为空"
+        if "DataType" not in post_data or len(post_data.get('DataType', "")) != 8:
+            return False, "DataType 不能为空且长度必须为8"
+        return cls.post_data(post_data, "add_or_update_asin_country_data")
+
+    @classmethod
+    def add_or_update_asin_campaign_data(cls, post_data):
+        """更新或者提交 某个用户某个国家 某个asin 多个计划,每个计划汇总数据"""
+        if "UID" not in post_data:
+            return False, "UID 不能为空"
+        if "CountryCode" not in post_data:
+            return False, "CountryCode 不能为空"
+        if "DataDate" not in post_data:
+            return False, "DataDate 不能为空"
+        if "Data" not in post_data:
+            return False, "Data 不能为空"
+        if "DataType" not in post_data or len(post_data.get('DataType', "")) != 8:
+            return False, "DataType 不能为空且长度必须为8"
+        if "Asin" not in post_data:
+            return False, "Asin 不能为空"
+        return cls.post_data(post_data, "add_or_update_asin_campaign_data")
+
+    @classmethod
+    def add_or_update_asin_campaign_word_data(cls, post_data):
+        """更新或者提交，某个计划的所有词1天的数据 """
+        if "UID" not in post_data:
+            return False, "UID 不能为空"
+        if "Data" not in post_data:
+            return False, "Data 不能为空"
+        if "DataType" not in post_data or len(post_data.get('DataType', "")) != 8:
+            return False, "DataType 不能为空且长度必须为8"
+        if "CampaignID" not in post_data:
+            return False, "CampaignID 不能为空"
+        return cls.post_data(post_data, "add_or_update_asin_campaign_word_data")
+
+    @classmethod
+    def show_auth_asin(cls, post_data):
+        """获取授权信息，按照国家返回"""
+        if "UID" not in post_data:
+            return False, "UID 不能为空"
+        return cls.post_data(post_data, "show_auth_asin")
+
 
 if __name__ == "__main__":
-    # 获取授权状态，包括报告状态
+    # # 获取授权状态，包括报告状态
     data = {
        "UID": 1
     }
     result, msg = ProcessShowData.get_user_outh(data)
+    print(result, msg)
+    data = {
+        "UID": 1
+    }
+    result, msg = ProcessShowData.show_auth_asin(
+        post_data=data)
     print(result, msg)
     # #  上传 报告结果, 上传返回数据中的 data 为该报告的线上id ，可以用于独立发送 邮件
     # file = "./resource/uploads/1.pdf"

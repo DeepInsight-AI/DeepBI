@@ -388,6 +388,7 @@ class Ceate_new_sku:
                     continue
                 recommendations = apitool1.list_adGroup_Targetingrecommendations(product)
                 print(recommendations)
+                targetId = None
                 for category in recommendations["categories"]:
                     categories_id = category["id"]
                     brand_info = apitool1.list_category_refinements(categories_id)
@@ -410,6 +411,8 @@ class Ceate_new_sku:
                                 bid = 0.25 * exchange_rate
                             targetId = api2.create_adGroup_Targeting2(new_campaign_id, new_adgroup_id, float(target_bid),
                                                                  categories_id, target_brand_id,user=user)
+                if targetId is None:  # 如果没有找到目标品牌
+                    targetId = api2.create_adGroup_Targeting1(new_campaign_id, new_adgroup_id, categories_id, 0.25 * exchange_rate,"ENABLED", "ASIN_CATEGORY_SAME_AS", user=user)
                     # try:
                     #                     #     # 尝试获取bid值
                     #                     #     bid2 = bid_info['bidRecommendations'][0]['bidRecommendationsForTargetingExpressions'][0][

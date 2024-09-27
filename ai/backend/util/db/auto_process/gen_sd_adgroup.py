@@ -205,9 +205,9 @@ class Gen_adgroup(AdGroupTools_SD):
         # 结果写入日志
         newdbtool = DbNewSpTools(self.db, self.brand,self.market)
         if apires[0]=="success":
-            newdbtool.add_sd_adGroup_Targeting(self.market,adGroupId,bid,expression_type,state,"similarProduct","SD","success",datetime.now(),user)
+            newdbtool.add_sd_adGroup_Targeting(self.market,adGroupId,bid,expression_type,state,"similarProduct","SD","success",datetime.now(),apires[1],user)
         else:
-            newdbtool.add_sd_adGroup_Targeting(self.market,adGroupId,bid,expression_type,state,"similarProduct","SD","failed",datetime.now(),user)
+            newdbtool.add_sd_adGroup_Targeting(self.market,adGroupId,bid,expression_type,state,"similarProduct","SD","failed",datetime.now(),None,user)
         return apires[1]
 
     def create_adGroup_Targeting2(self,adGroupId,categoryid,brand_id,expression_type,state,bid, user='test'):
@@ -246,10 +246,10 @@ class Gen_adgroup(AdGroupTools_SD):
         newdbtool = DbNewSpTools(self.db, self.brand,self.market)
         if apires[0] == "success":
             newdbtool.add_sd_adGroup_Targeting(self.market, adGroupId, bid, expression_type, state, expression, "SD",
-                                               "success", datetime.now(), user)
+                                               "success", datetime.now(),apires[1], user)
         else:
             newdbtool.add_sd_adGroup_Targeting(self.market, adGroupId, bid, expression_type, state, expression, "SD",
-                                               "failed", datetime.now(), user)
+                                               "failed", datetime.now(),None, user)
         return apires[1]
 
     def create_adGroup_Targeting3(self,adGroupId,asin,expression_type,state,bid, user='test'):
@@ -274,9 +274,9 @@ class Gen_adgroup(AdGroupTools_SD):
         expression = f"asin={asin}"
         newdbtool = DbNewSpTools(self.db, self.brand,self.market)
         if apires[0]=="success":
-            newdbtool.add_sd_adGroup_Targeting(self.market,adGroupId,bid,expression_type,state,expression,"SD","success",datetime.now(), user)
+            newdbtool.add_sd_adGroup_Targeting(self.market,adGroupId,bid,expression_type,state,expression,"SD","success",datetime.now(),apires[1], user)
         else:
-            newdbtool.add_sd_adGroup_Targeting(self.market,adGroupId,bid,expression_type,state,expression,"SD","failed",datetime.now(), user)
+            newdbtool.add_sd_adGroup_Targeting(self.market,adGroupId,bid,expression_type,state,expression,"SD","failed",datetime.now(),None, user)
         return apires[1]
 
     def create_adGroup_Targeting4(self,adGroupId,expression,expression_type,state,bid, user='test'):
@@ -295,9 +295,9 @@ class Gen_adgroup(AdGroupTools_SD):
         # 结果写入日志
         newdbtool = DbNewSpTools(self.db, self.brand,self.market)
         if apires[0]=="success":
-            newdbtool.add_sd_adGroup_Targeting(self.market,adGroupId,bid,expression_type,state,json.dumps(expression),"SD","success",datetime.now(), user)
+            newdbtool.add_sd_adGroup_Targeting(self.market,adGroupId,bid,expression_type,state,json.dumps(expression),"SD","success",datetime.now(),apires[1], user)
         else:
-            newdbtool.add_sd_adGroup_Targeting(self.market,adGroupId,bid,expression_type,state,json.dumps(expression),"SD","failed",datetime.now(), user)
+            newdbtool.add_sd_adGroup_Targeting(self.market,adGroupId,bid,expression_type,state,json.dumps(expression),"SD","failed",datetime.now(),None, user)
         return apires[1]
 
     def update_adGroup_Targeting(self,target_id,bid,state, user='test'):
@@ -314,11 +314,11 @@ class Gen_adgroup(AdGroupTools_SD):
         # 结果写入日志
         newdbtool = DbNewSpTools(self.db, self.brand,self.market)
         if apires[0] == "success":
-            newdbtool.update_sd_adGroup_Targeting(self.market, None, bid, state, target_id, "SD",
+            newdbtool.update_sd_adGroup_Targeting(self.market, None,None, bid, state, target_id, "SD",
                                                   "success", datetime.now(), user)
             return apires[1]
         else:
-            newdbtool.update_sd_adGroup_Targeting(self.market, None, bid, state, target_id, "SD",
+            newdbtool.update_sd_adGroup_Targeting(self.market, None,None, bid, state, target_id, "SD",
                                                   "failed", datetime.now(), user)
             return None
 

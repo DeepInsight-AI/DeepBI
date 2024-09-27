@@ -239,7 +239,7 @@ class auto_api_sp:
     def create_product_target_asin(self, asin, bid, campaignId, adGroupId):
         try:
             api2 = Gen_adgroup(self.db, self.brand, self.market)
-            api2.create_adGroup_Targeting1(campaignId, adGroupId, asin, bid,
+            api2.create_adGroup_Targeting1(campaignId, adGroupId, asin, float(bid),
                                            state='ENABLED', type='ASIN_SAME_AS', user=self.user)
             return 200
         except Exception as e:

@@ -350,7 +350,7 @@ class AdGroupTools(BaseApi):
             result = None
         if result and result.payload["targetingClauses"]["success"]:
             print("create adGroup TargetingClause success")
-            return ["success", result.payload["targetingClauses"]["success"][0]]
+            return ["success", result.payload["targetingClauses"]["success"][0]["targetId"]]
         # if result and result.payload["negativeKeywords"]["success"]:
         #     negativeKeywordId = result.payload["negativeKeywords"]["success"][0]["negativeKeywordId"]
         #     print("add adGroup negative keyword success,negativeKeywordId is:", negativeKeywordId)

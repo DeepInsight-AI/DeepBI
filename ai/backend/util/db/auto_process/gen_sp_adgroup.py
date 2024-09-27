@@ -225,11 +225,11 @@ class Gen_adgroup(AdGroupTools):
         # 结果写入日志
         newdbtool = DbNewSpTools(self.db, self.brand,self.market)
         if apires[0] == "success":
-            newdbtool.update_sd_adGroup_Targeting(self.market, None, bid, state, target_id, "SP",
+            newdbtool.update_sd_adGroup_Targeting(self.market, None,None, bid, state, target_id, "SP",
                                                "success", datetime.now(), user)
             return apires[1]["targetId"]
         else:
-            newdbtool.update_sd_adGroup_Targeting(self.market, None, bid, state, target_id, "SP",
+            newdbtool.update_sd_adGroup_Targeting(self.market, None,None, bid, state, target_id, "SP",
                                                "failed", datetime.now(), user)
             return None
 
@@ -262,13 +262,14 @@ class Gen_adgroup(AdGroupTools):
             updates.append({
                 'market': self.market,
                 'adGroupId': None,
-                'bid': item['bid_new'],
+                'bid_old': item['bid'],
                 'state': item['state'],
                 'expression': item['keywordId'],  # Assuming you have this value in `info`
                 'targetingType': 'SP',
                 'targetingState': status,
                 'update_time': datetime.now(),
-                'user': user
+                'user': user,
+                'bid_new': item['bid_new']
             })
 
         # 批量插入到数据库
@@ -298,10 +299,10 @@ class Gen_adgroup(AdGroupTools):
         newdbtool = DbNewSpTools(self.db, self.brand,self.market)
         if apires[0]=="success":
             newdbtool.add_sd_adGroup_Targeting(self.market, new_adgroup_id, bid, type, state, asin, "SP",
-                                               "success", datetime.now(), user)
+                                               "success", datetime.now(),apires[1], user)
         else:
             newdbtool.add_sd_adGroup_Targeting(self.market, new_adgroup_id, bid, type, state, asin, "SP",
-                                               "failed", datetime.now(), user)
+                                               "failed", datetime.now(),None, user)
         return apires[1]["targetId"]
 
     def create_adGroup_Targeting2(self,new_campaign_id,new_adgroup_id,bid,categories_id,brand_id, user='test'):
@@ -333,10 +334,10 @@ class Gen_adgroup(AdGroupTools):
         expression = f"Category={categories_id},brand={brand_id}"
         if apires[0]=="success":
             newdbtool.add_sd_adGroup_Targeting(self.market, new_adgroup_id, bid, "MANUAL", "ENABLED", expression, "SP",
-                                               "success", datetime.now(), user)
+                                               "success", datetime.now(),apires[1], user)
         else:
             newdbtool.add_sd_adGroup_Targeting(self.market, new_adgroup_id, bid, "MANUAL", "ENABLED", expression, "SP",
-                                               "failed", datetime.now(), user)
+                                               "failed", datetime.now(),None, user)
         return apires[1]["targetId"]
 
     def create_adGroup_Negative_Targeting_by_asin(self,new_campaign_id,new_adgroup_id,asin,user='test'):
@@ -362,11 +363,11 @@ class Gen_adgroup(AdGroupTools):
         expression = f"asin={asin}"
         if apires[0]=="success":
             newdbtool.add_sd_adGroup_Targeting(self.market, new_adgroup_id, None, "Negative", "ENABLED", expression, "SP",
-                                               "success", datetime.now(),user)
+                                               "success", datetime.now(),None,user)
             return apires[1]["targetId"]
         else:
             newdbtool.add_sd_adGroup_Targeting(self.market, new_adgroup_id, None, "Negative", "ENABLED", expression, "SP",
-                                               "failed", datetime.now(),user)
+                                               "failed", datetime.now(),None,user)
             return None
 
 if __name__ == "__main__":

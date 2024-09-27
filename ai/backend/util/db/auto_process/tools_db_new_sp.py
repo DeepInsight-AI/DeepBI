@@ -201,24 +201,24 @@ class DbNewSpTools(BaseDb):
         except Exception as e:
             print(f"Error occurred when into amazon_negative_keyword_update: {e}")
 
-    def add_sd_adGroup_Targeting(self, market,adGroupId,bid,expression_type,state,expression,targetingType,targetingState, update_time,user='test'):
+    def add_sd_adGroup_Targeting(self, market,adGroupId,bid,expression_type,state,expression,targetingType,targetingState, update_time,targetId,user='test'):
         try:
             conn = self.conn
             cursor = conn.cursor()
-            query = "INSERT INTO amazon_targeting_create (market,adGroupId,bid,expressionType,state,expression,targetingType,targetingState,update_time,user) VALUES (%s,%s, %s, %s, %s, %s, %s, %s, %s, %s)"
-            values = (market,adGroupId,bid,expression_type,state,expression,targetingType,targetingState, update_time,user)
+            query = "INSERT INTO amazon_targeting_create (market,adGroupId,bid,expressionType,state,expression,targetingType,targetingState,update_time,user,targetId) VALUES (%s,%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
+            values = (market,adGroupId,bid,expression_type,state,expression,targetingType,targetingState, update_time,user,targetId)
             cursor.execute(query, values)
             conn.commit()
             print("Record inserted successfully into amazon_targeting_create table")
         except Exception as e:
             print(f"Error occurred when into amazon_targeting_create: {e}")
 
-    def update_sd_adGroup_Targeting(self, market,adGroupId,bid,state,expression,targetingType,targetingState, update_time,user='test'):
+    def update_sd_adGroup_Targeting(self, market,adGroupId,bid_old,bid,state,expression,targetingType,targetingState, update_time,user='test'):
         try:
             conn = self.conn
             cursor = conn.cursor()
-            query = "INSERT INTO amazon_targeting_update (market,adGroupId,bid,state,expression,targetingType,targetingState,update_time,user) VALUES (%s,%s, %s, %s, %s, %s, %s, %s, %s)"
-            values = (market,adGroupId,bid,state,expression,targetingType,targetingState, update_time,user)
+            query = "INSERT INTO amazon_targeting_update (market,adGroupId,bid_old,state,expression,targetingType,targetingState,update_time,user,bid_new) VALUES (%s,%s, %s, %s, %s, %s, %s, %s, %s, %s)"
+            values = (market,adGroupId,bid_old,state,expression,targetingType,targetingState, update_time,user,bid)
             cursor.execute(query, values)
             conn.commit()
             print("Record inserted successfully into amazon_targeting_update table")
@@ -231,12 +231,12 @@ class DbNewSpTools(BaseDb):
             cursor = conn.cursor()
 
             # 创建插入的 SQL 语句
-            query = "INSERT INTO amazon_targeting_update (market,adGroupId,bid,state,expression,targetingType,targetingState,update_time,user) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)"
+            query = "INSERT INTO amazon_targeting_update (market,adGroupId,bid_old,state,expression,targetingType,targetingState,update_time,user,bid_new) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
 
             # 批量执行插入
-            cursor.executemany(query, [(update['market'], update['adGroupId'], update['bid'], update['state'],
+            cursor.executemany(query, [(update['market'], update['adGroupId'], update['bid_old'], update['state'],
                                         update['expression'], update['targetingType'], update['targetingState'],
-                                        update['update_time'], update['user']) for
+                                        update['update_time'], update['user'], update['bid_new']) for
                                        update in updates])
 
             conn.commit()

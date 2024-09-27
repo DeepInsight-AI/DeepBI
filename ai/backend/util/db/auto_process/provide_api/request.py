@@ -108,19 +108,21 @@ class ProcessShowData():
 
 if __name__ == "__main__":
     # 要发送的JSON数据
-    # update_data = {
-    #     "db":"amazon_ads",
-    #     "brand": "LAPASA",
-    #     "market": "IT",
-    #     "require": "bid_batch",
-    #     "position": "automatic_targeting",
-    #     "type": "SP",
-    #     "ID": ["211711817244392", "263489723525844", "12345"],
-    #     "text": ["1", "1.0", "1"],
-    #     "user":"wanghequan"
-    # }
-    #
-    # res = ProcessShowData.update(update_data)
+    update_data = {
+        "db":"amazon_ads",
+        "brand": "LAPASA",
+        "market": "IT",
+        "require": "create",
+        "position": "product_target_asin",
+        "type": "SP",
+        "ID": "B07NDYW9NH",
+        "text": "0.5",
+        "user":"wanghequan",
+        "campaignId":"90124165629540",
+        "adGroupId":"118677141166299"
+    }
+
+    res = ProcessShowData.update(update_data)
     # print(res)
     # add_data = {
     #     "brand": "LAPASA",
@@ -138,13 +140,13 @@ if __name__ == "__main__":
     # }
     # res = ProcessShowData.get_data(add_data)
     # print(res)
-    automatically_data = {
-        "db": "amazon_bdzx",
-        "brand": "DELOMO",
-        "market": "IT",
-        "strategy": "automatically_add_targets",
-        "user": "wanghequan"
-    }
-
-    res = ProcessShowData.automatically_add_targets(automatically_data)
-    print(res)
+    # automatically_data = {
+    #     "db": "amazon_bdzx",
+    #     "brand": "DELOMO",
+    #     "market": "IT",
+    #     "strategy": "automatically_add_targets",
+    #     "user": "wanghequan"
+    # }
+    #
+    # res = ProcessShowData.automatically_add_targets(automatically_data)
+    # print(res)

@@ -54,7 +54,7 @@ def sp_api(data):
 
 
 def sd_api(data):
-    api = auto_api_sd(data['brand'], data['market'])
+    api = auto_api_sd(data['brand'],data['market'],data['db'],data['user'])
     if data['require'] == 'bid':
         if data['position'] == 'campaign':
             code = api.update_sd_ad_budget(data['ID'], data['text'])

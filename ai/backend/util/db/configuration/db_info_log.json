@@ -373,6 +373,19 @@
           "use_unicode": true
       }
     }
+  },
+  "amazon_ouruite": {
+    "ouruite": {
+      "default": {
+          "host": "192.168.2.123",
+          "user": "wanghequan",
+          "passwd": "WHq123123Aa",
+          "port": 3308,
+          "db": "amazon_log_ouruite",
+          "charset": "utf8mb4",
+          "use_unicode": true
+      }
+    }
   }
 }
 

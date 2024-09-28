@@ -303,7 +303,7 @@ class Gen_adgroup(AdGroupTools):
         else:
             newdbtool.add_sd_adGroup_Targeting(self.market, new_adgroup_id, bid, type, state, asin, "SP",
                                                "failed", datetime.now(),None, user)
-        return apires[1]["targetId"]
+        return apires[1]
 
     def create_adGroup_Targeting2(self,new_campaign_id,new_adgroup_id,bid,categories_id,brand_id, user='test'):
         adGroup_info = {
@@ -338,7 +338,7 @@ class Gen_adgroup(AdGroupTools):
         else:
             newdbtool.add_sd_adGroup_Targeting(self.market, new_adgroup_id, bid, "MANUAL", "ENABLED", expression, "SP",
                                                "failed", datetime.now(),None, user)
-        return apires[1]["targetId"]
+        return apires[1]
 
     def create_adGroup_Negative_Targeting_by_asin(self,new_campaign_id,new_adgroup_id,asin,user='test'):
         adGroup_info = {

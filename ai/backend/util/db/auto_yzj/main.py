@@ -35,9 +35,13 @@ def run_():
     #     'Gotoly': ['US'],
     # }
     brands_and_countries = {
+        'amazon_huangjunxi': {
+            'brand': 'keimi',
+            'countries': ["US"]
+        },
         'amazon_ads': {
             'brand': 'LAPASA',
-            'countries': ["US", "FR", "IT", "DE", "ES", "UK", "JP"]
+            'countries': ["US", "FR", "IT", "DE", "ES", "UK", "JP"]# "US", "FR", "IT", "DE", "ES", "UK", "JP"
         },
         'amazon_bdzx': {
             'brand': 'DELOMO',
@@ -63,10 +67,6 @@ def run_():
             'brand': 'Rossny',
             'countries': ['US']
         },
-        'amazon_bdzx_zen_cave': {
-            'brand': 'ZEN CAVE',
-            'countries': ['US']
-        },
         'amazon_chaoyangkeji_gotoly': {
             'brand': 'Gotoly',
             'countries': ['US']
@@ -82,6 +82,13 @@ def run_():
 
     }
     last_main_loop_time = time.time() - 60 * 60 * 24
+
+    execution_path = os.path.join(get_config_path(), 'execution_times.json')
+    if os.path.exists(execution_path):
+        with open(execution_path, 'r') as json_file:
+            execution_times = json.load(json_file)
+
+
     while True:
         current_time = time.time()
         if current_time - last_main_loop_time >= 60 * 60 * 24:
@@ -92,21 +99,21 @@ def run_():
 
                     today = datetime.today()
                     cur_time = today.strftime('%Y-%m-%d')
-                    cur_time = '2024-09-24'
+                    # cur_time = '2024-09-24'
                     current_country = country
 
                     # 预处理数据，生成相应的csv,初次运行会生成json文件，用来描述各个字段的意思
-                    preprocess_daily_data_test(cur_time, current_country, brand,key)
-                    processing_test(cur_time, current_country, use_llm=False, brand=brand, strategy='daily',db=key)
-                    # if brand == 'LAPASA':
-                    #     llm_processing(cur_time, current_country, 'default', brand)  # deepseek
-                    # 老版本已弃用
-                    # if brand == 'LAPASA':
-                    #     llm_processing3(cur_time, current_country, 'default', brand, version=0)  # deepseek
-                    #     preprocess_sp_data(cur_time, current_country, brand)
-                    #     llm_processing1(cur_time, current_country, 'default', brand)
-                    preprocess_csv(cur_time, current_country, brand, strategy='daily')
-                    auto_execute3(cur_time, current_country, brand=brand, strategy='daily',db=key)
+                    # preprocess_daily_data_test(cur_time, current_country, brand,key)
+                    # processing_test(cur_time, current_country, use_llm=False, brand=brand, strategy='daily',db=key)
+                    # # if brand == 'LAPASA':
+                    # #     llm_processing(cur_time, current_country, 'default', brand)  # deepseek
+                    # # 老版本已弃用
+                    # # if brand == 'LAPASA':
+                    # #     llm_processing3(cur_time, current_country, 'default', brand, version=0)  # deepseek
+                    # #     preprocess_sp_data(cur_time, current_country, brand)
+                    # #     llm_processing1(cur_time, current_country, 'default', brand)
+                    # preprocess_csv(cur_time, current_country, brand, strategy='daily')
+                    # auto_execute3(cur_time, current_country, brand=brand, strategy='daily',db=key)
                     #preprocess_daily_data_anomaly_detection(cur_time, current_country, brand)
                     # if brand == 'LAPASA':
                     #     preprocess_daily_data_anomaly_detection(cur_time, current_country, brand)
@@ -116,7 +123,31 @@ def run_():
                     #     #     auto_execute(cur_time, current_country,brand=brand, strategy='daily')
                     # else:
                     #     auto_execute2(cur_time, current_country, brand=brand, strategy='daily')
-                    last_main_loop_time = current_time
+                    # 更新或记录执行时间
+                    if key not in execution_times:
+                        execution_times[key] = []  # 确保这是一个列表
+                    current_time1 = time.time()
+                    country_exists = False
+                    for entry in execution_times[key]:
+                        if entry['market'] == current_country:
+                            entry['timestamp'] = datetime.fromtimestamp(current_time1).strftime('%Y-%m-%d %H:%M:%S')
+                            entry['date'] = cur_time
+                            country_exists = True
+                            break
+
+                    # 如果国家记录不存在，添加新条目
+                    if not country_exists:
+                        execution_times[key].append({
+                            "market": current_country,
+                            "timestamp": datetime.fromtimestamp(current_time1).strftime('%Y-%m-%d %H:%M:%S'),
+                            "date": cur_time
+                        })
+
+                    # 将执行时间记录写入 JSON 文件
+            with open(execution_path, 'w') as json_file:
+                json.dump(execution_times, json_file, indent=4)
+            last_main_loop_time = current_time
+            print("Finished")
 
         time.sleep(60 * 60 * 1)
 

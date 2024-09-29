@@ -8,6 +8,7 @@ import os
 from ai.backend.util.db.auto_process.db_api import BaseDb
 from ai.backend.util.db.configuration.path import get_config_path
 from ai.backend.util.db.auto_yzj.utils.trans_to import csv_to_json
+from ai.backend.util.db.auto_yzj.path import get_auto_path
 from ai.backend.util.db.auto_yzj.日常优化.手动sp广告.SKU优化.query import skuquery_manual
 from ai.backend.util.db.auto_yzj.日常优化.手动sp广告.复开SKU.query import reopenSkuQueryManual
 from ai.backend.util.db.auto_yzj.日常优化.自动sp广告.SKU优化.query import skuQueryAuto
@@ -174,7 +175,8 @@ class AmazonMysqlRagUitl(BaseDb):
             else:
                 query = None
             df1 = pd.read_sql(query, con=conn)
-            output_filename = '.\日常优化\手动sp广告\搜索词优化\预处理.csv'
+            output_filename = os.path.join(get_auto_path(), '日常优化\手动sp广告\搜索词优化\预处理.csv')
+            #output_filename = '.\日常优化\手动sp广告\搜索词优化\预处理.csv'
             df1.to_csv(output_filename, index=False, encoding='utf-8-sig')
             csv_to_json(output_filename)
             # return df
@@ -670,7 +672,8 @@ ORDER BY
                 query = None
             # print(query)
             df1 = pd.read_sql(query, con=conn)
-            output_filename = '.\日常优化\手动sp广告\商品投放搜索词优化\预处理.csv'
+            output_filename = os.path.join(get_auto_path(), '日常优化\手动sp广告\商品投放搜索词优化\预处理.csv')
+            # output_filename = '.\日常优化\手动sp广告\商品投放搜索词优化\预处理.csv'
             df1.to_csv(output_filename, index=False, encoding='utf-8-sig')
             csv_to_json(output_filename)
             # return df
@@ -775,7 +778,9 @@ ORDER BY
             else:
                 query = None
             df1 = pd.read_sql(query, con=conn)
-            output_filename = '.\日常优化\自动sp广告\搜索词优化\预处理.csv'
+
+            output_filename = os.path.join(get_auto_path(), '日常优化\自动sp广告\搜索词优化\预处理.csv')
+            # output_filename = '.\日常优化\自动sp广告\搜索词优化\预处理.csv'
             df1.to_csv(output_filename, index=False, encoding='utf-8-sig')
             csv_to_json(output_filename)
             # return df

@@ -1,142 +1,169 @@
 {
-    "LAPASA": [
+    "amazon_huangjunxi": [
         {
-            "market": "IT",
-            "timestamp": "2024-09-22 20:35:06",
-            "date": "2024-09-22"
-        },
+            "market": "US",
+            "timestamp": "2024-09-29 15:47:29",
+            "date": "2024-09-29"
+        }
+    ],
+    "amazon_ads": [
         {
-            "market": "ES",
-            "timestamp": "2024-09-22 20:45:19",
-            "date": "2024-09-22"
-        },
-        {
-            "market": "DE",
-            "timestamp": "2024-09-22 21:09:09",
-            "date": "2024-09-22"
+            "market": "US",
+            "timestamp": "2024-09-29 15:47:29",
+            "date": "2024-09-29"
         },
         {
             "market": "FR",
-            "timestamp": "2024-09-22 21:18:55",
-            "date": "2024-09-22"
+            "timestamp": "2024-09-29 15:47:29",
+            "date": "2024-09-29"
+        },
+        {
+            "market": "IT",
+            "timestamp": "2024-09-29 15:47:29",
+            "date": "2024-09-29"
+        },
+        {
+            "market": "DE",
+            "timestamp": "2024-09-29 15:47:29",
+            "date": "2024-09-29"
+        },
+        {
+            "market": "ES",
+            "timestamp": "2024-09-29 15:47:29",
+            "date": "2024-09-29"
         },
         {
             "market": "UK",
-            "timestamp": "2024-09-22 21:24:50",
-            "date": "2024-09-22"
-        },
-        {
-            "market": "US",
-            "timestamp": "2024-09-22 21:53:21",
-            "date": "2024-09-22"
+            "timestamp": "2024-09-29 15:47:29",
+            "date": "2024-09-29"
         },
         {
             "market": "JP",
-            "timestamp": "2024-09-22 21:56:28",
-            "date": "2024-09-22"
+            "timestamp": "2024-09-29 15:47:29",
+            "date": "2024-09-29"
         }
     ],
-    "DELOMO": [
+    "amazon_bdzx": [
         {
             "market": "IT",
-            "timestamp": "2024-09-22 21:56:31",
-            "date": "2024-09-22"
+            "timestamp": "2024-09-29 15:47:29",
+            "date": "2024-09-29"
         },
         {
             "market": "ES",
-            "timestamp": "2024-09-22 21:56:48",
-            "date": "2024-09-22"
+            "timestamp": "2024-09-29 15:47:29",
+            "date": "2024-09-29"
         },
         {
             "market": "DE",
-            "timestamp": "2024-09-22 21:57:00",
-            "date": "2024-09-22"
+            "timestamp": "2024-09-29 15:47:29",
+            "date": "2024-09-29"
         },
         {
             "market": "FR",
-            "timestamp": "2024-09-22 21:57:07",
-            "date": "2024-09-22"
+            "timestamp": "2024-09-29 15:47:29",
+            "date": "2024-09-29"
         }
     ],
-    "OutdoorMaster": [
+    "amazon_bdzx_delomo": [
+        {
+            "market": "US",
+            "timestamp": "2024-09-29 15:47:29",
+            "date": "2024-09-29"
+        }
+    ],
+    "amazon_outdoormaster": [
         {
             "market": "IT",
-            "timestamp": "2024-09-22 21:57:13",
-            "date": "2024-09-22"
+            "timestamp": "2024-09-29 15:47:29",
+            "date": "2024-09-29"
         },
         {
             "market": "ES",
-            "timestamp": "2024-09-22 21:57:23",
-            "date": "2024-09-22"
+            "timestamp": "2024-09-29 15:47:29",
+            "date": "2024-09-29"
         },
         {
             "market": "FR",
-            "timestamp": "2024-09-22 21:57:25",
-            "date": "2024-09-22"
+            "timestamp": "2024-09-29 15:47:29",
+            "date": "2024-09-29"
         },
         {
             "market": "SE",
-            "timestamp": "2024-09-22 21:57:26",
-            "date": "2024-09-22"
-        },
+            "timestamp": "2024-09-29 15:47:29",
+            "date": "2024-09-29"
+        }
+    ],
+    "amazon_outdoormaster_jp": [
         {
             "market": "JP",
-            "timestamp": "2024-09-22 21:58:46",
-            "date": "2024-09-22"
+            "timestamp": "2024-09-29 15:47:29",
+            "date": "2024-09-29"
         }
     ],
-    "MUDEELA": [
+    "amazon_bdzx_mudeela": [
         {
             "market": "US",
-            "timestamp": "2024-09-22 22:09:40",
-            "date": "2024-09-22"
+            "timestamp": "2024-09-29 15:47:29",
+            "date": "2024-09-29"
         }
     ],
-    "Rossny": [
+    "amazon_bdzx_rossny": [
         {
             "market": "US",
-            "timestamp": "2024-09-22 22:10:11",
-            "date": "2024-09-22"
+            "timestamp": "2024-09-29 15:47:29",
+            "date": "2024-09-29"
         }
     ],
-    "ZEN CAVE": [
+    "amazon_chaoyangkeji_gotoly": [
         {
             "market": "US",
-            "timestamp": "2024-09-22 22:10:12",
-            "date": "2024-09-22"
+            "timestamp": "2024-09-29 15:47:29",
+            "date": "2024-09-29"
         }
     ],
-    "Gotoly": [
+    "amazon_mayigongxiang": [
         {
-            "market": "US",
-            "timestamp": "2024-09-22 22:19:12",
-            "date": "2024-09-22"
-        }
-    ],
-    "us1": [
-        {
-            "market": "US",
-            "timestamp": "2024-09-22 22:22:35",
-            "date": "2024-09-22"
-        }
-    ],
-    "us2": [
-        {
-            "market": "US",
-            "timestamp": "2024-09-22 22:24:19",
-            "date": "2024-09-22"
-        }
-    ],
-    "eu": [
-        {
-            "market": "DE",
-            "timestamp": "2024-09-22 22:25:47",
-            "date": "2024-09-22"
+            "market": "IT",
+            "timestamp": "2024-09-29 15:47:29",
+            "date": "2024-09-29"
         },
         {
-            "market": "UK",
-            "timestamp": "2024-09-22 22:28:14",
-            "date": "2024-09-22"
+            "market": "ES",
+            "timestamp": "2024-09-29 15:47:29",
+            "date": "2024-09-29"
+        },
+        {
+            "market": "DE",
+            "timestamp": "2024-09-29 15:47:29",
+            "date": "2024-09-29"
+        },
+        {
+            "market": "FR",
+            "timestamp": "2024-09-29 15:47:29",
+            "date": "2024-09-29"
+        }
+    ],
+    "amazon_mayigongxiang_huakey": [
+        {
+            "market": "IT",
+            "timestamp": "2024-09-29 15:47:29",
+            "date": "2024-09-29"
+        },
+        {
+            "market": "ES",
+            "timestamp": "2024-09-29 15:47:29",
+            "date": "2024-09-29"
+        },
+        {
+            "market": "DE",
+            "timestamp": "2024-09-29 15:47:29",
+            "date": "2024-09-29"
+        },
+        {
+            "market": "FR",
+            "timestamp": "2024-09-29 15:47:29",
+            "date": "2024-09-29"
         }
     ]
 }

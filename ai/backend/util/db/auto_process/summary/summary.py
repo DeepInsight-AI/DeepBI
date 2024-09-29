@@ -41,9 +41,9 @@ def load_uid(db, brand, country=None):
 #     else:
 #         return obj
 
-def get_request_data(CountryCode, StartDate, report_type, all_table, data_id, brand, db,ID=None):
+def get_request_data(CountryCode, StartDate, report_type, all_table, data_id, brand, db, ID=None):
     try:
-        if data_id > 0:
+        if data_id == 1:
             add_data = {
                 "ID": str(ID),
                 "UID": str(load_uid(db, brand, CountryCode)),
@@ -57,7 +57,7 @@ def get_request_data(CountryCode, StartDate, report_type, all_table, data_id, br
             print(add_data)
             print(f"发送数据请求: 正在更新 {report_type} 的ID为 {ID}")
             res, data = ProcessShowData.update(add_data)
-        else:
+        elif data_id == 0:
             add_data = {
                 "UID": load_uid(db, brand, CountryCode),
                 "ContinentCode": get_continent_code(CountryCode),
@@ -71,6 +71,37 @@ def get_request_data(CountryCode, StartDate, report_type, all_table, data_id, br
             print(f"发送数据请求: 正在插入 {report_type} 的ID为 {id}")
             # 发送请求
             res, data = ProcessShowData.insert(add_data)
+        else:
+            add_data = {
+                "DataType": "D-LOG",  # 要与下面数据保持一致
+                "Data": [
+            {
+                "UID": "1",
+                "ContinentCode": "NA",
+                "CountryCode": "IT",
+                "DataType": "D-LOG",  # 这里是ai 日志操作
+                "StartDate": "2025-01-02",
+                "EndDate": "2025-01-02",
+                "ShowData": "{thisi is other data}",
+                "Other": "其他",
+                "Asin": "0888888888",  # ai操作新增asin
+                "WordID": "123123123123"  # ai操作新增词ID
+            },
+            {
+                "UID": "1",
+                "ContinentCode": "NA",
+                "CountryCode": "IT",
+                "DataType": "D-LOG",  # 这里是ai 日志操作
+                "StartDate": "2025-01-02",
+                "EndDate": "2025-01-02",
+                "ShowData": "{thisi is other data}",
+                "Other": "其他",
+                "Asin": "0888888888",  # ai操作新增asin
+                "WordID": "123123123123"  # ai操作新增词ID
+            }
+        ]
+            }
+            res, data = ProcessShowData.inserts(add_data)
         if res:
             print("请求成功: 操作成功")
             print(data)
@@ -84,8 +115,28 @@ def get_request_data(CountryCode, StartDate, report_type, all_table, data_id, br
         traceback.format_exc()
         return 0
 
-
-# res = get_request_data("FR","2024-06-25","AIADADD",
+def get_request_data_batch(data):
+    try:
+        add_data = {
+            "DataType": "D-LOG",  # 要与下面数据保持一致
+            "Data": data
+        }
+        print(add_data)
+        print(type(add_data))
+        res, data = ProcessShowData.inserts(add_data)
+        if res:
+            print("请求成功: 操作成功")
+            print(data)
+            data = data['data']
+        else:
+            print("请求失败: 操作失败")
+            data = 0
+        return data
+    except Exception as e:
+        print(f"请求失败: {e}")
+        traceback.format_exc()
+        return 0
+    # res = get_request_data("FR","2024-06-25","AIADADD",
 # [
 # {"x":"2024-06-25","type":"扫描广告活动","y":682},
 # {"x":"2024-06-25","type":"新建广告活动","y":12}
@@ -252,7 +303,7 @@ def get_data_temporary(market, brand, db):
     today = datetime.today()
     yesterday = today - timedelta(days=1)
     cur_time = yesterday.strftime('%Y-%m-%d')
-    # cur_time = '2024-09-23'
+    cur_time = '2024-09-26'
     # 以下是您的 API 调用和数据处理逻辑
     sp_count = api(db, brand, market).get_scan_campaign_sp(market, cur_time)
     sd_count = api(db, brand, market).get_scan_campaign_sd(market, cur_time)
@@ -448,7 +499,57 @@ def update_data_manual(market, brand, db):
     today = datetime.today()
     yesterday = today - timedelta(days=1)
     cur_time = yesterday.strftime('%Y-%m-%d')
-    # cur_time = '2024-09-23'
+    cur_time = '2024-09-26'
+    campaignName_info, advertisedSku_info, type_info = api(db, brand, market).get_sku_state_info(market, cur_time)
+    if campaignName_info and advertisedSku_info and type_info:
+        for campaignName, advertisedSku, type1 in zip(campaignName_info, advertisedSku_info, type_info):
+            if type1 == "ENABLED":
+                sku_status = "复开"
+            elif type1 == "PAUSED":
+                sku_status = "关闭"
+            else:
+                sku_status = "关闭"
+            table2 = [[market, cur_time, "SKU状态", campaignName, advertisedSku, sku_status]]
+            get_request_data(market, cur_time, "D-LOG", table2, 0, brand, db)
+    campaignName_info, keyword_info, matchType_info, bid_adjust_info = api(db, brand, market).get_keyword_bid_info(market, cur_time)
+    if campaignName_info and matchType_info and keyword_info and bid_adjust_info:
+        for campaignName, matchType, keyword, bid_adjust in zip(campaignName_info, matchType_info, keyword_info,
+                                                                bid_adjust_info):
+            if matchType == "KEYWORD_BROAD":
+                keyword_type = "关键词_广泛匹配"
+            elif matchType == "KEYWORD_PHRASE":
+                keyword_type = "关键词_短语匹配"
+            elif matchType == "KEYWORD_EXACT":
+                keyword_type = "关键词_精准匹配"
+            else:
+                keyword_type = None  # 或者设置为其他默认值，或者不赋值
+
+            if keyword_type is not None:
+                table2 = [[market, cur_time, keyword_type, campaignName, keyword, bid_adjust]]
+                get_request_data(market, cur_time, "D-LOG", table2, 0, brand, db)
+    campaignName_info, keyword_info, bid_adjust_info = api(db, brand, market).get_automatic_targeting_bid_info(market, cur_time)
+    if campaignName_info and keyword_info and bid_adjust_info:
+        for campaignName, keyword, bid_adjust in zip(campaignName_info, keyword_info, bid_adjust_info):
+            table2 = [[market, cur_time, "自动定位组竞价", campaignName, keyword,
+                       "设置竞价为0.05" if bid_adjust == -1 else bid_adjust]]
+            get_request_data(market, cur_time, "D-LOG", table2, 0, brand, db)
+    campaignName_info, keyword_info, bid_adjust_info = api(db, brand, market).get_product_target_bid_info(market, cur_time)
+    if campaignName_info and keyword_info and bid_adjust_info:
+        for campaignName, keyword, bid_adjust in zip(campaignName_info, keyword_info, bid_adjust_info):
+            if bid_adjust == -1 or bid_adjust == -10:
+                bid_adjust_desc = "设置竞价为0.05"
+            else:
+                bid_adjust_desc = "根据ACOS值降价" if bid_adjust == 0 else bid_adjust
+            table2 = [[market, cur_time, "商品投放竞价", campaignName, keyword, bid_adjust_desc]]
+            get_request_data(market, cur_time, "D-LOG", table2, 0, brand, db)
+
+
+def update_data_manual_batch(market, brand, db):
+    """将每日手动操作数据上传到线上数据库"""
+    today = datetime.today()
+    yesterday = today - timedelta(days=1)
+    cur_time = yesterday.strftime('%Y-%m-%d')
+    # cur_time = '2024-09-25'
     campaignName_info, advertisedSku_info, type_info = api(db, brand, market).get_sku_state_info(market, cur_time)
     if campaignName_info and advertisedSku_info and type_info:
         for campaignName, advertisedSku, type1 in zip(campaignName_info, advertisedSku_info, type_info):
@@ -554,7 +655,7 @@ def update_create_data(market, brand, db):
     today = datetime.today()
     yesterday = today - timedelta(days=1)
     cur_time = yesterday.strftime('%Y-%m-%d')
-    # cur_time = '2024-09-23'
+    cur_time = '2024-09-26'
     print(cur_time)
     campaignName_info, campaign_type_info, budget_info = AmazonMysqlRagUitl(db, brand, market).get_create_campaign(market, cur_time)
     if campaignName_info and campaign_type_info and budget_info:
@@ -590,6 +691,134 @@ def update_create_data(market, brand, db):
             if bid_adjust:
                 table2 = [[market, cur_time, "商品投放创建", campaignName, keyword, f'竞价为{round(float(bid_adjust), 2)}']]
                 get_request_data(market, cur_time, "D-LOG", table2, 0, brand, db)
+
+
+def update_create_data_batch(market, brand, db):
+    """将每日创建数据上传到线上数据库"""
+    today = datetime.today()
+    yesterday = today - timedelta(days=1)
+    cur_time = yesterday.strftime('%Y-%m-%d')
+    cur_time = '2024-09-25'
+    print(cur_time)
+    campaign_info = []
+    campaignName_info, campaign_type_info, budget_info, campaignId_info = AmazonMysqlRagUitl(db, brand, market).get_create_campaign_batch(market, cur_time)
+    if campaignName_info and campaign_type_info and budget_info and campaignId_info:
+        for campaignName, campaign_type, budget, campaignId in zip(campaignName_info, campaign_type_info, budget_info, campaignId_info):
+            table2 = [[market, cur_time, "广告活动创建", campaignName, campaign_type, f'预算为{budget}']]
+            campaign_info.append({
+                "UID": load_uid(db, brand, market),
+                "ContinentCode": get_continent_code(market),
+                "CountryCode": market,
+                "DataType": "D-LOG",
+                "StartDate": cur_time,
+                "EndDate": cur_time,
+                "ShowData": str(table2),
+                "Other": "",
+                "Asin": "",  # ai操作新增asin
+                "WordID": campaignId  # ai操作新增词ID
+            })
+            if len(campaign_info) >= 100:
+                get_request_data_batch(campaign_info)
+                campaign_info = []  # 清空列表以便继续添加
+        if campaign_info:
+            get_request_data_batch(campaign_info)
+    adGroup_info = []
+    campaignName_info, adGroupName_info, defaultBid_info, adGroupId_info = AmazonMysqlRagUitl(db, brand, market).get_create_adgroup_batch(market, cur_time)
+    if campaignName_info and adGroupName_info and defaultBid_info and adGroupId_info:
+        for campaignName, adGroupName, defaultBid, adGroupId in zip(campaignName_info, adGroupName_info, defaultBid_info, adGroupId_info):
+            table2 = [[market, cur_time, "广告组创建", campaignName, adGroupName, f'预算为{round(defaultBid, 2)}']]
+            adGroup_info.append({
+                "UID": load_uid(db, brand, market),
+                "ContinentCode": get_continent_code(market),
+                "CountryCode": market,
+                "DataType": "D-LOG",
+                "StartDate": cur_time,
+                "EndDate": cur_time,
+                "ShowData": str(table2),
+                "Other": "",
+                "Asin": "",  # ai操作新增asin
+                "WordID": adGroupId  # ai操作新增词ID
+            })
+            if len(adGroup_info) >= 100:
+                get_request_data_batch(adGroup_info)
+                adGroup_info = []  # 清空列表以便继续添加
+        if adGroup_info:
+            get_request_data_batch(adGroup_info)
+    Sku_info = []
+    campaignName_info, advertisedSku_info, adId_info = AmazonMysqlRagUitl(db, brand, market).get_create_sku_batch(market, cur_time)
+    if campaignName_info and advertisedSku_info and adId_info:
+        for campaignName, advertisedSku, adId in zip(campaignName_info, advertisedSku_info, adId_info):
+            table2 = [[market, cur_time, "SKU添加", campaignName, advertisedSku, ""]]
+            Sku_info.append({
+                "UID": load_uid(db, brand, market),
+                "ContinentCode": get_continent_code(market),
+                "CountryCode": market,
+                "DataType": "D-LOG",
+                "StartDate": cur_time,
+                "EndDate": cur_time,
+                "ShowData": str(table2),
+                "Other": "",
+                "Asin": "",  # ai操作新增asin
+                "WordID": adId  # ai操作新增词ID
+            })
+            if len(Sku_info) >= 100:
+                get_request_data_batch(Sku_info)
+                Sku_info = []  # 清空列表以便继续添加
+        if Sku_info:
+            get_request_data_batch(Sku_info)
+    Keyword_info = []
+    campaignName_info, matchType_info, keyword_info, bid_info, keywordId_info = AmazonMysqlRagUitl(db, brand, market).get_create_keyword_batch(market, cur_time)
+    if campaignName_info and matchType_info and keyword_info and bid_info and keywordId_info:
+        for campaignName, matchType, keyword, bid, keywordId in zip(campaignName_info, matchType_info, keyword_info, bid_info, keywordId_info):
+            if matchType == "BROAD":
+                keyword_type = "关键词创建_广泛匹配"
+            elif matchType == "PHRASE":
+                keyword_type = "关键词创建_短语匹配"
+            elif matchType == "EXACT":
+                keyword_type = "关键词创建_精准匹配"
+            else:
+                keyword_type = None  # 或者设置为其他默认值，或者不赋值
+            table2 = [[market, cur_time, keyword_type, campaignName, keyword, f'竞价为{round(bid, 2)}']]
+            Keyword_info.append({
+                "UID": load_uid(db, brand, market),
+                "ContinentCode": get_continent_code(market),
+                "CountryCode": market,
+                "DataType": "D-LOG",
+                "StartDate": cur_time,
+                "EndDate": cur_time,
+                "ShowData": str(table2),
+                "Other": "",
+                "Asin": "",  # ai操作新增asin
+                "WordID": keywordId  # ai操作新增词ID
+            })
+            if len(Keyword_info) >= 100:
+                get_request_data_batch(Keyword_info)
+                Keyword_info = []  # 清空列表以便继续添加
+        if Keyword_info:
+            get_request_data_batch(Keyword_info)
+    target_info = []
+    campaignName_info, keyword_info, bid_adjust_info, targetId_info = AmazonMysqlRagUitl(db, brand, market).get_create_product_targets_batch(market, cur_time)
+    if campaignName_info and keyword_info and bid_adjust_info and targetId_info:
+        for campaignName, keyword, bid_adjust, targetId in zip(campaignName_info, keyword_info, bid_adjust_info, targetId_info):
+            if bid_adjust:
+                table2 = [[market, cur_time, "商品投放创建", campaignName, keyword, f'竞价为{round(float(bid_adjust), 2)}']]
+                target_info.append({
+                    "UID": load_uid(db, brand, market),
+                    "ContinentCode": get_continent_code(market),
+                    "CountryCode": market,
+                    "DataType": "D-LOG",
+                    "StartDate": cur_time,
+                    "EndDate": cur_time,
+                    "ShowData": str(table2),
+                    "Other": "",
+                    "Asin": "",  # ai操作新增asin
+                    "WordID": targetId  # ai操作新增词ID
+                })
+                if len(target_info) >= 100:
+                    get_request_data_batch(target_info)
+                    target_info = []  # 清空列表以便继续添加
+            if target_info:
+                get_request_data_batch(target_info)
 
 
 def update_create_data_period(market, brand, start_date):

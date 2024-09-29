@@ -4,7 +4,7 @@ import time
 from datetime import datetime, timedelta
 from ai.backend.util.db.configuration.path import get_config_path
 from ai.backend.util.db.auto_process.summary.db_tool.ads_db import AmazonMysqlRagUitl as api
-from ai.backend.util.db.auto_process.summary.summary import get_data,update_create_data_period,update_create_data,get_data_temporary,update_data_manual_period,update_data_manual,get_data_temporary_period
+from ai.backend.util.db.auto_process.summary.summary import get_data,update_create_data_period,update_create_data,get_data_temporary,update_data_manual_period,update_data_manual,get_data_temporary_period,update_create_data_batch
 from ai.backend.util.db.auto_process.summary.summary import create_summarize_data
 
 
@@ -12,60 +12,68 @@ def run():
     brands_and_countries = {
         'amazon_ads': {
             'brand': 'LAPASA',
-            'countries': ["US", "FR", "IT", "DE", "NL", "SE", "ES", "UK", "JP"]
+            'countries': ["IT", "DE", "NL", "SE", "ES", "UK"]#"US", "FR", "IT", "DE", "NL", "SE", "ES", "UK", "JP"
         },
-        'amazon_bdzx': {
-            'brand': 'DELOMO',
-            'countries': ['IT', 'ES', 'DE', 'FR']
-        },
-        'amazon_bdzx_delomo': {
-            'brand': 'DELOMO',
-            'countries': ['US']
-        },
-        'amazon_outdoormaster': {
-            'brand': 'OutdoorMaster',
-            'countries': ['IT', 'ES', 'FR', 'SE', 'JP']
-        },
-        'amazon_bdzx_mudeela': {
-            'brand': 'MUDEELA',
-            'countries': ['US']
-        },
-        'amazon_bdzx_rossny': {
-            'brand': 'Rossny',
-            'countries': ['US']
-        },
-        'amazon_bdzx_zen_cave': {
-            'brand': 'ZEN CAVE',
-            'countries': ['US']
-        },
-        'amazon_chaoyangkeji_gotoly': {
-            'brand': 'Gotoly',
-            'countries': ['US']
-        },
-        'amazon_huangjunxi': {
-            'brand': 'keimi',
-            'countries': ['US']
-        },
-        'amazon_youniverse_inc_us': {
-            'brand': 'us1',
-            'countries': ['US']
-        },
-        'amazon_youniverse_fezibo_us': {
-            'brand': 'us2',
-            'countries': ['US']
-        },
-        'amazon_youniverse_eu': {
-            'brand': 'eu',
-            'countries': ['DE', 'UK']
-        },
-        'amazon_mayigongxiang': {
-            'brand': 'ANTSHARE',
-            'countries': ['IT', 'ES', 'DE', 'FR']
-        },
-        'amazon_mayigongxiang_huakey': {
-            'brand': 'ANTSHARE',
-            'countries': ['IT', 'ES', 'DE', 'FR']
-        }
+        # 'amazon_bdzx': {
+        #     'brand': 'DELOMO',
+        #     'countries': ['IT', 'ES', 'DE', 'FR']
+        # },
+        # 'amazon_bdzx_delomo': {
+        #     'brand': 'DELOMO',
+        #     'countries': ['US']
+        # },
+        # 'amazon_outdoormaster': {
+        #     'brand': 'OutdoorMaster',
+        #     'countries': ['IT', 'ES', 'FR', 'SE', 'JP']
+        # },
+        # 'amazon_bdzx_mudeela': {
+        #     'brand': 'MUDEELA',
+        #     'countries': ['US']
+        # },
+        # 'amazon_bdzx_rossny': {
+        #     'brand': 'Rossny',
+        #     'countries': ['US']
+        # },
+        # 'amazon_bdzx_zen_cave': {
+        #     'brand': 'ZEN CAVE',
+        #     'countries': ['US']
+        # },
+        # 'amazon_chaoyangkeji_gotoly': {
+        #     'brand': 'Gotoly',
+        #     'countries': ['US']
+        # },
+        # 'amazon_huangjunxi': {
+        #     'brand': 'keimi',
+        #     'countries': ['US']
+        # },
+        # 'amazon_youniverse_inc_us': {
+        #     'brand': 'us1',
+        #     'countries': ['US']
+        # },
+        # 'amazon_youniverse_fezibo_us': {
+        #     'brand': 'us2',
+        #     'countries': ['US']
+        # },
+        # 'amazon_youniverse_eu': {
+        #     'brand': 'eu',
+        #     'countries': ['DE', 'UK']
+        # },
+        # 'amazon_mayigongxiang': {
+        #     'brand': 'ANTSHARE',
+        #     'countries': ['IT', 'ES', 'DE', 'FR']
+        # },
+        # 'amazon_mayigongxiang_huakey': {
+        #     'brand': 'ANTSHARE',
+        #     'countries': ['IT', 'ES', 'DE', 'FR']
+        # },
+        # 'amazon_ouruite': {
+        #     'brand': 'RIDALUX',
+        #     'countries': ['US']
+        # },
+        # 'amazon_huixin': {
+        #     'brand': 'YOURUN',
+        #     'countries': ['US']
+        # },
 
     }
 
@@ -85,6 +93,7 @@ def run():
                     print(country, brand, key)
                     get_data_temporary(country, brand, key)
                     update_create_data(country, brand, key)
+                    #update_create_data_batch(country, brand, key)
                     update_data_manual(country, brand, key)
 
             # Update the last main loop run time
@@ -151,8 +160,94 @@ def run1():
         time.sleep(60 * 60 * 24)
 
 
+def run_():
+    brands_and_countries = {
+        'amazon_ads': {
+            'brand': 'LAPASA',
+            'countries': ["FR"]#"US", "FR", "IT", "DE", "NL", "SE", "ES", "UK", "JP"
+        },
+        # 'amazon_bdzx': {
+        #     'brand': 'DELOMO',
+        #     'countries': ['IT', 'ES', 'DE', 'FR']
+        # },
+        # 'amazon_bdzx_delomo': {
+        #     'brand': 'DELOMO',
+        #     'countries': ['US']
+        # },
+        # 'amazon_outdoormaster': {
+        #     'brand': 'OutdoorMaster',
+        #     'countries': ['IT', 'ES', 'FR', 'SE', 'JP']
+        # },
+        # 'amazon_bdzx_mudeela': {
+        #     'brand': 'MUDEELA',
+        #     'countries': ['US']
+        # },
+        # 'amazon_bdzx_rossny': {
+        #     'brand': 'Rossny',
+        #     'countries': ['US']
+        # },
+        # 'amazon_bdzx_zen_cave': {
+        #     'brand': 'ZEN CAVE',
+        #     'countries': ['US']
+        # },
+        # 'amazon_chaoyangkeji_gotoly': {
+        #     'brand': 'Gotoly',
+        #     'countries': ['US']
+        # },
+        # 'amazon_huangjunxi': {
+        #     'brand': 'keimi',
+        #     'countries': ['US']
+        # },
+        # 'amazon_youniverse_inc_us': {
+        #     'brand': 'us1',
+        #     'countries': ['US']
+        # },
+        # 'amazon_youniverse_fezibo_us': {
+        #     'brand': 'us2',
+        #     'countries': ['US']
+        # },
+        # 'amazon_youniverse_eu': {
+        #     'brand': 'eu',
+        #     'countries': ['DE', 'UK']
+        # },
+        # 'amazon_mayigongxiang': {
+        #     'brand': 'ANTSHARE',
+        #     'countries': ['IT', 'ES', 'DE', 'FR']
+        # },
+        # 'amazon_mayigongxiang_huakey': {
+        #     'brand': 'ANTSHARE',
+        #     'countries': ['IT', 'ES', 'DE', 'FR']
+        # }
+
+    }
+
+    # Initialize timing
+    last_summary_time = time.time() - 60 * 60 * 24
+    last_main_loop_time = time.time() - 60 * 60 * 24
+
+    while True:
+        current_time = time.time()
+
+        # Check if it's time to run the main loop tasks
+        if current_time - last_main_loop_time >= 60 * 60 * 24:
+            for key, value in brands_and_countries.items():
+                brand = value.get('brand', value['brand'])  # Use 'db' if 'brand' not present
+                countries = value['countries']
+                for country in countries:
+                    print(country, brand, key)
+                    update_create_data_batch(country, brand, key)
+                    update_data_manual(country, brand, key)
+            # Update the last main loop run time
+            last_main_loop_time = current_time
+            print('Main tasks done')
+
+        # Check if it's time to call create_summarize_dat
+        # Sleep for a short period before checking again
+        time.sleep(60 * 10)
+
 if __name__ == "__main__":
     #time.sleep(60 * 60 * 7)
+    # run_()
     run()
 
 

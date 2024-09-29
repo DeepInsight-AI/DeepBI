@@ -62,6 +62,7 @@ def after_request(response):
         'method': g.request_data['method'],
         'url': g.request_data['url'],
         'status': response.status,
+        'text': response.get_data(as_text=True),
         'elapsed_time': elapsed_time,
         'headers': g.request_data['headers'],
         'data': g.request_data['data']

@@ -44,8 +44,8 @@ class Ceate_new_sd:
             sub_brand_info = brand_info.get(self.brand, {})
             if self.market:
                 country_info = sub_brand_info.get(self.market, {})
-                return country_info.get('depository', brand_info.get('default', {}).get('depository'))
-            return brand_info.get('depository', brand_info.get('default', {}).get('depository'))
+                return country_info.get('depository', sub_brand_info.get('default', {}).get('depository'))
+            return brand_info.get('depository', sub_brand_info.get('default', {}).get('depository'))
 
     def create_new_sd_template(self,market1,market2,brand_name,uploaded_file,budget):
         #uploaded_file = 'C:/Users/admin/PycharmProjects/DeepBI/ai/backend/util/db/db_amazon/SE_DE_2024-06-27_2024-07-04_sd_sku_new.csv'

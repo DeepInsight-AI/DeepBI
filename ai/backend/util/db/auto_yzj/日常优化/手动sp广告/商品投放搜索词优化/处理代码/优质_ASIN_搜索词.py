@@ -5,11 +5,13 @@ import numpy as np
 from ai.backend.util.db.auto_process.tools_db_new_sp import DbNewSpTools
 from datetime import datetime
 from ai.backend.util.db.auto_process.tools_db_sp import DbSpTools
+from ai.backend.util.db.auto_yzj.path import get_auto_path
 
 
 def main(path, brand, cur_time, country, db, version=2):
     # 数据路径
-    data_path = r"C:\Users\admin\PycharmProjects\DeepBI\ai\backend\util\db\auto_yzj\日常优化\手动sp广告\商品投放搜索词优化\预处理.csv"
+    data_path = os.path.join(get_auto_path(), '日常优化\手动sp广告\商品投放搜索词优化\预处理.csv')
+    # data_path = r"C:\Users\admin\PycharmProjects\DeepBI\ai\backend\util\db\auto_yzj\日常优化\手动sp广告\商品投放搜索词优化\预处理.csv"
     file_name = "手动_优质_ASIN_搜索词" + '_' + brand + '_' + country + '_' + cur_time + '.csv'
     output_file_path = os.path.join(path, file_name)
 

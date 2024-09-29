@@ -103,17 +103,17 @@ def run_():
                     current_country = country
 
                     # 预处理数据，生成相应的csv,初次运行会生成json文件，用来描述各个字段的意思
-                    # preprocess_daily_data_test(cur_time, current_country, brand,key)
-                    # processing_test(cur_time, current_country, use_llm=False, brand=brand, strategy='daily',db=key)
-                    # # if brand == 'LAPASA':
-                    # #     llm_processing(cur_time, current_country, 'default', brand)  # deepseek
-                    # # 老版本已弃用
-                    # # if brand == 'LAPASA':
-                    # #     llm_processing3(cur_time, current_country, 'default', brand, version=0)  # deepseek
-                    # #     preprocess_sp_data(cur_time, current_country, brand)
-                    # #     llm_processing1(cur_time, current_country, 'default', brand)
-                    # preprocess_csv(cur_time, current_country, brand, strategy='daily')
-                    # auto_execute3(cur_time, current_country, brand=brand, strategy='daily',db=key)
+                    preprocess_daily_data_test(cur_time, current_country, brand,key)
+                    processing_test(cur_time, current_country, use_llm=False, brand=brand, strategy='daily',db=key)
+                    # if brand == 'LAPASA':
+                    #     llm_processing(cur_time, current_country, 'default', brand)  # deepseek
+                    # 老版本已弃用
+                    # if brand == 'LAPASA':
+                    #     llm_processing3(cur_time, current_country, 'default', brand, version=0)  # deepseek
+                    #     preprocess_sp_data(cur_time, current_country, brand)
+                    #     llm_processing1(cur_time, current_country, 'default', brand)
+                    preprocess_csv(cur_time, current_country, brand, strategy='daily')
+                    auto_execute3(cur_time, current_country, brand=brand, strategy='daily',db=key)
                     #preprocess_daily_data_anomaly_detection(cur_time, current_country, brand)
                     # if brand == 'LAPASA':
                     #     preprocess_daily_data_anomaly_detection(cur_time, current_country, brand)

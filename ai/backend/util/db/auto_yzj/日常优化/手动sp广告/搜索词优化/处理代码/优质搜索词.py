@@ -4,11 +4,12 @@ import os
 import numpy as np
 from ai.backend.util.db.auto_process.tools_db_new_sp import DbNewSpTools
 from datetime import datetime
+from ai.backend.util.db.auto_yzj.path import get_auto_path
 
 
 def main(path, brand, cur_time, country, db, version=2):
     # Load the CSV file
-    file_path = r"C:\Users\admin\PycharmProjects\DeepBI\ai\backend\util\db\auto_yzj\日常优化\手动sp广告\搜索词优化\预处理.csv"
+    file_path = os.path.join(get_auto_path(), '日常优化\手动sp广告\搜索词优化\预处理.csv')
     file_name = "手动_优质搜索词" + '_' + brand + '_' + country + '_' + cur_time + '.csv'
     output_file_path = os.path.join(path, file_name)
     data = pd.read_csv(file_path)
@@ -53,4 +54,4 @@ def main(path, brand, cur_time, country, db, version=2):
 
     print("Data has been successfully processed and saved to:", output_file_path)
 
-#main('C:/Users/admin/PycharmProjects/DeepBI/ai/backend/util/db/auto_yzj/日常优化/输出结果/LAPASA_JP_2024-07-29','LAPASA','2024-07-29','JP')
+# main('C:/Users/admin/PycharmProjects/DeepBI/ai/backend/util/db/auto_yzj/日常优化/输出结果/LAPASA_JP_2024-07-29','LAPASA','2024-07-29','JP','amazon_ads')

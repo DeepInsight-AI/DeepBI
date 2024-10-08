@@ -9,7 +9,7 @@ DeepBI is an AI-native data analysis platform. DeepBI leverages the power of lar
 
 <div align="center">
 
-  Languages： English [中文](README_CN.md)<br>
+  Languages： English [中文](README_CN.md) [日本語](README_JP.md)<br>
 Developer：dev@deepbi.com  Business：hi@deepbi.com
 
   <div style="display: flex; align-items: center;">

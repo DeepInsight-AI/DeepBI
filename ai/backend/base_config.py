@@ -6,7 +6,7 @@ class Config:
         self.load_conf()
 
     def load_conf(self):
-        self.ApiHost = "https://apiserver.deep-thought.io/proxy"
+        self.ApiHost = "https://apiserver.deepbi.com/proxy"
 
         # self.database_model = 'test'
         self.database_model = 'online'

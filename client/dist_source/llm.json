@@ -6,8 +6,7 @@
         "HttpProxyPort": "",
         "ApiHost": "",
         "required": [
-            "OpenaiApiKey",
-            "HttpProxyHost"
+            "OpenaiApiKey"
         ]
     },
     "DeepInsight": {

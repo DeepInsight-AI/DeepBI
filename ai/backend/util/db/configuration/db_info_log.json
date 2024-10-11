@@ -1,392 +1,427 @@
 {
-  "amazon_ads": {
-    "LAPASA": {
-      "default": {
-        "host": "192.168.2.123",
-        "user": "wanghequan",
-        "passwd": "WHq123123Aa",
-        "port": 3308,
-        "db": "test_amazon_log",
-        "charset": "utf8mb4",
-        "use_unicode": true
-      }
-    }
-  },
-  "amazon_bdzx": {
-    "DELOMO": {
-      "default": {
-        "host": "192.168.2.123",
-        "user": "wanghequan",
-        "passwd": "WHq123123Aa",
-        "port": 3308,
-        "db": "amazon_log_bdzx",
-        "charset": "utf8mb4",
-        "use_unicode": true
-      }
-    }
-  },
-  "amazon_bdzx_delomo": {
-    "DELOMO": {
-      "US": {
-        "host": "192.168.2.123",
-        "user": "wanghequan",
-        "passwd": "WHq123123Aa",
-        "port": 3308,
-        "db": "amazon_log_bdzx_delomo",
-        "charset": "utf8mb4",
-        "use_unicode": true
-      }
-    }
-  },
-  "amazon_outdoormaster": {
-    "OutdoorMaster": {
-      "default": {
-        "host": "192.168.2.123",
-        "user": "wanghequan",
-        "passwd": "WHq123123Aa",
-        "port": 3308,
-        "db": "amazon_log_outdoormaster",
-        "charset": "utf8mb4",
-        "use_unicode": true
-      }
-    }
-  },
-  "amazon_outdoormaster_jp": {
-    "OutdoorMaster": {
-      "JP": {
-          "host": "192.168.2.123",
-          "user": "wanghequan",
-          "passwd": "WHq123123Aa",
-          "port": 3308,
-          "db": "amazon_log_outdoormaster_jp",
-          "charset": "utf8mb4",
-          "use_unicode": true
-      }
-    }
-  },
-  "amazon_bdzx_mudeela": {
-    "MUDEELA": {
-      "US": {
-        "host": "192.168.2.123",
-        "user": "wanghequan",
-        "passwd": "WHq123123Aa",
-        "port": 3308,
-        "db": "amazon_log_bdzx_mudeela",
-        "charset": "utf8mb4",
-        "use_unicode": true
-      }
-    }
-  },
-  "amazon_bdzx_rossny": {
-    "Rossny": {
-      "US": {
-        "host": "192.168.2.123",
-        "user": "wanghequan",
-        "passwd": "WHq123123Aa",
-        "port": 3308,
-        "db": "amazon_log_bdzx_rossny",
-        "charset": "utf8mb4",
-        "use_unicode": true
-      }
-    }
-  },
-  "amazon_bdzx_zen_cave": {
-    "ZEN CAVE": {
-      "US": {
-        "host": "192.168.2.123",
-        "user": "wanghequan",
-        "passwd": "WHq123123Aa",
-        "port": 3308,
-        "db": "amazon_log_bdzx_zen_cave",
-        "charset": "utf8mb4",
-        "use_unicode": true
-      }
-    }
-  },
-  "amazon_chaoyangkeji_gotoly": {
-    "Gotoly": {
-      "US": {
-        "host": "192.168.2.123",
-        "user": "wanghequan",
-        "passwd": "WHq123123Aa",
-        "port": 3308,
-        "db": "amazon_log_gotoly",
-        "charset": "utf8mb4",
-        "use_unicode": true
-      }
-    }
-  },
-  "amazon_huangjunxi": {
-    "keimi": {
-      "US": {
-        "host": "192.168.2.123",
-        "user": "wanghequan",
-        "passwd": "WHq123123Aa",
-        "port": 3308,
-        "db": "amazon_log_keimi",
-        "charset": "utf8mb4",
-        "use_unicode": true
-      }
-    }
-  },
-  "amazon_youniverse_inc_us": {
-    "us1": {
-      "US": {
-        "host": "192.168.2.123",
-        "user": "wanghequan",
-        "passwd": "WHq123123Aa",
-        "port": 3308,
-        "db": "amazon_log_us1",
-        "charset": "utf8mb4",
-        "use_unicode": true
-      }
-    }
-  },
-  "amazon_youniverse_fezibo_us": {
-    "us2": {
-      "US": {
-        "host": "192.168.2.123",
-        "user": "wanghequan",
-        "passwd": "WHq123123Aa",
-        "port": 3308,
-        "db": "amazon_log_us2",
-        "charset": "utf8mb4",
-        "use_unicode": true
-      }
-    }
-  },
-  "amazon_youniverse_eu": {
-    "eu": {
-      "DE": {
-        "host": "192.168.2.123",
-        "user": "wanghequan",
-        "passwd": "WHq123123Aa",
-        "port": 3308,
-        "db": "amazon_log_eu",
-        "charset": "utf8mb4",
-        "use_unicode": true
-      },
-      "UK": {
-        "host": "192.168.2.123",
-        "user": "wanghequan",
-        "passwd": "WHq123123Aa",
-        "port": 3308,
-        "db": "amazon_log_eu",
-        "charset": "utf8mb4",
-        "use_unicode": true
-      }
-    }
-  },
-  "amazon_outdoormaster_vendors_vc1": {
-    "VC1": {
-      "US": {
-        "host": "192.168.2.123",
-        "user": "wanghequan",
-        "passwd": "WHq123123Aa",
-        "port": 3308,
-        "db": "amazon_log_outdoormaster_vc1",
-        "charset": "utf8mb4",
-        "use_unicode": true
-      }
-    }
-  },
-  "amazon_outdoormaster_vendors_vc2": {
-    "VC2": {
-      "US": {
-        "host": "192.168.2.123",
-        "user": "wanghequan",
-        "passwd": "WHq123123Aa",
-        "port": 3308,
-        "db": "amazon_log_outdoormaster_vc2",
-        "charset": "utf8mb4",
-        "use_unicode": true
-      }
-    }
-  },
-  "amazon_mayigongxiang": {
-    "ANTSHARE": {
-      "default": {
-          "host": "192.168.2.123",
-          "user": "wanghequan",
-          "passwd": "WHq123123Aa",
-          "port": 3308,
-          "db": "amazon_log_antshare",
-          "charset": "utf8mb4",
-          "use_unicode": true
-      }
+    "amazon_ads": {
+        "LAPASA": {
+            "default": {
+                "host": "192.168.2.123",
+                "user": "wanghequan",
+                "passwd": "WHq123123Aa",
+                "port": 3308,
+                "db": "test_amazon_log",
+                "charset": "utf8mb4",
+                "use_unicode": true
+            }
+        }
     },
-    "GOLDJU": {
-      "default": {
-          "host": "192.168.2.123",
-          "user": "wanghequan",
-          "passwd": "WHq123123Aa",
-          "port": 3308,
-          "db": "amazon_log_antshare",
-          "charset": "utf8mb4",
-          "use_unicode": true
-      }
+    "amazon_bdzx": {
+        "DELOMO": {
+            "default": {
+                "host": "192.168.2.123",
+                "user": "wanghequan",
+                "passwd": "WHq123123Aa",
+                "port": 3308,
+                "db": "amazon_log_bdzx",
+                "charset": "utf8mb4",
+                "use_unicode": true
+            }
+        }
     },
-    "WOOQU": {
-      "default": {
-          "host": "192.168.2.123",
-          "user": "wanghequan",
-          "passwd": "WHq123123Aa",
-          "port": 3308,
-          "db": "amazon_log_antshare",
-          "charset": "utf8mb4",
-          "use_unicode": true
-      }
+    "amazon_bdzx_delomo": {
+        "DELOMO": {
+            "US": {
+                "host": "192.168.2.123",
+                "user": "wanghequan",
+                "passwd": "WHq123123Aa",
+                "port": 3308,
+                "db": "amazon_log_bdzx_delomo",
+                "charset": "utf8mb4",
+                "use_unicode": true
+            }
+        }
     },
-    "Bestcellcase": {
-      "default": {
-          "host": "192.168.2.123",
-          "user": "wanghequan",
-          "passwd": "WHq123123Aa",
-          "port": 3308,
-          "db": "amazon_log_antshare",
-          "charset": "utf8mb4",
-          "use_unicode": true
-      }
+    "amazon_outdoormaster": {
+        "OutdoorMaster": {
+            "default": {
+                "host": "192.168.2.123",
+                "user": "wanghequan",
+                "passwd": "WHq123123Aa",
+                "port": 3308,
+                "db": "amazon_log_outdoormaster",
+                "charset": "utf8mb4",
+                "use_unicode": true
+            }
+        }
     },
-    "Huakay": {
-      "default": {
-          "host": "192.168.2.123",
-          "user": "wanghequan",
-          "passwd": "WHq123123Aa",
-          "port": 3308,
-          "db": "amazon_log_antshare",
-          "charset": "utf8mb4",
-          "use_unicode": true
-      }
+    "amazon_outdoormaster_jp": {
+        "OutdoorMaster": {
+            "JP": {
+                "host": "192.168.2.123",
+                "user": "wanghequan",
+                "passwd": "WHq123123Aa",
+                "port": 3308,
+                "db": "amazon_log_outdoormaster_jp",
+                "charset": "utf8mb4",
+                "use_unicode": true
+            }
+        }
+    },
+    "amazon_bdzx_mudeela": {
+        "MUDEELA": {
+            "US": {
+                "host": "192.168.2.123",
+                "user": "wanghequan",
+                "passwd": "WHq123123Aa",
+                "port": 3308,
+                "db": "amazon_log_bdzx_mudeela",
+                "charset": "utf8mb4",
+                "use_unicode": true
+            }
+        }
+    },
+    "amazon_bdzx_rossny": {
+        "Rossny": {
+            "US": {
+                "host": "192.168.2.123",
+                "user": "wanghequan",
+                "passwd": "WHq123123Aa",
+                "port": 3308,
+                "db": "amazon_log_bdzx_rossny",
+                "charset": "utf8mb4",
+                "use_unicode": true
+            }
+        }
+    },
+    "amazon_bdzx_zen_cave": {
+        "ZEN CAVE": {
+            "US": {
+                "host": "192.168.2.123",
+                "user": "wanghequan",
+                "passwd": "WHq123123Aa",
+                "port": 3308,
+                "db": "amazon_log_bdzx_zen_cave",
+                "charset": "utf8mb4",
+                "use_unicode": true
+            }
+        }
+    },
+    "amazon_chaoyangkeji_gotoly": {
+        "Gotoly": {
+            "US": {
+                "host": "192.168.2.123",
+                "user": "wanghequan",
+                "passwd": "WHq123123Aa",
+                "port": 3308,
+                "db": "amazon_log_gotoly",
+                "charset": "utf8mb4",
+                "use_unicode": true
+            }
+        }
+    },
+    "amazon_huangjunxi": {
+        "keimi": {
+            "US": {
+                "host": "192.168.2.123",
+                "user": "wanghequan",
+                "passwd": "WHq123123Aa",
+                "port": 3308,
+                "db": "amazon_log_keimi",
+                "charset": "utf8mb4",
+                "use_unicode": true
+            }
+        }
+    },
+    "amazon_youniverse_inc_us": {
+        "us1": {
+            "US": {
+                "host": "192.168.2.123",
+                "user": "wanghequan",
+                "passwd": "WHq123123Aa",
+                "port": 3308,
+                "db": "amazon_log_us1",
+                "charset": "utf8mb4",
+                "use_unicode": true
+            }
+        }
+    },
+    "amazon_youniverse_fezibo_us": {
+        "us2": {
+            "US": {
+                "host": "192.168.2.123",
+                "user": "wanghequan",
+                "passwd": "WHq123123Aa",
+                "port": 3308,
+                "db": "amazon_log_us2",
+                "charset": "utf8mb4",
+                "use_unicode": true
+            }
+        }
+    },
+    "amazon_youniverse_eu": {
+        "eu": {
+            "DE": {
+                "host": "192.168.2.123",
+                "user": "wanghequan",
+                "passwd": "WHq123123Aa",
+                "port": 3308,
+                "db": "amazon_log_eu",
+                "charset": "utf8mb4",
+                "use_unicode": true
+            },
+            "UK": {
+                "host": "192.168.2.123",
+                "user": "wanghequan",
+                "passwd": "WHq123123Aa",
+                "port": 3308,
+                "db": "amazon_log_eu",
+                "charset": "utf8mb4",
+                "use_unicode": true
+            }
+        }
+    },
+    "amazon_outdoormaster_vendors_vc1": {
+        "VC1": {
+            "US": {
+                "host": "192.168.2.123",
+                "user": "wanghequan",
+                "passwd": "WHq123123Aa",
+                "port": 3308,
+                "db": "amazon_log_outdoormaster_vc1",
+                "charset": "utf8mb4",
+                "use_unicode": true
+            }
+        }
+    },
+    "amazon_outdoormaster_vendors_vc2": {
+        "VC2": {
+            "US": {
+                "host": "192.168.2.123",
+                "user": "wanghequan",
+                "passwd": "WHq123123Aa",
+                "port": 3308,
+                "db": "amazon_log_outdoormaster_vc2",
+                "charset": "utf8mb4",
+                "use_unicode": true
+            }
+        }
+    },
+    "amazon_mayigongxiang": {
+        "ANTSHARE": {
+            "default": {
+                "host": "192.168.2.123",
+                "user": "wanghequan",
+                "passwd": "WHq123123Aa",
+                "port": 3308,
+                "db": "amazon_log_antshare",
+                "charset": "utf8mb4",
+                "use_unicode": true
+            }
+        },
+        "GOLDJU": {
+            "default": {
+                "host": "192.168.2.123",
+                "user": "wanghequan",
+                "passwd": "WHq123123Aa",
+                "port": 3308,
+                "db": "amazon_log_antshare",
+                "charset": "utf8mb4",
+                "use_unicode": true
+            }
+        },
+        "WOOQU": {
+            "default": {
+                "host": "192.168.2.123",
+                "user": "wanghequan",
+                "passwd": "WHq123123Aa",
+                "port": 3308,
+                "db": "amazon_log_antshare",
+                "charset": "utf8mb4",
+                "use_unicode": true
+            }
+        },
+        "Bestcellcase": {
+            "default": {
+                "host": "192.168.2.123",
+                "user": "wanghequan",
+                "passwd": "WHq123123Aa",
+                "port": 3308,
+                "db": "amazon_log_antshare",
+                "charset": "utf8mb4",
+                "use_unicode": true
+            }
+        },
+        "Huakay": {
+            "default": {
+                "host": "192.168.2.123",
+                "user": "wanghequan",
+                "passwd": "WHq123123Aa",
+                "port": 3308,
+                "db": "amazon_log_antshare",
+                "charset": "utf8mb4",
+                "use_unicode": true
+            }
+        }
+    },
+    "amazon_mayigongxiang_huakey": {
+        "ANTSHARE": {
+            "default": {
+                "host": "192.168.2.123",
+                "user": "wanghequan",
+                "passwd": "WHq123123Aa",
+                "port": 3308,
+                "db": "amazon_log_antshare_huakey",
+                "charset": "utf8mb4",
+                "use_unicode": true
+            }
+        },
+        "GOLDJU": {
+            "default": {
+                "host": "192.168.2.123",
+                "user": "wanghequan",
+                "passwd": "WHq123123Aa",
+                "port": 3308,
+                "db": "amazon_log_antshare_huakey",
+                "charset": "utf8mb4",
+                "use_unicode": true
+            }
+        },
+        "AMILIFECASES": {
+            "default": {
+                "host": "192.168.2.123",
+                "user": "wanghequan",
+                "passwd": "WHq123123Aa",
+                "port": 3308,
+                "db": "amazon_log_antshare_huakey",
+                "charset": "utf8mb4",
+                "use_unicode": true
+            }
+        },
+        "Bestcellcase": {
+            "default": {
+                "host": "192.168.2.123",
+                "user": "wanghequan",
+                "passwd": "WHq123123Aa",
+                "port": 3308,
+                "db": "amazon_log_antshare_huakey",
+                "charset": "utf8mb4",
+                "use_unicode": true
+            }
+        },
+        "PAKUYA": {
+            "default": {
+                "host": "192.168.2.123",
+                "user": "wanghequan",
+                "passwd": "WHq123123Aa",
+                "port": 3308,
+                "db": "amazon_log_antshare_huakey",
+                "charset": "utf8mb4",
+                "use_unicode": true
+            }
+        },
+        "Huakay": {
+            "default": {
+                "host": "192.168.2.123",
+                "user": "wanghequan",
+                "passwd": "WHq123123Aa",
+                "port": 3308,
+                "db": "amazon_log_antshare_huakey",
+                "charset": "utf8mb4",
+                "use_unicode": true
+            }
+        },
+        "Joytra": {
+            "default": {
+                "host": "192.168.2.123",
+                "user": "wanghequan",
+                "passwd": "WHq123123Aa",
+                "port": 3308,
+                "db": "amazon_log_antshare_huakey",
+                "charset": "utf8mb4",
+                "use_unicode": true
+            }
+        },
+        "Qipexeii": {
+            "default": {
+                "host": "192.168.2.123",
+                "user": "wanghequan",
+                "passwd": "WHq123123Aa",
+                "port": 3308,
+                "db": "amazon_log_antshare_huakey",
+                "charset": "utf8mb4",
+                "use_unicode": true
+            }
+        },
+        "WOOQU": {
+            "default": {
+                "host": "192.168.2.123",
+                "user": "wanghequan",
+                "passwd": "WHq123123Aa",
+                "port": 3308,
+                "db": "amazon_log_antshare_huakey",
+                "charset": "utf8mb4",
+                "use_unicode": true
+            }
+        }
+    },
+    "amazon_huixin": {
+        "YOURUN": {
+            "default": {
+                "host": "192.168.2.123",
+                "user": "wanghequan",
+                "passwd": "WHq123123Aa",
+                "port": 3308,
+                "db": "amazon_log_huixin",
+                "charset": "utf8mb4",
+                "use_unicode": true
+            }
+        }
+    },
+    "amazon_ouruite": {
+        "RIDALUX": {
+            "default": {
+                "host": "192.168.2.123",
+                "user": "wanghequan",
+                "passwd": "WHq123123Aa",
+                "port": 3308,
+                "db": "amazon_log_ouruite",
+                "charset": "utf8mb4",
+                "use_unicode": true
+            }
+        }
+    },
+    "amazon_hototools": {
+        "HOTO": {
+            "default": {
+                "host": "192.168.2.123",
+                "user": "wanghequan",
+                "passwd": "WHq123123Aa",
+                "port": 3306,
+                "db": "amazon_log_hototools",
+                "charset": "utf8mb4",
+                "use_unicode": true
+            }
+        },
+        "APEXFORGE": {
+            "default": {
+                "host": "192.168.2.123",
+                "user": "wanghequan",
+                "passwd": "WHq123123Aa",
+                "port": 3306,
+                "db": "amazon_log_hototools",
+                "charset": "utf8mb4",
+                "use_unicode": true
+            }
+        }
+    },
+    "amazon_kfeiya": {
+        "COFaR": {
+            "default": {
+                "host": "192.168.2.123",
+                "user": "wanghequan",
+                "passwd": "WHq123123Aa",
+                "port": 3308,
+                "db": "amazon_log_kfeiya",
+                "charset": "utf8mb4",
+                "use_unicode": true
+            }
+        }
     }
-  },
-  "amazon_mayigongxiang_huakey": {
-    "ANTSHARE": {
-      "default": {
-          "host": "192.168.2.123",
-          "user": "wanghequan",
-          "passwd": "WHq123123Aa",
-          "port": 3308,
-          "db": "amazon_log_antshare_huakey",
-          "charset": "utf8mb4",
-          "use_unicode": true
-      }
-    },
-    "GOLDJU": {
-      "default": {
-          "host": "192.168.2.123",
-          "user": "wanghequan",
-          "passwd": "WHq123123Aa",
-          "port": 3308,
-          "db": "amazon_log_antshare_huakey",
-          "charset": "utf8mb4",
-          "use_unicode": true
-      }
-    },
-    "AMILIFECASES": {
-      "default": {
-          "host": "192.168.2.123",
-          "user": "wanghequan",
-          "passwd": "WHq123123Aa",
-          "port": 3308,
-          "db": "amazon_log_antshare_huakey",
-          "charset": "utf8mb4",
-          "use_unicode": true
-      }
-    },
-    "Bestcellcase": {
-      "default": {
-          "host": "192.168.2.123",
-          "user": "wanghequan",
-          "passwd": "WHq123123Aa",
-          "port": 3308,
-          "db": "amazon_log_antshare_huakey",
-          "charset": "utf8mb4",
-          "use_unicode": true
-      }
-    },
-    "PAKUYA": {
-      "default": {
-          "host": "192.168.2.123",
-          "user": "wanghequan",
-          "passwd": "WHq123123Aa",
-          "port": 3308,
-          "db": "amazon_log_antshare_huakey",
-          "charset": "utf8mb4",
-          "use_unicode": true
-      }
-    },
-    "Huakay": {
-      "default": {
-          "host": "192.168.2.123",
-          "user": "wanghequan",
-          "passwd": "WHq123123Aa",
-          "port": 3308,
-          "db": "amazon_log_antshare_huakey",
-          "charset": "utf8mb4",
-          "use_unicode": true
-      }
-    },
-    "Joytra": {
-      "default": {
-          "host": "192.168.2.123",
-          "user": "wanghequan",
-          "passwd": "WHq123123Aa",
-          "port": 3308,
-          "db": "amazon_log_antshare_huakey",
-          "charset": "utf8mb4",
-          "use_unicode": true
-      }
-    },
-    "Qipexeii": {
-      "default": {
-          "host": "192.168.2.123",
-          "user": "wanghequan",
-          "passwd": "WHq123123Aa",
-          "port": 3308,
-          "db": "amazon_log_antshare_huakey",
-          "charset": "utf8mb4",
-          "use_unicode": true
-      }
-    },
-    "WOOQU": {
-      "default": {
-          "host": "192.168.2.123",
-          "user": "wanghequan",
-          "passwd": "WHq123123Aa",
-          "port": 3308,
-          "db": "amazon_log_antshare_huakey",
-          "charset": "utf8mb4",
-          "use_unicode": true
-      }
-    }
-  },
-  "amazon_huixin": {
-    "YOURUN": {
-      "default": {
-          "host": "192.168.2.123",
-          "user": "wanghequan",
-          "passwd": "WHq123123Aa",
-          "port": 3308,
-          "db": "amazon_log_huixin",
-          "charset": "utf8mb4",
-          "use_unicode": true
-      }
-    }
-  },
-  "amazon_ouruite": {
-    "RIDALUX": {
-      "default": {
-          "host": "192.168.2.123",
-          "user": "wanghequan",
-          "passwd": "WHq123123Aa",
-          "port": 3308,
-          "db": "amazon_log_ouruite",
-          "charset": "utf8mb4",
-          "use_unicode": true
-      }
-    }
-  }
 }
-
-

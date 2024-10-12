@@ -1068,6 +1068,7 @@ WHERE campaignId = "{int(campaignId)}" AND adGroupId = "{int(adGroupId)}" AND ke
             query = f"""
 SELECT COUNT(*) AS count FROM amazon_targets_list_sp
 WHERE campaignId = "{int(campaignId)}" AND adGroupId = "{int(adGroupId)}" AND expression LIKE "%{asin}%"
+AND expression LIKE "%ASIN_SAME_AS%"
             """
             df = pd.read_sql(query, con=conn)
             if df.empty:
@@ -1075,6 +1076,23 @@ WHERE campaignId = "{int(campaignId)}" AND adGroupId = "{int(adGroupId)}" AND ex
             else:
                 print("select_sp_target_count success")
                 return df.loc[0,'count']
+        except Exception as e:
+            print(f"Error occurred when select_sp_target_count: {e}")
+
+    def select_sp_target_expanded_count(self, campaignId, adGroupId, asin):
+        try:
+            conn = self.conn
+            query = f"""
+SELECT COUNT(*) AS count FROM amazon_targets_list_sp
+WHERE campaignId = "{int(campaignId)}" AND adGroupId = "{int(adGroupId)}" AND expression LIKE "%{asin}%"
+AND expression LIKE "%ASIN_EXPANDED_FROM%"
+            """
+            df = pd.read_sql(query, con=conn)
+            if df.empty:
+                print("No target")
+            else:
+                print("select_sp_target_count success")
+                return df.loc[0, 'count']
         except Exception as e:
             print(f"Error occurred when select_sp_target_count: {e}")
 # api = DbSpTools('OutdoorMaster')

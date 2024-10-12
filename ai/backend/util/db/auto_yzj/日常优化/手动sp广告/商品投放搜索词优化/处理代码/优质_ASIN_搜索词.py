@@ -41,6 +41,10 @@ def main(path, brand, cur_time, country, db, version=2):
 
         # 合并结果
         result_df = pd.concat([filtered_df1], ignore_index=True)
+
+    result_df['searchTerm'] = result_df['searchTerm'].str.replace("’", "'", regex=False).str.replace("%", "",
+                                                                                               regex=False).str.replace(
+        "\\", "", regex=False).str.replace("/", "", regex=False)
     # 提取所需列
     columns = [
         'campaignName',

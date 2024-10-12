@@ -59,7 +59,9 @@ def main(path, brand, cur_time, country, db, version=3):
         # Add reasons based on conditions
         filtered_df.loc[condition_1, 'reason'] += '定义一 '
 
-
+    filtered_df['searchTerm'] = filtered_df['searchTerm'].str.replace("’", "'", regex=False).str.replace("%", "",
+                                                                                               regex=False).str.replace(
+        "\\", "", regex=False).str.replace("/", "", regex=False)
     # 4. Select the required columns
     selected_columns = ['campaignName', 'campaignId', 'adGroupName', 'adGroupId', 'ORDER_1m',
                         'total_clicks_30d', 'total_cost_30d', 'ORDER_7d', 'total_clicks_7d', 'total_cost_7d', 'CPC_30d', 'searchTerm', 'reason']

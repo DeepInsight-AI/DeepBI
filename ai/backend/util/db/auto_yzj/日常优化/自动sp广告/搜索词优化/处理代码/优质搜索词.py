@@ -50,6 +50,9 @@ def main(path, brand, cur_time, country, db, version=2):
         result.loc[index, 'new_campaignName'] = new_campaignName
         result.loc[index, 'new_adGroupId'] = new_adGroupId
 
+    result['searchTerm'] = result['searchTerm'].str.replace("’", "'", regex=False).str.replace("%", "",
+                                                                                               regex=False).str.replace(
+        "\\", "", regex=False).str.replace("/", "", regex=False)
     # Select relevant columns for output
     output_columns = [
         'campaignName', 'campaignId', 'adGroupName', 'adGroupId',

@@ -192,6 +192,23 @@ class auto_api(BaseApi):
                                                                type='ASIN_SAME_AS', user=self.user)
                             except Exception as e:
                                 print(e)
+                        count4 = api2.select_sp_target_expanded_count(campaignId, adGroupId, searchTerm.upper())
+                        if count4 == 0:
+                            # try:
+                            #     bid_info = apitool1.list_product_bid_recommendations(market, searchTerm.upper(),
+                            #                                                          str(int(campaignId)),
+                            #                                                          str(int(adGroupId)))
+                            #     bid = bid_info['bidRecommendations'][0]['bidRecommendationsForTargetingExpressions'][0][
+                            #         'bidValues'][1]['suggestedBid']
+                            # except Exception as e:
+                            #     print(e)
+                            #     bid = 0.25 * self.exchange_rate
+                            try:
+                                api1.create_adGroup_Targeting1(str(int(campaignId)), str(int(adGroupId)),
+                                                               searchTerm.upper(), float(CPC_30d), state='ENABLED',
+                                                               type='ASIN_EXPANDED_FROM', user=self.user)
+                            except Exception as e:
+                                print(e)
                     else:
                         campaign_id = item["new_campaignId"]
                         adGroupId = item["new_adGroupId"]
@@ -393,9 +410,26 @@ class auto_api(BaseApi):
                             api1.create_adGroup_Targeting1(str(campaignId),str(adGroupId),searchTerm.upper(),float(CPC_30d),state='ENABLED',type='ASIN_SAME_AS', user=self.user)
                         except Exception as e:
                             print(e)
+                    count4 = api2.select_sp_target_expanded_count(campaignId, adGroupId, searchTerm.upper())
+                    if count4 == 0:
+                        # try:
+                        #     bid_info = apitool1.list_product_bid_recommendations(market, searchTerm.upper(),
+                        #                                                          str(int(campaignId)),
+                        #                                                          str(int(adGroupId)))
+                        #     bid = bid_info['bidRecommendations'][0]['bidRecommendationsForTargetingExpressions'][0][
+                        #         'bidValues'][1]['suggestedBid']
+                        # except Exception as e:
+                        #     print(e)
+                        #     bid = 0.25 * self.exchange_rate
+                        try:
+                            api1.create_adGroup_Targeting1(str(int(campaignId)), str(int(adGroupId)),
+                                                           searchTerm.upper(), float(CPC_30d), state='ENABLED',
+                                                           type='ASIN_EXPANDED_FROM', user=self.user)
+                        except Exception as e:
+                            print(e)
                 else:
                     if "new_campaignId" in item and item["new_campaignId"]:
-                        api = Gen_keyword(self.brand)
+                        api = Gen_keyword(self.db,self.brand,self.market)
                         campaign_id = item["new_campaignId"]
                         adGroupId = item["new_adGroupId"]
                         searchTerm = item["searchTerm"]

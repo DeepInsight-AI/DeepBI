@@ -33,6 +33,7 @@ def main(path, brand, cur_time, country, db, version=2):
         # Combine the results
         result = pd.concat([def1]).drop_duplicates(subset=['campaignId', 'adGroupId', 'searchTerm'])
 
+    result['searchTerm'] = result['searchTerm'].str.replace("’", "'", regex=False).str.replace("%", "", regex=False).str.replace("\\", "", regex=False).str.replace("/", "", regex=False)
     # Select relevant columns for output
     output_columns = [
         'campaignName', 'campaignId', 'adGroupName', 'adGroupId',

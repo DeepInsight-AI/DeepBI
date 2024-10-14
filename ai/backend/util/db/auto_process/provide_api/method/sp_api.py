@@ -97,7 +97,7 @@ class auto_api_sp:
                             "keywordId": keyword_id,
                             "state": info["state"],
                             "bid": info.get('bid', None),
-                            "bid_new": keyword_bid_mapping[keyword_id]  # 从 mapping 中获取 bid_old
+                            "bid_new": float(keyword_bid_mapping[keyword_id])  # 从 mapping 中获取 bid_old
                         })
                 api.update_keyword_toadGroup_batch(merged_info, self.user)
                 return 200
@@ -140,7 +140,7 @@ class auto_api_sp:
                             "keywordId": keyword_id,
                             "state": info["state"],
                             "bid": info.get('bid', None),
-                            "bid_new": keyword_bid_mapping[keyword_id]  # 从 mapping 中获取 bid_old
+                            "bid_new": float(keyword_bid_mapping[keyword_id]) # 从 mapping 中获取 bid_old
                         })
                 api1.update_adGroup_TargetingClause_batch(merged_info, self.user)
                 return 200
@@ -205,11 +205,80 @@ class auto_api_sp:
         except Exception as e:
             print(e)
             return 500  # Internal Server Error
+    def auto_keyword_status_batch(self, keywordId, status):
+        try:
+            api = Gen_keyword(self.db, self.brand, self.market)
+            merged_info = []
+            for keywordid, statu in zip(keywordId, status):
+                merged_info.append({
+                            "keywordId": keywordid,
+                            "state": statu,
+                            "bid": None,
+                            "bid_new": None  # 从 mapping 中获取 bid_old
+                        })
+            api.update_keyword_toadGroup_batch(merged_info, self.user)
+            return 200
+        except Exception as e:
+            print(e)
+            return 500  # Internal Server Error
+
+    def auto_targeting_status_batch(self, keywordId, status):
+        try:
+            api = Gen_adgroup(self.db, self.brand, self.market)
+            merged_info = []
+            for keywordid, statu in zip(keywordId, status):
+                merged_info.append({
+                            "keywordId": keywordid,
+                            "state": statu,
+                            "bid": None,
+                            "bid_new": None  # 从 mapping 中获取 bid_old
+                        })
+            api.update_adGroup_TargetingClause_batch(merged_info, self.user)
+            return 200
+        except Exception as e:
+            print(e)
+            return 500  # Internal Server Error
+
+    def negative_keyword_status(self, keywordId, status):
+        try:
+            api = Gen_adgroup(self.db, self.brand, self.market)
+            api.update_adGroup_negative_keyword(str(keywordId), status, user=self.user)
+            return 200
+        except Exception as e:
+            print(e)
+            return 500  # Internal Server Error
 
     def auto_targeting_status(self, keywordId, status):
         try:
             api1 = Gen_adgroup(self.db, self.brand, self.market)
             api1.update_adGroup_TargetingClause(str(keywordId), bid=None, state=status, user=self.user)
+            return 200
+        except Exception as e:
+            print(e)
+            return 500  # Internal Server Error
+
+    def negative_target_status(self, keywordId, status):
+        try:
+            api1 = Gen_adgroup(self.db, self.brand, self.market)
+            api1.update_adGroup_Negative_Targeting(str(keywordId), status, user=self.user)
+            return 200
+        except Exception as e:
+            print(e)
+            return 500  # Internal Server Error
+
+    def delete_negative_target(self, keywordId):
+        try:
+            api1 = Gen_adgroup(self.db, self.brand, self.market)
+            api1.delete_adGroup_Negative_Targeting(keywordId, user=self.user)
+            return 200
+        except Exception as e:
+            print(e)
+            return 500  # Internal Server Error
+
+    def delete_negative_keyword(self, keywordId):
+        try:
+            api1 = Gen_adgroup(self.db, self.brand, self.market)
+            api1.delete_adGroup_negative_keyword(keywordId, user=self.user)
             return 200
         except Exception as e:
             print(e)
@@ -246,11 +315,66 @@ class auto_api_sp:
             print(e)
             return 500  # Internal Server Error
 
+    def create_product_target_asin_expended(self, asin, bid, campaignId, adGroupId):
+        try:
+            api2 = Gen_adgroup(self.db, self.brand, self.market)
+            api2.create_adGroup_Targeting1(campaignId, adGroupId, asin, float(bid),
+                                           state='ENABLED', type='ASIN_EXPANDED_FROM', user=self.user)
+            return 200
+        except Exception as e:
+            print(e)
+            return 500  # Internal Server Error
+
     def create_keyword(self, keywordtext, bid, campaignId, adGroupId,matchType):
         try:
             api2 = Gen_keyword(self.db, self.brand, self.market)
             api2.add_keyword_toadGroup_v0(campaignId, adGroupId, keywordtext, matchType,
                                            'ENABLED', float(bid), self.user)
+            return 200
+        except Exception as e:
+            print(e)
+            return 500  # Internal Server Error
+
+    def create_negative_target(self, searchTerm, campaignId, adGroupId,matchType):
+        try:
+            api1 = Gen_adgroup(self.db, self.brand, self.market)
+            if len(searchTerm) == 10 and searchTerm.startswith('B0'):
+                api1.create_adGroup_Negative_Targeting_by_asin(str(campaignId), str(adGroupId), searchTerm.upper(), user=self.user)
+            else:
+                api1.add_adGroup_negative_keyword_v0(str(campaignId), str(adGroupId), searchTerm,
+                                                         matchType=matchType, state="ENABLED", user=self.user)
+            return 200
+        except Exception as e:
+            print(e)
+            return 500  # Internal Server Error
+
+    def create_negative_target_batch(self, searchTerm, campaignId, adGroupId,matchType):
+        try:
+            api1 = Gen_adgroup(self.db, self.brand, self.market)
+            merged_asin_info = []
+            merged_keyword_info = []
+            for searchterm, campaignid, adGroupid, matchtype in zip(searchTerm, campaignId,
+                                                                       adGroupId, matchType):
+                if len(searchterm) == 10 and searchterm.startswith('B0'):
+                    merged_asin_info.append({
+                        "asin": searchterm,
+                        "campaignId": campaignid,
+                        "adGroupId": adGroupid
+                    })
+                else:
+                    merged_keyword_info.append({
+                        "keywordText": searchterm,
+                        "campaignId": campaignid,
+                        "adGroupId": adGroupid,
+                        "matchType": matchtype  # 从 mapping 中获取 bid_old
+                    })
+            print(merged_asin_info)
+            print("-------------")
+            print(merged_keyword_info)
+            if len(merged_asin_info) > 0:
+                api1.create_adGroup_Negative_Targeting_by_asin_batch(merged_asin_info, user=self.user)
+            if len(merged_keyword_info) > 0:
+                api1.add_adGroup_negative_keyword_batch(merged_keyword_info, user=self.user)
             return 200
         except Exception as e:
             print(e)

@@ -9,57 +9,108 @@ from decimal import Decimal
 from ai.backend.util.db.configuration.path import get_config_path
 from ai.backend.util.db.util.common import get_ad_my_credentials,get_proxies
 from ai.backend.util.db.auto_process.base_api import BaseApi
+from ai.backend.util.db.util.db_tool.proxies import ProxyManager
 
 
 class CampaignTools(BaseApi):
     def __init__(self, db, brand, market):
         super().__init__(db, brand, market)
+        self.proxy_manager = ProxyManager()
 
-    def list_campaigns_api(self,campaignId):
-        try:
-            result = sponsored_display.Campaigns(credentials=self.credentials,
-                                                 marketplace=Marketplaces[self.market.upper()],
-                                                 access_token=self.access_token,
-                                                 proxies=get_proxies(self.market),
-                                                 debug=True).get_campaign(
-              str(campaignId))
-        except Exception as e:
-            print("list campaign failed: ", e)
-            result = None
-        compaignID = ""
-        if result and result.payload:
+    def make_request(self, method_name, *args, **kwargs):
+        attempts = 0
+        while attempts < self.attempts_time:
+            try:
+                campaigns = sponsored_display.Campaigns(
+                    credentials=self.credentials,
+                    marketplace=Marketplaces[self.market.upper()],
+                    access_token=self.access_token,
+                    proxies=self.proxy_manager.get_proxies(self.market),
+                    debug=True
+                )
 
-            print("list campaign success")
-            res = result.payload
+                # 动态调用方法
+                result = getattr(campaigns, method_name)(*args, **kwargs)
 
-        else:
-            print("list campaign failed:")
-            res = None
-        # 返回创建的 compaignID
+                if result and result.payload:
+                    print(f"{method_name} success")
+                    return result.payload
+                else:
+                    print(f"{method_name} failed:")
+                    self.wait_time()
+                    res = result.payload
+                    attempts += 1
+            except Exception as e:
+                print(f"{method_name} failed: ", e)
+                self.wait_time()
+                res = e
+                attempts += 1
+
         return res
+
+    def list_campaigns_api(self, campaignId):
+        return self.make_request("get_campaign", str(campaignId))
+
+    def list_all_campaigns_api(self):
+        return self.make_request("list_campaigns")
+
+    def create_campaigns_api(self, campaign_info):
+        return self.make_request("create_campaigns", json.dumps(campaign_info))
+    # def list_campaigns_api(self,campaignId):
+    #     attempts = 0
+    #     while attempts < 3:
+    #         try:
+    #             result = sponsored_display.Campaigns(credentials=self.credentials,
+    #                                                  marketplace=Marketplaces[self.market.upper()],
+    #                                                  access_token=self.access_token,
+    #                                                  proxies=self.proxy_manager.get_proxies(self.market),
+    #                                                  debug=True).get_campaign(
+    #               str(campaignId))
+    #             if result and result.payload:
+    #
+    #                 print("list campaign success")
+    #                 res = result.payload
+    #                 return res
+    #             else:
+    #                 print("list campaign failed:")
+    #                 self.wait_time()
+    #                 res = result.payload
+    #                 attempts += 1
+    #         except Exception as e:
+    #             print("list campaign failed: ", e)
+    #             self.wait_time()
+    #             res = e
+    #             attempts += 1
+    #
+    #         # 返回创建的 compaignID
+    #     return res
 
     # 新建广告活动/系列
-    def create_campaigns_api(self,campaign_info):
-        try:
-            result = sponsored_display.Campaigns(credentials=self.credentials,
-                                                 marketplace=Marketplaces[self.market.upper()],
-                                                 access_token=self.access_token,
-                                                 proxies=get_proxies(self.market),
-                                                 debug=True).create_campaigns(
-                body=json.dumps(campaign_info))
-        except Exception as e:
-            print("create campaign failed: ", e)
-            result = None
-        compaignID = ""
-        if result and result.payload[0]["campaignId"]:
-            campaignID = result.payload[0]["campaignId"]
-            print("create campaign success, compaignID is ", compaignID)
-            res = ["success",campaignID]
-        else:
-            print(" create campaign failed:")
-            res = ["failed",""]
-        # 返回创建的 compaignID
-        return res
+    # def create_campaigns_api(self,campaign_info):
+    #     attempts = 0
+    #     while attempts < 3:
+    #         try:
+    #             result = sponsored_display.Campaigns(credentials=self.credentials,
+    #                                                  marketplace=Marketplaces[self.market.upper()],
+    #                                                  access_token=self.access_token,
+    #                                                  proxies=self.proxy_manager.get_proxies(self.market),
+    #                                                  debug=True).create_campaigns(
+    #                 body=json.dumps(campaign_info))
+    #             compaignID = ""
+    #             if result and result.payload[0]["campaignId"]:
+    #                 campaignID = result.payload[0]["campaignId"]
+    #                 print("create campaign success, compaignID is ", compaignID)
+    #                 res = ["success",campaignID]
+    #                 return res
+    #             else:
+    #                 print(" create campaign failed:")
+    #                 self.wait_time()
+    #                 attempts += 1
+    #         except Exception as e:
+    #             print("create campaign failed: ", e)
+    #             self.wait_time()
+    #             attempts += 1
+    #     return ["failed", None]
 
     # 更新广告系列（调整Budget、状态、enddate）
     def update_campaigns(self,campaign_info):
@@ -68,7 +119,7 @@ class CampaignTools(BaseApi):
             result = sponsored_display.Campaigns(credentials=self.credentials,
                                                  marketplace=Marketplaces[self.market.upper()],
                                                  access_token=self.access_token,
-                                                 proxies=get_proxies(self.market),
+                                                 proxies=self.proxy_manager.get_proxies(self.market),
                                                  debug=True).edit_campaigns(
                 body=json.dumps(campaign_info))
             print(result)
@@ -180,7 +231,7 @@ class CampaignTools(BaseApi):
             result = sponsored_display.CampaignsV4(credentials=self.credentials,
                                                    marketplace=Marketplaces[self.market.upper()],
                                                    access_token=self.access_token,
-                                                   proxies=get_proxies(self.market),
+                                                   proxies=self.proxy_manager.get_proxies(self.market),
                                                    debug=True).delete_campaigns(
                 body=json.dumps(campaign_info))
         except Exception as e:
@@ -198,37 +249,41 @@ class CampaignTools(BaseApi):
         # 返回创建的 compaignID
         return print(res)
 
-    def list_all_campaigns_api(self):
-        try:
-            result = sponsored_display.Campaigns(credentials=self.credentials,
-                                                 marketplace=Marketplaces[self.market.upper()],
-                                                 access_token=self.access_token,
-                                                 proxies=get_proxies(self.market),
-                                                 debug=True).list_campaigns(
-              )
-        except Exception as e:
-            print("list campaign failed: ", e)
-            result = None
-        compaignID = ""
-        if result and result.payload:
-
-            print("list campaign success")
-            res = result.payload
-
-        else:
-            print("list campaign failed:")
-            res = ["failed",""]
-        # 返回创建的 compaignID
-        return res
+    # def list_all_campaigns_api(self):
+    #     attempts = 0
+    #     while attempts < 3:
+    #         try:
+    #             result = sponsored_display.Campaigns(credentials=self.credentials,
+    #                                                  marketplace=Marketplaces[self.market.upper()],
+    #                                                  access_token=self.access_token,
+    #                                                  proxies=self.proxy_manager.get_proxies(self.market),
+    #                                                  debug=True).list_campaigns(
+    #               )
+    #             if result and result.payload:
+    #
+    #                 print("list campaign success")
+    #                 res = result.payload
+    #                 return res
+    #
+    #             else:
+    #                 print("list campaign failed:")
+    #                 self.wait_time()
+    #                 attempts += 1
+    #         except Exception as e:
+    #             print("list campaign failed: ", e)
+    #             self.wait_time()
+    #             attempts += 1
+    #     # 返回创建的 compaignID
+    #     return None
 
 if __name__ == "__main__":
 
-    ct=CampaignTools('amazon_ads','LAPASA','DE')
+    ct = CampaignTools('amazon_ads','LAPASA','JP')
     #测试更新广告系列信息
     res = ct.list_all_campaigns_api()
     # res = ct.list_campaigns_api(498971857900272,'FR')
     # #print(type(res))
-    print(res)
+    #print(res)
 
 # 测试新增广告系列
 

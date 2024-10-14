@@ -61,13 +61,11 @@ class AdGroupTools(BaseApi):
 
     def get_adGroup_api(self,adGroupID):
         adGroup_info = {
-  "maxResults": 10,
   "adGroupIdFilter": {
     "include": [
       str(adGroupID)
     ]
-  },
-  "includeExtendedDataFields": True,
+  }
 }
         try:
             result = sponsored_products.AdGroupsV3(credentials=self.credentials,
@@ -90,13 +88,11 @@ class AdGroupTools(BaseApi):
 
     def get_adGroup_negativekw(self, adGroupID):
         adGroup_info = {
-            "maxResults": 500,
             "adGroupIdFilter": {
                 "include": [
                     str(adGroupID)
                 ]
-            },
-            "includeExtendedDataFields": True,
+            }
         }
         try:
             result = sponsored_products.NegativeKeywordsV3(credentials=self.credentials,
@@ -128,7 +124,7 @@ class AdGroupTools(BaseApi):
         except Exception as e:
             print("add adGroup negative keyword failed: ", e)
             result = None
-        if result and result.payload["negativeKeywords"]["success"][0]["negativeKeywordId"]:
+        if result and result.payload["negativeKeywords"]["success"]:
             negativeKeywordId = result.payload["negativeKeywords"]["success"][0]["negativeKeywordId"]
             print("add adGroup negative keyword success,negativeKeywordId is:", negativeKeywordId)
             return ["success",negativeKeywordId]
@@ -136,12 +132,32 @@ class AdGroupTools(BaseApi):
             print("add adGroup negative keyword failed:")
             return ["failed", ""]
 
+    def add_adGroup_negativekw_batch(self,adGroup_negativekw_info):
+        try:
+            result = sponsored_products.NegativeKeywordsV3(credentials=self.credentials,
+                                                           marketplace=Marketplaces[self.market.upper()],
+                                                           access_token=self.access_token,
+                                                           proxies=get_proxies(self.market),
+                                                           debug=True).create_negative_keyword(
+                body=json.dumps(adGroup_negativekw_info))
+        except Exception as e:
+            print("add adGroup negative keyword failed: ", e)
+            result = None
+        if result and result.payload:
+            negativeKeywordId = result.payload["negativeKeywords"]["success"]
+            print("add adGroup negative keyword success")
+        else:
+            print("add adGroup negative keyword failed:")
+        return result.payload
+
     # 广告组修改否定定向关键词
     def update_adGroup_negativekw(self,adGroup_negativekw_info):
         try:
-            result = sponsored_products.NegativeKeywordsV3(credentials=my_credentials,
-                                                            marketplace=Marketplaces.NA,
-                                                            debug=True).edit_negative_keyword(
+            result = sponsored_products.NegativeKeywordsV3(credentials=self.credentials,
+                                                          marketplace=Marketplaces[self.market.upper()],
+                                                          access_token=self.access_token,
+                                                          proxies=get_proxies(self.market),
+                                                          debug=True).edit_negative_keyword(
                 body=json.dumps(adGroup_negativekw_info))
         except Exception as e:
             print("update adGroup negative keyword failed: ", e)
@@ -153,6 +169,24 @@ class AdGroupTools(BaseApi):
         else:
             print("update adGroup negative keyword failed:", e)
             return ["failed", ""]
+
+    def delete_adGroup_negativekw(self,adGroup_negativekw_info):
+        try:
+            result = sponsored_products.NegativeKeywordsV3(credentials=self.credentials,
+                                                          marketplace=Marketplaces[self.market.upper()],
+                                                          access_token=self.access_token,
+                                                          proxies=get_proxies(self.market),
+                                                          debug=True).delete_negative_keywords(
+                body=json.dumps(adGroup_negativekw_info))
+        except Exception as e:
+            print("update adGroup negative keyword failed: ", e)
+            result = None
+        if result and result.payload["negativeKeywords"]["success"]:
+            negativeKeywordId = result.payload["negativeKeywords"]["success"][0]["negativeKeywordId"]
+            print("update adGroup negative keyword success")
+        else:
+            print("update adGroup negative keyword failed:")
+        return result.payload
 
     #
     def list_adGroup_negative_pd(self, adGroup_negativekw_info):
@@ -328,14 +362,13 @@ class AdGroupTools(BaseApi):
             result = None
         if result and result.payload["targetingClauses"]["success"]:
             print("update adGroup TargetingClause success")
-            return ["success", result.payload["targetingClauses"]["success"]]
         # if result and result.payload["negativeKeywords"]["success"]:
         #     negativeKeywordId = result.payload["negativeKeywords"]["success"][0]["negativeKeywordId"]
         #     print("add adGroup negative keyword success,negativeKeywordId is:", negativeKeywordId)
         #     return ["success", negativeKeywordId]
         else:
             print("update adGroup TargetingClause failed")
-            return ["failed", ""]
+        return result.payload
 
     def create_adGroup_TargetingC(self, adGroup_info):
         try:
@@ -363,9 +396,9 @@ class AdGroupTools(BaseApi):
 
     def list_adGroup_Targetingrecommendations(self, asins):
         adGroup_info={
-  "asins": asins,
-  "includeAncestor": False
-}
+          "asins": asins,
+          "includeAncestor": False
+        }
         try:
             result = sponsored_products.TargetsV3(credentials=self.credentials,
                                                   marketplace=Marketplaces[self.market.upper()],
@@ -539,6 +572,70 @@ class AdGroupTools(BaseApi):
         else:
             print("create adGroup Negative TargetingClause failed")
             return ["failed", ""]
+
+    def create_adGroup_Negative_TargetingClauses_batch(self, adGroup_info):
+        try:
+            result = sponsored_products.NegativeTargetsV3(credentials=self.credentials,
+                                                  marketplace=Marketplaces[self.market.upper()],
+                                                  access_token=self.access_token,
+                                                  proxies=get_proxies(self.market),
+                                                  debug=True).create_negative_product_targets(
+                body=json.dumps(adGroup_info))
+        except Exception as e:
+            print("create adGroup Negative TargetingClauses failed: ", e)
+            result = None
+        if result and result.payload["negativeTargetingClauses"]["success"]:
+            print("create adGroup Negative TargetingClauses success")
+        # if result and result.payload["negativeKeywords"]["success"]:
+        #     negativeKeywordId = result.payload["negativeKeywords"]["success"][0]["negativeKeywordId"]
+        #     print("add adGroup negative keyword success,negativeKeywordId is:", negativeKeywordId)
+        #     return ["success", negativeKeywordId]
+        else:
+            print("create adGroup Negative TargetingClause failed")
+        return result.payload
+
+    def update_adGroup_Negative_TargetingClauses(self, adGroup_info):
+        try:
+            result = sponsored_products.NegativeTargetsV3(credentials=self.credentials,
+                                                  marketplace=Marketplaces[self.market.upper()],
+                                                  access_token=self.access_token,
+                                                  proxies=get_proxies(self.market),
+                                                  debug=True).edit_negative_product_targets(
+                body=json.dumps(adGroup_info))
+        except Exception as e:
+            print("update adGroup Negative TargetingClauses failed: ", e)
+            result = None
+        if result and result.payload["negativeTargetingClauses"]["success"]:
+            print("update adGroup Negative TargetingClauses success")
+            return ["success", result.payload["negativeTargetingClauses"]["success"][0]["targetId"]]
+        # if result and result.payload["negativeKeywords"]["success"]:
+        #     negativeKeywordId = result.payload["negativeKeywords"]["success"][0]["negativeKeywordId"]
+        #     print("add adGroup negative keyword success,negativeKeywordId is:", negativeKeywordId)
+        #     return ["success", negativeKeywordId]
+        else:
+            print("update adGroup Negative TargetingClause failed")
+            return ["failed", ""]
+
+    def delete_adGroup_Negative_TargetingClauses(self, adGroup_info):
+        try:
+            result = sponsored_products.NegativeTargetsV3(credentials=self.credentials,
+                                                  marketplace=Marketplaces[self.market.upper()],
+                                                  access_token=self.access_token,
+                                                  proxies=get_proxies(self.market),
+                                                  debug=True).delete_negative_product_targets(
+                body=json.dumps(adGroup_info))
+        except Exception as e:
+            print("update adGroup Negative TargetingClauses failed: ", e)
+            result = None
+        if result and result.payload["negativeTargetingClauses"]["success"]:
+            print("update adGroup Negative TargetingClauses success")
+        # if result and result.payload["negativeKeywords"]["success"]:
+        #     negativeKeywordId = result.payload["negativeKeywords"]["success"][0]["negativeKeywordId"]
+        #     print("add adGroup negative keyword success,negativeKeywordId is:", negativeKeywordId)
+        #     return ["success", negativeKeywordId]
+        else:
+            print("update adGroup Negative TargetingClause failed")
+        return result.payload
 
     def list_category(self):
         try:

@@ -61,13 +61,11 @@ class ProductTools(BaseApi):
 
     def get_product_api(self, adGroupID):
         adGroup_info = {
-            "maxResults": 1000,
             "adGroupIdFilter": {
                 "include": [
                     str(adGroupID)
                 ]
-            },
-            "includeExtendedDataFields": False,
+            }
         }
         try:
             result = sponsored_products.ProductAdsV3(credentials=self.credentials,

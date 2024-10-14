@@ -59,22 +59,22 @@ class Gen_campaign(CampaignTools):
     # 新增广告系列
     def create_camapign(self,name,startDate,dynamicBidding,portfolioId,endDate,targetingType,state,budgetType,budget,user='test'):
         campaigninfo = {
-      "campaigns": [
-        {
-          "portfolioId": portfolioId,
-          "endDate": endDate,
-          "name": name,
-          "targetingType": targetingType,
-          "state": state,
-          "dynamicBidding": dynamicBidding,
-          "startDate": startDate,
-          "budget": {
-            "budgetType": budgetType,
-            "budget": budget
-          }
+          "campaigns": [
+            {
+              "portfolioId": portfolioId,
+              "endDate": endDate,
+              "name": name,
+              "targetingType": targetingType,
+              "state": state,
+              "dynamicBidding": dynamicBidding,
+              "startDate": startDate,
+              "budget": {
+                "budgetType": budgetType,
+                "budget": budget
+              }
+            }
+          ]
         }
-      ]
-    }
 
         # 执行创建
         res = self.create_campaigns_api(campaigninfo)

@@ -88,6 +88,7 @@ class Gen_keyword(SPKeywordTools):
         else:
             dbNewTools.update_sp_keyword_toadGroup(self.market,keywordId,state,bid_old,bid_new,"failed",datetime.now(), user)
 
+
     def update_keyword_toadGroup_batch(self,info, user='test'):
 
         keyword_info = {
@@ -98,7 +99,7 @@ class Gen_keyword(SPKeywordTools):
             keyword_info["keywords"].append({
                 "keywordId": str(item['keywordId']),
                 "state": item['state'],
-                "bid": float(item['bid_new'])
+                "bid": item['bid_new']
             })
         print(keyword_info)
         # 修改关键词操作
@@ -106,25 +107,30 @@ class Gen_keyword(SPKeywordTools):
         print(res)
         # 存储更新记录到数据库
         dbNewTools = DbNewSpTools(self.db, self.brand, self.market)
+
+        # 获取成功的 index
+        success_indices = {item['index']: item['keywordId'] for item in res['keywords']['success']}
+        print(success_indices)
         updates = []
+        for idx, item in enumerate(info):
+            # 检查当前的索引是否在成功的索引中
+            if idx in success_indices:
+                targeting_state = "success"
+                target_id = success_indices[idx]
+            else:
+                targeting_state = "failed"
+                target_id = None  # 或者设置为其他默认值
 
-        if res[0] == "success":
-            status = "success"
-        else:
-            status = "failed"
-
-        for item in info:
             updates.append({
                 'market': self.market,
                 'keywordId': item['keywordId'],
                 'state': item['state'],
                 'bid_old': item['bid'],  # Assuming you have this value in `info`
                 'bid_new': item['bid_new'],
-                'operation_state': status,
+                'operation_state': targeting_state,
                 'create_time': datetime.now(),
                 'user': user
             })
-
         # 批量插入到数据库
         dbNewTools.batch_update_sp_keywords(updates)
 

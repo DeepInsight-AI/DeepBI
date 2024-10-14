@@ -166,8 +166,61 @@ class Gen_adgroup(AdGroupTools):
             newdbtool.add_sp_adGroup_negativeKeyword(self.market, None, adGroupId, campaignId, None, matchType, state,keywordText, "success", datetime.now(),apires[1],keywordText,user)
         return apires[1]
 
+    def add_adGroup_negative_keyword_batch(self,info, user = 'test'):
+
+        adGroup_negative_keyword_info = {
+          "negativeKeywords": []
+        }
+        for item in info:
+            adGroup_negative_keyword_info["negativeKeywords"].append(
+                {
+                    "campaignId": str(item['campaignId']),
+                    "matchType": item['matchType'],
+                    "state": "ENABLED",
+                    "adGroupId": str(item['adGroupId']),
+                    "keywordText": item['keywordText']
+                }
+            )
+        # api更新
+        res = self.add_adGroup_negativekw_batch(adGroup_negative_keyword_info)
+        # 存储更新记录到数据库
+        dbNewTools = DbNewSpTools(self.db, self.brand, self.market)
+
+        # 获取成功的 index
+        success_indices = {item['index']: item['negativeKeywordId'] for item in res['negativeKeywords']['success']}
+
+        updates = []
+
+        for idx, item in enumerate(info):
+            # 检查当前的索引是否在成功的索引中
+            if idx in success_indices:
+                targeting_state = "success"
+                target_id = success_indices[idx]
+            else:
+                targeting_state = "failed"
+                target_id = None  # 或者设置为其他默认值
+
+            updates.append({
+                'market': self.market,
+                'adGroupName': None,
+                'adGroupId': item['adGroupId'],
+                'campaignId': item['campaignId'],
+                'campaignName': None,
+                'matchType': item['matchType'],
+                'keyword_state': "ENABLED",
+                'keywordText': item['keywordText'],
+                'operation_state': targeting_state,  # Assuming you have this value in `info`
+                'update_time': datetime.now(),
+                'campaignNegativeKeywordId': target_id,
+                'keywordText_new': item['keywordText'],
+                'user': user
+            })
+
+        # 批量插入到数据库
+        dbNewTools.batch_add_sp_adGroup_negativeKeyword(updates)
+
     # 给广告组更新否定关键词
-    def update_adGroup_negative_keyword(self,adGroupNegativeKeywordId,keyword_state):
+    def update_adGroup_negative_keyword(self,adGroupNegativeKeywordId,keyword_state,user='test'):
         adGroup_negativekw_info = {
         "negativeKeywords": [
         {
@@ -183,9 +236,49 @@ class Gen_adgroup(AdGroupTools):
         #                                            operation_state, update_time):
         newdbtool = DbNewSpTools(self.db, self.brand,self.market)
         if apires[0]=="success":
-            newdbtool.update_sp_adGroup_negativeKeyword(self.market,keyword_state,None,adGroupNegativeKeywordId,"success",datetime.now())
+            newdbtool.update_sp_adGroup_negativeKeyword(self.market,keyword_state,None,adGroupNegativeKeywordId,"success",datetime.now(),user)
         else:
-            newdbtool.update_sp_adGroup_negativeKeyword(self.market,keyword_state,None,adGroupNegativeKeywordId,"failed",datetime.now())
+            newdbtool.update_sp_adGroup_negativeKeyword(self.market,keyword_state,None,adGroupNegativeKeywordId,"failed",datetime.now(),user)
+
+    def delete_adGroup_negative_keyword(self, adGroupNegativeKeywordId, user='test'):
+        info = self.to_iterable(adGroupNegativeKeywordId)
+        adGroup_info = {
+            "negativeKeywordIdFilter": {
+                "include": []
+            }
+        }
+        for item in info:
+            adGroup_info["negativeKeywordIdFilter"]["include"].append(str(item))
+        # api更新
+        res = self.delete_adGroup_negativekw(adGroup_info)
+        # 存储更新记录到数据库
+        dbNewTools = DbNewSpTools(self.db, self.brand, self.market)
+        # 获取成功的 index
+        success_indices = {item['index']: item['negativeKeywordId'] for item in res['negativeKeywords']['success']}
+        print(success_indices)
+        updates = []
+        for idx, item in enumerate(info):
+            # 检查当前的索引是否在成功的索引中
+            if idx in success_indices:
+                targeting_state = "success"
+                target_id = success_indices[idx]
+            else:
+                targeting_state = "failed"
+                target_id = None  # 或者设置为其他默认值
+
+            for item in info:
+                updates.append({
+                    'market': self.market,
+                    'keyword_state': "ARCHIVED",
+                    'keywordText': "Negative",
+                    'campaignNegativeKeywordId': item,
+                    'operation': "DELETE",
+                    'operation_state': targeting_state,
+                    'update_time': datetime.now(),
+                    'user': user
+                })
+                # 批量插入到数据库
+        dbNewTools.batch_update_sp_adGroup_negativeKeyword(updates)
 
     def list_adGroup_negative_product(self,adGroupId):
         campaigninfo = {
@@ -243,7 +336,7 @@ class Gen_adgroup(AdGroupTools):
             adGroup_info["targetingClauses"].append({
                 "targetId": str(item['keywordId']),
                 "state": item['state'],
-                "bid": float(item['bid_new'])
+                "bid": item['bid_new']
             })
         print(adGroup_info)
         # 修改关键词操作
@@ -251,14 +344,19 @@ class Gen_adgroup(AdGroupTools):
         print(res)
         # 存储更新记录到数据库
         dbNewTools = DbNewSpTools(self.db, self.brand, self.market)
+        # 获取成功的 index
+        success_indices = {item['index']: item['targetId'] for item in res['targetingClauses']['success']}
+        print(success_indices)
         updates = []
+        for idx, item in enumerate(info):
+            # 检查当前的索引是否在成功的索引中
+            if idx in success_indices:
+                targeting_state = "success"
+                target_id = success_indices[idx]
+            else:
+                targeting_state = "failed"
+                target_id = None  # 或者设置为其他默认值
 
-        if res[0] == "success":
-            status = "success"
-        else:
-            status = "failed"
-
-        for item in info:
             updates.append({
                 'market': self.market,
                 'adGroupId': None,
@@ -266,12 +364,11 @@ class Gen_adgroup(AdGroupTools):
                 'state': item['state'],
                 'expression': item['keywordId'],  # Assuming you have this value in `info`
                 'targetingType': 'SP',
-                'targetingState': status,
+                'targetingState': targeting_state,
                 'update_time': datetime.now(),
                 'user': user,
                 'bid_new': item['bid_new']
             })
-
         # 批量插入到数据库
         dbNewTools.batch_update_adGroup_Targeting(updates)
 
@@ -370,10 +467,129 @@ class Gen_adgroup(AdGroupTools):
                                                "failed", datetime.now(),None,user)
             return None
 
+    def create_adGroup_Negative_Targeting_by_asin_batch(self,info,user='test'):
+        adGroup_info = {
+          "negativeTargetingClauses": []
+        }
+        for item in info:
+            adGroup_info["negativeTargetingClauses"].append({
+                    "expression": [
+                        {
+                            "type": "ASIN_SAME_AS",
+                            "value": str(item['asin'])
+                        }
+                    ],
+                    "campaignId": str(item['campaignId']),
+                    "state": "ENABLED",
+                    "adGroupId": str(item['adGroupId'])
+            })
+
+        # api更新
+        res = self.create_adGroup_Negative_TargetingClauses_batch(adGroup_info)
+        #结果写入日志
+        print(res)
+        # 存储更新记录到数据库
+        dbNewTools = DbNewSpTools(self.db, self.brand, self.market)
+
+        # 获取成功的 index
+        success_indices = {item['index']: item['targetId'] for item in res['negativeTargetingClauses']['success']}
+        print(success_indices)
+        updates = []
+        for idx, item in enumerate(info):
+            # 检查当前的索引是否在成功的索引中
+            if idx in success_indices:
+                targeting_state = "success"
+                target_id = success_indices[idx]
+            else:
+                targeting_state = "failed"
+                target_id = None  # 或者设置为其他默认值
+
+            updates.append({
+                'market': self.market,
+                'adGroupId': item['adGroupId'],
+                'bid': None,
+                'expressionType': "Negative",
+                'state': "ENABLED",
+                'expression': f"asin={item['asin']}",  # Assuming you have this value in `info`
+                'targetingType': "SP",
+                'targetingState': targeting_state,
+                'update_time': datetime.now(),
+                'user': user,
+                'targetId': target_id,
+            })
+
+        # 批量插入到数据库
+        dbNewTools.batch_add_sd_adGroup_Targeting(updates)
+
+    def update_adGroup_Negative_Targeting(self,targetId,state,user='test'):
+        adGroup_info = {
+          "negativeTargetingClauses": [
+            {
+              "targetId": str(targetId),
+              "state": state
+            }
+          ]
+        }
+        # api更新
+        apires = self.update_adGroup_Negative_TargetingClauses(adGroup_info)
+        #结果写入日志
+        newdbtool = DbNewSpTools(self.db, self.brand,self.market)
+        if apires[0]=="success":
+            newdbtool.update_sd_adGroup_Targeting(self.market, "Negative", None, state, state, targetId, "SP",
+                                               "success", datetime.now(), user)
+            return apires[1]
+        else:
+            newdbtool.update_sd_adGroup_Targeting(self.market, "Negative", None, state, state, targetId, "SP",
+                                               "failed", datetime.now(), user)
+            return None
+
+    def delete_adGroup_Negative_Targeting(self,targetId,user='test'):
+        info = self.to_iterable(targetId)
+        adGroup_info = {
+          "negativeTargetIdFilter": {
+            "include": []
+          }
+        }
+        for item in info:
+            adGroup_info["negativeTargetIdFilter"]["include"].append(str(item))
+        # api更新
+        res = self.delete_adGroup_Negative_TargetingClauses(adGroup_info)
+        # 存储更新记录到数据库
+        dbNewTools = DbNewSpTools(self.db, self.brand, self.market)
+        # 获取成功的 index
+        success_indices = {item['index']: item['targetId'] for item in res['negativeTargetingClauses']['success']}
+        print(success_indices)
+        updates = []
+        for idx, item in enumerate(info):
+            # 检查当前的索引是否在成功的索引中
+            if idx in success_indices:
+                targeting_state = "success"
+                target_id = success_indices[idx]
+            else:
+                targeting_state = "failed"
+                target_id = None  # 或者设置为其他默认值
+
+            for item in info:
+                updates.append({
+                    'market': self.market,
+                    'adGroupId': "Negative",
+                    'bid_old': None,
+                    'state': "ARCHIVED",
+                    'expression': item,  # Assuming you have this value in `info`
+                    'targetingType': 'SP',
+                    'targetingState': targeting_state,
+                    'update_time': datetime.now(),
+                    'user': user,
+                    'bid_new': None
+                })
+        # 批量插入到数据库
+        dbNewTools.batch_update_adGroup_Targeting(updates)
+
 if __name__ == "__main__":
-    res = ['351388264320161', '365939904097078', '397574951723968', '510156903057793', '536626933665279', '386936079471516', '479623043802884', '415561823776403', '297463420656977', '427300641407372', '386771929703150', '413831898714768', '360183036925031', '301322349925964', '377149157951836', '444283893094892', '360497898301246', '319038378512978', '338104714081678', '445651338415553', '506528464131838', '323965893198020', '468773280390716', '295148153019184', '533767669358972', '289784634687833']
-    for adgroupid in res:
-        Gen_adgroup('Gotoly').update_adgroup_v0('US',None,adgroupid,'ENABLED',None)
+    # res = ['351388264320161', '365939904097078', '397574951723968', '510156903057793', '536626933665279', '386936079471516', '479623043802884', '415561823776403', '297463420656977', '427300641407372', '386771929703150', '413831898714768', '360183036925031', '301322349925964', '377149157951836', '444283893094892', '360497898301246', '319038378512978', '338104714081678', '445651338415553', '506528464131838', '323965893198020', '468773280390716', '295148153019184', '533767669358972', '289784634687833']
+    # for adgroupid in res:
+    #     Gen_adgroup('Gotoly').update_adgroup_v0('US',None,adgroupid,'ENABLED',None)
+    Gen_adgroup('amazon_ads','LAPASA','UK').delete_adGroup_negative_keyword(155010353421654)
 # ASIN = 'b00eea9zks'
 # Gen_adgroup('syndesmos').update_adgroup_v0('DE',None,'361896893484449','ENABLED',0.25)
 #Gen_adgroup('Veement').update_adgroup_v0('UK',None,'560403892575481','ENABLED',None)

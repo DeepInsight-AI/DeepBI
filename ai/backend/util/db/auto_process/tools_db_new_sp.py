@@ -187,6 +187,22 @@ class DbNewSpTools(BaseDb):
         except Exception as e:
             print(f"Error occurred when into amazon_negative_keyword_create: {e}")
 
+    def batch_add_sp_adGroup_negativeKeyword(self, updates):
+        try:
+            conn = self.conn
+            cursor = conn.cursor()
+            query = "INSERT INTO amazon_negative_keyword_create (market,adGroupName,adGroupId,campaignId,campaignName,matchType,keyword_state,keywordText,operation,operation_state,update_time,campaignNegativeKeywordId,keywordText_new,user) VALUES (%s, %s, %s, %s, %s,%s, %s,%s, 'addGroup_add', %s, %s, %s, %s, %s)"
+            cursor.executemany(query, [(update['market'], update['adGroupName'], update['adGroupId'], update['campaignId'],update['campaignName'],
+                                        update['matchType'], update['keyword_state'], update['keywordText'],update['operation_state'],update['update_time'],
+                                        update['campaignNegativeKeywordId'],update['keywordText_new'],update['user'])
+                                       for
+                                       update in updates])
+
+            conn.commit()
+            print("Record inserted successfully into amazon_negative_keyword_create table")
+        except Exception as e:
+            print(f"Error occurred when into amazon_negative_keyword_create: {e}")
+
     # sp广告组更改negativeKeyword
     def update_sp_adGroup_negativeKeyword(self, market, keyword_state, keywordText, campaignNegativeKeywordId,
                                            operation_state, update_time,user='test'):
@@ -196,6 +212,22 @@ class DbNewSpTools(BaseDb):
             query = "INSERT INTO amazon_negative_keyword_update (market,keyword_state,keywordText,campaignNegativeKeywordId,operation,operation_state,update_time,user) VALUES (%s,%s, %s, %s, 'adGroup_update', %s, %s, %s)"
             values = (market, keyword_state, keywordText, campaignNegativeKeywordId, operation_state, update_time,user)
             cursor.execute(query, values)
+            conn.commit()
+            print("Record inserted successfully into amazon_negative_keyword_update table")
+        except Exception as e:
+            print(f"Error occurred when into amazon_negative_keyword_update: {e}")
+
+    def batch_update_sp_adGroup_negativeKeyword(self, updates):
+        try:
+            conn = self.conn
+            cursor = conn.cursor()
+            query = "INSERT INTO amazon_negative_keyword_update (market,keyword_state,keywordText,campaignNegativeKeywordId,operation,operation_state,update_time,user) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)"
+            cursor.executemany(query, [(update['market'], update['keyword_state'], update['keywordText'],
+                                        update['campaignNegativeKeywordId'], update['operation'],
+                                        update['operation_state'], update['update_time'], update['user'])
+                                       for
+                                       update in updates])
+
             conn.commit()
             print("Record inserted successfully into amazon_negative_keyword_update table")
         except Exception as e:
@@ -212,6 +244,24 @@ class DbNewSpTools(BaseDb):
             print("Record inserted successfully into amazon_targeting_create table")
         except Exception as e:
             print(f"Error occurred when into amazon_targeting_create: {e}")
+
+
+    def batch_add_sd_adGroup_Targeting(self,updates):
+        try:
+            conn = self.conn
+            cursor = conn.cursor()
+            query = "INSERT INTO amazon_targeting_create (market,adGroupId,bid,expressionType,state,expression,targetingType,targetingState,update_time,user,targetId) VALUES (%s,%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
+            # 批量执行插入
+            cursor.executemany(query, [(update['market'], update['adGroupId'], update['bid'], update['expressionType'],
+                                        update['state'], update['expression'], update['targetingType'],update['targetingState'],update['update_time'],
+                                        update['user'],update['targetId'],) for
+                                       update in updates])
+
+            conn.commit()
+            print("Record inserted successfully into amazon_targeting_create table")
+        except Exception as e:
+            print(f"Error occurred when into amazon_targeting_create: {e}")
+
 
     def update_sd_adGroup_Targeting(self, market,adGroupId,bid_old,bid,state,expression,targetingType,targetingState, update_time,user='test'):
         try:

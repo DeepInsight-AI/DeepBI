@@ -330,6 +330,11 @@ class AdGroupTools_SD(BaseApi):
         else:
             print("list adGroup TargetingClause failed")
             return ["failed", ""]
+
+if __name__ == "__main__":
+    campaign_tools = AdGroupTools_SD('amazon_outdoormaster_jp', 'OutdoorMaster', 'JP')
+    res = campaign_tools.get_adGroup_bycampaignid_api(512652073772549)
+    print(res)
 # 广告组更新否定关键词测试
 # adGroup_negativekw_info = {
 # "negativeKeywords": [

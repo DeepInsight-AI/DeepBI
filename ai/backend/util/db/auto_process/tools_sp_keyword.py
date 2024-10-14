@@ -71,12 +71,11 @@ class SPKeywordTools(BaseApi):
             result = None
         keywordId = ""
         if result and result.payload["keywords"]["success"]:
-            spkeywordid = result.payload["keywords"]["success"]
-            print("update sp keyword success,sp keywordid is:", spkeywordid)
-            return ["success", spkeywordid]
+            spkeywordid = result.payload["keywords"]
+            print("update sp keyword success,")
         else:
             print("update sp keyword failed:")
-            return ["failed", keywordId]
+        return result.payload
 
     def delete_spkeyword_api(self, keyword_info):
         try:
@@ -100,13 +99,11 @@ class SPKeywordTools(BaseApi):
 
     def get_spkeyword_api(self, adGroupID):
         adGroup_info = {
-            "maxResults": 2000,
             "adGroupIdFilter": {
                 "include": [
                     str(adGroupID)
                 ]
-            },
-            "includeExtendedDataFields": False,
+            }
         }
         try:
             result = sponsored_products.KeywordsV3(credentials=self.credentials,

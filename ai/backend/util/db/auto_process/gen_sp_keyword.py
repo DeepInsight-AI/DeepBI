@@ -93,14 +93,14 @@ class Gen_keyword(SPKeywordTools):
             # 检查当前的索引是否在成功的索引中
             if idx in success_indices:
                 targeting_state = "success"
-                target_id = success_indices[idx]
+                keywordId = success_indices[idx]
             else:
                 targeting_state = "failed"
-                target_id = None  # 或者设置为其他默认值
-
+                keywordId = None  # 或者设置为其他默认值
+            print(targeting_state,keywordId)
             updates.append({
                 'market': self.market,
-                'keywordId': item['keywordId'],
+                'keywordId': keywordId,
                 'campaignId': item['campaignId'],
                 'matchType': item['matchType'],
                 'state': "ENABLED",

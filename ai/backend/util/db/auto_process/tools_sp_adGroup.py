@@ -392,7 +392,26 @@ class AdGroupTools(BaseApi):
             print("create adGroup TargetingClause failed")
             return ["failed", ""]
 
-
+    def create_adGroup_TargetingC_batch(self, adGroup_info):
+        try:
+            result = sponsored_products.TargetsV3(credentials=self.credentials,
+                                                  marketplace=Marketplaces[self.market.upper()],
+                                                  access_token=self.access_token,
+                                                  proxies=get_proxies(self.market),
+                                                  debug=True).create_product_targets(
+                body=json.dumps(adGroup_info))
+        except Exception as e:
+            print("create adGroup TargetingClause failed: ", e)
+            result = None
+        if result and result.payload["targetingClauses"]["success"]:
+            print("create adGroup TargetingClause success")
+        # if result and result.payload["negativeKeywords"]["success"]:
+        #     negativeKeywordId = result.payload["negativeKeywords"]["success"][0]["negativeKeywordId"]
+        #     print("add adGroup negative keyword success,negativeKeywordId is:", negativeKeywordId)
+        #     return ["success", negativeKeywordId]
+        else:
+            print("create adGroup TargetingClause failed")
+        return result.payload
 
     def list_adGroup_Targetingrecommendations(self, asins):
         adGroup_info={

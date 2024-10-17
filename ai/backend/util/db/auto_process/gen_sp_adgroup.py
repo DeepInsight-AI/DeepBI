@@ -437,6 +437,62 @@ class Gen_adgroup(AdGroupTools):
                                                "failed", datetime.now(),None, user)
         return apires[1]
 
+    def create_adGroup_Targeting_by_asin_batch(self,info,user='test'):
+        adGroup_info = {
+          "targetingClauses": []
+        }
+        for item in info:
+            adGroup_info["targetingClauses"].append({
+                    "expression": [
+                        {
+                            "type": str(item['type']),
+                            "value": str(item['asin'])
+                        }
+                    ],
+                    "campaignId": str(item['campaignId']),
+                    "expressionType": "MANUAL",
+                    "state": "ENABLED",
+                    "bid": float(item['bid']),
+                    "adGroupId": str(item['adGroupId'])
+            })
+
+        # api更新
+        res = self.create_adGroup_TargetingC_batch(adGroup_info)
+        #结果写入日志
+        print(res)
+        # 存储更新记录到数据库
+        dbNewTools = DbNewSpTools(self.db, self.brand, self.market)
+
+        # 获取成功的 index
+        success_indices = {item['index']: item['targetId'] for item in res['targetingClauses']['success']}
+        print(success_indices)
+        updates = []
+        for idx, item in enumerate(info):
+            # 检查当前的索引是否在成功的索引中
+            if idx in success_indices:
+                targeting_state = "success"
+                target_id = success_indices[idx]
+            else:
+                targeting_state = "failed"
+                target_id = None  # 或者设置为其他默认值
+
+            updates.append({
+                'market': self.market,
+                'adGroupId': item['adGroupId'],
+                'bid': item['bid'],
+                'expressionType': "MANUAL",
+                'state': "ENABLED",
+                'expression': f"{item['type']}={item['asin']}",  # Assuming you have this value in `info`
+                'targetingType': "SP",
+                'targetingState': targeting_state,
+                'update_time': datetime.now(),
+                'user': user,
+                'targetId': target_id,
+            })
+
+        # 批量插入到数据库
+        dbNewTools.batch_add_sd_adGroup_Targeting(updates)
+
     def create_adGroup_Negative_Targeting_by_asin(self,new_campaign_id,new_adgroup_id,asin,user='test'):
         adGroup_info = {
   "negativeTargetingClauses": [

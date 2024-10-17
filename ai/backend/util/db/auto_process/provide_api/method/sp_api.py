@@ -368,6 +368,26 @@ class auto_api_sp:
             print(e)
             return 500  # Internal Server Error
 
+    def create_product_target_batch(self, keyWord, Bid, campaignId, adGroupId,matchType):
+        try:
+            api1 = Gen_adgroup(self.db, self.brand, self.market)
+            merged_keyword_info = []
+            for keyword, bid, campaignid, adGroupid, matchtype in zip(keyWord, Bid, campaignId,
+                                                                       adGroupId, matchType):
+                merged_keyword_info.append({
+                    "type": matchtype,
+                    "asin": keyword,
+                    "bid": bid,
+                    "campaignId": campaignid,
+                    "adGroupId": adGroupid,
+                })
+
+            api1.create_adGroup_Targeting_by_asin_batch(merged_keyword_info, user=self.user)
+            return 200
+        except Exception as e:
+            print(e)
+            return 500  # Internal Server Error
+
     def create_negative_target_batch(self, searchTerm, campaignId, adGroupId,matchType):
         try:
             api1 = Gen_adgroup(self.db, self.brand, self.market)

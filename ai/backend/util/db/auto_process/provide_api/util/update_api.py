@@ -65,6 +65,8 @@ def sp_api(data):
             code = api.create_negative_target_batch(data['ID'], data['campaignId'], data['adGroupId'], data['matchType'])
         elif data['position'] == 'keyword':
             code = api.create_keyword_batch(data['ID'], data['text'], data['campaignId'], data['adGroupId'], data['matchType'])
+        elif data['position'] == 'product_target':
+            code = api.create_product_target_batch(data['ID'], data['text'], data['campaignId'], data['adGroupId'], data['matchType'])
     elif data['require'] == 'name':
         if data['position'] == 'campaign':
             code = api.auto_campaign_name(data['ID'], data['text'])

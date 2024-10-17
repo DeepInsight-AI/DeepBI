@@ -37,6 +37,25 @@ class SPKeywordTools(BaseApi):
             print("create sp keyword failed")
             return ["failed", keywordId]
 
+    def create_spkeyword_api_batch(self, keyword_info):
+        try:
+            result = sponsored_products.KeywordsV3(credentials=self.credentials,
+                                                   marketplace=Marketplaces[self.market.upper()],
+                                                   access_token=self.access_token,
+                                                   proxies=get_proxies(self.market),
+                                                   debug=True).create_keyword(
+                body=json.dumps(keyword_info))
+        except Exception as e:
+            print("create sp keyword failed: ", e)
+            result = None
+        keywordId = ""
+        if result and result.payload["keywords"]["success"]:
+            spkeywordid = result.payload["keywords"]["success"][0]["keywordId"]
+            print("create sp keyword success,sp keywordid is:", spkeywordid)
+        else:
+            print("create sp keyword failed")
+        return result.payload
+
     # 修改广告组关键词
     def update_spkeyword_api(self, keyword_info):
         try:

@@ -101,6 +101,22 @@ class DbNewSpTools(BaseDb):
         except Exception as e:
             print(f"Error occurred when into amazon_keyword_create: {e}")
 
+    def batch_add_sp_keyword_toadGroup(self,updates):
+        try:
+            conn = self.conn
+            cursor = conn.cursor()
+            query = "INSERT INTO amazon_keyword_create (market,keywordId,campaignId,matchType,state,bid,adGroupId,keywordText_old,keywordText_new,operation_state,create_time,user) VALUES (%s,%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
+            # 批量执行插入
+            cursor.executemany(query, [(update['market'], update['keywordId'], update['campaignId'], update['matchType'],
+                                        update['state'], update['bid'], update['adGroupId'], update['keywordText'], update['keywordText_new'],
+                                        update['operation_state'], update['create_time'], update['user']) for
+                                       update in updates])
+
+            conn.commit()
+            print("Record inserted successfully into amazon_keyword_create table")
+        except Exception as e:
+            print(f"Error occurred when into amazon_keyword_create: {e}")
+
     # sp广告组关键词调整
     def update_sp_keyword_toadGroup(self,market,keywordId,state,bid_old,bid_new,operation_state,create_time,user='test'):
         try:

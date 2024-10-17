@@ -65,6 +65,57 @@ class Gen_keyword(SPKeywordTools):
             dbNewTools.add_sp_keyword_toadGroup(self.market,res[1],campaignId,matchType,state,bid,adGroupId,None,keywordText,"failed",datetime.now(), user)
         return res[1]
 
+    def add_keyword_toadGroup_batch(self,info, user='test'):
+        # 翻译完成进行添加
+        keyword_info = {
+          "keywords": []
+        }
+        for item in info:
+            keyword_info["keywords"].append({
+              "campaignId": str(item['campaignId']),
+              "matchType": item['matchType'],
+              "state": "ENABLED",
+              "bid": float(item['bid']),
+              "adGroupId": str(item['adGroupId']),
+              "keywordText": item['keywordText']
+            })
+        # 新增关键词操作
+        res = self.create_spkeyword_api_batch(keyword_info)
+        print(res)
+        # 存储更新记录到数据库
+        dbNewTools = DbNewSpTools(self.db, self.brand, self.market)
+
+        # 获取成功的 index
+        success_indices = {item['index']: item['keywordId'] for item in res['keywords']['success']}
+        print(success_indices)
+        updates = []
+        for idx, item in enumerate(info):
+            # 检查当前的索引是否在成功的索引中
+            if idx in success_indices:
+                targeting_state = "success"
+                target_id = success_indices[idx]
+            else:
+                targeting_state = "failed"
+                target_id = None  # 或者设置为其他默认值
+
+            updates.append({
+                'market': self.market,
+                'keywordId': item['keywordId'],
+                'campaignId': item['campaignId'],
+                'matchType': item['matchType'],
+                'state': "ENABLED",
+                'bid': item['bid'],  # Assuming you have this value in `info`
+                'adGroupId': item['adGroupId'],
+                'keywordText': None,
+                'keywordText_new': item['keywordText'],
+                'operation_state': targeting_state,
+                'create_time': datetime.now(),
+                'user': user
+            })
+        # 批量插入到数据库
+        dbNewTools.batch_add_sp_keyword_toadGroup(updates)
+
+
     def update_keyword_toadGroup(self,keywordId,bid_old,bid_new,state, user='test'):
 
         # 修改广告组关键词信息

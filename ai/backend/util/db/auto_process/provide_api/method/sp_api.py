@@ -348,6 +348,26 @@ class auto_api_sp:
             print(e)
             return 500  # Internal Server Error
 
+    def create_keyword_batch(self, keyWord, Bid, campaignId, adGroupId,matchType):
+        try:
+            api1 = Gen_keyword(self.db, self.brand, self.market)
+            merged_keyword_info = []
+            for keyword, bid, campaignid, adGroupid, matchtype in zip(keyWord, Bid, campaignId,
+                                                                       adGroupId, matchType):
+                merged_keyword_info.append({
+                    "keywordText": keyword,
+                    "bid": bid,
+                    "campaignId": campaignid,
+                    "adGroupId": adGroupid,
+                    "matchType": matchtype  # 从 mapping 中获取 bid_old
+                })
+
+            api1.add_keyword_toadGroup_batch(merged_keyword_info, user=self.user)
+            return 200
+        except Exception as e:
+            print(e)
+            return 500  # Internal Server Error
+
     def create_negative_target_batch(self, searchTerm, campaignId, adGroupId,matchType):
         try:
             api1 = Gen_adgroup(self.db, self.brand, self.market)

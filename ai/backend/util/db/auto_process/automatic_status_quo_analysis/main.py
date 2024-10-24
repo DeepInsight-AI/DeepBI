@@ -19,7 +19,7 @@ def find_brand_by_uid(uid):
     for brand_group, brand_data in brands.items():
         for brand_name, country_data in brand_data.items():
             for country, config in country_data.items():
-                print(f"Checking brand: {brand_name} with UID: {config.get('UID')}")  # 调试输出
+                # print(f"Checking brand: {brand_name} with UID: {config.get('UID')}")  # 调试输出
                 if config.get('UID') == uid:
                     return brand_group, brand_name, config
 

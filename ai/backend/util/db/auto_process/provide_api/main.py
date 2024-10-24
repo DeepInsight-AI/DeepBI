@@ -13,7 +13,8 @@ from ai.backend.util.db.auto_process.provide_api.util.update_api import update_a
 from ai.backend.util.db.auto_process.provide_api.util.create_api import create_api
 from ai.backend.util.db.auto_process.provide_api.util.get_report_api import get_report_api
 from ai.backend.util.db.auto_process.provide_api.util.automatically_api import automatically_api
-from backend.util.db.configuration.path import get_config_path
+from ai.backend.util.db.configuration.path import get_config_path
+from ai.backend.util.db.auto_process.automatic_status_quo_analysis.util.automatic_configuration import automatic_configuration
 
 app = Flask(__name__)
 CORS(app)  # 启用 CORS
@@ -32,12 +33,13 @@ def shutdown_logging(exception=None):
 # 定义你想定时执行的函数
 def scheduled_task():
     # 这里放入你想定时执行的代码
-    app.logger.info("Scheduled task is running...")
+    automatic_configuration()
+    app.logger.info("automatic_configuration is running...")
 
 # 设置调度器
 scheduler = BackgroundScheduler()
 # 添加定时任务，比如每10秒执行一次
-scheduler.add_job(scheduled_task, 'interval', seconds=10)
+scheduler.add_job(scheduled_task, 'interval', seconds=60 * 60)
 scheduler.start()
 
 # 确保在应用关闭时停止调度器

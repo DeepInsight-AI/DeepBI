@@ -401,7 +401,7 @@
     "amazon_hototools": {
         "HOTO": {
             "default": {
-                "host": "192.168.2.123",
+                "host": "192.168.2.139",
                 "user": "wanghequan",
                 "passwd": "WHq123123Aa",
                 "port": 3306,
@@ -412,7 +412,7 @@
         },
         "APEXFORGE": {
             "default": {
-                "host": "192.168.2.123",
+                "host": "192.168.2.139",
                 "user": "wanghequan",
                 "passwd": "WHq123123Aa",
                 "port": 3306,
@@ -430,6 +430,32 @@
                 "passwd": "WHq123123Aa",
                 "port": 3308,
                 "db": "amazon_kfeiya",
+                "charset": "utf8mb4",
+                "use_unicode": true
+            }
+        }
+    },
+    "amazon_suihuo_uuoeebb_global": {
+        "Uuoeebb": {
+            "default": {
+                "host": "192.168.2.139",
+                "user": "wanghequan",
+                "passwd": "WHq123123Aa",
+                "port": 3306,
+                "db": "amazon_suihuo_uuoeebb_global",
+                "charset": "utf8mb4",
+                "use_unicode": true
+            }
+        }
+    },
+    "amazon_suihuo_suihuooo": {
+        "suihuooo": {
+            "default": {
+                "host": "192.168.2.139",
+                "user": "wanghequan",
+                "passwd": "WHq123123Aa",
+                "port": 3306,
+                "db": "amazon_suihuo_suihuooo",
                 "charset": "utf8mb4",
                 "use_unicode": true
             }

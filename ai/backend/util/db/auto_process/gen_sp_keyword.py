@@ -120,14 +120,14 @@ class Gen_keyword(SPKeywordTools):
 
         # 修改广告组关键词信息
         keyword_info={
-      "keywords": [
-        {
-          "keywordId": str(keywordId),
-          "state": state,
-          "bid": bid_new
+          "keywords": [
+            {
+              "keywordId": str(keywordId),
+              "state": state,
+              "bid": bid_new
+            }
+          ]
         }
-      ]
-    }
         # 修改关键词操作
         res = self.update_spkeyword_api(keyword_info)
 
@@ -186,16 +186,16 @@ class Gen_keyword(SPKeywordTools):
         dbNewTools.batch_update_sp_keywords(updates)
 
 
-    def delete_keyword_toadGroup(self,keywordId):
+    def delete_keyword_toadGroup(self,keywordId, user='test'):
 
         # 修改广告组关键词信息
         keyword_info = {
-  "keywordIdFilter": {
-    "include": [
-      str(keywordId)
-    ]
-  }
-}
+          "keywordIdFilter": {
+            "include": [
+              str(keywordId)
+            ]
+          }
+        }
         # 修改关键词操作
         res = self.delete_spkeyword_api(keyword_info)
 
@@ -206,6 +206,48 @@ class Gen_keyword(SPKeywordTools):
             dbNewTools.update_sp_keyword_toadGroup(self.market,keywordId,'delete',None,None,"success",datetime.now())
         else:
             dbNewTools.update_sp_keyword_toadGroup(self.market,keywordId,'delete',None,None,"failed",datetime.now())
+
+    def delete_keyword_toadGroup_batch(self,keywordId, user='test'):
+        info = self.to_iterable(keywordId)
+        # 修改广告组关键词信息
+        keyword_info = {
+          "keywordIdFilter": {
+            "include": []
+          }
+        }
+        for item in info:
+            keyword_info["keywordIdFilter"]["include"].append(str(item))
+        # 修改关键词操作
+        res = self.delete_spkeyword_api_batch(keyword_info)
+
+        # 根据结果更新log
+        # def update_sp_keyword_toadGroup(self,market,keywordId,state,bid,operation_state,create_time):
+        dbNewTools = DbNewSpTools(self.db, self.brand,self.market)
+        # 获取成功的 index
+        success_indices = {item['index']: item['keywordId'] for item in res['keywords']['success']}
+        print(success_indices)
+        updates = []
+        for idx, item in enumerate(info):
+            # 检查当前的索引是否在成功的索引中
+            if idx in success_indices:
+                targeting_state = "success"
+                target_id = success_indices[idx]
+            else:
+                targeting_state = "failed"
+                target_id = None  # 或者设置为其他默认值
+
+            updates.append({
+                'market': self.market,
+                'keywordId': item,
+                'state': 'ARCHIVED',
+                'bid_old': None,  # Assuming you have this value in `info`
+                'bid_new': None,
+                'operation_state': targeting_state,
+                'create_time': datetime.now(),
+                'user': user
+            })
+        # 批量插入到数据库
+        dbNewTools.batch_update_sp_keywords(updates)
 
 
     # 新增测试

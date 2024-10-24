@@ -1,5 +1,4 @@
 import os
-
 import pymysql
 from ad_api.api import sponsored_products
 from ad_api.base import Marketplaces
@@ -115,6 +114,25 @@ class SPKeywordTools(BaseApi):
         else:
             print("delete sp keyword failed")
             return ["failed", keywordId]
+
+    def delete_spkeyword_api_batch(self, keyword_info):
+        try:
+            result = sponsored_products.KeywordsV3(credentials=self.credentials,
+                                                   marketplace=Marketplaces[self.market.upper()],
+                                                   access_token=self.access_token,
+                                                   proxies=get_proxies(self.market),
+                                                   debug=True).delete_keywords(
+                body=json.dumps(keyword_info))
+        except Exception as e:
+            print("delete sp keyword failed: ", e)
+            result = None
+        keywordId = ""
+        if result and result.payload["keywords"]["success"]:
+            spkeywordid = result.payload["keywords"]["success"][0]["keywordId"]
+            print("delete sp keyword success,sp keywordid is:", spkeywordid)
+        else:
+            print("delete sp keyword failed")
+        return result.payload
 
     def get_spkeyword_api(self, adGroupID):
         adGroup_info = {

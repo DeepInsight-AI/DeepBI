@@ -6,6 +6,7 @@ import pandas as pd
 import pymysql
 from ai.backend.util.db.configuration.path import get_config_path
 from ai.backend.util.db.auto_process.automatic_status_quo_analysis.export.export_path import get_export_path
+from ai.backend.util.db.auto_process.db_api import BaseDb
 
 
 
@@ -18,28 +19,9 @@ def get_timestamp():
     date_timestamp_string = f"{date_string}_{timestamp}"
     return date_timestamp_string
 
-class DbToolsCsv:
-    def __init__(self, brand,market):
-        self.brand = brand
-        self.market = market
-        self.db_info = self.load_db_info(brand,market)
-        self.conn = self.connect(self.db_info)
-
-    def load_db_info(self, brand, country=None):
-        # 从 JSON 文件加载数据库信息
-        db_info_path = os.path.join(get_config_path(), 'db_info.json')
-        with open(db_info_path, 'r') as f:
-            db_info_json = json.load(f)
-
-        if brand not in db_info_json:
-            raise ValueError(f"Unknown brand '{brand}'")
-
-        brand_info = db_info_json[brand]
-
-        if country and country in brand_info:
-            return brand_info[country]
-
-        return brand_info.get('default', {})
+class DbToolsCsv(BaseDb):
+    def __init__(self, db, brand, market):
+        super().__init__(db, brand, market)
 
     def load_config_info(self):
         # 从 JSON 文件加载数据库信息
@@ -47,22 +29,6 @@ class DbToolsCsv:
         with open(time_zone_info_path, 'r') as f:
             time_zone_info_json = json.load(f)
         return time_zone_info_json.get(self.market, "国家代码不存在")
-
-    def connect(self, db_info):
-        try:
-            conn = pymysql.connect(**db_info)
-            print("Connected to amazon_mysql database!")
-            return conn
-        except Exception as error:
-            print("Error while connecting to amazon_mysql:", error)
-            return None
-
-    def connect_close(self):
-        try:
-            self.conn.close()
-        except Exception as error:
-            print("Error while connecting to amazon_mysql:", error)
-            return None
 
     def get_advertising_data(self, market,start_date,end_date):
         # 低于 平均ACOS值 30% 以上的  campaign 广告活动
@@ -2468,7 +2434,7 @@ ORDER BY
             print("get_listing_sd_summary_data Error while query data:", error)
 
 
-    def get_expected_sales(self, market,start_date,end_date, sp_expectation=65, sd_expectation=25, spacos_expectation=24, sdacos_expectation=8):
+    def get_expected_sales(self, market,start_date,end_date, sp_expectation=70, sd_expectation=30, spacos_expectation=24, sdacos_expectation=8):
         # 低于 平均ACOS值 30% 以上的  campaign 广告活动
         # 建议执行的操作：预算提升30%
         try:

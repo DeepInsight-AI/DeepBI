@@ -158,9 +158,9 @@ def set_table_width(table, width_in_inches):
 
 
 def create_summery(date,code):
-    # summery = asyncio.get_event_loop().run_until_complete(ask_question(date, code))
-    # return summery
-    return 'test'
+    summery = asyncio.get_event_loop().run_until_complete(ask_question(date, code))
+    return summery
+    # return 'test'
 
 
 def generate_docx(db, brand, market,start_date,end_date,period):
@@ -455,5 +455,5 @@ def generate_summary_docx(db, brand, market,start_date,end_date,period):
     return docx_path
 
 if __name__ == "__main__":
-    generate_docx('amazon_ads','LAPASA', 'US', '2024-09-18', '2024-09-22', 5)
-    # generate_summary_docx('Rossny', 'US', '2024-09-12', '2024-09-18', 7)
+    generate_docx('amazon_chaoyangkeji_gotoly','Gotoly', 'US', '2024-10-06', '2024-10-12', 7)
+    # generate_summary_docx('amazon_bdzx','DELOMO', 'EU', '2024-09-20', '2024-09-26', 7)

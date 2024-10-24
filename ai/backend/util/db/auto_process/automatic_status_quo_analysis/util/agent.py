@@ -151,7 +151,7 @@ async def ask_question(data, custom_message=0):
     # 发起聊天
     await user_proxy.initiate_chat(
         summarizer,
-        message='\n' + str("根据给定的数据，进行总结，给出现状分析。") + '\n' + str(data),
+        message='\n' + str("根据给定的数据，进行总结，给出现状分析。使用中文回答。") + '\n' + str(data),
     )
 
     # 获取回答

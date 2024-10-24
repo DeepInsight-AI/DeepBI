@@ -14,6 +14,7 @@ from ai.backend.util.db.auto_process.automatic_status_quo_analysis.util.db_tool 
 from ai.backend.util.db.auto_process.automatic_status_quo_analysis.util.util import csv_to_json
 from ai.backend.util.db.auto_process.automatic_status_quo_analysis.util.agent import ask_question
 from ai.backend.util.db.auto_process.automatic_status_quo_analysis.output.output_path import get_output_path
+from ai.backend.util.db.auto_process.automatic_status_quo_analysis.util.change import convert_to_pdf
 
 
 def set_font_size(cell, pt_size):
@@ -128,9 +129,10 @@ def create_summery(date,code):
     # return 'test'
 
 
-def generate_docx(brand, market,start_date,end_date):
+def generate_docx(db, brand, market,start_date,end_date):
     # 新建文档对象按模板新建 word 文档文件，具有模板文件的所有格式
     doc = Document()
+
     # end_date = (datetime.today() - timedelta(days=2)).strftime('%m.%d')
     # start_date = (datetime.today() - timedelta(days=31)).strftime('%m.%d')
     # 增加标题：add_heading(self, text="", level=1):
@@ -141,10 +143,10 @@ def generate_docx(brand, market,start_date,end_date):
 
     doc.add_heading('一、宏观分析', 1)
     doc.add_paragraph().add_run(f'近{difference}天的广告数据和店铺营收数据如下所示:')
-    csv_path1 = DbToolsCsv(brand, market).get_advertising_data(market,end_date,start_date)
+    csv_path1 = DbToolsCsv(db, brand, market).get_advertising_data(market,end_date,start_date)
     insert_csv_to_docx(doc, csv_path1,9+1)
     doc.add_paragraph().add_run('')
-    csv_path2 = DbToolsCsv(brand, market).get_store_data(market,end_date,start_date)
+    csv_path2 = DbToolsCsv(db, brand, market).get_store_data(market,end_date,start_date)
     table1 = insert_csv_to_docx(doc, csv_path2,9+1)
     table1.cell(1, 0).text = ""
     json1 = csv_to_json(csv_path1)
@@ -164,13 +166,13 @@ def generate_docx(brand, market,start_date,end_date):
 
     doc.add_heading(f'二、现状分析（{start_date}-{end_date}，{difference}天）', 1)
     doc.add_heading(f'1.目前所有在投计划情况（{start_date}-{end_date}）', 2)
-    csv_path3 = DbToolsCsv(brand, market).get_ad_type(market,end_date,start_date)
+    csv_path3 = DbToolsCsv(db, brand, market).get_ad_type(market,end_date,start_date)
     insert_csv_to_docx(doc, csv_path3,9+1)
     doc.add_paragraph().add_run('')
-    csv_path4 = DbToolsCsv(brand, market).get_ad_type_data(market,end_date,start_date)
+    csv_path4 = DbToolsCsv(db, brand, market).get_ad_type_data(market,end_date,start_date)
     insert_csv_to_docx(doc, csv_path4,9+1)
     doc.add_paragraph().add_run('')
-    csv_path5 = DbToolsCsv(brand, market).get_sp_type_data(market,end_date,start_date)
+    csv_path5 = DbToolsCsv(db, brand, market).get_sp_type_data(market,end_date,start_date)
     insert_csv_to_docx(doc, csv_path5,9+1)
     # doc.add_paragraph().add_run('')
     json4 = csv_to_json(csv_path4)
@@ -183,11 +185,11 @@ def generate_docx(brand, market,start_date,end_date):
     doc.add_paragraph().add_run(f"{translate_kw6}")
     # doc.add_paragraph().add_run('')
     doc.add_heading(f'2.以下是按父Asin分类，各listing的数据情况', 2)
-    csv_path6 = DbToolsCsv(brand, market).get_listing_summary_data(market,end_date,start_date)
+    csv_path6 = DbToolsCsv(db, brand, market).get_listing_summary_data(market,end_date,start_date)
     insert_csv_to_docx(doc, csv_path6,8+1+1)
     doc.add_paragraph().add_run('')
     doc.add_heading(f'2.2.1 SP计划整体', 3)
-    csv_path7 = DbToolsCsv(brand, market).get_listing_sp_summary_data(market,end_date,start_date)
+    csv_path7 = DbToolsCsv(db, brand, market).get_listing_sp_summary_data(market,end_date,start_date)
     insert_csv_to_docx(doc, csv_path7,8+1+1)
     doc.add_paragraph().add_run('')
     json7 = csv_to_json(csv_path7)
@@ -198,7 +200,7 @@ def generate_docx(brand, market,start_date,end_date):
     doc.add_heading('2.2.1.2 整体销售额占比分析', 4)
     doc.add_paragraph().add_run(f"{translate_kw8}")
     doc.add_heading(f'2.2.2 SP手动和SP自动计划', 3)
-    csv_path8 = DbToolsCsv(brand, market).get_listing_sp_specific_data(market,end_date,start_date)
+    csv_path8 = DbToolsCsv(db, brand, market).get_listing_sp_specific_data(market,end_date,start_date)
     pt1 = determine_max_font_size(csv_path8,1)
     insert_csv_to_docx(doc, csv_path8,pt1)
     # doc.add_paragraph().add_run('')
@@ -210,7 +212,7 @@ def generate_docx(brand, market,start_date,end_date):
     doc.add_heading('2.2.2.2 SP广告销售额占比分析', 4)
     doc.add_paragraph().add_run(f"{translate_kw10}")
     doc.add_heading(f'2.2.3 SD计划', 3)
-    csv_path9 = DbToolsCsv(brand, market).get_listing_sd_summary_data(market,end_date,start_date)
+    csv_path9 = DbToolsCsv(db, brand, market).get_listing_sd_summary_data(market,end_date,start_date)
     insert_csv_to_docx(doc, csv_path9,9+1)
     json9 = csv_to_json(csv_path9)
     translate_kw11 = create_summery(json9, 10)
@@ -221,22 +223,22 @@ def generate_docx(brand, market,start_date,end_date):
     doc.add_paragraph().add_run(f"{translate_kw11}")
 
     doc.add_heading(f'三、目标期望设定', 1)
-    doc.add_paragraph().add_run('按照我们先前的经验，广告营收大致占总营收的55-60%；而在广告营收中，SD广告和SP广告带来的营收占比分别为35%-40%和50%-65%。于是我们的长期目标是希望广告整体营收占比可以达到55%，整体Acos值可以降低到24%以内，广告花费占比降低至12%。')
-    doc.add_paragraph().add_run('为没有开设SD广告的商品开设SD广告，并将SD广告营收占比提升至35%，Acos值控制在8%以内；SP广告营收占比65%，Acos值控制在24%以内。')
-    doc.add_paragraph().add_run('于是，我们将每个listing的SD、SP期望广告营收占比分别设置为35%和65%，期望Acos值设置为8%和24%。（若目前已达到预期目标，则将目前的值设置为预期目标）')
+    doc.add_paragraph().add_run('按照我们先前的经验，广告营收大致占总营收的45-55%；而在广告营收中，SD广告和SP广告带来的营收占比分别为25%-35%和65%-75%。于是我们的长期目标是希望广告整体营收占比可以达到50%，整体Acos值可以降低到24%以内，广告花费占比降低至12%。')
+    doc.add_paragraph().add_run('为没有开设SD广告的商品开设SD广告，并将SD广告营收占比提升至30%，Acos值控制在8%以内；SP广告营收占比70%，Acos值控制在24%以内。')
+    doc.add_paragraph().add_run('于是，我们将每个listing的SD、SP期望广告营收占比分别设置为30%和70%，期望Acos值设置为8%和24%。（若目前已达到预期目标，则将目前的值设置为预期目标）')
     doc.add_heading(f'广告销售额期望计算', 2)
     doc.add_paragraph().add_run('对于每个listing，我们将以SP或SD中较好的作为基准，按照目标比例提升另一类型的广告数据。结算结果如下所示')
-    csv_path10,expect_ad_sales,total_ad_sales = DbToolsCsv(brand, market).get_expected_sales(market,end_date,start_date)
+    csv_path10,expect_ad_sales,total_ad_sales = DbToolsCsv(db, brand, market).get_expected_sales(market,end_date,start_date)
     pt2 = determine_max_font_size(csv_path10, 2)
     insert_csv_to_docx(doc, csv_path10,pt2)
     doc.add_paragraph().add_run('')
     doc.add_paragraph().add_run(f'广告销售额上可达到（{expect_ad_sales}/{total_ad_sales}-1）*100%={round((expect_ad_sales/total_ad_sales-1)*100,2)}%的增幅。')
     # doc.add_heading(f'2、广告成本期望计算', 2)
-    csv_path11, expect_ad_cost, total_ad_cost = DbToolsCsv(brand, market).get_expected_cost(market,end_date,start_date)
+    csv_path11, expect_ad_cost, total_ad_cost = DbToolsCsv(db, brand, market).get_expected_cost(market,end_date,start_date)
     # insert_csv_to_docx(doc, csv_path11,7)
     # doc.add_paragraph().add_run(f'整体广告花费下降（1-{expect_ad_cost}/{total_ad_cost}）*100%={round((1 - expect_ad_cost / total_ad_cost) * 100, 2)}%')
     doc.add_paragraph().add_run(f'整体预期AOCS值为（{expect_ad_cost}/{expect_ad_sales}）*100%={round((expect_ad_cost / expect_ad_sales) * 100, 2)}%')
-    doc.add_paragraph().add_run(f'我们预期自然销售占比在40%-50%之间，根据这个比例，则预期Tacos值为{round((expect_ad_cost / expect_ad_sales) * 50, 2)}%-{round((expect_ad_cost / expect_ad_sales) * 60, 2)}%')
+    doc.add_paragraph().add_run(f'我们预期自然销售占比在45%-55%之间，根据这个比例，则预期Tacos值为{round((expect_ad_cost / expect_ad_sales) * 45, 2)}%-{round((expect_ad_cost / expect_ad_sales) * 55, 2)}%')
 
     doc.add_heading(f'四、总结', 1)
     doc.add_paragraph().add_run(f"1.{translate_kw4}")
@@ -246,7 +248,7 @@ def generate_docx(brand, market,start_date,end_date):
     translate_kw14 = create_summery(result3, 13)
     doc.add_paragraph().add_run(f"2.{translate_kw13}")
     doc.add_paragraph().add_run(f"3.{translate_kw14}")
-    doc.add_paragraph().add_run(f'4.最终实现，预期销售额{round((expect_ad_sales/total_ad_sales-1)*100,2)}%的增长，预期整体ACOS为{round((expect_ad_cost / expect_ad_sales) * 100, 2)}%，预期Tacos值为{round((expect_ad_cost / expect_ad_sales) * 50, 2)}%-{round((expect_ad_cost / expect_ad_sales) * 60, 2)}%的目标')
+    doc.add_paragraph().add_run(f'4.最终实现，预期销售额{round((expect_ad_sales/total_ad_sales-1)*100,2)}%的增长，预期整体ACOS为{round((expect_ad_cost / expect_ad_sales) * 100, 2)}%，预期Tacos值为{round((expect_ad_cost / expect_ad_sales) * 45, 2)}%-{round((expect_ad_cost / expect_ad_sales) * 55, 2)}%的目标')
     sections = doc.sections
     print(sections)
     default_section = sections[0]
@@ -264,6 +266,10 @@ def generate_docx(brand, market,start_date,end_date):
     # # 增加标题 API 分析， 只能设置 0-9 级标题
     # for i in range(0,10):
     #     doc.add_heading(f'标题{i}', i)
+    # for paragraph in doc.paragraphs:
+    #     for run in paragraph.runs:
+    #         run.font.name = 'Arial'  # 设置字体
+    #         run.font.size = Pt(12)  # 设置字号
 
     docx_path = f'{brand}_{market}_{start_date}-{end_date}({difference}天)_现状分析.docx'
     pdf_path = f'{brand}_{market}_{start_date}-{end_date}({difference}天)_现状分析.pdf'
@@ -276,10 +282,11 @@ def generate_docx(brand, market,start_date,end_date):
     # Convert DOCX to PDF
     convert(docx_path)
     pdf_path = os.path.join(get_output_path(), pdf_path)
+    # convert_to_pdf(docx_path,pdf_path)
     return pdf_path
 
 
-def generate_docx_supplier(brand, market,start_date,end_date):
+def generate_docx_supplier(db, brand, market,start_date,end_date):
     # 新建文档对象按模板新建 word 文档文件，具有模板文件的所有格式
     doc = Document()
     # end_date = (datetime.today() - timedelta(days=2)).strftime('%m.%d')
@@ -292,10 +299,10 @@ def generate_docx_supplier(brand, market,start_date,end_date):
 
     doc.add_heading('一、宏观分析', 1)
     doc.add_paragraph().add_run(f'近{difference}天的广告数据和店铺营收数据如下所示:')
-    csv_path1 = DbToolsCsv(brand, market).get_advertising_data(market,end_date,start_date)
+    csv_path1 = DbToolsCsv(db, brand, market).get_advertising_data(market,end_date,start_date)
     insert_csv_to_docx(doc, csv_path1,9+1)
     doc.add_paragraph().add_run('')
-    csv_path2 = DbToolsCsv(brand, market).get_store_data_supplier(market,end_date,start_date)
+    csv_path2 = DbToolsCsv(db, brand, market).get_store_data_supplier(market,end_date,start_date)
     table1 = insert_csv_to_docx(doc, csv_path2,9+1)
     table1.cell(1, 0).text = ""
     json1 = csv_to_json(csv_path1)
@@ -315,13 +322,13 @@ def generate_docx_supplier(brand, market,start_date,end_date):
 
     doc.add_heading(f'二、现状分析（{start_date}-{end_date}，{difference}天）', 1)
     doc.add_heading(f'1.目前所有在投计划情况（{start_date}-{end_date}）', 2)
-    csv_path3 = DbToolsCsv(brand, market).get_ad_type(market,end_date,start_date)
+    csv_path3 = DbToolsCsv(db, brand, market).get_ad_type(market,end_date,start_date)
     insert_csv_to_docx(doc, csv_path3,9+1)
     doc.add_paragraph().add_run('')
-    csv_path4 = DbToolsCsv(brand, market).get_ad_type_data(market,end_date,start_date)
+    csv_path4 = DbToolsCsv(db, brand, market).get_ad_type_data(market,end_date,start_date)
     insert_csv_to_docx(doc, csv_path4,9+1)
     doc.add_paragraph().add_run('')
-    csv_path5 = DbToolsCsv(brand, market).get_sp_type_data(market,end_date,start_date)
+    csv_path5 = DbToolsCsv(db, brand, market).get_sp_type_data(market,end_date,start_date)
     insert_csv_to_docx(doc, csv_path5,9+1)
     # doc.add_paragraph().add_run('')
     json4 = csv_to_json(csv_path4)
@@ -334,11 +341,11 @@ def generate_docx_supplier(brand, market,start_date,end_date):
     doc.add_paragraph().add_run(f"{translate_kw6}")
     # doc.add_paragraph().add_run('')
     doc.add_heading(f'2.以下是按父Asin分类，各listing的数据情况', 2)
-    csv_path6 = DbToolsCsv(brand, market).get_listing_summary_data_supplier(market,end_date,start_date)
+    csv_path6 = DbToolsCsv(db, brand, market).get_listing_summary_data_supplier(market,end_date,start_date)
     insert_csv_to_docx(doc, csv_path6,8+1+1)
     doc.add_paragraph().add_run('')
     doc.add_heading(f'2.2.1 SP计划整体', 3)
-    csv_path7 = DbToolsCsv(brand, market).get_listing_sp_summary_data_supplier(market,end_date,start_date)
+    csv_path7 = DbToolsCsv(db, brand, market).get_listing_sp_summary_data_supplier(market,end_date,start_date)
     insert_csv_to_docx(doc, csv_path7,8+1+1)
     doc.add_paragraph().add_run('')
     json7 = csv_to_json(csv_path7)
@@ -349,7 +356,7 @@ def generate_docx_supplier(brand, market,start_date,end_date):
     doc.add_heading('2.2.1.2 整体销售额占比分析', 4)
     doc.add_paragraph().add_run(f"{translate_kw8}")
     doc.add_heading(f'2.2.2 SP手动和SP自动计划', 3)
-    csv_path8 = DbToolsCsv(brand, market).get_listing_sp_specific_data_supplier(market,end_date,start_date)
+    csv_path8 = DbToolsCsv(db, brand, market).get_listing_sp_specific_data_supplier(market,end_date,start_date)
     pt1 = determine_max_font_size(csv_path8,1)
     insert_csv_to_docx(doc, csv_path8,pt1)
     # doc.add_paragraph().add_run('')
@@ -361,7 +368,7 @@ def generate_docx_supplier(brand, market,start_date,end_date):
     doc.add_heading('2.2.2.2 SP广告销售额占比分析', 4)
     doc.add_paragraph().add_run(f"{translate_kw10}")
     doc.add_heading(f'2.2.3 SD计划', 3)
-    csv_path9 = DbToolsCsv(brand, market).get_listing_sd_summary_data_supplier(market,end_date,start_date)
+    csv_path9 = DbToolsCsv(db, brand, market).get_listing_sd_summary_data_supplier(market,end_date,start_date)
     insert_csv_to_docx(doc, csv_path9,9+1)
     json9 = csv_to_json(csv_path9)
     translate_kw11 = create_summery(json9, 10)
@@ -377,13 +384,13 @@ def generate_docx_supplier(brand, market,start_date,end_date):
     doc.add_paragraph().add_run('于是，我们将每个listing的SD、SP期望广告营收占比分别设置为35%和65%，期望Acos值设置为8%和24%。（若目前已达到预期目标，则将目前的值设置为预期目标）')
     doc.add_heading(f'广告销售额期望计算', 2)
     doc.add_paragraph().add_run('对于每个listing，我们将以SP或SD中较好的作为基准，按照目标比例提升另一类型的广告数据。结算结果如下所示')
-    csv_path10,expect_ad_sales,total_ad_sales = DbToolsCsv(brand, market).get_expected_sales_supplier(market,end_date,start_date)
+    csv_path10,expect_ad_sales,total_ad_sales = DbToolsCsv(db, brand, market).get_expected_sales_supplier(market,end_date,start_date)
     pt2 = determine_max_font_size(csv_path10, 2)
     insert_csv_to_docx(doc, csv_path10,pt2)
     doc.add_paragraph().add_run('')
     doc.add_paragraph().add_run(f'广告销售额上可达到（{expect_ad_sales}/{total_ad_sales}-1）*100%={round((expect_ad_sales/total_ad_sales-1)*100,2)}%的增幅。')
     # doc.add_heading(f'2、广告成本期望计算', 2)
-    csv_path11, expect_ad_cost, total_ad_cost = DbToolsCsv(brand, market).get_expected_cost_supplier(market,end_date,start_date)
+    csv_path11, expect_ad_cost, total_ad_cost = DbToolsCsv(db, brand, market).get_expected_cost_supplier(market,end_date,start_date)
     # insert_csv_to_docx(doc, csv_path11,7)
     # doc.add_paragraph().add_run(f'整体广告花费下降（1-{expect_ad_cost}/{total_ad_cost}）*100%={round((1 - expect_ad_cost / total_ad_cost) * 100, 2)}%')
     doc.add_paragraph().add_run(f'整体预期AOCS值为（{expect_ad_cost}/{expect_ad_sales}）*100%={round((expect_ad_cost / expect_ad_sales) * 100, 2)}%')
@@ -430,7 +437,7 @@ def generate_docx_supplier(brand, market,start_date,end_date):
     return pdf_path
 
 
-def generate_docx_test(brand, market,start_date,end_date):
+def generate_docx_test(db,brand, market,start_date,end_date):
     # 新建文档对象按模板新建 word 文档文件，具有模板文件的所有格式
     doc = Document()
     # end_date = (datetime.today() - timedelta(days=2)).strftime('%m.%d')
@@ -443,10 +450,10 @@ def generate_docx_test(brand, market,start_date,end_date):
 
     doc.add_heading('一、宏观分析', 1)
     doc.add_paragraph().add_run(f'近{difference}天的广告数据和店铺营收数据如下所示:')
-    csv_path1 = DbToolsCsv(brand, market).get_advertising_data(market,end_date,start_date)
+    csv_path1 = DbToolsCsv(db,brand, market).get_advertising_data(market,end_date,start_date)
     insert_csv_to_docx(doc, csv_path1,9+1)
     doc.add_paragraph().add_run('')
-    csv_path2 = DbToolsCsv(brand, market).get_store_data(market,end_date,start_date)
+    csv_path2 = DbToolsCsv(db,brand, market).get_store_data(market,end_date,start_date)
     table1 = insert_csv_to_docx(doc, csv_path2,9+1)
     #table1.cell(1, 0).text = ""
     json1 = csv_to_json(csv_path1)
@@ -466,13 +473,13 @@ def generate_docx_test(brand, market,start_date,end_date):
 
     doc.add_heading(f'二、现状分析（{start_date}-{end_date}，{difference}天）', 1)
     doc.add_heading(f'1.目前所有在投计划情况（{start_date}-{end_date}）', 2)
-    csv_path3 = DbToolsCsv(brand, market).get_ad_type(market,end_date,start_date)
+    csv_path3 = DbToolsCsv(db,brand, market).get_ad_type(market,end_date,start_date)
     insert_csv_to_docx(doc, csv_path3,9+1)
     doc.add_paragraph().add_run('')
-    csv_path4 = DbToolsCsv(brand, market).get_ad_type_data(market,end_date,start_date)
+    csv_path4 = DbToolsCsv(db,brand, market).get_ad_type_data(market,end_date,start_date)
     insert_csv_to_docx(doc, csv_path4,9+1)
     doc.add_paragraph().add_run('')
-    csv_path5 = DbToolsCsv(brand, market).get_sp_type_data(market,end_date,start_date)
+    csv_path5 = DbToolsCsv(db,brand, market).get_sp_type_data(market,end_date,start_date)
     insert_csv_to_docx(doc, csv_path5,9+1)
     # doc.add_paragraph().add_run('')
     json4 = csv_to_json(csv_path4)
@@ -485,11 +492,11 @@ def generate_docx_test(brand, market,start_date,end_date):
     doc.add_paragraph().add_run(f"{translate_kw6}")
     # doc.add_paragraph().add_run('')
     doc.add_heading(f'2.以下是按父Asin分类，各listing的数据情况', 2)
-    csv_path6 = DbToolsCsv(brand, market).get_listing_summary_data(market,end_date,start_date)
+    csv_path6 = DbToolsCsv(db,brand, market).get_listing_summary_data(market,end_date,start_date)
     insert_csv_to_docx(doc, csv_path6,8+1+1)
     doc.add_paragraph().add_run('')
     doc.add_heading(f'2.2.1 SP计划整体', 3)
-    csv_path7 = DbToolsCsv(brand, market).get_listing_sp_summary_data(market,end_date,start_date)
+    csv_path7 = DbToolsCsv(db,brand, market).get_listing_sp_summary_data(market,end_date,start_date)
     insert_csv_to_docx(doc, csv_path7,8+1+1)
     doc.add_paragraph().add_run('')
     json7 = csv_to_json(csv_path7)
@@ -500,7 +507,7 @@ def generate_docx_test(brand, market,start_date,end_date):
     doc.add_heading('2.2.1.2 整体销售额占比分析', 4)
     doc.add_paragraph().add_run(f"{translate_kw8}")
     doc.add_heading(f'2.2.2 SP手动和SP自动计划', 3)
-    csv_path8 = DbToolsCsv(brand, market).get_listing_sp_specific_data(market,end_date,start_date)
+    csv_path8 = DbToolsCsv(db,brand, market).get_listing_sp_specific_data(market,end_date,start_date)
     pt1 = determine_max_font_size(csv_path8,1)
     insert_csv_to_docx(doc, csv_path8,pt1)
     # doc.add_paragraph().add_run('')
@@ -512,7 +519,7 @@ def generate_docx_test(brand, market,start_date,end_date):
     doc.add_heading('2.2.2.2 SP广告销售额占比分析', 4)
     doc.add_paragraph().add_run(f"{translate_kw10}")
     doc.add_heading(f'2.2.3 SD计划', 3)
-    csv_path9 = DbToolsCsv(brand, market).get_listing_sd_summary_data(market,end_date,start_date)
+    csv_path9 = DbToolsCsv(db,brand, market).get_listing_sd_summary_data(market,end_date,start_date)
     insert_csv_to_docx(doc, csv_path9,9+1)
     json9 = csv_to_json(csv_path9)
     translate_kw11 = create_summery(json9, 10)
@@ -528,13 +535,13 @@ def generate_docx_test(brand, market,start_date,end_date):
     doc.add_paragraph().add_run('于是，我们将每个listing的SD、SP期望广告营收占比分别设置为35%和65%，期望Acos值设置为8%和24%。（若目前已达到预期目标，则将目前的值设置为预期目标）')
     doc.add_heading(f'广告销售额期望计算', 2)
     doc.add_paragraph().add_run('对于每个listing，我们将以SP或SD中较好的作为基准，按照目标比例提升另一类型的广告数据。结算结果如下所示')
-    csv_path10,expect_ad_sales,total_ad_sales = DbToolsCsv(brand, market).get_expected_sales(market,end_date,start_date)
+    csv_path10,expect_ad_sales,total_ad_sales = DbToolsCsv(db,brand, market).get_expected_sales(market,end_date,start_date)
     pt2 = determine_max_font_size(csv_path10, 2)
     insert_csv_to_docx(doc, csv_path10,pt2)
     doc.add_paragraph().add_run('')
     # doc.add_paragraph().add_run(f'广告销售额上可达到（{expect_ad_sales}/{total_ad_sales}-1）*100%={round((expect_ad_sales/total_ad_sales-1)*100,2)}%的增幅。')
     # doc.add_heading(f'2、广告成本期望计算', 2)
-    csv_path11, expect_ad_cost, total_ad_cost = DbToolsCsv(brand, market).get_expected_cost(market,end_date,start_date)
+    csv_path11, expect_ad_cost, total_ad_cost = DbToolsCsv(db,brand, market).get_expected_cost(market,end_date,start_date)
     # insert_csv_to_docx(doc, csv_path11,7)
     # doc.add_paragraph().add_run(f'整体广告花费下降（1-{expect_ad_cost}/{total_ad_cost}）*100%={round((1 - expect_ad_cost / total_ad_cost) * 100, 2)}%')
     # doc.add_paragraph().add_run(f'整体预期AOCS值为（{expect_ad_cost}/{expect_ad_sales}）*100%={round((expect_ad_cost / expect_ad_sales) * 100, 2)}%')
@@ -581,5 +588,5 @@ def generate_docx_test(brand, market,start_date,end_date):
     return pdf_path
 
 if __name__ == "__main__":
-    generate_docx('MUDEELA','US','2024-08-23','2024-09-21')
+    generate_docx('amazon_kfeiya','COFaR','US','2024-09-11','2024-10-10')
     # generate_docx_supplier('LAPASA','US','2024-08-10','2024-09-08')

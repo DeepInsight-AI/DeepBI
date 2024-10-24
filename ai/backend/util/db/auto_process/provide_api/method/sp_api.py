@@ -284,6 +284,15 @@ class auto_api_sp:
             print(e)
             return 500  # Internal Server Error
 
+    def delete_keyword(self, keywordId):
+        try:
+            api1 = Gen_keyword(self.db, self.brand, self.market)
+            api1.delete_keyword_toadGroup_batch(keywordId, user=self.user)
+            return 200
+        except Exception as e:
+            print(e)
+            return 500  # Internal Server Error
+
     def create_product_target(self, keywordId, bid, campaignId, adGroupId):
         try:
             apitool1 = AdGroupTools(self.db, self.brand, self.market)

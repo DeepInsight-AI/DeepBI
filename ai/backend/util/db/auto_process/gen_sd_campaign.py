@@ -30,7 +30,7 @@ class Gen_campaign(CampaignTools):
 
         # 执行创建
         res = self.create_campaigns_api(campaigninfo)
-
+        print(res)
         #根据创建结果更新log
         dbNewTools = DbNewSpTools(self.db, self.brand,self.market)
         if res[0] == "success":
@@ -256,6 +256,8 @@ class Gen_campaign(CampaignTools):
         else:
             newdbtool.update_sp_campaign_negativeKeyword(self.market, keyword_state, None, campaignNegativeKeywordId, "failed",datetime.now())
 
+if __name__ == "__main__":
+    Gen_campaign('amazon_ads','LAPASA','US').create_camapign('DeepBI_0509_M129','2024-10-18','vcpm',None,None,'T00020','enabled','daily',10)
 # ins = Gen_campaign('Gotoly')
 # ins.update_camapign_status('US',375934001677502,None,None,'paused')
 # ins.create_camapign(market='FR',portfolioId=None,dynamicBidding={"placementBidding": [{"percentage": 20, "placement": "PLACEMENT_TOP"}], "strategy": "AUTO_FOR_SALES"}, endDate=None,name='DeepBI_AUTO_test',targetingType='AUTO',state='PAUSED',startDate='2024-05-20',budgetType='DAILY',budget=10)

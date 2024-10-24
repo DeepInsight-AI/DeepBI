@@ -455,5 +455,5 @@ def generate_summary_docx(db, brand, market,start_date,end_date,period):
     return docx_path
 
 if __name__ == "__main__":
-    generate_docx('amazon_youniverse_eu', 'eu','UK', '2024-08-29', '2024-09-23', 26)
+    generate_docx('amazon_youniverse_eu', 'eu','DE', '2024-08-09', '2024-08-28', 20)
     # generate_summary_docx('DELOMO', 'EU', '2024-08-23', '2024-09-22', 31)

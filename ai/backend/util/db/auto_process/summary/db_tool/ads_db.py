@@ -220,6 +220,82 @@ amazon_advertising_change_history.id
         finally:
             self.connect_close()
 
+    def get_product_target_bid_info_batch(self, market, date):
+        """从数据库获取手动操作的商品投放改价信息并上传线上"""
+        try:
+            conn = self.conn
+
+            query1 = f"""
+SELECT
+     ROUND(newValue-previousValue,2) AS bid_adjust,
+     amazon_campaigns_list_sp.campaign_name,
+     targetingExpression,
+     amazon_advertising_change_history.entityId
+FROM
+    amazon_advertising_change_history
+LEFT JOIN
+    amazon_campaigns_list_sp ON amazon_advertising_change_history.campaignId = amazon_campaigns_list_sp.campaignId
+WHERE
+    changeType = 'BID_AMOUNT'
+    AND entityType = 'PRODUCT_TARGETING'
+    AND productTargetingType = 'EXPRESSION'
+    AND amazon_advertising_change_history.market = '{market}'
+    AND FROM_UNIXTIME( TIMESTAMP / 1000, '%Y-%m-%d' ) = '{date}'
+    AND previousValue != 'null'
+    AND amazon_campaigns_list_sp.campaign_name LIKE 'DeepBI_%'
+GROUP BY
+amazon_advertising_change_history.id
+                    """
+            df1 = pd.read_sql(query1, con=conn)
+            # return df
+            return df1['campaign_name'].tolist(), df1['targetingExpression'].tolist(), df1['bid_adjust'].tolist(), df1['entityId'].tolist()
+        except Exception as e:
+            print("Error while get_product_target_bid_info:", e)
+        finally:
+            self.connect_close()
+
+    def get_automatic_targeting_bid_info_batch(self, market, date):
+        """从数据库获取手动操作的自动定位组改价信息并上传线上"""
+        try:
+            conn = self.conn
+
+            query1 = f"""
+SELECT
+    ROUND(newValue - previousValue, 2) AS bid_adjust,
+    amazon_campaigns_list_sp.campaign_name,
+    CASE
+        WHEN expression LIKE '%QUERY_BROAD_REL_MATCHES%' THEN 'loose-match'
+        WHEN expression LIKE '%QUERY_HIGH_REL_MATCHES%' THEN 'close-match'
+        WHEN expression LIKE '%ASIN_SUBSTITUTE_RELATED%' THEN 'substitutes'
+        WHEN expression LIKE '%ASIN_ACCESSORY_RELATED%' THEN 'complements'
+        ELSE expression
+    END AS expression,
+    entityId
+FROM
+    amazon_advertising_change_history
+LEFT JOIN
+    amazon_campaigns_list_sp ON amazon_advertising_change_history.campaignId = amazon_campaigns_list_sp.campaignId
+LEFT JOIN
+    amazon_targets_list_sp ON amazon_advertising_change_history.entityId = amazon_targets_list_sp.targetId
+WHERE
+    changeType = 'BID_AMOUNT'
+    AND entityType = 'PRODUCT_TARGETING'
+    AND productTargetingType = 'PREDEFINED'
+    AND amazon_advertising_change_history.market = '{market}'
+    AND FROM_UNIXTIME(TIMESTAMP / 1000, '%Y-%m-%d') = '{date}'
+    AND previousValue != 'null'
+    AND amazon_campaigns_list_sp.campaign_name LIKE 'DeepBI_%'
+GROUP BY
+    amazon_advertising_change_history.id
+                    """
+            df1 = pd.read_sql(query1, con=conn)
+            # return df
+            return df1['campaign_name'].tolist(), df1['expression'].tolist(), df1['bid_adjust'].tolist(), df1['entityId'].tolist()
+        except Exception as e:
+            print("Error while get_automatic_targeting_bid_info:", e)
+        finally:
+            self.connect_close()
+
     def get_keyword_bid_info(self, market, date):
         """从数据库获取手动操作的关键词改价信息并上传线上"""
         try:
@@ -248,6 +324,40 @@ amazon_advertising_change_history.id
             df1 = pd.read_sql(query1, con=conn)
             # return df
             return df1['campaign_name'].tolist(), df1['keyword'].tolist(), df1['keywordType'].tolist(), df1['bid_adjust'].tolist()
+        except Exception as e:
+            print("Error while get_keyword_bid_info:", e)
+        finally:
+            self.connect_close()
+
+    def get_keyword_bid_info_batch(self, market, date):
+        """从数据库获取手动操作的关键词改价信息并上传线上"""
+        try:
+            conn = self.conn
+
+            query1 = f"""
+SELECT
+     ROUND(newValue-previousValue,2) AS bid_adjust,
+     amazon_campaigns_list_sp.campaign_name,
+     keyword,
+     keywordType,
+     entityId
+FROM
+    amazon_advertising_change_history
+LEFT JOIN
+    amazon_campaigns_list_sp ON amazon_advertising_change_history.campaignId = amazon_campaigns_list_sp.campaignId
+WHERE
+    changeType = 'BID_AMOUNT'
+    AND entityType = 'KEYWORD'
+    AND amazon_advertising_change_history.market = '{market}'
+    AND FROM_UNIXTIME( TIMESTAMP / 1000, '%Y-%m-%d' ) = '{date}'
+    AND previousValue != 'null'
+    AND amazon_campaigns_list_sp.campaign_name LIKE 'DeepBI_%'
+GROUP BY
+amazon_advertising_change_history.id
+                    """
+            df1 = pd.read_sql(query1, con=conn)
+            # return df
+            return df1['campaign_name'].tolist(), df1['keyword'].tolist(), df1['keywordType'].tolist(), df1['bid_adjust'].tolist(), df1['entityId'].tolist()
         except Exception as e:
             print("Error while get_keyword_bid_info:", e)
         finally:
@@ -282,6 +392,41 @@ amazon_advertising_change_history.id
             df1 = pd.read_sql(query1, con=conn)
             # return df
             return df1['campaign_name'].tolist(), df1['sku'].tolist(), df1['bid_adjust'].tolist()
+        except Exception as e:
+            print("Error while get_sku_state_info:", e)
+        finally:
+            self.connect_close()
+
+    def get_sku_state_info_batch(self, market, date):
+        """从数据库获取手动操作的sku修改状态信息并上传线上"""
+        try:
+            conn = self.conn
+
+            query1 = f"""
+SELECT
+     newValue AS bid_adjust,
+     amazon_campaigns_list_sp.campaign_name,
+     amazon_sp_productads_list.sku,
+     amazon_sp_productads_list.adId
+FROM
+    amazon_advertising_change_history
+LEFT JOIN
+    amazon_campaigns_list_sp ON amazon_advertising_change_history.campaignId = amazon_campaigns_list_sp.campaignId
+LEFT JOIN
+    amazon_sp_productads_list ON amazon_advertising_change_history.entityId = amazon_sp_productads_list.adId
+WHERE
+    changeType = 'STATUS'
+    AND entityType = 'AD'
+    AND amazon_advertising_change_history.market = '{market}'
+    AND FROM_UNIXTIME( TIMESTAMP / 1000, '%Y-%m-%d' ) = '{date}'
+    AND previousValue != 'null'
+    AND amazon_campaigns_list_sp.campaign_name LIKE 'DeepBI_%'
+GROUP BY
+amazon_advertising_change_history.id
+                    """
+            df1 = pd.read_sql(query1, con=conn)
+            # return df
+            return df1['campaign_name'].tolist(), df1['sku'].tolist(), df1['bid_adjust'].tolist(), df1['adId'].tolist()
         except Exception as e:
             print("Error while get_sku_state_info:", e)
         finally:
@@ -323,7 +468,7 @@ SELECT
             amazon_get_flat_file_all_orders_data_by_last_update_general
         WHERE
             CONVERT_TZ(purchase_date ,'+08:00', '{query['timezone_offset']}') >= DATE_SUB(CURDATE(), INTERVAL 16 DAY)
-            AND CONVERT_TZ(purchase_date ,'+08:00', '{query['timezone_offset']}') < CURDATE()- INTERVAL 1 DAY
+            AND CONVERT_TZ(purchase_date ,'+08:00', '{query['timezone_offset']}') < CURDATE()
             AND sales_channel = '{query['sales_channel']}'
         GROUP BY
             sales_channel,
@@ -356,7 +501,7 @@ SELECT
                     amazon_campaign_reports_sp
                 WHERE
                     DATE >= DATE_SUB(CURDATE(), INTERVAL 16 DAY)
-                    AND DATE < CURDATE() - INTERVAL 1 DAY
+                    AND DATE < CURDATE()
                 GROUP BY
                     market,
                     DATE
@@ -371,7 +516,7 @@ SELECT
                     amazon_campaign_reports_sd
                 WHERE
                     DATE >= DATE_SUB(CURDATE(), INTERVAL 16 DAY)
-                    AND DATE < CURDATE() - INTERVAL 1 DAY
+                    AND DATE < CURDATE()
                 GROUP BY
                     market,
                     DATE
@@ -386,7 +531,7 @@ SELECT
                     amazon_campaign_reports_sb
                 WHERE
                     DATE >= DATE_SUB(CURDATE(), INTERVAL 16 DAY)
-                    AND DATE < CURDATE() - INTERVAL 1 DAY
+                    AND DATE < CURDATE()
                 GROUP BY
                     market,
                     DATE
@@ -421,7 +566,7 @@ SELECT
                     amazon_campaign_reports_sp
                 WHERE
                     DATE >= DATE_SUB(CURDATE(), INTERVAL 16 DAY)
-                    AND DATE < CURDATE() - INTERVAL 1 DAY
+                    AND DATE < CURDATE()
                     AND campaignName LIKE 'DeepBI_%'
                 GROUP BY
                     market,
@@ -437,7 +582,7 @@ SELECT
                     amazon_campaign_reports_sd
                 WHERE
                     DATE >= DATE_SUB(CURDATE(), INTERVAL 16 DAY)
-                    AND DATE < CURDATE() - INTERVAL 1 DAY
+                    AND DATE < CURDATE()
 										AND campaignName LIKE 'DeepBI_%'
                 GROUP BY
                     market,
@@ -453,7 +598,7 @@ SELECT
                     amazon_campaign_reports_sb
                 WHERE
                     DATE >= DATE_SUB(CURDATE(), INTERVAL 16 DAY)
-                    AND DATE < CURDATE() - INTERVAL 1 DAY
+                    AND DATE < CURDATE()
 										AND campaignName LIKE 'DeepBI_%'
                 GROUP BY
                     market,
@@ -553,7 +698,7 @@ SELECT
             amazon_get_flat_file_all_orders_data_by_last_update_general
         WHERE
             CONVERT_TZ(purchase_date ,'+08:00', '{query['timezone_offset']}') >= DATE_SUB(CURDATE(), INTERVAL 16 DAY)
-            AND CONVERT_TZ(purchase_date ,'+08:00', '{query['timezone_offset']}') < CURDATE() - INTERVAL 1 DAY
+            AND CONVERT_TZ(purchase_date ,'+08:00', '{query['timezone_offset']}') < CURDATE()
             AND sales_channel IN %(column1_values1)s
         GROUP BY
             event_date
@@ -585,7 +730,7 @@ SELECT
                     amazon_campaign_reports_sp
                 WHERE
                     DATE >= DATE_SUB(CURDATE(), INTERVAL 16 DAY)
-                    AND DATE < CURDATE() - INTERVAL 1 DAY
+                    AND DATE < CURDATE()
 										AND market IN %(column1_values2)s
                 GROUP BY
                     DATE
@@ -600,7 +745,7 @@ SELECT
                     amazon_campaign_reports_sd
                 WHERE
                     DATE >= DATE_SUB(CURDATE(), INTERVAL 16 DAY)
-                    AND DATE < CURDATE() - INTERVAL 1 DAY
+                    AND DATE < CURDATE()
 										AND market IN %(column1_values2)s
                 GROUP BY
                     DATE
@@ -615,7 +760,7 @@ SELECT
                     amazon_campaign_reports_sb
                 WHERE
                     DATE >= DATE_SUB(CURDATE(), INTERVAL 16 DAY)
-                    AND DATE < CURDATE() - INTERVAL 1 DAY
+                    AND DATE < CURDATE()
                     AND market IN %(column1_values2)s
                 GROUP BY
                     DATE
@@ -650,7 +795,7 @@ SELECT
                     amazon_campaign_reports_sp
                 WHERE
                     DATE >= DATE_SUB(CURDATE(), INTERVAL 16 DAY)
-                    AND DATE < CURDATE() - INTERVAL 1 DAY
+                    AND DATE < CURDATE()
 										AND market IN %(column1_values2)s
 										AND campaignName LIKE 'DeepBI_%%'
                 GROUP BY
@@ -666,7 +811,7 @@ SELECT
                     amazon_campaign_reports_sd
                 WHERE
                     DATE >= DATE_SUB(CURDATE(), INTERVAL 16 DAY)
-                    AND DATE < CURDATE() - INTERVAL 1 DAY
+                    AND DATE < CURDATE()
 										AND market IN %(column1_values2)s
 										AND campaignName LIKE 'DeepBI_%%'
                 GROUP BY
@@ -682,7 +827,7 @@ SELECT
                     amazon_campaign_reports_sb
                 WHERE
                     DATE >= DATE_SUB(CURDATE(), INTERVAL 16 DAY)
-                    AND DATE < CURDATE() - INTERVAL 1 DAY
+                    AND DATE < CURDATE()
 										AND market IN %(column1_values2)s
 										AND campaignName LIKE 'DeepBI_%%'
                 GROUP BY
@@ -787,7 +932,7 @@ SELECT
 											CONVERT_TZ(purchase_date,'+08:00', '{query['timezone_offset']}'
 ) >= DATE_SUB(CURDATE(), INTERVAL 16 DAY)
 											AND CONVERT_TZ(purchase_date,'+08:00', '{query['timezone_offset']}'
-) < CURDATE()- INTERVAL 1 DAY
+) < CURDATE()
 											AND sales_channel = '{query['sales_channel']}'
 											AND apie.market = '{query['country']}'
 
@@ -827,7 +972,7 @@ SELECT
 										amazon_product_info_extended apie ON adpr.advertisedAsin = apie.asin AND adpr.market = apie.market
                 WHERE
                     adpr.DATE >= DATE_SUB(CURDATE(), INTERVAL 16 DAY)
-                    AND adpr.DATE < CURDATE() - INTERVAL 1 DAY
+                    AND adpr.DATE < CURDATE()
 										AND adpr.market = '{query['country']}'
 
 										AND apie.asin IN %(column1_values1)s
@@ -848,7 +993,7 @@ SELECT
 										amazon_product_info_extended apie ON adpr.promotedAsin = apie.asin AND adpr.market = apie.market
                 WHERE
                     adpr.DATE >= DATE_SUB(CURDATE(), INTERVAL 16 DAY)
-                    AND adpr.DATE < CURDATE() - INTERVAL 1 DAY
+                    AND adpr.DATE < CURDATE()
 										AND apie.asin IN %(column1_values1)s
                 GROUP BY
                     adpr.market,
@@ -888,7 +1033,7 @@ SELECT
 										amazon_product_info_extended apie ON adpr.advertisedAsin = apie.asin AND adpr.market = apie.market
                 WHERE
                     adpr.DATE >= DATE_SUB(CURDATE(), INTERVAL 16 DAY)
-                    AND adpr.DATE < CURDATE() - INTERVAL 1 DAY
+                    AND adpr.DATE < CURDATE()
 										AND adpr.market = '{query['country']}'
 
 										AND adpr.campaignName LIKE 'DeepBI_%%'
@@ -910,7 +1055,7 @@ SELECT
 										amazon_product_info_extended apie ON adpr.promotedAsin = apie.asin AND adpr.market = apie.market
                 WHERE
                     adpr.DATE >= DATE_SUB(CURDATE(), INTERVAL 16 DAY)
-                    AND adpr.DATE < CURDATE() - INTERVAL 1 DAY
+                    AND adpr.DATE < CURDATE()
 										AND adpr.campaignName LIKE 'DeepBI_%%'
 										AND apie.asin IN %(column1_values1)s
                 GROUP BY

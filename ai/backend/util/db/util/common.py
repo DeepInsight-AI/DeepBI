@@ -132,6 +132,7 @@ def new_get_api_config(brand_config, region, api_type, is_new=False):
                     }
                     # print("data==", data)
                     res, data = ProcessShowData.get_accesstoken(data)
+                    print(res, data)
                     # print("res==", res)
                     # print("data==", data)
                     if res:
@@ -182,7 +183,6 @@ def get_sp_my_credentials(market, brand):
 # 获取 ad my_credentials
 def get_ad_my_credentials(db, market, brand):
     brand_config = select_brand(db, brand, market)
-    print(brand_config)
     if 'public' in brand_config and brand_config['public'] == 1:
         profileid,region = get_profile_id_info(db,market, brand)
         api_config = new_get_api_config(brand_config, region, "AD")
@@ -207,8 +207,8 @@ def get_ad_my_credentials(db, market, brand):
 
 def get_proxies(region):
     proxies = {
-        "http": "http://192.168.5.165:7890",
-        "https": "http://192.168.5.165:7890"
+        "http": "http://192.168.2.165:7890",
+        "https": "https://daili.deepbi.com"
     }
     if region == "JP":
         return proxies

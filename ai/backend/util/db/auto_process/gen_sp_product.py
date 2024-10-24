@@ -12,16 +12,16 @@ class Gen_product(ProductTools):
 # 创建/新增品
     def create_productsku(self,campaignId,adGroupId,sku,asin,state,user='test'):
         product_info = {
-      "productAds": [
-        {
-          "campaignId": str(campaignId),
-          "state": state,
-          "sku": sku,
-          "asin": asin,
-          "adGroupId": str(adGroupId)
+          "productAds": [
+            {
+              "campaignId": str(campaignId),
+              "state": state,
+              "sku": sku,
+              "asin": asin,
+              "adGroupId": str(adGroupId)
+            }
+          ]
         }
-      ]
-    }
         # 执行新增品 返回adId
         adId = self.create_product_api(product_info)
         print(adId)

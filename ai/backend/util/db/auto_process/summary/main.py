@@ -4,7 +4,7 @@ import time
 from datetime import datetime, timedelta
 from ai.backend.util.db.configuration.path import get_config_path
 from ai.backend.util.db.auto_process.summary.db_tool.ads_db import AmazonMysqlRagUitl as api
-from ai.backend.util.db.auto_process.summary.summary import get_data,update_create_data_period,update_create_data,get_data_temporary,update_data_manual_period,update_data_manual,get_data_temporary_period,update_create_data_batch
+from ai.backend.util.db.auto_process.summary.summary import get_data,update_create_data_period,update_create_data,get_data_temporary,update_data_manual_period,update_data_manual,get_data_temporary_period,update_create_data_batch,update_data_manual_batch
 from ai.backend.util.db.auto_process.summary.summary import create_summarize_data
 
 
@@ -12,7 +12,7 @@ def run():
     brands_and_countries = {
         'amazon_ads': {
             'brand': 'LAPASA',
-            'countries': ["IT", "DE", "NL", "SE", "ES", "UK"]#"US", "FR", "IT", "DE", "NL", "SE", "ES", "UK", "JP"
+            'countries': ["US", "FR", "IT", "DE", "NL", "SE", "ES", "UK", "JP"]#"US", "FR", "IT", "DE", "NL", "SE", "ES", "UK", "JP"
         },
         # 'amazon_bdzx': {
         #     'brand': 'DELOMO',
@@ -164,7 +164,7 @@ def run_():
     brands_and_countries = {
         'amazon_ads': {
             'brand': 'LAPASA',
-            'countries': ["FR"]#"US", "FR", "IT", "DE", "NL", "SE", "ES", "UK", "JP"
+            'countries': ["US", "FR", "IT", "DE", "NL", "SE", "ES", "UK", "JP"]#"US", "FR", "IT", "DE", "NL", "SE", "ES", "UK", "JP"
         },
         # 'amazon_bdzx': {
         #     'brand': 'DELOMO',
@@ -235,8 +235,9 @@ def run_():
                 countries = value['countries']
                 for country in countries:
                     print(country, brand, key)
+                    get_data_temporary(country, brand, key)
                     update_create_data_batch(country, brand, key)
-                    update_data_manual(country, brand, key)
+                    update_data_manual_batch(country, brand, key)
             # Update the last main loop run time
             last_main_loop_time = current_time
             print('Main tasks done')
@@ -245,10 +246,44 @@ def run_():
         # Sleep for a short period before checking again
         time.sleep(60 * 10)
 
+
+def run__():
+    brands_and_countries = {
+        'amazon_ads': {
+            'brand': 'LAPASA',
+            'countries': ["US", "FR", "IT", "DE", "NL", "SE", "ES", "UK", "JP"]
+        }
+    }
+
+    # 初始化起始日期和结束日期
+    start_date = datetime.strptime('2024-10-03', '%Y-%m-%d')
+    end_date = datetime.strptime('2024-10-07', '%Y-%m-%d')
+
+    # 使用日期范围循环
+    current_date = start_date
+    while current_date <= end_date:
+        cur_time = current_date.strftime('%Y-%m-%d')  # 格式化为字符串 'YYYY-MM-DD'
+        print(f"Processing tasks for date: {cur_time}")
+
+        # 执行每日任务
+        for key, value in brands_and_countries.items():
+            brand = value.get('brand', value['brand'])  # 读取 'brand'
+            countries = value['countries']
+            for country in countries:
+                print(f"Country: {country}, Brand: {brand}, Key: {key}")
+                get_data_temporary(country, brand, key, cur_time)
+                update_create_data_batch(country, brand, key, cur_time)
+                update_data_manual_batch(country, brand, key, cur_time)
+
+        # 日期递增一天
+        current_date += timedelta(days=1)
+
+    print('All tasks for the date range are done')
+
 if __name__ == "__main__":
     #time.sleep(60 * 60 * 7)
-    # run_()
-    run()
+    run__()
+    # run()
 
 
 # LAPASA SE  JP  D-Trim

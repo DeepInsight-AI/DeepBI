@@ -16,12 +16,14 @@ def find_brand_by_uid(uid):
     with open(Brand_path, 'r') as file:
         brands = yaml.safe_load(file)
 
-    for brand_name, brand_data in brands.items():
-        for config_key, config_value in brand_data.items():
-            if config_value.get('UID') == uid:
-                return brand_name, config_value
+    for brand_group, brand_data in brands.items():
+        for brand_name, country_data in brand_data.items():
+            for country, config in country_data.items():
+                print(f"Checking brand: {brand_name} with UID: {config.get('UID')}")  # 调试输出
+                if config.get('UID') == uid:
+                    return brand_group, brand_name, config
 
-    return None, None
+    return None, None, None
 
 
 def update_db_info(new_dbinfo):
@@ -34,7 +36,7 @@ def update_db_info(new_dbinfo):
         # 更新 JSON 数据
         key = new_dbinfo.get("db")  # 假设你的 dbname 能作为键
         if key:
-            data[key] = {"default": new_dbinfo}
+            data[key] = {key: {"default": new_dbinfo}}
         else:
             print("Error: 'db' key is missing from new_dbinfo")
             return
@@ -88,6 +90,7 @@ def run():
                             "country_code": ""  # 可以不传递
                         }
                         success2, report_info = ProcessShowData.get_report_info(query_data)
+                        print(success2, report_info)
                         if success2:
                             # 确保返回的数据的格式和内容是我们期望的
                             if report_info['code'] == 200:
@@ -124,7 +127,7 @@ def run():
                                         print("Two days ago:", two_days_ago_str)
                                         print("Thirty one days ago:", thirty_one_days_ago_str)
 
-                                        pdf_path = generate_docx_test(dbname,country_code, two_days_ago_str,thirty_one_days_ago_str)
+                                        pdf_path = generate_docx(dbname,dbname,country_code,thirty_one_days_ago_str, two_days_ago_str)
                                         print(pdf_path)
                                         file = pdf_path
                                         data = {
@@ -160,7 +163,9 @@ def run():
                                     for country_entry in sp_data['Outhed_country_code']:
                                         if country_entry['report_state'] == 1:
                                             CountryCode = country_entry['CountryCode']
-                                            brand_name, brand_info = find_brand_by_uid(i)
+                                            print(CountryCode)
+                                            db, brand_name, brand_info = find_brand_by_uid(i)
+                                            print(db, brand_name, brand_info)
                                             if brand_name:
                                                 # # Update the JSON file with new dbinfo
                                                 # update_db_info(dbinfo)
@@ -175,15 +180,15 @@ def run():
                                                 # 按照 '%Y-%m-%d' 格式生成日期字符串
                                                 two_days_ago_str = two_days_ago.strftime('%Y-%m-%d')
                                                 thirty_one_days_ago_str = thirty_one_days_ago.strftime('%Y-%m-%d')
-                                                pdf_path = generate_docx_test(brand_name, CountryCode, two_days_ago_str,
-                                                                              thirty_one_days_ago_str)
+                                                print(two_days_ago_str,thirty_one_days_ago_str)
+                                                pdf_path = generate_docx(db, brand_name, CountryCode, thirty_one_days_ago_str, two_days_ago_str)
                                                 file = pdf_path
                                                 data = {
                                                     "UID": i,
                                                     "CountryCode": CountryCode,
                                                     "send_email": 0  # 是否发送邮件 1:是  0:否，默认否
                                                 }
-                                                result, msg = ProcessShowData.post_file(file, data)
+                                                result, msg = psd.post_file(file, data)
                                                 print(result, msg)
 
             except Exception as e:
@@ -193,4 +198,21 @@ def run():
 # #True {'code': 200, 'data': 5, 'msg': 'success'}
 # Shop ID: 1, Country Code: MX
 if __name__ == "__main__":
-    run()
+    # run()
+    # users = ProcessShowData.get_all_user()
+    # print(users)
+    file = "C:/Users/admin/PycharmProjects/DeepBI/ai/backend/util/db/auto_process/automatic_status_quo_analysis/output/COFaR_US_2024-09-11-2024-10-10(30天)_现状分析.pdf"
+    data = {
+        "UID": "38",
+        "CountryCode": "US",
+        "send_email": 0  # 是否发送邮件 1:是  0:否，默认否
+    }
+    result, msg = psd.post_file(file, data)
+    print(result, msg)
+
+    data = {
+        "UID": 38
+    }
+    result, msg = psd.get_user_outh(data)
+    print(result, msg)
+

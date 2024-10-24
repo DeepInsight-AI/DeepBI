@@ -105,25 +105,204 @@ class ProcessShowData():
             print(response.text)
             return False
 
+    @classmethod
+    def get_report(cls, file_name):
+        """获取报告"""
+        timestamp = int(time.time())
+        secrete = cls.config[cls.environment]['INSERT_SECRATE']
+        token = cls.sha1(secrete + str(timestamp) + secrete)
+        headers = {
+            'token': str(token),
+            'timestamp': str(timestamp)
+        }
+        url = cls.config[cls.environment]['ONLINE_URL'] + "get_report"
+
+        # 发送GET请求
+        response = requests.get(url, headers=headers, json=file_name)
+
+        # 输出响应内容
+        print(response.status_code)
+        if response.status_code == 200:
+            return True, response.json()
+        else:
+            print("操作失败")
+            print(response.text)
+            return False
+
 
 if __name__ == "__main__":
     # 要发送的JSON数据
+    # update_data = {
+    #     "db":"amazon_ads",
+    #     "brand": "LAPASA",
+    #     "market": "JP",
+    #     "require": "bid",
+    #     "position": "product_target",
+    #     "type": "SP",
+    #     "ID": "100003525913061",
+    #     "text": "26",
+    #     "user":"wanghequan",
+    #     # "campaignId":"90124165629540",
+    #     # "adGroupId":"118677141166299"
+    # }
+    #
+    # res = ProcessShowData.update(update_data)
+    # ## 批量添加关键词一次最多1000条
+    # update_data = {
+    #     "db": "amazon_ads",
+    #     "brand": "LAPASA",
+    #     "market": "US",
+    #     "require": "create_batch",
+    #     "position": "keyword",
+    #     "type": "SP",
+    #     "ID": ["test word1", "test word2"],  #
+    #     "text": ["0.5","0.4"],
+    #     "campaignId": ["90124165629540", "90124165753222"],
+    #     "adGroupId": ["118677141166299", "90124165753222"],
+    #     "matchType": ["EXACT", "PHRASE"],  # NEGATIVE_PHRASE 如果添加的是asin则需要传"asin"
+    #     "user": "wanghequan"
+    # }
+    # res = ProcessShowData.update(update_data)
+    ## 批量添加投放一次最多1000条
     update_data = {
-        "db":"amazon_ads",
+        "db": "amazon_ads",
         "brand": "LAPASA",
-        "market": "IT",
-        "require": "create",
-        "position": "product_target_asin",
+        "market": "US",
+        "require": "create_batch",
+        "position": "product_target",
         "type": "SP",
-        "ID": "B07NDYW9NH",
-        "text": "0.5",
-        "user":"wanghequan",
-        "campaignId":"90124165629540",
-        "adGroupId":"118677141166299"
+        "ID": ["B071JRS5GF", "B071JRS5GF"],  # 可以是词或者ASIN
+        "text": ["0.5","0.4"],
+        "campaignId": ["90124165629540", "90124165753222"],
+        "adGroupId": ["118677141166299", "90124165753222"],
+        "matchType": ["ASIN_SAME_AS", "ASIN_EXPANDED_FROM"],  # NEGATIVE_PHRASE 如果添加的是asin则需要传"asin"
+        "user": "wanghequan"
     }
-
     res = ProcessShowData.update(update_data)
+    # # 添加否定关键词和商品（自动判定）
+    # update_data = {
+    #     "db": "amazon_ads",
+    #     "brand": "LAPASA",
+    #     "market": "UK",
+    #     "require": "create",
+    #     "position": "negative_target",
+    #     "type": "SP",
+    #     "ID": "tartan pyjamas 20",#可以是词或者ASIN
+    #     "text": "",
+    #     "campaignId": "459447767497303",
+    #     "adGroupId": "464481432509078",
+    #     "matchType": "NEGATIVE_EXACT",#NEGATIVE_PHRASE 如果添加的是asin则不需要传
+    #     "user": "wanghequan"
+    # }
+    # res = ProcessShowData.update(update_data)
+    # # 批量添加否定关键词和商品（自动判定）一次最多1000条
+    # update_data = {
+    #     "db": "amazon_ads",
+    #     "brand": "LAPASA",
+    #     "market": "US",
+    #     "require": "create_batch",
+    #     "position": "negative_target",
+    #     "type": "SP",
+    #     "ID": ["test word1", "test word2"],  # 可以是词或者ASIN
+    #     "text": "",
+    #     "campaignId": ["90124165629540", "90124165753222"],
+    #     "adGroupId": ["118677141166299", "90124165753222"],
+    #     "matchType": ["NEGATIVE_EXACT", "asin"],  # NEGATIVE_PHRASE 如果添加的是asin则需要传"asin"
+    #     "user": "wanghequan"
+    # }
+    # res = ProcessShowData.update(update_data)
+    # ## 修改投放状态
+    # update_data = {
+    #     "db":"amazon_ads",
+    #     "brand": "LAPASA",
+    #     "market": "US",
+    #     "require": "state",
+    #     "position": "product_target",
+    #     "type": "SP",
+    #     "ID": "targetId",#可以是词或者ASIN
+    #     "text": "PAUSED",
+    #     "user": "wanghequan"
+    # }
+    # res = ProcessShowData.update(update_data)
+    ## 修改否定关键词状态
+    # update_data = {
+    #     "db": "amazon_ads",
+    #     "brand": "LAPASA",
+    #     "market": "UK",
+    #     "require": "state",
+    #     "position": "negative_keyword",
+    #     "type": "SP",
+    #     "ID": "155010353421654",
+    #     "text": "PAUSED",#ENABLED  PAUSED
+    #     "user": "wanghequan"
+    # }
+    # res = ProcessShowData.update(update_data)
+    # ## 修改否定投放状态
+    # update_data = {
+    #     "db": "amazon_ads",
+    #     "brand": "LAPASA",
+    #     "market": "US",
+    #     "require": "state",
+    #     "position": "negative_target",
+    #     "type": "SP",
+    #     "ID": "targetId",
+    #     "text": "PAUSED",#ENABLED
+    #     "user": "wanghequan"
+    # }
+    # res = ProcessShowData.update(update_data)
     # print(res)
+    # # 批量修改关键词状态 一次最多1000条
+    # update_data = {
+    #     "db": "amazon_ads",
+    #     "brand": "LAPASA",
+    #     "market": "US",
+    #     "require": "state_batch",
+    #     "position": "keyword",
+    #     "type": "SP",
+    #     "ID": ["keywordId1", "keywordId2"],
+    #     "text": ["PAUSED", "PAUSED"],  # ENABLED
+    #     "user": "wanghequan"
+    # }
+    # res = ProcessShowData.update(update_data)
+    # ## 批量修改投放状态 一次最多1000条
+    # update_data = {
+    #     "db": "amazon_ads",
+    #     "brand": "LAPASA",
+    #     "market": "US",
+    #     "require": "state_batch",
+    #     "position": "product_target",
+    #     "type": "SP",
+    #     "ID": ["targetId1", "targetId2"],
+    #     "text": ["PAUSED", "PAUSED"],  # ENABLED
+    #     "user": "wanghequan"
+    # }
+    # res = ProcessShowData.update(update_data)
+    # ## 删除否定关键词 可以单条也可以批量 一次最多1000条
+    # update_data = {
+    #     "db": "amazon_ads",
+    #     "brand": "LAPASA",
+    #     "market": "US",
+    #     "require": "delete",
+    #     "position": "negative_keyword",
+    #     "type": "SP",
+    #     "ID": "keywordId",  # 批量为["keywordId1", "keywordId2"]
+    #     "text": "",  # 不需要传
+    #     "user": "wanghequan"
+    # }
+    # res = ProcessShowData.update(update_data)
+    # ## 删除否定ASIN 可以单条也可以批量 一次最多1000条
+    # update_data = {
+    #     "db": "amazon_ads",
+    #     "brand": "LAPASA",
+    #     "market": "US",
+    #     "require": "delete",
+    #     "position": "negative_target",
+    #     "type": "SP",
+    #     "ID": "targetId",  # 批量为["targetId1", "targetId2"]
+    #     "text": "",  # 不需要传
+    #     "user": "wanghequan"
+    # }
+    # res = ProcessShowData.update(update_data)
     # add_data = {
     #     "brand": "LAPASA",
     #     "market": "DE",
@@ -150,3 +329,10 @@ if __name__ == "__main__":
     #
     # res = ProcessShowData.automatically_add_targets(automatically_data)
     # print(res)
+    # 获取报告
+    get_data = {
+        "UID": "1",
+        "market": "US"
+    }
+    res = ProcessShowData.get_report(get_data)
+    print(res)

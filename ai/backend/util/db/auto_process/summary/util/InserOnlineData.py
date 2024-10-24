@@ -26,10 +26,10 @@ class ProcessShowData():
         },
         'test': {
             'INSERT_SECRATE': "10470c3b4b1fed12c3baac014be15fac67c6e815",
-            'ONLINE_URL': "http://192.168.2.152:8000/api/data/"
+            'ONLINE_URL': "http://test.deepbi.com/api/data/"
         },
         'test_pre': {
-            'INSERT_SECRATE': '',
+            'INSERT_SECRATE': '69c5fcebaa65b560eaf06c3fbeb481ae44b8dpre',
             "ONLINE_URL": "https://pre_atlas.deepbi.com/api/data/"
         },
         'pre': {
@@ -44,7 +44,7 @@ class ProcessShowData():
     @classmethod
     def set_debug_mode(cls, debug):
         """根据debug状态设置环境"""
-        cls.environment = 'pre'
+        cls.environment = 'test'
 
     @classmethod
     def sha1(cls, input_string):
@@ -242,20 +242,36 @@ class ProcessShowData():
             return False, "UID 不能为空"
         return cls.post_data(post_data, "show_auth_asin")
 
+    @classmethod
+    def user_account_info(cls, post_data):
+        """获取用户列表"""
+        return cls.post_data(post_data, "user_account_info")
+
+    @classmethod
+    def set_account_dbname(cls, post_data):
+        """设置线上数据库名称"""
+        return cls.post_data(post_data, "set_account_dbname")
+
 
 if __name__ == "__main__":
-    # # 获取授权状态，包括报告状态
+    # 获取用户信息
     data = {
-       "UID": 1
+        "CloseFlag": 0  # 1 关闭的 0 没有关闭的
     }
-    result, msg = ProcessShowData.get_user_outh(data)
-    print(result, msg)
-    data = {
-        "UID": 1
-    }
-    result, msg = ProcessShowData.show_auth_asin(
-        post_data=data)
-    print(result, msg)
+    data, msg = ProcessShowData.user_account_info(post_data=data)
+    print(data, msg)
+    # # # 获取授权状态，包括报告状态
+    # data = {
+    #    "UID": 1
+    # }
+    # result, msg = ProcessShowData.get_user_outh(data)
+    # print(result, msg)
+    # data = {
+    #     "UID": 1
+    # }
+    # result, msg = ProcessShowData.show_auth_asin(
+    #     post_data=data)
+    # print(result, msg)
     # #  上传 报告结果, 上传返回数据中的 data 为该报告的线上id ，可以用于独立发送 邮件
     # file = "./resource/uploads/1.pdf"
     # data = {

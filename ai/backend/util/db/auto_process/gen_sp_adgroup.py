@@ -266,17 +266,16 @@ class Gen_adgroup(AdGroupTools):
                 targeting_state = "failed"
                 target_id = None  # 或者设置为其他默认值
 
-            for item in info:
-                updates.append({
-                    'market': self.market,
-                    'keyword_state': "ARCHIVED",
-                    'keywordText': "Negative",
-                    'campaignNegativeKeywordId': item,
-                    'operation': "DELETE",
-                    'operation_state': targeting_state,
-                    'update_time': datetime.now(),
-                    'user': user
-                })
+            updates.append({
+                'market': self.market,
+                'keyword_state': "ARCHIVED",
+                'keywordText': "Negative",
+                'campaignNegativeKeywordId': item,
+                'operation': "DELETE",
+                'operation_state': targeting_state,
+                'update_time': datetime.now(),
+                'user': user
+            })
                 # 批量插入到数据库
         dbNewTools.batch_update_sp_adGroup_negativeKeyword(updates)
 
@@ -625,19 +624,18 @@ class Gen_adgroup(AdGroupTools):
                 targeting_state = "failed"
                 target_id = None  # 或者设置为其他默认值
 
-            for item in info:
-                updates.append({
-                    'market': self.market,
-                    'adGroupId': "Negative",
-                    'bid_old': None,
-                    'state': "ARCHIVED",
-                    'expression': item,  # Assuming you have this value in `info`
-                    'targetingType': 'SP',
-                    'targetingState': targeting_state,
-                    'update_time': datetime.now(),
-                    'user': user,
-                    'bid_new': None
-                })
+            updates.append({
+                'market': self.market,
+                'adGroupId': "Negative",
+                'bid_old': None,
+                'state': "ARCHIVED",
+                'expression': item,  # Assuming you have this value in `info`
+                'targetingType': 'SP',
+                'targetingState': targeting_state,
+                'update_time': datetime.now(),
+                'user': user,
+                'bid_new': None
+            })
         # 批量插入到数据库
         dbNewTools.batch_update_adGroup_Targeting(updates)
 

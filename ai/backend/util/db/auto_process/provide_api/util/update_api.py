@@ -75,6 +75,8 @@ def sp_api(data):
             code = api.delete_negative_target(data['ID'])
         elif data['position'] == 'negative_keyword':
             code = api.delete_negative_keyword(data['ID'])
+        elif data['position'] == 'keyword':
+            code = api.delete_keyword(data['ID'])
     return code
 
 def sd_api(data):

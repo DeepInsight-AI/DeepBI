@@ -7,9 +7,9 @@ from ai.backend.util.db.auto_process.tools_sp_adGroup import AdGroupTools
 from ai.backend.util.db.auto_process.tools_db_new_sp import DbNewSpTools
 
 def auto_process():
-    api = Ceate_new_sku()
+    api = Ceate_new_sku('amazon_ouruite','RIDALUX','US')
     # api.create_new_sp_auto_no_template1('US',['L59', 'M121', 'M23', 'M118', 'M108', 'G11', 'L96', 'M103', 'L103', 'M82', 'M131'],'LAPASA')
-    api.create_new_sp_no_template_error('US','us2',0.75,'417792357715506','342901206586768','FEZIBO')
+    api.create_new_sp_no_template_error('376761603644356','364302067267814')
     # api.create_new_sp_manual_no_template('US',['M100','M118'],'LAPASA')
     # api = Ceate_new_sd()
     # api.create_new_sd_no_template_error('US','B0CFXMKHLD','us1',10,370282559911575)
@@ -51,4 +51,5 @@ def auto_process2(market):
 # # 遍历每个国家代码并调用 auto_process2
 # for country in countries:
 #     auto_process2(country)
-auto_process()
+if __name__ == '__main__':
+    auto_process()

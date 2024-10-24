@@ -30,7 +30,7 @@ class CampaignTools(BaseApi):
                 )
 
                 # 动态调用方法
-                result = getattr(campaigns, method_name)(*args, **kwargs)
+                result = getattr(campaigns, method_name)(**kwargs)
 
                 if result and result.payload:
                     print(f"{method_name} success")
@@ -49,13 +49,13 @@ class CampaignTools(BaseApi):
         return res
 
     def list_campaigns_api(self, campaignId):
-        return self.make_request("get_campaign", str(campaignId))
+        return self.make_request("get_campaign", campaignId=str(campaignId))
 
     def list_all_campaigns_api(self):
         return self.make_request("list_campaigns")
 
     def create_campaigns_api(self, campaign_info):
-        return self.make_request("create_campaigns", json.dumps(campaign_info))
+        return self.make_request("create_campaigns", body=json.dumps(campaign_info))
     # def list_campaigns_api(self,campaignId):
     #     attempts = 0
     #     while attempts < 3:
@@ -278,7 +278,7 @@ class CampaignTools(BaseApi):
 
 if __name__ == "__main__":
 
-    ct = CampaignTools('amazon_ads','LAPASA','JP')
+    ct = CampaignTools('amazon_kfeiya','COFaR','US')
     #测试更新广告系列信息
     res = ct.list_all_campaigns_api()
     # res = ct.list_campaigns_api(498971857900272,'FR')

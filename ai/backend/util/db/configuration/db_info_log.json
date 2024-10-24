@@ -394,7 +394,7 @@
                 "user": "wanghequan",
                 "passwd": "WHq123123Aa",
                 "port": 3306,
-                "db": "amazon_log_hototools",
+                "db": "",
                 "charset": "utf8mb4",
                 "use_unicode": true
             }
@@ -405,7 +405,7 @@
                 "user": "wanghequan",
                 "passwd": "WHq123123Aa",
                 "port": 3306,
-                "db": "amazon_log_hototools",
+                "db": "",
                 "charset": "utf8mb4",
                 "use_unicode": true
             }
@@ -419,6 +419,32 @@
                 "passwd": "WHq123123Aa",
                 "port": 3308,
                 "db": "amazon_log_kfeiya",
+                "charset": "utf8mb4",
+                "use_unicode": true
+            }
+        }
+    },
+    "amazon_suihuo_uuoeebb_global": {
+        "Uuoeebb": {
+            "default": {
+                "host": "192.168.2.123",
+                "user": "wanghequan",
+                "passwd": "WHq123123Aa",
+                "port": 3306,
+                "db": "amazon_log_uuoeebb_global",
+                "charset": "utf8mb4",
+                "use_unicode": true
+            }
+        }
+    },
+    "amazon_suihuo_suihuooo": {
+        "suihuooo": {
+            "default": {
+                "host": "192.168.2.123",
+                "user": "wanghequan",
+                "passwd": "WHq123123Aa",
+                "port": 3306,
+                "db": "amazon_log_suihuooo",
                 "charset": "utf8mb4",
                 "use_unicode": true
             }

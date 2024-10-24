@@ -1086,7 +1086,7 @@ class Ceate_new_sku:
 
     def create_new_sp_no_template_error(self,new_campaign_id,new_adgroup_id):
         # exchange_rate = self.get_exchange_rate(market, 'DE')
-        i = 'B0CW14561T'
+        i = 'B0CLNRDCMH'
         api1 = DbSpTools(self.db, self.brand, self.market)
         api3 = Gen_product(self.db, self.brand, self.market)
         if self.brand == 'LAPASA':

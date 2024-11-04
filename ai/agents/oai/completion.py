@@ -210,7 +210,7 @@ class Completion(openai_Completion):
                 print('_get_response function +++++++++++++++++++')
                 # print("config :", config)
                 # print("config.get('api_base')", config.get('api_base'))
-                if config.get('api_base') is not None and str(config['api_base']).__contains__('apiserver.deep-thought.io'):
+                if config.get('api_base') is not None and str(config['api_base']).__contains__('apiserver.deepbi.com'):
 
                     if config.get('functions'):
                         data = {

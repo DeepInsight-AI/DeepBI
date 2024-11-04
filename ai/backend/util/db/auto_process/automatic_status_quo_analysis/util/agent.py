@@ -16,7 +16,7 @@ from ai.agents.code_utils import (
 )
 
 api_key = 'H131_FfEW_1a45a0dcfc03539cdc084e2bfa00e7'
-api_host = "https://apiserver.deep-thought.io/proxy"
+api_host = "https://apiserver.deepbi.com/proxy"
 
 config_list_gpt4_turbo = [
     {

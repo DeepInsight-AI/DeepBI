@@ -1,5 +1,6 @@
 import json
 import os
+import threading
 from datetime import datetime
 from flask_cors import CORS
 from flask import Flask, request, jsonify, g, send_file
@@ -180,7 +181,8 @@ def get_data():
     else:
         return jsonify({"error": "File not found"}), 404
 
-@app.route('/api/data/get_report', methods=['GET'])
+
+@app.route('/api/data/get_report', methods=['POST'])
 def get_report():
     # 验证请求头
     token = request.headers.get('token')
@@ -190,16 +192,15 @@ def get_report():
         return jsonify({"error": "Unauthorized"}), 401
 
     data = request.get_json()
-    code = get_report_api(data)
+
+    # 启动一个新线程来执行长时间运行的任务
+    thread = threading.Thread(target=get_report_api, args=(data,))
+    thread.start()
+
+    # 立即返回响应
     current_time = time.time()
-    if code == 200:
-        return jsonify({"status": 200, "error": "", "timestamp": datetime.fromtimestamp(current_time).strftime('%Y-%m-%d %H:%M:%S')})
-    elif code == 404:
-        return jsonify({"status": 404, "error": "Brand not found"})
-    elif code == 500:
-        return jsonify({"status": 500, "error": "Internal Server Error"})
-    else:
-        return jsonify({"status": 404, "error": "Unknown error"})  # Bad Request
+    return jsonify({"status": 200, "message": "Task has been started",
+                    "timestamp": datetime.fromtimestamp(current_time).strftime('%Y-%m-%d %H:%M:%S')})
 @app.route('/api/data/automatically', methods=['POST'])
 def get_automatically():
     # 验证请求头

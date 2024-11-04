@@ -12,17 +12,25 @@ from ai.backend.util.db.auto_process.summary.util.InserOnlineData import Process
 import time
 
 def find_brand_by_uid(uid):
-    Brand_path = os.path.join(get_config_path(), 'Brand.yml')
-    with open(Brand_path, 'r') as file:
-        brands = yaml.safe_load(file)
+    Brand_path = os.path.join(get_config_path(), 'Brand1.yml')
+    if os.path.exists(Brand_path):
+        with open(Brand_path, 'r', encoding='utf-8') as file:
+            brands = yaml.safe_load(file)
+    else:
+        # 如果文件不存在，则创建一个新的文件
+        with open(Brand_path, 'w', encoding='utf-8') as file:
+            yaml.dump({}, file)  # 创建一个空的 YAML 文件
+            brands = {}  # 初始化为一个空字典
+    if brands is None:
+        brands = {}  # 或者根据需要设置其他默认值
 
-    for brand_group, brand_data in brands.items():
-        for brand_name, country_data in brand_data.items():
-            for country, config in country_data.items():
-                # print(f"Checking brand: {brand_name} with UID: {config.get('UID')}")  # 调试输出
-                if config.get('UID') == uid:
-                    return brand_group, brand_name, config
-
+    if brands:
+        for brand_group, brand_data in brands.items():
+            for brand_name, country_data in brand_data.items():
+                for country, config in country_data.items():
+                    # print(f"Checking brand: {brand_name} with UID: {config.get('UID')}")  # 调试输出
+                    if config.get('UID') == uid:
+                        return brand_group, brand_name, config
     return None, None, None
 
 

@@ -1,6 +1,7 @@
 # 导入模块
 import asyncio
 import json
+from comtypes import CoInitialize, CoUninitialize
 import os
 from datetime import datetime, timedelta
 from docx2pdf import convert
@@ -124,7 +125,10 @@ def insert_csv_to_docx(doc, csv_path, pt):
     return table
 
 def create_summery(date,code):
-    summery = asyncio.get_event_loop().run_until_complete(ask_question(date, code))
+    loop = asyncio.new_event_loop()
+    asyncio.set_event_loop(loop)
+    summery = loop.run_until_complete(ask_question(date, code))
+    loop.close()
     return summery
     # return 'test'
 
@@ -279,8 +283,10 @@ def generate_docx(db, brand, market,start_date,end_date):
     # Save DOCX file
     doc.save(docx_path)
 
+    CoInitialize()
     # Convert DOCX to PDF
     convert(docx_path)
+    CoUninitialize()
     pdf_path = os.path.join(get_output_path(), pdf_path)
     # convert_to_pdf(docx_path,pdf_path)
     return pdf_path

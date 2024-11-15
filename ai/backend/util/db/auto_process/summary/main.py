@@ -249,15 +249,59 @@ def run_():
 
 def run__():
     brands_and_countries = {
-        'amazon_ads': {
-            'brand': 'LAPASA',
-            'countries': ["US", "FR", "IT", "DE", "NL", "SE", "ES", "UK", "JP"]
-        }
+        # 'amazon_ads': {
+        #     'brand': 'LAPASA',
+        #     'countries': ["US", "FR", "IT", "DE", "NL", "SE", "ES", "UK", "JP"]
+        # },
+        # 'amazon_bdzx': {
+        #     'brand': 'DELOMO',
+        #     'countries': ['IT', 'ES', 'DE', 'FR']
+        # },
+        'amazon_bdzx_delomo': {
+            'brand': 'DELOMO',
+            'countries': ['US']
+        },
+        # 'amazon_outdoormaster': {
+        #     'brand': 'OutdoorMaster',
+        #     'countries': ['IT', 'ES', 'FR', 'SE', 'JP']
+        # },
+        'amazon_bdzx_mudeela': {
+            'brand': 'MUDEELA',
+            'countries': ['US']
+        },
+        'amazon_bdzx_rossny': {
+            'brand': 'Rossny',
+            'countries': ['US']
+        },
+        'amazon_bdzx_zen_cave': {
+            'brand': 'ZEN CAVE',
+            'countries': ['US']
+        },
+        # 'amazon_chaoyangkeji_gotoly': {
+        #     'brand': 'Gotoly',
+        #     'countries': ['US']
+        # },
+        # 'amazon_huangjunxi': {
+        #     'brand': 'keimi',
+        #     'countries': ['US']
+        # },
+        # 'amazon_ouruite': {
+        #     'brand': 'RIDALUX',
+        #     'countries': ['US']
+        # },
+        # 'amazon_huixin': {
+        #     'brand': 'YOURUN',
+        #     'countries': ['US']
+        # },
+        # 'amazon_kfeiya': {
+        #     'brand': 'COFaR',
+        #     'countries': ['US']
+        # }
     }
 
     # 初始化起始日期和结束日期
-    start_date = datetime.strptime('2024-10-03', '%Y-%m-%d')
-    end_date = datetime.strptime('2024-10-07', '%Y-%m-%d')
+    start_date = datetime.strptime('2024-10-08', '%Y-%m-%d')
+    end_date = datetime.strptime('2024-10-28', '%Y-%m-%d')
 
     # 使用日期范围循环
     current_date = start_date
@@ -280,9 +324,97 @@ def run__():
 
     print('All tasks for the date range are done')
 
+
+def run___():
+    brands_and_countries = {
+        'amazon_ads': {
+            'brand': 'LAPASA',
+            'countries': ["US", "FR", "IT", "DE", "NL", "SE", "ES", "UK", "JP"]  # "US", "FR", "IT", "DE", "NL", "SE", "ES", "UK", "JP"
+        },
+        'amazon_bdzx': {
+            'brand': 'DELOMO',
+            'countries': ['IT', 'ES', 'DE', 'FR']
+        },
+        'amazon_bdzx_delomo': {
+            'brand': 'DELOMO',
+            'countries': ['US']
+        },
+        'amazon_outdoormaster': {
+            'brand': 'OutdoorMaster',
+            'countries': ['IT', 'ES', 'FR', 'SE', 'JP']
+        },
+        'amazon_bdzx_mudeela': {
+            'brand': 'MUDEELA',
+            'countries': ['US']
+        },
+        'amazon_bdzx_rossny': {
+            'brand': 'ROSSNY',
+            'countries': ['US']
+        },
+        'amazon_bdzx_zen_cave': {
+            'brand': 'ZEN CAVE',
+            'countries': ['US']
+        },
+        # 'amazon_chaoyangkeji_gotoly': {
+        #     'brand': 'Gotoly',
+        #     'countries': ['US']
+        # },
+        'amazon_huangjunxi': {
+            'brand': 'keimi',
+            'countries': ['US']
+        },
+        'amazon_ouruite': {
+            'brand': 'RIDALUX',
+            'countries': ['US']
+        },
+        'amazon_huixin': {
+            'brand': 'YOURUN',
+            'countries': ['US']
+        },
+        'amazon_kfeiya': {
+            'brand': 'COFaR',
+            'countries': ['US']
+        }
+    }
+
+    # Initialize timing
+    last_summary_time = time.time() - 60 * 60 * 24
+    last_main_loop_time = time.time() - 60 * 60 * 24
+
+    while True:
+        current_time = time.time()
+
+        # Check if it's time to run the main loop tasks
+        if current_time - last_main_loop_time >= 60 * 60 * 24:
+            today = datetime.today()
+            yesterday = today - timedelta(days=1)
+            cur_time = yesterday.strftime('%Y-%m-%d')
+            # cur_time = '2024-11-03'
+            for key, value in brands_and_countries.items():
+                brand = value.get('brand', value['brand'])  # 读取 'brand'
+                countries = value['countries']
+                for country in countries:
+                    # cur_time = '2024-09-30'
+                    print(f"Country: {country}, Brand: {brand}, Key: {key}")
+                    get_data_temporary(country, brand, key, cur_time)
+                    update_create_data_batch(country, brand, key, cur_time)
+                    update_data_manual_batch(country, brand, key, cur_time)
+
+            # Update the last main loop run time
+            last_main_loop_time = current_time
+            print('Main tasks done')
+
+        # Check if it's time to call create_summarize_data
+        if current_time - last_summary_time >= 60 * 60 * 2:
+            create_summarize_data()
+            last_summary_time = current_time
+
+        # Sleep for a short period before checking again
+        time.sleep(60 * 10)
+
 if __name__ == "__main__":
-    #time.sleep(60 * 60 * 7)
-    run__()
+    # time.sleep(60 * 60 * 7)
+    run___()
     # run()
 
 

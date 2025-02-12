@@ -210,7 +210,7 @@ git clone http://github.com/DeepInsight-AI/DeepBI.git
 </table>
 
 ## Contact Us
-<a><img src="https://github.com/user-attachments/assets/591f099d-58b4-4995-aaac-2b5d0a680bd9" width="40%"/></a>
+<a><img src="https://github.com/user-attachments/assets/6a43d2f9-8c3a-48fe-a61b-575d7fc69094" width="40%"/></a>
 
 
 <br>

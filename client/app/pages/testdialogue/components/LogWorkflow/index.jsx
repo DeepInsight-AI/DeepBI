@@ -31,7 +31,10 @@ const LogWorkflow = props => {
         setSourceList(prevSourceList => [...prevSourceList, ...newLogData]);
       }
       setTimeout(() => {
-        log_terminal.scrollTop = log_terminal.scrollHeight;
+        if (log_terminal) {
+          log_terminal.scrollTop = log_terminal.scrollHeight;
+        }
+
       }, 0);
     }
   }, [logData, sourceList.length]);

@@ -12,7 +12,7 @@ DeepBI是一款AI原生的数据分析平台。DeepBI充分利用大语言模型
 
 <div align="center">
 
-  Languages： 中文 [English](README.md)<br>
+  Languages： 中文 [English](README.md) [日本語](README_JP.md)<br>
  开发：dev@deepbi.com，工作及商务：hi@deepbi.com
 
   <div style="display: flex; align-items: center;">

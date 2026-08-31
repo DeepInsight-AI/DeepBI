@@ -71,6 +71,7 @@ git clone http://github.com/DeepInsight-AI/DeepBI.git
    You can then open your DeepBI URL in the browser [URLs are in the format http://‘local machine's internal IP address’:8338]
 
 
+- If your WSL is the 2 version, maybe you can't visit your DeepBI URL in your browser directly. Type ```ip addr | grep eth0 | grep inet```,  use the ip address with "scope global" property instead of WSL's internal IP address. 
 - If you need to obtain the WSL internal IP address again: ``` ifconfig | grep -Eo 'inet (addr:)?([0-9]*\.){3}[0-9]*' | grep -vE '^inet 127(\.[0-9]{1,3}){3}' ```
 - Starting from version 1.1, if updating the code, simply pull the new code with```git pull``` and then restart Docker. <br>
     Stop command:  ```sudo docker-compose stop```<br>

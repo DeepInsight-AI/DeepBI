@@ -58,8 +58,8 @@ If the download fails to replace the protocol, run the following code
 git clone http://github.com/DeepInsight-AI/DeepBI.git
  ```
 - During the installation process, you will be prompted to choose an IP address. Select an internal IP starting with 172.x.x.x
-- Run the command ```cd DeepBI```  to the corresponding folder and run install file ```sudo ./install.sh```
-- Run the command:```sudo ./Install_cn.sh ``` to start the installation.
+- Run the command ```cd DeepBI```  to the corresponding folder and run install file ```sudo ./Install.sh```
+- Run the command:```sudo ./Install_CN.sh ``` to start the installation.
 - After the installation is complete, there will be a URL prompt. Open it directly in your browser.
   (Note: *Closing the command prompt window will result in no access to the DeepBI URL.
   To use DeepBI again, open "Command Prompt" window "Run as Administrator"
